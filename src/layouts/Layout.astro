@@ -43,12 +43,12 @@ const bgUrl = getAsset('/images/03.jpg');
   </head>
 
   <body class="antialiased text-default tracking-tight relative">
-    <!-- Hintergrundbild -->
+
     <div
       class="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
       style={`background-image: url(${bgUrl});`}
     ></div>
-    <!-- Optionaler Overlay für bessere Lesbarkeit -->
+
     <div class="fixed inset-0 -z-10 bg-black/40"></div>
 
     <slot />
