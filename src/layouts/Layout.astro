@@ -11,9 +11,10 @@ import Analytics from '~/components/common/Analytics.astro'
 import BasicScripts from '~/components/common/BasicScripts.astro'
 import { ClientRouter } from 'astro:transitions'
 import type { MetaData as MetaDataType } from '~/types'
+
 const { metadata = {} } = Astro.props
 const { language, textDirection } = I18N
-const bgImage = Astro.resolve('../assets/images/03.jpg')
+const bgImage = new URL('../assets/images/03.jpg', import.meta.url).pathname
 ---
 <!doctype html>
 <html lang={language} dir={textDirection} class="2xl:text-[20px]">
