@@ -12,39 +12,29 @@ const socialLinks = [
   { ariaLabel: 'Kick', icon: 'simple-icons:kick', href: 'https://kick.com/tnx6' },
   { ariaLabel: 'YouTube', icon: 'mdi:youtube', href: 'https://www.youtube.com/@TNX66' },
 ];
-
 ---
 
-<footer class="relative border-t border-gray-200 dark:border-slate-800 not-prose">
-  <div class="dark:bg-dark absolute inset-0 pointer-events-none" aria-hidden="true"></div>
-  <div
-    class="relative max-w-7xl mx-auto px-4 sm:px-6 dark:text-slate-300 intersect-once intersect-quarter intersect-no-queue motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
-  >
-    <div class="grid grid-cols-12 gap-4 py-8 md:py-12">
-      <div class="col-span-12 text-center">
-        <a class="inline-block font-bold text-2xl mb-3 text-white" href={getHomePermalink()}>
-          {SITE?.name || 'TNX6'}
-        </a>
-        <p class="text-sm text-gray-400">© {new Date().getFullYear()} TNX6 — All rights reserved.</p>
-      </div>
-    </div>
+<footer class="relative border-t border-gray-800 bg-[#0b0c10] text-gray-400">
+  <div class="max-w-7xl mx-auto px-6 py-10 text-center">
+    <a class="inline-block font-bold text-2xl mb-3 text-white" href={getHomePermalink()}>
+      {SITE?.name || 'TNX6 Twitch'}
+    </a>
+    <p class="text-sm mb-6">© {new Date().getFullYear()} TNX6 — All rights reserved.</p>
 
-    <div class="flex justify-center py-6 md:py-8">
-      <ul class="flex gap-4 flex-wrap justify-center">
-        {socialLinks.map(({ ariaLabel, href, icon }) => (
-          <li>
-            <a
-              class="text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-full p-3 transition"
-              aria-label={ariaLabel}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Icon name={icon} class="w-5 h-5" />
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul class="flex justify-center flex-wrap gap-4">
+      {socialLinks.map(({ ariaLabel, href, icon }) => (
+        <li>
+          <a
+            class="text-gray-400 hover:text-white transition-colors duration-200"
+            aria-label={ariaLabel}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon name={icon} class="w-6 h-6" />
+          </a>
+        </li>
+      ))}
+    </ul>
   </div>
 </footer>
