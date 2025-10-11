@@ -1,6 +1,5 @@
 ---
 import '~/assets/styles/tailwind.css';
-
 import { I18N } from 'astrowind:config';
 
 import CommonMeta from '~/components/common/CommonMeta.astro';
@@ -16,6 +15,7 @@ import BasicScripts from '~/components/common/BasicScripts.astro';
 import { ClientRouter } from 'astro:transitions';
 
 import type { MetaData as MetaDataType } from '~/types';
+import { getAsset } from '~/utils/permalinks';
 
 export interface Props {
   metadata?: MetaDataType;
@@ -23,6 +23,8 @@ export interface Props {
 
 const { metadata = {} } = Astro.props;
 const { language, textDirection } = I18N;
+
+const bgUrl = getAsset('/images/03.jpg');
 ---
 
 <!doctype html>
@@ -40,9 +42,14 @@ const { language, textDirection } = I18N;
     <ClientRouter fallback="swap" />
   </head>
 
-  <body
-  class="antialiased text-default tracking-tight bg-cover bg-center bg-no-repeat"
-  style="background-image: url('/src/assets/images/03.jpg');">
+  <body class="antialiased text-default tracking-tight relative">
+    <!-- Hintergrundbild -->
+    <div
+      class="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+      style={`background-image: url(${bgUrl});`}
+    ></div>
+    <!-- Optionaler Overlay für bessere Lesbarkeit -->
+    <div class="fixed inset-0 -z-10 bg-black/40"></div>
 
     <slot />
 
