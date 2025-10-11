@@ -25,6 +25,11 @@ export default defineConfig({
   site: 'https://tawmae.github.io/',
   base: '/tnx-site/',
   output: 'static',
+    build: {
+    assets: 'assets',
+    assetsPrefix: '/tnx-site/',
+  },
+
 
   integrations: [
     tailwind({
