@@ -40,7 +40,10 @@ const { language, textDirection } = I18N;
     <ClientRouter fallback="swap" />
   </head>
 
-  <body class="antialiased text-default bg-page tracking-tight">
+  <body
+  class="antialiased text-default tracking-tight bg-cover bg-center bg-no-repeat"
+  style="background-image: url('/src/assets/images/03.jpg');">
+
     <slot />
 
     <BasicScripts />
