@@ -11,9 +11,9 @@ import Analytics from '~/components/common/Analytics.astro'
 import BasicScripts from '~/components/common/BasicScripts.astro'
 import { ClientRouter } from 'astro:transitions'
 import type { MetaData as MetaDataType } from '~/types'
-import bgImage from '~/assets/images/03.jpg'
 const { metadata = {} } = Astro.props
 const { language, textDirection } = I18N
+const bgImage = Astro.resolve('../assets/images/03.jpg')
 ---
 <!doctype html>
 <html lang={language} dir={textDirection} class="2xl:text-[20px]">
@@ -33,7 +33,6 @@ const { language, textDirection } = I18N
       style={`background-image: url(${bgImage});`}
     ></div>
     <div class="fixed inset-0 -z-10 bg-black/40"></div>
-    <p style="position:fixed;top:10px;left:10px;z-index:9999;color:white;">{bgImage}</p>
     <slot />
     <BasicScripts />
   </body>
