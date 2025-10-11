@@ -11,11 +11,10 @@ const metadata = {
 
 <Layout metadata={metadata}>
   <Hero
-    image={{ src: '~/assets/images/hero-image.png', alt: 'TNX6 Banner' }}
     actions={[
       {
         variant: 'primary',
-        text: 'Watch Live',
+        text: 'Follow on Twitch',
         href: 'https://www.twitch.tv/tnx_6',
         target: '_blank',
         icon: 'tabler:brand-twitch',
@@ -29,11 +28,24 @@ const metadata = {
     ]}
   >
     <Fragment slot="title">
-      Welcome to <span class="text-accent dark:text-white">TNX6</span>
+      <span class="text-accent dark:text-white">TNX6</span> Live on Twitch
     </Fragment>
 
     <Fragment slot="subtitle">
-      Official Twitch hub for <strong>TNX6</strong> — discover commands, badges, items, and challenges.
+      Watch the stream directly here or join the chat on Twitch.
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="relative w-full max-w-4xl mx-auto aspect-video rounded-2xl overflow-hidden shadow-lg">
+        <iframe
+          src="https://player.twitch.tv/?channel=tnx_6&parent=tawmae.github.io"
+          allowfullscreen
+          frameborder="0"
+          scrolling="no"
+          width="100%"
+          height="100%"
+        ></iframe>
+      </div>
     </Fragment>
   </Hero>
 
