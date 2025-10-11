@@ -14,7 +14,6 @@ import type { MetaData as MetaDataType } from '~/types'
 
 const { metadata = {} } = Astro.props
 const { language, textDirection } = I18N
-const bgImage = new URL('../assets/images/03.jpg', import.meta.url).pathname
 ---
 <!doctype html>
 <html lang={language} dir={textDirection} class="2xl:text-[20px]">
@@ -31,7 +30,7 @@ const bgImage = new URL('../assets/images/03.jpg', import.meta.url).pathname
   <body class="antialiased text-default tracking-tight relative">
     <div
       class="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
-      style={`background-image: url(${bgImage});`}
+      style="background-image: url('/tnx-site/assets/03.jpg');"
     ></div>
     <div class="fixed inset-0 -z-10 bg-black/40"></div>
     <slot />
