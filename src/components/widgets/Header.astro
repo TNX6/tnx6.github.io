@@ -1,7 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components'
 import Logo from '~/components/Logo.astro'
-import ToggleTheme from '~/components/common/ToggleTheme.astro'
 import ToggleMenu from '~/components/common/ToggleMenu.astro'
 import { trimSlash } from '~/utils/permalinks'
 
@@ -20,7 +19,8 @@ const nav = [
 
 <header class="top-0 z-40 relative w-full bg-[#0a0a0c]/95 border-b border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.3)] backdrop-blur-md">
   <div class="max-w-7xl mx-auto px-6 flex items-center justify-between py-4">
-    <a href={makeHref('')} class="flex items-center space-x-2 text-[#d5b76c] font-extrabold text-2xl tracking-wide drop-shadow-[0_0_10px_rgba(198,164,79,0.6)]">
+    <a href={makeHref('')} class="flex items-center space-x-3 text-[#d5b76c] font-extrabold text-2xl tracking-wide drop-shadow-[0_0_10px_rgba(198,164,79,0.6)]">
+      <Icon name="mdi:twitch" class="w-7 h-7 text-[#c6a44f]" />
       <Logo />
       <span>TNX6</span>
     </a>
@@ -44,11 +44,8 @@ const nav = [
       })}
     </nav>
 
-    <div class="flex items-center space-x-4">
-      <ToggleTheme iconClass="w-6 h-6 text-[#c6a44f] hover:text-[#f0d68c] transition-colors duration-150" />
-      <div class="md:hidden text-[#c6a44f]">
-        <ToggleMenu />
-      </div>
+    <div class="md:hidden text-[#c6a44f]">
+      <ToggleMenu />
     </div>
   </div>
 </header>
