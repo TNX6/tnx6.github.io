@@ -1,46 +1,52 @@
 ---
-import { Icon } from 'astro-icon/components';
-import Logo from '~/components/Logo.astro';
-import ToggleTheme from '~/components/common/ToggleTheme.astro';
-import ToggleMenu from '~/components/common/ToggleMenu.astro';
-import { getHomePermalink } from '~/utils/permalinks';
-import { trimSlash } from '~/utils/permalinks';
+import { Icon } from 'astro-icon/components'
+import Logo from '~/components/Logo.astro'
+import ToggleTheme from '~/components/common/ToggleTheme.astro'
+import ToggleMenu from '~/components/common/ToggleMenu.astro'
+import { trimSlash } from '~/utils/permalinks'
 
-const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
+const base = import.meta.env.BASE_URL || '/'
+const makeHref = (p: string) => (p ? `${base}${trimSlash(p)}/` : base)
+const currentUrl = new URL(Astro.url).pathname
 
-const navLinks = [
-  { text: 'Home', href: '/' },
-  { text: 'Commands', href: '/commands' },
-  { text: 'Badges', href: '/badges' },
-  { text: 'Items', href: '/items' },
-  { text: 'Challenges', href: '/challenges' },
-];
+const nav = [
+  { text: 'Home', path: '' },
+  { text: 'Commands', path: 'commands' },
+  { text: 'Badges', path: 'badges' },
+  { text: 'Items', path: 'items' },
+  { text: 'Challenges', path: 'challenges' },
+]
 ---
 
-<header class="top-0 z-40 relative w-full border-b border-gray-800 bg-[#0b0c10]/80 backdrop-blur-md text-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between py-3">
-    <a href={getHomePermalink()} class="flex items-center font-bold text-xl tracking-tight">
+<header class="top-0 z-40 relative w-full bg-[#0a0a0c]/95 border-b border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.3)] backdrop-blur-md">
+  <div class="max-w-7xl mx-auto px-6 flex items-center justify-between py-4">
+    <a href={makeHref('')} class="flex items-center space-x-2 text-[#d5b76c] font-extrabold text-2xl tracking-wide drop-shadow-[0_0_10px_rgba(198,164,79,0.6)]">
       <Logo />
-      <span class="ml-2">TNX6</span>
+      <span>TNX6</span>
     </a>
 
-    <nav class="hidden md:flex space-x-6 text-sm font-medium">
-      {navLinks.map(({ text, href }) => (
-        <a
-          href={href}
-          class:list={[
-            'transition-colors hover:text-accent',
-            { 'text-accent font-semibold': href === currentPath },
-          ]}
-        >
-          {text}
-        </a>
-      ))}
+    <nav class="hidden md:flex space-x-8 text-lg font-semibold uppercase tracking-wider">
+      {nav.map(({ text, path }) => {
+        const href = makeHref(path)
+        const isActive = currentUrl === href
+        return (
+          <a
+            href={href}
+            aria-current={isActive ? 'page' : undefined}
+            class:list={[
+              'relative transition-all duration-200 text-[#c6a44f] hover:text-[#f0d68c] drop-shadow-[0_0_6px_rgba(198,164,79,0.4)]',
+              { 'text-[#f7e6ac] after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-[2px] after:bg-[#f7e6ac]': isActive },
+            ]}
+          >
+            {text}
+          </a>
+        )
+      })}
     </nav>
 
-    <div class="flex items-center space-x-3">
-      <ToggleTheme iconClass="w-5 h-5" />
-      <div class="md:hidden">
+    <div class="flex items-center space-x-4">
+      <ToggleTheme iconClass="w-6 h-6 text-[#c6a44f] hover:text-[#f0d68c] transition-colors duration-150" />
+      <div class="md:hidden text-[#c6a44f]">
         <ToggleMenu />
       </div>
     </div>
