@@ -1,7 +1,5 @@
 ---
 import Layout from '~/layouts/PageLayout.astro'
-import Hero from '~/components/widgets/Hero.astro'
-import Content from '~/components/widgets/Content.astro'
 
 const metadata = {
   title: 'TNX6 — Twitch Streamer',
@@ -10,34 +8,34 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <Hero
-    actions={[
-      {
-        variant: 'primary',
-        text: 'Follow on Twitch',
-        href: 'https://www.twitch.tv/tnx_6',
-        target: '_blank',
-        icon: 'mdi:twitch',
-      },
-      {
-        text: 'All Links',
-        href: 'https://linktr.ee/TNX6',
-        target: '_blank',
-        icon: 'mdi:link',
-      },
-    ]}
-  >
-    <Fragment slot="title">
-      <span class="text-[#d5b76c] drop-shadow-[0_0_10px_rgba(198,164,79,0.6)] font-extrabold">TNX6</span>
-      <span class="text-white font-extrabold"> Live on Twitch</span>
-    </Fragment>
+  <section class="relative text-center text-white py-24 px-6 bg-gradient-to-b from-black/60 to-transparent">
+    <div class="max-w-5xl mx-auto">
+      <div class="flex items-center justify-center gap-3 mb-6">
+        <iconify-icon icon="tabler:brand-twitch" class="text-[#a67c00] text-5xl"></iconify-icon>
+        <h1 class="text-5xl font-extrabold tracking-wide bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
+          TNX6
+        </h1>
+      </div>
+      <p class="text-lg text-gray-200 mb-10">Live on Twitch — Interactive streams, community & chaos.</p>
 
-    <Fragment slot="subtitle">
-      <span class="text-gray-300">Watch the stream directly here or join the chat on Twitch.</span>
-    </Fragment>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a
+          href="https://www.twitch.tv/tnx_6"
+          target="_blank"
+          class="px-8 py-3 rounded-lg text-black font-semibold bg-gradient-to-r from-[#ffda6a] to-[#c29200] hover:opacity-90 transition"
+        >
+          Follow on Twitch
+        </a>
+        <a
+          href="https://linktr.ee/TNX6"
+          target="_blank"
+          class="px-8 py-3 rounded-lg border border-[#c29200] text-[#ffda6a] hover:bg-[#c29200]/10 transition"
+        >
+          All Links
+        </a>
+      </div>
 
-    <Fragment slot="image">
-      <div class="relative w-full max-w-4xl mx-auto aspect-video rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(198,164,79,0.4)] border border-[#c6a44f]/40">
+      <div class="relative w-full max-w-4xl mx-auto aspect-video rounded-2xl overflow-hidden shadow-2xl mt-16 border border-[#c29200]/40">
         <iframe
           src="https://player.twitch.tv/?channel=tnx_6&parent=tawmae.github.io"
           allowfullscreen
@@ -47,42 +45,43 @@ const metadata = {
           height="100%"
         ></iframe>
       </div>
-    </Fragment>
-  </Hero>
+    </div>
+  </section>
 
-  <section class="relative py-24 bg-[#0b0c10]/90 text-gray-200">
-    <div class="max-w-6xl mx-auto px-6 text-center">
-      <h2 class="text-4xl md:text-5xl font-extrabold mb-6 tracking-wide text-[#d5b76c] drop-shadow-[0_0_8px_rgba(198,164,79,0.4)]">
-        Streamer. Creator. Community.
-      </h2>
-      <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-14 leading-relaxed">
-        <strong class="text-[#f7e6ac]">TNX6</strong> brings interactive Twitch streaming to the next level — powered by custom tools,
-        Streamer.bot, and a dedicated community that builds every event together.
-      </p>
+  <section class="relative py-24 px-6 text-white bg-black/70">
+    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+      <img
+        src="https://static-cdn.jtvnw.net/jtv_user_pictures/b85ce088-8b2a-4efb-b165-dc2b25481f0f-profile_image-300x300.png"
+        alt="TNX6 Twitch Avatar"
+        class="rounded-2xl w-full max-w-sm mx-auto border border-[#c29200]/40 shadow-lg"
+        width="300"
+        height="300"
+        loading="lazy"
+      />
 
-      <div class="grid md:grid-cols-3 gap-10">
-        <div class="p-6 bg-[#131417]/80 border border-[#c6a44f]/30 rounded-xl shadow-[0_0_10px_rgba(198,164,79,0.2)]">
-          <h3 class="text-xl font-bold text-[#f0d68c] mb-3">Interactive Stream Commands</h3>
-          <p class="text-gray-300">Fun chat commands, sound effects, and unique Twitch Point rewards await every viewer.</p>
-        </div>
-        <div class="p-6 bg-[#131417]/80 border border-[#c6a44f]/30 rounded-xl shadow-[0_0_10px_rgba(198,164,79,0.2)]">
-          <h3 class="text-xl font-bold text-[#f0d68c] mb-3">Badges & Items</h3>
-          <p class="text-gray-300">Unlock collectible items and badges through challenges, events, and milestones.</p>
-        </div>
-        <div class="p-6 bg-[#131417]/80 border border-[#c6a44f]/30 rounded-xl shadow-[0_0_10px_rgba(198,164,79,0.2)]">
-          <h3 class="text-xl font-bold text-[#f0d68c] mb-3">Community Challenges</h3>
-          <p class="text-gray-300">Join group events, chat goals, and creative Twitch-wide experiences powered by TNX6.</p>
-        </div>
-      </div>
+      <div>
+        <h2 class="text-3xl font-bold mb-6 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent">
+          About TNX6
+        </h2>
+        <p class="text-gray-200 mb-8 text-lg leading-relaxed">
+          <strong class="text-[#ffda6a]">TNX6</strong> brings interactive Twitch streaming to the next level —
+          powered by Streamer.bot and custom integrations.
+        </p>
 
-      <div class="mt-20">
-        <img
-          src="https://static-cdn.jtvnw.net/jtv_user_pictures/b85ce088-8b2a-4efb-b165-dc2b25481f0f-profile_image-300x300.png"
-          alt="TNX6 Twitch Avatar"
-          width="160"
-          height="160"
-          class="mx-auto rounded-full border-4 border-[#c6a44f]/60 shadow-[0_0_25px_rgba(198,164,79,0.5)]"
-        />
+        <ul class="space-y-4 text-gray-300">
+          <li class="flex items-start gap-3">
+            <iconify-icon icon="tabler:bolt" class="text-[#c29200] text-xl mt-1"></iconify-icon>
+            Interactive Stream Commands — fun chat triggers, sounds, and point rewards.
+          </li>
+          <li class="flex items-start gap-3">
+            <iconify-icon icon="tabler:medal" class="text-[#c29200] text-xl mt-1"></iconify-icon>
+            Unlock badges & items through stream events and challenges.
+          </li>
+          <li class="flex items-start gap-3">
+            <iconify-icon icon="tabler:users" class="text-[#c29200] text-xl mt-1"></iconify-icon>
+            Join community challenges and goals directly on stream.
+          </li>
+        </ul>
       </div>
     </div>
   </section>
