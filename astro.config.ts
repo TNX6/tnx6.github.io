@@ -35,9 +35,8 @@ export default defineConfig({
     mdx(),
     icon({
       include: {
-        mdi: ['*'], // <- WICHTIG: für Twitch, Link, YouTube etc.
         tabler: ['*'],
-        'simple-icons': ['*'],
+        'flat-color-icons': ['*'],
       },
     }),
     ...whenExternalScripts(() =>
