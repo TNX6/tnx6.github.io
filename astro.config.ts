@@ -1,6 +1,5 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-
 import { defineConfig } from 'astro/config';
 
 import sitemap from '@astrojs/sitemap';
@@ -39,6 +38,7 @@ export default defineConfig({
       include: {
         tabler: ['*'],
         'flat-color-icons': ['*'],
+        mdi: ['*'],
       },
     }),
 
