@@ -1,22 +1,24 @@
-import path from 'path'
-import { fileURLToPath } from 'url'
-import { defineConfig } from 'astro/config'
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-import sitemap from '@astrojs/sitemap'
-import tailwind from '@astrojs/tailwind'
-import mdx from '@astrojs/mdx'
-import partytown from '@astrojs/partytown'
-import icon from 'astro-icon'
-import compress from 'astro-compress'
-import type { AstroIntegration } from 'astro'
+import { defineConfig } from 'astro/config';
 
-import astrowind from './vendor/integration'
-import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin } from './src/utils/frontmatter'
+import sitemap from '@astrojs/sitemap';
+import tailwind from '@astrojs/tailwind';
+import mdx from '@astrojs/mdx';
+import partytown from '@astrojs/partytown';
+import icon from 'astro-icon';
+import compress from 'astro-compress';
+import type { AstroIntegration } from 'astro';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const hasExternalScripts = false
-const whenExternalScripts = (items = []) =>
-  hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : []
+import astrowind from './vendor/integration';
+import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin } from './src/utils/frontmatter';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const hasExternalScripts = false;
+const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroIntegration)[] = []) =>
+  hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
 
 export default defineConfig({
   site: 'https://tawmae.github.io/',
@@ -39,26 +41,33 @@ export default defineConfig({
         'flat-color-icons': ['*'],
       },
     }),
+
     ...whenExternalScripts(() =>
       partytown({
         config: { forward: ['dataLayer.push'] },
       })
     ),
+
     compress({
       CSS: true,
-      HTML: { 'html-minifier-terser': { removeAttributeQuotes: false } },
+      HTML: {
+        'html-minifier-terser': {
+          removeAttributeQuotes: false,
+        },
+      },
       Image: false,
       JavaScript: true,
       SVG: false,
       Logger: 1,
     }),
+
     astrowind({
       config: './src/config.yaml',
     }),
   ],
 
   image: {
-    domains: ['cdn.pixabay.com', 'static-cdn.jtvnw.net'],
+    domains: ['cdn.pixabay.com'],
   },
 
   markdown: {
@@ -73,4 +82,4 @@ export default defineConfig({
       },
     },
   },
-})
+});
