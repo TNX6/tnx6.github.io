@@ -33,7 +33,7 @@ const metadata = {
     </div>
   </section>
 
-  <script>
+  <script is:inline>
     const perPage = 20
     let allData = { points: [], watchtime: [] }
     let filteredData = { points: [], watchtime: [] }
@@ -60,18 +60,18 @@ const metadata = {
         const rank = start + i + 1
         const showLogin =
           user.UserName.toLowerCase() !== user.UserLogin.toLowerCase()
-            ? \` <span class='text-gray-400 text-sm'>(\${user.UserLogin})</span>\`
+            ? ` <span class='text-gray-400 text-sm'>(${user.UserLogin})</span>`
             : ''
         const el = document.createElement('div')
         el.className =
           'flex justify-between items-center bg-black/40 p-4 rounded-xl border border-[#c6a44f]/30 backdrop-blur-sm'
-        el.innerHTML = \`
+        el.innerHTML = `
           <div class="flex items-center gap-3 text-gray-200">
-            <span class="text-[#f7e6ac] font-bold w-8 text-right">\${rank}.</span>
-            <span class="font-semibold">\${user.UserName}</span>\${showLogin}
+            <span class="text-[#f7e6ac] font-bold w-8 text-right">${rank}.</span>
+            <span class="font-semibold">${user.UserName}</span>${showLogin}
           </div>
-          <span class="text-[#f7e6ac] font-bold">\${user.Value}</span>
-        \`
+          <span class="text-[#f7e6ac] font-bold">${user.Value}</span>
+        `
         container.appendChild(el)
       })
 
