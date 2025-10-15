@@ -4,7 +4,9 @@ import ToggleMenu from '~/components/common/ToggleMenu.astro'
 import { trimSlash } from '~/utils/permalinks'
 
 const base = import.meta.env.BASE_URL || '/'
-const makeHref = (p: string) => (p ? `${base}${trimSlash(p)}/` : base)
+const makeHref = (p: string) =>
+  (p ? `${import.meta.env.BASE_URL}${trimSlash(p)}/` : import.meta.env.BASE_URL)
+
 const currentUrl = new URL(Astro.url).pathname
 
 const nav = [
