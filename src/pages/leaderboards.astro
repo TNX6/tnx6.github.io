@@ -1,0 +1,50 @@
+---
+// ==============================
+// src/pages/leaderboards.astro
+// ==============================
+import Layout from '~/layouts/PageLayout.astro'
+const res = await fetch('https://tawmae.github.io/tnx-site/api/leaderboard_data.json')
+const data = await res.json()
+---
+
+<Layout metadata={{ title: 'Leaderboards' }}>
+  <section class="relative text-center text-white py-24 px-6 bg-gradient-to-b from-black/60 to-transparent">
+    <div class="max-w-5xl mx-auto">
+      <h1 class="text-5xl font-extrabold tracking-wide bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent mb-10">
+        Leaderboards
+      </h1>
+      <input
+        type="text"
+        id="search"
+        placeholder="Search users..."
+        class="w-full max-w-md px-4 py-3 rounded-lg text-black"
+      />
+      <div id="leaderboards" class="mt-10 space-y-16">
+        {Object.entries(data).map(([title, list]) => (
+          <div class="bg-black/60 border border-[#c29200]/40 rounded-2xl p-8 shadow-lg">
+            <h2 class="text-3xl font-bold mb-6 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent">{title}</h2>
+            <ul class="space-y-3 text-lg text-gray-200">
+              {list.map((user) => (
+                <li class="flex justify-between border-b border-[#c29200]/20 pb-1">
+                  <span><strong>{user.UserName}</strong> ({user.UserLogin})</span>
+                  <span>{user.Value}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const input = document.getElementById('search')
+    const sections = document.querySelectorAll('#leaderboards ul li')
+    input.addEventListener('input', e => {
+      const val = e.target.value.toLowerCase()
+      sections.forEach(li => {
+        li.style.display = li.textContent.toLowerCase().includes(val) ? '' : 'none'
+      })
+    })
+  </script>
+</Layout>
