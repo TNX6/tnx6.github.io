@@ -1,50 +1,55 @@
----
-// ==============================
-// src/pages/leaderboards.astro
-// ==============================
-import Layout from '~/layouts/PageLayout.astro'
-const res = await fetch('https://tawmae.github.io/tnx-site/api/leaderboard_data.json')
-const data = await res.json()
----
+<section class="max-w-6xl mx-auto py-16 px-6 space-y-16 text-white">
 
-<Layout metadata={{ title: 'Leaderboards' }}>
-  <section class="relative text-center text-white py-24 px-6 bg-gradient-to-b from-black/60 to-transparent">
-    <div class="max-w-5xl mx-auto">
-      <h1 class="text-5xl font-extrabold tracking-wide bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent mb-10">
-        Leaderboards
-      </h1>
-      <input
-        type="text"
-        id="search"
-        placeholder="Search users..."
-        class="w-full max-w-md px-4 py-3 rounded-lg text-black"
-      />
-      <div id="leaderboards" class="mt-10 space-y-16">
-        {Object.entries(data).map(([title, list]) => (
-          <div class="bg-black/60 border border-[#c29200]/40 rounded-2xl p-8 shadow-lg">
-            <h2 class="text-3xl font-bold mb-6 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent">{title}</h2>
-            <ul class="space-y-3 text-lg text-gray-200">
-              {list.map((user) => (
-                <li class="flex justify-between border-b border-[#c29200]/20 pb-1">
-                  <span><strong>{user.UserName}</strong> ({user.UserLogin})</span>
-                  <span>{user.Value}</span>
-                </li>
-              ))}
-            </ul>
+  <!-- POINTS -->
+  <div>
+    <h2 class="text-3xl font-bold mb-8 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent">Points</h2>
+    <div id="points-list" class="space-y-3"></div>
+    <button id="loadMorePoints" class="mt-6 px-6 py-2 bg-[#c6a44f]/20 border border-[#c6a44f]/40 rounded-lg text-[#f7e6ac] hover:bg-[#c6a44f]/30 transition">Show More</button>
+  </div>
+
+  <!-- WATCHTIME -->
+  <div>
+    <h2 class="text-3xl font-bold mb-8 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent">Watchtime</h2>
+    <div id="watchtime-list" class="space-y-3"></div>
+    <button id="loadMoreWatchtime" class="mt-6 px-6 py-2 bg-[#c6a44f]/20 border border-[#c6a44f]/40 rounded-lg text-[#f7e6ac] hover:bg-[#c6a44f]/30 transition">Show More</button>
+  </div>
+
+</section>
+
+<script>
+  const loadSegment = (id, users, perPage) => {
+    const container = document.getElementById(id + '-list')
+    const button = document.getElementById('loadMore' + id.charAt(0).toUpperCase() + id.slice(1))
+    let index = 0
+
+    const render = () => {
+      const slice = users.slice(index, index + perPage)
+      slice.forEach((user, i) => {
+        const rank = index + i + 1
+        const el = document.createElement('div')
+        el.className = 'flex justify-between items-center bg-black/40 p-4 rounded-xl border border-[#c6a44f]/30'
+        el.innerHTML = `
+          <div class="flex items-center gap-3 text-gray-200">
+            <span class="text-[#f7e6ac] font-bold w-8 text-right">${rank}.</span>
+            <span class="font-semibold">${user.UserName}</span>
+            <span class="text-gray-400 text-sm">(${user.UserLogin})</span>
           </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <script>
-    const input = document.getElementById('search')
-    const sections = document.querySelectorAll('#leaderboards ul li')
-    input.addEventListener('input', e => {
-      const val = e.target.value.toLowerCase()
-      sections.forEach(li => {
-        li.style.display = li.textContent.toLowerCase().includes(val) ? '' : 'none'
+          <span class="text-[#f7e6ac] font-bold">${user.Value}</span>
+        `
+        container.appendChild(el)
       })
+      index += perPage
+      if (index >= users.length) button.style.display = 'none'
+    }
+
+    button.addEventListener('click', render)
+    render()
+  }
+
+  fetch('/tnx-site/public/api/leaderboard_data.json')
+    .then(res => res.json())
+    .then(data => {
+      loadSegment('points', data.points, 20)
+      loadSegment('watchtime', data.watchtime, 20)
     })
-  </script>
-</Layout>
+</script>
