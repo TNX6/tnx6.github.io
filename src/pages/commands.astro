@@ -20,23 +20,63 @@ for (const cmd of commands) {
 ---
 <Layout>
   <section class="max-w-5xl mx-auto py-16 px-6 text-white">
-    <h1 class="text-4xl font-bold mb-10 text-[#f7e6ac]">Commands</h1>
-    {Object.keys(groups).length === 0 ? (
-      <p class="text-gray-400">No commands found.</p>
-    ) : (
-      Object.keys(groups).map(group => (
-        <div class="mb-10">
-          <h2 class="text-2xl font-semibold text-[#c6a44f] mb-4">{group}</h2>
-          <ul class="space-y-3">
-            {groups[group].map(cmd => (
-              <li class="flex justify-between border-b border-[#c6a44f]/20 pb-2">
-                <span class="font-bold">{cmd.Name}</span>
-                <span class="text-gray-300 text-sm">{cmd.Commands?.[0]}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))
-    )}
+    <h1 class="text-4xl font-bold mb-8 text-[#f7e6ac]">Commands</h1>
+
+    <div class="mb-10">
+      <input
+        id="commandSearch"
+        type="text"
+        placeholder="Search commands..."
+        class="w-full px-4 py-3 rounded-lg bg-black/40 border border-[#c6a44f]/40 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#c6a44f]"
+      />
+    </div>
+
+    <div id="commandList">
+      {Object.keys(groups).length === 0 ? (
+        <p class="text-gray-400">No commands found.</p>
+      ) : (
+        Object.keys(groups).map(group => (
+          <div class="mb-10 group-block bg-black/50 rounded-xl p-6 border border-[#c6a44f]/30 shadow-lg backdrop-blur-sm">
+            <h2 class="text-2xl font-semibold text-[#c6a44f] mb-4 group-title">{group}</h2>
+            <ul class="space-y-3 group-commands">
+              {groups[group].map(cmd => (
+                <li class="border-b border-[#c6a44f]/20 pb-2 command-item">
+                  <div class="font-bold mb-1 command-name">{cmd.Name}</div>
+                  <div class="text-gray-300 text-sm flex flex-wrap gap-2 command-aliases">
+                    {cmd.Commands?.map(c => (
+                      <span class="bg-[#c6a44f]/10 text-[#f7e6ac] px-2 py-0.5 rounded-md border border-[#c6a44f]/30 text-xs">{c}</span>
+                    ))}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      )}
+    </div>
   </section>
+
+  <script>
+    const input = document.getElementById('commandSearch')
+    const blocks = document.querySelectorAll('.group-block')
+
+    input.addEventListener('input', () => {
+      const term = input.value.toLowerCase().trim()
+
+      blocks.forEach(block => {
+        const commands = block.querySelectorAll('.command-item')
+        let visibleCount = 0
+
+        commands.forEach(cmd => {
+          const name = cmd.querySelector('.command-name').textContent.toLowerCase()
+          const aliases = Array.from(cmd.querySelectorAll('.command-aliases span')).map(s => s.textContent.toLowerCase())
+          const match = name.includes(term) || aliases.some(a => a.includes(term))
+          cmd.style.display = match ? '' : 'none'
+          if (match) visibleCount++
+        })
+
+        block.style.display = visibleCount > 0 ? '' : 'none'
+      })
+    })
+  </script>
 </Layout>
