@@ -1,0 +1,27 @@
+---
+import Layout from '~/layouts/PageLayout.astro'
+
+const res = await fetch('https://raw.githubusercontent.com/tawmae/tnx-site/main/public/api/commands.json')
+const data = await res.json()
+const grouped = Object.groupBy(data, c => c.Group || 'Other')
+---
+
+<Layout metadata={{ title: 'Commands — TNX6' }}>
+  <section class="max-w-5xl mx-auto py-16 px-6 text-white">
+    <h1 class="text-4xl font-bold text-[#d5b76c] mb-10">Stream Commands</h1>
+
+    {Object.entries(grouped).map(([group, cmds]) => (
+      <div class="mb-12">
+        <h2 class="text-2xl font-semibold text-[#f7e6ac] mb-4 border-b border-[#c6a44f]/40 pb-1">{group}</h2>
+        <ul class="space-y-2">
+          {cmds.map(c => (
+            <li class="flex justify-between bg-[#0b0c10]/60 border border-[#c6a44f]/20 rounded-md px-4 py-2">
+              <span class="font-semibold text-[#f0d68c]">{c.Name}</span>
+              <span class="text-gray-300">{c.Commands?.[0] ?? ''}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </section>
+</Layout>
