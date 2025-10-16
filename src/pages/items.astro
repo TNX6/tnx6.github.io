@@ -1,0 +1,129 @@
+---
+import { onMount } from "solid-js";
+
+let data = { items: [], lootTables: [], craftingList: [] };
+
+onMount(async () => {
+  const res = await fetch("/api/items.json");
+  data = await res.json();
+});
+---
+
+<style>
+  .section {
+    margin-bottom: 3rem;
+    padding: 1.5rem;
+    border-radius: 10px;
+    background: var(--astro-color-bg-soft, #1e1e2f);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 0.6rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  th {
+    text-align: left;
+    color: #c7c7ff;
+  }
+  .icon {
+    font-size: 1.1rem;
+    margin: 0 0.3rem;
+    cursor: help;
+  }
+  .tooltip {
+    position: relative;
+  }
+  .tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: 0.8rem;
+  }
+  .ingredient {
+    background: rgba(255,255,255,0.08);
+    padding: 3px 8px;
+    border-radius: 5px;
+    margin-right: 5px;
+  }
+</style>
+
+<div class="section">
+  <h2>🧱 Available Items</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Value</th>
+        <th>Flags</th>
+      </tr>
+    </thead>
+    <tbody>
+      {data.items.map((item) => (
+        <tr>
+          <td>{item.text}</td>
+          <td>{item.description || "—"}</td>
+          <td>{item.value}</td>
+          <td>
+            {item.excludeSale && <span class="tooltip icon" data-tooltip="Not for sale">💰🚫</span>}
+            {item.excludePurchase && <span class="tooltip icon" data-tooltip="Can't be bought">🛒🚫</span>}
+            {item.excludeUsage && <span class="tooltip icon" data-tooltip="Can't be used">⚔️🚫</span>}
+            {item.itemLimitEnabled && <span class="tooltip icon" data-tooltip={`Max amount: ${item.itemLimitAmount}`}>📦</span>}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>🎁 Loot Tables</h2>
+  {data.lootTables.map((table) => (
+    <div style="margin-bottom:1.5rem;">
+      <h3>{table.name}</h3>
+      <table>
+        <thead>
+          <tr><th>Item</th><th>Amount</th><th>Chance (%)</th></tr>
+        </thead>
+        <tbody>
+          {table.items.map((loot) => (
+            <tr>
+              <td>{loot.option}</td>
+              <td>{loot.amount}</td>
+              <td>{loot.value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ))}
+</div>
+
+<div class="section">
+  <h2>⚒️ Crafting</h2>
+  {data.craftingList.map((recipe) => (
+    <div style="margin-bottom:1.2rem;">
+      <strong>{recipe.result}</strong>
+      <div>
+        {recipe.ingredients.map((ing) => (
+          <span class="ingredient">{ing.amount}× {ing.item}</span>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
