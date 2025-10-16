@@ -1,138 +1,99 @@
 ---
-import Layout from "../layouts/Base.astro";
+import Layout from '~/layouts/PageLayout.astro';
 
-const res = await fetch("/api/items.json");
-const data = await res.json();
+const metadata = {
+  title: 'Items — TNX6',
+  ignoreTitleTemplate: true,
+};
 ---
 
-<Layout title="Items | TNX">
-  <style>
-    .section {
-      margin-bottom: 3rem;
-      padding: 1.5rem;
-      border-radius: 10px;
-      background: var(--astro-color-bg-soft, #1e1e2f);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-    h2 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-      color: var(--astro-color-text-primary, #fff);
-    }
-    h3 {
-      font-size: 1.2rem;
-      margin: 0.5rem 0;
-      color: var(--astro-color-text-secondary, #ccc);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 0.5rem;
-    }
-    th, td {
-      padding: 0.6rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    th {
-      text-align: left;
-      color: #c7c7ff;
-    }
-    .icon {
-      font-size: 1.1rem;
-      margin: 0 0.3rem;
-      cursor: help;
-    }
-    .tooltip {
-      position: relative;
-    }
-    .tooltip:hover::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      bottom: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #333;
-      color: white;
-      padding: 4px 8px;
-      border-radius: 4px;
-      white-space: nowrap;
-      font-size: 0.8rem;
-      z-index: 10;
-    }
-    .ingredient {
-      background: rgba(255, 255, 255, 0.08);
-      padding: 3px 8px;
-      border-radius: 5px;
-      margin-right: 5px;
-      display: inline-block;
-    }
-  </style>
+<Layout metadata={metadata}>
+  <section class="max-w-6xl mx-auto py-16 px-6 text-white">
+    <h1 class="text-4xl font-extrabold text-center mb-12 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(198,164,79,0.5)]">
+      Items
+    </h1>
 
-  <div class="section">
-    <h2>🧱 Available Items</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Value</th>
-          <th>Flags</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.items.map((item) => (
-          <tr>
-            <td>{item.text}</td>
-            <td>{item.description || "—"}</td>
-            <td>{item.value}</td>
-            <td>
-              {item.excludeSale && <span class="tooltip icon" data-tooltip="Not for sale">💰🚫</span>}
-              {item.excludePurchase && <span class="tooltip icon" data-tooltip="Can't be bought">🛒🚫</span>}
-              {item.excludeUsage && <span class="tooltip icon" data-tooltip="Can't be used">⚔️🚫</span>}
-              {item.itemLimitEnabled && (
-                <span class="tooltip icon" data-tooltip={`Max amount: ${item.itemLimitAmount}`}>📦</span>
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
+    <div id="items-section" class="mb-20"></div>
 
-  <div class="section">
-    <h2>🎁 Loot Tables</h2>
-    {data.lootTables.map((table) => (
-      <div style="margin-bottom:1.5rem;">
-        <h3>{table.name}</h3>
-        <table>
-          <thead>
-            <tr><th>Item</th><th>Amount</th><th>Chance (%)</th></tr>
-          </thead>
-          <tbody>
-            {table.items.map((loot) => (
-              <tr>
-                <td>{loot.option}</td>
-                <td>{loot.amount}</td>
-                <td>{loot.value}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    ))}
-  </div>
+    <h2 class="text-3xl font-bold mb-8 text-center text-[#f7e6ac]">Loot Tables</h2>
+    <div id="loots-section" class="mb-20"></div>
 
-  <div class="section">
-    <h2>⚒️ Crafting</h2>
-    {data.craftingList.map((recipe) => (
-      <div style="margin-bottom:1.2rem;">
-        <strong>{recipe.result}</strong>
-        <div>
-          {recipe.ingredients.map((ing) => (
-            <span class="ingredient">{ing.amount}× {ing.item}</span>
-          ))}
-        </div>
-      </div>
-    ))}
-  </div>
+    <h2 class="text-3xl font-bold mb-8 text-center text-[#f7e6ac]">Crafting Recipes</h2>
+    <div id="crafting-section"></div>
+  </section>
+
+  <script is:inline>
+    async function loadData() {
+      const res = await fetch('/tnx-site/api/items.json');
+      const data = await res.json();
+
+      const itemsSection = document.getElementById('items-section');
+      const lootsSection = document.getElementById('loots-section');
+      const craftSection = document.getElementById('crafting-section');
+
+      // ITEMS
+      const itemsHtml = data.items.map(i => {
+        const icons = [];
+        if (i.excludeSale) icons.push(`<div class="tooltip" data-tip="Excluded from sale"><iconify-icon icon="mdi:cart-off"></iconify-icon></div>`);
+        if (i.excludePurchase) icons.push(`<div class="tooltip" data-tip="Excluded from purchase"><iconify-icon icon="mdi:cart-remove"></iconify-icon></div>`);
+        if (i.excludeUsage) icons.push(`<div class="tooltip" data-tip="Cannot be used"><iconify-icon icon="mdi:cancel"></iconify-icon></div>`);
+        if (i.itemLimitEnabled) icons.push(`<div class="tooltip" data-tip="Item limit: ${i.itemLimitAmount}"><iconify-icon icon="mdi:numeric-${i.itemLimitAmount}-circle-outline"></iconify-icon></div>`);
+
+        return `
+          <div class="bg-black/40 border border-[#c6a44f]/30 rounded-2xl p-6 mb-4 shadow-md flex flex-col gap-2 hover:border-[#f7e6ac]/60 transition-all">
+            <div class="flex items-center justify-between">
+              <div class="text-xl font-bold text-[#f7e6ac]">${i.text}</div>
+              <div class="flex gap-3 text-[#c6a44f] text-xl">${icons.join('')}</div>
+            </div>
+            <div class="text-sm text-gray-300">${i.description || 'No description'}</div>
+            <div class="text-sm text-gray-400">Value: ${i.value ?? 0}</div>
+          </div>
+        `;
+      }).join('');
+      itemsSection.innerHTML = `<h2 class="text-3xl font-bold mb-8 text-center text-[#f7e6ac]">Available Items</h2>${itemsHtml}`;
+
+      // LOOT TABLES
+      const lootsHtml = data.lootTables.map(t => {
+        const items = t.items.map(it =>
+          `<li class="flex justify-between text-sm text-gray-300"><span>${it.option}</span><span>${it.value}%</span></li>`
+        ).join('');
+        return `
+          <div class="bg-black/40 border border-[#c6a44f]/30 rounded-2xl p-6 mb-6 shadow-md">
+            <h3 class="text-2xl font-bold text-[#f7e6ac] mb-4">${t.name}</h3>
+            <ul class="space-y-1">${items}</ul>
+          </div>
+        `;
+      }).join('');
+      lootsSection.innerHTML = lootsHtml;
+
+      // CRAFTING
+      const craftHtml = data.crafting.map(c => {
+        const ingr = c.ingredients.map(i =>
+          `<li class="text-sm text-gray-300">${i.amount}x ${i.item}</li>`
+        ).join('');
+        return `
+          <div class="bg-black/40 border border-[#c6a44f]/30 rounded-2xl p-6 mb-6 shadow-md">
+            <h3 class="text-2xl font-bold text-[#f7e6ac] mb-2">${c.result}</h3>
+            <ul class="space-y-1">${ingr}</ul>
+          </div>
+        `;
+      }).join('');
+      craftSection.innerHTML = craftHtml;
+
+      // Tooltip logic
+      document.querySelectorAll('.tooltip').forEach(el => {
+        const tip = document.createElement('div');
+        tip.className = 'absolute hidden bg-black/90 text-[#f7e6ac] text-xs px-2 py-1 rounded-md';
+        tip.textContent = el.dataset.tip;
+        el.style.position = 'relative';
+        el.appendChild(tip);
+        el.addEventListener('mouseenter', () => (tip.style.display = 'block'));
+        el.addEventListener('mouseleave', () => (tip.style.display = 'none'));
+      });
+    }
+
+    loadData();
+  </script>
+
+  <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
 </Layout>
