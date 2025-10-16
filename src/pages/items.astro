@@ -8,18 +8,34 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <section class="max-w-6xl mx-auto py-16 px-6 text-white">
-    <h1 class="text-4xl font-extrabold text-center mb-12 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(198,164,79,0.5)]">
-      Items
+  <section class="max-w-6xl mx-auto py-20 px-6 text-white font-[Poppins]">
+
+    <!-- HEADER -->
+    <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(198,164,79,0.5)] tracking-wider">
+      TNX ITEMS
     </h1>
 
-    <div id="items-section" class="mb-20"></div>
+    <!-- SECTION: ITEMS -->
+    <div class="relative mb-28">
+      <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#c6a44f]/70 to-transparent"></div>
+      <h2 class="text-3xl font-bold text-center mb-10 text-[#f7e6ac] uppercase tracking-wide">Available Items</h2>
+      <div id="items-section" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    </div>
 
-    <h2 class="text-3xl font-bold mb-8 text-center text-[#f7e6ac]">Loot Tables</h2>
-    <div id="loots-section" class="mb-20"></div>
+    <!-- SECTION: LOOT TABLES -->
+    <div class="relative mb-28">
+      <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#c6a44f]/70 to-transparent"></div>
+      <h2 class="text-3xl font-bold text-center mb-10 text-[#f7e6ac] uppercase tracking-wide">Loot Tables</h2>
+      <div id="loots-section" class="grid sm:grid-cols-2 gap-8"></div>
+    </div>
 
-    <h2 class="text-3xl font-bold mb-8 text-center text-[#f7e6ac]">Crafting Recipes</h2>
-    <div id="crafting-section"></div>
+    <!-- SECTION: CRAFTING -->
+    <div class="relative">
+      <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#c6a44f]/70 to-transparent"></div>
+      <h2 class="text-3xl font-bold text-center mb-10 text-[#f7e6ac] uppercase tracking-wide">Crafting Recipes</h2>
+      <div id="crafting-section" class="grid sm:grid-cols-2 gap-8"></div>
+    </div>
+
   </section>
 
   <script is:inline>
@@ -32,58 +48,65 @@ const metadata = {
       const craftSection = document.getElementById('crafting-section');
 
       // ITEMS
-      const itemsHtml = data.items.map(i => {
+      const itemIcon = (i) => {
         const icons = [];
-        if (i.excludeSale) icons.push(`<div class="tooltip" data-tip="Excluded from sale"><iconify-icon icon="mdi:cart-off"></iconify-icon></div>`);
-        if (i.excludePurchase) icons.push(`<div class="tooltip" data-tip="Excluded from purchase"><iconify-icon icon="mdi:cart-remove"></iconify-icon></div>`);
-        if (i.excludeUsage) icons.push(`<div class="tooltip" data-tip="Cannot be used"><iconify-icon icon="mdi:cancel"></iconify-icon></div>`);
-        if (i.itemLimitEnabled) icons.push(`<div class="tooltip" data-tip="Item limit: ${i.itemLimitAmount}"><iconify-icon icon="mdi:numeric-${i.itemLimitAmount}-circle-outline"></iconify-icon></div>`);
+        if (i.excludeSale) icons.push(`<div class="tooltip" data-tip="Not for sale"><iconify-icon icon="tabler:shopping-cart-off"></iconify-icon></div>`);
+        if (i.excludePurchase) icons.push(`<div class="tooltip" data-tip="Not purchasable"><iconify-icon icon="tabler:circle-x"></iconify-icon></div>`);
+        if (i.excludeUsage) icons.push(`<div class="tooltip" data-tip="Cannot be used"><iconify-icon icon="tabler:ban"></iconify-icon></div>`);
+        if (i.itemLimitEnabled) icons.push(`<div class="tooltip" data-tip="Limit: ${i.itemLimitAmount}"><iconify-icon icon="tabler:package"></iconify-icon></div>`);
+        return icons.join('');
+      };
 
-        return `
-          <div class="bg-black/40 border border-[#c6a44f]/30 rounded-2xl p-6 mb-4 shadow-md flex flex-col gap-2 hover:border-[#f7e6ac]/60 transition-all">
-            <div class="flex items-center justify-between">
-              <div class="text-xl font-bold text-[#f7e6ac]">${i.text}</div>
-              <div class="flex gap-3 text-[#c6a44f] text-xl">${icons.join('')}</div>
-            </div>
-            <div class="text-sm text-gray-300">${i.description || 'No description'}</div>
-            <div class="text-sm text-gray-400">Value: ${i.value ?? 0}</div>
+      itemsSection.innerHTML = data.items.map(i => `
+        <div class="relative p-6 rounded-2xl bg-gradient-to-br from-[#0a0a0c]/80 to-[#1a1408]/80 border border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.15)] backdrop-blur-md hover:border-[#f7e6ac]/60 transition-all group">
+          <div class="flex justify-between items-start mb-2">
+            <div class="text-2xl font-bold text-[#f7e6ac] group-hover:text-[#fff1b0]">${i.text}</div>
+            <div class="flex gap-3 text-[#c6a44f] text-lg">${itemIcon(i)}</div>
           </div>
-        `;
-      }).join('');
-      itemsSection.innerHTML = `<h2 class="text-3xl font-bold mb-8 text-center text-[#f7e6ac]">Available Items</h2>${itemsHtml}`;
+          <p class="text-sm text-gray-300 mb-2 leading-snug">${i.description || "No description available."}</p>
+          <div class="flex justify-between text-sm mt-2 text-gray-400 border-t border-[#c6a44f]/20 pt-2">
+            <span>Value:</span><span>${i.value ?? 0}</span>
+          </div>
+          <div class="absolute inset-x-0 bottom-0 h-[3px] bg-gradient-to-r from-transparent via-[#c6a44f]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        </div>
+      `).join('');
 
       // LOOT TABLES
-      const lootsHtml = data.lootTables.map(t => {
-        const items = t.items.map(it =>
-          `<li class="flex justify-between text-sm text-gray-300"><span>${it.option}</span><span>${it.value}%</span></li>`
-        ).join('');
-        return `
-          <div class="bg-black/40 border border-[#c6a44f]/30 rounded-2xl p-6 mb-6 shadow-md">
-            <h3 class="text-2xl font-bold text-[#f7e6ac] mb-4">${t.name}</h3>
-            <ul class="space-y-1">${items}</ul>
-          </div>
-        `;
-      }).join('');
-      lootsSection.innerHTML = lootsHtml;
+      lootsSection.innerHTML = data.lootTables.map(t => `
+        <div class="p-6 rounded-2xl bg-gradient-to-b from-[#0f0f10]/90 to-[#1c1505]/80 border border-[#c6a44f]/30 shadow-[0_0_12px_rgba(198,164,79,0.15)] hover:border-[#f7e6ac]/60 transition-all">
+          <h3 class="text-2xl font-semibold text-[#f7e6ac] mb-4 flex items-center gap-2">
+            <iconify-icon icon="tabler:treasure-chest" class="text-[#c6a44f]"></iconify-icon> ${t.name}
+          </h3>
+          <ul class="divide-y divide-[#c6a44f]/15">
+            ${t.items.map(it => `
+              <li class="flex justify-between py-2 text-gray-300 text-sm hover:text-[#f7e6ac]/90 transition-all">
+                <span class="flex items-center gap-2"><iconify-icon icon="tabler:coin" class="text-[#c6a44f]/80"></iconify-icon>${it.option}</span>
+                <span>${it.value}%</span>
+              </li>`).join('')}
+          </ul>
+        </div>
+      `).join('');
 
       // CRAFTING
-      const craftHtml = data.crafting.map(c => {
-        const ingr = c.ingredients.map(i =>
-          `<li class="text-sm text-gray-300">${i.amount}x ${i.item}</li>`
-        ).join('');
-        return `
-          <div class="bg-black/40 border border-[#c6a44f]/30 rounded-2xl p-6 mb-6 shadow-md">
-            <h3 class="text-2xl font-bold text-[#f7e6ac] mb-2">${c.result}</h3>
-            <ul class="space-y-1">${ingr}</ul>
+      craftSection.innerHTML = data.crafting.map(c => `
+        <div class="p-6 rounded-2xl bg-gradient-to-t from-[#0f0f10]/90 to-[#221a08]/80 border border-[#c6a44f]/30 shadow-[0_0_12px_rgba(198,164,79,0.15)] hover:border-[#f7e6ac]/60 transition-all">
+          <h3 class="text-2xl font-semibold text-[#f7e6ac] mb-3 flex items-center gap-2">
+            <iconify-icon icon="tabler:hammer" class="text-[#c6a44f]"></iconify-icon> ${c.result}
+          </h3>
+          <div class="flex flex-col gap-2 text-gray-300 text-sm">
+            ${c.ingredients.map(i => `
+              <div class="flex justify-between items-center bg-black/30 px-3 py-1 rounded-md border border-[#c6a44f]/20">
+                <span class="flex items-center gap-2"><iconify-icon icon="tabler:tool" class="text-[#c6a44f]/70"></iconify-icon>${i.item}</span>
+                <span class="text-[#f7e6ac]/80">${i.amount}x</span>
+              </div>`).join('')}
           </div>
-        `;
-      }).join('');
-      craftSection.innerHTML = craftHtml;
+        </div>
+      `).join('');
 
-      // Tooltip logic
+      // Tooltip behavior
       document.querySelectorAll('.tooltip').forEach(el => {
         const tip = document.createElement('div');
-        tip.className = 'absolute hidden bg-black/90 text-[#f7e6ac] text-xs px-2 py-1 rounded-md';
+        tip.className = 'tooltip-box hidden absolute -top-8 left-1/2 -translate-x-1/2 bg-black/90 text-[#f7e6ac] text-xs px-2 py-1 rounded-md whitespace-nowrap border border-[#c6a44f]/40';
         tip.textContent = el.dataset.tip;
         el.style.position = 'relative';
         el.appendChild(tip);
@@ -96,4 +119,5 @@ const metadata = {
   </script>
 
   <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </Layout>
