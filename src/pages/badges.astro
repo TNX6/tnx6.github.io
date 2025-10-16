@@ -15,17 +15,23 @@ const metadata = {
 
     <div id="badge-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 justify-items-center mb-20"></div>
 
-    <div class="max-w-md mx-auto text-center mb-12">
-      <input
-        id="userSearch"
-        type="text"
-        placeholder="Search user..."
-        class="w-full px-4 py-3 rounded-xl bg-black/40 border border-[#c6a44f]/40 text-white placeholder-gray-400 text-center focus:outline-none focus:ring-2 focus:ring-[#f7e6ac]"
-      />
-      <div id="userResults" class="mt-4 text-[#f7e6ac] text-sm"></div>
-    </div>
+    <div class="py-16 px-6 bg-black/40 border border-[#c6a44f]/30 rounded-2xl shadow-[0_0_15px_rgba(198,164,79,0.25)] backdrop-blur-md">
+      <h2 class="text-3xl font-extrabold text-center mb-10 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(198,164,79,0.5)]">
+        View User Badge Cards
+      </h2>
 
-    <div id="userCardContainer" class="flex justify-center"></div>
+      <div class="max-w-md mx-auto text-center mb-12">
+        <input
+          id="userSearch"
+          type="text"
+          placeholder="Search user..."
+          class="w-full px-4 py-3 rounded-xl bg-black/40 border border-[#c6a44f]/40 text-white placeholder-gray-400 text-center focus:outline-none focus:ring-2 focus:ring-[#f7e6ac]"
+        />
+        <div id="userResults" class="mt-4 text-[#f7e6ac] text-sm"></div>
+      </div>
+
+      <div id="userCardContainer" class="flex justify-center"></div>
+    </div>
   </section>
 
   <script is:inline>
@@ -38,7 +44,7 @@ const metadata = {
           const el = document.createElement('div');
           el.className = 'flex flex-col items-center bg-black/40 border border-[#c6a44f]/30 p-4 rounded-2xl shadow-lg backdrop-blur-sm transition-transform hover:scale-105 hover:border-[#f7e6ac]/60';
           el.innerHTML = `
-            <img src="${b.image}" alt="${b.name}" class="w-24 h-24 object-contain rounded-lg mb-3 border border-[#c6a44f]/20">
+            <img src="${b.image}" alt="${b.name}" class="w-20 h-20 object-contain rounded-lg mb-3 border border-[#c6a44f]/20">
             <span class="text-[#f7e6ac] font-semibold text-center text-sm">${b.name}</span>
           `;
           grid.appendChild(el);
@@ -101,10 +107,10 @@ const metadata = {
           const username = dn.toLowerCase() !== ul.toLowerCase() ? `${dn} (${ul})` : dn;
 
           const equippedBadges = (details.badges || []).filter(b => b.equipped).slice(0, 6);
-          const badgeHtml = equippedBadges.map(b => `<img src="${b.url}" alt="${b.name}" class="badge w-16 h-16 object-contain">`).join('');
+          const badgeHtml = equippedBadges.map(b => `<img src="${b.url}" alt="${b.name}" class="w-[70px] h-[70px] object-contain rounded-lg">`).join('');
 
           const html = `
-            <div class="user-card relative w-[800px] h-[360px] rounded-2xl overflow-hidden border border-black shadow-2xl"
+            <div class="user-card relative w-[800px] h-[360px] rounded-[15px] overflow-hidden border-[2px] border-black shadow-[0_6px_12px_rgba(0,0,0,0.3)] font-[Poppins] opacity-0 transition-opacity duration-500"
                  style="background: linear-gradient(to bottom, ${bc} 70%, ${dc} 100%);">
               <div class="banner w-full h-[180px] bg-center bg-cover"
                    style="background-image: url('${details.bannerImage || ''}')"></div>
@@ -113,21 +119,24 @@ const metadata = {
                   <div class="profile-picture w-[150px] h-[150px] rounded-full border-[7px]"
                        style="border-color: ${bc}; background-color: ${bc}; background-image: url('${details.profileImageUrl || ''}'); background-size: cover; background-position: center;">
                   </div>
-                  <div class="points mt-2 text-lg text-white font-semibold flex items-center gap-1">
-                    <iconify-icon icon="mdi:star-four-points-circle" class="text-xl"></iconify-icon>
+                  <div class="points flex items-center justify-center mt-2 text-[1.3em] text-white drop-shadow-[1px_1px_1px_black]">
+                    <iconify-icon icon="mdi:star-four-points-circle" class="text-[1.1em] mr-1"></iconify-icon>
                     ${formatNumber(details.points || 0)}
                   </div>
                 </div>
-                <div class="username-container absolute top-[85px] left-[170px] text-white text-[2.4em] font-bold drop-shadow-[1px_2px_1px_black] whitespace-nowrap">
+                <div class="username-container absolute top-[85px] left-[170px] text-white text-[2.4em] font-[700] drop-shadow-[1px_2px_1px_black] whitespace-nowrap">
                   ${username}
                 </div>
-                <div class="badges-container-wrapper absolute top-[95px] right-[20px] grid grid-cols-3 grid-rows-2 gap-3">
+                <div class="badges-container-wrapper absolute top-[95px] right-[20px] grid grid-cols-3 grid-rows-2 gap-[10px]">
                   ${badgeHtml}
                 </div>
               </div>
             </div>
           `;
+
           cardContainer.innerHTML = html;
+          const card = cardContainer.querySelector('.user-card');
+          setTimeout(() => { card.style.opacity = 1; }, 50);
         }
       } catch (e) {
         console.error('Failed to load user_badges.json', e);
@@ -137,4 +146,7 @@ const metadata = {
     loadBadges();
     loadUsers();
   </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
 </Layout>
