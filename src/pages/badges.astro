@@ -13,24 +13,128 @@ const metadata = {
       Badges
     </h1>
 
-    <div id="badge-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 justify-items-center"></div>
+    <div id="badge-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 justify-items-center mb-20"></div>
+
+    <div class="max-w-md mx-auto text-center mb-12">
+      <input
+        id="userSearch"
+        type="text"
+        placeholder="Search user..."
+        class="w-full px-4 py-3 rounded-xl bg-black/40 border border-[#c6a44f]/40 text-white placeholder-gray-400 text-center focus:outline-none focus:ring-2 focus:ring-[#f7e6ac]"
+      />
+      <div id="userResults" class="mt-4 text-[#f7e6ac] text-sm"></div>
+    </div>
+
+    <div id="userCardContainer" class="flex justify-center"></div>
   </section>
 
   <script is:inline>
-    fetch('/tnx-site/api/badges.json')
-      .then(res => res.json())
-      .then(badges => {
-        const grid = document.getElementById('badge-grid')
+    async function loadBadges() {
+      try {
+        const res = await fetch('/tnx-site/api/badges.json');
+        const badges = await res.json();
+        const grid = document.getElementById('badge-grid');
         badges.forEach(b => {
-          const el = document.createElement('div')
-          el.className = 'flex flex-col items-center bg-black/40 border border-[#c6a44f]/30 p-4 rounded-2xl shadow-lg backdrop-blur-sm transition-transform hover:scale-105 hover:border-[#f7e6ac]/60'
+          const el = document.createElement('div');
+          el.className = 'flex flex-col items-center bg-black/40 border border-[#c6a44f]/30 p-4 rounded-2xl shadow-lg backdrop-blur-sm transition-transform hover:scale-105 hover:border-[#f7e6ac]/60';
           el.innerHTML = `
             <img src="${b.image}" alt="${b.name}" class="w-24 h-24 object-contain rounded-lg mb-3 border border-[#c6a44f]/20">
             <span class="text-[#f7e6ac] font-semibold text-center text-sm">${b.name}</span>
-          `
-          grid.appendChild(el)
-        })
-      })
-      .catch(err => console.error('Failed to load badges.json', err))
+          `;
+          grid.appendChild(el);
+        });
+      } catch (e) {
+        console.error('Failed to load badges.json', e);
+      }
+    }
+
+    async function loadUsers() {
+      try {
+        const res = await fetch('/tnx-site/api/user_badges.json');
+        const users = await res.json();
+        const search = document.getElementById('userSearch');
+        const results = document.getElementById('userResults');
+        const cardContainer = document.getElementById('userCardContainer');
+
+        search.addEventListener('input', () => {
+          const q = search.value.trim().toLowerCase();
+          results.innerHTML = '';
+          if (!q) return;
+          const filtered = users.filter(u =>
+            u.userName.toLowerCase().includes(q) || u.userLogin.toLowerCase().includes(q)
+          ).slice(0, 10);
+
+          filtered.forEach(u => {
+            const div = document.createElement('div');
+            div.className = 'cursor-pointer hover:underline hover:text-[#f7e6ac]/80';
+            div.textContent = `${u.userName}${u.userName.toLowerCase() !== u.userLogin.toLowerCase() ? ` (${u.userLogin})` : ''}`;
+            div.onclick = () => {
+              search.value = '';
+              results.innerHTML = '';
+              renderUserCard(u);
+            };
+            results.appendChild(div);
+          });
+        });
+
+        function formatNumber(n) {
+          return n.toLocaleString('de-DE');
+        }
+
+        function hexToRgb(h) {
+          const v = parseInt(h.replace('#', ''), 16);
+          return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+        }
+
+        function shade(h, p) {
+          const [r, g, b] = hexToRgb(h);
+          const fmt = c => ('0' + Math.max(0, Math.min(255, c + Math.floor(2.55 * p))).toString(16)).slice(-2);
+          return '#' + fmt(r) + fmt(g) + fmt(b);
+        }
+
+        function renderUserCard(details) {
+          cardContainer.innerHTML = '';
+          const bc = details.backgroundColor || '#423fff';
+          const dc = shade(bc, -20);
+          const dn = details.userName;
+          const ul = details.userLogin;
+          const username = dn.toLowerCase() !== ul.toLowerCase() ? `${dn} (${ul})` : dn;
+
+          const equippedBadges = (details.badges || []).filter(b => b.equipped).slice(0, 6);
+          const badgeHtml = equippedBadges.map(b => `<img src="${b.url}" alt="${b.name}" class="badge w-16 h-16 object-contain">`).join('');
+
+          const html = `
+            <div class="user-card relative w-[800px] h-[360px] rounded-2xl overflow-hidden border border-black shadow-2xl"
+                 style="background: linear-gradient(to bottom, ${bc} 70%, ${dc} 100%);">
+              <div class="banner w-full h-[180px] bg-center bg-cover"
+                   style="background-image: url('${details.bannerImage || ''}')"></div>
+              <div class="profile-section absolute top-[100px] left-[20px] right-[20px] flex items-center z-10">
+                <div class="picture-points flex flex-col items-center">
+                  <div class="profile-picture w-[150px] h-[150px] rounded-full border-[7px]"
+                       style="border-color: ${bc}; background-color: ${bc}; background-image: url('${details.profileImageUrl || ''}'); background-size: cover; background-position: center;">
+                  </div>
+                  <div class="points mt-2 text-lg text-white font-semibold flex items-center gap-1">
+                    <iconify-icon icon="mdi:star-four-points-circle" class="text-xl"></iconify-icon>
+                    ${formatNumber(details.points || 0)}
+                  </div>
+                </div>
+                <div class="username-container absolute top-[85px] left-[170px] text-white text-[2.4em] font-bold drop-shadow-[1px_2px_1px_black] whitespace-nowrap">
+                  ${username}
+                </div>
+                <div class="badges-container-wrapper absolute top-[95px] right-[20px] grid grid-cols-3 grid-rows-2 gap-3">
+                  ${badgeHtml}
+                </div>
+              </div>
+            </div>
+          `;
+          cardContainer.innerHTML = html;
+        }
+      } catch (e) {
+        console.error('Failed to load user_badges.json', e);
+      }
+    }
+
+    loadBadges();
+    loadUsers();
   </script>
 </Layout>
