@@ -1,8 +1,7 @@
 <script client:load>
 function initChallenges() {
   const fmtNum = (n) => (typeof n === 'number' ? n.toLocaleString('de-DE') : n)
-  const base = window.location.pathname.includes('/tnx-site/') ? '/tnx-site/' : '/'
-  const url = `${base}api/challenges.json`
+  const url = `/api/challenges.json`
   const root = document.getElementById('root')
 
   function userLabel(u) {
