@@ -3,7 +3,7 @@ import { Icon } from 'astro-icon/components'
 import ToggleMenu from '~/components/common/ToggleMenu.astro'
 import { trimSlash } from '~/utils/permalinks'
 
-const base = '/tnx-site/'
+const base = '/'
 const makeHref = (p) => `${base}${trimSlash(p)}`.replace(/\/+$/, '/')
 const currentUrl = new URL(Astro.url).pathname
 
