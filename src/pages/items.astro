@@ -40,7 +40,7 @@ const metadata = {
 
   <script is:inline data-reinit>
     async function loadData() {
-      const res = await fetch('/tnx-site/api/items.json');
+      const res = await fetch('/api/items.json');
       const data = await res.json();
 
       const itemsSection = document.getElementById('items-section');
