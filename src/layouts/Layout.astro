@@ -35,5 +35,21 @@ const { language, textDirection } = I18N
     <div class="fixed inset-0 -z-10 bg-black/40"></div>
     <slot />
     <BasicScripts />
+
+
+<script is:inline>
+  document.addEventListener('astro:page-load', () => {
+    // reload page-specific inline scripts manually
+    document.querySelectorAll('script[data-reinit]').forEach(s => {
+      const clone = document.createElement('script')
+      clone.textContent = s.textContent
+      clone.setAttribute('data-reinit', '')
+      s.replaceWith(clone)
+    })
+  })
+</script>
+
+
+    
   </body>
 </html>
