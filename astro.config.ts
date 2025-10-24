@@ -20,7 +20,7 @@ const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroInteg
   hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
 
 export default defineConfig({
-  site: 'https://tawmae.github.io/',
+  site: 'https://tnx6.github.io/',
   base: '/tnx-site/',
   output: 'static',
   build: {
