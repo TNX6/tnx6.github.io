@@ -1,9 +1,442 @@
 [
   {
-    "Id": "ac35cf94-b731-4d13-9474-3e653721e2f9",
-    "Name": "[COMMAND CHECK] Command Check",
+    "Id": "ff6e0ca0-99fb-409d-96ff-aba85a377660",
+    "Name": "يبيس",
     "Enabled": true,
-    "Group": "COMMAND CHECK",
+    "Group": "!rps",
+    "Mode": 0,
+    "Commands": [
+      "!rps"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "ef734e0c-2550-491e-9387-1e1d02fefcd4",
+    "Name": "[Currency Core] - Add for Trovo",
+    "Enabled": false,
+    "Group": "[Currency Core]",
+    "Mode": 0,
+    "Commands": [
+      "!addPoints"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Trovo Message"
+    ]
+  },
+  {
+    "Id": "af40b120-85c3-47a8-9ee0-2a6b391c83c1",
+    "Name": "[Currency Core] - Add for Twitch",
+    "Enabled": false,
+    "Group": "[Currency Core]",
+    "Mode": 0,
+    "Commands": [
+      "!addPoints"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "da8c0dc8-e3b1-4b51-a64a-d143fde96643",
+    "Name": "[Currency Core] - Add for YouTube",
+    "Enabled": false,
+    "Group": "[Currency Core]",
+    "Mode": 0,
+    "Commands": [
+      "!addPoints"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "YouTube Message"
+    ]
+  },
+  {
+    "Id": "5ed4b3ef-6076-4fe5-ab67-9fade460e94a",
+    "Name": "[Currency Core] - Reset All Points",
+    "Enabled": false,
+    "Group": "[Currency Core]",
+    "Mode": 0,
+    "Commands": [
+      "!resetAllPoints"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message"
+    ]
+  },
+  {
+    "Id": "34540404-75cf-4c80-8990-831221b15ad6",
+    "Name": "[Currency Core] - Set for Trovo",
+    "Enabled": false,
+    "Group": "[Currency Core]",
+    "Mode": 0,
+    "Commands": [
+      "!setPoints"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Trovo Message"
+    ]
+  },
+  {
+    "Id": "cc260b5b-bcd6-45eb-89d8-c7f6b300b24c",
+    "Name": "[Currency Core] - Set for Twitch",
+    "Enabled": false,
+    "Group": "[Currency Core]",
+    "Mode": 0,
+    "Commands": [
+      "!setPoints"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "c2ec0be5-c8eb-425f-81a9-fa3d32110556",
+    "Name": "[Currency Core] - Set for YouTube",
+    "Enabled": false,
+    "Group": "[Currency Core]",
+    "Mode": 0,
+    "Commands": [
+      "!setPoints"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "YouTube Message"
+    ]
+  },
+  {
+    "Id": "36a22b8f-5e63-4df7-ae8f-3439dd7d6475",
+    "Name": "[HLG] - Game - !equal",
+    "Enabled": true,
+    "Group": "[HLG] - High-Low Game",
+    "Mode": 0,
+    "Commands": [
+      "!equal"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message",
+      "Trovo Message"
+    ]
+  },
+  {
+    "Id": "dc2d4f17-d5f1-4228-923e-5c03652bb30f",
+    "Name": "[HLG] - Game - !high",
+    "Enabled": true,
+    "Group": "[HLG] - High-Low Game",
+    "Mode": 0,
+    "Commands": [
+      "!high"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message",
+      "Trovo Message"
+    ]
+  },
+  {
+    "Id": "2b7f7ba1-b8a6-4b45-b2ef-31b1ee61f7be",
+    "Name": "[HLG] - Game - !low",
+    "Enabled": true,
+    "Group": "[HLG] - High-Low Game",
+    "Mode": 0,
+    "Commands": [
+      "!low"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message",
+      "Trovo Message"
+    ]
+  },
+  {
+    "Id": "66eeb31b-dd62-454f-b164-1262de6a6f72",
+    "Name": "[HLG] - High-Low Setup",
+    "Enabled": false,
+    "Group": "[HLG] - High-Low Game",
+    "Mode": 0,
+    "Commands": [
+      "!highlowsetup"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message",
+      "Trovo Message"
+    ]
+  },
+  {
+    "Id": "68f97444-4f77-4bab-8277-2a920fcdfddf",
+    "Name": "[HLG] - Scoreboard - Alltime",
+    "Enabled": true,
+    "Group": "[HLG] - High-Low Game",
+    "Mode": 0,
+    "Commands": [
+      "!alltime"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "Trovo Message"
+    ]
+  },
+  {
+    "Id": "df94341a-8b15-4c6c-9e1a-6af383915f8b",
+    "Name": "[HLG] - Scoreboard - Personal Stats",
+    "Enabled": true,
+    "Group": "[HLG] - High-Low Game",
+    "Mode": 0,
+    "Commands": [
+      "!personalstats"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message",
+      "Trovo Message"
+    ]
+  },
+  {
+    "Id": "5911cfbc-32cb-4749-bb40-3fce8eb76a1a",
+    "Name": "[HLG] - Scoreboard - Session",
+    "Enabled": true,
+    "Group": "[HLG] - High-Low Game",
+    "Mode": 0,
+    "Commands": [
+      "!session"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message",
+      "Trovo Message"
+    ]
+  },
+  {
+    "Id": "1c530182-3982-4584-a873-ded21d583fa7",
+    "Name": "[pwn][PDC S] Counter Decrease",
+    "Enabled": true,
+    "Group": "[pwn] Per Game DeathCounter (Single)",
+    "Mode": 0,
+    "Commands": [
+      "!death-"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "1ff374cc-9318-4304-8eaf-c42a764ff1ca",
+    "Name": "[pwn][PDC S] Counter Increase",
+    "Enabled": true,
+    "Group": "[pwn] Per Game DeathCounter (Single)",
+    "Mode": 0,
+    "Commands": [
+      "!death+"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "edcfa87b-c562-4da6-b2e1-622b58a421a5",
+    "Name": "[pwn][PDC S] Counter Set",
+    "Enabled": true,
+    "Group": "[pwn] Per Game DeathCounter (Single)",
+    "Mode": 0,
+    "Commands": [
+      "!deathset"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "949b5e10-f798-4c93-8f44-fbccea623491",
+    "Name": "[pwn][PDC S] Game Add",
+    "Enabled": true,
+    "Group": "[pwn] Per Game DeathCounter (Single)",
+    "Mode": 0,
+    "Commands": [
+      "!deathgame+"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "1a03c7af-382c-418d-b5a8-e30463b41369",
+    "Name": "[pwn][PDC S] Game Remove",
+    "Enabled": true,
+    "Group": "[pwn] Per Game DeathCounter (Single)",
+    "Mode": 0,
+    "Commands": [
+      "!deathgame-"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "328d12cc-863b-4f00-b358-452f734cbf14",
+    "Name": "[pwn][PDC S] Get Game Counter",
+    "Enabled": true,
+    "Group": "[pwn] Per Game DeathCounter (Single)",
+    "Mode": 0,
+    "Commands": [
+      "!deaths"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message",
+      "Trovo Message"
+    ]
+  },
+  {
+    "Id": "c989604f-c91c-4009-950b-a1e1d3759ff1",
+    "Name": "[pwn][PDC S] Get Leaderboard",
+    "Enabled": true,
+    "Group": "[pwn] Per Game DeathCounter (Single)",
+    "Mode": 0,
+    "Commands": [
+      "!deathboard"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "bed7b3ee-58c2-4cea-aec4-25a7e59808ed",
+    "Name": "[pwn][PDC S] Get Total Deaths",
+    "Enabled": true,
+    "Group": "[pwn] Per Game DeathCounter (Single)",
+    "Mode": 0,
+    "Commands": [
+      "!totaldeaths"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "d83cbf55-a747-448b-8a16-3f2400e753e3",
+    "Name": "New QOTD",
+    "Enabled": false,
+    "Group": "Basic",
+    "Mode": 0,
+    "Commands": [
+      "!newQOTD"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "b9bf2cb5-50be-4fbe-b604-1892c93cd972",
+    "Name": "Post QOTD",
+    "Enabled": false,
+    "Group": "Basic",
+    "Mode": 0,
+    "Commands": [
+      "!qotd"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "7115e1c7-98de-46a7-b96c-ee24cf6a61e3",
+    "Name": "[Channel Reward Auction] Auction Info",
+    "Enabled": true,
+    "Group": "Channel Reward Auction",
+    "Mode": 0,
+    "Commands": [
+      "!auction",
+      "!مزاد"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "ac35cf94-b731-4d13-9474-3e653721e2f9",
+    "Name": "Command Checker",
+    "Enabled": true,
+    "Group": "Command Checker",
     "Mode": 1,
     "Commands": null,
     "RegexCommand": "^!",
@@ -14,13 +447,32 @@
     ]
   },
   {
-    "Id": "120042d0-7754-4d65-802c-633af86d1ad2",
-    "Name": "Double XP",
+    "Id": "377a9b50-be13-4955-919d-877a39e69b12",
+    "Name": "CowbouyDuel Deny",
+    "Enabled": false,
+    "Group": "cowboy",
+    "Mode": 0,
+    "Commands": [
+      "no",
+      "No",
+      "لا",
+      "ارفض"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "78300bb4-1e55-4829-90aa-99e1c0b8cda4",
+    "Name": "Cowboy Duel Info",
     "Enabled": true,
-    "Group": "Commands",
+    "Group": "cowboy",
     "Mode": 0,
     "Commands": [
-      "!doubleXp"
+      "!duel"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -30,14 +482,16 @@
     ]
   },
   {
-    "Id": "1f86e102-5a0f-4704-bd6f-21e7aab07999",
-    "Name": "[DYNAMIC TIMERS] Add Time",
+    "Id": "d6c5fbfe-86b0-4b1d-bf7c-247d46bbc9b8",
+    "Name": "CowboyDuel Agree",
     "Enabled": false,
-    "Group": "DYNAMIC TIMERS",
+    "Group": "cowboy",
     "Mode": 0,
     "Commands": [
-      "!timeAdd",
-      "!addTime"
+      "yes",
+      "Yes",
+      "نعم",
+      "ايه"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -47,166 +501,14 @@
     ]
   },
   {
-    "Id": "98dc88c0-4bb3-406d-bf9f-277724f81844",
-    "Name": "[DYNAMIC TIMERS] Clear All Timers",
-    "Enabled": false,
-    "Group": "DYNAMIC TIMERS",
-    "Mode": 0,
-    "Commands": [
-      "!timerClearAll",
-      "!clearAllTimers"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "eee30a3d-fd3e-4741-bf2e-8d7f56741d9b",
-    "Name": "[DYNAMIC TIMERS] Continue All Timers",
-    "Enabled": false,
-    "Group": "DYNAMIC TIMERS",
-    "Mode": 0,
-    "Commands": [
-      "!continueAllTimers",
-      "!timerContinueAll"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "e18796d8-75b0-4cb7-a606-158ffc755b9f",
-    "Name": "[DYNAMIC TIMERS] Continue Timer",
-    "Enabled": false,
-    "Group": "DYNAMIC TIMERS",
-    "Mode": 0,
-    "Commands": [
-      "!timerContinue",
-      "!continueTimer"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "0630a07f-b2f7-4ed5-8f68-7af2df07a5e0",
-    "Name": "[DYNAMIC TIMERS] Create Timer",
-    "Enabled": false,
-    "Group": "DYNAMIC TIMERS",
-    "Mode": 0,
-    "Commands": [
-      "!createTimer",
-      "!timerCreate"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "1cc2254b-9a8d-4709-852a-966988843413",
-    "Name": "[DYNAMIC TIMERS] Delete Timer",
-    "Enabled": false,
-    "Group": "DYNAMIC TIMERS",
-    "Mode": 0,
-    "Commands": [
-      "!timerDelete",
-      "!deleteTimer"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "bc171d1a-68d9-4e75-a318-cf91d89a6a31",
-    "Name": "[DYNAMIC TIMERS] Pause All Timers",
-    "Enabled": false,
-    "Group": "DYNAMIC TIMERS",
-    "Mode": 0,
-    "Commands": [
-      "!pauseAllTimers",
-      "!timerPauseAll"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "4891d646-c8be-41d7-b385-5e42708d5c75",
-    "Name": "[DYNAMIC TIMERS] Pause Timer",
-    "Enabled": false,
-    "Group": "DYNAMIC TIMERS",
-    "Mode": 0,
-    "Commands": [
-      "!timerPause",
-      "!pauseTimer"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "fef91a3a-6f65-4443-9d56-de5149553fab",
-    "Name": "[DYNAMIC TIMERS] Remove Time",
-    "Enabled": false,
-    "Group": "DYNAMIC TIMERS",
-    "Mode": 0,
-    "Commands": [
-      "!removeTime",
-      "!timeRemove"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "710c7dbc-9535-424c-999f-9ee3b6914fc2",
-    "Name": "Dino Egg Hatch",
+    "Id": "36cd9e4b-9458-4563-995f-c17fcd937462",
+    "Name": "CowboyDuel Reset",
     "Enabled": true,
-    "Group": "GAMES",
+    "Group": "cowboy",
     "Mode": 0,
     "Commands": [
-      "!hatch"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Shared Chat"
-    ]
-  },
-  {
-    "Id": "40a1c4e1-731b-42ba-b4aa-93afe6d698af",
-    "Name": "Show Clip",
-    "Enabled": true,
-    "Group": "GIPHY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!clip"
+      "duelReset",
+      "!ريستارت"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -216,14 +518,14 @@
     ]
   },
   {
-    "Id": "eb2ec0b2-a2f6-4c5a-bdfa-bc335a779cf0",
-    "Name": "Show GIF",
-    "Enabled": true,
-    "Group": "GIPHY & SB",
+    "Id": "9bcc8aac-76aa-4ebb-8bd4-d69044fefd79",
+    "Name": "CowboyDuel Shoot",
+    "Enabled": false,
+    "Group": "cowboy",
     "Mode": 0,
     "Commands": [
-      "!gif",
-      "!giphy"
+      "shoot",
+      "Shoot"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -233,13 +535,13 @@
     ]
   },
   {
-    "Id": "e4bb0e36-ad02-4b44-9e64-60830465f46f",
-    "Name": "Leaderboard",
+    "Id": "a3621ab9-6399-4919-815d-6a73a1a45732",
+    "Name": "!ffa",
     "Enabled": true,
-    "Group": "GriM - Pass The Bong",
+    "Group": "Fluffless Family Feud",
     "Mode": 0,
     "Commands": [
-      "!bongLeaderboard"
+      "!ffa"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -249,13 +551,13 @@
     ]
   },
   {
-    "Id": "2131a27a-45f9-491e-b313-aa2b2febd2a5",
-    "Name": "Loser Leaderboard",
+    "Id": "6481f5e0-408c-44f7-b763-159c1c7778f5",
+    "Name": "!ffleaderboard",
     "Enabled": true,
-    "Group": "GriM - Pass The Bong",
+    "Group": "Fluffless Family Feud",
     "Mode": 0,
     "Commands": [
-      "!bongLoserLeaderboard"
+      "!فاميلي فيود"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -265,10 +567,59 @@
     ]
   },
   {
-    "Id": "27c0ab80-2053-483d-90ff-a3e68cc3788a",
-    "Name": "Pass",
+    "Id": "2336a71f-ad7a-4236-8145-bb307b350f09",
+    "Name": "!guess",
+    "Enabled": false,
+    "Group": "Game - Wordle on Stream",
+    "Mode": 0,
+    "Commands": [
+      "!اتوقع",
+      "!guess"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "5a41c8c9-cd11-438b-bb15-ee91155ab9ac",
+    "Name": "!دخول",
     "Enabled": true,
-    "Group": "GriM - Pass The Bong",
+    "Group": "Hot Potato",
+    "Mode": 0,
+    "Commands": [
+      "!دخول"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "3ae070a1-a0de-4de0-9b62-987cefe98e8d",
+    "Name": "[Hot Potato] Exclude User",
+    "Enabled": true,
+    "Group": "Hot Potato",
+    "Mode": 0,
+    "Commands": [
+      "!hotpotato exclude"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "44c2e979-f973-463f-b445-1cec39ae87b2",
+    "Name": "[Hot Potato] Pass",
+    "Enabled": true,
+    "Group": "Hot Potato",
     "Mode": 0,
     "Commands": [
       "!pass"
@@ -281,255 +632,13 @@
     ]
   },
   {
-    "Id": "14dde877-d9e1-43f5-8c8f-7f73892b1bff",
-    "Name": "Start Game",
+    "Id": "58bbecf4-b8fe-42f5-b92b-5412f317dece",
+    "Name": "!lclip",
     "Enabled": true,
-    "Group": "GriM - Pass The Bong",
+    "Group": "Jeff",
     "Mode": 0,
     "Commands": [
-      "!startGame"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "bfaf34c8-f7f3-4beb-8b48-7a9a35c67840",
-    "Name": "Create Clip",
-    "Enabled": true,
-    "Group": "JESUCRISTO69 - Clip Tracker",
-    "Mode": 0,
-    "Commands": [
-      "!createClip"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "a40daede-3f7e-47b2-b3e9-c53e8cf217b5",
-    "Name": "Contribute Points To Challenge",
-    "Enabled": true,
-    "Group": "JESUCRISTO69 - GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!contributePoints"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "99b23fdc-ea0f-4e8b-8b99-e427585b269e",
-    "Name": "Set Current Bits Value",
-    "Enabled": true,
-    "Group": "JESUCRISTO69 - GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!setCurrentBits"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "1aa4a67f-ce6c-42c3-bf70-b913985b4f0f",
-    "Name": "Set Current Value Kofi",
-    "Enabled": true,
-    "Group": "JESUCRISTO69 - GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!setCurrentKofi"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "87f983a3-f2e5-4138-b3c7-3b7a19a629be",
-    "Name": "Set Follows Max Value",
-    "Enabled": true,
-    "Group": "JESUCRISTO69 - GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!setMaxFollows"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "fccc113d-4365-4661-a1a6-37285a37d564",
-    "Name": "Set Max Value Bits",
-    "Enabled": true,
-    "Group": "JESUCRISTO69 - GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!setMaxBits"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "9ba7cacb-01b2-4bf3-9b9f-80c52e25f225",
-    "Name": "Set Max Value Challenge",
-    "Enabled": true,
-    "Group": "JESUCRISTO69 - GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!setMaxChallenge"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "979e4244-0cd3-4d15-8b1a-53d0a61f5ff0",
-    "Name": "Set Max Value Kofi",
-    "Enabled": true,
-    "Group": "JESUCRISTO69 - GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!setMaxKofi"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "6a3c4f4b-b521-4957-91a7-057f9f9b531c",
-    "Name": "Set Max Value Subs",
-    "Enabled": true,
-    "Group": "JESUCRISTO69 - GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!setMaxSubs"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "d109ec7b-1092-4064-87c4-0c6d59406e56",
-    "Name": "[LURKS & SB] Leaderboard",
-    "Enabled": false,
-    "Group": "LURKS & SB",
-    "Mode": 0,
-    "Commands": [
-      "!lurkLeaderboard",
-      "!leaderboardLurk",
-      "!topLurkers"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "60aafe9a-864f-456f-8df4-a916311422e6",
-    "Name": "[LURKS & SB] Lurk Check",
-    "Enabled": false,
-    "Group": "LURKS & SB",
-    "Mode": 0,
-    "Commands": [
-      "!lurkers",
-      "!currentLurkers"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "6f114279-edbf-407c-9b3e-f54cb52805f8",
-    "Name": "[LURKS & SB] Lurk End",
-    "Enabled": false,
-    "Group": "LURKS & SB",
-    "Mode": 0,
-    "Commands": [
-      "!unlurk",
-      "!back"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "629b395d-088e-48f5-9ec6-bcaa861b17ff",
-    "Name": "[LURKS & SB] Lurk Start",
-    "Enabled": false,
-    "Group": "LURKS & SB",
-    "Mode": 0,
-    "Commands": [
-      "!lurk",
-      "!afk"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "5f23ea57-77fb-4e44-83d4-1e4429b217c1",
-    "Name": "[LURKS & SB] Stats",
-    "Enabled": false,
-    "Group": "LURKS & SB",
-    "Mode": 0,
-    "Commands": [
-      "!lurkStats",
-      "!myLurks"
+      "!lclip"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -1695,7 +1804,8 @@
     "Group": "MOD TOOLS",
     "Mode": 0,
     "Commands": [
-      "!translate"
+      "!translate",
+      "!ترجم"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -1732,7 +1842,7 @@
   {
     "Id": "2e5c1997-2fb3-4b39-b4a5-6d3376223990",
     "Name": "[MOVIE & TV SHOW QUIZ] End Quiz",
-    "Enabled": false,
+    "Enabled": true,
     "Group": "MOVIE & TV SHOW QUIZ",
     "Mode": 0,
     "Commands": [
@@ -1748,7 +1858,7 @@
   {
     "Id": "6ab09ba3-66d9-4e9b-89a3-bab01aad2254",
     "Name": "[MOVIE & TV SHOW QUIZ] Start Quiz",
-    "Enabled": false,
+    "Enabled": true,
     "Group": "MOVIE & TV SHOW QUIZ",
     "Mode": 0,
     "Commands": [
@@ -1764,7 +1874,7 @@
   {
     "Id": "6244be6e-8e74-4999-a920-2b457a29b625",
     "Name": "[MOVIE & TV SHOW QUIZ] Stats",
-    "Enabled": false,
+    "Enabled": true,
     "Group": "MOVIE & TV SHOW QUIZ",
     "Mode": 0,
     "Commands": [
@@ -1780,7 +1890,7 @@
   {
     "Id": "e3d9a715-6564-493d-afd0-84c818bd6f6a",
     "Name": "[MOVIE & TV SHOW QUIZ] Terminate Quiz",
-    "Enabled": false,
+    "Enabled": true,
     "Group": "MOVIE & TV SHOW QUIZ",
     "Mode": 0,
     "Commands": [
@@ -1794,13 +1904,14 @@
     ]
   },
   {
-    "Id": "97f26f38-9784-4da1-9de9-af576e675f26",
-    "Name": "Auto Add Group",
+    "Id": "08ee39d4-ad72-4db6-8024-138a1a45fa5c",
+    "Name": "!brb stop",
     "Enabled": true,
-    "Group": "Nexxx",
+    "Group": "Mustached_Maniac",
     "Mode": 0,
     "Commands": [
-      "!autoAdd"
+      "!brbstop",
+      "!brb stop"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -1810,13 +1921,13 @@
     ]
   },
   {
-    "Id": "34f07db8-8fcc-4fce-85e8-51716bcf3e08",
-    "Name": "Buy Tickets",
+    "Id": "f59f5c51-8ecb-4a63-9e12-1e4047c31bac",
+    "Name": "BRB Clip Player",
     "Enabled": true,
-    "Group": "Nexxx",
+    "Group": "Mustached_Maniac",
     "Mode": 0,
     "Commands": [
-      "!ticket"
+      "!brb"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -1826,397 +1937,26 @@
     ]
   },
   {
-    "Id": "cea848c7-e567-4985-8d22-b85734e9c566",
-    "Name": "Cancel Giveaway",
+    "Id": "04505d01-95b1-428a-a039-11f836e4d477",
+    "Name": "Shoutouts",
     "Enabled": true,
-    "Group": "Nexxx",
+    "Group": "Mustached_Maniac",
     "Mode": 0,
     "Commands": [
-      "!cancelGiveaway"
+      "!so"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
     "Sources": [
       "None",
       "Twitch Message"
-    ]
-  },
-  {
-    "Id": "b836662a-1ffe-4892-ae97-7ae6d90c8f2e",
-    "Name": "Cancel Raffle",
-    "Enabled": true,
-    "Group": "Nexxx",
-    "Mode": 0,
-    "Commands": [
-      "!cancelRaffle"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "787d1a96-b839-4abe-8862-44293337f275",
-    "Name": "End Giveaway",
-    "Enabled": true,
-    "Group": "Nexxx",
-    "Mode": 0,
-    "Commands": [
-      "!endGiveaway"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "76bd6f51-0cd8-4b46-92ba-bc1f499f397e",
-    "Name": "End Raffle",
-    "Enabled": true,
-    "Group": "Nexxx",
-    "Mode": 0,
-    "Commands": [
-      "!endRaffle"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "bbd6822e-9769-430f-97af-3ff5f2bb6a1c",
-    "Name": "Enter Raffle",
-    "Enabled": true,
-    "Group": "Nexxx",
-    "Mode": 0,
-    "Commands": [
-      "!enter"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "a234955a-fad8-4a8d-8783-40cdf54ea3e2",
-    "Name": "Giveaway Info",
-    "Enabled": true,
-    "Group": "Nexxx",
-    "Mode": 0,
-    "Commands": [
-      "!giveawayInfo"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "570ce0dc-f489-4ed1-baa3-d4abe89c33a1",
-    "Name": "Pick Giveaway Winner",
-    "Enabled": true,
-    "Group": "Nexxx",
-    "Mode": 0,
-    "Commands": [
-      "!pickGiveawayWinner"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "0b33c2d6-85ab-4f3e-8d44-358ddc589f6b",
-    "Name": "Pick Raffle Winner",
-    "Enabled": true,
-    "Group": "Nexxx",
-    "Mode": 0,
-    "Commands": [
-      "!pickRaffleWinner"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "8f0941e6-d9d0-4d75-9788-0e61b6734352",
-    "Name": "Raffle Info",
-    "Enabled": true,
-    "Group": "Nexxx",
-    "Mode": 0,
-    "Commands": [
-      "!raffleInfo"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "0dfe44b1-8cfc-49dd-8925-c22a42391d68",
-    "Name": "Start Giveaway",
-    "Enabled": true,
-    "Group": "Nexxx",
-    "Mode": 0,
-    "Commands": [
-      "!startGiveaway"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "1f2bda2f-fc7d-45d5-9660-4b63ca065a7b",
-    "Name": "Start Raffle",
-    "Enabled": true,
-    "Group": "Nexxx",
-    "Mode": 0,
-    "Commands": [
-      "!startRaffle"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "93206509-0712-4fef-96c6-ac883a27d3ae",
-    "Name": "Add Team 1",
-    "Enabled": true,
-    "Group": "Nexxx XP System",
-    "Mode": 0,
-    "Commands": [
-      "!team1"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "f572cf86-cfeb-4d9b-8591-3266fab360bf",
-    "Name": "Add Team 2",
-    "Enabled": true,
-    "Group": "Nexxx XP System",
-    "Mode": 0,
-    "Commands": [
-      "!team2"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "75fa5d91-8034-4429-be4a-043cb838ab70",
-    "Name": "Add XP",
-    "Enabled": true,
-    "Group": "Nexxx XP System",
-    "Mode": 0,
-    "Commands": [
-      "!addXp"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "72cc6a4c-689e-4eb8-8b25-8e5383e7a174",
-    "Name": "Clear Team 1",
-    "Enabled": true,
-    "Group": "Nexxx XP System",
-    "Mode": 0,
-    "Commands": [
-      "!clearTeam1"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "6aefd897-b3b1-4915-a4c1-3466368329cb",
-    "Name": "Clear Team 2",
-    "Enabled": true,
-    "Group": "Nexxx XP System",
-    "Mode": 0,
-    "Commands": [
-      "!clearTeam2"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "61e8cb99-3fa7-451e-b28e-820ecbbcbb19",
-    "Name": "Deny Report",
-    "Enabled": true,
-    "Group": "Nexxx XP System",
-    "Mode": 0,
-    "Commands": [
-      "!deny"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "3a692e62-09e1-4789-bcad-b46a75098399",
-    "Name": "Leaderboard",
-    "Enabled": true,
-    "Group": "Nexxx XP System",
-    "Mode": 0,
-    "Commands": [
-      "!xpLeaderboard"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "d42c4f95-81d6-47aa-8c6d-60484c95f54b",
-    "Name": "My Stats",
-    "Enabled": true,
-    "Group": "Nexxx XP System",
-    "Mode": 0,
-    "Commands": [
-      "!myStats"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "5d7bb665-0e5e-4e92-a6ad-219bd6c2aed6",
-    "Name": "Pick Winning Team 1",
-    "Enabled": true,
-    "Group": "Nexxx XP System",
-    "Mode": 0,
-    "Commands": [
-      "!team1w"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "6067eaad-a77f-4f28-9724-6570536377dc",
-    "Name": "Pick Winning Team 2",
-    "Enabled": true,
-    "Group": "Nexxx XP System",
-    "Mode": 0,
-    "Commands": [
-      "!team2w"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "e6cb6838-9258-4148-86bc-781ef28e0c56",
-    "Name": "Remove XP",
-    "Enabled": true,
-    "Group": "Nexxx XP System",
-    "Mode": 0,
-    "Commands": [
-      "!removeXp"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "d1352183-d121-442b-8386-a88c9f4b0934",
-    "Name": "Set Rating",
-    "Enabled": true,
-    "Group": "Nexxx XP System",
-    "Mode": 0,
-    "Commands": [
-      "!editRating",
-      "!setRating"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "427ca542-684b-47c1-8883-731bf8881548",
-    "Name": "!8ball",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
-    "Mode": 0,
-    "Commands": [
-      "!8ball"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
     ]
   },
   {
     "Id": "d899f18c-53f5-4638-89f0-b6bf94cc74a7",
     "Name": "!accountage",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
+    "Enabled": true,
+    "Group": "nutty's utilities & tools • streamer.bot starter pack",
     "Mode": 0,
     "Commands": [
       "!accountage"
@@ -2225,70 +1965,30 @@
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
-    ]
-  },
-  {
-    "Id": "802697a4-1ac4-4f66-b21b-bc29c6f3dc16",
-    "Name": "!clip",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
-    "Mode": 0,
-    "Commands": [
-      "!clip"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
+      "Twitch Message"
     ]
   },
   {
     "Id": "eb5027ae-592b-45cd-833b-fe5acd16db11",
-    "Name": "!flipcoin",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
+    "Name": "!flipcoin (Twitch)",
+    "Enabled": true,
+    "Group": "nutty's utilities & tools • streamer.bot starter pack",
     "Mode": 0,
     "Commands": [
-      "!flipcoin"
+      "!رمي عملة"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
-    ]
-  },
-  {
-    "Id": "40fe138b-d5e8-46a0-b277-c4ed6d1ea1e3",
-    "Name": "!followage",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
-    "Mode": 0,
-    "Commands": [
-      "!followage"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
+      "Twitch Message"
     ]
   },
   {
     "Id": "7acfcb9f-2a4f-4abb-adb2-b349f81bc88c",
     "Name": "!fortune",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
+    "Enabled": true,
+    "Group": "nutty's utilities & tools • streamer.bot starter pack",
     "Mode": 0,
     "Commands": [
       "!fortune"
@@ -2298,15 +1998,14 @@
     "Sources": [
       "None",
       "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
+      "YouTube Message"
     ]
   },
   {
     "Id": "4f36a2f5-e017-48f5-8c7f-fd48a1602692",
-    "Name": "!lurk",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
+    "Name": "!lurk (Twitch)",
+    "Enabled": true,
+    "Group": "nutty's utilities & tools • streamer.bot starter pack",
     "Mode": 0,
     "Commands": [
       "!lurk"
@@ -2315,70 +2014,30 @@
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
+      "Twitch Message"
     ]
   },
   {
-    "Id": "12604008-ecec-435a-9391-1bda68f1faf8",
-    "Name": "!russianroulette",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
+    "Id": "b46a785f-8eb7-4b50-b4eb-feb0961df323",
+    "Name": "!lurk (YouTube)",
+    "Enabled": true,
+    "Group": "nutty's utilities & tools • streamer.bot starter pack",
     "Mode": 0,
     "Commands": [
-      "!russianroulette"
+      "!lurk"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
-    ]
-  },
-  {
-    "Id": "57b6bf9d-c6c7-4e9f-9f16-51d3f768225b",
-    "Name": "!sacrifice",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
-    "Mode": 0,
-    "Commands": [
-      "!sacrifice"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
-    ]
-  },
-  {
-    "Id": "4efb872b-44bb-421f-9cd3-a41fdaf31b59",
-    "Name": "!scene",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
-    "Mode": 0,
-    "Commands": [
-      "!scene"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
+      "YouTube Message"
     ]
   },
   {
     "Id": "40ce5ecc-0d9a-49b9-9e30-dd9ed0109bc3",
     "Name": "!setgame",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
+    "Enabled": true,
+    "Group": "nutty's utilities & tools • streamer.bot starter pack",
     "Mode": 0,
     "Commands": [
       "!setgame"
@@ -2387,16 +2046,14 @@
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
+      "Twitch Message"
     ]
   },
   {
     "Id": "e923b5e8-d2d0-464c-a63c-b921f0f0e58c",
     "Name": "!settitle",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
+    "Enabled": true,
+    "Group": "nutty's utilities & tools • streamer.bot starter pack",
     "Mode": 0,
     "Commands": [
       "!settitle"
@@ -2406,15 +2063,14 @@
     "Sources": [
       "None",
       "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
+      "YouTube Message"
     ]
   },
   {
     "Id": "e36ae51a-20d9-4bec-9911-beaed57fdf41",
     "Name": "!shoutout, !so",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
+    "Enabled": true,
+    "Group": "nutty's utilities & tools • streamer.bot starter pack",
     "Mode": 0,
     "Commands": [
       "!shoutout",
@@ -2424,16 +2080,14 @@
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
+      "Twitch Message"
     ]
   },
   {
     "Id": "140040ea-bcbe-46c2-ac74-0c283c13d4bc",
     "Name": "!time",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
+    "Enabled": true,
+    "Group": "nutty's utilities & tools • streamer.bot starter pack",
     "Mode": 0,
     "Commands": [
       "!time"
@@ -2443,15 +2097,14 @@
     "Sources": [
       "None",
       "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
+      "YouTube Message"
     ]
   },
   {
     "Id": "c2b42a17-8365-4e2e-9a62-5706afa63c91",
     "Name": "!translate",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
+    "Enabled": true,
+    "Group": "nutty's utilities & tools • streamer.bot starter pack",
     "Mode": 0,
     "Commands": [
       "!translate"
@@ -2461,36 +2114,18 @@
     "Sources": [
       "None",
       "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
+      "YouTube Message"
     ]
   },
   {
-    "Id": "8fe8860b-9a80-44be-9076-f61dc417da27",
-    "Name": "!uptime",
-    "Enabled": false,
-    "Group": "nutty.gg • Streamer.bot Starter Pack",
-    "Mode": 0,
-    "Commands": [
-      "!uptime"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "YouTube Message",
-      "Kick Message"
-    ]
-  },
-  {
-    "Id": "eaee2064-051f-4d20-a2b2-a833d6a11478",
-    "Name": "asd",
+    "Id": "6c6f30a6-aa1a-448a-ad7f-1967177b74a7",
+    "Name": " مودز",
     "Enabled": true,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!loot"
+      "!مود",
+      "كوماند؟"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2500,14 +2135,13 @@
     ]
   },
   {
-    "Id": "ee193886-6e25-4cc8-8af4-07d48d775068",
-    "Name": "asdads",
+    "Id": "9c97c940-cfcc-4369-b41f-9ccf4755b506",
+    "Name": "!Bounty",
     "Enabled": true,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!heheh123",
-      "!goonen"
+      "!Bounty"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2517,13 +2151,13 @@
     ]
   },
   {
-    "Id": "ec42de12-c128-4fb0-8960-add0adf5e80f",
-    "Name": "asdsad",
+    "Id": "15d3a991-545f-4e73-9ba8-7f4c9680f87a",
+    "Name": "!checkins",
     "Enabled": true,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!testrrr"
+      "!checkins"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2533,13 +2167,13 @@
     ]
   },
   {
-    "Id": "9e9e1949-3c69-4457-91fd-e72fa9b99b9b",
-    "Name": "beebo done",
+    "Id": "3cd0094d-68af-4bf1-925b-895244f1b36d",
+    "Name": "!join",
     "Enabled": true,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!done"
+      "!join"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2549,13 +2183,13 @@
     ]
   },
   {
-    "Id": "c7cffc82-ca7d-48e2-8d13-ce58680debad",
-    "Name": "beebo fail",
+    "Id": "d2092181-ea04-4d1a-8ccc-b32e12b23a1b",
+    "Name": "!join",
     "Enabled": true,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!fail"
+      "!join"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2565,13 +2199,13 @@
     ]
   },
   {
-    "Id": "df9c0fae-9a81-415a-825b-3308900a2fb2",
-    "Name": "beebo hush",
+    "Id": "0e07e19f-0144-4b7c-b79b-34fd8fe01ff9",
+    "Name": "!test",
     "Enabled": true,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!hush"
+      "!test"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2581,13 +2215,13 @@
     ]
   },
   {
-    "Id": "624a83c6-0e10-49e9-8725-f809574940f8",
-    "Name": "beebo success",
+    "Id": "fae91923-1c13-44a2-a129-3c5de43dcc3b",
+    "Name": "!whisper",
     "Enabled": true,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!success"
+      "!whisper"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2597,13 +2231,14 @@
     ]
   },
   {
-    "Id": "1a1f85cb-032a-4a1e-a6a2-ee9cd2f71932",
-    "Name": "Clip Create",
+    "Id": "b37a1445-ba90-4886-86e3-92c3527a6a11",
+    "Name": "!اقتراح",
     "Enabled": true,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!clipCreate"
+      "!اقترح",
+      "!اقتراح"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2613,13 +2248,13 @@
     ]
   },
   {
-    "Id": "99441795-9ed8-4fc4-993e-6e6833d49df8",
-    "Name": "Clip List",
+    "Id": "2f27de27-11eb-4ef5-9ea4-7ad8cbe1933b",
+    "Name": "!الفاشلين",
     "Enabled": true,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!cliplist"
+      "!الفاشلين"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2629,41 +2264,13 @@
     ]
   },
   {
-    "Id": "79d79339-1f1d-4c4a-8418-29e06d7a2ce0",
-    "Name": "Clip Play",
-    "Enabled": true,
-    "Group": "Others",
-    "Mode": 1,
-    "Commands": null,
-    "RegexCommand": "^!",
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "2c1e89b0-9a9f-4546-9b35-150ba444ef44",
-    "Name": "Count Emote",
-    "Enabled": true,
-    "Group": "Others",
-    "Mode": 1,
-    "Commands": null,
-    "RegexCommand": "Kappa\\s?@(?<mentioned>\\S+)",
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "4253b2d0-9a10-462d-988b-cf22fd33a511",
-    "Name": "Delete Clip",
+    "Id": "d3ca10eb-8ce7-41cf-a42c-0818fc717d98",
+    "Name": "!تحدي",
     "Enabled": true,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!deleteclip"
+      "!تحدي"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2673,13 +2280,13 @@
     ]
   },
   {
-    "Id": "b96db1d2-fbed-4956-9a5d-63ca73a775ee",
-    "Name": "intern",
+    "Id": "0165c28c-b82b-44cd-b253-0526a0e1aedf",
+    "Name": "!تحقق",
     "Enabled": true,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!intern"
+      "!تحقق"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2689,52 +2296,29 @@
     ]
   },
   {
-    "Id": "b7357f84-ede2-4c4c-87d9-da99db3729a9",
-    "Name": "Set Current Value Challenge",
+    "Id": "36566977-2077-433b-a8a8-31576dc39c23",
+    "Name": "!تيست",
     "Enabled": true,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!setCurrentChallenge"
+      "!تيست"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
+      "Twitch Message"
     ]
   },
   {
-    "Id": "0399e29d-3108-450a-a930-26256af750ec",
-    "Name": "Song",
+    "Id": "46578c95-ea25-4189-a9c7-02aa18f20cc6",
+    "Name": "!تيست",
     "Enabled": false,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!song",
-      "!currentsong",
-      "!playing"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "YouTube Message",
-      "Trovo Message",
-      "Kick Message"
-    ]
-  },
-  {
-    "Id": "6b2f8e5f-c5e4-4f2e-a017-babbe72e28d0",
-    "Name": "steam",
-    "Enabled": true,
-    "Group": "Others",
-    "Mode": 0,
-    "Commands": [
-      "!steam"
+      "!تيست"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2744,13 +2328,17 @@
     ]
   },
   {
-    "Id": "fe1cc39e-44d8-4c19-a716-a89ba7ff6fba",
-    "Name": "test",
+    "Id": "f169c348-19db-4c41-8d30-6136ab5777ff",
+    "Name": "!دس",
     "Enabled": true,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!test123"
+      "!دس",
+      "!دسكورد",
+      "!dis",
+      "!dic",
+      "دس؟ "
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2760,13 +2348,13 @@
     ]
   },
   {
-    "Id": "e6e49861-7622-42d4-bb76-f114bbe330cb",
-    "Name": "Test",
+    "Id": "59057c5a-c496-4700-b792-908a8d30fee7",
+    "Name": "!طراطيع",
     "Enabled": true,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!test321"
+      "!طراطيع"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2776,93 +2364,181 @@
     ]
   },
   {
-    "Id": "5c00f694-cc9e-41ca-a691-913b7106c14d",
-    "Name": "Timeout X Users",
+    "Id": "46a04adc-3fa0-4f05-981e-b8e636ce3bdf",
+    "Name": "!ليدربورد",
+    "Enabled": true,
+    "Group": "Others",
+    "Mode": 0,
+    "Commands": [
+      "!ليدربورد",
+      "!توب"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "03438003-4767-4f80-9bb3-57fb1224d097",
+    "Name": "@tnx_6",
+    "Enabled": true,
+    "Group": "Others",
+    "Mode": 0,
+    "Commands": [
+      "@tnx_6"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "563ed7d0-1524-4b5f-930d-a4ef10741b23",
+    "Name": "تجربة",
+    "Enabled": true,
+    "Group": "Others",
+    "Mode": 0,
+    "Commands": [
+      "!تجربة"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "15fc3c61-8d48-407e-a8c3-f4ef2c5a4424",
+    "Name": "تيست",
+    "Enabled": true,
+    "Group": "Others",
+    "Mode": 0,
+    "Commands": [
+      "تيست؟ "
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "82fb6ce3-055f-4685-bacc-dcc04d52f075",
+    "Name": "ريستارت لعبة",
+    "Enabled": true,
+    "Group": "Others",
+    "Mode": 0,
+    "Commands": [
+      "!ريستارت لعبة"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "49be9b46-8257-4fac-bb12-1fe739b3281c",
+    "Name": "سب البوت",
+    "Enabled": true,
+    "Group": "Others",
+    "Mode": 0,
+    "Commands": [
+      "البوت حمار",
+      "البوت حمار",
+      "البوت غبي",
+      "القم يابوت",
+      "القم بوت ",
+      "بوتك حمار",
+      "بوتك غبي",
+      "بوتك سبك",
+      "القم يالسبك",
+      "بوت كلب",
+      "بوتك كلب",
+      "البوت كلب",
+      "بوتك الحمار",
+      "البوت يستغبي",
+      "بوتك يستغبي",
+      "بوت حمار",
+      "بوت غبي",
+      "فواز غبي",
+      "فواز الغبي"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "0723d163-7849-4e93-b17b-f9b4f63d6b43",
+    "Name": "عنوان",
+    "Enabled": true,
+    "Group": "Others",
+    "Mode": 0,
+    "Commands": [
+      "!عنوان"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "50a9fdbb-2266-4a6f-b3b4-27f5a7ff67c5",
+    "Name": "فواز",
+    "Enabled": true,
+    "Group": "Others",
+    "Mode": 0,
+    "Commands": [
+      "فواز",
+      "تنكس"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "8934ed6e-cccb-4916-95ef-9d311dace742",
+    "Name": "كيف الحال",
+    "Enabled": true,
+    "Group": "Others",
+    "Mode": 0,
+    "Commands": [
+      "كيف الحال",
+      "كيفك",
+      "اخبارك",
+      "علومك",
+      "شخبارك"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "45ae8fad-ab31-4f09-8654-3fe7430f7e65",
+    "Name": "لعبة",
     "Enabled": false,
     "Group": "Others",
     "Mode": 0,
     "Commands": [
-      "!timeout"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "0e09c451-852f-426f-b4f0-bde96ee1fd05",
-    "Name": "Cancel Auction",
-    "Enabled": true,
-    "Group": "Points Auction",
-    "Mode": 0,
-    "Commands": [
-      "!cancelAuction"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "eb929de5-3c82-4f8c-9510-9c88c8af0447",
-    "Name": "End Auction",
-    "Enabled": true,
-    "Group": "Points Auction",
-    "Mode": 0,
-    "Commands": [
-      "!endAuction"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "d2b19c78-6e48-4525-a3eb-6eefbe03a52a",
-    "Name": "Get Current Highest Bid",
-    "Enabled": true,
-    "Group": "Points Auction",
-    "Mode": 0,
-    "Commands": [
-      "!highestBid"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "5337d0c9-5e89-4565-8666-fec2e4889d13",
-    "Name": "Place Bid",
-    "Enabled": true,
-    "Group": "Points Auction",
-    "Mode": 0,
-    "Commands": [
-      "!bid"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "e47ff572-7c11-4795-add9-c591de9d795c",
-    "Name": "Start Auction",
-    "Enabled": true,
-    "Group": "Points Auction",
-    "Mode": 0,
-    "Commands": [
-      "!startAuction"
+      "!لعبة"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2874,7 +2550,7 @@
   {
     "Id": "8a08feec-4f5a-4b36-b609-7f30f145ef2e",
     "Name": "[QUICK MATHS] Answer",
-    "Enabled": false,
+    "Enabled": true,
     "Group": "QUICK MATHS",
     "Mode": 1,
     "Commands": null,
@@ -2886,14 +2562,63 @@
     ]
   },
   {
-    "Id": "ef8064e4-51c5-46d9-8868-1a4fd8661c5a",
-    "Name": "[QUICK MATHS] Start",
+    "Id": "aee9a954-64a8-413c-bf9e-d17988b8bc6b",
+    "Name": "8ball",
+    "Enabled": true,
+    "Group": "Test",
+    "Mode": 0,
+    "Commands": [
+      "!اسأل تنكس"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "fad291d5-60b3-4891-9d88-1a3e8e8ce147",
+    "Name": "متى تبث",
+    "Enabled": true,
+    "Group": "Test",
+    "Mode": 0,
+    "Commands": [
+      "متى تبث؟",
+      "متى تبث",
+      "موعد البثوث",
+      "موعد البثوث؟",
+      "مواعيد البثوث",
+      "مواعيد البث",
+      "مواعيد البثوث؟",
+      "مواعيد البث؟",
+      "موعد البث",
+      "مواعيد البث؟",
+      "موعد البث؟"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "b09e3d6e-dcb2-406e-9534-f0daaad826ad",
+    "Name": "!A1, !A2, !A3, !B1, !B2, !B3, !C1, !C2, !C3, ",
     "Enabled": false,
-    "Group": "QUICK MATHS",
+    "Group": "Tic TAc Toe",
     "Mode": 0,
     "Commands": [
-      "!quickmaths",
-      "!quickmath"
+      "!A1",
+      "!A2",
+      "!A3",
+      "!B1",
+      "!B2",
+      "!B3",
+      "!C1",
+      "!C2",
+      "!C3"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2903,766 +2628,14 @@
     ]
   },
   {
-    "Id": "f88a6e3c-fc01-4984-b1be-b9f846a40b45",
-    "Name": "[RAFFLE] Cancel Raffle",
-    "Enabled": true,
-    "Group": "RAFFLE",
-    "Mode": 0,
-    "Commands": [
-      "!raffleCancel"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "3282f4a5-b69e-4e72-82b5-6066f0f4dc3e",
-    "Name": "[RAFFLE] Delete Raffle",
-    "Enabled": true,
-    "Group": "RAFFLE",
-    "Mode": 0,
-    "Commands": [
-      "!raffleDelete"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "b1f186cb-a63a-4740-9c30-c1c94554be88",
-    "Name": "[RAFFLE] Enter",
-    "Enabled": true,
-    "Group": "RAFFLE",
-    "Mode": 0,
-    "Commands": [
-      "!enter"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "09ee62d7-fe7d-4102-a184-e22b9ea35b53",
-    "Name": "[RAFFLE] Lock Raffle",
-    "Enabled": true,
-    "Group": "RAFFLE",
-    "Mode": 0,
-    "Commands": [
-      "!raffleLock"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "4d8a2891-f476-4bdf-8637-704f828ef4da",
-    "Name": "[RAFFLE] Pick Winner",
-    "Enabled": true,
-    "Group": "RAFFLE",
-    "Mode": 0,
-    "Commands": [
-      "!rafflePickWinner"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "f49ee004-ae05-4bf8-bad4-76c8e880cdf2",
-    "Name": "[RAFFLE] Raffle Info",
-    "Enabled": true,
-    "Group": "RAFFLE",
-    "Mode": 0,
-    "Commands": [
-      "!raffle"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "f0dac758-49df-490c-946c-e301177fc492",
-    "Name": "[RAFFLE] Start Raffle",
-    "Enabled": true,
-    "Group": "RAFFLE",
-    "Mode": 0,
-    "Commands": [
-      "!raffleStart"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "fcb857da-817e-43c6-8a14-7396cd8771a5",
-    "Name": "[RAFFLE] Unlock Raffle",
-    "Enabled": true,
-    "Group": "RAFFLE",
-    "Mode": 0,
-    "Commands": [
-      "!raffleUnlock"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "19582ec7-9082-42f2-9652-116a894b6a64",
-    "Name": "[SPOTIFY & SB] Add Song To Playlist",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!addSong",
-      "!add",
-      "!saveSong"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "c04d5d1a-1cda-41eb-a631-9d6efdcfde4f",
-    "Name": "[SPOTIFY & SB] Add To Liked Songs",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!like",
-      "!addLike",
-      "!likeAdd"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "604d7838-7f45-44e7-ac1d-aaebf8981174",
-    "Name": "[SPOTIFY & SB] Ban Song",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!banSong",
-      "!excludeSong"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "b77fbb15-de8a-45d1-b838-db36e7170ffa",
-    "Name": "[SPOTIFY & SB] Banned Song List",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!bannedSongs",
-      "!bannedSongList",
-      "!excludedSongs",
-      "!excludedSondList"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "b046561e-cb1f-4167-9c27-899e3b736d83",
-    "Name": "[SPOTIFY & SB] Change Device",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!changeDevice",
-      "!setDevice"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "4274541a-1e99-40d5-9351-c09f38f0c276",
-    "Name": "[SPOTIFY & SB] Change Playlist",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!playPlaylist",
-      "!setPlaylist",
-      "!changePlaylist"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "fbf19e61-d406-41ab-9349-51deb66e1997",
-    "Name": "[SPOTIFY & SB] Change Volume",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!vol",
-      "!volume",
-      "!songVolume"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "948b55e4-f0e7-457d-ad98-85e31c480835",
-    "Name": "[SPOTIFY & SB] Current Playlist",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!playlist",
-      "!currentPlaylist"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "ef1d6997-d45b-4e6d-b104-ba16591f4673",
-    "Name": "[SPOTIFY & SB] Current Song Link",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!songLink",
-      "!currentSongLink"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "8de0835c-e4eb-470b-852d-8c744256a08a",
-    "Name": "[SPOTIFY & SB] Current Song Name",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!song",
-      "!currentSong",
-      "!songName"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "465f62da-8c10-40fb-b187-9ad9ac345778",
-    "Name": "[SPOTIFY & SB] Device List",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!devices",
-      "!deviceList"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "9ff79513-0a8b-46d1-91dd-d96da0a3eeb4",
-    "Name": "[SPOTIFY & SB] Get All Requests",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!requests",
-      "!allRequests",
-      "!getRequests",
-      "!getAllRequests"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "90ffda48-f49e-4557-8564-bdcce12dcce0",
-    "Name": "[SPOTIFY & SB] Get Playlists",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!playlists",
-      "!getPlaylists"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "e7a85a3c-c79d-4f49-92e9-1d7aa15d8407",
-    "Name": "[SPOTIFY & SB] Get Queue Position",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!myQueue",
-      "!myRequests",
-      "!queuePos",
-      "!queuePositions"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "d156e9f5-c41f-48fa-b7c5-e8532ca3504f",
-    "Name": "[SPOTIFY & SB] Get Top Artists",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!broadcasterTopArtists"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "3feece7d-2127-41a9-8b34-7eb5a218a826",
-    "Name": "[SPOTIFY & SB] Get Top Songs",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!broadcasterTopTracks",
-      "!broadcasterTopSongs"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "8a16939f-411c-44c4-8eb5-c7400c731cbd",
-    "Name": "[SPOTIFY & SB] Last Song Name",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!lastSong",
-      "!lastSongName",
-      "!last"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "bde26096-62fc-4043-a802-66500cfdc55a",
-    "Name": "[SPOTIFY & SB] Pause Song",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!pause",
-      "!stop",
-      "!pauseSong",
-      "!stopSong"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "5b98b604-0ebd-4e49-916c-443d8c70a2d4",
-    "Name": "[SPOTIFY & SB] Play Song",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!play",
-      "!playSong",
-      "!continue"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "03223804-f395-463f-bd0a-81082d67adc2",
-    "Name": "[SPOTIFY & SB] Previous Song",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!back",
-      "!previous",
-      "!previousSong"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "cef5fa07-3317-44d8-bd0f-b68d10c8a638",
-    "Name": "[SPOTIFY & SB] Queued Songs",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!queue",
-      "!queuedSongs"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "63520c40-a894-4f4b-b132-d99bf42d63c6",
-    "Name": "[SPOTIFY & SB] Remove From Queue",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!remove",
-      "!removeFromQueue",
-      "!removeSong",
-      "!deleteSong",
-      "!deleteSongFromQueue"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "a8569911-e31b-4aab-8dca-1811c0e5e612",
-    "Name": "[SPOTIFY & SB] Restart Current Song",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!restart",
-      "!restartSong",
-      "!restartCurrentSong",
-      "!replay",
-      "!replaySong"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "4a0ae9f6-54b9-4be2-a816-5dc2c2ee2fbd",
-    "Name": "[SPOTIFY & SB] Skip Song",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!skip",
-      "!next",
-      "!skipSong",
-      "!nextSong"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "29b6cf41-9c1c-410a-9c6b-85d932a4ff7e",
-    "Name": "[SPOTIFY & SB] Song Request",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!sr"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "85555bd4-7419-4174-93fb-e5cae458cb26",
-    "Name": "[SPOTIFY & SB] Top Requested Artists",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!topArtists"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "72f8a52f-7eed-4a01-b010-562c109d5571",
-    "Name": "[SPOTIFY & SB] Top Requested Artists (User)",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!myTopArtists",
-      "!topArtistsUser"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "439021e5-066a-462f-a953-c9cd80803266",
-    "Name": "[SPOTIFY & SB] Top Requested Songs",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!topSongs"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "9c4298b8-411c-47a8-b84b-2d39eeea9b83",
-    "Name": "[SPOTIFY & SB] Top Requested Songs (User)",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!myTopSongs",
-      "!topSongsUser"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "c394c8cb-bae1-4464-9ec0-9ff76955db29",
-    "Name": "[SPOTIFY & SB] Unban Song",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!unbanSong",
-      "!includeSong"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "1f470f76-febc-451d-8171-fb30201cef41",
-    "Name": "[SPOTIFY & SB] Voteskip",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!voteskip"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "6a0faf30-d178-41af-9cd6-66ad234eb65f",
-    "Name": "[SPOTIFY & SB] Wrong Song",
-    "Enabled": true,
-    "Group": "SPOTIFY & SB",
-    "Mode": 0,
-    "Commands": [
-      "!wrongsong"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message",
-      "Twitch Whisper",
-      "Twitch Bot Whisper"
-    ]
-  },
-  {
-    "Id": "18019f10-a191-47ad-93fa-360f71340a39",
-    "Name": "[TEMPORARY VIP] Add VIP Time",
+    "Id": "a4803141-b5c4-4396-9a65-b6a3fb5f175d",
+    "Name": "!p1, !p2",
     "Enabled": false,
-    "Group": "Temporary VIP",
+    "Group": "Tic TAc Toe",
     "Mode": 0,
     "Commands": [
-      "!vipAdd",
-      "!addVip"
+      "!p1",
+      "!p2"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -3672,14 +2645,15 @@
     ]
   },
   {
-    "Id": "89d5964b-90e8-4415-be48-8562ffa7bff9",
-    "Name": "[TEMPORARY VIP] Check Expired VIPs",
-    "Enabled": false,
-    "Group": "Temporary VIP",
+    "Id": "5a127175-d60f-4630-99db-3f521ef07f58",
+    "Name": "!resetTicTacToe",
+    "Enabled": true,
+    "Group": "Tic TAc Toe",
     "Mode": 0,
     "Commands": [
-      "!refreshVip",
-      "!vipRefresh"
+      "!resetTicTacToe",
+      "!resetTTT",
+      "!ريست"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -3689,14 +2663,14 @@
     ]
   },
   {
-    "Id": "ee427cd8-a60a-4061-9139-bc620b415147",
-    "Name": "[TEMPORARY VIP] Remove VIP Time",
-    "Enabled": false,
-    "Group": "Temporary VIP",
+    "Id": "98e145ae-5000-4a3d-9ea0-64fed542eeba",
+    "Name": "Bet",
+    "Enabled": true,
+    "Group": "TNX - Point Bets",
     "Mode": 0,
     "Commands": [
-      "!vipRemove",
-      "!removeVip"
+      "!ارهن",
+      "!bet"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -3706,14 +2680,15 @@
     ]
   },
   {
-    "Id": "2208162b-5529-448e-bda2-6007020d59f7",
-    "Name": "[TEMPORARY VIP] User Ending Date Check",
-    "Enabled": false,
-    "Group": "Temporary VIP",
+    "Id": "f75e3c19-7959-453d-8039-a5fc140ea547",
+    "Name": "Create Bet",
+    "Enabled": true,
+    "Group": "TNX - Point Bets",
     "Mode": 0,
     "Commands": [
-      "!vipCheck",
-      "!checkVip"
+      "!رهان",
+      "!startBet",
+      "!createBet"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -3723,23 +2698,103 @@
     ]
   },
   {
-    "Id": "f9ff1bf8-fa89-4a47-a248-5108c7668142",
-    "Name": "Timer Command",
-    "Enabled": false,
-    "Group": "Timer Commands",
+    "Id": "5a3bd556-f6e0-425b-8738-39e81da5b905",
+    "Name": "Lock Bet",
+    "Enabled": true,
+    "Group": "TNX - Point Bets",
     "Mode": 0,
     "Commands": [
-      "!timer",
-      "!timers",
-      "!tmr"
+      "!قفل الرهان",
+      "!lockBet"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message",
-      "YouTube Message",
-      "Trovo Message"
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "119a10f5-ec0d-4163-992d-badde29040b7",
+    "Name": "Resolve Bet",
+    "Enabled": true,
+    "Group": "TNX - Point Bets",
+    "Mode": 0,
+    "Commands": [
+      "!الفائز",
+      "!resolveBet"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "7558b4ef-c798-482b-a12f-7c74202744af",
+    "Name": "Answer",
+    "Enabled": true,
+    "Group": "TNX - Who Wants To Be A Millionaire",
+    "Mode": 0,
+    "Commands": [
+      "!answer",
+      "!اجابة",
+      "!اجابه"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "6f373c0b-10ce-4050-9dd6-5f657a63d9d6",
+    "Name": "Join Game",
+    "Enabled": true,
+    "Group": "TNX - Who Wants To Be A Millionaire",
+    "Mode": 0,
+    "Commands": [
+      "!join"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "8d51b346-c1ec-4524-9160-abcb878dfdce",
+    "Name": "Joker",
+    "Enabled": true,
+    "Group": "TNX - Who Wants To Be A Millionaire",
+    "Mode": 0,
+    "Commands": [
+      "!joker"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "b3ab4327-f2bf-444a-a157-13b6a74188f9",
+    "Name": "Start Game",
+    "Enabled": true,
+    "Group": "TNX - Who Wants To Be A Millionaire",
+    "Mode": 0,
+    "Commands": [
+      "!startGame"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
     ]
   },
   {
@@ -3749,7 +2804,8 @@
     "Group": "TNX BADGES",
     "Mode": 0,
     "Commands": [
-      "!addBadge"
+      "!addBadge",
+      "!اضف بادج"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -3781,7 +2837,8 @@
     "Group": "TNX BADGES",
     "Mode": 0,
     "Commands": [
-      "!equipBadge"
+      "!equipBadge",
+      "!وضع البادج"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -3797,7 +2854,8 @@
     "Group": "TNX BADGES",
     "Mode": 0,
     "Commands": [
-      "!myBadges"
+      "!myBadges",
+      "!بادج"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -3813,7 +2871,8 @@
     "Group": "TNX BADGES",
     "Mode": 0,
     "Commands": [
-      "!removeBadge"
+      "!removeBadge",
+      "!حذف البادج"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -3829,7 +2888,8 @@
     "Group": "TNX BADGES",
     "Mode": 0,
     "Commands": [
-      "!setBackgroundColor"
+      "!setBackgroundColor",
+      "!لون البنر"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -3845,7 +2905,8 @@
     "Group": "TNX BADGES",
     "Mode": 0,
     "Commands": [
-      "!setBanner"
+      "!setBanner",
+      "!بنر"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -3861,13 +2922,15 @@
     "Group": "TNX BADGES",
     "Mode": 0,
     "Commands": [
-      "!showUsercard"
+      "!showUsercard",
+      "!بطاقتي"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message"
+      "Twitch Message",
+      "Kick Message"
     ]
   },
   {
@@ -3877,7 +2940,8 @@
     "Group": "TNX BADGES",
     "Mode": 0,
     "Commands": [
-      "!unequipAllBadges"
+      "!unequipAllBadges",
+      "!الغاء البادجات"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -3893,7 +2957,8 @@
     "Group": "TNX BADGES",
     "Mode": 0,
     "Commands": [
-      "!unequipBadge"
+      "!unequipBadge",
+      "!الغاء البادج"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -3903,222 +2968,13 @@
     ]
   },
   {
-    "Id": "711d24fd-e96b-4727-9631-7fb116d14186",
-    "Name": "Discord Rolle",
-    "Enabled": true,
-    "Group": "Twitch ↔ Discord",
+    "Id": "b98136dc-afb2-43d1-82d5-e394ebc7e220",
+    "Name": "Create Twitch Clip",
+    "Enabled": false,
+    "Group": "Twitch",
     "Mode": 0,
     "Commands": [
-      "!discordRolle"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "d7f8ae9c-8cdd-442f-b5a0-703e866f65aa",
-    "Name": "[TWITCH GOALBAR] Set Bits Value Current",
-    "Enabled": true,
-    "Group": "TWITCH GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!goalbarBitsCurrent",
-      "!goalbarBitCurrent",
-      "!goalbarCheersCurrent"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "b04b32e4-9a5e-4517-b836-c8059ffe885f",
-    "Name": "[TWITCH GOALBAR] Set Bits Value Goal",
-    "Enabled": true,
-    "Group": "TWITCH GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!goalbarBitsGoal",
-      "!goalbarBitGoal",
-      "!goalbarCheersGoal"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "8d495ade-837b-4f6f-850a-f47e09030071",
-    "Name": "[TWITCH GOALBAR] Set Donations Value Goal",
-    "Enabled": true,
-    "Group": "TWITCH GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!goalbarDonationsGoal",
-      "!goalbarDonationGoal"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "4fb21128-c653-403f-bd07-0f0d90b0b3c8",
-    "Name": "[TWITCH GOALBAR] Set Donations Value Goal",
-    "Enabled": true,
-    "Group": "TWITCH GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!goalbarDonationsCurrent",
-      "!goalbarDonationCurrent"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "b1c0d4e2-dd95-4b59-9c62-659ea81a572d",
-    "Name": "[TWITCH GOALBAR] Set Followers Value Goal",
-    "Enabled": true,
-    "Group": "TWITCH GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!goalbarFollowersGoal",
-      "!goalbarFollowsGoal",
-      "!goalbarFollowGoal"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "4142e488-27fa-4e48-87fa-e93589bb0d44",
-    "Name": "[TWITCH GOALBAR] Set New Followers Value Current",
-    "Enabled": true,
-    "Group": "TWITCH GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!goalbarNewFollowersCurrent",
-      "!goalbarNewFollowsCurrent"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "09b45a71-470c-4cb7-babf-4b7a9e351c0d",
-    "Name": "[TWITCH GOALBAR] Set New Followers Value Goal",
-    "Enabled": true,
-    "Group": "TWITCH GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!goalbarNewFollowersGoal",
-      "!goalbarNewFollowsGoal",
-      "!goalbarNewFollowGoal"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "e199a65d-b5ef-4bae-a07b-e1ca75f3fc98",
-    "Name": "[TWITCH GOALBAR] Set New Subscribers Value Current",
-    "Enabled": true,
-    "Group": "TWITCH GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!goalbarNewSubscribersCurrent",
-      "!goalbarNewSubsCurrent",
-      "!goalbarNewSubCurrent"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "6a4cef73-fba3-4931-b80f-13f843863e75",
-    "Name": "[TWITCH GOALBAR] Set New Subscribers Value Goal",
-    "Enabled": true,
-    "Group": "TWITCH GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!goalbarNewSubscribersGoal",
-      "!goalbarNewSubsGoal",
-      "!goalbarNewSubGoal"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "944d120e-17af-4d59-9989-ef01be7a1361",
-    "Name": "[TWITCH GOALBAR] Set Overall Goal Value Current",
-    "Enabled": true,
-    "Group": "TWITCH GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!goalbarOverallGoalCurrent"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "0540c3a1-db93-46e8-b0f7-19f594f21b52",
-    "Name": "[TWITCH GOALBAR] Set Overall Goal Value Goal",
-    "Enabled": true,
-    "Group": "TWITCH GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!goalbarOverallGoalGoal"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "1d44c350-65a4-4bec-8c68-ab27b15a1778",
-    "Name": "[TWITCH GOALBAR] Set Subscribers Value Goal",
-    "Enabled": true,
-    "Group": "TWITCH GOALBAR",
-    "Mode": 0,
-    "Commands": [
-      "!goalbarSubscribersGoal",
-      "!goalbarSubsGoal",
-      "!goalbarSubGoal"
+      "!clip"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4255,7 +3111,10 @@
     "Group": "TWITCH POINTS",
     "Mode": 0,
     "Commands": [
-      "!points"
+      "!points",
+      "!نقاطي",
+      "!نقاط",
+      "!فلوسي"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4272,7 +3131,8 @@
     "Mode": 0,
     "Commands": [
       "!pointsLeaderboard",
-      "!leaderboardPoints"
+      "!leaderboardPoints",
+      "!ترتيب النقاط"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4349,7 +3209,7 @@
   },
   {
     "Id": "4730334a-38b5-4dfe-863a-651e4741c964",
-    "Name": "[TWITCH POINTS] Transfer Points",
+    "Name": "[TWITCH POINTS] Transfer Points test 1",
     "Enabled": true,
     "Group": "TWITCH POINTS",
     "Mode": 0,
@@ -4357,7 +3217,11 @@
       "!givePoints",
       "!pointsGive",
       "!transferPoints",
-      "!pointsTransfer"
+      "!pointsTransfer",
+      "!تحويل النقاط",
+      "!تحويل نقاط",
+      "!ارسال النقاط",
+      "!ارسال نقاط"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4369,7 +3233,7 @@
   {
     "Id": "77e52447-f0e1-44ff-8d7d-1d8668680640",
     "Name": "[TWITCH WATCHTIME] Get Watchtime",
-    "Enabled": false,
+    "Enabled": true,
     "Group": "TWITCH WATCHTIME",
     "Mode": 0,
     "Commands": [
@@ -4386,7 +3250,7 @@
   {
     "Id": "f40c803f-6542-4ef9-8bd8-3226ba98b698",
     "Name": "[TWITCH WATCHTIME] Leaderboard",
-    "Enabled": false,
+    "Enabled": true,
     "Group": "TWITCH WATCHTIME",
     "Mode": 0,
     "Commands": [
@@ -4403,29 +3267,14 @@
     ]
   },
   {
-    "Id": "7964eeee-ad35-483d-a874-075a95dd0c17",
-    "Name": "User Birthday",
-    "Enabled": true,
-    "Group": "User Birthday",
-    "Mode": 0,
-    "Commands": [
-      "!birthday"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
     "Id": "01edac79-1070-43ad-b52e-a114dd0ae94d",
     "Name": "[USER INVENTORY] Accept Trade",
     "Enabled": true,
     "Group": "USER INVENTORY",
     "Mode": 0,
     "Commands": [
-      "!acceptTrade"
+      "!acceptTrade",
+      "!اقبل التريد"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4459,7 +3308,8 @@
     "Commands": [
       "!buyItem",
       "!itemBuy",
-      "!buy"
+      "!buy",
+      "!شراء"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4476,7 +3326,10 @@
     "Mode": 0,
     "Commands": [
       "!craft",
-      "!craftItem"
+      "!craftItem",
+      "!انشاء",
+      "!إنشاء",
+      "!كرافت"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4493,7 +3346,9 @@
     "Mode": 0,
     "Commands": [
       "!inventory",
-      "!items"
+      "!items",
+      "!اغراضي",
+      "!اغراض"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4543,7 +3398,10 @@
     "Group": "USER INVENTORY",
     "Mode": 0,
     "Commands": [
-      "!itemList"
+      "!itemList",
+      "!المتجر",
+      "!متجر",
+      "!shop"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4560,7 +3418,9 @@
     "Mode": 0,
     "Commands": [
       "!recipe",
-      "!itemRecipe"
+      "!itemRecipe",
+      "!الوصفة",
+      "!وصفة"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4577,7 +3437,8 @@
     "Mode": 0,
     "Commands": [
       "!itemValue",
-      "!checkValue"
+      "!checkValue",
+      "!سعر"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4615,7 +3476,8 @@
       "!trade",
       "!tradeItem",
       "!offer",
-      "!offerItem"
+      "!offerItem",
+      "!تريد"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4631,7 +3493,8 @@
     "Group": "USER INVENTORY",
     "Mode": 0,
     "Commands": [
-      "!rejectTrade"
+      "!rejectTrade",
+      "!ارفض التريد"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4665,7 +3528,8 @@
     "Commands": [
       "!sellItem",
       "!itemSell",
-      "!sell"
+      "!sell",
+      "!بيع"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4682,7 +3546,8 @@
     "Mode": 0,
     "Commands": [
       "!useItem",
-      "!use"
+      "!use",
+      "!استخدام"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4692,13 +3557,222 @@
     ]
   },
   {
-    "Id": "a35005e7-986c-4f85-81c6-f9f15b61d648",
-    "Name": "Get Watchtime User",
-    "Enabled": false,
-    "Group": "Watchtime",
+    "Id": "5b5c3c88-7c93-4947-83ea-f8e1ab4d48c2",
+    "Name": "استاذنكم",
+    "Enabled": true,
+    "Group": "ردود البوت",
     "Mode": 0,
     "Commands": [
-      "!watchtime"
+      "استاذنكم",
+      "استأذنكم",
+      "أستأذنكم",
+      "عن اذنكم",
+      "عن أذنكم"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "9e61887f-1bdc-4264-9fc9-8921c1540454",
+    "Name": "السلام",
+    "Enabled": true,
+    "Group": "ردود البوت",
+    "Mode": 0,
+    "Commands": [
+      "السلام",
+      "السلام عليكم",
+      "سلام عليكم",
+      "سلام"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "151c72df-aa9f-4c73-b55b-1d61124c31ab",
+    "Name": "القم",
+    "Enabled": true,
+    "Group": "ردود البوت",
+    "Mode": 0,
+    "Commands": [
+      "القم"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "2f5a1ee6-26f0-4983-b58c-78053a683439",
+    "Name": "باك",
+    "Enabled": true,
+    "Group": "ردود البوت",
+    "Mode": 0,
+    "Commands": [
+      "باك",
+      "رجعت",
+      "رجعنا",
+      "عودنا",
+      "عدنا"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "6ef98491-279f-40dd-8a63-bf8f24e59781",
+    "Name": "برب",
+    "Enabled": true,
+    "Group": "ردود البوت",
+    "Mode": 0,
+    "Commands": [
+      "برب",
+      "شوي واجي ",
+      "شويات واجي",
+      "ثواني واجي",
+      "دقايق واجي"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "6bd64b57-ae66-4e86-83b1-e3b1af1e41fb",
+    "Name": "!تحويل",
+    "Enabled": false,
+    "Group": "لعبة الحياة الواقعية",
+    "Mode": 0,
+    "Commands": [
+      "!تحويل"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "25fdaa85-dbd7-427c-a62b-451f774b67ed",
+    "Name": "!boo",
+    "Enabled": true,
+    "Group": "مادري",
+    "Mode": 0,
+    "Commands": [
+      "!boo"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "1d1c622a-0dd1-4537-a197-20c9a2b3290a",
+    "Name": "!checkinlb",
+    "Enabled": true,
+    "Group": "مادري",
+    "Mode": 0,
+    "Commands": [
+      "!checkinlb"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "802697a4-1ac4-4f66-b21b-bc29c6f3dc16",
+    "Name": "!clip",
+    "Enabled": true,
+    "Group": "مادري",
+    "Mode": 0,
+    "Commands": [
+      "!clip"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "40fe138b-d5e8-46a0-b277-c4ed6d1ea1e3",
+    "Name": "!followage",
+    "Enabled": true,
+    "Group": "مادري",
+    "Mode": 0,
+    "Commands": [
+      "متى؟"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "8fe8860b-9a80-44be-9076-f61dc417da27",
+    "Name": "!uptime",
+    "Enabled": true,
+    "Group": "مادري",
+    "Mode": 0,
+    "Commands": [
+      "!uptime"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "2dfb9070-0c61-4cde-9aa5-b7abf7e62a5c",
+    "Name": "!البث الجاي",
+    "Enabled": true,
+    "Group": "مادري",
+    "Mode": 0,
+    "Commands": [
+      "!البث الجاي"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "181857d7-e490-44d0-98aa-3ff09fe68838",
+    "Name": "[Currency Core] - Points",
+    "Enabled": true,
+    "Group": "مادري",
+    "Mode": 0,
+    "Commands": [
+      "!points",
+      "!نقاطي",
+      "!نقاط"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -4707,6 +3781,348 @@
       "Twitch Message",
       "YouTube Message",
       "Trovo Message"
+    ]
+  },
+  {
+    "Id": "d5d22a1e-880b-4bf7-92d9-98704c765072",
+    "Name": "[User Item Inventory] Buy Item",
+    "Enabled": false,
+    "Group": "مادري",
+    "Mode": 0,
+    "Commands": [
+      "!buy"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "c17e520a-fe33-4bbf-a62a-034c2f11756e",
+    "Name": "[User Item Inventory] Sell Item",
+    "Enabled": false,
+    "Group": "مادري",
+    "Mode": 0,
+    "Commands": [
+      "!sell"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "3a454e3e-3c90-48db-bd4e-a8bc07339917",
+    "Name": "Bounty",
+    "Enabled": true,
+    "Group": "مادري",
+    "Mode": 0,
+    "Commands": [
+      "!bounty"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "2208162b-5529-448e-bda2-6007020d59f7",
+    "Name": "User Ending Date Check",
+    "Enabled": true,
+    "Group": "مادري",
+    "Mode": 0,
+    "Commands": [
+      "!vipCheck",
+      "!checkVip"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "75ad005f-e7d5-4055-9a4a-3ad4e247421a",
+    "Name": "!محاميي",
+    "Enabled": true,
+    "Group": "محكمة",
+    "Mode": 0,
+    "Commands": [
+      "!محاميي"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "11a2ebc8-9dc3-4056-9f08-de2d262a3b25",
+    "Name": "محامي",
+    "Enabled": true,
+    "Group": "محكمة",
+    "Mode": 0,
+    "Commands": [
+      "!محامي"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "c0ef2050-4d4a-407d-af7c-64185e543690",
+    "Name": "محكمة",
+    "Enabled": true,
+    "Group": "محكمة",
+    "Mode": 0,
+    "Commands": [
+      "!محكمة"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "02b230fa-cffa-4239-aadc-b4461b8c6953",
+    "Name": "!just",
+    "Enabled": true,
+    "Group": "مودز",
+    "Mode": 0,
+    "Commands": [
+      "!just",
+      "!j"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "6006dee5-d1b5-47c4-b7bb-6e95794ab6b5",
+    "Name": "!انتهاء الخصومات",
+    "Enabled": true,
+    "Group": "مودز",
+    "Mode": 0,
+    "Commands": [
+      "!انتهاء الخصومات"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "18503414-07fc-4e7e-8656-e8c0d71a527d",
+    "Name": "!انتهاء لعبة الورق",
+    "Enabled": true,
+    "Group": "مودز",
+    "Mode": 0,
+    "Commands": [
+      "!انتهاء لعبة الورق"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "137fe6b3-4b85-437f-8e60-93319813fe7f",
+    "Name": "!بدء الخصومات",
+    "Enabled": true,
+    "Group": "مودز",
+    "Mode": 0,
+    "Commands": [
+      "!بدء الخصومات"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "98f2289a-f7ce-46d1-8326-e04de3b90570",
+    "Name": "!بدء المزاد",
+    "Enabled": true,
+    "Group": "مودز",
+    "Mode": 0,
+    "Commands": [
+      "!بدء المزاد"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "31a2da99-7140-4be6-83b6-c6e8bac32eee",
+    "Name": "!تغير اللعبة",
+    "Enabled": true,
+    "Group": "مودز",
+    "Mode": 0,
+    "Commands": [
+      "!تغير اللعبة",
+      "!game"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "be0eed56-f397-4dfb-a0ee-21ac3f9d5166",
+    "Name": "!لعبة الورق",
+    "Enabled": true,
+    "Group": "مودز",
+    "Mode": 0,
+    "Commands": [
+      "!بدء لعبة الورق"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "18019f10-a191-47ad-93fa-360f71340a39",
+    "Name": "Add Vip Time",
+    "Enabled": true,
+    "Group": "مودز",
+    "Mode": 0,
+    "Commands": [
+      "!vipAdd",
+      "!addVip"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "89d5964b-90e8-4415-be48-8562ffa7bff9",
+    "Name": "Check Expired VIPs",
+    "Enabled": true,
+    "Group": "مودز",
+    "Mode": 0,
+    "Commands": [
+      "!refreshVip",
+      "!vipRefresh"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "ee427cd8-a60a-4061-9139-bc620b415147",
+    "Name": "Remove Vip Time",
+    "Enabled": true,
+    "Group": "مودز",
+    "Mode": 0,
+    "Commands": [
+      "!vipRemove",
+      "!removeVip"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "70064853-7bd1-468a-af91-68485615a3c4",
+    "Name": "test mod",
+    "Enabled": true,
+    "Group": "مودز",
+    "Mode": 0,
+    "Commands": [
+      "!mod"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "ff649566-6f77-40ff-9b9a-09a02b64449c",
+    "Name": "انتهاء الخصومات",
+    "Enabled": true,
+    "Group": "مودز",
+    "Mode": 0,
+    "Commands": [
+      "!انتهاء الخصومات"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "9f4aaadc-6391-44a8-bfb7-ee1f73eb4281",
+    "Name": "خصومات",
+    "Enabled": true,
+    "Group": "مودز",
+    "Mode": 0,
+    "Commands": [
+      "!بدء الخصومات"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "46e2e992-276c-4da1-8037-47374ecf6a9f",
+    "Name": "!dungeon",
+    "Enabled": true,
+    "Group": "نظام البادج",
+    "Mode": 0,
+    "Commands": [
+      "!dungeon"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
     ]
   }
 ]
