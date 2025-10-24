@@ -21,11 +21,9 @@ const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroInteg
 
 export default defineConfig({
   site: 'https://tnx6.github.io/',
-  base: '/tnx-site/',
   output: 'static',
   build: {
     assets: 'assets',
-    assetsPrefix: '/tnx-site/',
   },
 
   integrations: [
