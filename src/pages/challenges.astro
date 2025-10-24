@@ -18,58 +18,62 @@ const base = import.meta.env.BASE_URL || '/';
   </section>
 
   <script is:inline>
-    const fmtNum = (n) => (typeof n === 'number' ? n.toLocaleString('de-DE') : n);
-    const base = `${import.meta.env.BASE_URL}`;
-    const url = `${base}api/challenges.json`;
+  const fmtNum = (n) => (typeof n === 'number' ? n.toLocaleString('de-DE') : n);
 
-    function userLabel(u){
-      if(!u) return '';
-      const a = (u.user||'').toLowerCase();
-      const b = (u.userName||'').toLowerCase();
-      return a && b && a!==b ? `${u.user} (${u.userName})` : (u.user || u.userName || '');
-    }
+  const base = window.location.pathname.includes('/tnx-site/')
+    ? '/tnx-site/'
+    : '/';
+  const url = `${base}api/challenges.json`;
 
-    function variantCard(v){
-      const amountText = v.isBoolean ? '1+' : fmtNum(v.amount);
-      const reward = v.rewardItem ? `<span class="ml-2 px-2 py-0.5 rounded bg-[#c6a44f]/20 border border-[#c6a44f]/40 text-xs tracking-wide">Reward: ${v.rewardItem}</span>` : '';
-      const users = (v.users||[]).map(u=>`<li class="px-3 py-1 rounded bg-black/30 border border-[#c6a44f]/20">${userLabel(u)}</li>`).join('') || `<li class="text-gray-400">No completions yet</li>`;
-      return `
-        <div class="p-5 rounded-2xl bg-gradient-to-br from-[#0a0a0c]/80 to-[#1a1408]/80 border border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.12)] backdrop-blur-md">
-          <div class="flex items-center justify-between">
-            <div class="text-lg font-semibold text-[#f7e6ac] flex items-center gap-3">
-              <span class="px-2 py-0.5 rounded bg-[#c6a44f]/20 border border-[#c6a44f]/40 text-xs font-mono">ID: ${v.id}</span>
-              <span>Amount: ${amountText}</span>
-              ${reward}
-            </div>
+  function userLabel(u){
+    if(!u) return '';
+    const a = (u.user||'').toLowerCase();
+    const b = (u.userName||'').toLowerCase();
+    return a && b && a!==b ? `${u.user} (${u.userName})` : (u.user || u.userName || '');
+  }
+
+  function variantCard(v){
+    const amountText = v.isBoolean ? '1+' : fmtNum(v.amount);
+    const reward = v.rewardItem ? `<span class="ml-2 px-2 py-0.5 rounded bg-[#c6a44f]/20 border border-[#c6a44f]/40 text-xs tracking-wide">Reward: ${v.rewardItem}</span>` : '';
+    const users = (v.users||[]).map(u=>`<li class="px-3 py-1 rounded bg-black/30 border border-[#c6a44f]/20">${userLabel(u)}</li>`).join('') || `<li class="text-gray-400">No completions yet</li>`;
+    return `
+      <div class="p-5 rounded-2xl bg-gradient-to-br from-[#0a0a0c]/80 to-[#1a1408]/80 border border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.12)] backdrop-blur-md">
+        <div class="flex items-center justify-between">
+          <div class="text-lg font-semibold text-[#f7e6ac] flex items-center gap-3">
+            <span class="px-2 py-0.5 rounded bg-[#c6a44f]/20 border border-[#c6a44f]/40 text-xs font-mono">ID: ${v.id}</span>
+            <span>Amount: ${amountText}</span>
+            ${reward}
           </div>
-          <ul class="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-2">${users}</ul>
         </div>
-      `;
-    }
+        <ul class="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-2">${users}</ul>
+      </div>
+    `;
+  }
 
-    function typeBlock(t){
-      const variants = (t.variants||[]).map(variantCard).join('');
-      return `
-        <section class="relative">
-          <div class="absolute inset-x-0 -top-3 h-[2px] bg-gradient-to-r from-transparent via-[#c6a44f]/70 to-transparent"></div>
-          <h2 class="text-3xl font-bold mb-6 text-center text-[#f7e6ac] uppercase tracking-wide">${t.type} <span class="text-sm text-[#c6a44f] align-middle">(${t.variantCount})</span></h2>
-          <div class="grid gap-6">${variants}</div>
-        </section>
-      `;
-    }
+  function typeBlock(t){
+    const variants = (t.variants||[]).map(variantCard).join('');
+    return `
+      <section class="relative">
+        <div class="absolute inset-x-0 -top-3 h-[2px] bg-gradient-to-r from-transparent via-[#c6a44f]/70 to-transparent"></div>
+        <h2 class="text-3xl font-bold mb-6 text-center text-[#f7e6ac] uppercase tracking-wide">${t.type} <span class="text-sm text-[#c6a44f] align-middle">(${t.variantCount})</span></h2>
+        <div class="grid gap-6">${variants}</div>
+      </section>
+    `;
+  }
 
-    async function run(){
-      try{
-        const res = await fetch(url, { cache: 'no-store' });
-        const data = await res.json();
-        const html = (data.types||[]).map(typeBlock).join('');
-        document.getElementById('root').innerHTML = html || '<div class="text-center text-gray-400">No challenges</div>';
-      }catch(e){
-        document.getElementById('root').innerHTML = '<div class="text-center text-gray-400">Failed to load challenges</div>';
-      }
+  async function run(){
+    try{
+      const res = await fetch(url, { cache: 'no-store' });
+      const data = await res.json();
+      const html = (data.types||[]).map(typeBlock).join('');
+      document.getElementById('root').innerHTML = html || '<div class="text-center text-gray-400">No challenges</div>';
+    }catch(e){
+      document.getElementById('root').innerHTML = '<div class="text-center text-gray-400">Failed to load challenges</div>';
     }
-    run();
-  </script>
+  }
+  run();
+</script>
+
 
   <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
