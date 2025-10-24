@@ -1,0 +1,64 @@
+<script client:load>
+function initChallenges() {
+  const fmtNum = (n) => (typeof n === 'number' ? n.toLocaleString('de-DE') : n)
+  const base = window.location.pathname.includes('/tnx-site/') ? '/tnx-site/' : '/'
+  const url = `${base}api/challenges.json`
+  const root = document.getElementById('root')
+
+  function userLabel(u) {
+    if (!u) return ''
+    const a = (u.user || '').toLowerCase()
+    const b = (u.userName || '').toLowerCase()
+    return a && b && a !== b ? `${u.user} (${u.userName})` : (u.user || u.userName || '')
+  }
+
+  function variantCard(v) {
+    const reward = v.rewardItem
+      ? `<span class="ml-2 px-2 py-0.5 rounded bg-[#c6a44f]/20 border border-[#c6a44f]/40 text-xs tracking-wide font-medium">Reward: <span class="text-[#f7e6ac] font-semibold">${v.rewardItem}</span></span>`
+      : ''
+    const amountText = v.isBoolean ? '' : `<span class="ml-2 text-sm text-gray-400">Required: ${fmtNum(v.amount)}</span>`
+    const users =
+      (v.users || []).map(
+        (u) => `<li class="px-3 py-1 rounded bg-black/30 border border-[#c6a44f]/20 text-[#f7e6ac]">${userLabel(u)}</li>`
+      ).join('') || `<li class="text-gray-400">No one has completed this challenge yet</li>`
+    const completedLabel = (v.users && v.users.length)
+      ? `<h4 class="mt-4 mb-2 font-semibold text-[#c6a44f] uppercase tracking-wider text-sm">Completed by</h4>` : ''
+    return `
+      <div class="p-5 rounded-2xl bg-gradient-to-br from-[#0a0a0c]/80 to-[#1a1408]/80 border border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.12)] backdrop-blur-md">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-lg font-semibold text-[#f7e6ac] flex items-center gap-2">${v.type}${amountText}${reward}</div>
+        </div>
+        ${completedLabel}
+        <ul class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">${users}</ul>
+      </div>
+    `
+  }
+
+  function typeBlock(t) {
+    const variants = (t.variants || []).map(variantCard).join('')
+    return `
+      <section class="relative">
+        <div class="absolute inset-x-0 -top-3 h-[2px] bg-gradient-to-r from-transparent via-[#c6a44f]/70 to-transparent"></div>
+        <h2 class="text-3xl font-bold mb-6 text-center text-[#f7e6ac] uppercase tracking-wide">${t.type}</h2>
+        <div class="grid gap-6">${variants}</div>
+      </section>
+    `
+  }
+
+  async function run() {
+    try {
+      const res = await fetch(url, { cache: 'no-store' })
+      const data = await res.json()
+      const html = (data.types || []).map(typeBlock).join('')
+      root.innerHTML = html || '<div class="text-center text-gray-400">No challenges</div>'
+    } catch (e) {
+      root.innerHTML = '<div class="text-center text-gray-400">Failed to load challenges</div>'
+    }
+  }
+  run()
+}
+
+document.addEventListener('astro:page-load', () => {
+  requestAnimationFrame(() => initChallenges())
+})
+</script>
