@@ -37,7 +37,7 @@ const metadata = {
   <script is:inline data-reinit>
     async function loadBadges() {
       try {
-        const res = await fetch('/tnx-site/api/badges.json');
+        const res = await fetch('/api/badges.json');
         const badges = await res.json();
         const grid = document.getElementById('badge-grid');
         badges.forEach(b => {
