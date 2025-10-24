@@ -17,7 +17,7 @@ const base = import.meta.env.BASE_URL || '/';
     <div id="root" class="space-y-14"></div>
   </section>
 
-  <script is:inline>
+  <script is:inline data-reinit>
     const fmtNum = (n) => (typeof n === 'number' ? n.toLocaleString('de-DE') : n);
 
     const base = window.location.pathname.includes('/tnx-site/')
