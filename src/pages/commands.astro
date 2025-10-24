@@ -3,6 +3,11 @@ import Layout from '~/layouts/PageLayout.astro'
 import fs from 'fs'
 import path from 'path'
 
+const metadata = {
+  title: 'Commands — TNX6',
+  ignoreTitleTemplate: true,
+}
+
 let commands = []
 try {
   const filePath = path.resolve('public/api/commands.json')
@@ -18,9 +23,12 @@ for (const cmd of commands) {
   groups[cmd.Group].push(cmd)
 }
 ---
-<Layout>
+
+<Layout metadata={metadata}>
   <section class="max-w-5xl mx-auto py-16 px-6 text-white">
-    <h1 class="text-4xl font-bold mb-8 text-[#f7e6ac]">Commands</h1>
+    <h1 class="text-5xl font-extrabold text-center mb-14 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(198,164,79,0.5)] tracking-wider">
+      COMMANDS
+    </h1>
 
     <div class="mb-10">
       <input
@@ -33,18 +41,18 @@ for (const cmd of commands) {
 
     <div id="commandList">
       {Object.keys(groups).length === 0 ? (
-        <p class="text-gray-400">No commands found.</p>
+        <p class="text-gray-400 text-center">No commands found.</p>
       ) : (
         Object.keys(groups).map(group => (
-          <div class="mb-10 group-block bg-black/50 rounded-xl p-6 border border-[#c6a44f]/30 shadow-lg backdrop-blur-sm">
-            <h2 class="text-2xl font-semibold text-[#c6a44f] mb-4 group-title">{group}</h2>
+          <div class="mb-10 group-block bg-gradient-to-br from-[#0a0a0c]/80 to-[#1a1408]/80 rounded-2xl p-6 border border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.15)] backdrop-blur-md">
+            <h2 class="text-3xl font-bold text-center mb-6 text-[#f7e6ac] uppercase tracking-wide">{group}</h2>
             <ul class="space-y-3 group-commands">
               {groups[group].map(cmd => (
-                <li class="border-b border-[#c6a44f]/20 pb-2 command-item">
-                  <div class="font-bold mb-1 command-name">{cmd.Name}</div>
+                <li class="border border-[#c6a44f]/20 rounded-xl p-4 bg-black/30 backdrop-blur-sm command-item">
+                  <div class="font-bold mb-1 text-[#f7e6ac] text-lg command-name">{cmd.Name}</div>
                   <div class="text-gray-300 text-sm flex flex-wrap gap-2 command-aliases">
                     {cmd.Commands?.map(c => (
-                      <span class="bg-[#c6a44f]/10 text-[#f7e6ac] px-2 py-0.5 rounded-md border border-[#c6a44f]/30 text-xs">{c}</span>
+                      <span class="bg-[#c6a44f]/15 text-[#f7e6ac] px-3 py-1 rounded-md border border-[#c6a44f]/30 text-xs font-mono">{c}</span>
                     ))}
                   </div>
                 </li>
