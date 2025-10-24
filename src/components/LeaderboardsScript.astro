@@ -96,7 +96,7 @@ function initLeaderboards() {
   lessButtons.watchtime?.addEventListener('click', () => removeSegment('watchtime'))
   document.getElementById('search')?.addEventListener('input', e => handleSearch(e.target.value))
 
-  fetch('/tnx-site/api/leaderboard_data.json', { cache: 'no-store' })
+  fetch('/api/leaderboard_data.json', { cache: 'no-store' })
     .then(res => res.json())
     .then(data => {
       allData = data
