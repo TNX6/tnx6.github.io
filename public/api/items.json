@@ -1,55 +1,33 @@
 {
   "items": [
     {
-      "text": "Copper Bar",
-      "value": 100,
-      "description": "A sturdy copper bar used for crafting weak tools.",
-      "option": "Type to filter options...",
-      "excludeSale": false,
-      "excludePurchase": false,
-      "excludeUsage": true,
-      "itemLimitEnabled": false,
-      "itemLimitAmount": 1
-    },
-    {
-      "text": "Iron Bar",
-      "value": 500,
-      "description": "A hard material used to craft weapons and arrows.",
-      "option": "Type to filter options...",
-      "excludeSale": false,
-      "excludePurchase": false,
-      "excludeUsage": true,
-      "itemLimitEnabled": false,
-      "itemLimitAmount": 1
-    },
-    {
-      "text": "Stick",
+      "text": "خشب",
       "value": 1,
-      "description": "A wooden stick. Can be used for crafting.",
-      "option": "Type to filter options...",
-      "excludeSale": true,
-      "excludePurchase": true,
-      "excludeUsage": true,
-      "itemLimitEnabled": false,
-      "itemLimitAmount": 1
-    },
-    {
-      "text": "Iron Pickaxe",
-      "value": 10000,
-      "description": "A massive pickaxe. Can be used to gather stones.",
-      "option": "Type to filter options...",
+      "description": "تلغي اي رهان موجود",
+      "option": "بطاقة اقول لا يكثر",
       "excludeSale": false,
       "excludePurchase": false,
       "excludeUsage": false,
       "itemLimitEnabled": true,
-      "itemLimitAmount": 5
+      "itemLimitAmount": 1
     },
     {
-      "text": "Copper Sword",
-      "value": 560,
-      "description": "A weak sword. Used to defend yourself.",
-      "option": "Type to filter options...",
+      "text": "حديد",
+      "value": 1,
+      "description": "",
+      "option": "[HOT POTATO] 7 - الفاشلين",
       "excludeSale": false,
+      "excludePurchase": false,
+      "excludeUsage": false,
+      "itemLimitEnabled": true,
+      "itemLimitAmount": 1
+    },
+    {
+      "text": "صندوق",
+      "value": 1,
+      "description": "",
+      "option": "يد الحرامي",
+      "excludeSale": true,
       "excludePurchase": false,
       "excludeUsage": false,
       "itemLimitEnabled": false,
@@ -58,32 +36,12 @@
   ],
   "lootTables": [
     {
-      "name": "Rare Chest",
+      "name": "",
       "items": [
         {
-          "option": "Copper Bar",
+          "option": "خشب",
           "amount": 1,
-          "value": 50.0
-        },
-        {
-          "option": "Iron Bar",
-          "amount": 1,
-          "value": 50.0
-        }
-      ]
-    },
-    {
-      "name": "Common Chest",
-      "items": [
-        {
-          "option": "Stick",
-          "amount": 1,
-          "value": 99.0
-        },
-        {
-          "option": "Iron Pickaxe",
-          "amount": 1,
-          "value": 1.0
+          "value": 0.0
         }
       ]
     }
@@ -92,28 +50,15 @@
     {
       "ingredients": [
         {
-          "item": "Iron Bar",
-          "amount": 3
+          "item": "خشب",
+          "amount": 1
         },
         {
-          "item": "Stick",
+          "item": "حديد",
           "amount": 1
         }
       ],
-      "result": "Iron Pickaxe"
-    },
-    {
-      "ingredients": [
-        {
-          "item": "Copper Bar",
-          "amount": 2
-        },
-        {
-          "item": "Stick",
-          "amount": 1
-        }
-      ],
-      "result": "Copper Sword"
+      "result": "صندوق"
     }
   ]
 }
