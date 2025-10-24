@@ -1,4 +1,5 @@
 <script client:load>
+function initLeaderboards() {
   const perPage = 20
   let allData = { points: [], watchtime: [] }
   let filteredData = { points: [], watchtime: [] }
@@ -54,10 +55,9 @@
     const container = containers[id]
     const button = buttons[id]
     const lessButton = lessButtons[id]
-    const children = container.children
     if (indexes[id] > perPage) {
       indexes[id] -= perPage
-      for (let i = 0; i < perPage && children.length > perPage; i++) {
+      for (let i = 0; i < perPage && container.children.length > perPage; i++) {
         container.removeChild(container.lastChild)
       }
     }
@@ -96,7 +96,7 @@
   lessButtons.watchtime?.addEventListener('click', () => removeSegment('watchtime'))
   document.getElementById('search')?.addEventListener('input', e => handleSearch(e.target.value))
 
-  fetch('/tnx-site/api/leaderboard_data.json')
+  fetch('/tnx-site/api/leaderboard_data.json', { cache: 'no-store' })
     .then(res => res.json())
     .then(data => {
       allData = data
@@ -104,4 +104,11 @@
       resetAndRender()
     })
     .catch(err => console.error('Failed to load leaderboard data', err))
+}
+
+document.addEventListener('astro:page-load', () => {
+  requestAnimationFrame(() => {
+    initLeaderboards()
+  })
+})
 </script>
