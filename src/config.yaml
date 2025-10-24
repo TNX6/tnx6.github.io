@@ -3,15 +3,13 @@ site:
   site: 'https://tnx6.github.io/'
   base: '/'
   trailingSlash: false
-
   googleSiteVerificationId: orcPxI47GSa-cRvY11tUe6iGg2IO_RPvnA1q95iEM3M
 
-# Default SEO metadata
 metadata:
   title:
     default: TNX6 Twitch
     template: '%s — AstroWind'
-  description: "\U0001F680 A personal website to show off all relevant infos for my Twitch stream."
+  description: "A personal website to show off all relevant infos for my Twitch stream."
   robots:
     index: true
     follow: true
@@ -19,8 +17,8 @@ metadata:
     site_name: TNX6 Twitch
     images:
       - url: '/assets/images/default.png'
-        width: 1110
-        height: 692
+        width: 1200
+        height: 630
     type: website
 
 i18n:
@@ -31,38 +29,33 @@ apps:
   blog:
     isEnabled: true
     postsPerPage: 6
-
     post:
       isEnabled: true
-      permalink: '/%slug%' # Variables: %slug%, %year%, %month%, %day%, %hour%, %minute%, %second%, %category%
+      permalink: '/%slug%'
       robots:
         index: true
-
     list:
       isEnabled: true
-      pathname: 'blog' # Blog main path, you can change this to "articles" (/articles)
+      pathname: 'blog'
       robots:
         index: true
-
     category:
       isEnabled: true
-      pathname: 'category' # Category main path /category/some-category, you can change this to "group" (/group/some-category)
+      pathname: 'category'
       robots:
         index: true
-
     tag:
       isEnabled: true
-      pathname: 'tag' # Tag main path /tag/some-tag, you can change this to "topics" (/topics/some-category)
+      pathname: 'tag'
       robots:
         index: false
-
     isRelatedPostsEnabled: true
     relatedPostsCount: 4
 
 analytics:
   vendors:
     googleAnalytics:
-      id: null # or "G-XXXXXXXXXX"
+      id: null
 
 ui:
-  theme: 'system' # Values: "system" | "light" | "dark" | "light:only" | "dark:only"
+  theme: 'system'
