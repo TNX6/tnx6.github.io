@@ -14,55 +14,59 @@ const winners = [
 ---
 
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
-  <section class="py-24 px-6 text-white relative overflow-hidden">
+  <section class="py-24 px-6 text-white relative">
 
     <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r 
       from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
       الفائزون
     </h1>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14 max-w-4xl mx-auto">
 
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center">
 
-          <!-- 👑 تاج بدون الخط + بدون تكبير -->
+          <!-- 👑 تاج بين حدود الكارد (بوضعية PERFECT) -->
           <svg 
-            viewBox="0 0 24 24" 
-            class="w-14 h-14 absolute -top-10 z-40 text-[#ffda6a] pointer-events-none"
-            fill="none" 
-            stroke="#ffda6a" 
-            stroke-width="2.3" 
-            stroke-linecap="round" 
+            viewBox="0 0 24 24"
+            class="w-14 h-14 absolute top-[-32px] z-30 text-[#ffda6a] pointer-events-none"
+            fill="none"
+            stroke="#ffda6a"
+            stroke-width="2.3"
+            stroke-linecap="round"
             stroke-linejoin="round"
-            style="filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.35)); background: transparent;"
+            style="filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.35));"
           >
             <path d="M3 10l2.5 2 2.5-4 3 5 3-5 2.5 4 2.5-2v8H3v-8z" />
           </svg>
 
-          <!-- 🟦 الكارد — يكبر عند hover بدون ما يكبر التاج -->
-          <div class="card group w-[220px] h-[260px] bg-black/30 border border-[#c29200]/40 
-                      rounded-2xl shadow-md transition-all duration-300 ease-out
-                      hover:scale-[1.05] hover:shadow-xl
-                      flex flex-col items-center justify-center p-4 relative z-10">
-
-            <div class="w-[130px] h-[130px] rounded-xl overflow-hidden border border-[#c29200]/40 shadow-md mb-3">
+          <!-- 🟦 الكارد (هو اللي يكبر عند hover فقط) -->
+          <div
+            class="group relative w-[260px] h-[330px] border border-[#c29200]/40 
+                   rounded-2xl bg-black/30 shadow-md pt-10
+                   transition-all duration-300 ease-out
+                   hover:scale-[1.06] hover:shadow-2xl"
+          >
+            <!-- الصورة داخل الكارد -->
+            <div class="w-[140px] h-[140px] mx-auto rounded-xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4">
               <img 
                 src={winner.avatar}
+                class="w-full h-full object-cover transition-all duration-300 group-hover:scale-[1.08]"
                 alt={winner.name}
-                class="w-full h-full object-cover"
               />
             </div>
 
-            <!-- Glow خفيف للاسم -->
-            <p class="text-2xl font-bold text-[#ffda6a] tracking-wide"
-               style="text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);">
+            <!-- الاسم -->
+            <p class="text-3xl font-bold text-[#ffda6a] text-center tracking-wide 
+                      transition-all duration-300 group-hover:scale-[1.08]"
+               style="text-shadow: 0 0 6px rgba(255, 215, 0, 0.35);">
               {winner.name}
             </p>
           </div>
 
         </div>
       ))}
+
     </div>
 
   </section>
