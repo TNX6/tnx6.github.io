@@ -25,10 +25,10 @@ const winners = [
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center">
 
-          <!-- التاج ثابت ما عليه أي تكبير -->
+          <!-- 👑 التاج — مرتفع فوق الإطار وثابت 100% -->
           <svg 
             viewBox="0 0 24 24"
-            class="w-14 h-14 absolute -top-9 z-30 text-[#ffda6a]"
+            class="w-14 h-14 absolute -top-14 z-40 text-[#ffda6a]"
             fill="none"
             stroke="#ffda6a"
             stroke-width="2.5"
@@ -39,14 +39,14 @@ const winners = [
             <path d="M3 10l2.5 2 2.5-4 3 5 3-5 2.5 4 2.5-2v8H3v-8z" />
           </svg>
 
-          <!-- الإطار يصغر/يكبر لحاله بدون ما يؤثر على التاج ولا الصورة -->
+          <!-- 🟧 الإطار — هو الوحيد اللي يتحرك -->
           <div
             class="group card relative w-[220px] h-[290px] border border-[#c29200]/40 
                    rounded-2xl bg-black/30 shadow-md pt-10
                    transition-transform duration-300 ease-out
                    hover:scale-[1.06]"
           >
-            <!-- صورة ثابتة ما تتكبر -->
+            <!-- الصورة ثابتة بدون تكبير -->
             <div class="w-[130px] h-[130px] mx-auto rounded-xl overflow-hidden 
                         border border-[#c29200]/40 shadow-md mb-4">
               <img 
