@@ -5,10 +5,15 @@ const winners = [
   {
     name: "Fawaz",
     avatar: "/TEST/assets/images/tnx-min.jpg",
-  }
+    reason: "فاز في مسابقة الطبخ",
+  },
+  {
+    name: "Musaad",
+    avatar: "/TEST/assets/images/default.png",
+    reason: "فاز في التحدي الأسبوعي",
+  },
 ]
 ---
-
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
   <section class="py-24 px-6 text-white">
     
@@ -20,10 +25,13 @@ const winners = [
 
       {winners.map((winner) => (
         <div
-          class="flex flex-col items-center bg-black/30 border border-[#c6a44f]/35 
-                 p-5 rounded-3xl shadow-lg backdrop-blur-sm
+          class="user-card flex flex-col items-center bg-black/30 border border-[#c6a44f]/35 
+                 p-5 rounded-3xl shadow-lg backdrop-blur-sm cursor-pointer
                  w-[240px] h-[300px]
                  transition-transform hover:scale-105 hover:border-[#f7e6ac]/60"
+          data-name={winner.name}
+          data-avatar={winner.avatar}
+          data-reason={winner.reason}
         >
           
           <div class="w-[160px] h-[160px] rounded-2xl overflow-hidden border border-[#c6a44f]/25 mb-4">
@@ -43,6 +51,54 @@ const winners = [
       ))}
 
     </div>
-
   </section>
+
+  <!-- 🟡 Popup -->
+  <div id="popup"
+       class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+    
+    <div class="bg-black/60 border border-[#c6a44f]/40 rounded-2xl p-6 w-[350px] 
+                shadow-[0_0_20px_rgba(198,164,79,0.4)] text-center backdrop-blur-md">
+
+      <img id="popupImg" class="w-[140px] h-[140px] rounded-xl mx-auto mb-4 border border-[#c6a44f]/40 object-cover">
+
+      <h2 id="popupName" class="text-3xl font-bold text-[#ffda6a] mb-3"></h2>
+
+      <p id="popupReason" class="text-lg text-[#f7e6ac] mb-6"></p>
+
+      <button id="closePopup"
+              class="px-5 py-2 rounded-xl bg-[#c29200]/60 hover:bg-[#ffda6a]/80 
+                     text-black font-bold transition">
+        إغلاق
+      </button>
+
+    </div>
+  </div>
+
+
+  <script is:inline>
+    const cards = document.querySelectorAll('.user-card');
+    const popup = document.getElementById('popup');
+    const popupImg = document.getElementById('popupImg');
+    const popupName = document.getElementById('popupName');
+    const popupReason = document.getElementById('popupReason');
+    const closePopup = document.getElementById('closePopup');
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        popupImg.src = card.dataset.avatar;
+        popupName.textContent = card.dataset.name;
+        popupReason.textContent = card.dataset.reason;
+
+        popup.classList.remove('hidden');
+        popup.classList.add('flex');
+      });
+    });
+
+    closePopup.onclick = () => popup.classList.add('hidden');
+    popup.onclick = (e) => {
+      if (e.target === popup) popup.classList.add('hidden');
+    };
+  </script>
+
 </Layout>
