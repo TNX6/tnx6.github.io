@@ -21,11 +21,11 @@ const winners = [
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center">
 
-          <!-- 👑 التاج -->
+          <!-- 👑 التاج فوق الخط مباشرة -->
           <svg 
             viewBox="0 0 24 24"
-            class="crown w-10 h-10 absolute -top-[22px] z-30 text-[#ffda6a]
-                   transition-all duration-300"
+            class="crown w-10 h-10 absolute -top-[18px] z-30 text-[#ffda6a]
+                   transition-all duration-300 pointer-events-none"
             fill="none"
             stroke="#ffda6a"
             stroke-width="2.2"
@@ -36,43 +36,52 @@ const winners = [
             <path d="M5 16h14v-6l-3 2-3-5-3 5-3-2v6z" />
           </svg>
 
-          <!-- 🟧 الإطار (نفس حجم king بالضبط) -->
+          <!-- 🟧 الإطار (180 × 250 مثل king) -->
           <div
-            class="group card relative w-[180px] h-[250px] border border-[#c29200]/35 
+            class="card relative w-[180px] h-[250px] border border-[#c29200]/35 
                    rounded-[26px] bg-black/25 shadow-lg pt-10
-                   transition-all duration-300 hover:scale-[1.05]"
+                   transition-transform duration-300 hover:scale-[1.05]
+                   flex flex-col items-center"
           >
-            <!-- الصورة الداخلية -->
-            <div class="w-[120px] h-[120px] mx-auto rounded-2xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4">
+            <!-- الصورة + الإطار الداخلي -->
+            <div class="inner-img-wrapper w-[120px] h-[120px] rounded-2xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4 transition-transform duration-300">
               <img 
                 src={winner.avatar}
-                class="w-full h-full object-cover transition-all duration-300 group-hover:scale-[1.07]"
+                class="w-full h-full object-cover"
                 alt={winner.name}
               />
             </div>
 
             <!-- الاسم -->
-            <p class="text-xl font-bold text-[#ffda6a] text-center tracking-wide"
+            <p class="text-xl font-bold text-[#ffda6a] tracking-wide text-center"
                style="text-shadow: 0 0 6px rgba(255, 215, 0, 0.35);">
               {winner.name}
             </p>
           </div>
+
         </div>
       ))}
 
     </div>
   </section>
 
-  <!-- تكبير التاج بدون تحريكه -->
+  <!-- 🔥 تكبير الصورة + الإطار معًا -->
   <script>
     document.querySelectorAll(".card").forEach((card) => {
+
+      const img = card.querySelector(".inner-img-wrapper")
       const crown = card.parentElement.querySelector(".crown")
+
       card.addEventListener("mouseenter", () => {
+        img.style.transform = "scale(1.05)"
         crown.style.transform = "scale(1.1)"
       })
+
       card.addEventListener("mouseleave", () => {
+        img.style.transform = "scale(1)"
         crown.style.transform = "scale(1)"
       })
+
     })
   </script>
 </Layout>
