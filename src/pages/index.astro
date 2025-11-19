@@ -8,14 +8,8 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-
-  <!-- Divider الذهبي تحت الهيدر -->
-  <div class="w-full h-[1px] bg-gradient-to-r from-[#c6a44f]/40 via-[#ffda6a]/60 to-transparent mb-6"></div>
-
-  <!-- Section الرئيسي -->
-  <section class="relative text-center text-white py-12 px-6 bg-gradient-to-b from-black/60 to-transparent">
+  <section class="relative text-center text-white py-24 px-6 bg-gradient-to-b from-black/60 to-transparent">
     <div class="max-w-5xl mx-auto">
-
       <div class="flex items-center justify-center gap-3 mb-6">
         <iconify-icon icon="tabler:brand-twitch" class="text-[#a67c00] text-5xl"></iconify-icon>
         <h1 class="text-5xl font-extrabold tracking-wide bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
@@ -23,12 +17,8 @@ const metadata = {
         </h1>
       </div>
 
-      <p class="text-lg text-gray-200 mb-4">
-        اهلًا اسمي فواز تقدر تناديني تنكس، ابث للمتعة وتضيع الوقت.
-      </p>
-
       <p class="text-lg text-gray-200 mb-10">
-        أبحث عن المتعة، الضحك، وتحدي المجتمع… وأبث يوميًا.
+        أبحث عن المتعة، الضحك، وتحديات المجتمع… وأبث يوميًا
       </p>
 
       <div class="flex flex-wrap justify-center gap-4">
@@ -49,8 +39,7 @@ const metadata = {
         </a>
       </div>
 
-      <!-- Stream Box محسّن -->
-      <div class="relative w-full max-w-4xl mx-auto aspect-video rounded-2xl overflow-hidden shadow-xl mt-12 border border-[#c29200]/30 bg-black/40 backdrop-blur-sm">
+      <div class="relative w-full max-w-4xl mx-auto aspect-video rounded-2xl overflow-hidden shadow-2xl mt-16 border border-[#c29200]/40">
         <iframe
           src="https://player.twitch.tv/?channel=tnx_6&parent=tnx6.xyz"
           allowfullscreen
@@ -60,17 +49,15 @@ const metadata = {
           height="100%"
         ></iframe>
       </div>
-
     </div>
   </section>
 
-
-  <!-- ====== قسم ABOUT ME (رجّعته مثل ما كان بدون أي تغيير) ====== -->
   <section class="relative py-24 px-6 text-white bg-black/70">
     <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
 
+      <!-- الصورة الجديدة -->
       <img
-        src="https://static-cdn.jtvnw.net/jtv_user_pictures/b85ce088-8b2a-4efb-b165-dc2b25481f0f-profile_image-300x300.png"
+        src="/assets/images/tnx-min.jpg"
         alt="TNX6 Twitch Avatar"
         class="rounded-2xl w-full max-w-sm mx-auto border border-[#c29200]/40 shadow-lg"
         width="300"
@@ -84,7 +71,7 @@ const metadata = {
         </h2>
 
         <p class="text-gray-200 mb-8 text-lg leading-relaxed">
-          <strong class="text-[#ffda6a]">TNX</strong> is the best streamer Twitch has ever seen — 
+          <strong class="text-[#ffda6a]">TNX</strong> is the best streamer Twitch has ever seen —
           insanely skilled, handsome and loved by everyone.
         </p>
 
@@ -104,10 +91,8 @@ const metadata = {
             You better join the community NOW or else...
           </li>
         </ul>
-
       </div>
 
     </div>
   </section>
-
 </Layout>
