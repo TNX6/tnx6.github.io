@@ -7,7 +7,6 @@ const base = SITE.base
 const makeHref = (p) => `${base}${trimSlash(p)}`.replace(/\/+$/, '/')
 const currentUrl = new URL(Astro.url).pathname
 
-// القائمة
 const nav = [
   { text: 'الرئيسية', path: '' },
   { text: 'الأوامر', path: 'commands' },
@@ -28,7 +27,7 @@ const nav = [
       <span>TNX</span>
     </a>
 
-    <!-- زر القائمة (ظاهر على كل المقاسات) -->
+    <!-- Menu Button (Always Visible) -->
     <button
       class="px-4 py-2 rounded-md border border-[#c6a44f]/40 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition"
       onclick="document.getElementById('dropdownMenu').classList.toggle('hidden')"
@@ -41,10 +40,14 @@ const nav = [
   <div id="dropdownMenu" class="hidden px-6 pb-4 space-y-3">
     {nav.map(({ text, path }) => {
       const href = makeHref(path)
+      const isActive = currentUrl === href
       return (
         <a
           href={href}
-          class="block w-full text-left px-4 py-3 rounded-lg bg-black/40 border border-[#c6a44f]/30 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition"
+          class:list={[
+            "block w-full text-center px-4 py-3 rounded-lg bg-black/40 border border-[#c6a44f]/30 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition",
+            { "bg-[#c6a44f]/20": isActive },
+          ]}
         >
           {text}
         </a>
