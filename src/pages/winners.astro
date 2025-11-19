@@ -12,7 +12,6 @@ const winners = [
   },
 ]
 ---
-
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
 
   <section class="py-24 px-6 text-white">
@@ -25,23 +24,31 @@ const winners = [
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center mt-10">
 
-          <!-- 🔥 التاج الصحيح -->
+          <!-- 👑 التاج الجديد النظيف -->
           <svg 
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.2"
-            stroke-linecap="round"
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            stroke-width="2.2" 
+            stroke-linecap="round" 
             stroke-linejoin="round"
-            class="text-[#ffda6a] absolute -top-[18px] left-1/2 -translate-x-1/2 
-                   w-12 h-12 drop-shadow-[0_0_6px_rgba(255,215,0,0.4)] z-50">
-            <path d="M5 16h14v-6l-3 2-3-5-3 5-3-2v6z" />
+            class="text-[#ffda6a] w-12 h-12 absolute 
+                   -top-[28px] 
+                   left-1/2 -translate-x-1/2 
+                   drop-shadow-[0_0_6px_rgba(255,215,0,0.4)] 
+                   z-50 pointer-events-none">
+            <path d="M4 16h16l-2-8-4 3-2-5-2 5-4-3-2 8z" />
           </svg>
 
+          <!-- 📦 الإطار -->
           <div 
-            class="card relative w-[180px] h-[250px] border border-[#c29200]/35 rounded-[26px] bg-black/25 shadow-lg pt-10 transition-transform duration-300 hover:scale-[1.05] flex flex-col items-center">
+            class="card relative w-[180px] h-[250px] border border-[#c29200]/35 
+                   rounded-[26px] bg-black/25 shadow-lg pt-10
+                   transition-transform duration-300 hover:scale-[1.05]
+                   flex flex-col items-center">
 
+            <!-- 🖼️ الصورة -->
             <div class="inner-img-wrapper w-[120px] h-[120px] rounded-2xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4 transition-transform duration-300">
               <img 
                 src={winner.avatar} 
@@ -50,7 +57,9 @@ const winners = [
               />
             </div>
 
-            <p class="text-xl font-bold text-[#ffda6a] tracking-wide text-center" style="text-shadow: 0 0 6px rgba(255,215,0,0.35);">
+            <!-- ✨ الاسم -->
+            <p class="text-xl font-bold text-[#ffda6a] tracking-wide text-center"
+               style="text-shadow: 0 0 6px rgba(255,215,0,0.35);">
               {winner.name}
             </p>
 
@@ -62,16 +71,17 @@ const winners = [
     </div>
   </section>
 
+  <!-- 🔥 تكبير الصورة مع الإطار -->
   <script>
     document.querySelectorAll(".card").forEach((card) => {
       const img = card.querySelector(".inner-img-wrapper")
-      if(img && img instanceof HTMLElement) {
-          card.addEventListener("mouseenter", () => {
-            img.style.transform = "scale(1.05)"
-          })
-          card.addEventListener("mouseleave", () => {
-            img.style.transform = "scale(1)"
-          })
+      if(img) {
+        card.addEventListener("mouseenter", () => {
+          img.style.transform = "scale(1.05)"
+        })
+        card.addEventListener("mouseleave", () => {
+          img.style.transform = "scale(1)"
+        })
       }
     })
   </script>
