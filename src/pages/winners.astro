@@ -18,41 +18,39 @@ const winners = [
 
     <div class="max-w-5xl mx-auto flex justify-center">
 
-      <div class="relative flex flex-col items-center">
+      {winners.map((winner) => (
+        <div class="relative flex flex-col items-center">
 
-        <!-- التاج فوق الإطار تمامًا -->
-        <iconify-icon
-          icon="ph:crown-simple-bold"
-          class="text-[#ffda6a] w-12 h-12 absolute 
-                 -top-[28px]    /* يرفع التاج فوق الإطار */
-                 left-1/2 -translate-x-1/2
-                 drop-shadow-[0_0_6px_rgba(255,215,0,0.4)] z-20">
-        </iconify-icon>
+          <iconify-icon
+            icon="ph:crown-simple-bold"
+            class="text-[#ffda6a] w-12 h-12 absolute 
+                   -top-[28px]
+                   left-1/2 -translate-x-1/2
+                   drop-shadow-[0_0_6px_rgba(255,215,0,0.4)] z-20">
+          </iconify-icon>
 
-        <!-- الإطار (مصغّر) -->
-        <div
-          class="w-[240px] h-[300px] border border-[#c29200]/40 rounded-[26px]
-                 bg-black/20 backdrop-blur-sm
-                 flex flex-col items-center justify-start pt-12 relative"
-        >
-          <!-- صورة الفائز -->
-          <div class="w-[150px] h-[150px] rounded-2xl overflow-hidden border border-[#c29200]/40 shadow-md">
-            <img
-              src={winner.avatar}
-              alt={winner.name}
-              class="w-full h-full object-cover"
-            />
+          <div
+            class="w-[240px] h-[300px] border border-[#c29200]/40 rounded-[26px]
+                   bg-black/20 backdrop-blur-sm
+                   flex flex-col items-center justify-start pt-12 relative"
+          >
+            <div class="w-[150px] h-[150px] rounded-2xl overflow-hidden border border-[#c29200]/40 shadow-md">
+              <img
+                src={winner.avatar}
+                alt={winner.name}
+                class="w-full h-full object-cover"
+              />
+            </div>
+
+            <p class="mt-6 text-2xl font-bold text-[#ffda6a] tracking-wide 
+                      drop-shadow-[0_0_6px_rgba(255,215,0,0.4)]">
+              {winner.name}
+            </p>
+
           </div>
 
-          <!-- الاسم -->
-          <p class="mt-6 text-2xl font-bold text-[#ffda6a] tracking-wide 
-                    drop-shadow-[0_0_6px_rgba(255,215,0,0.4)]">
-            {winner.name}
-          </p>
-
         </div>
-
-      </div>
+      ))}
 
     </div>
   </section>
