@@ -23,14 +23,27 @@ const winners = [
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
 
       {winners.map((winner) => (
-        <div class="flex flex-col items-center">
+        <div class="flex flex-col items-center relative">
 
-          <!-- الكارد نفسه مثل البدج -->
+          <!-- تاج مع Glow خفيف -->
+          <svg 
+            viewBox="0 0 24 24" 
+            class="w-12 h-12 absolute -top-10 text-[#ffda6a]"
+            fill="none" 
+            stroke="#ffda6a" 
+            stroke-width="2" 
+            stroke-linecap="round" 
+            stroke-linejoin="round"
+            style="filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.4));"
+          >
+            <path d="M3 10l2.5 2 2.5-4 3 5 3-5 2.5 4 2.5-2v8H3v-8z" />
+          </svg>
+
+          <!-- الكارد -->
           <div class="w-[180px] h-[220px] bg-black/30 border border-[#c29200]/40 rounded-2xl
                       shadow-md hover:shadow-lg transition-all duration-300 flex flex-col
                       items-center justify-center p-4">
 
-            <!-- الصورة (تصغير وإطار) -->
             <div class="w-[110px] h-[110px] rounded-xl overflow-hidden border border-[#c29200]/40 shadow-md mb-3">
               <img 
                 src={winner.avatar}
@@ -39,8 +52,9 @@ const winners = [
               />
             </div>
 
-            <!-- الاسم -->
-            <p class="text-xl font-bold text-[#ffda6a] tracking-wide">
+            <!-- الاسم مع glow خفيف -->
+            <p class="text-xl font-bold text-[#ffda6a] tracking-wide"
+               style="text-shadow: 0 0 6px rgba(255, 215, 0, 0.4);">
               {winner.name}
             </p>
           </div>
