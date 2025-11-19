@@ -15,7 +15,6 @@ const winners = [
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
 
   <style>
-    /* الخلفية الشفافة عند فتح البوب أب */
     #winner-overlay {
       position: fixed;
       inset: 0;
@@ -25,9 +24,9 @@ const winners = [
       align-items: center;
       justify-content: center;
       z-index: 999;
+      cursor: pointer; /* علشان تقدر تضغط برا وتسكر */
     }
 
-    /* بطاقة البوب أب الوسطية */
     .winner-popup {
       background: #000000cc;
       border: 2px solid #c6a44f;
@@ -38,6 +37,7 @@ const winners = [
       color: white;
       box-shadow: 0 0 25px rgba(255,215,0,0.4);
       animation: popupFade 0.3s ease;
+      cursor: default;
     }
 
     @keyframes popupFade {
@@ -45,14 +45,12 @@ const winners = [
       to   { opacity: 1; transform: scale(1); }
     }
 
-    /* تأثير الضغط على البطاقة */
     .card:active {
       animation: cardPress 0.15s ease;
     }
-
     @keyframes cardPress {
-      0%   { transform: scale(1); box-shadow: 0 0 12px rgba(255,215,0,0.4); }
-      50%  { transform: scale(0.96); box-shadow: 0 0 20px rgba(255,215,0,0.6); }
+      0%   { transform: scale(1); }
+      50%  { transform: scale(0.96); }
       100% { transform: scale(1); }
     }
   </style>
@@ -73,6 +71,8 @@ const winners = [
                    rounded-2xl bg-black/30 shadow-md pt-10
                    hover:scale-[1.06] transition-all duration-300 ease-out
                    hover:shadow-[0_0_25px_rgba(255,215,0,0.25)] cursor-pointer"
+            data-name={winner.name}
+            data-avatar={winner.avatar}
           >
             <div class="w-[150px] h-[150px] mx-auto rounded-xl overflow-hidden 
                         border border-[#c29200]/40 shadow-md mb-4">
@@ -97,31 +97,45 @@ const winners = [
 
   <!-- البوب أب -->
   <div id="winner-overlay">
-    <div class="winner-popup">
-      <h2 id="winner-name" class="text-2xl font-bold text-[#ffda6a] mb-4"></h2>
-      <p class="text-lg">فاز في مسابقة الطبخ 🎉</p>
+    <div class="winner-popup" id="winner-popup">
+      <img id="popup-avatar" class="w-[120px] h-[120px] rounded-xl mx-auto mb-4 border border-[#c6a44f]/50 shadow-md" />
+      <h2 id="popup-name" class="text-2xl font-bold text-[#ffda6a] mb-4"></h2>
+      <p class="text-lg mb-4">فاز في مسابقة الطبخ 🎉</p>
 
       <button 
         onclick="closeWinnerPopup()" 
-        class="mt-6 px-4 py-2 bg-[#c6a44f]/30 border border-[#c6a44f]/40 rounded-xl hover:bg-[#c6a44f]/40">
+        class="mt-2 px-4 py-2 bg-[#c6a44f]/30 border border-[#c6a44f]/40 rounded-xl hover:bg-[#c6a44f]/40">
         إغلاق
       </button>
     </div>
   </div>
 
   <script>
+    const overlay = document.getElementById("winner-overlay");
+    const popup = document.getElementById("winner-popup");
+
     document.querySelectorAll(".card").forEach(card => {
       card.addEventListener("click", () => {
-        const name = card.querySelector("p").innerText;
+        const name = card.dataset.name;
+        const avatar = card.dataset.avatar;
 
-        document.getElementById("winner-name").innerText = name;
-        document.getElementById("winner-overlay").style.display = "flex";
+        document.getElementById("popup-name").innerText = name;
+        document.getElementById("popup-avatar").src = avatar;
+
+        overlay.style.display = "flex";
       });
     });
 
     function closeWinnerPopup() {
-      document.getElementById("winner-overlay").style.display = "none";
+      overlay.style.display = "none";
     }
+
+    // إغلاق عند الضغط خارج البوب أب
+    overlay.addEventListener("click", (e) => {
+      if (!popup.contains(e.target)) {
+        closeWinnerPopup();
+      }
+    });
   </script>
 
 </Layout>
