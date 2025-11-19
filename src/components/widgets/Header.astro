@@ -1,50 +1,138 @@
 ---
 import { Icon } from 'astro-icon/components'
-import ToggleMenu from '~/components/common/ToggleMenu.astro'
+import { SITE } from 'astrowind:config'
 import { trimSlash } from '~/utils/permalinks'
 
-const base = '/'
+const base = SITE.base
 const makeHref = (p) => `${base}${trimSlash(p)}`.replace(/\/+$/, '/')
 const currentUrl = new URL(Astro.url).pathname
 
 const nav = [
-  { text: 'Home', path: '' },
-  { text: 'Commands', path: 'commands' },
-  { text: 'Leaderboards', path: 'leaderboards' },
-  { text: 'Badges', path: 'badges' },
-  { text: 'Items', path: 'items' },
-  { text: 'Challenges', path: 'challenges' },
+  { text: 'الرئيسية', path: '' },
+  { text: 'الأوامر', path: 'commands' },
+  { text: 'الترتيب', path: 'leaderboards' },
+  { text: 'البدجات', path: 'badges' },
+  { text: 'الأغراض', path: 'items' },
+  { text: 'التحديات', path: 'challenges' },
+  { text: 'الفائزين', path: 'winners' },
 ]
 ---
 
+<style>
+  /* فتح القائمة */
+  @keyframes dropdownSlide {
+    0% {
+      opacity: 0;
+      transform: translateY(-12px);
+      filter: blur(4px);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(4px);
+      filter: blur(0px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  .dropdown-animate {
+    animation: dropdownSlide 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  }
+
+  /* إغلاق القائمة */
+  @keyframes dropdownClose {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0px);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-12px);
+      filter: blur(4px);
+    }
+  }
+  .dropdown-close {
+    animation: dropdownClose 0.28s ease-out forwards;
+  }
+
+  /* Glow + Pulse */
+  @keyframes pulseGlow {
+    0% {
+      box-shadow: 0 0 6px rgba(198,164,79,0.25);
+    }
+    50% {
+      box-shadow: 0 0 14px rgba(198,164,79,0.55);
+    }
+    100% {
+      box-shadow: 0 0 6px rgba(198,164,79,0.25);
+    }
+  }
+
+  .menu-glow {
+    transition: all 0.25s ease;
+  }
+
+  .menu-pulse:hover {
+    animation: pulseGlow 1.2s ease-in-out infinite;
+    border-color: #c6a44f !important;
+  }
+</style>
+
 <header class="top-0 z-40 relative w-full bg-[#0a0a0c]/95 border-b border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.3)] backdrop-blur-md">
   <div class="max-w-7xl mx-auto px-6 flex items-center justify-between py-4">
+
+    <!-- Logo -->
     <a href={makeHref('')} class="flex items-center space-x-3 text-[#d5b76c] font-extrabold text-2xl tracking-wide drop-shadow-[0_0_10px_rgba(198,164,79,0.6)]">
       <Icon name="tabler:brand-twitch" class="w-7 h-7 text-[#c6a44f]" />
       <span>TNX</span>
     </a>
 
-    <nav class="hidden md:flex space-x-8 text-lg font-semibold uppercase tracking-wider">
-      {nav.map(({ text, path }) => {
-        const href = makeHref(path)
-        const isActive = currentUrl === href
-        return (
-          <a
-            href={href}
-            aria-current={isActive ? 'page' : undefined}
-            class:list={[
-              'relative transition-all duration-200 text-[#c6a44f] hover:text-[#f0d68c] drop-shadow-[0_0_6px_rgba(198,164,79,0.4)]',
-              { 'text-[#f7e6ac] after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-[2px] after:bg-[#f7e6ac]': isActive },
-            ]}
-          >
-            {text}
-          </a>
-        )
-      })}
-    </nav>
+    <!-- زر القائمة -->
+    <button
+      class="menu-glow menu-pulse flex items-center gap-2 px-4 py-2 rounded-md border border-[#c6a44f]/40 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition"
+      onclick="
+        const menu = document.getElementById('dropdownMenu');
+        const isHidden = menu.classList.contains('hidden');
 
-    <div class="md:hidden text-[#c6a44f]">
-      <ToggleMenu />
-    </div>
+        if (isHidden) {
+          // فتح القائمة
+          menu.classList.remove('dropdown-close');
+          menu.classList.remove('hidden');
+          menu.classList.add('dropdown-animate');
+          setTimeout(() => menu.classList.remove('dropdown-animate'), 400);
+        } else {
+          // إغلاق القائمة
+          menu.classList.remove('dropdown-animate');
+          menu.classList.add('dropdown-close');
+          setTimeout(() => {
+            menu.classList.add('hidden');
+            menu.classList.remove('dropdown-close');
+          }, 280);
+        }
+      "
+    >
+      <span style="font-size: 20px;">☰</span>
+      <span>القائمة</span>
+    </button>
+  </div>
+
+  <!-- القائمة المنسدلة -->
+  <div id="dropdownMenu" class="hidden px-6 pb-4 space-y-3">
+    {nav.map(({ text, path }) => {
+      const href = makeHref(path)
+      const isActive = currentUrl === href
+      return (
+        <a
+          href={href}
+          class:list={[
+            "menu-glow menu-pulse block w-full text-center px-4 py-3 rounded-lg bg-black/40 border border-[#c6a44f]/30 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition",
+            { "bg-[#c6a44f]/20": isActive },
+          ]}
+        >
+          {text}
+        </a>
+      )
+    })}
   </div>
 </header>
