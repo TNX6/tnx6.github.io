@@ -25,15 +25,15 @@ const winners = [
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center">
 
-          {/* التاج */}
+          <!-- التاج -->
           <iconify-icon 
             icon="ph:crown-simple-bold"
             class="text-[#ffda6a] w-12 h-12 absolute -top-[22px] z-30 
                    drop-shadow-[0_0_6px_rgba(255,215,0,0.4)]
                    transition-all duration-300"
-          />
+          ></iconify-icon>
 
-          {/* الكارد */}
+          <!-- الكارد -->
           <div 
             class="group w-full max-w-[150px] aspect-square bg-black/40 border border-[#c29200]/40 
                    rounded-2xl overflow-hidden shadow-xl flex items-center justify-center 
@@ -46,7 +46,7 @@ const winners = [
             />
           </div>
 
-          {/* الاسم */}
+          <!-- الاسم -->
           <p class="mt-4 text-xl font-bold text-[#ffda6a] tracking-wide 
                     drop-shadow-[0_0_6px_rgba(255,215,0,0.4)]">
             {winner.name}
