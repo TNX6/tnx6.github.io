@@ -10,7 +10,7 @@ const winners = [
     name: "Musaad",
     avatar: "/TEST/assets/images/default.png",
   },
-]
+];
 ---
 
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
@@ -22,7 +22,7 @@ const winners = [
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-16 max-w-5xl mx-auto">
 
-      {winners.map((winner) => (
+      {winners.map(winner => (
         <div class="relative flex flex-col items-center">
 
           <!-- التاج -->
@@ -48,10 +48,10 @@ const winners = [
 
           <!-- الاسم -->
           <p class="mt-4 text-xl font-bold text-[#ffda6a] tracking-wide 
-                    drop-shadow-[0_0_6px_rgba(255,215,0,0.4)]">
+                    drop-shadow-[0_0_6px_rgba(255,215,0,0.4)]"
+          >
             {winner.name}
           </p>
-
         </div>
       ))}
 
