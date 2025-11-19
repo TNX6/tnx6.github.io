@@ -1,0 +1,185 @@
+---
+// src/pages/winners.astro
+import Layout from '~/layouts/PageLayout.astro'
+
+const winners = [
+  {
+    name: "anyang_chii",
+    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/bb394a1e-0961-43e8-a840-aeabd0fffe0d-profile_image-300x300.png",
+    reason: "فازت في مسابقة الطبخ 👨‍🍳",
+  },
+]
+---
+<Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
+  <section class="py-24 px-6 text-white">
+    <h1
+      class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(198,164,79,0.5)]"
+    >
+      الفائزون
+    </h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 max-w-4xl mx-auto">
+      {winners.map((winner) => (
+        <div
+          class="user-card group flex flex-col items-center bg-black/30 border border-transparent 
+                 p-5 rounded-3xl shadow-lg backdrop-blur-sm cursor-pointer
+                 w-[240px] h-[300px]
+                 transition-transform will-change-transform hover:scale-105"
+          data-name={winner.name}
+          data-avatar={winner.avatar}
+          data-reason={winner.reason}
+          role="button"
+          tabindex="0"
+        >
+          <div class="w-[160px] h-[160px] rounded-2xl overflow-hidden border border-[#c6a44f]/25 mb-4">
+            <img 
+              src={winner.avatar}
+              class="w-full h-full object-cover"
+              alt={winner.name}
+              loading="lazy"
+              referrerpolicy="no-referrer"
+            />
+          </div>
+
+          <p
+            class="winner-name text-xl font-bold text-[#f7e6ac] text-center tracking-wide"
+            style="text-shadow: 0 0 6px rgba(255,215,0,0.35);"
+          >
+            {winner.name}
+          </p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Popup -->
+  <div
+    id="popup"
+    class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50"
+    aria-hidden="true"
+  >
+    <div
+      id="popupInner"
+      class="popup-inner bg-black/60 border border-[#c6a44f]/40 rounded-2xl p-6 w-[350px] 
+             shadow-[0_0_20px_rgba(198,164,79,0.4)] text-center backdrop-blur-md"
+    >
+      <img
+        id="popupImg"
+        class="w-[140px] h-[140px] rounded-xl mx-auto mb-4 border border-[#c6a44f]/40 object-cover"
+        alt=""
+      />
+
+      <h2 id="popupName" class="text-3xl font-bold text-[#ffda6a] mb-3"></h2>
+      <p id="popupReason" class="text-lg text-[#f7e6ac] mb-6"></p>
+
+      <button
+        id="closePopup"
+        class="px-5 py-2 rounded-xl bg-[#c29200]/60 hover:bg-[#ffda6a]/80 
+               text-black font-bold transition"
+        type="button"
+      >
+        إغلاق
+      </button>
+    </div>
+  </div>
+
+  <style is:global>
+    .user-card {
+      position: relative;
+      isolation: isolate;
+      animation: fadeScale 400ms ease both;
+    }
+    .user-card::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      padding: 2px;
+      border-radius: 1.5rem;
+      background: conic-gradient(
+        from 0deg,
+        #ffda6a,
+        #c29200,
+        #c6a44f,
+        #ffda6a,
+        #c29200
+      );
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: -1;
+      transform: none; /* ثابت بلا دوران */
+    }
+
+    .user-card:hover {
+      box-shadow:
+        0 0 22px rgba(198, 164, 79, 0.55),
+        0 0 44px rgba(198, 164, 79, 0.35);
+    }
+
+    .user-card:hover .winner-name {
+      animation: gentleBounce 650ms cubic-bezier(.34,.97,.64,1.02) 1;
+    }
+
+    .popup-inner.animate-in { animation: fadeScale 350ms ease both; }
+
+    @keyframes fadeScale {
+      from { opacity: 0; transform: scale(.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes gentleBounce {
+      0%   { transform: translateY(0); }
+      35%  { transform: translateY(-6px); }
+      60%  { transform: translateY(0); }
+      80%  { transform: translateY(-2px); }
+      100% { transform: translateY(0); }
+    }
+  </style>
+
+  <script is:inline>
+    const cards = document.querySelectorAll('.user-card');
+    const popup = document.getElementById('popup');
+    const popupInner = document.getElementById('popupInner');
+    const popupImg = document.getElementById('popupImg');
+    const popupName = document.getElementById('popupName');
+    const popupReason = document.getElementById('popupReason');
+    const closePopup = document.getElementById('closePopup');
+
+    const openPopup = (name, avatar, reason) => {
+      popupImg.src = avatar;
+      popupImg.alt = name;
+      popupName.textContent = name;
+      popupReason.textContent = reason;
+
+      popup.classList.remove('hidden');
+      popup.classList.add('flex');
+      popup.setAttribute('aria-hidden', 'false');
+
+      popupInner.classList.remove('animate-in');
+      void popupInner.offsetWidth;
+      popupInner.classList.add('animate-in');
+    };
+
+    const close = () => {
+      popup.classList.remove('flex');
+      popup.classList.add('hidden');
+      popup.setAttribute('aria-hidden', 'true');
+      popupInner.classList.remove('animate-in');
+    };
+
+    cards.forEach(card => {
+      const { name, avatar, reason } = card.dataset;
+      card.addEventListener('click', () => openPopup(name, avatar, reason));
+      card.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') openPopup(name, avatar, reason);
+      });
+    });
+
+    closePopup.addEventListener('click', close);
+    popup.addEventListener('click', (e) => { if (e.target === popup) close(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  </script>
+</Layout>
