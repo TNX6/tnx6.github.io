@@ -25,10 +25,11 @@ const winners = [
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center">
 
-          <!-- 👑 التاج — مرتفع فوق الإطار وثابت 100% -->
+          <!-- التاج -->
           <svg 
             viewBox="0 0 24 24"
-            class="w-14 h-14 absolute -top-14 z-40 text-[#ffda6a]"
+            class="crown w-14 h-14 absolute -top-10 z-40 text-[#ffda6a]
+                   transition-all duration-300"
             fill="none"
             stroke="#ffda6a"
             stroke-width="2.5"
@@ -39,16 +40,17 @@ const winners = [
             <path d="M3 10l2.5 2 2.5-4 3 5 3-5 2.5 4 2.5-2v8H3v-8z" />
           </svg>
 
-          <!-- 🟧 الإطار — هو الوحيد اللي يتحرك -->
+          <!-- الإطار -->
           <div
             class="group card relative w-[220px] h-[290px] border border-[#c29200]/40 
                    rounded-2xl bg-black/30 shadow-md pt-10
-                   transition-transform duration-300 ease-out
-                   hover:scale-[1.06]"
+                   transition-all duration-300 ease-out
+                   hover:scale-[1.04]
+                   hover:border-[#ffda6a]/80
+                   hover:shadow-[0_0_25px_rgba(255,218,106,0.35)]"
           >
-            <!-- الصورة ثابتة بدون تكبير -->
-            <div class="w-[130px] h-[130px] mx-auto rounded-xl overflow-hidden 
-                        border border-[#c29200]/40 shadow-md mb-4">
+            <!-- الصورة -->
+            <div class="w-[140px] h-[140px] mx-auto rounded-xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4">
               <img 
                 src={winner.avatar}
                 class="w-full h-full object-cover"
@@ -56,8 +58,9 @@ const winners = [
               />
             </div>
 
+            <!-- الاسم -->
             <p class="text-2xl font-bold text-[#ffda6a] text-center tracking-wide"
-               style="text-shadow: 0 0 6px rgba(255,215,0,0.35);">
+               style="text-shadow: 0 0 6px rgba(255, 215, 0, 0.35);">
               {winner.name}
             </p>
           </div>
