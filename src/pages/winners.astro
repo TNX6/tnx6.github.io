@@ -13,8 +13,8 @@ const winners = [
 ]
 ---
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
-  <section class="py-24 px-6 text-white">
 
+  <section class="py-24 px-6 text-white">
     <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r 
       from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
       الفائزون
@@ -25,11 +25,11 @@ const winners = [
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center">
 
-          <!-- التاج -->
+          <!-- 👑 التاج فوق الإطار تمامًا وثابت -->
           <svg 
             viewBox="0 0 24 24"
-            class="crown w-14 h-14 absolute -top-10 z-40 text-[#ffda6a]
-                   transition-all duration-300"
+            class="crown w-14 h-14 absolute -top-9 left-1/2 -translate-x-1/2 
+                   z-40 text-[#ffda6a] transition-all duration-300 pointer-events-none"
             fill="none"
             stroke="#ffda6a"
             stroke-width="2.5"
@@ -40,17 +40,16 @@ const winners = [
             <path d="M3 10l2.5 2 2.5-4 3 5 3-5 2.5 4 2.5-2v8H3v-8z" />
           </svg>
 
-          <!-- الإطار -->
+          <!-- 🟧 الإطار الأساسي + glow عند الهوفر -->
           <div
-            class="group card relative w-[220px] h-[290px] border border-[#c29200]/40 
+            class="card group relative w-[260px] h-[330px] border border-[#c29200]/40 
                    rounded-2xl bg-black/30 shadow-md pt-10
                    transition-all duration-300 ease-out
-                   hover:scale-[1.04]
-                   hover:border-[#ffda6a]/80
-                   hover:shadow-[0_0_25px_rgba(255,218,106,0.35)]"
+                   hover:scale-[1.06] hover:shadow-[0_0_15px_rgba(255,215,0,0.45)]"
           >
-            <!-- الصورة -->
-            <div class="w-[140px] h-[140px] mx-auto rounded-xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4">
+            <!-- الصورة بدون تكبير -->
+            <div class="w-[150px] h-[150px] mx-auto rounded-xl overflow-hidden 
+                        border border-[#c29200]/40 shadow-md mb-4">
               <img 
                 src={winner.avatar}
                 class="w-full h-full object-cover"
@@ -59,7 +58,7 @@ const winners = [
             </div>
 
             <!-- الاسم -->
-            <p class="text-2xl font-bold text-[#ffda6a] text-center tracking-wide"
+            <p class="text-3xl font-bold text-[#ffda6a] text-center tracking-wide"
                style="text-shadow: 0 0 6px rgba(255, 215, 0, 0.35);">
               {winner.name}
             </p>
@@ -71,4 +70,20 @@ const winners = [
     </div>
 
   </section>
+
+  <!-- 🔥 التاج يكبر مع الهوفر فقط -->
+  <script>
+    document.querySelectorAll(".card").forEach((card) => {
+      const crown = card.parentElement.querySelector(".crown")
+
+      card.addEventListener("mouseenter", () => {
+        crown.style.transform = "translateX(-50%) scale(1.15)"
+      })
+
+      card.addEventListener("mouseleave", () => {
+        crown.style.transform = "translateX(-50%) scale(1)"
+      })
+    })
+  </script>
+
 </Layout>
