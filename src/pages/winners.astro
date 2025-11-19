@@ -25,11 +25,10 @@ const winners = [
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center">
 
-          <!-- ⭐ التاج — مرفوع فوق الإطار أكثر -->
+          <!-- التاج ثابت ما عليه أي تكبير -->
           <svg 
             viewBox="0 0 24 24"
-            class="crown w-12 h-12 absolute -top-10 z-30 text-[#ffda6a] 
-                   transition-all duration-300"
+            class="w-14 h-14 absolute -top-9 z-30 text-[#ffda6a]"
             fill="none"
             stroke="#ffda6a"
             stroke-width="2.5"
@@ -40,25 +39,24 @@ const winners = [
             <path d="M3 10l2.5 2 2.5-4 3 5 3-5 2.5 4 2.5-2v8H3v-8z" />
           </svg>
 
-          <!-- ⭐ الإطار — أصغر -->
+          <!-- الإطار يصغر/يكبر لحاله بدون ما يؤثر على التاج ولا الصورة -->
           <div
             class="group card relative w-[220px] h-[290px] border border-[#c29200]/40 
                    rounded-2xl bg-black/30 shadow-md pt-10
-                   transition-all duration-300 ease-out hover:scale-[1.06]"
+                   transition-transform duration-300 ease-out
+                   hover:scale-[1.06]"
           >
-            <!-- الصورة -->
+            <!-- صورة ثابتة ما تتكبر -->
             <div class="w-[130px] h-[130px] mx-auto rounded-xl overflow-hidden 
                         border border-[#c29200]/40 shadow-md mb-4">
               <img 
                 src={winner.avatar}
-                class="w-full h-full object-cover transition-all duration-300 group-hover:scale-[1.08]"
+                class="w-full h-full object-cover"
                 alt={winner.name}
               />
             </div>
 
-            <!-- الاسم -->
-            <p class="text-2xl font-bold text-[#ffda6a] text-center tracking-wide 
-                      transition-all duration-300 group-hover:scale-[1.08]"
+            <p class="text-2xl font-bold text-[#ffda6a] text-center tracking-wide"
                style="text-shadow: 0 0 6px rgba(255,215,0,0.35);">
               {winner.name}
             </p>
@@ -70,19 +68,4 @@ const winners = [
     </div>
 
   </section>
-
-  <script>
-    document.querySelectorAll(".card").forEach((card) => {
-      const crown = card.parentElement.querySelector(".crown")
-
-      card.addEventListener("mouseenter", () => {
-        crown.style.transform = "scale(1.15)"
-      })
-
-      card.addEventListener("mouseleave", () => {
-        crown.style.transform = "scale(1)"
-      })
-    })
-  </script>
-
 </Layout>
