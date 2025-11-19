@@ -1,5 +1,5 @@
 ---
-// src/pages/winners.astro (مثال)
+// src/pages/winners.astro
 import Layout from '~/layouts/PageLayout.astro'
 
 const winners = [
@@ -56,7 +56,7 @@ const winners = [
     </div>
   </section>
 
-  <!-- 🟡 Popup -->
+  <!-- Popup -->
   <div
     id="popup"
     class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50"
@@ -88,7 +88,7 @@ const winners = [
   </div>
 
   <style is:global>
-    /* لماذا: حدود متحركة + قناع لإظهار الحد فقط حول البطاقة */
+    /* لماذا: قناع لعرض حد متدرّج حول البطاقة فقط */
     .user-card {
       position: relative;
       isolation: isolate;
@@ -108,31 +108,35 @@ const winners = [
         #ffda6a,
         #c29200
       );
-      -webkit-mask: 
-        linear-gradient(#000 0 0) content-box, 
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
         linear-gradient(#000 0 0);
       -webkit-mask-composite: xor;
               mask-composite: exclude;
-      animation: ringSpin 6s linear infinite;
-      opacity: 0.55;
+      opacity: 0.55; /* ثابت بدون دوران */
       pointer-events: none;
       z-index: -1;
+      transform: rotate(0deg);
     }
-    .user-card:hover::before { animation-duration: 3s; opacity: 0.8; }
+    /* دوران فقط عند hover */
+    .user-card:hover::before {
+      animation: ringSpin 3s linear infinite;
+      opacity: 0.85;
+    }
 
-    /* لماذا: Glow ذهبي قوي عند التحويم */
+    /* Glow ذهبي أقوى عند hover */
     .user-card:hover {
       box-shadow:
         0 0 22px rgba(198, 164, 79, 0.55),
         0 0 44px rgba(198, 164, 79, 0.35);
     }
 
-    /* لماذا: Bounce بسيط على الاسم عند hover على البطاقة */
+    /* Bounce بسيط على الاسم */
     .user-card:hover .winner-name {
       animation: gentleBounce 650ms cubic-bezier(.34,.97,.64,1.02) 1;
     }
 
-    /* لماذا: حركة ظهور ناعمة للـPopup */
+    /* Popup دخول ناعم */
     .popup-inner.animate-in { animation: fadeScale 350ms ease both; }
 
     /* Keyframes */
@@ -140,9 +144,7 @@ const winners = [
       from { opacity: 0; transform: scale(.92); }
       to   { opacity: 1; transform: scale(1); }
     }
-    @keyframes ringSpin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes ringSpin { to { transform: rotate(360deg); } }
     @keyframes gentleBounce {
       0%   { transform: translateY(0); }
       35%  { transform: translateY(-6px); }
@@ -171,9 +173,8 @@ const winners = [
       popup.classList.add('flex');
       popup.setAttribute('aria-hidden', 'false');
 
-      // لماذا: إعادة تشغيل حركة fade+scale كل مرة
+      // لماذا: إعادة تشغيل حركة الدخول كل مرة
       popupInner.classList.remove('animate-in');
-      // Force reflow
       void popupInner.offsetWidth;
       popupInner.classList.add('animate-in');
     };
