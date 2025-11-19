@@ -7,17 +7,16 @@ const base = SITE.base
 const makeHref = (p) => `${base}${trimSlash(p)}`.replace(/\/+$/, '/')
 const currentUrl = new URL(Astro.url).pathname
 
+// القائمة
 const nav = [
-  { text: 'Home', path: '' },
-  { text: 'Commands', path: 'commands' },
-  { text: 'Leaderboards', path: 'leaderboards' },
-  { text: 'Badges', path: 'badges' },
-  { text: 'Items', path: 'items' },
-  { text: 'Challenges', path: 'challenges' },
-  { text: 'Winners', path: 'winners' }, 
+  { text: 'الرئيسية', path: '' },
+  { text: 'الأوامر', path: 'commands' },
+  { text: 'الترتيب', path: 'leaderboards' },
+  { text: 'البدجات', path: 'badges' },
+  { text: 'الأغراض', path: 'items' },
+  { text: 'التحديات', path: 'challenges' },
+  { text: 'الفائزين', path: 'winners' },
 ]
-
-let open = false
 ---
 
 <header class="top-0 z-40 relative w-full bg-[#0a0a0c]/95 border-b border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.3)] backdrop-blur-md">
@@ -29,20 +28,17 @@ let open = false
       <span>TNX</span>
     </a>
 
-    <!-- MENU BUTTON -->
+    <!-- زر القائمة (ظاهر على كل المقاسات) -->
     <button
-      class="px-4 py-2 rounded-md border border-[#c6a44f]/40 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition md:hidden"
+      class="px-4 py-2 rounded-md border border-[#c6a44f]/40 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition"
       onclick="document.getElementById('dropdownMenu').classList.toggle('hidden')"
     >
       القائمة
     </button>
-
-    <!-- Desktop hidden (you asked for full dropdown only) -->
-    <nav class="hidden"></nav>
   </div>
 
-  <!-- DROPDOWN MENU -->
-  <div id="dropdownMenu" class="hidden px-6 pb-4 md:hidden space-y-3">
+  <!-- Dropdown Menu -->
+  <div id="dropdownMenu" class="hidden px-6 pb-4 space-y-3">
     {nav.map(({ text, path }) => {
       const href = makeHref(path)
       return (
