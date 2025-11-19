@@ -20,7 +20,8 @@ const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroInteg
   hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
 
 export default defineConfig({
-  site: 'https://tranbox6.github.io/TEST/',
+  site: 'https://tranbox6.github.io',
+  base: '/TEST',
   output: 'static',
   build: {
     assets: 'assets',
