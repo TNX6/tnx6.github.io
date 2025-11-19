@@ -2,8 +2,9 @@
 import { Icon } from 'astro-icon/components'
 import ToggleMenu from '~/components/common/ToggleMenu.astro'
 import { trimSlash } from '~/utils/permalinks'
+import { SITE } from 'astrowind:config'  // wichtig
 
-const base = '/'
+const base = SITE.base        // wird '/TEST/' sein
 const makeHref = (p) => `${base}${trimSlash(p)}`.replace(/\/+$/, '/')
 const currentUrl = new URL(Astro.url).pathname
 
@@ -16,6 +17,7 @@ const nav = [
   { text: 'Challenges', path: 'challenges' },
 ]
 ---
+
 
 <header class="top-0 z-40 relative w-full bg-[#0a0a0c]/95 border-b border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.3)] backdrop-blur-md">
   <div class="max-w-7xl mx-auto px-6 flex items-center justify-between py-4">
