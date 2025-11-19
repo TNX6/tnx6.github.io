@@ -14,7 +14,8 @@ const winners = [
 ---
 
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
-  <section class="py-24 px-6 text-white">
+  <section class="py-24 px-6 text-white relative overflow-hidden">
+
     <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r 
       from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
       الفائزون
@@ -23,26 +24,27 @@ const winners = [
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
 
       {winners.map((winner) => (
-        <div class="flex flex-col items-center relative">
+        <div class="relative flex flex-col items-center">
 
-          <!-- 🔥 تاج مضبوط الارتفاع + Glow -->
+          <!-- 👑 تاج بدون الخط + بدون تكبير -->
           <svg 
             viewBox="0 0 24 24" 
-            class="w-14 h-14 absolute -top-9 text-[#ffda6a]"
+            class="w-14 h-14 absolute -top-10 z-40 text-[#ffda6a] pointer-events-none"
             fill="none" 
             stroke="#ffda6a" 
             stroke-width="2.3" 
             stroke-linecap="round" 
             stroke-linejoin="round"
-            style="filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.35));"
+            style="filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.35)); background: transparent;"
           >
             <path d="M3 10l2.5 2 2.5-4 3 5 3-5 2.5 4 2.5-2v8H3v-8z" />
           </svg>
 
-          <!-- 🔥 الكارد + تأثير التكبير عند الاقتراب -->
-          <div class="group w-[220px] h-[260px] bg-black/30 border border-[#c29200]/40 rounded-2xl
-                      shadow-md transition-all duration-300 ease-out hover:scale-[1.05] hover:shadow-lg
-                      flex flex-col items-center justify-center p-4">
+          <!-- 🟦 الكارد — يكبر عند hover بدون ما يكبر التاج -->
+          <div class="card group w-[220px] h-[260px] bg-black/30 border border-[#c29200]/40 
+                      rounded-2xl shadow-md transition-all duration-300 ease-out
+                      hover:scale-[1.05] hover:shadow-xl
+                      flex flex-col items-center justify-center p-4 relative z-10">
 
             <div class="w-[130px] h-[130px] rounded-xl overflow-hidden border border-[#c29200]/40 shadow-md mb-3">
               <img 
@@ -62,5 +64,6 @@ const winners = [
         </div>
       ))}
     </div>
+
   </section>
 </Layout>
