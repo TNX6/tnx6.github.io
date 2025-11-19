@@ -6,44 +6,46 @@ const winners = [
     name: "Fawaz",
     avatar: "/TEST/assets/images/tnx-min.jpg",
   },
+  {
+    name: "Musaad",
+    avatar: "/TEST/assets/images/default.png",
+  },
 ]
 ---
-<Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
-  <section class="py-24 px-6 text-white">
 
-    <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r 
-      from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
+<Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
+
+  <section class="py-24 px-6 text-white">
+    <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
       الفائزون
     </h1>
 
-    <div class="max-w-5xl mx-auto flex justify-center">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-16 max-w-5xl mx-auto">
 
       {winners.map((winner) => (
-        <div class="relative flex flex-col items-center">
-
-          <iconify-icon
-            icon="ph:crown-simple-bold"
-            class="text-[#ffda6a] w-12 h-12 absolute 
-                   -top-[28px]
-                   left-1/2 -translate-x-1/2
-                   drop-shadow-[0_0_6px_rgba(255,215,0,0.4)] z-20">
-          </iconify-icon>
-
-          <div
-            class="w-[240px] h-[300px] border border-[#c29200]/40 rounded-[26px]
-                   bg-black/20 backdrop-blur-sm
-                   flex flex-col items-center justify-start pt-12 relative"
+        <div class="relative flex flex-col items-center mt-10">
+          {/* التاج - تم تعديل الـ -top- و الـ w- و الـ h-auto */}
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 256 256" 
+            fill="currentColor"
+            class="text-[#ffda6a] absolute -top-[22px] left-1/2 -translate-x-1/2 w-[220px] h-auto z-50 drop-shadow-[0_0_6px_rgba(255,215,0,0.4)] pointer-events-none opacity-90"
           >
-            <div class="w-[150px] h-[150px] rounded-2xl overflow-hidden border border-[#c29200]/40 shadow-md">
-              <img
-                src={winner.avatar}
-                alt={winner.name}
+            <path d="M232,80a12,12,0,0,0-12.83-11.08l-52.6,3.7L133.42,27.65a12,12,0,0,0-20.84,0L79.43,72.62l-52.6-3.7A12,12,0,0,0,13.07,80.6L32.6,200.54A20,20,0,0,0,52.18,216H203.82a20,20,0,0,0,19.58-15.46L242.93,80.6A12,12,0,0,0,232,80Z" />
+          </svg>
+
+          <div 
+            class="card relative w-[180px] h-[250px] border border-[#c29200]/35 rounded-[26px] bg-black/25 shadow-lg pt-10 transition-transform duration-300 hover:scale-[1.05] flex flex-col items-center">
+
+            <div class="inner-img-wrapper w-[120px] h-[120px] rounded-2xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4 transition-transform duration-300">
+              <img 
+                src={winner.avatar} 
+                alt={winner.name} 
                 class="w-full h-full object-cover"
               />
             </div>
 
-            <p class="mt-6 text-2xl font-bold text-[#ffda6a] tracking-wide 
-                      drop-shadow-[0_0_6px_rgba(255,215,0,0.4)]">
+            <p class="text-xl font-bold text-[#ffda6a] tracking-wide text-center" style="text-shadow: 0 0 6px rgba(255,215,0,0.35);">
               {winner.name}
             </p>
 
@@ -54,4 +56,19 @@ const winners = [
 
     </div>
   </section>
+
+  <script>
+    document.querySelectorAll(".card").forEach((card) => {
+      const img = card.querySelector(".inner-img-wrapper")
+      if(img && img instanceof HTMLElement) {
+          card.addEventListener("mouseenter", () => {
+            img.style.transform = "scale(1.05)"
+          })
+          card.addEventListener("mouseleave", () => {
+            img.style.transform = "scale(1)"
+          })
+      }
+    })
+  </script>
+
 </Layout>
