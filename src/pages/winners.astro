@@ -6,82 +6,54 @@ const winners = [
     name: "Fawaz",
     avatar: "/TEST/assets/images/tnx-min.jpg",
   },
+  {
+    name: "Musaad",
+    avatar: "/TEST/assets/images/default.png",
+  },
 ]
 ---
+
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
   <section class="py-24 px-6 text-white">
-
     <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r 
       from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
       الفائزون
     </h1>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 max-w-3xl mx-auto">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-16 max-w-5xl mx-auto">
 
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center">
 
-          <!-- 👑 التاج فوق الخط مباشرة -->
-          <svg 
-            viewBox="0 0 24 24"
-            class="crown w-10 h-10 absolute -top-[18px] z-30 text-[#ffda6a]
-                   transition-all duration-300 pointer-events-none"
-            fill="none"
-            stroke="#ffda6a"
-            stroke-width="2.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            style="filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.4));"
-          >
-            <path d="M5 16h14v-6l-3 2-3-5-3 5-3-2v6z" />
-          </svg>
+          <!-- التاج (ما يكبر مع الهوفر) -->
+          <iconify-icon 
+            icon="ph:crown-simple-bold"
+            class="text-[#ffda6a] w-12 h-12 absolute -top-[22px] z-30 
+                   drop-shadow-[0_0_6px_rgba(255,215,0,0.4)]
+                   transition-all duration-300"
+          />
 
-          <!-- 🟧 الإطار (180 × 250 مثل king) -->
-          <div
-            class="card relative w-[180px] h-[250px] border border-[#c29200]/35 
-                   rounded-[26px] bg-black/25 shadow-lg pt-10
-                   transition-transform duration-300 hover:scale-[1.05]
-                   flex flex-col items-center"
+          <!-- الكارد — الإطار + الصورة يكبران معًا -->
+          <div 
+            class="group w-full max-w-[150px] aspect-square bg-black/40 border border-[#c29200]/40 
+                   rounded-2xl overflow-hidden shadow-xl flex items-center justify-center 
+                   relative transition-transform duration-300 hover:scale-110"
           >
-            <!-- الصورة + الإطار الداخلي -->
-            <div class="inner-img-wrapper w-[120px] h-[120px] rounded-2xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4 transition-transform duration-300">
-              <img 
-                src={winner.avatar}
-                class="w-full h-full object-cover"
-                alt={winner.name}
-              />
-            </div>
-
-            <!-- الاسم -->
-            <p class="text-xl font-bold text-[#ffda6a] tracking-wide text-center"
-               style="text-shadow: 0 0 6px rgba(255, 215, 0, 0.35);">
-              {winner.name}
-            </p>
+            <img 
+              src={winner.avatar} 
+              alt={winner.name} 
+              class="w-full h-full object-cover"
+            />
           </div>
 
+          <!-- الاسم — عليه Glow خفيف -->
+          <p class="mt-4 text-xl font-bold text-[#ffda6a] tracking-wide 
+                    drop-shadow-[0_0_6px_rgba(255,215,0,0.4)]">
+            {winner.name}
+          </p>
         </div>
       ))}
 
     </div>
   </section>
-
-  <!-- 🔥 تكبير الصورة + الإطار معًا -->
-  <script>
-    document.querySelectorAll(".card").forEach((card) => {
-
-      const img = card.querySelector(".inner-img-wrapper")
-      const crown = card.parentElement.querySelector(".crown")
-
-      card.addEventListener("mouseenter", () => {
-        img.style.transform = "scale(1.05)"
-        crown.style.transform = "scale(1.1)"
-      })
-
-      card.addEventListener("mouseleave", () => {
-        img.style.transform = "scale(1)"
-        crown.style.transform = "scale(1)"
-      })
-
-    })
-  </script>
 </Layout>
