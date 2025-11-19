@@ -14,7 +14,7 @@ const winners = [
 ---
 
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
-  <section class="py-24 px-6 text-white relative">
+  <section class="py-24 px-6 text-white">
 
     <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r 
       from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
@@ -26,29 +26,30 @@ const winners = [
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center">
 
-          <!-- 👑 تاج بين حدود الكارد (بوضعية PERFECT) -->
+          <!-- 👑 تاج — بالمكان الصحيح بين الخطوط -->
           <svg 
             viewBox="0 0 24 24"
-            class="w-14 h-14 absolute top-[-32px] z-30 text-[#ffda6a] pointer-events-none"
+            class="crown w-14 h-14 absolute -top-7 z-30 text-[#ffda6a]
+                   transition-all duration-300"
             fill="none"
             stroke="#ffda6a"
-            stroke-width="2.3"
+            stroke-width="2.5"
             stroke-linecap="round"
             stroke-linejoin="round"
-            style="filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.35));"
+            style="filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.45));"
           >
             <path d="M3 10l2.5 2 2.5-4 3 5 3-5 2.5 4 2.5-2v8H3v-8z" />
           </svg>
 
-          <!-- 🟦 الكارد (هو اللي يكبر عند hover فقط) -->
+          <!-- 🟧 الإطار الأساسي -->
           <div
-            class="group relative w-[260px] h-[330px] border border-[#c29200]/40 
+            class="group card relative w-[260px] h-[330px] border border-[#c29200]/40 
                    rounded-2xl bg-black/30 shadow-md pt-10
                    transition-all duration-300 ease-out
-                   hover:scale-[1.06] hover:shadow-2xl"
+                   hover:scale-[1.06]"
           >
-            <!-- الصورة داخل الكارد -->
-            <div class="w-[140px] h-[140px] mx-auto rounded-xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4">
+            <!-- الصورة -->
+            <div class="w-[150px] h-[150px] mx-auto rounded-xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4">
               <img 
                 src={winner.avatar}
                 class="w-full h-full object-cover transition-all duration-300 group-hover:scale-[1.08]"
@@ -63,11 +64,26 @@ const winners = [
               {winner.name}
             </p>
           </div>
-
         </div>
       ))}
 
     </div>
 
   </section>
+
+  <!-- هذا سكربت بسيط يخلي التاج يكبر مع الهوفر -->
+  <script>
+    document.querySelectorAll(".card").forEach((card) => {
+      const crown = card.parentElement.querySelector(".crown")
+
+      card.addEventListener("mouseenter", () => {
+        crown.style.transform = "scale(1.15)"
+      })
+
+      card.addEventListener("mouseleave", () => {
+        crown.style.transform = "scale(1)"
+      })
+    })
+  </script>
+
 </Layout>
