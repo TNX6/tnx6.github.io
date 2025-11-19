@@ -25,9 +25,10 @@ const winners = [
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center">
 
+          <!-- ⭐ التاج — مرفوع فوق الإطار أكثر -->
           <svg 
             viewBox="0 0 24 24"
-            class="crown w-14 h-14 absolute -top-7 z-30 text-[#ffda6a]
+            class="crown w-12 h-12 absolute -top-10 z-30 text-[#ffda6a] 
                    transition-all duration-300"
             fill="none"
             stroke="#ffda6a"
@@ -39,13 +40,15 @@ const winners = [
             <path d="M3 10l2.5 2 2.5-4 3 5 3-5 2.5 4 2.5-2v8H3v-8z" />
           </svg>
 
+          <!-- ⭐ الإطار — أصغر -->
           <div
-            class="group card relative w-[260px] h-[330px] border border-[#c29200]/40 
+            class="group card relative w-[220px] h-[290px] border border-[#c29200]/40 
                    rounded-2xl bg-black/30 shadow-md pt-10
-                   transition-all duration-300 ease-out
-                   hover:scale-[1.06]"
+                   transition-all duration-300 ease-out hover:scale-[1.06]"
           >
-            <div class="w-[150px] h-[150px] mx-auto rounded-xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4">
+            <!-- الصورة -->
+            <div class="w-[130px] h-[130px] mx-auto rounded-xl overflow-hidden 
+                        border border-[#c29200]/40 shadow-md mb-4">
               <img 
                 src={winner.avatar}
                 class="w-full h-full object-cover transition-all duration-300 group-hover:scale-[1.08]"
@@ -53,12 +56,14 @@ const winners = [
               />
             </div>
 
-            <p class="text-3xl font-bold text-[#ffda6a] text-center tracking-wide 
+            <!-- الاسم -->
+            <p class="text-2xl font-bold text-[#ffda6a] text-center tracking-wide 
                       transition-all duration-300 group-hover:scale-[1.08]"
-               style="text-shadow: 0 0 6px rgba(255, 215, 0, 0, 0.35);">
+               style="text-shadow: 0 0 6px rgba(255,215,0,0.35);">
               {winner.name}
             </p>
           </div>
+
         </div>
       ))}
 
