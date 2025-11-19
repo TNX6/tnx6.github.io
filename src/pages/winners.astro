@@ -3,53 +3,43 @@ import Layout from '~/layouts/PageLayout.astro'
 
 const winners = [
   {
-    name: "Fawaz",
-    avatar: "/TEST/assets/images/tnx-min.jpg",
+    name: "king",
+    avatar: "/TEST/assets/images/king.png",
   },
   {
-    name: "Musaad",
-    avatar: "/TEST/assets/images/default.png",
+    name: "Fawaz",
+    avatar: "/TEST/assets/images/tnx-min.jpg",
   },
 ]
 ---
 
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
-
   <section class="py-24 px-6 text-white">
     
-    <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
+    <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(198,164,79,0.5)]">
       الفائزون
     </h1>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14 max-w-4xl mx-auto">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 max-w-5xl mx-auto">
 
       {winners.map((winner) => (
-        <div class="relative flex flex-col items-center">
-
-          <!-- الكارد -->
-          <div
-            class="group card relative w-[260px] h-[330px] border border-[#c29200]/40 
-                   rounded-2xl bg-black/30 shadow-md pt-10
-                   transition-all duration-300 ease-out
-                   hover:scale-[1.06] hover:shadow-[0_0_20px_rgba(255,215,0,0.3)]"
-          >
-
-            <!-- الصورة -->
-            <div class="w-[150px] h-[150px] mx-auto rounded-xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4">
-              <img 
-                src={winner.avatar}
-                class="w-full h-full object-cover transition-all duration-300"
-                alt={winner.name}
-              />
-            </div>
-
-            <!-- الاسم -->
-            <p class="text-3xl font-bold text-[#ffda6a] text-center tracking-wide 
-                      transition-all duration-300"
-               style="text-shadow: 0 0 6px rgba(255, 215, 0, 0.35);">
-              {winner.name}
-            </p>
+        <div
+          class="flex flex-col items-center bg-black/40 border border-[#c6a44f]/30 
+                 p-5 rounded-2xl shadow-lg backdrop-blur-sm
+                 transition-transform hover:scale-105 hover:border-[#f7e6ac]/60"
+        >
+          
+          <div class="w-28 h-28 rounded-xl overflow-hidden border border-[#c6a44f]/20 mb-3">
+            <img 
+              src={winner.avatar}
+              alt={winner.name}
+              class="w-full h-full object-cover"
+            />
           </div>
+
+          <span class="text-[#f7e6ac] font-semibold text-center text-lg">
+            {winner.name}
+          </span>
 
         </div>
       ))}
@@ -57,5 +47,4 @@ const winners = [
     </div>
 
   </section>
-
 </Layout>
