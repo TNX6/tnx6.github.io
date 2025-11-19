@@ -18,6 +18,28 @@ const nav = [
 ]
 ---
 
+<style>
+  @keyframes dropdownSlide {
+    0% {
+      opacity: 0;
+      transform: translateY(-12px);
+      filter: blur(4px);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(4px);
+      filter: blur(0px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  .dropdown-animate {
+    animation: dropdownSlide 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  }
+</style>
+
 <header class="top-0 z-40 relative w-full bg-[#0a0a0c]/95 border-b border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.3)] backdrop-blur-md">
   <div class="max-w-7xl mx-auto px-6 flex items-center justify-between py-4">
 
@@ -27,10 +49,19 @@ const nav = [
       <span>TNX</span>
     </a>
 
-    <!-- Menu Button (Always Visible) -->
+    <!-- Menu Button -->
     <button
       class="px-4 py-2 rounded-md border border-[#c6a44f]/40 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition"
-      onclick="document.getElementById('dropdownMenu').classList.toggle('hidden')"
+      onclick="
+        const menu = document.getElementById('dropdownMenu');
+        const isHidden = menu.classList.contains('hidden');
+        menu.classList.toggle('hidden');
+
+        if (isHidden) {
+          menu.classList.add('dropdown-animate');
+          setTimeout(() => menu.classList.remove('dropdown-animate'), 400);
+        }
+      "
     >
       القائمة
     </button>
