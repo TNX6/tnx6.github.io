@@ -19,6 +19,7 @@ const nav = [
 ---
 
 <style>
+  /* انيميشن الانزلاق */
   @keyframes dropdownSlide {
     0% {
       opacity: 0;
@@ -38,6 +39,17 @@ const nav = [
   .dropdown-animate {
     animation: dropdownSlide 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
   }
+
+  /* تأثير الـGlow الذهبي */
+  .menu-glow {
+    transition: all 0.25s ease;
+  }
+
+  .menu-glow:hover {
+    box-shadow: 0 0 12px rgba(198,164,79,0.45);
+    border-color: #c6a44f !important;
+    transform: translateY(-1px);
+  }
 </style>
 
 <header class="top-0 z-40 relative w-full bg-[#0a0a0c]/95 border-b border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.3)] backdrop-blur-md">
@@ -49,9 +61,9 @@ const nav = [
       <span>TNX</span>
     </a>
 
-    <!-- Menu Button -->
+    <!-- زر القائمة -->
     <button
-      class="px-4 py-2 rounded-md border border-[#c6a44f]/40 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition"
+      class="menu-glow px-4 py-2 rounded-md border border-[#c6a44f]/40 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition"
       onclick="
         const menu = document.getElementById('dropdownMenu');
         const isHidden = menu.classList.contains('hidden');
@@ -67,7 +79,7 @@ const nav = [
     </button>
   </div>
 
-  <!-- Dropdown Menu -->
+  <!-- القائمة المنسدلة -->
   <div id="dropdownMenu" class="hidden px-6 pb-4 space-y-3">
     {nav.map(({ text, path }) => {
       const href = makeHref(path)
@@ -76,7 +88,7 @@ const nav = [
         <a
           href={href}
           class:list={[
-            "block w-full text-center px-4 py-3 rounded-lg bg-black/40 border border-[#c6a44f]/30 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition",
+            "menu-glow block w-full text-center px-4 py-3 rounded-lg bg-black/40 border border-[#c6a44f]/30 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition",
             { "bg-[#c6a44f]/20": isActive },
           ]}
         >
