@@ -24,12 +24,13 @@ const winners = [
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center">
 
-          <!-- SVG تاج جاهز -->
+          <!-- تاج مضبوط ومتمركز -->
           <svg 
             viewBox="0 0 24 24"
-            class="w-12 h-12 absolute -top-[20px] z-30 text-[#ffda6a] transition-all duration-300 drop-shadow-[0_0_6px_rgba(255,215,0,0.4)]"
+            class="w-12 h-12 absolute -top-[24px] z-20 text-[#ffda6a] left-1/2 -translate-x-1/2
+                   drop-shadow-[0_0_6px_rgba(255,215,0,0.4)] transition-all duration-300"
             fill="none"
-            stroke="#ffda6a"
+            stroke="currentColor"
             stroke-width="2.2"
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -37,10 +38,11 @@ const winners = [
             <path d="M5 16h14v-6l-3 2-3-5-3 5-3-2v6z" />
           </svg>
 
+          <!-- الكارد + الإطار راجع -->
           <div 
             class="group w-full max-w-[150px] aspect-square bg-black/40 border border-[#c29200]/40 
                    rounded-2xl overflow-hidden shadow-xl flex items-center justify-center 
-                   relative transition-transform duration-300 hover:scale-110"
+                   relative transition-transform duration-300 hover:scale-110 z-10"
           >
             <img 
               src={winner.avatar} 
