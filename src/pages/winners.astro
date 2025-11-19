@@ -13,76 +13,70 @@ const winners = [
 ]
 ---
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
-
   <section class="py-24 px-6 text-white">
-    <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
+
+    <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r 
+      from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
       الفائزون
     </h1>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-16 max-w-5xl mx-auto">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14 max-w-4xl mx-auto">
 
       {winners.map((winner) => (
-        <div class="relative flex flex-col items-center mt-10">
+        <div class="relative flex flex-col items-center">
 
-          <!-- 👑 التاج الجديد النظيف -->
           <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            stroke-width="2.2" 
-            stroke-linecap="round" 
+            viewBox="0 0 24 24"
+            class="crown w-14 h-14 absolute -top-7 z-30 text-[#ffda6a]
+                   transition-all duration-300"
+            fill="none"
+            stroke="#ffda6a"
+            stroke-width="2.5"
+            stroke-linecap="round"
             stroke-linejoin="round"
-            class="text-[#ffda6a] w-12 h-12 absolute 
-                   -top-[28px] 
-                   left-1/2 -translate-x-1/2 
-                   drop-shadow-[0_0_6px_rgba(255,215,0,0.4)] 
-                   z-50 pointer-events-none">
-            <path d="M4 16h16l-2-8-4 3-2-5-2 5-4-3-2 8z" />
+            style="filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.45));"
+          >
+            <path d="M3 10l2.5 2 2.5-4 3 5 3-5 2.5 4 2.5-2v8H3v-8z" />
           </svg>
 
-          <!-- 📦 الإطار -->
-          <div 
-            class="card relative w-[180px] h-[250px] border border-[#c29200]/35 
-                   rounded-[26px] bg-black/25 shadow-lg pt-10
-                   transition-transform duration-300 hover:scale-[1.05]
-                   flex flex-col items-center">
-
-            <!-- 🖼️ الصورة -->
-            <div class="inner-img-wrapper w-[120px] h-[120px] rounded-2xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4 transition-transform duration-300">
+          <div
+            class="group card relative w-[260px] h-[330px] border border-[#c29200]/40 
+                   rounded-2xl bg-black/30 shadow-md pt-10
+                   transition-all duration-300 ease-out
+                   hover:scale-[1.06]"
+          >
+            <div class="w-[150px] h-[150px] mx-auto rounded-xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4">
               <img 
-                src={winner.avatar} 
-                alt={winner.name} 
-                class="w-full h-full object-cover"
+                src={winner.avatar}
+                class="w-full h-full object-cover transition-all duration-300 group-hover:scale-[1.08]"
+                alt={winner.name}
               />
             </div>
 
-            <!-- ✨ الاسم -->
-            <p class="text-xl font-bold text-[#ffda6a] tracking-wide text-center"
-               style="text-shadow: 0 0 6px rgba(255,215,0,0.35);">
+            <p class="text-3xl font-bold text-[#ffda6a] text-center tracking-wide 
+                      transition-all duration-300 group-hover:scale-[1.08]"
+               style="text-shadow: 0 0 6px rgba(255, 215, 0, 0, 0.35);">
               {winner.name}
             </p>
-
           </div>
-
         </div>
       ))}
 
     </div>
+
   </section>
 
-  <!-- 🔥 تكبير الصورة مع الإطار -->
   <script>
     document.querySelectorAll(".card").forEach((card) => {
-      const img = card.querySelector(".inner-img-wrapper")
-      if(img) {
-        card.addEventListener("mouseenter", () => {
-          img.style.transform = "scale(1.05)"
-        })
-        card.addEventListener("mouseleave", () => {
-          img.style.transform = "scale(1)"
-        })
-      }
+      const crown = card.parentElement.querySelector(".crown")
+
+      card.addEventListener("mouseenter", () => {
+        crown.style.transform = "scale(1.15)"
+      })
+
+      card.addEventListener("mouseleave", () => {
+        crown.style.transform = "scale(1)"
+      })
     })
   </script>
 
