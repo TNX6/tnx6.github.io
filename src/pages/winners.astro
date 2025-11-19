@@ -4,14 +4,9 @@ import Layout from '~/layouts/PageLayout.astro'
 
 const winners = [
   {
-    name: "Fawaz",
-    avatar: "/TEST/assets/images/tnx-min.jpg",
-    reason: "فاز في مسابقة الطبخ",
-  },
-  {
-    name: "Musaad",
-    avatar: "/TEST/assets/images/default.png",
-    reason: "فاز في التحدي الأسبوعي",
+    name: "anyang_chii",
+    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/bb394a1e-0961-43e8-a840-aeabd0fffe0d-profile_image-300x300.png",
+    reason: "فازت في مسابقة الطبخ 👨‍🍳",
   },
 ]
 ---
@@ -42,6 +37,7 @@ const winners = [
               class="w-full h-full object-cover"
               alt={winner.name}
               loading="lazy"
+              referrerpolicy="no-referrer"
             />
           </div>
 
@@ -88,11 +84,10 @@ const winners = [
   </div>
 
   <style is:global>
-    /* لماذا: الحد المتدرّج ثابت بلا دوران */
     .user-card {
       position: relative;
       isolation: isolate;
-      animation: fadeScale 400ms ease both; /* دخول لطيف */
+      animation: fadeScale 400ms ease both;
     }
     .user-card::before {
       content: "";
@@ -116,25 +111,21 @@ const winners = [
       opacity: 0.7;
       pointer-events: none;
       z-index: -1;
-      transform: none; /* لا دوران */
+      transform: none; /* ثابت بلا دوران */
     }
 
-    /* Glow ذهبي عند hover فقط */
     .user-card:hover {
       box-shadow:
         0 0 22px rgba(198, 164, 79, 0.55),
         0 0 44px rgba(198, 164, 79, 0.35);
     }
 
-    /* Bounce بسيط على الاسم */
     .user-card:hover .winner-name {
       animation: gentleBounce 650ms cubic-bezier(.34,.97,.64,1.02) 1;
     }
 
-    /* Popup دخول ناعم */
     .popup-inner.animate-in { animation: fadeScale 350ms ease both; }
 
-    /* Keyframes */
     @keyframes fadeScale {
       from { opacity: 0; transform: scale(.92); }
       to   { opacity: 1; transform: scale(1); }
@@ -167,7 +158,6 @@ const winners = [
       popup.classList.add('flex');
       popup.setAttribute('aria-hidden', 'false');
 
-      // لماذا: إعادة تشغيل حركة الدخول كل مرة
       popupInner.classList.remove('animate-in');
       void popupInner.offsetWidth;
       popupInner.classList.add('animate-in');
