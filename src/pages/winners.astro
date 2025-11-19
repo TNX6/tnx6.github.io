@@ -3,13 +3,9 @@ import Layout from '~/layouts/PageLayout.astro'
 
 const winners = [
   {
-    name: "king",
-    avatar: "/TEST/assets/images/king.png",
-  },
-  {
     name: "Fawaz",
     avatar: "/TEST/assets/images/tnx-min.jpg",
-  },
+  }
 ]
 ---
 
@@ -20,26 +16,28 @@ const winners = [
       الفائزون
     </h1>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 max-w-5xl mx-auto">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 max-w-4xl mx-auto">
 
       {winners.map((winner) => (
         <div
-          class="flex flex-col items-center bg-black/40 border border-[#c6a44f]/30 
-                 p-5 rounded-2xl shadow-lg backdrop-blur-sm
+          class="flex flex-col items-center bg-black/30 border border-[#c6a44f]/35 
+                 p-5 rounded-3xl shadow-lg backdrop-blur-sm
+                 w-[230px] h-[260px]
                  transition-transform hover:scale-105 hover:border-[#f7e6ac]/60"
         >
           
-          <div class="w-28 h-28 rounded-xl overflow-hidden border border-[#c6a44f]/20 mb-3">
+          <div class="w-[120px] h-[120px] rounded-2xl overflow-hidden border border-[#c6a44f]/25 mb-4">
             <img 
               src={winner.avatar}
-              alt={winner.name}
               class="w-full h-full object-cover"
+              alt={winner.name}
             />
           </div>
 
-          <span class="text-[#f7e6ac] font-semibold text-center text-lg">
+          <p class="text-xl font-bold text-[#f7e6ac] text-center tracking-wide"
+             style="text-shadow: 0 0 6px rgba(255,215,0,0.35);">
             {winner.name}
-          </span>
+          </p>
 
         </div>
       ))}
