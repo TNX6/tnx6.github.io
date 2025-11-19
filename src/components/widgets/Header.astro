@@ -19,7 +19,7 @@ const nav = [
 ---
 
 <style>
-  /* انيميشن الانزلاق */
+  /* فتح القائمة */
   @keyframes dropdownSlide {
     0% {
       opacity: 0;
@@ -35,20 +35,47 @@ const nav = [
       transform: translateY(0);
     }
   }
-
   .dropdown-animate {
     animation: dropdownSlide 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
   }
 
-  /* تأثير الـGlow الذهبي */
+  /* إغلاق القائمة */
+  @keyframes dropdownClose {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0px);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-12px);
+      filter: blur(4px);
+    }
+  }
+  .dropdown-close {
+    animation: dropdownClose 0.28s ease-out forwards;
+  }
+
+  /* Glow + Pulse */
+  @keyframes pulseGlow {
+    0% {
+      box-shadow: 0 0 6px rgba(198,164,79,0.25);
+    }
+    50% {
+      box-shadow: 0 0 14px rgba(198,164,79,0.55);
+    }
+    100% {
+      box-shadow: 0 0 6px rgba(198,164,79,0.25);
+    }
+  }
+
   .menu-glow {
     transition: all 0.25s ease;
   }
 
-  .menu-glow:hover {
-    box-shadow: 0 0 12px rgba(198,164,79,0.45);
+  .menu-pulse:hover {
+    animation: pulseGlow 1.2s ease-in-out infinite;
     border-color: #c6a44f !important;
-    transform: translateY(-1px);
   }
 </style>
 
@@ -63,19 +90,30 @@ const nav = [
 
     <!-- زر القائمة -->
     <button
-      class="menu-glow px-4 py-2 rounded-md border border-[#c6a44f]/40 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition"
+      class="menu-glow menu-pulse flex items-center gap-2 px-4 py-2 rounded-md border border-[#c6a44f]/40 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition"
       onclick="
         const menu = document.getElementById('dropdownMenu');
         const isHidden = menu.classList.contains('hidden');
-        menu.classList.toggle('hidden');
 
         if (isHidden) {
+          // فتح القائمة
+          menu.classList.remove('dropdown-close');
+          menu.classList.remove('hidden');
           menu.classList.add('dropdown-animate');
           setTimeout(() => menu.classList.remove('dropdown-animate'), 400);
+        } else {
+          // إغلاق القائمة
+          menu.classList.remove('dropdown-animate');
+          menu.classList.add('dropdown-close');
+          setTimeout(() => {
+            menu.classList.add('hidden');
+            menu.classList.remove('dropdown-close');
+          }, 280);
         }
       "
     >
-      القائمة
+      <span style="font-size: 20px;">☰</span>
+      <span>القائمة</span>
     </button>
   </div>
 
@@ -88,7 +126,7 @@ const nav = [
         <a
           href={href}
           class:list={[
-            "menu-glow block w-full text-center px-4 py-3 rounded-lg bg-black/40 border border-[#c6a44f]/30 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition",
+            "menu-glow menu-pulse block w-full text-center px-4 py-3 rounded-lg bg-black/40 border border-[#c6a44f]/30 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition",
             { "bg-[#c6a44f]/20": isActive },
           ]}
         >
