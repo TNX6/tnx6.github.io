@@ -4,11 +4,11 @@ import Layout from '~/layouts/PageLayout.astro'
 const winners = [
   {
     name: "Fawaz",
-    avatar: "/assets/images/tnx-min.jpg",
+    avatar: "/TEST/assets/images/tnx-min.jpg",   // <-- عدلت المسار الصحيح
   },
   {
     name: "Musaad",
-    avatar: "/assets/images/default.png",
+    avatar: "/TEST/assets/images/default.png",
   },
 ]
 ---
@@ -25,7 +25,7 @@ const winners = [
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center">
 
-          <!-- تاج ذهبي فوق الإطار بدون دخول -->
+          <!-- التاج -->
           <svg 
             viewBox="0 0 24 24" 
             class="w-12 h-12 absolute -top-14 z-20 text-[#ffda6a]"
@@ -41,7 +41,7 @@ const winners = [
 
           <!-- الكارد -->
           <div class="w-full max-w-[200px] aspect-square bg-black/40 border border-[#c29200]/40 
-                      rounded-2xl overflow-hidden shadow-xl relative flex items-center justify-center">
+                      rounded-2xl overflow-hidden shadow-xl flex items-center justify-center relative">
 
             <img 
               src={winner.avatar} 
@@ -51,7 +51,7 @@ const winners = [
           </div>
 
           <!-- الاسم -->
-          <p class="mt-4 text-xl font-bold text-[#ffda6a] tracking-wide">{winner.name}</p>
+          <p class="mt-4 text-2xl font-bold text-[#ffda6a] tracking-wide">{winner.name}</p>
         </div>
       ))}
     </div>
