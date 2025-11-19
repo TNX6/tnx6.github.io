@@ -1,128 +1,200 @@
 ---
+// src/pages/winners.astro (مثال)
 import Layout from '~/layouts/PageLayout.astro'
 
 const winners = [
   {
     name: "Fawaz",
     avatar: "/TEST/assets/images/tnx-min.jpg",
-    achievement: "فاز في مسابقة الطبخ 🔥"
+    reason: "فاز في مسابقة الطبخ",
   },
   {
     name: "Musaad",
     avatar: "/TEST/assets/images/default.png",
-    achievement: "فاز في تحدي الرسم 🎨"
+    reason: "فاز في التحدي الأسبوعي",
   },
-];
+]
 ---
-
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
-
   <section class="py-24 px-6 text-white">
-    <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r 
-      from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent">
+    <h1
+      class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(198,164,79,0.5)]"
+    >
       الفائزون
     </h1>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14 max-w-4xl mx-auto">
-
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 max-w-4xl mx-auto">
       {winners.map((winner) => (
-        <div 
-          class="relative flex flex-col items-center cursor-pointer select-none"
+        <div
+          class="user-card group flex flex-col items-center bg-black/30 border border-transparent 
+                 p-5 rounded-3xl shadow-lg backdrop-blur-sm cursor-pointer
+                 w-[240px] h-[300px]
+                 transition-transform will-change-transform hover:scale-105"
           data-name={winner.name}
           data-avatar={winner.avatar}
-          data-achievement={winner.achievement}
+          data-reason={winner.reason}
+          role="button"
+          tabindex="0"
         >
-
-          <!-- الإطار -->
-          <div
-            class="card relative w-[220px] h-[300px] border border-[#c29200]/40 
-                   rounded-2xl bg-black/30 shadow-md pt-10
-                   transition-all duration-300 ease-out
-                   hover:scale-[1.06]"
-          >
-            <!-- الصورة -->
-            <div class="w-[150px] h-[150px] mx-auto rounded-xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4">
-              <img 
-                src={winner.avatar}
-                class="w-full h-full object-cover"
-                alt={winner.name}
-              />
-            </div>
-
-            <!-- الاسم -->
-            <p class="text-3xl font-bold text-[#ffda6a] text-center tracking-wide"
-               style="text-shadow: 0 0 6px rgba(255, 215, 0, 0.35);">
-              {winner.name}
-            </p>
+          <div class="w-[160px] h-[160px] rounded-2xl overflow-hidden border border-[#c6a44f]/25 mb-4">
+            <img 
+              src={winner.avatar}
+              class="w-full h-full object-cover"
+              alt={winner.name}
+              loading="lazy"
+            />
           </div>
 
+          <p
+            class="winner-name text-xl font-bold text-[#f7e6ac] text-center tracking-wide"
+            style="text-shadow: 0 0 6px rgba(255,215,0,0.35);"
+          >
+            {winner.name}
+          </p>
         </div>
       ))}
-
     </div>
   </section>
 
-  <!-- البوب-أب -->
-  <div 
-    id="winner-overlay"
-    class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center"
+  <!-- 🟡 Popup -->
+  <div
+    id="popup"
+    class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50"
+    aria-hidden="true"
   >
-    <div 
-      id="winner-popup"
-      class="bg-black/80 border border-[#c29200]/40 rounded-2xl p-6 w-[90%] max-w-[400px] text-center"
+    <div
+      id="popupInner"
+      class="popup-inner bg-black/60 border border-[#c6a44f]/40 rounded-2xl p-6 w-[350px] 
+             shadow-[0_0_20px_rgba(198,164,79,0.4)] text-center backdrop-blur-md"
     >
-      <img 
-        id="popup-avatar"
-        src=""
-        class="w-32 h-32 mx-auto rounded-xl border border-[#c29200]/40 shadow-md mb-4 object-cover"
+      <img
+        id="popupImg"
+        class="w-[140px] h-[140px] rounded-xl mx-auto mb-4 border border-[#c6a44f]/40 object-cover"
+        alt=""
       />
 
-      <h2 
-        id="popup-name"
-        class="text-3xl font-bold text-[#ffda6a] mb-2"
-        style="text-shadow: 0 0 6px rgba(255,215,0,0.45);"
-      ></h2>
+      <h2 id="popupName" class="text-3xl font-bold text-[#ffda6a] mb-3"></h2>
+      <p id="popupReason" class="text-lg text-[#f7e6ac] mb-6"></p>
 
-      <p id="popup-achievement" class="text-lg text-gray-300 mb-6"></p>
-
-      <button 
-        id="close-btn"
-        class="mt-2 px-4 py-2 bg-[#c6a44f]/30 border border-[#c6a44f]/40 rounded-xl hover:bg-[#c6a44f]/40"
+      <button
+        id="closePopup"
+        class="px-5 py-2 rounded-xl bg-[#c29200]/60 hover:bg-[#ffda6a]/80 
+               text-black font-bold transition"
+        type="button"
       >
         إغلاق
       </button>
     </div>
   </div>
 
-  <script>
-    const overlay = document.getElementById("winner-overlay");
-    const popup = document.getElementById("winner-popup");
-    const closeBtn = document.getElementById("close-btn");
+  <style is:global>
+    /* لماذا: حدود متحركة + قناع لإظهار الحد فقط حول البطاقة */
+    .user-card {
+      position: relative;
+      isolation: isolate;
+      animation: fadeScale 400ms ease both; /* دخول لطيف */
+    }
+    .user-card::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      padding: 2px;
+      border-radius: 1.5rem;
+      background: conic-gradient(
+        from 0deg,
+        #ffda6a,
+        #c29200,
+        #c6a44f,
+        #ffda6a,
+        #c29200
+      );
+      -webkit-mask: 
+        linear-gradient(#000 0 0) content-box, 
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      animation: ringSpin 6s linear infinite;
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .user-card:hover::before { animation-duration: 3s; opacity: 0.8; }
 
-    document.querySelectorAll(".card").forEach((card) => {
-      const parent = card.parentElement;
+    /* لماذا: Glow ذهبي قوي عند التحويم */
+    .user-card:hover {
+      box-shadow:
+        0 0 22px rgba(198, 164, 79, 0.55),
+        0 0 44px rgba(198, 164, 79, 0.35);
+    }
 
-      parent.addEventListener("click", () => {
-        document.getElementById("popup-name").innerText = parent.dataset.name;
-        document.getElementById("popup-avatar").src = parent.dataset.avatar;
-        document.getElementById("popup-achievement").innerText = parent.dataset.achievement;
+    /* لماذا: Bounce بسيط على الاسم عند hover على البطاقة */
+    .user-card:hover .winner-name {
+      animation: gentleBounce 650ms cubic-bezier(.34,.97,.64,1.02) 1;
+    }
 
-        overlay.style.display = "flex";
+    /* لماذا: حركة ظهور ناعمة للـPopup */
+    .popup-inner.animate-in { animation: fadeScale 350ms ease both; }
+
+    /* Keyframes */
+    @keyframes fadeScale {
+      from { opacity: 0; transform: scale(.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes ringSpin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes gentleBounce {
+      0%   { transform: translateY(0); }
+      35%  { transform: translateY(-6px); }
+      60%  { transform: translateY(0); }
+      80%  { transform: translateY(-2px); }
+      100% { transform: translateY(0); }
+    }
+  </style>
+
+  <script is:inline>
+    const cards = document.querySelectorAll('.user-card');
+    const popup = document.getElementById('popup');
+    const popupInner = document.getElementById('popupInner');
+    const popupImg = document.getElementById('popupImg');
+    const popupName = document.getElementById('popupName');
+    const popupReason = document.getElementById('popupReason');
+    const closePopup = document.getElementById('closePopup');
+
+    const openPopup = (name, avatar, reason) => {
+      popupImg.src = avatar;
+      popupImg.alt = name;
+      popupName.textContent = name;
+      popupReason.textContent = reason;
+
+      popup.classList.remove('hidden');
+      popup.classList.add('flex');
+      popup.setAttribute('aria-hidden', 'false');
+
+      // لماذا: إعادة تشغيل حركة fade+scale كل مرة
+      popupInner.classList.remove('animate-in');
+      // Force reflow
+      void popupInner.offsetWidth;
+      popupInner.classList.add('animate-in');
+    };
+
+    const close = () => {
+      popup.classList.remove('flex');
+      popup.classList.add('hidden');
+      popup.setAttribute('aria-hidden', 'true');
+      popupInner.classList.remove('animate-in');
+    };
+
+    cards.forEach(card => {
+      const { name, avatar, reason } = card.dataset;
+      card.addEventListener('click', () => openPopup(name, avatar, reason));
+      card.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') openPopup(name, avatar, reason);
       });
     });
 
-    function closeWinnerPopup() {
-      overlay.style.display = "none";
-    }
-
-    overlay.addEventListener("click", (e) => {
-      if (!popup.contains(e.target)) closeWinnerPopup();
-    });
-
-    closeBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      closeWinnerPopup();
-    });
+    closePopup.addEventListener('click', close);
+    popup.addEventListener('click', (e) => { if (e.target === popup) close(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
   </script>
-
 </Layout>
