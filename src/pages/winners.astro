@@ -88,7 +88,7 @@ const winners = [
   </div>
 
   <style is:global>
-    /* لماذا: قناع لعرض حد متدرّج حول البطاقة فقط */
+    /* لماذا: الحد المتدرّج ثابت بلا دوران */
     .user-card {
       position: relative;
       isolation: isolate;
@@ -113,18 +113,13 @@ const winners = [
         linear-gradient(#000 0 0);
       -webkit-mask-composite: xor;
               mask-composite: exclude;
-      opacity: 0.55; /* ثابت بدون دوران */
+      opacity: 0.7;
       pointer-events: none;
       z-index: -1;
-      transform: rotate(0deg);
-    }
-    /* دوران فقط عند hover */
-    .user-card:hover::before {
-      animation: ringSpin 3s linear infinite;
-      opacity: 0.85;
+      transform: none; /* لا دوران */
     }
 
-    /* Glow ذهبي أقوى عند hover */
+    /* Glow ذهبي عند hover فقط */
     .user-card:hover {
       box-shadow:
         0 0 22px rgba(198, 164, 79, 0.55),
@@ -144,7 +139,6 @@ const winners = [
       from { opacity: 0; transform: scale(.92); }
       to   { opacity: 1; transform: scale(1); }
     }
-    @keyframes ringSpin { to { transform: rotate(360deg); } }
     @keyframes gentleBounce {
       0%   { transform: translateY(0); }
       35%  { transform: translateY(-6px); }
