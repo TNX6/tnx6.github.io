@@ -6,13 +6,8 @@ const winners = [
     name: "Fawaz",
     avatar: "/TEST/assets/images/tnx-min.jpg",
   },
-  {
-    name: "Musaad",
-    avatar: "/TEST/assets/images/default.png",
-  },
 ]
 ---
-
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
   <section class="py-24 px-6 text-white">
 
@@ -21,35 +16,34 @@ const winners = [
       الفائزون
     </h1>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14 max-w-4xl mx-auto">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 max-w-3xl mx-auto">
 
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center">
 
-          <!-- 👑 تاج مضبوط بحيث يلامس الحد بدون ما يخترق -->
+          <!-- 👑 التاج -->
           <svg 
             viewBox="0 0 24 24"
-            class="crown w-12 h-12 absolute -top-[18px] z-30 text-[#ffda6a]
+            class="crown w-10 h-10 absolute -top-[22px] z-30 text-[#ffda6a]
                    transition-all duration-300"
             fill="none"
             stroke="#ffda6a"
-            stroke-width="2.4"
+            stroke-width="2.2"
             stroke-linecap="round"
             stroke-linejoin="round"
-            style="filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.45));"
+            style="filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.4));"
           >
-            <path d="M3 10l2.5 2 2.5-4 3 5 3-5 2.5 4 2.5-2v8H3v-8z" />
+            <path d="M5 16h14v-6l-3 2-3-5-3 5-3-2v6z" />
           </svg>
 
-          <!-- 🟧 الكارد بالحجم المطلوب -->
+          <!-- 🟧 الإطار (نفس حجم king بالضبط) -->
           <div
-            class="group card relative w-[240px] h-[300px] border border-[#c29200]/40 
-                   rounded-2xl bg-black/25 shadow-md pt-10
-                   transition-all duration-300 ease-out
-                   hover:scale-[1.05]"
+            class="group card relative w-[180px] h-[250px] border border-[#c29200]/35 
+                   rounded-[26px] bg-black/25 shadow-lg pt-10
+                   transition-all duration-300 hover:scale-[1.05]"
           >
-            <!-- الصورة -->
-            <div class="w-[140px] h-[140px] mx-auto rounded-xl overflow-hidden border border-[#c29200]/40 shadow-md mb-3">
+            <!-- الصورة الداخلية -->
+            <div class="w-[120px] h-[120px] mx-auto rounded-2xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4">
               <img 
                 src={winner.avatar}
                 class="w-full h-full object-cover transition-all duration-300 group-hover:scale-[1.07]"
@@ -57,9 +51,8 @@ const winners = [
               />
             </div>
 
-            <!-- الاسم مع glow خفيف -->
-            <p class="text-2xl font-bold text-[#ffda6a] text-center tracking-wide 
-                      transition-all duration-300 group-hover:scale-[1.07]"
+            <!-- الاسم -->
+            <p class="text-xl font-bold text-[#ffda6a] text-center tracking-wide"
                style="text-shadow: 0 0 6px rgba(255, 215, 0, 0.35);">
               {winner.name}
             </p>
@@ -68,20 +61,18 @@ const winners = [
       ))}
 
     </div>
-
   </section>
 
-  <!-- 👑 تكبير التاج عند hover -->
+  <!-- تكبير التاج بدون تحريكه -->
   <script>
     document.querySelectorAll(".card").forEach((card) => {
       const crown = card.parentElement.querySelector(".crown")
       card.addEventListener("mouseenter", () => {
-        crown.style.transform = "scale(1.15)"
+        crown.style.transform = "scale(1.1)"
       })
       card.addEventListener("mouseleave", () => {
         crown.style.transform = "scale(1)"
       })
     })
   </script>
-
 </Layout>
