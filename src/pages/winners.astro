@@ -16,52 +16,36 @@ const winners = [
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
 
   <section class="py-24 px-6 text-white">
-
-    <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r 
-      from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
+    
+    <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
       الفائزون
     </h1>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-16 max-w-4xl mx-auto">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14 max-w-4xl mx-auto">
 
       {winners.map((winner) => (
         <div class="relative flex flex-col items-center">
 
-          <!-- 👑 تاج -->
-          <svg 
-            viewBox="0 0 24 24"
-            class="crown w-14 h-14 absolute -top-[30px] 
-                   left-1/2 -translate-x-1/2 z-30 text-[#ffda6a]
-                   transition-transform duration-300"
-            fill="none"
-            stroke="#ffda6a"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            style="filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.45));"
-          >
-            <path d="M3 10l2.5 2 2.5-4 3 5 3-5 2.5 4 2.5-2v8H3v-8z" />
-          </svg>
-
-          <!-- 🟧 الإطار -->
+          <!-- الكارد -->
           <div
-            class="card group relative w-[230px] h-[300px] border border-[#c29200]/40 
+            class="group card relative w-[260px] h-[330px] border border-[#c29200]/40 
                    rounded-2xl bg-black/30 shadow-md pt-10
                    transition-all duration-300 ease-out
-                   hover:scale-[1.06] hover:shadow-[0_0_25px_rgba(255,215,0,0.35)]"
+                   hover:scale-[1.06] hover:shadow-[0_0_20px_rgba(255,215,0,0.3)]"
           >
+
             <!-- الصورة -->
-            <div class="w-[140px] h-[140px] mx-auto rounded-xl overflow-hidden 
-                        border border-[#c29200]/40 shadow-md mb-4">
+            <div class="w-[150px] h-[150px] mx-auto rounded-xl overflow-hidden border border-[#c29200]/40 shadow-md mb-4">
               <img 
                 src={winner.avatar}
-                class="w-full h-full object-cover"
+                class="w-full h-full object-cover transition-all duration-300"
                 alt={winner.name}
               />
             </div>
 
             <!-- الاسم -->
-            <p class="text-2xl font-bold text-[#ffda6a] text-center tracking-wide"
+            <p class="text-3xl font-bold text-[#ffda6a] text-center tracking-wide 
+                      transition-all duration-300"
                style="text-shadow: 0 0 6px rgba(255, 215, 0, 0.35);">
               {winner.name}
             </p>
@@ -71,21 +55,7 @@ const winners = [
       ))}
 
     </div>
+
   </section>
-
-  <!-- سكربت تكبير التاج -->
-  <script>
-    document.querySelectorAll(".card").forEach((card) => {
-      const crown = card.parentElement.querySelector(".crown")
-
-      card.addEventListener("mouseenter", () => {
-        crown.style.transform = "scale(1.18)"
-      })
-
-      card.addEventListener("mouseleave", () => {
-        crown.style.transform = "scale(1)"
-      })
-    })
-  </script>
 
 </Layout>
