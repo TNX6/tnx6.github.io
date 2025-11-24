@@ -56,7 +56,7 @@ const nav = [
     animation: dropdownClose 0.28s ease-out forwards;
   }
 
-  /* Glow */
+  /* Glow بسيط للروابط فقط */
   @keyframes pulseGlow {
     0% {
       box-shadow: 0 0 6px rgba(198,164,79,0.25);
@@ -69,35 +69,36 @@ const nav = [
     }
   }
 
-  .menu-glow {
-    transition: all 0.25s ease;
+  .menu-link {
+    transition:
+      box-shadow 0.25s ease,
+      border-color 0.25s ease,
+      background-color 0.25s ease,
+      transform 0.25s ease;
   }
 
-  /* ✅ هوفر بدون تصغير/تكبير ولا أنميشن مستمر */
-  .menu-pulse:hover {
-    animation: none; /* نوقف الأنميشن */
-    transform: none; /* نتأكد ما في scale */
+  .menu-link:hover {
+    animation: pulseGlow 1.2s ease-in-out infinite;
     border-color: #c6a44f !important;
-    box-shadow: 0 0 10px rgba(198,164,79,0.5);
   }
 
-  /* 🔥 أنميشن كبس الزر (يصغر ثم يكبر) */
-  @keyframes menuClickPop {
-    0%   { transform: scale(1); }
-    50%  { transform: scale(0.9); }
-    100% { transform: scale(1); }
-  }
-
-  .menu-toggle {
-    transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+  /* 🔥 زر القائمة نفسه */
+  .menu-button {
+    transition:
+      transform 0.14s ease,
+      box-shadow 0.14s ease,
+      border-color 0.14s ease,
+      background-color 0.14s ease;
     transform-origin: center;
   }
 
-  .menu-click {
-    animation: menuClickPop 0.18s ease-out;
+  /* يصغر لحظة الضغط ويرجع */
+  .menu-button:active {
+    transform: scale(0.92);
+    box-shadow: 0 0 12px rgba(198,164,79,0.6);
   }
 
-  /* أيقونة الخطوط الثلاثة */
+  /* أيقونة الخطوط */
   .menu-icon {
     display: flex;
     flex-direction: column;
@@ -120,15 +121,15 @@ const nav = [
   }
 
   /* لما تكون القائمة مفتوحة تتحول الخطوط إلى X */
-  .menu-toggle.menu-open .menu-line.top {
+  .menu-button.menu-open .menu-line.top {
     transform: translateY(5px) rotate(45deg);
   }
 
-  .menu-toggle.menu-open .menu-line.middle {
+  .menu-button.menu-open .menu-line.middle {
     opacity: 0;
   }
 
-  .menu-toggle.menu-open .menu-line.bottom {
+  .menu-button.menu-open .menu-line.bottom {
     transform: translateY(-5px) rotate(-45deg);
   }
 </style>
@@ -137,7 +138,10 @@ const nav = [
   <div class="max-w-7xl mx-auto px-6 flex items-center justify-between py-4">
 
     <!-- Logo -->
-    <a href={makeHref('')} class="flex items-center space-x-3 text-[#d5b76c] font-extrabold text-2xl tracking-wide drop-shadow-[0_0_10px_rgba(198,164,79,0.6)]">
+    <a
+      href={makeHref('')}
+      class="flex items-center space-x-3 text-[#d5b76c] font-extrabold text-2xl tracking-wide drop-shadow-[0_0_10px_rgba(198,164,79,0.6)]"
+    >
       <Icon name="tabler:brand-twitch" class="w-7 h-7 text-[#c6a44f]" />
       <span>TNX</span>
     </a>
@@ -146,16 +150,11 @@ const nav = [
     <button
       id="tnx-menu-btn"
       type="button"
-      class="menu-toggle menu-glow menu-pulse flex items-center gap-2 px-4 py-2 rounded-md border border-[#c6a44f]/40 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition"
+      class="menu-button flex items-center gap-2 px-4 py-2 rounded-md border border-[#c6a44f]/40 text-[#ffda6a] bg-black/40 hover:bg-[#c6a44f]/10"
       onclick="
         const menu = document.getElementById('dropdownMenu');
         const isHidden = menu.classList.contains('hidden');
         const btn = this;
-
-        // أنميشن التصغير ثم التكبير (على الضغط فقط)
-        btn.classList.remove('menu-click');
-        void btn.offsetWidth; // لإعادة تشغيل الأنميشن
-        btn.classList.add('menu-click');
 
         if (isHidden) {
           // فتح القائمة
@@ -178,7 +177,6 @@ const nav = [
         }
       "
     >
-      <!-- أيقونة الخطوط المتحركة -->
       <div class="menu-icon">
         <span class="menu-line top"></span>
         <span class="menu-line middle"></span>
@@ -197,7 +195,7 @@ const nav = [
         <a
           href={href}
           class:list={[
-            'menu-glow menu-pulse block w-full text-center px-4 py-3 rounded-lg bg-black/40 border border-[#c6a44f]/30 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition',
+            'menu-link block w-full text-center px-4 py-3 rounded-lg bg-black/40 border border-[#c6a44f]/30 text-[#ffda6a] hover:bg-[#c6a44f]/10 transition',
             { 'bg-[#c6a44f]/20': isActive },
           ]}
         >
