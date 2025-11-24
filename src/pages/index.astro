@@ -39,7 +39,39 @@ const metadata = {
         </a>
       </div>
 
-      <div class="relative w-full max-w-4xl mx-auto aspect-video rounded-2xl overflow-hidden shadow-2xl mt-16 border border-[#c29200]/40">
+      <!-- 🔴 كبسولة العدّاد -->
+      <div class="mt-6 mb-4 flex justify-center">
+        <div
+          id="next-stream-wrapper"
+          class="inline-flex items-center gap-3 rounded-full border border-[#c29200]/70 bg-black/70 px-5 py-2 text-xs md:text-sm shadow-[0_0_25px_rgba(0,0,0,0.7)]"
+        >
+          <!-- الرقم يمين -->
+          <span
+            id="next-stream-timer"
+            class="font-mono text-sm md:text-base font-semibold text-[#ffda6a]"
+          >
+            -- : -- : --
+          </span>
+
+          <!-- الكلام يسار -->
+          <span
+            id="next-stream-label"
+            class="text-slate-100 text-[13px] md:text-sm"
+          >
+            البث القادم خلال
+          </span>
+
+          <!-- أيقونة بسيطة لليمين -->
+          <span
+            class="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#c29200]/70 text-[12px] text-[#ffda6a] bg-black/60"
+          >
+            🎥
+          </span>
+        </div>
+      </div>
+
+      <!-- 🎥 مربع تويتش -->
+      <div class="relative w-full max-w-4xl mx-auto aspect-video rounded-2xl overflow-hidden shadow-2xl mt-6 border border-[#c29200]/40">
         <iframe
           src="https://player.twitch.tv/?channel=tnx_6&parent=tnx6.xyz"
           allowfullscreen
@@ -48,6 +80,94 @@ const metadata = {
           width="100%"
           height="100%"
         ></iframe>
+      </div>
+
+      <!-- 📅 جدول البث الأسبوعي تحت مربع البث -->
+      <div class="mt-10 w-full max-w-5xl mx-auto" dir="rtl">
+        <div class="rounded-3xl border border-[#c29200]/40 bg-black/70 px-5 py-4 md:px-8 md:py-6 shadow-[0_0_25px_rgba(0,0,0,0.65)]">
+
+          <!-- العنوان في النص -->
+          <div class="flex items-center justify-center mb-4">
+            <div class="flex items-center gap-2 text-sm md:text-base">
+              <iconify-icon icon="tabler:calendar-time" class="text-[#ffda6a] text-lg md:text-xl"></iconify-icon>
+              <h2 class="font-semibold text-white">
+                جدول البث الأسبوعي
+              </h2>
+            </div>
+          </div>
+
+          <div class="grid gap-3 md:grid-cols-5">
+            <!-- السبت -->
+            <div
+              class="tnx-schedule-card rounded-2xl border border-transparent px-4 py-4 text-center text-xs md:text-sm text-gray-200 flex flex-col justify-center gap-1"
+              data-schedule-day="6"
+            >
+              <div class="font-semibold text-sm md:text-base">السبت</div>
+              <div class="flex items-center justify-center text-[13px] md:text-sm font-semibold text-[#ffda6a]">
+                <span>8:30 م</span>
+              </div>
+              <div class="text-[11px] md:text-xs text-gray-300 mt-1">
+                قصص ألعاب + سوالف
+              </div>
+            </div>
+
+            <!-- الأحد -->
+            <div
+              class="tnx-schedule-card rounded-2xl border border-transparent px-4 py-4 text-center text-xs md:text-sm text-gray-200 flex flex-col justify-center gap-1"
+              data-schedule-day="0"
+            >
+              <div class="font-semibold text-sm md:text-base">الأحد</div>
+              <div class="flex items-center justify-center text-[13px] md:text-sm font-semibold text-[#ffda6a]">
+                <span>8:30 م</span>
+              </div>
+              <div class="text-[11px] md:text-xs text-gray-300 mt-1">
+                قصص ألعاب + سوالف
+              </div>
+            </div>
+
+            <!-- الاثنين -->
+            <div
+              class="tnx-schedule-card rounded-2xl border border-transparent px-4 py-4 text-center text-xs md:text-sm text-gray-200 flex flex-col justify-center gap-1"
+              data-schedule-day="1"
+            >
+              <div class="font-semibold text-sm md:text-base">الاثنين</div>
+              <div class="flex items-center justify-center text-[13px] md:text-sm font-semibold text-[#ffda6a]">
+                <span>8:30 م</span>
+              </div>
+              <div class="text-[11px] md:text-xs text-gray-300 mt-1">
+                قصص ألعاب + سوالف
+              </div>
+            </div>
+
+            <!-- الثلاثاء -->
+            <div
+              class="tnx-schedule-card rounded-2xl border border-transparent px-4 py-4 text-center text-xs md:text-sm text-gray-200 flex flex-col justify-center gap-1"
+              data-schedule-day="2"
+            >
+              <div class="font-semibold text-sm md:text-base">الثلاثاء</div>
+              <div class="flex items-center justify-center text-[13px] md:text-sm font-semibold text-[#ffda6a]">
+                <span>8:30 م</span>
+              </div>
+              <div class="text-[11px] md:text-xs text-gray-300 mt-1">
+                قصص ألعاب + سوالف
+              </div>
+            </div>
+
+            <!-- الأربعاء -->
+            <div
+              class="tnx-schedule-card rounded-2xl border border-transparent px-4 py-4 text-center text-xs md:text-sm text-gray-200 flex flex-col justify-center gap-1"
+              data-schedule-day="3"
+            >
+              <div class="font-semibold text-sm md:text-base">الأربعاء</div>
+              <div class="flex items-center justify-center text-[13px] md:text-sm font-semibold text-[#ffda6a]">
+                <span>8:30 م</span>
+              </div>
+              <div class="text-[11px] md:text-xs text-gray-300 mt-1">
+                قصص ألعاب + سوالف
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -95,4 +215,180 @@ const metadata = {
 
     </div>
   </section>
+
+  <!-- 🌟 ستايل الـ glow + شكل كروت الجدول -->
+  <style is:global>
+    .tnx-live-glow {
+      color: #fef08a;
+      text-shadow:
+        0 0 5px #facc15,
+        0 0 12px #facc15,
+        0 0 20px #facc15;
+      animation: tnx-live-pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes tnx-live-pulse {
+      0%, 100% {
+        text-shadow:
+          0 0 4px #facc15,
+          0 0 10px #facc15,
+          0 0 18px #facc15;
+        transform: translateY(0);
+      }
+      50% {
+        text-shadow:
+          0 0 8px #fde68a,
+          0 0 18px #facc15,
+          0 0 28px #fbbf24;
+        transform: translateY(-0.5px);
+      }
+    }
+
+    .tnx-schedule-card {
+      background: #080b12;
+    }
+
+    .tnx-schedule-card--active {
+      border-color: rgba(194, 146, 0, 0.9) !important;
+      box-shadow: 0 0 22px rgba(194, 146, 0, 0.45);
+    }
+  </style>
+
+  <!-- 🧠 سكربت العدّ التنازلي + وضع "البث شغال" + تمييز يوم الجدول -->
+  <script>
+    const STREAM_START_HOUR = 20;      // 8 PM
+    const STREAM_START_MINUTE = 30;    // :30
+    const STREAM_END_HOUR = 2;         // 2 AM
+    const STREAM_DAYS = [6, 0, 1, 2, 3]; // السبت إلى الأربعاء
+
+    function isStreamDay(date) {
+      return STREAM_DAYS.includes(date.getDay());
+    }
+
+    function isInStreamWindow(now) {
+      const today = new Date(now);
+      const yesterday = new Date(now);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      function inWindowFor(dateObj) {
+        if (!isStreamDay(dateObj)) return false;
+
+        const start = new Date(dateObj);
+        start.setHours(STREAM_START_HOUR, STREAM_START_MINUTE, 0, 0);
+
+        const end = new Date(start);
+        end.setDate(end.getDate() + 1);
+        end.setHours(STREAM_END_HOUR, 0, 0, 0);
+
+        return now >= start && now < end;
+      }
+
+      return inWindowFor(today) || inWindowFor(yesterday);
+    }
+
+    function getNextStreamStart(now) {
+      for (let offset = 0; offset < 10; offset++) {
+        const candidateDay = new Date(now);
+        candidateDay.setDate(candidateDay.getDate() + offset);
+
+        if (!isStreamDay(candidateDay)) continue;
+
+        const start = new Date(candidateDay);
+        start.setHours(STREAM_START_HOUR, STREAM_START_MINUTE, 0, 0);
+
+        if (start > now) {
+          return start;
+        }
+      }
+      return null;
+    }
+
+    function highlightTodayScheduleCard() {
+      const today = new Date();
+      const todayDay = today.getDay();
+      const cards = document.querySelectorAll('.tnx-schedule-card');
+
+      cards.forEach((card) => {
+        card.classList.remove('tnx-schedule-card--active');
+        const dayAttr = card.getAttribute('data-schedule-day');
+        if (!dayAttr) return;
+        const cardDay = parseInt(dayAttr, 10);
+        if (cardDay === todayDay) {
+          card.classList.add('tnx-schedule-card--active');
+        }
+      });
+    }
+
+    function startNextStreamCountdown() {
+      const timerEl = document.getElementById('next-stream-timer');
+      const wrapperEl = document.getElementById('next-stream-wrapper');
+      const labelEl = document.getElementById('next-stream-label');
+      if (!timerEl) return;
+
+      function update() {
+        const now = new Date();
+
+        if (isInStreamWindow(now)) {
+          timerEl.textContent = 'البث شغّال الآن! انضم للبث 👇';
+          timerEl.classList.remove('font-mono');
+          timerEl.classList.add('font-bold', 'tnx-live-glow');
+
+          if (labelEl) labelEl.textContent = 'البث مباشر';
+          if (wrapperEl) wrapperEl.classList.add('ring-1', 'ring-yellow-400/60');
+          return;
+        }
+
+        const next = getNextStreamStart(now);
+        if (!next) {
+          timerEl.textContent = '-- : -- : --';
+          timerEl.classList.add('font-mono');
+          timerEl.classList.remove('font-bold', 'tnx-live-glow');
+          if (labelEl) labelEl.textContent = 'البث القادم خلال';
+          if (wrapperEl) wrapperEl.classList.remove('ring-1', 'ring-yellow-400/60');
+          return;
+        }
+
+        const diffMs = next - now;
+        const totalSeconds = Math.max(0, Math.floor(diffMs / 1000));
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+
+        timerEl.textContent =
+          String(h).padStart(2, '0') + ' : ' +
+          String(m).padStart(2, '0') + ' : ' +
+          String(s).padStart(2, '0');
+
+        timerEl.classList.add('font-mono');
+        timerEl.classList.remove('font-bold', 'tnx-live-glow');
+
+        if (labelEl) {
+          if (!isStreamDay(now)) {
+            labelEl.textContent = 'اليوم ما فيه بث - البث القادم بعد';
+          } else {
+            labelEl.textContent = 'البث القادم خلال';
+          }
+        }
+
+        if (wrapperEl) {
+          wrapperEl.classList.remove('ring-1', 'ring-yellow-400/60');
+        }
+      }
+
+      update();
+      setInterval(update, 1000);
+    }
+
+    if (typeof window !== 'undefined') {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          startNextStreamCountdown();
+          highlightTodayScheduleCard();
+        });
+      } else {
+        startNextStreamCountdown();
+        highlightTodayScheduleCard();
+      }
+    }
+  </script>
 </Layout>
