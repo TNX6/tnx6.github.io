@@ -56,7 +56,7 @@ const nav = [
     animation: dropdownClose 0.28s ease-out forwards;
   }
 
-  /* Glow + Pulse */
+  /* Glow */
   @keyframes pulseGlow {
     0% {
       box-shadow: 0 0 6px rgba(198,164,79,0.25);
@@ -73,9 +73,12 @@ const nav = [
     transition: all 0.25s ease;
   }
 
+  /* ✅ هوفر بدون تصغير/تكبير ولا أنميشن مستمر */
   .menu-pulse:hover {
-    animation: pulseGlow 1.2s ease-in-out infinite;
+    animation: none; /* نوقف الأنميشن */
+    transform: none; /* نتأكد ما في scale */
     border-color: #c6a44f !important;
+    box-shadow: 0 0 10px rgba(198,164,79,0.5);
   }
 
   /* 🔥 أنميشن كبس الزر (يصغر ثم يكبر) */
@@ -149,9 +152,9 @@ const nav = [
         const isHidden = menu.classList.contains('hidden');
         const btn = this;
 
-        // أنميشن التصغير ثم التكبير
+        // أنميشن التصغير ثم التكبير (على الضغط فقط)
         btn.classList.remove('menu-click');
-        void btn.offsetWidth; // force reflow لإعادة تشغيل الأنميشن
+        void btn.offsetWidth; // لإعادة تشغيل الأنميشن
         btn.classList.add('menu-click');
 
         if (isHidden) {
