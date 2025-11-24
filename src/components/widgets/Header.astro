@@ -56,7 +56,7 @@ const nav = [
     animation: dropdownClose 0.28s ease-out forwards;
   }
 
-  /* Glow بسيط للروابط فقط */
+  /* Glow بسيط للروابط */
   @keyframes pulseGlow {
     0% {
       box-shadow: 0 0 6px rgba(198,164,79,0.25);
@@ -74,12 +74,18 @@ const nav = [
       box-shadow 0.25s ease,
       border-color 0.25s ease,
       background-color 0.25s ease,
-      transform 0.25s ease;
+      transform 0.15s ease;
   }
 
   .menu-link:hover {
     animation: pulseGlow 1.2s ease-in-out infinite;
     border-color: #c6a44f !important;
+  }
+
+  /* ✅ لما تضغط على عنصر القائمة يصغر شوي ثم يرجع */
+  .menu-link:active {
+    transform: scale(0.97);
+    box-shadow: 0 0 10px rgba(198,164,79,0.5);
   }
 
   /* 🔥 زر القائمة نفسه */
@@ -92,7 +98,6 @@ const nav = [
     transform-origin: center;
   }
 
-  /* يصغر لحظة الضغط ويرجع */
   .menu-button:active {
     transform: scale(0.92);
     box-shadow: 0 0 12px rgba(198,164,79,0.6);
