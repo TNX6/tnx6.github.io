@@ -8,44 +8,79 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <section class="relative text-center text-white py-24 px-6 bg-gradient-to-b from-black/60 to-transparent">
-    <div class="max-w-5xl mx-auto">
-      <div class="flex items-center justify-center gap-3 mb-6">
-        <iconify-icon icon="tabler:brand-twitch" class="text-[#a67c00] text-5xl"></iconify-icon>
-        <h1 class="text-5xl font-extrabold tracking-wide bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-lg">
-          TNX
+  
+  <section
+    class="relative py-24 px-6 text-white bg-black/90 overflow-hidden"
+  >
+    <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center text-center md:text-right" dir="rtl">
+      
+      <div class="relative flex justify-center md:order-2">
+        <div class="relative w-full max-w-sm group"> 
+          <img
+            src="/assets/images/tnx-min.jpg"
+            alt="Avatar"
+            class="rounded-full w-full object-cover aspect-square border-2 border-[#ffda6a]/80 shadow-lg group-hover:scale-105 transition-transform duration-500"
+            width="400"
+            height="400"
+          />
+          <div class="absolute inset-0 rounded-full shadow-[0_0_20px_#ffda6a,0_0_50px_#c29200] opacity-80 animate-pulse"></div>
+        </div>
+      </div>
+
+      <div class="md:order-1">
+        <p class="text-xl text-gray-300 mb-2">اهلًا، أنا TNX</p>
+        
+        <h1 class="text-5xl md:text-6xl font-extrabold tracking-wide mb-6 bg-clip-text text-transparent drop-shadow-lg leading-tight">
+          أنا <span id="changing-title" class="text-[#ffda6a] glow-text border-r-4 border-[#ffda6a] pr-1"></span>
         </h1>
+
+        <p class="text-lg text-gray-200 mb-10 max-w-lg md:max-w-none mx-auto">
+          أبحث عن المتعة، الضحك، وتحديات المجتمع… وأبث يوميًا على Twitch.
+        </p>
+
+        <div class="flex flex-wrap justify-center md:justify-start gap-4">
+          <a
+            href="https://www.twitch.tv/tnx_6"
+            target="_blank"
+            class="px-8 py-3 rounded-lg text-black font-semibold bg-gradient-to-r from-[#ffda6a] to-[#c29200] hover:opacity-90 transition shadow-lg shadow-[#c29200]/30"
+          >
+            شاهد البث الآن
+          </a>
+
+          <a
+            href="https://linktr.ee/TNX6"
+            target="_blank"
+            class="px-8 py-3 rounded-lg border border-[#c29200] text-[#ffda6a] hover:bg-[#c29200]/10 transition"
+          >
+            كل الروابط
+          </a>
+        </div>
+
+        <div class="flex justify-center md:justify-start gap-4 mt-8">
+          <a href="https://www.twitch.tv/tnx_6" target="_blank" aria-label="Twitch" class="social-icon">
+            <iconify-icon icon="tabler:brand-twitch" class="text-3xl text-gray-400 hover:text-[#ffda6a] transition"></iconify-icon>
+          </a>
+          <a href="#" target="_blank" aria-label="YouTube" class="social-icon">
+            <iconify-icon icon="tabler:brand-youtube" class="text-3xl text-gray-400 hover:text-[#ffda6a] transition"></iconify-icon>
+          </a>
+          <a href="#" target="_blank" aria-label="Discord" class="social-icon">
+            <iconify-icon icon="tabler:brand-discord" class="text-3xl text-gray-400 hover:text-[#ffda6a] transition"></iconify-icon>
+          </a>
+          <a href="#" target="_blank" aria-label="TikTok" class="social-icon">
+            <iconify-icon icon="tabler:brand-tiktok" class="text-3xl text-gray-400 hover:text-[#ffda6a] transition"></iconify-icon>
+          </a>
+        </div>
       </div>
+    </div>
+  </section>
+  <section class="relative text-center text-white py-24 px-6 bg-black/70 border-t border-[#c29200]/10">
+    <div class="max-w-5xl mx-auto">
 
-      <p class="text-lg text-gray-200 mb-10">
-        أبحث عن المتعة، الضحك، وتحديات المجتمع… وأبث يوميًا
-      </p>
-
-      <div class="flex flex-wrap justify-center gap-4">
-        <a
-          href="https://www.twitch.tv/tnx_6"
-          target="_blank"
-          class="px-8 py-3 rounded-lg text-black font-semibold bg-gradient-to-r from-[#ffda6a] to-[#c29200] hover:opacity-90 transition"
-        >
-          Follow on Twitch
-        </a>
-
-        <a
-          href="https://linktr.ee/TNX6"
-          target="_blank"
-          class="px-8 py-3 rounded-lg border border-[#c29200] text-[#ffda6a] hover:bg-[#c29200]/10 transition"
-        >
-          All Links
-        </a>
-      </div>
-
-      <!-- 🔴 كبسولة العدّاد -->
       <div class="mt-6 mb-4 flex justify-center">
         <div
           id="next-stream-wrapper"
           class="inline-flex items-center gap-3 rounded-full border border-[#c29200]/70 bg-black/70 px-5 py-2 text-xs md:text-sm shadow-[0_0_25px_rgba(0,0,0,0.7)]"
         >
-          <!-- الرقم يمين -->
           <span
             id="next-stream-timer"
             class="font-mono text-sm md:text-base font-semibold text-[#ffda6a]"
@@ -53,7 +88,6 @@ const metadata = {
             -- : -- : --
           </span>
 
-          <!-- الكلام يسار -->
           <span
             id="next-stream-label"
             class="text-slate-100 text-[13px] md:text-sm"
@@ -61,7 +95,6 @@ const metadata = {
             البث القادم خلال
           </span>
 
-          <!-- أيقونة بسيطة لليمين -->
           <span
             class="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#c29200]/70 text-[12px] text-[#ffda6a] bg-black/60"
           >
@@ -70,7 +103,6 @@ const metadata = {
         </div>
       </div>
 
-      <!-- 🎥 مربع تويتش -->
       <div class="relative w-full max-w-4xl mx-auto aspect-video rounded-2xl overflow-hidden shadow-2xl mt-6 border border-[#c29200]/40">
         <iframe
           src="https://player.twitch.tv/?channel=tnx_6&parent=tnx6.xyz"
@@ -82,11 +114,9 @@ const metadata = {
         ></iframe>
       </div>
 
-      <!-- 📅 جدول البث الأسبوعي تحت مربع البث -->
       <div class="mt-10 w-full max-w-5xl mx-auto" dir="rtl">
         <div class="rounded-3xl border border-[#c29200]/40 bg-black/70 px-5 py-4 md:px-8 md:py-6 shadow-[0_0_25px_rgba(0,0,0,0.65)]">
 
-          <!-- العنوان في النص -->
           <div class="flex items-center justify-center mb-4">
             <div class="flex items-center gap-2 text-sm md:text-base">
               <iconify-icon icon="tabler:calendar-time" class="text-[#ffda6a] text-lg md:text-xl"></iconify-icon>
@@ -97,7 +127,6 @@ const metadata = {
           </div>
 
           <div class="grid gap-3 md:grid-cols-5">
-            <!-- السبت -->
             <div
               class="tnx-schedule-card rounded-2xl border border-transparent px-4 py-4 text-center text-xs md:text-sm text-gray-200 flex flex-col justify-center gap-1"
               data-schedule-day="6"
@@ -111,7 +140,6 @@ const metadata = {
               </div>
             </div>
 
-            <!-- الأحد -->
             <div
               class="tnx-schedule-card rounded-2xl border border-transparent px-4 py-4 text-center text-xs md:text-sm text-gray-200 flex flex-col justify-center gap-1"
               data-schedule-day="0"
@@ -125,7 +153,6 @@ const metadata = {
               </div>
             </div>
 
-            <!-- الاثنين -->
             <div
               class="tnx-schedule-card rounded-2xl border border-transparent px-4 py-4 text-center text-xs md:text-sm text-gray-200 flex flex-col justify-center gap-1"
               data-schedule-day="1"
@@ -139,7 +166,6 @@ const metadata = {
               </div>
             </div>
 
-            <!-- الثلاثاء -->
             <div
               class="tnx-schedule-card rounded-2xl border border-transparent px-4 py-4 text-center text-xs md:text-sm text-gray-200 flex flex-col justify-center gap-1"
               data-schedule-day="2"
@@ -153,7 +179,6 @@ const metadata = {
               </div>
             </div>
 
-            <!-- الأربعاء -->
             <div
               class="tnx-schedule-card rounded-2xl border border-transparent px-4 py-4 text-center text-xs md:text-sm text-gray-200 flex flex-col justify-center gap-1"
               data-schedule-day="3"
@@ -175,11 +200,10 @@ const metadata = {
   <section class="relative py-24 px-6 text-white bg-black/70">
     <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
 
-      <!-- الصورة الجديدة -->
       <img
         src="/assets/images/tnx-min.jpg"
         alt="TNX6 Twitch Avatar"
-        class="rounded-2xl w-full max-w-sm mx-auto border border-[#c29200]/40 shadow-lg"
+        class="rounded-2xl w-full max-w-sm mx-auto border border-[#c29200]/40 shadow-lg hover:scale-105 transition-transform duration-500"
         width="300"
         height="300"
         loading="lazy"
@@ -216,7 +240,30 @@ const metadata = {
     </div>
   </section>
 
-  <!-- 🌟 ستايل الـ glow + شكل كروت الجدول -->
+  <style>
+    /* تخصيص تأثير التوهج للنص في الهيرو */
+    .glow-text {
+      text-shadow:
+        0 0 5px rgba(255, 218, 106, 0.7),
+        0 0 15px rgba(194, 146, 0, 0.7);
+    }
+
+    /* تخصيص تأثير التوهج للأيقونات في الهيرو */
+    .social-icon:hover iconify-icon {
+      filter: drop-shadow(0 0 4px #ffda6a);
+    }
+
+    /* وميض المؤشر (الكيرسير) لتأثير الآلة الكاتبة */
+    #changing-title {
+        animation: cursor-blink 1s step-end infinite;
+    }
+
+    @keyframes cursor-blink {
+        from, to { border-color: transparent }
+        50% { border-color: #ffda6a }
+    }
+  </style>
+
   <style is:global>
     .tnx-live-glow {
       color: #fef08a;
@@ -254,11 +301,67 @@ const metadata = {
     }
   </style>
 
-  <!-- 🧠 سكربت العدّ التنازلي + وضع "البث شغال" + تمييز يوم الجدول -->
   <script>
-    const STREAM_START_HOUR = 20;      // 8 PM
+    const titles = [
+      "Twitch Streamer",
+      "Content Creator",
+      "Community Builder",
+      "Game Storyteller"
+    ];
+
+    let titleElement = document.getElementById('changing-title');
+    let currentTitleIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let typingSpeed = 100; // سرعة الكتابة بالملي ثانية
+    let delayAfterTyping = 1500; // تأخير بعد الانتهاء من كتابة الكلمة (مللي ثانية)
+
+    function typeWriterEffect() {
+      if (!titleElement) return;
+
+      const currentTitle = titles[currentTitleIndex];
+
+      if (isDeleting) {
+        // وضع الحذف (حذف الحروف)
+        titleElement.textContent = currentTitle.substring(0, charIndex - 1);
+        charIndex--;
+        typingSpeed = 50; // سرعة حذف أسرع
+      } else {
+        // وضع الكتابة (إضافة الحروف)
+        titleElement.textContent = currentTitle.substring(0, charIndex + 1);
+        charIndex++;
+        typingSpeed = 100; // سرعة الكتابة العادية
+      }
+
+      if (!isDeleting && charIndex === currentTitle.length) {
+        // انتهت الكتابة، ابدأ بالحذف بعد تأخير
+        isDeleting = true;
+        typingSpeed = delayAfterTyping; 
+      } else if (isDeleting && charIndex === 0) {
+        // انتهى الحذف، انتقل للعنوان التالي
+        isDeleting = false;
+        currentTitleIndex = (currentTitleIndex + 1) % titles.length;
+        typingSpeed = 200; // تأخير بسيط قبل بدء كتابة الكلمة الجديدة
+      }
+
+      // استدعاء الدالة مجدداً بالسرعة المحددة
+      setTimeout(typeWriterEffect, typingSpeed);
+    }
+
+    // التأكد من أن DOM جاهز قبل البدء
+    if (typeof window !== 'undefined' && document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            typeWriterEffect();
+        });
+    } else if (titleElement) {
+        typeWriterEffect();
+    }
+  </script>
+
+  <script>
+    const STREAM_START_HOUR = 20;       // 8 PM
     const STREAM_START_MINUTE = 30;    // :30
-    const STREAM_END_HOUR = 2;         // 2 AM
+    const STREAM_END_HOUR = 2;          // 2 AM
     const STREAM_DAYS = [6, 0, 1, 2, 3]; // السبت إلى الأربعاء
 
     function isStreamDay(date) {
