@@ -19,7 +19,7 @@ const metadata = {
           <img
             src="/assets/images/tnx-min.jpg"
             alt="Avatar"
-            class="rounded-full w-full object-cover aspect-square border-2 border-[#ffda6a]/80 shadow-lg group-hover:scale-105 transition-transform duration-500"
+            class="rounded-full w-full object-cover aspect-square border-2 border-[#ffda6a]/80 shadow-lg tnx-avatar-animation group-hover:scale-105 transition-transform duration-500"
             width="400"
             height="400"
           />
@@ -28,14 +28,14 @@ const metadata = {
       </div>
 
       <div class="md:order-1">
-        <p class="text-xl text-gray-300 mb-2">اهلًا، أنا TNX</p>
+        <p class="text-xl text-gray-300 mb-2">مرحباً، أنا TNX</p>
         
         <h1 class="text-5xl md:text-6xl font-extrabold tracking-wide mb-6 bg-clip-text text-transparent drop-shadow-lg leading-tight">
           أنا <span id="changing-title" class="text-[#ffda6a] glow-text border-r-4 border-[#ffda6a] pr-1"></span>
         </h1>
 
         <p class="text-lg text-gray-200 mb-10 max-w-lg md:max-w-none mx-auto">
-          أبحث عن المتعة، الضحك، وتحديات المجتمع… وأبث يوميًا على Twitch.
+          أبحث عن المتعة، الضحك، وتحديات المجتمع… وأبث يوميًا على **Twitch** و**YouTube**. لدي الخبرة في صناعة المحتوى والتفاعل مع الجمهور.
         </p>
 
         <div class="flex flex-wrap justify-center md:justify-start gap-4">
@@ -241,6 +241,18 @@ const metadata = {
   </section>
 
   <style>
+    /* 1. مفاتيح الحركة (Keyframes) لتأثير الصعود والنزول التلقائي */
+    @keyframes float-up-down {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-10px); } /* تتحرك للأعلى 10 بكسل */
+        100% { transform: translateY(0); }
+    }
+
+    /* 2. تطبيق الحركة على الصورة الدائرية */
+    .tnx-avatar-animation {
+        animation: float-up-down 4s ease-in-out infinite; /* 4 ثواني لكل دورة، تكرار مستمر */
+    }
+
     /* تخصيص تأثير التوهج للنص في الهيرو */
     .glow-text {
       text-shadow:
@@ -302,11 +314,10 @@ const metadata = {
   </style>
 
   <script>
+    // تم تغيير النصوص هنا إلى العربية
     const titles = [
-      "Twitch Streamer",
-      "Content Creator",
-      "Community Builder",
-      "Game Storyteller"
+      "ستريمر",
+      "صانع محتوى",
     ];
 
     let titleElement = document.getElementById('changing-title');
