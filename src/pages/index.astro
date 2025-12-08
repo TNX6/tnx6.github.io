@@ -15,11 +15,11 @@ const metadata = {
     <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center text-center md:text-right" dir="rtl">
       
       <div class="relative flex justify-center md:order-2">
-        <div class="relative w-full max-w-sm group"> 
+        <div class="relative w-full max-w-sm group tnx-avatar-animation"> 
           <img
             src="/assets/images/tnx-min.jpg"
             alt="Avatar"
-            class="rounded-full w-full object-cover aspect-square border-2 border-[#ffda6a]/80 shadow-lg tnx-avatar-animation group-hover:scale-105 transition-transform duration-500"
+            class="rounded-full w-full object-cover aspect-square border-2 border-[#ffda6a]/80 shadow-lg group-hover:scale-105 transition-transform duration-500"
             width="400"
             height="400"
           />
@@ -248,7 +248,7 @@ const metadata = {
         100% { transform: translateY(0); }
     }
 
-    /* 2. تطبيق الحركة على الصورة الدائرية */
+    /* 2. تطبيق الحركة على الحاوية لضمان حركة الإطار والصورة معاً */
     .tnx-avatar-animation {
         animation: float-up-down 4s ease-in-out infinite; /* 4 ثواني لكل دورة، تكرار مستمر */
     }
@@ -314,7 +314,7 @@ const metadata = {
   </style>
 
   <script>
-    // تم تغيير النصوص هنا إلى العربية
+    // النصوص المعربة: "ستريمر" و "صانع محتوى"
     const titles = [
       "ستريمر",
       "صانع محتوى",
