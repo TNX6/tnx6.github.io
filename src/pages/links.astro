@@ -1,0 +1,193 @@
+---
+import Layout from '~/layouts/PageLayout.astro'
+
+const metadata = {
+  title: 'TNX6 — الروابط',
+}
+
+const year = new Date().getFullYear()
+---
+
+<Layout metadata={metadata}>
+  <main class="min-h-[100vh] flex items-center justify-center px-6 py-12 text-white">
+    <div class="w-full max-w-md mx-auto text-center">
+
+      <!-- الصورة + الاسم -->
+      <div class="flex flex-col items-center gap-4 mb-8">
+        <div class="tnx-ring-links">
+          <img
+            src="/assets/images/tnx-min.jpg"
+            alt="TNX Avatar"
+            class="w-full h-full object-cover rounded-full"
+            loading="lazy"
+          />
+        </div>
+
+        <div>
+          <h1 class="text-2xl font-extrabold tracking-wide">
+            TNX6
+          </h1>
+          <p class="mt-1 text-sm text-gray-300">
+            ستريمر يحب القصص، السوالف، وتحديات المجتمع 👑
+          </p>
+        </div>
+      </div>
+
+      <!-- الأزرار الرئيسية (link-in-bio style) -->
+      <div class="space-y-3 text-right" dir="rtl">
+
+        <!-- Twitch -->
+        <a
+          href="https://www.twitch.tv/tnx_6"
+          target="_blank"
+          class="tnx-link-btn"
+        >
+          <span class="flex items-center gap-2">
+            <iconify-icon icon="tabler:brand-twitch" class="text-xl"></iconify-icon>
+            <span>البث على Twitch</span>
+          </span>
+        </a>
+
+        <!-- Kick -->
+        <a
+          href="https://kick.com/tnx6"
+          target="_blank"
+          class="tnx-link-btn"
+        >
+          <span class="flex items-center gap-2">
+            <iconify-icon icon="simple-icons:kick" class="text-xl"></iconify-icon>
+            <span>البث على Kick</span>
+          </span>
+        </a>
+
+        <!-- YouTube -->
+        <a
+          href="https://www.youtube.com/@TNX66"
+          target="_blank"
+          class="tnx-link-btn"
+        >
+          <span class="flex items-center gap-2">
+            <iconify-icon icon="tabler:brand-youtube" class="text-xl"></iconify-icon>
+            <span>قناتي في YouTube</span>
+          </span>
+        </a>
+
+        <!-- TikTok -->
+        <a
+          href="https://www.tiktok.com/@itstnx"
+          target="_blank"
+          class="tnx-link-btn"
+        >
+          <span class="flex items-center gap-2">
+            <iconify-icon icon="tabler:brand-tiktok" class="text-xl"></iconify-icon>
+            <span>مقاطعي في TikTok</span>
+          </span>
+        </a>
+
+        <!-- Instagram -->
+        <a
+          href="https://www.instagram.com/itstnx6"
+          target="_blank"
+          class="tnx-link-btn"
+        >
+          <span class="flex items-center gap-2">
+            <iconify-icon icon="tabler:brand-instagram" class="text-xl"></iconify-icon>
+            <span>Instagram</span>
+          </span>
+        </a>
+
+        <!-- Discord -->
+        <a
+          href="https://discord.gg/x7FtrfM6Sk"
+          target="_blank"
+          class="tnx-link-btn"
+        >
+          <span class="flex items-center gap-2">
+            <iconify-icon icon="tabler:brand-discord" class="text-xl"></iconify-icon>
+            <span>سيرفر Discord</span>
+          </span>
+        </a>
+
+        <!-- الموقع الرئيسي -->
+        <a
+          href="https://tnx6.xyz"
+          target="_blank"
+          class="tnx-link-btn-secondary"
+        >
+          <span class="flex items-center gap-2">
+            <iconify-icon icon="tabler:world-www" class="text-xl"></iconify-icon>
+            <span>الموقع الرئيسي</span>
+          </span>
+        </a>
+      </div>
+
+      <!-- فوتر بسيط -->
+      <div class="mt-8 text-xs text-gray-400">
+        © {year} TNX6 — All Rights Reserved
+      </div>
+    </div>
+  </main>
+
+  <style is:global>
+    /* دائرة صغيرة لصفحة الروابط */
+    .tnx-ring-links{
+      width: 120px;
+      height: 120px;
+      border-radius: 9999px;
+      border: 3px solid rgba(194,146,0,0.9);
+      padding: 6px;
+      box-shadow: 0 0 18px rgba(194,146,0,0.25);
+      background: transparent;
+      overflow: hidden;
+    }
+
+    /* زر رئيسي (ذهبي) */
+    .tnx-link-btn{
+      display: block;
+      width: 100%;
+      border-radius: 9999px;
+      padding: 0.9rem 1.2rem;
+      background-image: linear-gradient(to right, #ffda6a, #c29200);
+      color: #000;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: 1px solid rgba(0,0,0,0.4);
+      box-shadow: 0 0 14px rgba(0,0,0,0.7);
+      transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+    }
+    .tnx-link-btn:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(194,146,0,0.55);
+      opacity: 0.96;
+    }
+    .tnx-link-btn:active{
+      transform: scale(0.97);
+      box-shadow: 0 0 8px rgba(194,146,0,0.45);
+    }
+
+    /* زر ثانوي (شفاف بحد ذهبي) */
+    .tnx-link-btn-secondary{
+      display: block;
+      width: 100%;
+      border-radius: 9999px;
+      padding: 0.9rem 1.2rem;
+      background: rgba(0,0,0,0.6);
+      color: #ffda6a;
+      font-weight: 500;
+      font-size: 0.9rem;
+      border: 1px solid rgba(194,146,0,0.7);
+      box-shadow: 0 0 14px rgba(0,0,0,0.7);
+      transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease, border-color .12s ease;
+    }
+    .tnx-link-btn-secondary:hover{
+      transform: translateY(-1px);
+      background: rgba(194,146,0,0.08);
+      border-color: rgba(255,218,106,0.95);
+      box-shadow: 0 0 18px rgba(194,146,0,0.5);
+    }
+    .tnx-link-btn-secondary:active{
+      transform: scale(0.97);
+      box-shadow: 0 0 8px rgba(194,146,0,0.4);
+    }
+  </style>
+</Layout>
