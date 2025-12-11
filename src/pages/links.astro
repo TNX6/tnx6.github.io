@@ -33,91 +33,91 @@ const year = new Date().getFullYear()
         </div>
       </div>
 
-      <!-- الأزرار الرئيسية (link-in-bio style) -->
-      <div class="space-y-3 text-right" dir="rtl">
+      <!-- الروابط على شكل أيقونات تتحول لشريط عند الـ hover -->
+      <div class="space-y-4 flex flex-col items-center" dir="rtl">
 
         <!-- Twitch -->
         <a
           href="https://www.twitch.tv/tnx_6"
           target="_blank"
-          class="tnx-link-btn"
+          class="tnx-link-compact"
         >
-          <span class="flex items-center gap-2">
-            <iconify-icon icon="tabler:brand-twitch" class="text-xl"></iconify-icon>
-            <span>البث على Twitch</span>
-          </span>
+          <span class="tnx-link-label">البث على Twitch</span>
+          <div class="tnx-link-icon">
+            <iconify-icon icon="tabler:brand-twitch" class="text-2xl"></iconify-icon>
+          </div>
         </a>
 
         <!-- Kick -->
         <a
           href="https://kick.com/tnx6"
           target="_blank"
-          class="tnx-link-btn"
+          class="tnx-link-compact"
         >
-          <span class="flex items-center gap-2">
-            <iconify-icon icon="simple-icons:kick" class="text-xl"></iconify-icon>
-            <span>البث على Kick</span>
-          </span>
+          <span class="tnx-link-label">البث على Kick</span>
+          <div class="tnx-link-icon">
+            <iconify-icon icon="simple-icons:kick" class="text-2xl"></iconify-icon>
+          </div>
         </a>
 
         <!-- YouTube -->
         <a
           href="https://www.youtube.com/@TNX66"
           target="_blank"
-          class="tnx-link-btn"
+          class="tnx-link-compact"
         >
-          <span class="flex items-center gap-2">
-            <iconify-icon icon="tabler:brand-youtube" class="text-xl"></iconify-icon>
-            <span>قناتي في YouTube</span>
-          </span>
+          <span class="tnx-link-label">قناتي في YouTube</span>
+          <div class="tnx-link-icon">
+            <iconify-icon icon="tabler:brand-youtube" class="text-2xl"></iconify-icon>
+          </div>
         </a>
 
         <!-- TikTok -->
         <a
           href="https://www.tiktok.com/@itstnx"
           target="_blank"
-          class="tnx-link-btn"
+          class="tnx-link-compact"
         >
-          <span class="flex items-center gap-2">
-            <iconify-icon icon="tabler:brand-tiktok" class="text-xl"></iconify-icon>
-            <span>مقاطعي في TikTok</span>
-          </span>
+          <span class="tnx-link-label">مقاطعي في TikTok</span>
+          <div class="tnx-link-icon">
+            <iconify-icon icon="tabler:brand-tiktok" class="text-2xl"></iconify-icon>
+          </div>
         </a>
 
         <!-- Instagram -->
         <a
           href="https://www.instagram.com/itstnx6"
           target="_blank"
-          class="tnx-link-btn"
+          class="tnx-link-compact"
         >
-          <span class="flex items-center gap-2">
-            <iconify-icon icon="tabler:brand-instagram" class="text-xl"></iconify-icon>
-            <span>Instagram</span>
-          </span>
+          <span class="tnx-link-label">Instagram</span>
+          <div class="tnx-link-icon">
+            <iconify-icon icon="tabler:brand-instagram" class="text-2xl"></iconify-icon>
+          </div>
         </a>
 
         <!-- Discord -->
         <a
           href="https://discord.gg/x7FtrfM6Sk"
           target="_blank"
-          class="tnx-link-btn"
+          class="tnx-link-compact"
         >
-          <span class="flex items-center gap-2">
-            <iconify-icon icon="tabler:brand-discord" class="text-xl"></iconify-icon>
-            <span>سيرفر Discord</span>
-          </span>
+          <span class="tnx-link-label">سيرفر Discord</span>
+          <div class="tnx-link-icon">
+            <iconify-icon icon="tabler:brand-discord" class="text-2xl"></iconify-icon>
+          </div>
         </a>
 
         <!-- الموقع الرئيسي -->
         <a
           href="https://tnx6.xyz"
           target="_blank"
-          class="tnx-link-btn-secondary"
+          class="tnx-link-compact tnx-link-main-site"
         >
-          <span class="flex items-center gap-2">
-            <iconify-icon icon="tabler:world-www" class="text-xl"></iconify-icon>
-            <span>الموقع الرئيسي</span>
-          </span>
+          <span class="tnx-link-label">الموقع الرئيسي</span>
+          <div class="tnx-link-icon">
+            <iconify-icon icon="tabler:world-www" class="text-2xl"></iconify-icon>
+          </div>
         </a>
       </div>
 
@@ -129,7 +129,7 @@ const year = new Date().getFullYear()
   </main>
 
   <style is:global>
-    /* دائرة صغيرة لصفحة الروابط */
+    /* حلقة الصورة */
     .tnx-ring-links{
       width: 120px;
       height: 120px;
@@ -141,53 +141,89 @@ const year = new Date().getFullYear()
       overflow: hidden;
     }
 
-    /* زر رئيسي (ذهبي) */
-    .tnx-link-btn{
-      display: block;
-      width: 100%;
+    /* شكل الرابط المدمج (أيقونة فقط، ويتوسع عند الهوفر) */
+    .tnx-link-compact{
+      position: relative;
+      display: flex;
+      flex-direction: row-reverse; /* عشان الأيقونة تكون يمين والنص يسار مع RTL */
+      align-items: center;
+      gap: 0.6rem;
       border-radius: 9999px;
-      padding: 0.9rem 1.2rem;
-      background-image: linear-gradient(to right, #ffda6a, #c29200);
-      color: #000;
-      font-weight: 600;
-      font-size: 0.95rem;
-      border: 1px solid rgba(0,0,0,0.4);
-      box-shadow: 0 0 14px rgba(0,0,0,0.7);
-      transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
-    }
-    .tnx-link-btn:hover{
-      transform: translateY(-1px);
-      box-shadow: 0 0 20px rgba(194,146,0,0.55);
-      opacity: 0.96;
-    }
-    .tnx-link-btn:active{
-      transform: scale(0.97);
-      box-shadow: 0 0 8px rgba(194,146,0,0.45);
+      padding: 0.35rem;
+      padding-inline-start: 0.35rem;
+      padding-inline-end: 0.35rem;
+      background: transparent;
+      border: 1px solid transparent;
+      color: #ffda6a;
+      text-decoration: none;
+      cursor: pointer;
+      transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        padding 0.25s ease,
+        transform 0.1s ease;
     }
 
-    /* زر ثانوي (شفاف بحد ذهبي) */
-    .tnx-link-btn-secondary{
-      display: block;
-      width: 100%;
-      border-radius: 9999px;
-      padding: 0.9rem 1.2rem;
-      background: rgba(0,0,0,0.6);
-      color: #ffda6a;
-      font-weight: 500;
-      font-size: 0.9rem;
-      border: 1px solid rgba(194,146,0,0.7);
-      box-shadow: 0 0 14px rgba(0,0,0,0.7);
-      transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease, border-color .12s ease;
-    }
-    .tnx-link-btn-secondary:hover{
+    .tnx-link-compact:hover{
+      background-image: linear-gradient(to left, #ffda6a, #c29200);
+      border-color: rgba(0,0,0,0.5);
+      box-shadow: 0 0 18px rgba(194,146,0,0.45);
+      color: #000;
+      padding-inline-start: 0.8rem;
+      padding-inline-end: 0.8rem;
       transform: translateY(-1px);
-      background: rgba(194,146,0,0.08);
-      border-color: rgba(255,218,106,0.95);
-      box-shadow: 0 0 18px rgba(194,146,0,0.5);
     }
-    .tnx-link-btn-secondary:active{
+
+    .tnx-link-compact:active{
       transform: scale(0.97);
-      box-shadow: 0 0 8px rgba(194,146,0,0.4);
+      box-shadow: 0 0 10px rgba(194,146,0,0.5);
+    }
+
+    /* دائرة الأيقونة */
+    .tnx-link-icon{
+      width: 52px;
+      height: 52px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.7);
+      border: 1px solid rgba(194,146,0,0.7);
+      box-shadow: 0 0 14px rgba(0,0,0,0.8);
+      transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+    }
+
+    .tnx-link-compact:hover .tnx-link-icon{
+      background: rgba(0,0,0,0.05);
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    /* النص المخفي، يظهر ويتوسع عند الهوفر */
+    .tnx-link-label{
+      white-space: nowrap;
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition:
+        max-width 0.25s ease,
+        opacity 0.25s ease;
+    }
+
+    .tnx-link-compact:hover .tnx-link-label{
+      max-width: 260px; /* مساحة كافية للجملة */
+      opacity: 1;
+    }
+
+    /* ممكن تعطي الموقع الرئيسي تميز بسيط لو حبيت */
+    .tnx-link-main-site:hover{
+      box-shadow: 0 0 22px rgba(255,218,106,0.65);
     }
   </style>
 </Layout>
