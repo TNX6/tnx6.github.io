@@ -57,7 +57,6 @@ const year = new Date().getFullYear()
           >
             <span class="tnx-link-label">البث على Kick</span>
             <div class="tnx-link-icon">
-              <!-- حرف K من Tabler Icons -->
               <Icon name="tabler:letter-k" class="w-7 h-7 text-[#ffda6a]" />
             </div>
           </a>
@@ -113,11 +112,10 @@ const year = new Date().getFullYear()
           </a>
         </div>
 
-        <!-- صف 4: الموقع الرئيسي (لوحده في النص) -->
+        <!-- صف 4: الموقع الرئيسي (بدون target="_blank") -->
         <div class="tnx-links-row">
           <a
-            href="https://tnx6.xyz"
-            target="_blank"
+            href="/"
             class="tnx-link-compact tnx-link-main-site"
           >
             <span class="tnx-link-label">الموقع الرئيسي</span>
@@ -136,7 +134,6 @@ const year = new Date().getFullYear()
   </main>
 
   <style is:global>
-    /* حلقة الصورة */
     .tnx-ring-links{
       width: 120px;
       height: 120px;
@@ -148,18 +145,16 @@ const year = new Date().getFullYear()
       overflow: hidden;
     }
 
-    /* صف الدائرتين */
     .tnx-links-row{
       display: flex;
       justify-content: center;
-      gap: 3rem;         /* المسافة بين الدائرتين */
+      gap: 3rem;
     }
 
-    /* الرابط الأساسي (دائرة + شريط عند الهوفر) */
     .tnx-link-compact{
       position: relative;
       display: flex;
-      flex-direction: row-reverse; /* أيقونة يمين، نص يسار مع RTL */
+      flex-direction: row-reverse;
       align-items: center;
       justify-content: flex-end;
       gap: 0.6rem;
@@ -182,7 +177,6 @@ const year = new Date().getFullYear()
         opacity 0.2s ease;
     }
 
-    /* الدائرة نفسها */
     .tnx-link-icon{
       width: 70px;
       height: 70px;
@@ -200,7 +194,6 @@ const year = new Date().getFullYear()
         transform 0.2s ease;
     }
 
-    /* النص – يكون مخفي ويظهر مع الشريط */
     .tnx-link-label{
       white-space: nowrap;
       max-width: 0;
@@ -213,7 +206,6 @@ const year = new Date().getFullYear()
         opacity 0.25s ease;
     }
 
-    /* لما تحوم على الصف كله: اللي مو تحت الماوس يصغر وينزل شوي */
     .tnx-links-row:hover .tnx-link-compact{
       opacity: 0.5;
     }
@@ -226,7 +218,6 @@ const year = new Date().getFullYear()
       transform: translateY(6px) scale(0.9);
     }
 
-    /* تأثير الهوفر على العنصر نفسه: يكبر و يطلع الشريط */
     .tnx-link-compact:hover{
       background-image: linear-gradient(to left, #ffda6a, #c29200);
       border-color: rgba(0,0,0,0.7);
@@ -258,7 +249,6 @@ const year = new Date().getFullYear()
       box-shadow: 0 0 24px rgba(255,218,106,0.7);
     }
 
-    /* استجابة للجوال: نخليهم أقرب */
     @media (max-width: 640px){
       .tnx-links-row{
         gap: 2rem;
