@@ -47,9 +47,9 @@ const metadata = {
             شاهد البث الآن
           </a>
 
+          <!-- ✅ هنا التعديل: نحولها لـ /links -->
           <a
-            href="https://linktr.ee/TNX6"
-            target="_blank"
+            href="/links"
             class="px-8 py-3 rounded-lg border border-[#c29200] text-[#ffda6a] hover:bg-[#c29200]/10 transition"
           >
             كل الروابط
@@ -73,6 +73,7 @@ const metadata = {
       </div>
     </div>
   </section>
+
   <section class="relative text-center text-white py-24 px-6 bg-black/70 border-t border-[#c29200]/10">
     <div class="max-w-5xl mx-auto">
 
@@ -244,28 +245,25 @@ const metadata = {
     /* 1. مفاتيح الحركة (Keyframes) لتأثير الصعود والنزول التلقائي */
     @keyframes float-up-down {
         0% { transform: translateY(0); }
-        50% { transform: translateY(-10px); } /* تتحرك للأعلى 10 بكسل */
+        50% { transform: translateY(-10px); }
         100% { transform: translateY(0); }
     }
 
-    /* 2. تطبيق الحركة على الحاوية لضمان حركة الإطار والصورة معاً */
+    /* 2. تطبيق الحركة على الحاوية */
     .tnx-avatar-animation {
-        animation: float-up-down 4s ease-in-out infinite; /* 4 ثواني لكل دورة، تكرار مستمر */
+        animation: float-up-down 4s ease-in-out infinite;
     }
 
-    /* تخصيص تأثير التوهج للنص في الهيرو */
     .glow-text {
       text-shadow:
         0 0 5px rgba(255, 218, 106, 0.7),
         0 0 15px rgba(194, 146, 0, 0.7);
     }
 
-    /* تخصيص تأثير التوهج للأيقونات في الهيرو */
     .social-icon:hover iconify-icon {
       filter: drop-shadow(0 0 4px #ffda6a);
     }
 
-    /* وميض المؤشر (الكيرسير) لتأثير الآلة الكاتبة */
     #changing-title {
         animation: cursor-blink 1s step-end infinite;
     }
@@ -314,7 +312,6 @@ const metadata = {
   </style>
 
   <script>
-    // النصوص المعربة: "ستريمر" و "صانع محتوى"
     const titles = [
       "ستريمر",
       "صانع محتوى",
@@ -324,8 +321,8 @@ const metadata = {
     let currentTitleIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
-    let typingSpeed = 100; // سرعة الكتابة بالملي ثانية
-    let delayAfterTyping = 1500; // تأخير بعد الانتهاء من كتابة الكلمة (مللي ثانية)
+    let typingSpeed = 100;
+    let delayAfterTyping = 1500;
 
     function typeWriterEffect() {
       if (!titleElement) return;
@@ -333,33 +330,27 @@ const metadata = {
       const currentTitle = titles[currentTitleIndex];
 
       if (isDeleting) {
-        // وضع الحذف (حذف الحروف)
         titleElement.textContent = currentTitle.substring(0, charIndex - 1);
         charIndex--;
-        typingSpeed = 50; // سرعة حذف أسرع
+        typingSpeed = 50;
       } else {
-        // وضع الكتابة (إضافة الحروف)
         titleElement.textContent = currentTitle.substring(0, charIndex + 1);
         charIndex++;
-        typingSpeed = 100; // سرعة الكتابة العادية
+        typingSpeed = 100;
       }
 
       if (!isDeleting && charIndex === currentTitle.length) {
-        // انتهت الكتابة، ابدأ بالحذف بعد تأخير
         isDeleting = true;
         typingSpeed = delayAfterTyping; 
       } else if (isDeleting && charIndex === 0) {
-        // انتهى الحذف، انتقل للعنوان التالي
         isDeleting = false;
         currentTitleIndex = (currentTitleIndex + 1) % titles.length;
-        typingSpeed = 200; // تأخير بسيط قبل بدء كتابة الكلمة الجديدة
+        typingSpeed = 200;
       }
 
-      // استدعاء الدالة مجدداً بالسرعة المحددة
       setTimeout(typeWriterEffect, typingSpeed);
     }
 
-    // التأكد من أن DOM جاهز قبل البدء
     if (typeof window !== 'undefined' && document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             typeWriterEffect();
@@ -370,10 +361,10 @@ const metadata = {
   </script>
 
   <script>
-    const STREAM_START_HOUR = 20;       // 8 PM
-    const STREAM_START_MINUTE = 30;    // :30
-    const STREAM_END_HOUR = 2;          // 2 AM
-    const STREAM_DAYS = [6, 0, 1, 2, 3]; // السبت إلى الأربعاء
+    const STREAM_START_HOUR = 20;
+    const STREAM_START_MINUTE = 30;
+    const STREAM_END_HOUR = 2;
+    const STREAM_DAYS = [6, 0, 1, 2, 3];
 
     function isStreamDay(date) {
       return STREAM_DAYS.includes(date.getDay());
