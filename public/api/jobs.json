@@ -2,7 +2,7 @@
   {
     "id": "tier1_Citizen",
     "name": "Citizen",
-    "description": "The starting job.",
+    "description": "The starting job. Does nothing, has no rights.",
     "tier": 1,
     "badge": "mdi:account",
     "requiredGold": 0,
@@ -11,10 +11,10 @@
   {
     "id": "tier2_Farmer",
     "name": "Farmer",
-    "description": "Can use !farm once per hour to harvest crops.",
+    "description": "Can use !harvest once per hour to harvest crops. Crops can be sold, used for crafting or used for promotions.",
     "tier": 2,
     "badge": "material-symbols:agriculture",
-    "requiredGold": 0,
+    "requiredGold": 5000,
     "requiredItems": [
       "Cow",
       "Hay"
@@ -23,10 +23,10 @@
   {
     "id": "tier2_Lumberjack",
     "name": "Lumberjack",
-    "description": "Can use !chop once per hour to harvest wood.",
+    "description": "Can use !chop once per hour to harvest wood. Can be used for promotions and can be sold.",
     "tier": 2,
     "badge": "mdi:axe",
-    "requiredGold": 0,
+    "requiredGold": 5000,
     "requiredItems": [
       "Axe",
       "Wood"
@@ -35,10 +35,10 @@
   {
     "id": "tier2_Fisherman",
     "name": "Fisherman",
-    "description": "Can use !fish once per hour to catch fish.",
+    "description": "Can use !fish once per hour to catch fish. Fish can be used for cooking, can be sold and used for promotions. Catching a fish without bait has a 50% chance, with bait 95%.",
     "tier": 2,
     "badge": "mdi:fishing",
-    "requiredGold": 0,
+    "requiredGold": 5000,
     "requiredItems": [
       "Fishing Rod",
       "Bait"
@@ -46,11 +46,11 @@
   },
   {
     "id": "tier3_Cook",
-    "name": "Koch",
-    "description": "Can craft special meals with unique effects.",
+    "name": "Cook",
+    "description": "Can craft delicious stews to sell. Stews require an onion, pumpkin and a tomato. Adding a fish makes an even more valueable stew!",
     "tier": 3,
     "badge": "mdi:chef-hat",
-    "requiredGold": 10,
+    "requiredGold": 50000,
     "requiredItems": [
       "Cooking License",
       "Wood",
@@ -63,10 +63,10 @@
   {
     "id": "tier3_Merchant",
     "name": "Merchant",
-    "description": "Sells items for 10% more points.",
+    "description": "Sells items for 10% more points. Cannot buy items though.",
     "tier": 3,
     "badge": "mdi:store",
-    "requiredGold": 0,
+    "requiredGold": 50000,
     "requiredItems": [
       "Trading License",
       "Wood",
@@ -77,10 +77,10 @@
   {
     "id": "tier4_Lawyer",
     "name": "Lawyer",
-    "description": "Use !objection to free a user from timeout.",
+    "description": "Use '!objection <username>' to free a user from timeout.",
     "tier": 4,
-    "badge": "https://i.imgur.com/HDpO9gu.png",
-    "requiredGold": 10000,
+    "badge": "mdi:scale-balance",
+    "requiredGold": 100000,
     "requiredItems": [
       "Lawyer's Exam"
     ]
@@ -88,7 +88,7 @@
   {
     "id": "tier4_Banker",
     "name": "Banker",
-    "description": "Gain 5% interest on own points using !interest.",
+    "description": "Gain 5% interest on own points using !interest, up to 5.000 points.",
     "tier": 4,
     "badge": "mdi:bank",
     "requiredGold": 100000,
@@ -99,10 +99,10 @@
   {
     "id": "tier5_Judge",
     "name": "Judge",
-    "description": "Can free users or issue 2-minute timeouts.",
+    "description": "Can free users '!pardon <username>' or issue 2-minute timeouts '!verdict <username>'.",
     "tier": 5,
     "badge": "mdi:gavel",
-    "requiredGold": 0,
+    "requiredGold": 250000,
     "requiredItems": [
       "Golden Hammer"
     ]
@@ -110,10 +110,10 @@
   {
     "id": "tier6_King",
     "name": "King",
-    "description": "Distribute points, collect taxes, knight users.",
+    "description": "Distribute 10.000 points '!royalDecree' to all, collect taxes '!royalTax' or knight users to give them a +50% points buff for 15 minutes '!knight <username>'",
     "tier": 6,
     "badge": "mdi:crown",
-    "requiredGold": 0,
+    "requiredGold": 1,
     "requiredItems": [
       "Crown"
     ]
