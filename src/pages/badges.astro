@@ -35,6 +35,13 @@ const metadata = {
   </section>
 
   <script is:inline data-reinit>
+    // router-safe job icon map
+    var JOB_ICONS = window.JOB_ICONS || {
+      tier1_Citizen: 'mdi:account',
+      tier3_Merchant: 'mdi:store'
+    };
+    window.JOB_ICONS = JOB_ICONS;
+
     async function loadBadges() {
       try {
         const res = await fetch('/api/badges.json');
@@ -66,6 +73,7 @@ const metadata = {
           const q = search.value.trim().toLowerCase();
           results.innerHTML = '';
           if (!q) return;
+
           const filtered = users.filter(u =>
             u.userName.toLowerCase().includes(q) || u.userLogin.toLowerCase().includes(q)
           ).slice(0, 10);
@@ -84,7 +92,7 @@ const metadata = {
         });
 
         function formatNumber(n) {
-          return n.toLocaleString('de-DE');
+          return (n || 0).toLocaleString('de-DE');
         }
 
         function hexToRgb(h) {
@@ -106,27 +114,46 @@ const metadata = {
           const ul = details.userLogin;
           const username = dn.toLowerCase() !== ul.toLowerCase() ? `${dn} (${ul})` : dn;
 
+          const jobIcon = JOB_ICONS[details.jobId] || 'mdi:account';
+
           const equippedBadges = (details.badges || []).filter(b => b.equipped).slice(0, 6);
-          const badgeHtml = equippedBadges.map(b => `<img src="${b.url}" alt="${b.name}" class="w-[70px] h-[70px] object-contain rounded-lg">`).join('');
+          const badgeHtml = equippedBadges.map(b =>
+            `<img src="${b.url}" alt="${b.name}" class="w-[70px] h-[70px] object-contain rounded-lg">`
+          ).join('');
 
           const html = `
             <div class="user-card relative w-[800px] h-[360px] rounded-[15px] overflow-hidden border-[2px] border-black shadow-[0_6px_12px_rgba(0,0,0,0.3)] font-[Poppins] opacity-0 transition-opacity duration-500"
                  style="background: linear-gradient(to bottom, ${bc} 70%, ${dc} 100%);">
               <div class="banner w-full h-[180px] bg-center bg-cover"
                    style="background-image: url('${details.bannerImage || ''}')"></div>
-              <div class="profile-section absolute top-[100px] left-[20px] right-[20px] flex items-center z-10">
-                <div class="picture-points flex flex-col items-center">
+
+              <div class="profile-section absolute top-[100px] left-[20px] right-[20px] flex items-start z-10">
+                <div class="picture-points flex flex-col items-center w-[170px]">
                   <div class="profile-picture w-[150px] h-[150px] rounded-full border-[7px]"
-                       style="border-color: ${bc}; background-color: ${bc}; background-image: url('${details.profileImageUrl || ''}'); background-size: cover; background-position: center;">
+                       style="border-color:${bc}; background-color:${bc}; background-image:url('${details.profileImageUrl || ''}'); background-size:cover; background-position:center;">
                   </div>
-                  <div class="points flex items-center justify-center mt-2 text-[1.3em] text-white drop-shadow-[1px_1px_1px_black]">
-                    <iconify-icon icon="mdi:star-four-points-circle" class="text-[1.1em] mr-1"></iconify-icon>
-                    ${formatNumber(details.points || 0)}
+
+                  <div class="job-info flex items-center w-full mt-2 pl-[10px] text-[1.4em] font-[700] text-white drop-shadow-[1px_1px_1px_black]">
+                    <iconify-icon icon="${jobIcon}" class="mr-2"></iconify-icon>
+                    ${details.jobName || 'Citizen'}
+                  </div>
+
+                  <div class="stats-row flex gap-[10px] mt-[4px] w-full pl-[10px]">
+                    <div class="points flex items-center text-white text-[1em] drop-shadow-[1px_1px_1px_black]">
+                      <iconify-icon icon="mdi:star-four-points-circle" class="mr-1"></iconify-icon>
+                      ${formatNumber(details.points)}
+                    </div>
+                    <div class="gold flex items-center text-[#FFD700] text-[1em] drop-shadow-[1px_1px_1px_black]">
+                      <iconify-icon icon="mdi:gold" class="mr-1"></iconify-icon>
+                      ${formatNumber(details.gold)}
+                    </div>
                   </div>
                 </div>
+
                 <div class="username-container absolute top-[85px] left-[170px] text-white text-[2.4em] font-[700] drop-shadow-[1px_2px_1px_black] whitespace-nowrap">
                   ${username}
                 </div>
+
                 <div class="badges-container-wrapper absolute top-[95px] right-[20px] grid grid-cols-3 grid-rows-2 gap-[10px]">
                   ${badgeHtml}
                 </div>
