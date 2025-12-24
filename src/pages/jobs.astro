@@ -1,0 +1,72 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'Jobs — TNX6',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="max-w-6xl mx-auto py-16 px-6 text-white">
+    <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(198,164,79,0.5)]">
+      Jobs
+    </h1>
+
+    <div id="jobsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
+  </section>
+
+  <script is:inline>
+    async function loadJobs() {
+      const res = await fetch('/api/jobs.json');
+      const jobs = await res.json();
+      const grid = document.getElementById('jobsGrid');
+
+      jobs.sort((a, b) => a.tier - b.tier);
+
+      jobs.forEach(job => {
+        const isImage = /^https?:\/\//i.test(job.badge);
+
+        const badgeHtml = isImage
+          ? `<img src="${job.badge}" class="w-12 h-12 object-contain">`
+          : `<iconify-icon icon="${job.badge}" class="text-[2.5rem]"></iconify-icon>`;
+
+        const itemsHtml = job.requiredItems.length
+          ? job.requiredItems.map(i => `<span class="px-2 py-1 bg-black/40 rounded text-sm">${i}</span>`).join('')
+          : '<span class="text-gray-400">None</span>';
+
+        const el = document.createElement('div');
+        el.className =
+          'bg-black/40 border border-[#c6a44f]/30 rounded-2xl p-6 shadow-lg backdrop-blur-md';
+
+        el.innerHTML = `
+          <div class="flex items-center gap-4 mb-4">
+            ${badgeHtml}
+            <div>
+              <div class="text-2xl font-bold">${job.name}</div>
+              <div class="text-[#f7e6ac] text-sm">Tier ${job.tier}</div>
+            </div>
+          </div>
+
+          <p class="mb-4 text-gray-200">${job.description}</p>
+
+          <div class="mb-3">
+            <strong class="text-[#ffd700]">Gold required:</strong>
+            ${job.requiredGold.toLocaleString('de-DE')}
+          </div>
+
+          <div>
+            <strong class="text-[#c6a44f]">Required items:</strong>
+            <div class="flex flex-wrap gap-2 mt-2">${itemsHtml}</div>
+          </div>
+        `;
+
+        grid.appendChild(el);
+      });
+    }
+
+    loadJobs();
+  </script>
+
+  <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+</Layout>
