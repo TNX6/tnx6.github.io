@@ -72,18 +72,14 @@ const winners = [
           </div>
 
           <p
-            class="winner-name text-xl font-bold text-[#f7e6ac] tracking-wide w-full text-center"
-            dir="rtl"
+            class="winner-name text-xl font-bold text-[#f7e6ac] text-center tracking-wide"
             style="text-shadow: 0 0 6px rgba(255,215,0,0.35);"
           >
             {winner.name}
           </p>
 
           {winner.year && (
-            <span
-              class="text-xs text-[#f7e6ac]/60 mt-1 w-full text-center block"
-              dir="rtl"
-            >
+            <span class="text-xs text-[#f7e6ac]/60 mt-1">
               فائز سنة {winner.year}
             </span>
           )}
