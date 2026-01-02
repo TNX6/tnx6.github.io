@@ -4,7 +4,7 @@ import Layout from '~/layouts/PageLayout.astro'
 const winners = [
   {
     name: "anyang_chii",
-    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/b4ca406f-392e-4af8-ac09-36cdc6b8e2bd-profile_image-300x300.png",
+    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/bb394a1e-0961-43e8-a840-aeabd0fffe0d-profile_image-300x300.png",
     reason: "فازت في مسابقة الطبخ 👨‍🍳",
   },
   {
@@ -48,10 +48,6 @@ const winners = [
       الفائزون
     </h1>
 
-    <p class="text-center text-[#f7e6ac]/80 mb-12">
-      ✨ الفائزون الرسميون لسنة 2025
-    </p>
-
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 max-w-4xl mx-auto">
       {winners.map((winner) => (
         <div
@@ -76,14 +72,18 @@ const winners = [
           </div>
 
           <p
-            class="winner-name text-xl font-bold text-[#f7e6ac] text-center tracking-wide"
+            class="winner-name text-xl font-bold text-[#f7e6ac] tracking-wide w-full text-center"
+            dir="rtl"
             style="text-shadow: 0 0 6px rgba(255,215,0,0.35);"
           >
             {winner.name}
           </p>
 
           {winner.year && (
-            <span class="text-xs text-[#f7e6ac]/60 mt-1">
+            <span
+              class="text-xs text-[#f7e6ac]/60 mt-1 w-full text-center block"
+              dir="rtl"
+            >
               فائز سنة {winner.year}
             </span>
           )}
