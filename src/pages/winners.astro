@@ -1,22 +1,46 @@
 ---
-// src/pages/winners.astro
 import Layout from '~/layouts/PageLayout.astro'
 
 const winners = [
   {
-    name: "anyang_chii",
-    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/bb394a1e-0961-43e8-a840-aeabd0fffe0d-profile_image-300x300.png",
-    reason: "فازت في مسابقة الطبخ 👨‍🍳",
+    name: "ملفي",
+    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/x-profile_image-300x300.png",
+    reason: "أفضل VIP 🏆 (فائز سنة 2025)",
+  },
+  {
+    name: "21AMOL",
+    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/x-profile_image-300x300.png",
+    reason: "أفضل داعم 💛 (فائز سنة 2025)",
+  },
+  {
+    name: "MOON",
+    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/x-profile_image-300x300.png",
+    reason: "أفضل شاتر 📸 (فائز سنة 2025)",
+  },
+  {
+    name: "RAZONF15",
+    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/x-profile_image-300x300.png",
+    reason: "أفضل مود 🛡️ (فائز سنة 2025)",
+  },
+  {
+    name: "HANNEN",
+    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/x-profile_image-300x300.png",
+    reason: "الحضور المستمر ⏱️ (فائز سنة 2025)",
   },
 ]
 ---
+
 <Layout metadata={{ title: "الفائزين — TNX6", ignoreTitleTemplate: true }}>
   <section class="py-24 px-6 text-white">
     <h1
-      class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(198,164,79,0.5)]"
+      class="text-5xl font-extrabold text-center mb-6 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(198,164,79,0.5)]"
     >
       الفائزون
     </h1>
+
+    <p class="text-center text-[#f7e6ac]/80 mb-16">
+      ✨ الفائزون الرسميون لسنة 2025
+    </p>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 max-w-4xl mx-auto">
       {winners.map((winner) => (
@@ -48,8 +72,7 @@ const winners = [
             {winner.name}
           </p>
 
-          <!-- سطر التلميح الخفيف -->
-          <p class="mt-1 text-sm font-normal text-[#f7e6ac]/80 opacity-80">
+          <p class="mt-1 text-sm text-[#f7e6ac]/80 opacity-80">
             (اضغط لعرض المزيد)
           </p>
         </div>
@@ -94,6 +117,7 @@ const winners = [
       isolation: isolate;
       animation: fadeScale 400ms ease both;
     }
+
     .user-card::before {
       content: "";
       position: absolute;
@@ -116,7 +140,6 @@ const winners = [
       opacity: 0.7;
       pointer-events: none;
       z-index: -1;
-      transform: none; /* ثابت بلا دوران */
     }
 
     .user-card:hover {
@@ -129,12 +152,15 @@ const winners = [
       animation: gentleBounce 650ms cubic-bezier(.34,.97,.64,1.02) 1;
     }
 
-    .popup-inner.animate-in { animation: fadeScale 350ms ease both; }
+    .popup-inner.animate-in {
+      animation: fadeScale 350ms ease both;
+    }
 
     @keyframes fadeScale {
       from { opacity: 0; transform: scale(.92); }
       to   { opacity: 1; transform: scale(1); }
     }
+
     @keyframes gentleBounce {
       0%   { transform: translateY(0); }
       35%  { transform: translateY(-6px); }
@@ -184,7 +210,11 @@ const winners = [
     });
 
     closePopup.addEventListener('click', close);
-    popup.addEventListener('click', (e) => { if (e.target === popup) close(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    popup.addEventListener('click', (e) => {
+      if (e.target === popup) close();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close();
+    });
   </script>
 </Layout>
