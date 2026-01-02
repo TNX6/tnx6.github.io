@@ -4,33 +4,38 @@ import Layout from '~/layouts/PageLayout.astro'
 const winners = [
   {
     name: "anyang_chii",
-    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/bb394a1e-0961-43e8-a840-aeabd0fffe0d-profile_image-300x300.png",
+    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/b4ca406f-392e-4af8-ac09-36cdc6b8e2bd-profile_image-300x300.png",
     reason: "فازت في مسابقة الطبخ 👨‍🍳",
   },
   {
-    name: "ملفي",
-    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/x-profile_image-300x300.png",
-    reason: "أفضل VIP 🏆 (فائز سنة 2025)",
+    name: "MLFY_933",
+    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/19732ee7-f7e5-4375-9793-bc59b236e90d-profile_image-300x300.png",
+    reason: "أفضل VIP 🏆",
+    year: "2025",
   },
   {
-    name: "21AMOL",
-    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/x-profile_image-300x300.png",
-    reason: "أفضل داعم 💛 (فائز سنة 2025)",
+    name: "21AMOLY",
+    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/6223e1bc-10b4-4be7-95c9-49d836da533b-profile_image-300x300.png",
+    reason: "أفضل داعم 💛",
+    year: "2025",
   },
   {
-    name: "MOON",
-    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/x-profile_image-300x300.png",
-    reason: "أفضل شاتر 📸 (فائز سنة 2025)",
+    name: "MOON0Q1",
+    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/3006ee76-cb82-46b9-b9af-fc008f847c2a-profile_image-300x300.png",
+    reason: "أفضل شاتر 🗣️",
+    year: "2025",
   },
   {
     name: "RAZONF15",
-    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/x-profile_image-300x300.png",
-    reason: "أفضل مود 🛡️ (فائز سنة 2025)",
+    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/1a5bf49f-01a4-4914-8830-12b0b55c6a55-profile_image-300x300.jpeg",
+    reason: "أفضل مود 🔨",
+    year: "2025",
   },
   {
-    name: "HANNEN",
-    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/x-profile_image-300x300.png",
-    reason: "الحضور المستمر ⏱️ (فائز سنة 2025)",
+    name: "HANEEN48",
+    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/95bf22da-d041-4f17-811f-c5ec817b7be4-profile_image-300x300.png",
+    reason: "الحضور المستمر ⭐",
+    year: "2025",
   },
 ]
 ---
@@ -76,6 +81,12 @@ const winners = [
           >
             {winner.name}
           </p>
+
+          {winner.year && (
+            <span class="text-xs text-[#f7e6ac]/60 mt-1">
+              فائز سنة {winner.year}
+            </span>
+          )}
 
           <p class="mt-1 text-sm font-normal text-[#f7e6ac]/80 opacity-80">
             (اضغط لعرض المزيد)
