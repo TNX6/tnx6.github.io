@@ -2,15 +2,15 @@
 import Layout from '~/layouts/PageLayout.astro'
 
 const artworks = [
-  { artist: "Anyang", discord: "Anyang", image: "/FANART/Anyang.webp" },
+  { artist: "ليان",  discord: "@anyang_chii", image: "/FANART/Anyang.webp" },
 
-  // رسمتين من MARIYO
-  { artist: "Mariyo", discord: "Mariyo", image: "/FANART/Mariyo.webp" },
-  { artist: "Mariyo", discord: "Mariyo", image: "/FANART/Mariyo.png" },
+  // رسمتين من ماريو
+  { artist: "ماريو", discord: "@mariyo2468", image: "/FANART/Mariyo.webp" },
+  { artist: "ماريو", discord: "@mariyo2468", image: "/FANART/Mariyo.png" },
 
-  { artist: "NORH", discord: "NORH", image: "/FANART/NORH.webp" },
-  { artist: "kanai", discord: "kanai", image: "/FANART/kanai.webp" },
-  { artist: "pekz0", discord: "pekz0", image: "/FANART/pekz0.webp" },
+  { artist: "نورة",  discord: "@norhv17",    image: "/FANART/NORH.webp" },
+  { artist: "كاناي", discord: "@xkanaix",    image: "/FANART/kanai.webp" },
+  { artist: "معاذ",  discord: "@pekz0_",     image: "/FANART/pekz0.webp" },
 ]
 ---
 
@@ -50,7 +50,7 @@ const artworks = [
               {a.artist}
             </div>
             <div class="text-xs text-[#f7e6ac]/75 mt-1 leading-none">
-              @{a.discord}
+              {a.discord}
             </div>
           </div>
         </div>
@@ -134,8 +134,6 @@ const artworks = [
       opacity: 0.75;
       pointer-events: none;
       z-index: -1;
-
-      /* مافيه animation هنا */
       transform: none;
     }
 
@@ -223,7 +221,7 @@ const artworks = [
       popupImg.src = src;
       popupImg.alt = `Fan art by ${artist}`;
       popupName.textContent = artist;
-      popupHandle.textContent = `@${discord}`;
+      popupHandle.textContent = `${discord}`;
 
       popup.classList.remove('hidden');
       popup.classList.add('flex');
