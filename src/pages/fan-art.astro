@@ -14,22 +14,18 @@ const artworks = [
 ]
 ---
 
-<Layout metadata={{ title: "Fan Art — TNX6", ignoreTitleTemplate: true }}>
+<Layout metadata={{ title: "معرض الرسمات — TNX6", ignoreTitleTemplate: true }}>
   <section class="py-24 px-6 text-white">
     <h1
-      class="text-5xl font-extrabold text-center mb-4 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(198,164,79,0.5)]"
+      class="text-5xl font-extrabold text-center mb-12 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(198,164,79,0.5)]"
     >
-      Fan Art Gallery
+      معرض الرسمات
     </h1>
-
-    <p class="text-center text-sm text-white/70 mb-14">
-      الكريديت ظاهر على كل صورة — اضغط على أي رسمة عشان تنفتح كاملة.
-    </p>
 
     <div class="fanart-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
       {artworks.map((a) => (
         <div
-          class="fanart-card group relative overflow-hidden rounded-3xl bg-black/30 border border-white/5
+          class="fanart-card group relative overflow-hidden rounded-3xl bg-black/30 border border-transparent
                  shadow-lg backdrop-blur-sm cursor-pointer transition-transform will-change-transform hover:scale-[1.02]"
           role="button"
           tabindex="0"
@@ -45,10 +41,8 @@ const artworks = [
             class="fanart-img w-full h-[240px] sm:h-[260px] object-cover transition-transform duration-200"
           />
 
-          <!-- خفيف عشان الكريديت يبان -->
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none"></div>
 
-          <!-- Credit bottom-left -->
           <div
             class="absolute left-3 bottom-3 z-10 bg-black/60 backdrop-blur-md rounded-xl px-3 py-2 border border-white/10"
           >
@@ -64,7 +58,7 @@ const artworks = [
     </div>
   </section>
 
-  <!-- Popup (نفس فكرة صفحة الفائزين) -->
+  <!-- Popup -->
   <div
     id="popup"
     class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 p-4"
@@ -73,7 +67,7 @@ const artworks = [
     <div
       id="popupInner"
       class="popup-inner relative bg-black/55 border border-[#c6a44f]/40 rounded-2xl p-4
-             shadow-[0_0_30px_rgba(198,164,79,0.35)] backdrop-blur-md w-[min(1100px,95vw)]"
+             shadow-[0_0_30px_rgba(198,164,79,0.35)] backdrop-blur-md w-[min(1200px,95vw)]"
     >
       <div class="flex items-start justify-between gap-3 mb-3">
         <div>
@@ -92,19 +86,72 @@ const artworks = [
         </button>
       </div>
 
-      <img
-        id="popupImg"
-        class="w-full max-h-[78vh] object-contain rounded-xl bg-black/20 border border-white/10"
-        alt=""
-      />
+      <!-- Zoom stage -->
+      <div
+        id="zoomStage"
+        class="relative w-full max-h-[78vh] rounded-xl bg-black/20 border border-white/10 overflow-hidden select-none"
+      >
+        <img
+          id="popupImg"
+          class="block w-full h-auto max-h-[78vh] object-contain"
+          alt=""
+          draggable="false"
+        />
+      </div>
+
+      <p class="mt-3 text-xs text-white/55">
+        كلك يسار = زوم / إلغاء زوم — اسحب للتحريك بعد الزوم — Wheel للتكبير والتصغير
+      </p>
     </div>
   </div>
 
   <style is:global>
-    /* نفس إحساس "Filter Card Effects": باقي الكروت تنطفي + تقل saturate + blur خفيف */
+    /* نفس الحد الذهبي المتحرك حق صفحة الفائزين */
+    .fanart-card {
+      position: relative;
+      isolation: isolate;
+      animation: fadeScale 400ms ease both;
+    }
+
+    .fanart-card::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      padding: 2px;
+      border-radius: 1.5rem;
+
+      background: conic-gradient(
+        from 0deg,
+        #ffda6a,
+        #c29200,
+        #c6a44f,
+        #ffda6a,
+        #c29200
+      );
+
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+
+      opacity: 0.75;
+      pointer-events: none;
+      z-index: -1;
+
+      animation: goldSpin 5s linear infinite;
+    }
+
+    .fanart-card:hover {
+      box-shadow:
+        0 0 22px rgba(198, 164, 79, 0.55),
+        0 0 44px rgba(198, 164, 79, 0.35);
+    }
+
+    /* Hover effect: الباقي ينطفي + يقل saturate + blur خفيف */
     @media (hover: hover) and (pointer: fine) {
       .fanart-grid:hover > .fanart-card:not(:hover) .fanart-img {
-        filter: brightness(0.35) saturate(0.25) blur(6px) contrast(1.1);
+        filter: brightness(0.38) saturate(0.25) blur(6px) contrast(1.1);
         transform: scale(1.02);
       }
       .fanart-grid:hover > .fanart-card:hover .fanart-img {
@@ -119,6 +166,32 @@ const artworks = [
       from { opacity: 0; transform: scale(.96); }
       to   { opacity: 1; transform: scale(1); }
     }
+
+    @keyframes goldSpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* Zoom transforms via CSS vars */
+    #zoomStage {
+      cursor: zoom-in;
+    }
+    #zoomStage.is-zoomed {
+      cursor: grab;
+    }
+    #zoomStage.is-dragging {
+      cursor: grabbing;
+    }
+
+    #popupImg {
+      transform-origin: var(--ox, 50%) var(--oy, 50%);
+      transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--s, 1));
+      transition: transform 140ms ease;
+      will-change: transform;
+    }
+    #zoomStage.is-dragging #popupImg {
+      transition: none;
+    }
   </style>
 
   <script is:inline>
@@ -129,6 +202,39 @@ const artworks = [
     const popupName = document.getElementById('popupName');
     const popupHandle = document.getElementById('popupHandle');
     const closePopup = document.getElementById('closePopup');
+    const zoomStage = document.getElementById('zoomStage');
+
+    // Zoom state
+    let scale = 1;
+    let tx = 0, ty = 0;
+    let isDragging = false;
+    let lastX = 0, lastY = 0;
+
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+    const applyTransform = () => {
+      popupImg.style.setProperty('--s', scale);
+      popupImg.style.setProperty('--tx', `${tx}px`);
+      popupImg.style.setProperty('--ty', `${ty}px`);
+      zoomStage.classList.toggle('is-zoomed', scale > 1);
+    };
+
+    const setOriginFromEvent = (e) => {
+      const r = zoomStage.getBoundingClientRect();
+      const ox = ((e.clientX - r.left) / r.width) * 100;
+      const oy = ((e.clientY - r.top) / r.height) * 100;
+      popupImg.style.setProperty('--ox', `${clamp(ox, 0, 100)}%`);
+      popupImg.style.setProperty('--oy', `${clamp(oy, 0, 100)}%`);
+    };
+
+    const resetZoom = () => {
+      scale = 1;
+      tx = 0; ty = 0;
+      popupImg.style.setProperty('--ox', `50%`);
+      popupImg.style.setProperty('--oy', `50%`);
+      zoomStage.classList.remove('is-zoomed', 'is-dragging');
+      applyTransform();
+    };
 
     const openPopup = (src, artist, discord) => {
       popupImg.src = src;
@@ -143,6 +249,8 @@ const artworks = [
       popupInner.classList.remove('animate-in');
       void popupInner.offsetWidth;
       popupInner.classList.add('animate-in');
+
+      resetZoom();
     };
 
     const close = () => {
@@ -152,6 +260,7 @@ const artworks = [
       popupInner.classList.remove('animate-in');
       popupImg.src = '';
       popupImg.alt = '';
+      resetZoom();
     };
 
     cards.forEach(card => {
@@ -166,5 +275,73 @@ const artworks = [
     closePopup.addEventListener('click', close);
     popup.addEventListener('click', (e) => { if (e.target === popup) close(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+    // Left click: zoom in/out
+    zoomStage.addEventListener('click', (e) => {
+      // لا تخلي كلك على الزر/الحواف يقلب زوم بالغلط
+      if (popup.classList.contains('hidden')) return;
+
+      if (scale === 1) {
+        setOriginFromEvent(e);
+        scale = 2.6;
+        tx = 0; ty = 0;
+      } else {
+        resetZoom();
+        return;
+      }
+      applyTransform();
+    });
+
+    // Drag to pan (only when zoomed)
+    zoomStage.addEventListener('pointerdown', (e) => {
+      if (scale <= 1) return;
+      isDragging = true;
+      zoomStage.classList.add('is-dragging');
+      lastX = e.clientX;
+      lastY = e.clientY;
+      zoomStage.setPointerCapture(e.pointerId);
+    });
+
+    zoomStage.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      lastX = e.clientX;
+      lastY = e.clientY;
+
+      tx += dx;
+      ty += dy;
+
+      applyTransform();
+    });
+
+    zoomStage.addEventListener('pointerup', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      zoomStage.classList.remove('is-dragging');
+      try { zoomStage.releasePointerCapture(e.pointerId); } catch {}
+    });
+
+    // Wheel zoom (اختياري)
+    zoomStage.addEventListener('wheel', (e) => {
+      if (popup.classList.contains('hidden')) return;
+      e.preventDefault();
+
+      setOriginFromEvent(e);
+
+      const delta = Math.sign(e.deltaY);
+      const step = 0.25;
+
+      if (delta > 0) scale -= step;
+      else scale += step;
+
+      scale = clamp(scale, 1, 6);
+
+      if (scale === 1) {
+        tx = 0; ty = 0;
+      }
+
+      applyTransform();
+    }, { passive: false });
   </script>
 </Layout>
