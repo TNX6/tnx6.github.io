@@ -98,15 +98,11 @@ const artworks = [
           draggable="false"
         />
       </div>
-
-      <p class="mt-3 text-xs text-white/55">
-        كلك يسار = زوم / إلغاء زوم — اسحب للتحريك بعد الزوم — Wheel للتكبير والتصغير
-      </p>
     </div>
   </div>
 
   <style is:global>
-    /* نفس الحد الذهبي المتحرك حق صفحة الفائزين */
+    /* نفس الحد الذهبي (ثابت بدون دوران) */
     .fanart-card {
       position: relative;
       isolation: isolate;
@@ -139,7 +135,8 @@ const artworks = [
       pointer-events: none;
       z-index: -1;
 
-      animation: goldSpin 5s linear infinite;
+      /* مافيه animation هنا */
+      transform: none;
     }
 
     .fanart-card:hover {
@@ -167,21 +164,10 @@ const artworks = [
       to   { opacity: 1; transform: scale(1); }
     }
 
-    @keyframes goldSpin {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
-
     /* Zoom transforms via CSS vars */
-    #zoomStage {
-      cursor: zoom-in;
-    }
-    #zoomStage.is-zoomed {
-      cursor: grab;
-    }
-    #zoomStage.is-dragging {
-      cursor: grabbing;
-    }
+    #zoomStage { cursor: zoom-in; }
+    #zoomStage.is-zoomed { cursor: grab; }
+    #zoomStage.is-dragging { cursor: grabbing; }
 
     #popupImg {
       transform-origin: var(--ox, 50%) var(--oy, 50%);
@@ -189,9 +175,7 @@ const artworks = [
       transition: transform 140ms ease;
       will-change: transform;
     }
-    #zoomStage.is-dragging #popupImg {
-      transition: none;
-    }
+    #zoomStage.is-dragging #popupImg { transition: none; }
   </style>
 
   <script is:inline>
@@ -204,7 +188,6 @@ const artworks = [
     const closePopup = document.getElementById('closePopup');
     const zoomStage = document.getElementById('zoomStage');
 
-    // Zoom state
     let scale = 1;
     let tx = 0, ty = 0;
     let isDragging = false;
@@ -265,7 +248,6 @@ const artworks = [
 
     cards.forEach(card => {
       const { src, artist, discord } = card.dataset;
-
       card.addEventListener('click', () => openPopup(src, artist, discord));
       card.addEventListener('keyup', (e) => {
         if (e.key === 'Enter' || e.key === ' ') openPopup(src, artist, discord);
@@ -278,18 +260,16 @@ const artworks = [
 
     // Left click: zoom in/out
     zoomStage.addEventListener('click', (e) => {
-      // لا تخلي كلك على الزر/الحواف يقلب زوم بالغلط
       if (popup.classList.contains('hidden')) return;
 
       if (scale === 1) {
         setOriginFromEvent(e);
         scale = 2.6;
         tx = 0; ty = 0;
+        applyTransform();
       } else {
         resetZoom();
-        return;
       }
-      applyTransform();
     });
 
     // Drag to pan (only when zoomed)
@@ -308,10 +288,8 @@ const artworks = [
       const dy = e.clientY - lastY;
       lastX = e.clientX;
       lastY = e.clientY;
-
       tx += dx;
       ty += dy;
-
       applyTransform();
     });
 
@@ -322,7 +300,7 @@ const artworks = [
       try { zoomStage.releasePointerCapture(e.pointerId); } catch {}
     });
 
-    // Wheel zoom (اختياري)
+    // Wheel zoom
     zoomStage.addEventListener('wheel', (e) => {
       if (popup.classList.contains('hidden')) return;
       e.preventDefault();
