@@ -2,18 +2,18 @@
 import Layout from '~/layouts/PageLayout.astro'
 
 const artworks = [
-  { artist: "ليان",  discord: "@anyang_chii", image: "/FANART/Anyang.webp" },
+  { artist: "ليان",  discord: "@anyang_chii", image: "/FANART/Anyang.webp", twitch: "anyang_chii" },
 
   // رسمتين من ماريو
-  { artist: "ماريو", discord: "@mariyo2468", image: "/FANART/Mariyo.webp" },
-  { artist: "ماريو", discord: "@mariyo2468", image: "/FANART/Mariyo.png" },
+  { artist: "ماريو", discord: "@mariyo2468", image: "/FANART/Mariyo.webp", twitch: "mariyo2468" },
+  { artist: "ماريو", discord: "@mariyo2468", image: "/FANART/Mariyo.png",  twitch: "mariyo2468" },
 
-  { artist: "نورة",  discord: "@norhv17",    image: "/FANART/NORH.webp" },
-  { artist: "كاناي", discord: "@xkanaix",    image: "/FANART/kanai.webp" },
-  { artist: "معاذ",  discord: "@pekz0_",     image: "/FANART/pekz0.webp" },
+  { artist: "نورة",  discord: "@norhv17",    image: "/FANART/NORH.webp",  twitch: "norhv17" },
+  { artist: "كاناي", discord: "@xkanaix",    image: "/FANART/kanai.webp", twitch: "xkanaix" },
+  { artist: "معاذ",  discord: "@pekz0_",     image: "/FANART/pekz0.webp", twitch: "pekz0_" },
 
-  { artist: "مازن",  discord: "@ker_a9",            image: "/FANART/Mazen.png" },
-  { artist: "بعير",  discord: "@ba3eerwut",            image: "/FANART/ba3eerwut.png" },
+  { artist: "مازن",  discord: "@ker_a9", image: "/FANART/Mazen.png", twitch: "ker_a9" },
+  { artist: "بعير",  discord: "@ba3eerwut", image: "/FANART/ba3eerwut.png", twitch: "ba3eerwut" },
 ]
 ---
 
@@ -25,26 +25,27 @@ const artworks = [
       معرض الرسمات
     </h1>
 
-<!-- Fixed Grid مثل قبل -->
-<div class="fanart-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-  {artworks.map((a, index) => (
-    <div
-      class="fanart-card group relative overflow-hidden rounded-3xl bg-black/30 border border-transparent
-             shadow-lg backdrop-blur-sm cursor-pointer transition-transform will-change-transform hover:scale-[1.02]"
-      role="button"
-      tabindex="0"
-      data-index={index}
-      data-src={a.image}
-      data-artist={a.artist}
-      data-discord={a.discord}
-      aria-label={`Open fan art by ${a.artist}`}
-    >
-      <img
-        src={a.image}
-        alt={`Fan art by ${a.artist}`}
-        loading="lazy"
-        class="fanart-img w-full h-[240px] sm:h-[260px] object-cover transition-transform duration-200"
-      />
+    <!-- Fixed Grid مثل قبل -->
+    <div class="fanart-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      {artworks.map((a, index) => (
+        <div
+          class="fanart-card group relative overflow-hidden rounded-3xl bg-black/30 border border-transparent
+                 shadow-lg backdrop-blur-sm cursor-pointer transition-transform will-change-transform hover:scale-[1.02]"
+          role="button"
+          tabindex="0"
+          data-index={index}
+          data-src={a.image}
+          data-artist={a.artist}
+          data-discord={a.discord}
+          data-twitch={a.twitch}
+          aria-label={`Open fan art by ${a.artist}`}
+        >
+          <img
+            src={a.image}
+            alt={`Fan art by ${a.artist}`}
+            loading="lazy"
+            class="fanart-img w-full h-[240px] sm:h-[260px] object-cover transition-transform duration-200"
+          />
 
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none"></div>
 
@@ -55,9 +56,34 @@ const artworks = [
               {a.artist}
             </div>
 
-            {a.discord && (
-              <div class="text-xs text-[#f7e6ac]/75 mt-1 leading-none">
-                {a.discord}
+            {(a.discord || a.twitch) && (
+              <div class="mt-1 flex items-center gap-2 text-xs text-[#f7e6ac]/75 leading-none">
+                {a.discord && <span>{a.discord}</span>}
+
+                {a.discord && a.twitch && <span class="opacity-40">|</span>}
+
+                {a.twitch && (
+                  <a
+                    href={`https://www.twitch.tv/${a.twitch}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center text-[#a970ff] hover:text-[#c6a44f] transition"
+                    aria-label={`Open ${a.artist} Twitch`}
+                    title={`twitch.tv/${a.twitch}`}
+                    onclick="event.stopPropagation()"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      class="w-4 h-4"
+                      aria-hidden="true"
+                    >
+                      <path d="M4 3 2 8v11h4v3h3l3-3h4l6-6V3H4zm16 9-3 3h-4l-3 3v-3H6V5h14v7z"></path>
+                      <path d="M15 8h2v5h-2zM10 8h2v5h-2z"></path>
+                    </svg>
+                  </a>
+                )}
               </div>
             )}
           </div>
@@ -80,7 +106,32 @@ const artworks = [
       <div class="flex items-start justify-between gap-3 mb-3">
         <div>
           <h2 id="popupName" class="text-2xl font-extrabold text-[#ffda6a] leading-tight"></h2>
-          <p id="popupHandle" class="text-sm text-[#f7e6ac]/75 mt-1"></p>
+
+          <div id="popupMeta" class="mt-1 flex items-center gap-2 text-sm text-[#f7e6ac]/75">
+            <span id="popupHandle"></span>
+            <span id="popupDivider" class="opacity-40 hidden">|</span>
+
+            <a
+              id="popupTwitchLink"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hidden items-center text-[#a970ff] hover:text-[#c6a44f] transition"
+              aria-label="Open Twitch profile"
+              title="Open Twitch profile"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                class="w-5 h-5"
+                aria-hidden="true"
+              >
+                <path d="M4 3 2 8v11h4v3h3l3-3h4l6-6V3H4zm16 9-3 3h-4l-3 3v-3H6V5h14v7z"></path>
+                <path d="M15 8h2v5h-2zM10 8h2v5h-2z"></path>
+              </svg>
+            </a>
+          </div>
         </div>
 
         <button
@@ -137,7 +188,6 @@ const artworks = [
       inset: -2px;
       padding: 2px;
       border-radius: 1.5rem;
-
       background: conic-gradient(
         from 0deg,
         #ffda6a,
@@ -173,7 +223,7 @@ const artworks = [
 
       .fanart-grid:hover > .fanart-card:hover .fanart-img {
         filter: saturate(1.15) contrast(1.05);
-        transform: scale(1.03);
+        transform: scale(1.06);
       }
     }
 
@@ -298,7 +348,10 @@ const artworks = [
     const popupInner = document.getElementById('popupInner');
     const popupImg = document.getElementById('popupImg');
     const popupName = document.getElementById('popupName');
+    const popupMeta = document.getElementById('popupMeta');
     const popupHandle = document.getElementById('popupHandle');
+    const popupDivider = document.getElementById('popupDivider');
+    const popupTwitchLink = document.getElementById('popupTwitchLink');
     const closePopup = document.getElementById('closePopup');
     const zoomStage = document.getElementById('zoomStage');
     const thumbButtons = document.querySelectorAll('.thumb-btn');
@@ -306,7 +359,8 @@ const artworks = [
     const items = [...cards].map((card) => ({
       src: card.dataset.src,
       artist: card.dataset.artist,
-      discord: card.dataset.discord || ''
+      discord: card.dataset.discord || '',
+      twitch: card.dataset.twitch || ''
     }));
 
     let currentIndex = 0;
@@ -336,8 +390,8 @@ const artworks = [
       scale = 1;
       tx = 0;
       ty = 0;
-      popupImg.style.setProperty('--ox', `50%`);
-      popupImg.style.setProperty('--oy', `50%`);
+      popupImg.style.setProperty('--ox', '50%');
+      popupImg.style.setProperty('--oy', '50%');
       zoomStage.classList.remove('is-zoomed', 'is-dragging');
       applyTransform();
     };
@@ -396,6 +450,32 @@ const artworks = [
         popupHandle.classList.add('hidden');
       }
 
+      if (item.twitch) {
+        popupTwitchLink.href = `https://www.twitch.tv/${item.twitch}`;
+        popupTwitchLink.title = `twitch.tv/${item.twitch}`;
+        popupTwitchLink.setAttribute('aria-label', `Open ${item.artist} Twitch`);
+        popupTwitchLink.classList.remove('hidden');
+        popupTwitchLink.classList.add('inline-flex');
+      } else {
+        popupTwitchLink.href = '#';
+        popupTwitchLink.title = 'Open Twitch profile';
+        popupTwitchLink.setAttribute('aria-label', 'Open Twitch profile');
+        popupTwitchLink.classList.add('hidden');
+        popupTwitchLink.classList.remove('inline-flex');
+      }
+
+      if (item.discord && item.twitch) {
+        popupDivider.classList.remove('hidden');
+      } else {
+        popupDivider.classList.add('hidden');
+      }
+
+      if (item.discord || item.twitch) {
+        popupMeta.classList.remove('hidden');
+      } else {
+        popupMeta.classList.add('hidden');
+      }
+
       setActiveThumb(index);
       resetZoom();
     };
@@ -420,8 +500,18 @@ const artworks = [
       popupInner.classList.remove('is-portrait', 'is-landscape', 'is-square');
       popupImg.src = '';
       popupImg.alt = '';
+
       popupHandle.textContent = '';
       popupHandle.classList.remove('hidden');
+      popupDivider.classList.add('hidden');
+      popupMeta.classList.remove('hidden');
+
+      popupTwitchLink.href = '#';
+      popupTwitchLink.title = 'Open Twitch profile';
+      popupTwitchLink.setAttribute('aria-label', 'Open Twitch profile');
+      popupTwitchLink.classList.add('hidden');
+      popupTwitchLink.classList.remove('inline-flex');
+
       resetZoom();
     };
 
@@ -432,6 +522,7 @@ const artworks = [
 
     cards.forEach((card) => {
       const index = Number(card.dataset.index);
+
       card.addEventListener('click', () => openPopup(index));
       card.addEventListener('keyup', (e) => {
         if (e.key === 'Enter' || e.key === ' ') openPopup(index);
@@ -446,6 +537,7 @@ const artworks = [
     });
 
     closePopup.addEventListener('click', close);
+
     popup.addEventListener('click', (e) => {
       if (e.target === popup) close();
     });
@@ -454,7 +546,7 @@ const artworks = [
       if (e.key === 'Escape') close();
     });
 
-    // Left click: zoom in/out
+    // Click to zoom in/out
     zoomStage.addEventListener('click', (e) => {
       if (popup.classList.contains('hidden')) return;
       if (e.target !== popupImg && scale === 1) return;
@@ -470,7 +562,7 @@ const artworks = [
       }
     });
 
-    // Drag to pan (only when zoomed)
+    // Drag to pan when zoomed
     zoomStage.addEventListener('pointerdown', (e) => {
       if (scale <= 1) return;
       if (e.target !== popupImg) return;
