@@ -56,36 +56,11 @@ const artworks = [
               {a.artist}
             </div>
 
-            {(a.discord || a.twitch) && (
-              <div class="mt-1 flex items-center gap-2 text-xs text-[#f7e6ac]/75 leading-none">
-                {a.discord && <span>{a.discord}</span>}
-
-                {a.discord && a.twitch && <span class="opacity-40">|</span>}
-
-                {a.twitch && (
-                  <a
-                    href={`https://www.twitch.tv/${a.twitch}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center text-[#a970ff] hover:text-[#c6a44f] transition"
-                    aria-label={`Open ${a.artist} Twitch`}
-                    title={`twitch.tv/${a.twitch}`}
-                    onclick="event.stopPropagation()"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      class="w-4 h-4"
-                      aria-hidden="true"
-                    >
-                      <path d="M4 3 2 8v11h4v3h3l3-3h4l6-6V3H4zm16 9-3 3h-4l-3 3v-3H6V5h14v7z"></path>
-                      <path d="M15 8h2v5h-2zM10 8h2v5h-2z"></path>
-                    </svg>
-                  </a>
-                )}
-              </div>
-            )}
+{a.discord && (
+  <div class="text-xs text-[#f7e6ac]/75 mt-1 leading-none">
+    {a.discord}
+  </div>
+)}
           </div>
         </div>
       ))}
