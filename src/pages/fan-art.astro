@@ -12,9 +12,8 @@ const artworks = [
   { artist: "كاناي", discord: "@xkanaix",    image: "/FANART/kanai.webp" },
   { artist: "معاذ",  discord: "@pekz0_",     image: "/FANART/pekz0.webp" },
 
-  // الإضافات الجديدة
-  { artist: "مازن",  discord: "@ker_a9",            image: "/FANART/Mazen.png" },
-  { artist: "بعير",  discord: "@ba3eerwut",            image: "/FANART/ba3eerwut.png" },
+  { artist: "مازن",  discord: "",            image: "/FANART/Mazen.png" },
+  { artist: "بعير",  discord: "",            image: "/FANART/ba3eerwut.png" },
 ]
 ---
 
@@ -26,13 +25,16 @@ const artworks = [
       معرض الرسمات
     </h1>
 
-    <div class="fanart-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-      {artworks.map((a) => (
+    <!-- Masonry Grid -->
+    <div class="fanart-grid columns-1 sm:columns-2 lg:columns-3 gap-8 max-w-6xl mx-auto">
+      {artworks.map((a, index) => (
         <div
           class="fanart-card group relative overflow-hidden rounded-3xl bg-black/30 border border-transparent
-                 shadow-lg backdrop-blur-sm cursor-pointer transition-transform will-change-transform hover:scale-[1.02]"
+                 shadow-lg backdrop-blur-sm cursor-pointer transition-transform will-change-transform hover:scale-[1.01]
+                 mb-8 break-inside-avoid"
           role="button"
           tabindex="0"
+          data-index={index}
           data-src={a.image}
           data-artist={a.artist}
           data-discord={a.discord}
@@ -42,7 +44,7 @@ const artworks = [
             src={a.image}
             alt={`Fan art by ${a.artist}`}
             loading="lazy"
-            class="fanart-img w-full h-[240px] sm:h-[260px] object-cover transition-transform duration-200"
+            class="fanart-img w-full h-auto object-cover transition-transform duration-200"
           />
 
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none"></div>
@@ -53,9 +55,12 @@ const artworks = [
             <div class="text-sm font-extrabold text-[#f7e6ac] leading-none">
               {a.artist}
             </div>
-            <div class="text-xs text-[#f7e6ac]/75 mt-1 leading-none">
-              {a.discord}
-            </div>
+
+            {a.discord && (
+              <div class="text-xs text-[#f7e6ac]/75 mt-1 leading-none">
+                {a.discord}
+              </div>
+            )}
           </div>
         </div>
       ))}
@@ -71,17 +76,17 @@ const artworks = [
     <div
       id="popupInner"
       class="popup-inner relative bg-black/55 border border-[#c6a44f]/40 rounded-2xl p-4
-             shadow-[0_0_30px_rgba(198,164,79,0.35)] backdrop-blur-md w-[min(1200px,95vw)]"
+             shadow-[0_0_30px_rgba(198,164,79,0.35)] backdrop-blur-md"
     >
       <div class="flex items-start justify-between gap-3 mb-3">
         <div>
           <h2 id="popupName" class="text-2xl font-extrabold text-[#ffda6a] leading-tight"></h2>
-          <p id="popupHandle" class="text-sm text-[#f7e6ac]/75"></p>
+          <p id="popupHandle" class="text-sm text-[#f7e6ac]/75 mt-1"></p>
         </div>
 
         <button
           id="closePopup"
-          class="w-11 h-11 rounded-xl bg-[#c29200]/40 hover:bg-[#ffda6a]/80 text-black font-black transition"
+          class="w-9 h-9 rounded-lg bg-[#c29200]/30 hover:bg-[#ffda6a]/70 text-black text-xl leading-none font-black transition shrink-0"
           type="button"
           aria-label="Close"
           title="Close"
@@ -97,10 +102,25 @@ const artworks = [
       >
         <img
           id="popupImg"
-          class="block w-full h-auto max-h-[78vh] object-contain"
+          class="block max-w-full w-auto h-auto max-h-[78vh] object-contain"
           alt=""
           draggable="false"
         />
+      </div>
+
+      <!-- Thumbnails -->
+      <div id="thumbStrip" class="mt-4 flex gap-3 overflow-x-auto pb-2">
+        {artworks.map((a, index) => (
+          <button
+            type="button"
+            class="thumb-btn"
+            data-index={index}
+            aria-label={`Open art by ${a.artist}`}
+            title={a.artist}
+          >
+            <img src={a.image} alt={a.artist} loading="lazy" />
+          </button>
+        ))}
       </div>
     </div>
   </div>
@@ -151,20 +171,58 @@ const artworks = [
         filter: brightness(0.38) saturate(0.25) blur(6px) contrast(1.1);
         transform: scale(1.02);
       }
+
       .fanart-grid:hover > .fanart-card:hover .fanart-img {
         filter: saturate(1.15) contrast(1.05);
-        transform: scale(1.06);
+        transform: scale(1.03);
       }
     }
 
-    .popup-inner.animate-in { animation: fadeScale 260ms ease both; }
+    .popup-inner {
+      width: min(1080px, 95vw);
+      transition: width 220ms ease, max-width 220ms ease, transform 220ms ease;
+    }
+
+    .popup-inner.is-portrait {
+      width: min(760px, 92vw);
+    }
+
+    .popup-inner.is-landscape {
+      width: min(1280px, 96vw);
+    }
+
+    .popup-inner.is-square {
+      width: min(940px, 93vw);
+    }
+
+    .popup-inner.animate-in {
+      animation: fadeScale 260ms ease both;
+    }
 
     @keyframes fadeScale {
-      from { opacity: 0; transform: scale(.96); }
+      from { opacity: 0; transform: scale(.97); }
       to   { opacity: 1; transform: scale(1); }
     }
 
-    #zoomStage { cursor: zoom-in; }
+    @keyframes imageIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    #zoomStage {
+      cursor: zoom-in;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 320px;
+    }
+
     #zoomStage.is-zoomed { cursor: grab; }
     #zoomStage.is-dragging { cursor: grabbing; }
 
@@ -173,8 +231,66 @@ const artworks = [
       transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--s, 1));
       transition: transform 140ms ease;
       will-change: transform;
+      backface-visibility: hidden;
     }
-    #zoomStage.is-dragging #popupImg { transition: none; }
+
+    #popupImg.animate-in {
+      animation: imageIn 260ms ease both;
+    }
+
+    #zoomStage.is-dragging #popupImg {
+      transition: none;
+    }
+
+    #thumbStrip {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 218, 106, 0.35) transparent;
+    }
+
+    #thumbStrip::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    #thumbStrip::-webkit-scrollbar-thumb {
+      background: rgba(255, 218, 106, 0.25);
+      border-radius: 999px;
+    }
+
+    .thumb-btn {
+      flex: 0 0 auto;
+      width: 74px;
+      height: 74px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.03);
+      opacity: 0.55;
+      transform: translateY(0);
+      transition:
+        opacity 180ms ease,
+        transform 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .thumb-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .thumb-btn.is-active {
+      opacity: 1;
+      border-color: rgba(255, 218, 106, 0.65);
+      box-shadow: 0 0 18px rgba(198, 164, 79, 0.28);
+      transform: translateY(-2px);
+    }
+
+    .thumb-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
   </style>
 
   <script is:inline>
@@ -186,7 +302,15 @@ const artworks = [
     const popupHandle = document.getElementById('popupHandle');
     const closePopup = document.getElementById('closePopup');
     const zoomStage = document.getElementById('zoomStage');
+    const thumbButtons = document.querySelectorAll('.thumb-btn');
 
+    const items = [...cards].map((card) => ({
+      src: card.dataset.src,
+      artist: card.dataset.artist,
+      discord: card.dataset.discord || ''
+    }));
+
+    let currentIndex = 0;
     let scale = 1;
     let tx = 0, ty = 0;
     let isDragging = false;
@@ -211,19 +335,73 @@ const artworks = [
 
     const resetZoom = () => {
       scale = 1;
-      tx = 0; ty = 0;
+      tx = 0;
+      ty = 0;
       popupImg.style.setProperty('--ox', `50%`);
       popupImg.style.setProperty('--oy', `50%`);
       zoomStage.classList.remove('is-zoomed', 'is-dragging');
       applyTransform();
     };
 
-    const openPopup = (src, artist, discord) => {
-      popupImg.src = src;
-      popupImg.alt = `Fan art by ${artist}`;
-      popupName.textContent = artist;
-      popupHandle.textContent = `${discord}`;
+    const animatePopupImage = () => {
+      popupImg.classList.remove('animate-in');
+      void popupImg.offsetWidth;
+      popupImg.classList.add('animate-in');
+    };
 
+    const setPopupLayout = () => {
+      popupInner.classList.remove('is-portrait', 'is-landscape', 'is-square');
+
+      const w = popupImg.naturalWidth || 1;
+      const h = popupImg.naturalHeight || 1;
+      const ratio = w / h;
+
+      if (ratio < 0.85) {
+        popupInner.classList.add('is-portrait');
+      } else if (ratio > 1.15) {
+        popupInner.classList.add('is-landscape');
+      } else {
+        popupInner.classList.add('is-square');
+      }
+    };
+
+    const setActiveThumb = (index) => {
+      thumbButtons.forEach((btn) => {
+        const active = Number(btn.dataset.index) === index;
+        btn.classList.toggle('is-active', active);
+
+        if (active) {
+          btn.scrollIntoView({
+            behavior: 'smooth',
+            inline: 'center',
+            block: 'nearest'
+          });
+        }
+      });
+    };
+
+    const renderPopup = (index) => {
+      const item = items[index];
+      if (!item) return;
+
+      currentIndex = index;
+      popupImg.src = item.src;
+      popupImg.alt = `Fan art by ${item.artist}`;
+      popupName.textContent = item.artist;
+
+      if (item.discord) {
+        popupHandle.textContent = item.discord;
+        popupHandle.classList.remove('hidden');
+      } else {
+        popupHandle.textContent = '';
+        popupHandle.classList.add('hidden');
+      }
+
+      setActiveThumb(index);
+      resetZoom();
+    };
+
+    const openPopup = (index) => {
       popup.classList.remove('hidden');
       popup.classList.add('flex');
       popup.setAttribute('aria-hidden', 'false');
@@ -232,7 +410,7 @@ const artworks = [
       void popupInner.offsetWidth;
       popupInner.classList.add('animate-in');
 
-      resetZoom();
+      renderPopup(index);
     };
 
     const close = () => {
@@ -240,38 +418,64 @@ const artworks = [
       popup.classList.add('hidden');
       popup.setAttribute('aria-hidden', 'true');
       popupInner.classList.remove('animate-in');
+      popupInner.classList.remove('is-portrait', 'is-landscape', 'is-square');
       popupImg.src = '';
       popupImg.alt = '';
+      popupHandle.textContent = '';
+      popupHandle.classList.remove('hidden');
       resetZoom();
     };
 
-    cards.forEach(card => {
-      const { src, artist, discord } = card.dataset;
-      card.addEventListener('click', () => openPopup(src, artist, discord));
+    popupImg.addEventListener('load', () => {
+      setPopupLayout();
+      animatePopupImage();
+    });
+
+    cards.forEach((card) => {
+      const index = Number(card.dataset.index);
+      card.addEventListener('click', () => openPopup(index));
       card.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') openPopup(src, artist, discord);
+        if (e.key === 'Enter' || e.key === ' ') openPopup(index);
+      });
+    });
+
+    thumbButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.dataset.index);
+        renderPopup(index);
       });
     });
 
     closePopup.addEventListener('click', close);
-    popup.addEventListener('click', (e) => { if (e.target === popup) close(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    popup.addEventListener('click', (e) => {
+      if (e.target === popup) close();
+    });
 
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close();
+    });
+
+    // Left click: zoom in/out
     zoomStage.addEventListener('click', (e) => {
       if (popup.classList.contains('hidden')) return;
+      if (e.target !== popupImg && scale === 1) return;
 
       if (scale === 1) {
         setOriginFromEvent(e);
         scale = 2.6;
-        tx = 0; ty = 0;
+        tx = 0;
+        ty = 0;
         applyTransform();
       } else {
         resetZoom();
       }
     });
 
+    // Drag to pan (only when zoomed)
     zoomStage.addEventListener('pointerdown', (e) => {
       if (scale <= 1) return;
+      if (e.target !== popupImg) return;
+
       isDragging = true;
       zoomStage.classList.add('is-dragging');
       lastX = e.clientX;
@@ -281,10 +485,13 @@ const artworks = [
 
     zoomStage.addEventListener('pointermove', (e) => {
       if (!isDragging) return;
+
       const dx = e.clientX - lastX;
       const dy = e.clientY - lastY;
+
       lastX = e.clientX;
       lastY = e.clientY;
+
       tx += dx;
       ty += dy;
       applyTransform();
@@ -297,6 +504,12 @@ const artworks = [
       try { zoomStage.releasePointerCapture(e.pointerId); } catch {}
     });
 
+    zoomStage.addEventListener('pointercancel', () => {
+      isDragging = false;
+      zoomStage.classList.remove('is-dragging');
+    });
+
+    // Wheel zoom
     zoomStage.addEventListener('wheel', (e) => {
       if (popup.classList.contains('hidden')) return;
       e.preventDefault();
@@ -312,7 +525,8 @@ const artworks = [
       scale = clamp(scale, 1, 6);
 
       if (scale === 1) {
-        tx = 0; ty = 0;
+        tx = 0;
+        ty = 0;
       }
 
       applyTransform();
