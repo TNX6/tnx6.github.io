@@ -12,8 +12,8 @@ const artworks = [
   { artist: "كاناي", discord: "@xkanaix",    image: "/FANART/kanai.webp" },
   { artist: "معاذ",  discord: "@pekz0_",     image: "/FANART/pekz0.webp" },
 
-  { artist: "مازن",  discord: "",            image: "/FANART/Mazen.png" },
-  { artist: "بعير",  discord: "",            image: "/FANART/ba3eerwut.png" },
+  { artist: "مازن",  discord: "@ker_a9",            image: "/FANART/Mazen.png" },
+  { artist: "بعير",  discord: "@ba3eerwut",            image: "/FANART/ba3eerwut.png" },
 ]
 ---
 
@@ -25,27 +25,26 @@ const artworks = [
       معرض الرسمات
     </h1>
 
-    <!-- Masonry Grid -->
-    <div class="fanart-grid columns-1 sm:columns-2 lg:columns-3 gap-8 max-w-6xl mx-auto">
-      {artworks.map((a, index) => (
-        <div
-          class="fanart-card group relative overflow-hidden rounded-3xl bg-black/30 border border-transparent
-                 shadow-lg backdrop-blur-sm cursor-pointer transition-transform will-change-transform hover:scale-[1.01]
-                 mb-8 break-inside-avoid"
-          role="button"
-          tabindex="0"
-          data-index={index}
-          data-src={a.image}
-          data-artist={a.artist}
-          data-discord={a.discord}
-          aria-label={`Open fan art by ${a.artist}`}
-        >
-          <img
-            src={a.image}
-            alt={`Fan art by ${a.artist}`}
-            loading="lazy"
-            class="fanart-img w-full h-auto object-cover transition-transform duration-200"
-          />
+<!-- Fixed Grid مثل قبل -->
+<div class="fanart-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+  {artworks.map((a, index) => (
+    <div
+      class="fanart-card group relative overflow-hidden rounded-3xl bg-black/30 border border-transparent
+             shadow-lg backdrop-blur-sm cursor-pointer transition-transform will-change-transform hover:scale-[1.02]"
+      role="button"
+      tabindex="0"
+      data-index={index}
+      data-src={a.image}
+      data-artist={a.artist}
+      data-discord={a.discord}
+      aria-label={`Open fan art by ${a.artist}`}
+    >
+      <img
+        src={a.image}
+        alt={`Fan art by ${a.artist}`}
+        loading="lazy"
+        class="fanart-img w-full h-[240px] sm:h-[260px] object-cover transition-transform duration-200"
+      />
 
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none"></div>
 
