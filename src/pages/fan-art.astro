@@ -11,6 +11,10 @@ const artworks = [
   { artist: "نورة",  discord: "@norhv17",    image: "/FANART/NORH.webp" },
   { artist: "كاناي", discord: "@xkanaix",    image: "/FANART/kanai.webp" },
   { artist: "معاذ",  discord: "@pekz0_",     image: "/FANART/pekz0.webp" },
+
+  // الإضافات الجديدة
+  { artist: "مازن",  discord: "",            image: "/FANART/Mazen.png" },
+  { artist: "بعير",  discord: "",            image: "/FANART/ba3eerwut.png" },
 ]
 ---
 
@@ -102,7 +106,6 @@ const artworks = [
   </div>
 
   <style is:global>
-    /* نفس الحد الذهبي (ثابت بدون دوران) */
     .fanart-card {
       position: relative;
       isolation: isolate;
@@ -143,7 +146,6 @@ const artworks = [
         0 0 44px rgba(198, 164, 79, 0.35);
     }
 
-    /* Hover effect: الباقي ينطفي + يقل saturate + blur خفيف */
     @media (hover: hover) and (pointer: fine) {
       .fanart-grid:hover > .fanart-card:not(:hover) .fanart-img {
         filter: brightness(0.38) saturate(0.25) blur(6px) contrast(1.1);
@@ -162,7 +164,6 @@ const artworks = [
       to   { opacity: 1; transform: scale(1); }
     }
 
-    /* Zoom transforms via CSS vars */
     #zoomStage { cursor: zoom-in; }
     #zoomStage.is-zoomed { cursor: grab; }
     #zoomStage.is-dragging { cursor: grabbing; }
@@ -256,7 +257,6 @@ const artworks = [
     popup.addEventListener('click', (e) => { if (e.target === popup) close(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
 
-    // Left click: zoom in/out
     zoomStage.addEventListener('click', (e) => {
       if (popup.classList.contains('hidden')) return;
 
@@ -270,7 +270,6 @@ const artworks = [
       }
     });
 
-    // Drag to pan (only when zoomed)
     zoomStage.addEventListener('pointerdown', (e) => {
       if (scale <= 1) return;
       isDragging = true;
@@ -298,7 +297,6 @@ const artworks = [
       try { zoomStage.releasePointerCapture(e.pointerId); } catch {}
     });
 
-    // Wheel zoom
     zoomStage.addEventListener('wheel', (e) => {
       if (popup.classList.contains('hidden')) return;
       e.preventDefault();
