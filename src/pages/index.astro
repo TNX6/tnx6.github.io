@@ -1,5 +1,6 @@
 ---
 import Layout from '~/layouts/PageLayout.astro'
+import IntroOverlay from '~/components/IntroOverlay.astro'
 
 const metadata = {
   title: 'TNX6 — Twitch Streamer',
@@ -8,6 +9,7 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
+  <IntroOverlay />
   
   <section
     class="relative py-24 px-6 text-white bg-black/90 overflow-hidden"
