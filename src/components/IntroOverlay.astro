@@ -1,354 +1,279 @@
 ---
 ---
 <div id="intro-overlay">
-  <canvas id="matrix-canvas"></canvas>
-  <canvas id="particle-canvas"></canvas>
+    <canvas id="matrix-canvas"></canvas>
+    <canvas id="particle-canvas"></canvas>
 </div>
 
 <style>
-  #intro-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: #050505;
-    z-index: 9999;
-    overflow: hidden;
-    transition: opacity 1.5s ease-out;
-  }
-
-  canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  #matrix-canvas {
-    z-index: 1;
-    opacity: 0.6;
-  }
-
-  #particle-canvas {
-    z-index: 2;
-  }
+    #intro-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #050505;
+        z-index: 9999;
+        overflow: hidden;
+        transition: opacity 1.5s ease-out;
+    }
+    canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    #matrix-canvas {
+        z-index: 1;
+        opacity: 0.6;
+    }
+    #particle-canvas {
+        z-index: 2;
+    }
 </style>
 
 <script is:inline>
-  function initComplexIntro() {
-    const overlay = document.getElementById('intro-overlay');
-    const matrixCanvas = document.getElementById('matrix-canvas');
-    const particleCanvas = document.getElementById('particle-canvas');
+    function initComplexIntro() {
+        const overlay = document.getElementById('intro-overlay');
+        const matrixCanvas = document.getElementById('matrix-canvas');
+        const particleCanvas = document.getElementById('particle-canvas');
+        
+        if (!overlay || !matrixCanvas || !particleCanvas) return;
+        
+        document.body.style.overflow = 'hidden';
 
-    if (!overlay || !matrixCanvas || !particleCanvas) return;
-    if (overlay.dataset.started === '1') return;
-    overlay.dataset.started = '1';
+        const mCtx = matrixCanvas.getContext('2d');
+        const pCtx = particleCanvas.getContext('2d', { willReadFrequently: true });
+        
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        
+        matrixCanvas.width = particleCanvas.width = width;
+        matrixCanvas.height = particleCanvas.height = height;
 
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
+        // 1. برمجة خلفية الماتريكس (الشفرات)
+        const matrixChars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*<>[]{}'.split('');
+        const fontSize = 16;
+        let columns = Math.floor(width / fontSize);
+        let drops = Array(columns).fill(1);
 
-    const mCtx = matrixCanvas.getContext('2d');
-    const pCtx = particleCanvas.getContext('2d', { willReadFrequently: true });
-
-    if (!mCtx || !pCtx) return;
-
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-
-    matrixCanvas.width = particleCanvas.width = width;
-    matrixCanvas.height = particleCanvas.height = height;
-
-    const offscreen = document.createElement('canvas');
-    const oCtx = offscreen.getContext('2d', { willReadFrequently: true });
-
-    if (!oCtx) return;
-
-    offscreen.width = width;
-    offscreen.height = height;
-
-    // =========================
-    // 1) خلفية الماتريكس
-    // =========================
-    const matrixChars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*<>[]{}'.split('');
-    const fontSize = 16;
-    let columns = Math.floor(width / fontSize);
-    let drops = Array(columns).fill(1);
-
-    function drawMatrix() {
-      mCtx.fillStyle = 'rgba(5, 5, 5, 0.1)';
-      mCtx.fillRect(0, 0, width, height);
-
-      mCtx.fillStyle = '#ff66b2';
-      mCtx.font = fontSize + 'px monospace';
-
-      for (let i = 0; i < drops.length; i++) {
-        const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-        mCtx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-        if (drops[i] * fontSize > height && Math.random() > 0.975) {
-          drops[i] = 0;
+        function drawMatrix() {
+            mCtx.fillStyle = 'rgba(5, 5, 5, 0.1)';
+            mCtx.fillRect(0, 0, width, height);
+            mCtx.fillStyle = '#ff66b2'; 
+            mCtx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                mCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
         }
 
-        drops[i]++;
-      }
-    }
-
-    // =========================
-    // 2) الجسيمات
-    // =========================
-    let particles = [];
-    const fov = 250;
-
-    class Particle {
-      constructor(x, y, z) {
-        this.x = (Math.random() - 0.5) * width * 2;
-        this.y = (Math.random() - 0.5) * height * 2;
-        this.z = Math.random() * 1000 - 500;
-
-        this.tx = x;
-        this.ty = y;
-        this.tz = z;
-
-        this.vx = 0;
-        this.vy = 0;
-        this.vz = 0;
-
-        this.color = '#ffffff';
-        this.size = 2;
-      }
-
-      update() {
-        const dx = this.tx - this.x;
-        const dy = this.ty - this.y;
-        const dz = this.tz - this.z;
-
-        this.vx += dx * 0.02;
-        this.vy += dy * 0.02;
-        this.vz += dz * 0.02;
-
-        this.vx *= 0.85;
-        this.vy *= 0.85;
-        this.vz *= 0.85;
-
-        this.x += this.vx;
-        this.y += this.vy;
-        this.z += this.vz;
-      }
-
-      draw() {
-        if (this.z < -fov) return;
-
-        const scale = fov / (fov + this.z);
-        const x2d = (this.x * scale) + width / 2;
-        const y2d = (this.y * scale) + height / 2;
-
-        pCtx.beginPath();
-        pCtx.arc(x2d, y2d, this.size * scale, 0, Math.PI * 2);
-        pCtx.fillStyle = this.color;
-        pCtx.fill();
-      }
-    }
-
-    // =========================
-    // 3) استخراج نقاط النص
-    // =========================
-    function getTextCoords(text, options = {}) {
-      offscreen.width = width;
-      offscreen.height = height;
-
-      oCtx.clearRect(0, 0, width, height);
-      oCtx.fillStyle = 'white';
-      oCtx.textAlign = 'center';
-      oCtx.textBaseline = 'middle';
-      oCtx.direction = options.rtl ? 'rtl' : 'ltr';
-
-      const fontSizeText = options.fontSize || Math.min(width * 0.2, 150);
-      const yOffset = options.yOffset || 0;
-      const step = options.step || 6;
-      const color = options.color || '#ffffff';
-
-      oCtx.font = `bold ${fontSizeText}px Arial`;
-      oCtx.fillText(text, width / 2, (height / 2) + yOffset);
-
-      const imageData = oCtx.getImageData(0, 0, width, height).data;
-      const coords = [];
-
-      for (let y = 0; y < height; y += step) {
-        for (let x = 0; x < width; x += step) {
-          const alpha = imageData[(y * width + x) * 4 + 3];
-          if (alpha > 128) {
-            coords.push({
-              x: x - width / 2,
-              y: y - height / 2,
-              z: (Math.random() - 0.5) * 40,
-              color: color
-            });
-          }
-        }
-      }
-
-      return coords;
-    }
-
-    // =========================
-    // 4) قلب أفضل - مو رمز خط
-    // =========================
-    function getHeartCoords() {
-      const coords = [];
-      const heartSize = Math.min(width, height) * 0.18;
-      const yLift = -Math.min(height * 0.08, 55);
-
-      // قلب ممتلئ باستخدام معادلة القلب
-      for (let ny = -1.2; ny <= 1.2; ny += 0.05) {
-        for (let nx = -1.2; nx <= 1.2; nx += 0.05) {
-          const eq = Math.pow((nx * nx + ny * ny - 1), 3) - (nx * nx * Math.pow(ny, 3));
-
-          if (eq <= 0) {
-            const edgeGlow = Math.abs(eq);
-
-            let color = '#ff2f7d';
-            if (edgeGlow < 0.02) {
-              color = '#ffd3e6';
-            } else if (Math.random() > 0.65) {
-              color = '#ff66b2';
-            } else if (Math.random() > 0.4) {
-              color = '#ff0055';
+        // 2. برمجة الجسيمات
+        let particles = [];
+        const fov = 250; 
+        let isFirstWord = true; // لمنع انفجار الرقم الأول
+        
+        class Particle {
+            constructor() {
+                this.x = 0;
+                this.y = 0;
+                this.z = 0;
+                this.tx = 0;
+                this.ty = 0;
+                this.tz = 0;
+                this.vx = 0;
+                this.vy = 0;
+                this.vz = 0;
+                this.color = '#ffffff';
+                this.size = 2;
             }
 
-            coords.push({
-              x: (nx * heartSize) + (Math.random() - 0.5) * 3,
-              y: (ny * heartSize) + yLift + (Math.random() - 0.5) * 3,
-              z: (Math.random() - 0.5) * 70,
-              color: color
+            update() {
+                let dx = this.tx - this.x;
+                let dy = this.ty - this.y;
+                let dz = this.tz - this.z;
+
+                this.vx += dx * 0.02;
+                this.vy += dy * 0.02;
+                this.vz += dz * 0.02;
+
+                this.vx *= 0.85;
+                this.vy *= 0.85;
+                this.vz *= 0.85;
+
+                this.x += this.vx;
+                this.y += this.vy;
+                this.z += this.vz;
+            }
+
+            draw() {
+                if (this.z < -fov) return; 
+                
+                let scale = fov / (fov + this.z);
+                let x2d = (this.x * scale) + width / 2;
+                let y2d = (this.y * scale) + height / 2;
+                
+                pCtx.beginPath();
+                pCtx.arc(x2d, y2d, this.size * scale, 0, Math.PI * 2);
+                pCtx.fillStyle = this.color;
+                pCtx.fill();
+            }
+        }
+
+        function getTextCoords(text, isHeart = false) {
+            const offscreen = document.createElement('canvas');
+            const oCtx = offscreen.getContext('2d', { willReadFrequently: true });
+            offscreen.width = width;
+            offscreen.height = height;
+            
+            oCtx.fillStyle = 'white';
+            oCtx.textAlign = 'center';
+            oCtx.textBaseline = 'middle';
+            
+            if (isHeart) {
+                // رسم القلب هندسياً ليكون مثالياً دائماً
+                const hw = Math.min(width * 0.25, 180); // عرض القلب
+                const hh = hw; // ارتفاع القلب
+                const cx = width / 2;
+                const cy = height / 2 - 40;
+
+                oCtx.beginPath();
+                oCtx.moveTo(cx, cy - hh * 0.3);
+                oCtx.bezierCurveTo(cx - hw * 0.6, cy - hh * 0.8, cx - hw * 1.1, cy + hh * 0.1, cx, cy + hh);
+                oCtx.bezierCurveTo(cx + hw * 1.1, cy + hh * 0.1, cx + hw * 0.6, cy - hh * 0.8, cx, cy - hh * 0.3);
+                oCtx.fill();
+
+                // رسم النص تحت القلب
+                oCtx.font = `bold ${Math.min(width * 0.1, 60)}px Arial`;
+                oCtx.fillText('شكراً لكم', cx, cy + hh + 60);
+            } else {
+                oCtx.font = `bold ${Math.min(width * 0.2, 150)}px Arial`;
+                oCtx.fillText(text, width / 2, height / 2);
+            }
+
+            const imageData = oCtx.getImageData(0, 0, width, height).data;
+            let coords = [];
+            
+            // كثافة النقاط (الرقم 6 يتحكم بعدد النقاط، كلما قل زادت الدقة والنقاط)
+            const gap = isHeart ? 5 : 6; 
+
+            for (let y = 0; y < height; y += gap) {
+                for (let x = 0; x < width; x += gap) {
+                    const alpha = imageData[(y * width + x) * 4 + 3];
+                    if (alpha > 128) {
+                        coords.push({ x: x - width / 2, y: y - height / 2, z: 0 });
+                    }
+                }
+            }
+            return coords;
+        }
+
+        function explodeParticles() {
+            particles.forEach(p => {
+                p.vz = (Math.random() - 0.5) * 800;
+                p.vx = (Math.random() - 0.5) * 300;
+                p.vy = (Math.random() - 0.5) * 300;
             });
-          }
         }
-      }
 
-      // نص تحت القلب
-      const thankYouCoords = getTextCoords('شكراً لكم', {
-        fontSize: Math.min(width * 0.08, 60),
-        yOffset: heartSize * 0.9,
-        step: 5,
-        rtl: true,
-        color: '#fff5fb'
-      });
+        function morphTo(text, isHeart = false) {
+            const newCoords = getTextCoords(text, isHeart);
+            
+            if (!isFirstWord) {
+                explodeParticles(); 
+            }
 
-      return coords.concat(thankYouCoords);
-    }
+            if (particles.length < newCoords.length) {
+                const diff = newCoords.length - particles.length;
+                for (let i = 0; i < diff; i++) {
+                    particles.push(new Particle());
+                }
+            } else if (particles.length > newCoords.length) {
+                particles.splice(newCoords.length);
+            }
 
-    function explodeParticles(power = 1) {
-      particles.forEach((p) => {
-        p.vz = (Math.random() - 0.5) * 800 * power;
-        p.vx = (Math.random() - 0.5) * 300 * power;
-        p.vy = (Math.random() - 0.5) * 300 * power;
-      });
-    }
+            newCoords.sort(() => Math.random() - 0.5);
 
-    function morphTo(text, isHeart = false) {
-      const newCoords = isHeart ? getHeartCoords() : getTextCoords(text);
-
-      // القلب يحتاج انفجار أخف عشان يتشكل بشكل أنظف
-      explodeParticles(isHeart ? 0.35 : 1);
-
-      if (particles.length < newCoords.length) {
-        const diff = newCoords.length - particles.length;
-        for (let i = 0; i < diff; i++) {
-          particles.push(new Particle(0, 0, 0));
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].tx = newCoords[i].x;
+                particles[i].ty = newCoords[i].y;
+                particles[i].tz = newCoords[i].z;
+                
+                if (isFirstWord) {
+                    particles[i].x = particles[i].tx;
+                    particles[i].y = particles[i].ty;
+                    particles[i].z = particles[i].tz;
+                }
+                
+                if (isHeart) {
+                    // تلوين القلب بمزيج من الوردي والأحمر الكرزي
+                    particles[i].color = Math.random() > 0.4 ? '#ff0055' : '#ff80bf';
+                } else {
+                    particles[i].color = '#ffffff';
+                }
+            }
+            
+            isFirstWord = false;
         }
-      } else if (particles.length > newCoords.length) {
-        particles.splice(newCoords.length);
-      }
 
-      newCoords.sort(() => Math.random() - 0.5);
+        // 3. التسلسل الزمني
+        const words = ["3", "2", "1", "سنة كاملة", "من البثوث", "شكراً"];
+        let wordIndex = 0;
 
-      for (let i = 0; i < particles.length; i++) {
-        particles[i].tx = newCoords[i].x;
-        particles[i].ty = newCoords[i].y;
-        particles[i].tz = newCoords[i].z;
-        particles[i].color = newCoords[i].color || '#ffffff';
-        particles[i].size = isHeart ? 2.4 : 2;
-      }
+        function nextWord() {
+            if (wordIndex < words.length) {
+                morphTo(words[wordIndex]);
+                wordIndex++;
+                setTimeout(nextWord, 2000); 
+            } else if (wordIndex === words.length) {
+                morphTo('heart', true); 
+                setTimeout(() => {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                        document.body.style.overflow = ''; 
+                        cancelAnimationFrame(animationId);
+                        clearInterval(matrixInterval);
+                    }, 1500);
+                }, 3000);
+            }
+        }
+
+        let animationId;
+        function animate() {
+            pCtx.clearRect(0, 0, width, height);
+            
+            pCtx.shadowBlur = 15;
+            pCtx.shadowColor = '#ff66b2'; 
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            
+            animationId = requestAnimationFrame(animate);
+        }
+
+        let matrixInterval = setInterval(drawMatrix, 40);
+        
+        // تشغيل الكلمة الأولى فوراً
+        nextWord();
+        animate();
+        
+        window.addEventListener('resize', () => {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            matrixCanvas.width = particleCanvas.width = width;
+            matrixCanvas.height = particleCanvas.height = height;
+            columns = Math.floor(width / fontSize);
+            drops = Array(columns).fill(1);
+        });
     }
 
-    // =========================
-    // 5) التسلسل الزمني
-    // =========================
-    const words = ["3", "2", "1", "سنة كاملة", "من البثوث", "شكراً"];
-    let wordIndex = 0;
-
-    function nextWord() {
-      if (wordIndex < words.length) {
-        morphTo(words[wordIndex]);
-        wordIndex++;
-        setTimeout(nextWord, 2000);
-      } else if (wordIndex === words.length) {
-        morphTo('heart', true);
-
-        setTimeout(() => {
-          overlay.style.opacity = '0';
-
-          setTimeout(() => {
-            overlay.style.display = 'none';
-            document.body.style.overflow = '';
-            document.documentElement.style.overflow = '';
-
-            cancelAnimationFrame(animationId);
-            clearInterval(matrixInterval);
-            window.removeEventListener('resize', handleResize);
-          }, 1500);
-        }, 3200);
-      }
-    }
-
-    // =========================
-    // 6) الرسم المستمر
-    // =========================
-    let animationId;
-
-    function animate() {
-      pCtx.clearRect(0, 0, width, height);
-
-      pCtx.shadowBlur = 16;
-      pCtx.shadowColor = '#ff66b2';
-
-      particles.forEach((p) => {
-        p.update();
-        p.draw();
-      });
-
-      animationId = requestAnimationFrame(animate);
-    }
-
-    // =========================
-    // 7) resize
-    // =========================
-    function handleResize() {
-      width = window.innerWidth;
-      height = window.innerHeight;
-
-      matrixCanvas.width = particleCanvas.width = width;
-      matrixCanvas.height = particleCanvas.height = height;
-
-      offscreen.width = width;
-      offscreen.height = height;
-
-      columns = Math.floor(width / fontSize);
-      drops = Array(columns).fill(1);
-    }
-
-    // =========================
-    // 8) التشغيل
-    // =========================
-    const matrixInterval = setInterval(drawMatrix, 40);
-    animate();
-
-    setTimeout(nextWord, 500);
-    window.addEventListener('resize', handleResize);
-  }
-
-  document.addEventListener('DOMContentLoaded', initComplexIntro);
-  document.addEventListener('astro:page-load', initComplexIntro);
+    document.addEventListener('DOMContentLoaded', initComplexIntro);
+    document.addEventListener('astro:page-load', initComplexIntro);
 </script>
