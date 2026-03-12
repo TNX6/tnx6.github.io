@@ -61,7 +61,7 @@
         function drawMatrix() {
             mCtx.fillStyle = 'rgba(5, 5, 5, 0.1)';
             mCtx.fillRect(0, 0, width, height);
-            mCtx.fillStyle = '#ff66b2'; // اللون الوردي
+            mCtx.fillStyle = '#ff66b2';
             mCtx.font = fontSize + 'px monospace';
             
             for (let i = 0; i < drops.length; i++) {
@@ -72,18 +72,19 @@
             }
         }
 
-        // 2. برمجة الجسيمات ثلاثية الأبعاد (النصوص)
+        // 2. برمجة الجسيمات
         let particles = [];
-        const fov = 250; // مجال الرؤية للعمق
+        const fov = 250; 
+        let isFirstWord = true; // متغير جديد لمنع الفوضى في البداية
         
         class Particle {
-            constructor(x, y, z) {
-                this.x = (Math.random() - 0.5) * width * 2;
-                this.y = (Math.random() - 0.5) * height * 2;
-                this.z = Math.random() * 1000 - 500;
-                this.tx = x; // الهدف X
-                this.ty = y; // الهدف Y
-                this.tz = z; // الهدف Z
+            constructor() {
+                this.x = 0;
+                this.y = 0;
+                this.z = 0;
+                this.tx = 0;
+                this.ty = 0;
+                this.tz = 0;
                 this.vx = 0;
                 this.vy = 0;
                 this.vz = 0;
@@ -91,18 +92,15 @@
                 this.size = 2;
             }
 
-            // حركة الجسيمات مع تأثير الانفجار والتجمع
             update() {
                 let dx = this.tx - this.x;
                 let dy = this.ty - this.y;
                 let dz = this.tz - this.z;
 
-                // مرونة الحركة (Spring physics)
                 this.vx += dx * 0.02;
                 this.vy += dy * 0.02;
                 this.vz += dz * 0.02;
 
-                // الاحتكاك
                 this.vx *= 0.85;
                 this.vy *= 0.85;
                 this.vz *= 0.85;
@@ -113,9 +111,8 @@
             }
 
             draw() {
-                if (this.z < -fov) return; // خلف الكاميرا
+                if (this.z < -fov) return;
                 
-                // حساب المنظور ثلاثي الأبعاد
                 let scale = fov / (fov + this.z);
                 let x2d = (this.x * scale) + width / 2;
                 let y2d = (this.y * scale) + height / 2;
@@ -127,7 +124,6 @@
             }
         }
 
-        // استخراج إحداثيات النقاط من النص المكتوب
         function getTextCoords(text, isHeart = false) {
             const offscreen = document.createElement('canvas');
             const oCtx = offscreen.getContext('2d', { willReadFrequently: true });
@@ -150,12 +146,10 @@
 
             const imageData = oCtx.getImageData(0, 0, width, height).data;
             let coords = [];
-            // فحص البيكسلات بتخطي معين لإنشاء النقاط (الرقم 6 يتحكم بكثافة النقاط)
             for (let y = 0; y < height; y += 6) {
                 for (let x = 0; x < width; x += 6) {
                     const alpha = imageData[(y * width + x) * 4 + 3];
                     if (alpha > 128) {
-                        // إزاحة الإحداثيات لتكون نقطة الأصل في المنتصف للرياضيات ثلاثية الأبعاد
                         coords.push({ x: x - width / 2, y: y - height / 2, z: 0 });
                     }
                 }
@@ -165,7 +159,6 @@
 
         function explodeParticles() {
             particles.forEach(p => {
-                // دفع الجسيمات عشوائياً للأمام والخلف والجانبين (تأثير الانفجار)
                 p.vz = (Math.random() - 0.5) * 800;
                 p.vx = (Math.random() - 0.5) * 300;
                 p.vy = (Math.random() - 0.5) * 300;
@@ -174,34 +167,46 @@
 
         function morphTo(text, isHeart = false) {
             const newCoords = getTextCoords(text, isHeart);
-            explodeParticles(); // تفعيل تأثير الانفجار قبل التشكيل الجديد
+            
+            // تفعيل الانفجار فقط إذا لم تكن هذه الكلمة الأولى
+            if (!isFirstWord) {
+                explodeParticles();
+            }
 
-            // تعديل عدد الجسيمات ليتطابق مع عدد النقاط المطلوبة للكلمة الجديدة
             if (particles.length < newCoords.length) {
                 const diff = newCoords.length - particles.length;
                 for (let i = 0; i < diff; i++) {
-                    particles.push(new Particle(0, 0, 0));
+                    particles.push(new Particle());
                 }
             } else if (particles.length > newCoords.length) {
                 particles.splice(newCoords.length);
             }
 
-            // خلط المصفوفة لكي لا تتشكل بخطوط مستقيمة
             newCoords.sort(() => Math.random() - 0.5);
 
             for (let i = 0; i < particles.length; i++) {
                 particles[i].tx = newCoords[i].x;
                 particles[i].ty = newCoords[i].y;
                 particles[i].tz = newCoords[i].z;
+                
+                // إذا كانت الكلمة الأولى، نرتب النقاط في أماكنها فوراً بدون طيران
+                if (isFirstWord) {
+                    particles[i].x = particles[i].tx;
+                    particles[i].y = particles[i].ty;
+                    particles[i].z = particles[i].tz;
+                }
+                
                 if (isHeart) {
                     particles[i].color = Math.random() > 0.3 ? '#ff0055' : '#ff66b2';
                 } else {
                     particles[i].color = '#ffffff';
                 }
             }
+            
+            isFirstWord = false; // تعطيل خاصية الكلمة الأولى للكلمات القادمة
         }
 
-        // 3. التسلسل الزمني (الكلمات)
+        // 3. التسلسل الزمني
         const words = ["3", "2", "1", "سنة كاملة", "من البثوث", "شكراً"];
         let wordIndex = 0;
 
@@ -209,15 +214,14 @@
             if (wordIndex < words.length) {
                 morphTo(words[wordIndex]);
                 wordIndex++;
-                setTimeout(nextWord, 2000); // ثانيتين لكل كلمة
+                setTimeout(nextWord, 2000); 
             } else if (wordIndex === words.length) {
-                morphTo('heart', true); // تشكيل القلب النهائي
+                morphTo('heart', true); 
                 setTimeout(() => {
-                    // إخفاء الواجهة بعد 3 ثواني من ظهور القلب
                     overlay.style.opacity = '0';
                     setTimeout(() => {
                         overlay.style.display = 'none';
-                        document.body.style.overflow = ''; // إعادة التمرير
+                        document.body.style.overflow = ''; 
                         cancelAnimationFrame(animationId);
                         clearInterval(matrixInterval);
                     }, 1500);
@@ -225,14 +229,12 @@
             }
         }
 
-        // حلقة الرسم (Render Loop)
         let animationId;
         function animate() {
-            // مسح الشاشة مع تأثير توهج خفيف للجسيمات
             pCtx.clearRect(0, 0, width, height);
             
             pCtx.shadowBlur = 15;
-            pCtx.shadowColor = '#ff66b2'; // التوهج الوردي
+            pCtx.shadowColor = '#ff66b2';
 
             particles.forEach(p => {
                 p.update();
@@ -242,14 +244,12 @@
             animationId = requestAnimationFrame(animate);
         }
 
-        // بدء التشغيل
         let matrixInterval = setInterval(drawMatrix, 40);
+        
+        // تشغيل الكلمة الأولى فوراً لتجنب أي شاشة فارغة أو فوضى
+        nextWord(); 
         animate();
         
-        // تأخير بسيط قبل بدء العد التنازلي
-        setTimeout(nextWord, 500);
-
-        // تجاوب مع تغيير حجم الشاشة
         window.addEventListener('resize', () => {
             width = window.innerWidth;
             height = window.innerHeight;
@@ -260,7 +260,6 @@
         });
     }
 
-    // تشغيل السكريبت بمجرد توفر الـ DOM (يدعم Astro بشكل مثالي)
     document.addEventListener('DOMContentLoaded', initComplexIntro);
     document.addEventListener('astro:page-load', initComplexIntro);
 </script>
