@@ -37,7 +37,7 @@ const metadata = {
         </h1>
 
         <p class="text-lg text-gray-200 mb-10 max-w-lg md:max-w-none mx-auto">
-          أبث لأجل المتعة وتضيع الوقت  .
+          أبث لأجل المتعة وتضيع الوقت .
         </p>
 
         <div class="flex flex-wrap justify-center md:justify-start gap-4">
@@ -49,7 +49,6 @@ const metadata = {
             شاهد البث الآن
           </a>
 
-          <!-- ✅ هنا التعديل: نحولها لـ /links -->
           <a
             href="/links"
             class="px-8 py-3 rounded-lg border border-[#c29200] text-[#ffda6a] hover:bg-[#c29200]/10 transition"
@@ -129,59 +128,60 @@ const metadata = {
             </div>
           </div>
 
-          <div class="grid gap-3 md:grid-cols-5">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             <div
-              class="tnx-schedule-card rounded-2xl border border-transparent px-4 py-4 text-center text-xs md:text-sm text-gray-200 flex flex-col justify-center gap-1"
+              class="tnx-schedule-card rounded-2xl border border-[#c29200]/15 px-4 py-4 md:px-5 md:py-5 text-center text-xs md:text-sm text-gray-200 flex flex-col items-center justify-center min-h-[125px] gap-2"
               data-schedule-day="6"
             >
-              <div class="font-semibold text-sm md:text-base">السبت</div>
-              <div class="flex items-center justify-center text-[13px] md:text-sm font-semibold text-[#ffda6a]">
+              <div class="font-bold text-sm md:text-base text-white">السبت</div>
+              <div class="flex items-center justify-center text-sm md:text-base font-semibold text-[#ffda6a]">
                 <span>8:30 م</span>
               </div>
-              <div class="text-[11px] md:text-xs text-gray-300 mt-1">
+              <div class="text-[11px] md:text-xs text-gray-400 leading-relaxed">
                 قصص ألعاب + سوالف
               </div>
             </div>
 
             <div
-              class="tnx-schedule-card rounded-2xl border border-transparent px-4 py-4 text-center text-xs md:text-sm text-gray-200 flex flex-col justify-center gap-1"
+              class="tnx-schedule-card rounded-2xl border border-[#c29200]/15 px-4 py-4 md:px-5 md:py-5 text-center text-xs md:text-sm text-gray-200 flex flex-col items-center justify-center min-h-[125px] gap-2"
               data-schedule-day="0"
             >
-              <div class="font-semibold text-sm md:text-base">الأحد</div>
-              <div class="flex items-center justify-center text-[13px] md:text-sm font-semibold text-[#ffda6a]">
+              <div class="font-bold text-sm md:text-base text-white">الأحد</div>
+              <div class="flex items-center justify-center text-sm md:text-base font-semibold text-[#ffda6a]">
                 <span>8:30 م</span>
               </div>
-              <div class="text-[11px] md:text-xs text-gray-300 mt-1">
+              <div class="text-[11px] md:text-xs text-gray-400 leading-relaxed">
                 قصص ألعاب + سوالف
               </div>
             </div>
 
             <div
-              class="tnx-schedule-card rounded-2xl border border-transparent px-4 py-4 text-center text-xs md:text-sm text-gray-200 flex flex-col justify-center gap-1"
-              data-schedule-day="1"
+              class="tnx-schedule-card rounded-2xl border border-[#c29200]/15 px-4 py-4 md:px-5 md:py-5 text-center text-xs md:text-sm text-gray-200 flex flex-col items-center justify-center min-h-[125px] gap-2"
+              data-schedule-day="2"
             >
-              <div class="font-semibold text-sm md:text-base">الثلاثاء</div>
-              <div class="flex items-center justify-center text-[13px] md:text-sm font-semibold text-[#ffda6a]">
+              <div class="font-bold text-sm md:text-base text-white">الثلاثاء</div>
+              <div class="flex items-center justify-center text-sm md:text-base font-semibold text-[#ffda6a]">
                 <span>8:30 م</span>
               </div>
-              <div class="text-[11px] md:text-xs text-gray-300 mt-1">
+              <div class="text-[11px] md:text-xs text-gray-400 leading-relaxed">
                 قصص ألعاب + سوالف
               </div>
             </div>
 
             <div
-              class="tnx-schedule-card rounded-2xl border border-transparent px-4 py-4 text-center text-xs md:text-sm text-gray-200 flex flex-col justify-center gap-1"
+              class="tnx-schedule-card rounded-2xl border border-[#c29200]/15 px-4 py-4 md:px-5 md:py-5 text-center text-xs md:text-sm text-gray-200 flex flex-col items-center justify-center min-h-[125px] gap-2"
               data-schedule-day="3"
             >
-              <div class="font-semibold text-sm md:text-base">الأربعاء</div>
-              <div class="flex items-center justify-center text-[13px] md:text-sm font-semibold text-[#ffda6a]">
+              <div class="font-bold text-sm md:text-base text-white">الأربعاء</div>
+              <div class="flex items-center justify-center text-sm md:text-base font-semibold text-[#ffda6a]">
                 <span>8:30 م</span>
               </div>
-              <div class="text-[11px] md:text-xs text-gray-300 mt-1">
+              <div class="text-[11px] md:text-xs text-gray-400 leading-relaxed">
                 قصص ألعاب + سوالف
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -231,16 +231,14 @@ const metadata = {
   </section>
 
   <style>
-    /* 1. مفاتيح الحركة (Keyframes) لتأثير الصعود والنزول التلقائي */
     @keyframes float-up-down {
-        0% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-        100% { transform: translateY(0); }
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
     }
 
-    /* 2. تطبيق الحركة على الحاوية */
     .tnx-avatar-animation {
-        animation: float-up-down 4s ease-in-out infinite;
+      animation: float-up-down 4s ease-in-out infinite;
     }
 
     .glow-text {
@@ -254,12 +252,12 @@ const metadata = {
     }
 
     #changing-title {
-        animation: cursor-blink 1s step-end infinite;
+      animation: cursor-blink 1s step-end infinite;
     }
 
     @keyframes cursor-blink {
-        from, to { border-color: transparent }
-        50% { border-color: #ffda6a }
+      from, to { border-color: transparent }
+      50% { border-color: #ffda6a }
     }
   </style>
 
@@ -291,7 +289,15 @@ const metadata = {
     }
 
     .tnx-schedule-card {
-      background: #080b12;
+      background: linear-gradient(180deg, rgba(12, 15, 24, 0.96) 0%, rgba(7, 9, 15, 0.98) 100%);
+      backdrop-filter: blur(8px);
+      transition: all 0.25s ease;
+    }
+
+    .tnx-schedule-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(194, 146, 0, 0.35);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
 
     .tnx-schedule-card--active {
@@ -330,7 +336,7 @@ const metadata = {
 
       if (!isDeleting && charIndex === currentTitle.length) {
         isDeleting = true;
-        typingSpeed = delayAfterTyping; 
+        typingSpeed = delayAfterTyping;
       } else if (isDeleting && charIndex === 0) {
         isDeleting = false;
         currentTitleIndex = (currentTitleIndex + 1) % titles.length;
@@ -341,11 +347,11 @@ const metadata = {
     }
 
     if (typeof window !== 'undefined' && document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            typeWriterEffect();
-        });
-    } else if (titleElement) {
+      document.addEventListener('DOMContentLoaded', () => {
         typeWriterEffect();
+      });
+    } else if (titleElement) {
+      typeWriterEffect();
     }
   </script>
 
@@ -353,7 +359,7 @@ const metadata = {
     const STREAM_START_HOUR = 20;
     const STREAM_START_MINUTE = 30;
     const STREAM_END_HOUR = 2;
-    const STREAM_DAYS = [6, 0, 1, 2, 3];
+    const STREAM_DAYS = [6, 0, 2, 3];
 
     function isStreamDay(date) {
       return STREAM_DAYS.includes(date.getDay());
