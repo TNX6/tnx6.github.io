@@ -1,0 +1,544 @@
+<div id="site-intro" class="intro-wrap">
+  <canvas id="intro-canvas"></canvas>
+
+  <div id="intro-countdown" class="intro-countdown">3</div>
+
+  <div class="intro-top">
+    <h1>احتفال مرور سنة على البثوث</h1>
+    <p>شكرًا لكل شخص كان جزءًا من الرحلة</p>
+  </div>
+
+  <div class="intro-badge">TNX6 • ONE YEAR OF STREAMING</div>
+
+  <button id="skip-intro" class="skip-btn">تخطي</button>
+</div>
+
+<style>
+  .intro-wrap {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    overflow: hidden;
+    background: #000;
+    opacity: 1;
+    transition: opacity 0.8s ease;
+  }
+
+  .intro-wrap.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #intro-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .intro-countdown {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    z-index: 3;
+    color: #fff;
+    font-size: clamp(4rem, 14vw, 9rem);
+    font-weight: 800;
+    text-shadow:
+      0 0 20px rgba(255, 255, 255, 0.2),
+      0 0 50px rgba(255, 88, 166, 0.35);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    direction: ltr;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .intro-countdown.is-hidden {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+
+  .intro-top {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 2;
+    width: min(90vw, 900px);
+    pointer-events: none;
+  }
+
+  .intro-top h1 {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+  }
+
+  .intro-top p {
+    margin: 0.7rem 0 0;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: clamp(0.95rem, 1.5vw, 1.05rem);
+  }
+
+  .intro-badge {
+    position: absolute;
+    left: 50%;
+    bottom: 2.2rem;
+    transform: translateX(-50%);
+    z-index: 2;
+    color: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+    border-radius: 999px;
+    padding: 0.75rem 1rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .skip-btn {
+    position: absolute;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 4;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.85);
+    border-radius: 999px;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: 0.2s ease;
+  }
+
+  .skip-btn:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+  }
+
+  @media (max-width: 640px) {
+    .intro-badge {
+      bottom: 1.2rem;
+      font-size: 0.62rem;
+      padding: 0.65rem 0.85rem;
+      letter-spacing: 0.14em;
+    }
+
+    .skip-btn {
+      right: 1rem;
+      bottom: 4.5rem;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.9rem;
+    }
+  }
+</style>
+
+<script is:inline>
+  const wrap = document.getElementById('site-intro');
+  const canvas = document.getElementById('intro-canvas');
+  const skipBtn = document.getElementById('skip-intro');
+  const countdownEl = document.getElementById('intro-countdown');
+
+  if (wrap && canvas && skipBtn && countdownEl) {
+    const ctx = canvas.getContext('2d', { alpha: true });
+
+    if (ctx) {
+      // ====== عدّل هنا إذا تبي ======
+      const COUNTDOWN_SECONDS = 3;
+      const INTRO_DURATION = 9000; // مدة عرض الكلام بعد انتهاء العد التنازلي
+      const FADE_DURATION = 850;
+      const TOTAL_DURATION = INTRO_DURATION + (COUNTDOWN_SECONDS * 1000);
+
+      let width = 0;
+      let height = 0;
+      let animationFrame = 0;
+      let phaseIndex = 0;
+      let lastSwitch = 0;
+      let introEnded = false;
+      let phrasesStarted = false;
+      let countdownTimer = null;
+      let closeTimer = null;
+
+      const phrases = [
+        { type: 'text', value: 'مرت سنة' },
+        { type: 'text', value: 'من أجمل البثوث' },
+        { type: 'text', value: 'سنة صنعة ذكريات لي' },
+        { type: 'text', value: 'جربنا العاب كثير' },
+        { type: 'text', value: 'والأجمل أنكم كنتم فيها' },
+        { type: 'text', value: 'شكراً لدعمكم المستمر' },
+        { type: 'heart', value: '1 YEAR' },
+      ];
+
+      const off = document.createElement('canvas');
+      const offCtx = off.getContext('2d', { willReadFrequently: true });
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const particles = [];
+      const rainColumns = [];
+      let targets = [];
+
+      const particleColor = '255, 236, 179';
+      const accentColor = '255, 88, 166';
+      const glowColor = '255, 194, 224';
+      const maxParticles = 1500;
+
+      class Particle {
+        constructor() {
+          this.x = Math.random() * width;
+          this.y = Math.random() * height;
+          this.tx = this.x;
+          this.ty = this.y;
+          this.vx = 0;
+          this.vy = 0;
+          this.size = 1 + Math.random() * 2.2;
+          this.alpha = 0.35 + Math.random() * 0.65;
+          this.wander = Math.random() * Math.PI * 2;
+          this.seed = Math.random() * 1000;
+        }
+
+        update(time) {
+          const dx = this.tx - this.x;
+          const dy = this.ty - this.y;
+
+          this.vx += dx * 0.018;
+          this.vy += dy * 0.018;
+
+          this.vx *= 0.83;
+          this.vy *= 0.83;
+
+          this.wander += 0.02;
+          const driftX = Math.cos(this.wander + this.seed + time * 0.0006) * 0.14;
+          const driftY = Math.sin(this.wander + this.seed + time * 0.0008) * 0.14;
+
+          this.x += this.vx + driftX;
+          this.y += this.vy + driftY;
+        }
+
+        draw(active = true) {
+          const radius = active ? this.size : this.size * 0.6;
+          const alpha = active ? this.alpha : this.alpha * 0.22;
+
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(${particleColor}, ${alpha})`;
+          ctx.shadowBlur = active ? 10 : 0;
+          ctx.shadowColor = `rgba(${glowColor}, 0.45)`;
+          ctx.arc(this.x, this.y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        off.width = width;
+        off.height = height;
+
+        buildRain();
+
+        if (phrasesStarted) {
+          setTargets(phrases[phaseIndex]);
+        }
+      }
+
+      function buildRain() {
+        rainColumns.length = 0;
+        const gap = Math.max(14, Math.floor(width / 70));
+        const count = Math.ceil(width / gap);
+
+        for (let i = 0; i < count; i++) {
+          rainColumns.push({
+            x: i * gap + Math.random() * 8,
+            y: Math.random() * height,
+            speed: 0.35 + Math.random() * 1.4,
+            length: 50 + Math.random() * 180,
+            opacity: 0.1 + Math.random() * 0.22,
+          });
+        }
+      }
+
+      function fitFont(text) {
+        if (!offCtx) return 80;
+
+        let size = Math.min(width * 0.15, 118);
+        offCtx.font = `700 ${size}px system-ui, sans-serif`;
+
+        while (offCtx.measureText(text).width > width * 0.82 && size > 36) {
+          size -= 4;
+          offCtx.font = `700 ${size}px system-ui, sans-serif`;
+        }
+
+        return size;
+      }
+
+      function getPointsFromImageData(step = 7) {
+        if (!offCtx) return [];
+
+        const imageData = offCtx.getImageData(0, 0, off.width, off.height).data;
+        const points = [];
+
+        for (let y = 0; y < off.height; y += step) {
+          for (let x = 0; x < off.width; x += step) {
+            const idx = (y * off.width + x) * 4 + 3;
+            if (imageData[idx] > 120) {
+              points.push({ x, y });
+            }
+          }
+        }
+
+        return points;
+      }
+
+      function drawHeartShape() {
+        if (!offCtx) return;
+
+        const scale = Math.min(width, height) * 0.12;
+        const cx = width / 2;
+        const cy = height / 2 - 10;
+
+        offCtx.save();
+        offCtx.translate(cx, cy);
+        offCtx.beginPath();
+
+        for (let t = 0; t <= Math.PI * 2 + 0.03; t += 0.02) {
+          const x = 16 * Math.pow(Math.sin(t), 3);
+          const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+          const px = x * scale;
+          const py = y * scale;
+
+          if (t === 0) offCtx.moveTo(px, py);
+          else offCtx.lineTo(px, py);
+        }
+
+        offCtx.closePath();
+        offCtx.lineWidth = Math.max(10, scale * 0.08);
+        offCtx.strokeStyle = 'rgba(255, 88, 166, 1)';
+        offCtx.stroke();
+        offCtx.restore();
+      }
+
+      function setTargets(phrase) {
+        if (!offCtx) return;
+
+        offCtx.clearRect(0, 0, off.width, off.height);
+        offCtx.fillStyle = '#ffffff';
+        offCtx.textAlign = 'center';
+        offCtx.textBaseline = 'middle';
+        offCtx.direction = 'rtl';
+
+        if (phrase.type === 'text') {
+          const size = fitFont(phrase.value);
+          offCtx.font = `700 ${size}px system-ui, sans-serif`;
+          offCtx.fillText(phrase.value, width / 2, height / 2 - 10);
+        } else {
+          drawHeartShape();
+          const labelSize = Math.min(width * 0.05, 34);
+          offCtx.font = `700 ${labelSize}px system-ui, sans-serif`;
+          offCtx.fillText(phrase.value, width / 2, height / 2 - 6);
+        }
+
+        const rawPoints = getPointsFromImageData(phrase.type === 'heart' ? 6 : 7);
+        const limited =
+          rawPoints.length > maxParticles
+            ? rawPoints.filter((_, i) => i % Math.ceil(rawPoints.length / maxParticles) === 0)
+            : rawPoints;
+
+        targets = limited;
+
+        while (particles.length < Math.max(targets.length, 400)) {
+          particles.push(new Particle());
+        }
+
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          const point = targets[i];
+
+          if (point) {
+            p.tx = point.x;
+            p.ty = point.y;
+            p.alpha = 0.4 + Math.random() * 0.6;
+            p.size = phrase.type === 'heart' ? 1.6 + Math.random() * 2.5 : 1.2 + Math.random() * 2.1;
+          } else {
+            p.tx = Math.random() * width;
+            p.ty = Math.random() * height;
+            p.alpha = 0.15 + Math.random() * 0.18;
+            p.size = 0.9 + Math.random() * 1.2;
+          }
+        }
+      }
+
+      function drawBackground(time) {
+        const bg = ctx.createLinearGradient(0, 0, 0, height);
+        bg.addColorStop(0, '#07060d');
+        bg.addColorStop(0.55, '#0f0a1a');
+        bg.addColorStop(1, '#07060d');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, width, height);
+
+        const centerGlow = ctx.createRadialGradient(
+          width / 2,
+          height / 2,
+          40,
+          width / 2,
+          height / 2,
+          Math.max(width, height) * 0.6
+        );
+
+        centerGlow.addColorStop(0, 'rgba(255, 88, 166, 0.16)');
+        centerGlow.addColorStop(0.45, 'rgba(148, 87, 235, 0.08)');
+        centerGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = centerGlow;
+        ctx.fillRect(0, 0, width, height);
+
+        for (const col of rainColumns) {
+          col.y += col.speed;
+
+          if (col.y - col.length > height) {
+            col.y = -20;
+            col.length = 50 + Math.random() * 180;
+            col.speed = 0.35 + Math.random() * 1.4;
+            col.opacity = 0.1 + Math.random() * 0.22;
+          }
+
+          const rain = ctx.createLinearGradient(col.x, col.y - col.length, col.x, col.y);
+          rain.addColorStop(0, 'rgba(255, 88, 166, 0)');
+          rain.addColorStop(0.5, `rgba(${accentColor}, ${col.opacity * 0.6})`);
+          rain.addColorStop(1, `rgba(184, 129, 255, ${col.opacity})`);
+
+          ctx.beginPath();
+          ctx.strokeStyle = rain;
+          ctx.lineWidth = 1;
+          ctx.moveTo(col.x, col.y - col.length);
+          ctx.lineTo(col.x, col.y);
+          ctx.stroke();
+        }
+
+        const flicker = 0.04 + (Math.sin(time * 0.0016) + 1) * 0.01;
+        ctx.fillStyle = `rgba(255,255,255,${flicker})`;
+
+        for (let i = 0; i < 35; i++) {
+          const x = (i * 97.13 + time * 0.01) % width;
+          const y = (i * 61.7 + time * 0.02) % height;
+          ctx.fillRect(x, y, 1.3, 1.3);
+        }
+      }
+
+      function drawOverlayText() {
+        const titleSize = Math.min(width * 0.04, 28);
+        const subSize = Math.min(width * 0.018, 15);
+
+        ctx.textAlign = 'center';
+        ctx.direction = 'rtl';
+        ctx.textBaseline = 'middle';
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = 'rgba(255,255,255,0.9)';
+        ctx.font = `600 ${titleSize}px system-ui, sans-serif`;
+        ctx.fillText('احتفال مرور سنة على البثوث', width / 2, height * 0.14);
+
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.font = `500 ${subSize}px system-ui, sans-serif`;
+        ctx.fillText('شكرًا لكل شخص كان جزءًا من الرحلة', width / 2, height * 0.19);
+      }
+
+      function animate(time) {
+        drawBackground(time);
+
+        if (phrasesStarted) {
+          drawOverlayText();
+
+          for (let i = 0; i < particles.length; i++) {
+            const active = i < targets.length;
+            particles[i].update(time);
+            particles[i].draw(active);
+          }
+
+          if (!lastSwitch) lastSwitch = time;
+
+          if (time - lastSwitch > 2200) {
+            phaseIndex = (phaseIndex + 1) % phrases.length;
+            setTargets(phrases[phaseIndex]);
+            lastSwitch = time;
+          }
+        }
+
+        if (!introEnded) {
+          animationFrame = requestAnimationFrame(animate);
+        }
+      }
+
+      function closeIntro() {
+        if (introEnded) return;
+        introEnded = true;
+
+        if (countdownTimer) {
+          window.clearInterval(countdownTimer);
+          countdownTimer = null;
+        }
+
+        if (closeTimer) {
+          window.clearTimeout(closeTimer);
+          closeTimer = null;
+        }
+
+        wrap.classList.add('is-hidden');
+
+        window.removeEventListener('resize', resize);
+        skipBtn.removeEventListener('click', closeIntro);
+
+        setTimeout(() => {
+          cancelAnimationFrame(animationFrame);
+          wrap.remove();
+        }, FADE_DURATION);
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+
+      animationFrame = requestAnimationFrame(animate);
+
+      let currentCount = COUNTDOWN_SECONDS;
+      countdownEl.textContent = String(currentCount);
+
+      countdownTimer = window.setInterval(() => {
+        currentCount -= 1;
+
+        if (currentCount > 0) {
+          countdownEl.textContent = String(currentCount);
+          return;
+        }
+
+        window.clearInterval(countdownTimer);
+        countdownTimer = null;
+
+        countdownEl.textContent = '';
+        countdownEl.classList.add('is-hidden');
+
+        phrasesStarted = true;
+        phaseIndex = 0;
+        lastSwitch = 0;
+        setTargets(phrases[0]);
+      }, 1000);
+
+      skipBtn.addEventListener('click', closeIntro);
+
+      closeTimer = window.setTimeout(() => {
+        closeIntro();
+      }, TOTAL_DURATION);
+    }
+  }
+</script>
