@@ -138,13 +138,18 @@
             oCtx.textAlign = 'center';
             oCtx.textBaseline = 'middle';
             
-            if (isHeart) {
+      if (isHeart) {
                 oCtx.font = `bold ${Math.min(width * 0.4, 300)}px Arial`;
                 oCtx.fillText('❤', width / 2, height / 2 - 50);
                 oCtx.font = `bold ${Math.min(width * 0.1, 80)}px Arial`;
                 oCtx.fillText('شكراً لكم', width / 2, height / 2 + 80);
+            } else if (!isNaN(text)) {
+                // حالة الأرقام (3, 2, 1): هنا نكبر الحجم براحتنا
+                oCtx.font = `bold ${Math.min(width * 0.5, 400)}px Arial`;
+                oCtx.fillText(text, width / 2, height / 2);
             } else {
-                oCtx.font = `bold ${Math.min(width * 0.4, 350)}px Arial`;
+                // حالة النصوص العادية (سنة كاملة، من البثوث...): نرجعها لحجمها الأصلي
+                oCtx.font = `bold ${Math.min(width * 0.2, 150)}px Arial`;
                 oCtx.fillText(text, width / 2, height / 2);
             }
 
