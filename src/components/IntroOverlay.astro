@@ -1,515 +1,320 @@
-<div id="site-intro" class="intro-wrap">
-  <canvas id="intro-canvas"></canvas>
-  <button id="skip-intro" class="skip-btn">تخطي</button>
-</div>
-
-<style>
-  .intro-wrap {
-    position: fixed;
-    inset: 0;
-    z-index: 99999;
-    overflow: hidden;
-    background: #05050a;
-    opacity: 1;
-    transition: opacity 0.85s ease;
-  }
-
-  .intro-wrap.is-hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  #intro-canvas {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-
-  .skip-btn {
-    position: absolute;
-    right: 1.25rem;
-    bottom: 1.25rem;
-    z-index: 4;
-    border: 1px solid rgba(255,255,255,0.14);
-    background: rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.88);
-    border-radius: 999px;
-    padding: 0.7rem 1rem;
-    cursor: pointer;
-    backdrop-filter: blur(10px);
-    transition: 0.2s ease;
-  }
-
-  .skip-btn:hover {
-    background: rgba(255,255,255,0.14);
-    color: #fff;
-  }
-
-  @media (max-width: 640px) {
-    .skip-btn {
-      right: 1rem;
-      bottom: 1rem;
-      padding: 0.65rem 0.9rem;
-      font-size: 0.92rem;
-    }
-  }
-</style>
-
-<script is:inline>
-  const wrap = document.getElementById('site-intro');
-  const canvas = document.getElementById('intro-canvas');
-  const skipBtn = document.getElementById('skip-intro');
-
-  if (wrap && canvas && skipBtn) {
-    const ctx = canvas.getContext('2d', { alpha: true });
-    if (ctx) {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-      let width = 0;
-      let height = 0;
-      let animationFrame = 0;
-      let introEnded = false;
-
-      const off = document.createElement('canvas');
-      const offCtx = off.getContext('2d', { willReadFrequently: true });
-
-      const state = {
-        startedAt: 0,
-        currentWordIndex: -1,
-        burstAt: -1,
-        heartStarted: false,
-      };
-
-      // مدد الحركة
-      const COUNTDOWN_START = 1200;   // متى يبدأ 3
-      const COUNTDOWN_STEP = 1000;    // كل رقم كم يجلس
-      const WORDS_START = 4700;       // بعد الانفجار
-      const WORD_STEP = 900;          // مدة كل كلمة
-      const HEART_START = 9800;       // متى يبدأ القلب
-      const END_AT = 14500;           // متى يختفي الانترو
-      const FADE_DURATION = 900;
-
-      // الكلمات بنفس روح المقطع لكن عن سنة البث
-      const words = ['THANK', 'YOU', 'FOR', 'ONE', 'YEAR'];
-      const finalHeartText = 'TNX6 • 1 YEAR';
-
-      // حروف الخلفية
-      const rainChars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ<>/*+-=.:;{}[]()LOVEYOUTNX6';
-      const columns = [];
-      const particles = [];
-      let textPoints = [];
-      let activeShape = null;
-
-      class RainColumn {
-        constructor(x) {
-          this.x = x;
-          this.reset(true);
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>احتفالية مرور سنة على البثوث - نفس المقطع</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        reset(initial = false) {
-          this.y = initial ? Math.random() * height : -Math.random() * 300;
-          this.speed = 1.1 + Math.random() * 2.6;
-          this.charGap = 12 + Math.random() * 10;
-          this.length = 12 + Math.floor(Math.random() * 26);
-          this.opacity = 0.16 + Math.random() * 0.34;
-          this.highlight = Math.random() > 0.82;
+        /* حاوية واجهة التحميل الافتتاحية */
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            z-index: 10000;
+            transition: opacity 1.5s ease-out;
+            pointer-events: auto; /* يمكن النقر عليه في البداية */
         }
 
-        draw(time) {
-          this.y += this.speed;
+        #intro-overlay.fade-out {
+            opacity: 0;
+            pointer-events: none; /* للسماح بالنقر على محتوى الموقع */
+        }
 
-          if (this.y - this.length * this.charGap > height + 50) {
-            this.reset(false);
-          }
+        /* لوحة القماش التي سيتم رسم الجسيمات عليها */
+        #canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
 
-          for (let i = 0; i < this.length; i++) {
-            const charY = this.y - i * this.charGap;
-            if (charY < -40 || charY > height + 20) continue;
+    <div id="intro-overlay">
+        <canvas id="canvas"></canvas>
+    </div>
 
-            const ch = rainChars[(Math.floor(time * 0.02 + i * 7 + this.x) % rainChars.length + rainChars.length) % rainChars.length];
-            const fade = 1 - (i / this.length);
-            const alpha = this.opacity * fade;
+    <script>
+        const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+        const ctx = canvas.getContext('2d')!;
+        let overlay = document.getElementById('intro-overlay')!;
 
-            ctx.font = `${10 + (i === 0 ? 1 : 0)}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+        // ضبط حجم لوحة القماش لتغطي الشاشة
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        // إعدادات الجسيمات والجماليات
+        const dotColor = '#ff66b2'; // اللون الوردي المتوهج من المقطع
+        const finalHeartColor = '#ff0055'; // لون القلب النهائي
+        const dotSize = 2; // حجم النقاط
+        const dotGap = 6; // المسافة بين النقاط في النصوص
+        const textFontSize = 100; // حجم خط النصوص
+
+        let particles: Particle[] = [];
+        let backgroundDots: BackgroundDot[] = [];
+        let currentSequenceIndex = 0;
+        let animationFrameId: number;
+        let finalHeartActive = false;
+
+        // دالة إنشاء مصفوفة من مواقع النقاط لنص معين
+        function createTextDots(text: string): { x: number; y: number }[] {
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${textFontSize}px sans-serif`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
+            
+            // قياس عرض النص
+            let textMetrics = ctx.measureText(text);
+            let textWidth = textMetrics.width;
+            let textHeight = textFontSize;
 
-            if (this.highlight && i === 0) {
-              ctx.fillStyle = `rgba(255,245,255,${Math.min(0.95, alpha + 0.35)})`;
-              ctx.shadowBlur = 10;
-              ctx.shadowColor = 'rgba(255, 170, 220, 0.7)';
-            } else {
-              const pink = 180 + Math.floor(Math.sin((this.x + i) * 0.2) * 35 + 35);
-              ctx.fillStyle = `rgba(255, ${90 + (pink % 50)}, ${170 + (pink % 70)}, ${alpha})`;
-              ctx.shadowBlur = 0;
+            // مسح لوحة القماش للحصول على النقاط النقية
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillText(text, width / 2, height / 2);
+
+            let dots: { x: number; y: number }[] = [];
+            let imageData = ctx.getImageData(0, 0, width, height);
+
+            // مسح بيانات الصورة بحثًا عن النقاط المكتوبة
+            for (let y = 0; y < height; y += dotGap) {
+                for (let x = 0; x < width; x += dotGap) {
+                    let index = (y * width + x) * 4;
+                    if (imageData.data[index] > 0) { // تم كتابة نقطة هنا
+                        dots.push({ x, y });
+                    }
+                }
+            }
+            return dots;
+        }
+
+        // جسيمات نصية تتحرك
+        class Particle {
+            x: number;
+            y: number;
+            targetX: number;
+            targetY: number;
+            velocityX: number;
+            velocityY: number;
+            size: number;
+            friction: number;
+            ease: number;
+            color: string;
+
+            constructor(x: number, y: number, color: string = dotColor) {
+                this.x = x;
+                this.y = y;
+                this.targetX = x;
+                this.targetY = y;
+                this.velocityX = 0;
+                this.velocityY = 0;
+                this.size = dotSize;
+                this.friction = 0.95;
+                this.ease = 0.1;
+                this.color = color;
             }
 
-            ctx.fillText(ch, this.x, charY);
-          }
-        }
-      }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
 
-      class GlowParticle {
-        constructor(x, y) {
-          this.x = x;
-          this.y = y;
-          this.vx = 0;
-          this.vy = 0;
-          this.tx = x;
-          this.ty = y;
-          this.size = 1.5 + Math.random() * 2.3;
-          this.alpha = 0.45 + Math.random() * 0.55;
-          this.seed = Math.random() * Math.PI * 2;
-          this.mode = 'idle';
-          this.life = 1;
-        }
+            update() {
+                // الحركة نحو الهدف
+                let dx = this.targetX - this.x;
+                let dy = this.targetY - this.y;
+                let dist = Math.sqrt(dx * dx + dy * dy);
 
-        setTarget(x, y) {
-          this.tx = x;
-          this.ty = y;
-          this.mode = 'shape';
-          this.life = 1;
-        }
+                if (dist > 1) {
+                    this.velocityX += dx * this.ease;
+                    this.velocityY += dy * this.ease;
+                }
 
-        explodeFrom(cx, cy, power = 5) {
-          const angle = Math.random() * Math.PI * 2;
-          const speed = power + Math.random() * power * 1.5;
-          this.x = cx + (Math.random() - 0.5) * 30;
-          this.y = cy + (Math.random() - 0.5) * 30;
-          this.vx = Math.cos(angle) * speed;
-          this.vy = Math.sin(angle) * speed;
-          this.mode = 'burst';
-          this.life = 1;
+                // تطبيق الاحتكاك
+                this.velocityX *= this.friction;
+                this.velocityY *= this.friction;
+
+                // تحديث الموقف
+                this.x += this.velocityX;
+                this.y += this.velocityY;
+            }
         }
 
-        update(time) {
-          if (this.mode === 'shape') {
-            const dx = this.tx - this.x;
-            const dy = this.ty - this.y;
+        // نقاط خلفية تتساقط
+        class BackgroundDot {
+            x: number;
+            y: number;
+            speed: number;
+            isHeart: boolean;
 
-            this.vx += dx * 0.025;
-            this.vy += dy * 0.025;
-            this.vx *= 0.82;
-            this.vy *= 0.82;
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * -height;
+                this.speed = Math.random() * 2 + 1;
+                this.isHeart = Math.random() < 0.1; // 10% قلوب
+            }
 
-            this.x += this.vx + Math.cos(this.seed + time * 0.002) * 0.08;
-            this.y += this.vy + Math.sin(this.seed + time * 0.0024) * 0.08;
-          } else if (this.mode === 'burst') {
-            this.x += this.vx;
-            this.y += this.vy;
-            this.vx *= 0.97;
-            this.vy *= 0.97;
-            this.life *= 0.985;
-          }
+            draw() {
+                if (this.isHeart) {
+                    // رسم قلب صغير بدلاً من نقطة
+                    ctx.font = '10px sans-serif';
+                    ctx.fillStyle = finalHeartColor;
+                    ctx.fillText('❤️', this.x, this.y);
+                } else {
+                    ctx.fillStyle = 'rgba(255, 102, 178, 0.5)'; // وردي فاتح
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, 1, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            update() {
+                this.y += this.speed;
+                if (this.y > height) {
+                    this.y = Math.random() * -100;
+                    this.x = Math.random() * width;
+                }
+            }
         }
 
-        draw(isHeart = false) {
-          const alpha = this.mode === 'burst'
-            ? Math.max(0, this.alpha * this.life)
-            : this.alpha;
-
-          ctx.beginPath();
-          ctx.shadowBlur = isHeart ? 14 : 10;
-          ctx.shadowColor = isHeart
-            ? 'rgba(255, 90, 180, 0.95)'
-            : 'rgba(255, 245, 210, 0.7)';
-          ctx.fillStyle = isHeart
-            ? `rgba(255, 80, 170, ${alpha})`
-            : `rgba(255, 245, 210, ${alpha})`;
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-
-      function resize() {
-        width = window.innerWidth;
-        height = window.innerHeight;
-
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-        off.width = width;
-        off.height = height;
-
-        buildRain();
-      }
-
-      function buildRain() {
-        columns.length = 0;
-        const gap = Math.max(10, Math.floor(width / 48));
-        for (let x = 0; x <= width + gap; x += gap) {
-          columns.push(new RainColumn(x));
-        }
-      }
-
-      function ensureParticles(count) {
-        while (particles.length < count) {
-          particles.push(new GlowParticle(Math.random() * width, Math.random() * height));
-        }
-      }
-
-      function pointsFromText(text, opts = {}) {
-        if (!offCtx) return [];
-        offCtx.clearRect(0, 0, width, height);
-
-        const size = opts.size || Math.min(width * 0.16, 150);
-        offCtx.fillStyle = '#fff';
-        offCtx.textAlign = 'center';
-        offCtx.textBaseline = 'middle';
-        offCtx.direction = opts.direction || 'ltr';
-        offCtx.font = `900 ${size}px Arial Black, Inter, Arial, sans-serif`;
-
-        offCtx.fillText(text, width / 2, height / 2);
-
-        return sampleOpaquePoints(opts.step || 8);
-      }
-
-      function pointsFromHeart() {
-        if (!offCtx) return [];
-        const pts = [];
-        const cx = width / 2;
-        const cy = height / 2 + 30;
-        const scale = Math.min(width, height) * 0.012;
-
-        for (let t = 0; t <= Math.PI * 2; t += 0.035) {
-          const x = 16 * Math.pow(Math.sin(t), 3);
-          const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-          pts.push({
-            x: cx + x * scale,
-            y: cy + y * scale,
-          });
+        // تهيئة نقاط الخلفية
+        function initBackground() {
+            backgroundDots = [];
+            for (let i = 0; i < 200; i++) {
+                backgroundDots.push(new BackgroundDot());
+            }
         }
 
-        // نكرر نقاط إضافية عشان يصير سميك مثل المقطع
-        const expanded = [];
-        for (const p of pts) {
-          for (let i = 0; i < 5; i++) {
-            expanded.push({
-              x: p.x + (Math.random() - 0.5) * 8,
-              y: p.y + (Math.random() - 0.5) * 8,
+        // دالة إنشاء القلب النهائي
+        function createHeartPattern(): { x: number; y: number }[] {
+            // رسم قلب على الكانفاس أولاً للحصول على النقاط
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = 'white';
+            ctx.font = '200px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('❤️', width / 2, height / 2);
+
+            let dots: { x: number; y: number }[] = [];
+            let imageData = ctx.getImageData(0, 0, width, height);
+
+            for (let y = 0; y < height; y += dotGap) {
+                for (let x = 0; x < width; x += dotGap) {
+                    let index = (y * width + x) * 4;
+                    if (imageData.data[index] > 0) {
+                        dots.push({ x, y });
+                    }
+                }
+            }
+            return dots;
+        }
+
+        // تسلسل النصوص الخاصة بك باللغة العربية
+        const ArabicMessages = [
+            "3",
+            "2",
+            "1",
+            "سنة كاملة",
+            "من البثوث",
+            "شكراً",
+            "لكم ❤️"
+        ];
+
+        // دالة الانتقال للخطوة التالية في التسلسل
+        function nextSequence() {
+            if (currentSequenceIndex >= ArabicMessages.length) {
+                startFinalHeart();
+                return;
+            }
+
+            let message = ArabicMessages[currentSequenceIndex];
+            let newTargets = createTextDots(message);
+            particles = []; // مسح الجسيمات السابقة لبدء الحركة من جديد
+
+            // إنشاء جسيمات جديدة في منتصف الشاشة للحركة نحو الأهداف
+            for (let i = 0; i < newTargets.length; i++) {
+                let p = new Particle(width / 2, height / 2);
+                p.targetX = newTargets[i].x;
+                p.targetY = newTargets[i].y;
+                particles.push(p);
+            }
+
+            currentSequenceIndex++;
+            setTimeout(nextSequence, 2000); // 2 ثانية لكل نص
+        }
+
+        // بدء شاشة القلب النهائي
+        function startFinalHeart() {
+            finalHeartActive = true;
+            let heartTargets = createHeartPattern();
+            particles = []; 
+
+            // إنشاء جسيمات للقلب النهائي
+            for (let i = 0; i < heartTargets.length; i++) {
+                let p = new Particle(width / 2, height / 2, finalHeartColor);
+                p.targetX = heartTargets[i].x;
+                p.targetY = heartTargets[i].y;
+                p.ease = 0.05; // أبطأ قليلاً لتعطيه شكل "تكوين"
+                particles.push(p);
+            }
+
+            // بعد 3 ثوانٍ من ظهور القلب، ابدأ في إخفاء واجهة التراكب (Fade Out)
+            setTimeout(() => {
+                overlay.classList.add('fade-out');
+            }, 3000);
+        }
+
+        // حلقة الرسم الرئيسية
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // رسم وتحديث خلفية النقاط المتساقطة
+            backgroundDots.forEach(dot => {
+                dot.update();
+                dot.draw();
             });
-          }
-        }
-        return expanded;
-      }
 
-      function sampleOpaquePoints(step) {
-        const imageData = offCtx.getImageData(0, 0, width, height).data;
-        const pts = [];
+            // رسم وتحديث جسيمات النصوص
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
 
-        for (let y = 0; y < height; y += step) {
-          for (let x = 0; x < width; x += step) {
-            const alpha = imageData[(y * width + x) * 4 + 3];
-            if (alpha > 120) pts.push({ x, y });
-          }
-        }
-        return pts;
-      }
-
-      function morphToPoints(points, kind = 'text') {
-        textPoints = points;
-        ensureParticles(points.length);
-
-        for (let i = 0; i < particles.length; i++) {
-          const p = particles[i];
-          const point = points[i];
-
-          if (point) {
-            p.setTarget(point.x, point.y);
-            p.size = kind === 'heart'
-              ? 1.7 + Math.random() * 2.5
-              : 1.5 + Math.random() * 2.1;
-            p.alpha = kind === 'heart'
-              ? 0.55 + Math.random() * 0.45
-              : 0.45 + Math.random() * 0.55;
-          } else {
-            p.setTarget(Math.random() * width, height + 50 + Math.random() * 100);
-            p.alpha = 0.06;
-            p.size = 1;
-          }
+            animationFrameId = requestAnimationFrame(animate);
         }
 
-        activeShape = kind;
-      }
+        // تهيئة وبدء العرض
+        initBackground();
+        nextSequence();
+        animate();
 
-      function burst(centerX, centerY) {
-        ensureParticles(260);
-        for (let i = 0; i < 260; i++) {
-          particles[i].explodeFrom(centerX, centerY, 4.2);
-          particles[i].size = 1.8 + Math.random() * 2.8;
-          particles[i].alpha = 0.45 + Math.random() * 0.55;
-        }
-        activeShape = null;
-      }
-
-      function drawBackgroundGlow(time) {
-        const bg = ctx.createLinearGradient(0, 0, 0, height);
-        bg.addColorStop(0, '#04040a');
-        bg.addColorStop(1, '#090912');
-        ctx.fillStyle = bg;
-        ctx.fillRect(0, 0, width, height);
-
-        const glow = ctx.createRadialGradient(
-          width / 2, height * 0.42, 40,
-          width / 2, height * 0.42, Math.max(width, height) * 0.55
-        );
-        glow.addColorStop(0, 'rgba(255, 70, 170, 0.12)');
-        glow.addColorStop(0.45, 'rgba(120, 60, 255, 0.07)');
-        glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        ctx.fillStyle = glow;
-        ctx.fillRect(0, 0, width, height);
-
-        // نجوم خفيفة
-        for (let i = 0; i < 35; i++) {
-          const x = (i * 177.31 + time * 0.03) % width;
-          const y = (i * 91.17 + time * 0.015) % height;
-          ctx.fillStyle = 'rgba(255,255,255,0.4)';
-          ctx.fillRect(x, y, 1.2, 1.2);
-        }
-      }
-
-      function drawRain(time) {
-        // أول ثانيتين يكون فيه تكدس سفلي مثل المقطع
-        const elapsed = time - state.startedAt;
-        const bandHeight = elapsed < COUNTDOWN_START
-          ? Math.min(height * 0.36, (elapsed / COUNTDOWN_START) * height * 0.34)
-          : 0;
-
-        columns.forEach((col) => col.draw(time));
-
-        if (bandHeight > 2) {
-          ctx.save();
-          const grad = ctx.createLinearGradient(0, height - bandHeight, 0, height);
-          grad.addColorStop(0, 'rgba(255, 70, 170, 0)');
-          grad.addColorStop(1, 'rgba(255, 70, 170, 0.08)');
-          ctx.fillStyle = grad;
-          ctx.fillRect(0, height - bandHeight, width, bandHeight);
-
-          for (let y = height - bandHeight; y < height; y += 12) {
-            for (let x = 0; x < width; x += 12) {
-              const ch = rainChars[(x + y + Math.floor(time * 0.05)) % rainChars.length];
-              const a = 0.08 + ((y - (height - bandHeight)) / bandHeight) * 0.4;
-              ctx.fillStyle = `rgba(255, ${90 + ((x + y) % 60)}, ${170 + ((x + y) % 70)}, ${a})`;
-              ctx.font = '10px ui-monospace, monospace';
-              ctx.fillText(ch, x, y);
-            }
-          }
-          ctx.restore();
-        }
-      }
-
-      function updateSequence(time) {
-        const elapsed = time - state.startedAt;
-
-        // 3 2 1
-        if (elapsed >= COUNTDOWN_START && elapsed < COUNTDOWN_START + COUNTDOWN_STEP * 3) {
-          const countdownIndex = Math.floor((elapsed - COUNTDOWN_START) / COUNTDOWN_STEP);
-          const number = String(3 - countdownIndex);
-
-          if (activeShape !== `count-${number}`) {
-            morphToPoints(pointsFromText(number, { size: Math.min(width * 0.2, 170), step: 8 }), 'text');
-            activeShape = `count-${number}`;
-          }
-        }
-
-        // انفجار بعد الواحد
-        if (elapsed >= COUNTDOWN_START + COUNTDOWN_STEP * 3 && state.burstAt < 0) {
-          state.burstAt = elapsed;
-          burst(width / 2, height / 2);
-        }
-
-        // الكلمات
-        if (elapsed >= WORDS_START && elapsed < HEART_START) {
-          const wordIndex = Math.floor((elapsed - WORDS_START) / WORD_STEP);
-
-          if (wordIndex >= 0 && wordIndex < words.length && wordIndex !== state.currentWordIndex) {
-            state.currentWordIndex = wordIndex;
-            morphToPoints(
-              pointsFromText(words[wordIndex], {
-                size: Math.min(width * 0.12, 120),
-                step: 8,
-                direction: 'ltr',
-              }),
-              'text'
-            );
-          }
-        }
-
-        // قبل القلب نسوي انفجار خفيف
-        if (elapsed >= HEART_START - 350 && elapsed < HEART_START - 250 && !state.heartStarted) {
-          burst(width / 2, height / 2);
-        }
-
-        // القلب النهائي
-        if (elapsed >= HEART_START && !state.heartStarted) {
-          state.heartStarted = true;
-          morphToPoints(pointsFromHeart(), 'heart');
-        }
-
-        // نهاية الانترو
-        if (elapsed >= END_AT) {
-          closeIntro();
-        }
-      }
-
-      function drawParticles(time) {
-        const isHeart = activeShape === 'heart';
-
-        for (const p of particles) {
-          p.update(time);
-          p.draw(isHeart);
-        }
-      }
-
-      function drawHeartText() {
-        if (!state.heartStarted) return;
-
-        ctx.save();
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = 'rgba(255,255,255,0.95)';
-        ctx.font = `700 ${Math.min(width * 0.028, 24)}px Arial, sans-serif`;
-        ctx.fillText(finalHeartText, width / 2, height / 2 + 28);
-        ctx.restore();
-      }
-
-      function closeIntro() {
-        if (introEnded) return;
-        introEnded = true;
-
-        wrap.classList.add('is-hidden');
-        window.removeEventListener('resize', resize);
-        skipBtn.removeEventListener('click', closeIntro);
-
-        setTimeout(() => {
-          cancelAnimationFrame(animationFrame);
-          wrap.remove();
-        }, FADE_DURATION);
-      }
-
-      function animate(time) {
-        if (!state.startedAt) state.startedAt = time;
-
-        drawBackgroundGlow(time);
-        drawRain(time);
-        updateSequence(time);
-        drawParticles(time);
-        drawHeartText();
-
-        if (!introEnded) {
-          animationFrame = requestAnimationFrame(animate);
-        }
-      }
-
-      resize();
-      window.addEventListener('resize', resize);
-      skipBtn.addEventListener('click', closeIntro);
-      animationFrame = requestAnimationFrame(animate);
-    }
-  }
-</script>
+        // تحديث الحجم عند تغيير حجم النافذة
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initBackground();
+            // لإعادة تشكيل النص الحالي عند التكبير/التصغير، يجب تعديل nextSequence ليكون أكثر مرونة،
+            // لكن للتبسيط، دعنا نعيد تشغيل التسلسل.
+            currentSequenceIndex = 0;
+            finalHeartActive = false;
+            overlay.classList.remove('fade-out');
+            cancelAnimationFrame(animationFrameId);
+            animate();
+            nextSequence();
+        });
+    </script>
+</body>
+</html>
