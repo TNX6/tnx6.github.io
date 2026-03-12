@@ -1,320 +1,558 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>احتفالية مرور سنة على البثوث - نفس المقطع</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #000000;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+<div id="site-intro" class="intro-wrap">
+  <canvas id="intro-canvas"></canvas>
+  <button id="skip-intro" class="skip-btn">تخطي</button>
+</div>
+
+<style>
+  .intro-wrap {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    overflow: hidden;
+    background: #04040a;
+    opacity: 1;
+    transition: opacity 0.9s ease;
+  }
+
+  .intro-wrap.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #intro-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .skip-btn {
+    position: absolute;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 5;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.9);
+    border-radius: 999px;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: 0.2s ease;
+  }
+
+  .skip-btn:hover {
+    background: rgba(255,255,255,0.14);
+    color: #fff;
+  }
+
+  @media (max-width: 640px) {
+    .skip-btn {
+      right: 1rem;
+      bottom: 1rem;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.92rem;
+    }
+  }
+</style>
+
+<script is:inline>
+  const wrap = document.getElementById('site-intro');
+  const canvas = document.getElementById('intro-canvas');
+  const skipBtn = document.getElementById('skip-intro');
+
+  if (wrap && canvas && skipBtn) {
+    const ctx = canvas.getContext('2d', { alpha: true });
+
+    if (ctx) {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      let width = 0;
+      let height = 0;
+      let animationFrame = 0;
+      let introEnded = false;
+
+      const off = document.createElement('canvas');
+      const offCtx = off.getContext('2d', { willReadFrequently: true });
+
+      // ======= تقدر تعدل المدد من هنا =======
+      const PRELUDE_MS = 1000;          // بداية الخلفية قبل العد
+      const COUNT_HOLD_MS = 1500;       // مدة كل رقم 3 / 2 / 1
+      const POST_ONE_MS = 900;          // مهلة بعد رقم 1
+      const WORD_HOLD_MS = 1700;        // مدة كل كلمة
+      const FINAL_TEXT_HOLD_MS = 2600;  // مدة الجملة النهائية
+      const HEART_HOLD_MS = 2600;       // مدة القلب النهائي
+      const FADE_DURATION = 900;
+
+      const words = ['شكراً', 'لكم', 'على', 'سنة', 'من', 'الدعم'];
+      const finalPhrase = 'شكراً لكم على سنة من الدعم';
+      const heartPhrase = 'TNX6 • 1 YEAR';
+
+      const START_3 = PRELUDE_MS;
+      const START_2 = START_3 + COUNT_HOLD_MS;
+      const START_1 = START_2 + COUNT_HOLD_MS;
+      const AFTER_1 = START_1 + COUNT_HOLD_MS;
+      const WORDS_START = AFTER_1 + POST_ONE_MS;
+      const FINAL_TEXT_START = WORDS_START + (words.length * WORD_HOLD_MS);
+      const HEART_START = FINAL_TEXT_START + FINAL_TEXT_HOLD_MS;
+      const END_AT = HEART_START + HEART_HOLD_MS;
+
+      const rainChars = 'ILOVEUTNX601001LOVEYOU<>/*+-=.;:[]{}ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const columns = [];
+      const particles = [];
+      let currentShape = '';
+      let currentPoints = [];
+      let startTime = 0;
+
+      class RainColumn {
+        constructor(x) {
+          this.x = x;
+          this.reset(true);
         }
 
-        /* حاوية واجهة التحميل الافتتاحية */
-        #intro-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #000000;
-            z-index: 10000;
-            transition: opacity 1.5s ease-out;
-            pointer-events: auto; /* يمكن النقر عليه في البداية */
+        reset(initial = false) {
+          this.y = initial ? Math.random() * height : -Math.random() * 220;
+          this.speed = 1.0 + Math.random() * 2.1;
+          this.length = 16 + Math.floor(Math.random() * 24);
+          this.gap = 11 + Math.random() * 8;
+          this.opacity = 0.14 + Math.random() * 0.26;
         }
 
-        #intro-overlay.fade-out {
-            opacity: 0;
-            pointer-events: none; /* للسماح بالنقر على محتوى الموقع */
-        }
+        draw(time) {
+          this.y += this.speed;
 
-        /* لوحة القماش التي سيتم رسم الجسيمات عليها */
-        #canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-    </style>
-</head>
-<body>
+          if (this.y - this.length * this.gap > height + 40) {
+            this.reset(false);
+          }
 
-    <div id="intro-overlay">
-        <canvas id="canvas"></canvas>
-    </div>
+          for (let i = 0; i < this.length; i++) {
+            const yy = this.y - i * this.gap;
+            if (yy < -30 || yy > height + 20) continue;
 
-    <script>
-        const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d')!;
-        let overlay = document.getElementById('intro-overlay')!;
+            const idx = Math.abs(Math.floor((time * 0.03) + i * 5 + this.x)) % rainChars.length;
+            const ch = rainChars[idx];
+            const alpha = this.opacity * (1 - i / this.length);
 
-        // ضبط حجم لوحة القماش لتغطي الشاشة
-        let width = canvas.width = window.innerWidth;
-        let height = canvas.height = window.innerHeight;
-
-        // إعدادات الجسيمات والجماليات
-        const dotColor = '#ff66b2'; // اللون الوردي المتوهج من المقطع
-        const finalHeartColor = '#ff0055'; // لون القلب النهائي
-        const dotSize = 2; // حجم النقاط
-        const dotGap = 6; // المسافة بين النقاط في النصوص
-        const textFontSize = 100; // حجم خط النصوص
-
-        let particles: Particle[] = [];
-        let backgroundDots: BackgroundDot[] = [];
-        let currentSequenceIndex = 0;
-        let animationFrameId: number;
-        let finalHeartActive = false;
-
-        // دالة إنشاء مصفوفة من مواقع النقاط لنص معين
-        function createTextDots(text: string): { x: number; y: number }[] {
-            ctx.fillStyle = 'white';
-            ctx.font = `bold ${textFontSize}px sans-serif`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            
-            // قياس عرض النص
-            let textMetrics = ctx.measureText(text);
-            let textWidth = textMetrics.width;
-            let textHeight = textFontSize;
+            ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, monospace';
 
-            // مسح لوحة القماش للحصول على النقاط النقية
-            ctx.clearRect(0, 0, width, height);
-            ctx.fillText(text, width / 2, height / 2);
-
-            let dots: { x: number; y: number }[] = [];
-            let imageData = ctx.getImageData(0, 0, width, height);
-
-            // مسح بيانات الصورة بحثًا عن النقاط المكتوبة
-            for (let y = 0; y < height; y += dotGap) {
-                for (let x = 0; x < width; x += dotGap) {
-                    let index = (y * width + x) * 4;
-                    if (imageData.data[index] > 0) { // تم كتابة نقطة هنا
-                        dots.push({ x, y });
-                    }
-                }
+            if (i === 0) {
+              ctx.fillStyle = `rgba(255, 240, 248, ${Math.min(0.9, alpha + 0.35)})`;
+              ctx.shadowBlur = 8;
+              ctx.shadowColor = 'rgba(255, 120, 200, 0.6)';
+            } else {
+              ctx.fillStyle = `rgba(255, ${90 + ((i * 7) % 40)}, ${170 + ((i * 5) % 60)}, ${alpha})`;
+              ctx.shadowBlur = 0;
             }
-            return dots;
+
+            ctx.fillText(ch, this.x, yy);
+          }
+        }
+      }
+
+      class DotParticle {
+        constructor() {
+          this.x = Math.random() * width;
+          this.y = Math.random() * height;
+          this.tx = this.x;
+          this.ty = this.y;
+          this.vx = 0;
+          this.vy = 0;
+          this.size = 2.3;
+          this.alpha = 0.9;
+          this.mode = 'shape';
+          this.life = 1;
         }
 
-        // جسيمات نصية تتحرك
-        class Particle {
-            x: number;
-            y: number;
-            targetX: number;
-            targetY: number;
-            velocityX: number;
-            velocityY: number;
-            size: number;
-            friction: number;
-            ease: number;
-            color: string;
-
-            constructor(x: number, y: number, color: string = dotColor) {
-                this.x = x;
-                this.y = y;
-                this.targetX = x;
-                this.targetY = y;
-                this.velocityX = 0;
-                this.velocityY = 0;
-                this.size = dotSize;
-                this.friction = 0.95;
-                this.ease = 0.1;
-                this.color = color;
-            }
-
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-
-            update() {
-                // الحركة نحو الهدف
-                let dx = this.targetX - this.x;
-                let dy = this.targetY - this.y;
-                let dist = Math.sqrt(dx * dx + dy * dy);
-
-                if (dist > 1) {
-                    this.velocityX += dx * this.ease;
-                    this.velocityY += dy * this.ease;
-                }
-
-                // تطبيق الاحتكاك
-                this.velocityX *= this.friction;
-                this.velocityY *= this.friction;
-
-                // تحديث الموقف
-                this.x += this.velocityX;
-                this.y += this.velocityY;
-            }
+        setTarget(x, y, mode = 'shape') {
+          this.tx = x;
+          this.ty = y;
+          this.mode = mode;
+          this.life = 1;
         }
 
-        // نقاط خلفية تتساقط
-        class BackgroundDot {
-            x: number;
-            y: number;
-            speed: number;
-            isHeart: boolean;
-
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * -height;
-                this.speed = Math.random() * 2 + 1;
-                this.isHeart = Math.random() < 0.1; // 10% قلوب
-            }
-
-            draw() {
-                if (this.isHeart) {
-                    // رسم قلب صغير بدلاً من نقطة
-                    ctx.font = '10px sans-serif';
-                    ctx.fillStyle = finalHeartColor;
-                    ctx.fillText('❤️', this.x, this.y);
-                } else {
-                    ctx.fillStyle = 'rgba(255, 102, 178, 0.5)'; // وردي فاتح
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, 1, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            update() {
-                this.y += this.speed;
-                if (this.y > height) {
-                    this.y = Math.random() * -100;
-                    this.x = Math.random() * width;
-                }
-            }
+        burst(cx, cy) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 2.2 + Math.random() * 4.2;
+          this.x = cx + (Math.random() - 0.5) * 18;
+          this.y = cy + (Math.random() - 0.5) * 18;
+          this.vx = Math.cos(angle) * speed;
+          this.vy = Math.sin(angle) * speed;
+          this.mode = 'burst';
+          this.life = 1;
         }
 
-        // تهيئة نقاط الخلفية
-        function initBackground() {
-            backgroundDots = [];
-            for (let i = 0; i < 200; i++) {
-                backgroundDots.push(new BackgroundDot());
-            }
+        update(time) {
+          if (this.mode === 'shape') {
+            const dx = this.tx - this.x;
+            const dy = this.ty - this.y;
+
+            this.vx += dx * 0.022;
+            this.vy += dy * 0.022;
+
+            this.vx *= 0.82;
+            this.vy *= 0.82;
+
+            this.x += this.vx + Math.cos(time * 0.002 + this.tx * 0.01) * 0.05;
+            this.y += this.vy + Math.sin(time * 0.0023 + this.ty * 0.01) * 0.05;
+          } else if (this.mode === 'burst') {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.vx *= 0.975;
+            this.vy *= 0.975;
+            this.life *= 0.986;
+          }
         }
 
-        // دالة إنشاء القلب النهائي
-        function createHeartPattern(): { x: number; y: number }[] {
-            // رسم قلب على الكانفاس أولاً للحصول على النقاط
-            ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = 'white';
-            ctx.font = '200px serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('❤️', width / 2, height / 2);
+        draw(isHeart = false) {
+          const alpha = this.mode === 'burst' ? Math.max(0, this.life * 0.9) : this.alpha;
 
-            let dots: { x: number; y: number }[] = [];
-            let imageData = ctx.getImageData(0, 0, width, height);
+          ctx.beginPath();
+          ctx.fillStyle = isHeart
+            ? `rgba(255, 90, 185, ${alpha})`
+            : `rgba(255, 246, 210, ${alpha})`;
+          ctx.shadowBlur = isHeart ? 14 : 10;
+          ctx.shadowColor = isHeart
+            ? 'rgba(255, 90, 185, 0.9)'
+            : 'rgba(255, 234, 180, 0.8)';
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
 
-            for (let y = 0; y < height; y += dotGap) {
-                for (let x = 0; x < width; x += dotGap) {
-                    let index = (y * width + x) * 4;
-                    if (imageData.data[index] > 0) {
-                        dots.push({ x, y });
-                    }
-                }
-            }
-            return dots;
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        off.width = width;
+        off.height = height;
+
+        buildRain();
+      }
+
+      function buildRain() {
+        columns.length = 0;
+        const gap = Math.max(12, Math.floor(width / 46));
+
+        for (let x = 0; x <= width + gap; x += gap) {
+          columns.push(new RainColumn(x));
+        }
+      }
+
+      function ensureParticles(count) {
+        while (particles.length < count) {
+          particles.push(new DotParticle());
+        }
+      }
+
+      function fitTextSize(text, maxWidth, startSize, rtl = false) {
+        if (!offCtx) return startSize;
+
+        let size = startSize;
+        offCtx.direction = rtl ? 'rtl' : 'ltr';
+        offCtx.font = `900 ${size}px Arial Black, Inter, Arial, sans-serif`;
+
+        while (offCtx.measureText(text).width > maxWidth && size > 28) {
+          size -= 4;
+          offCtx.font = `900 ${size}px Arial Black, Inter, Arial, sans-serif`;
         }
 
-        // تسلسل النصوص الخاصة بك باللغة العربية
-        const ArabicMessages = [
-            "3",
-            "2",
-            "1",
-            "سنة كاملة",
-            "من البثوث",
-            "شكراً",
-            "لكم ❤️"
-        ];
+        return size;
+      }
 
-        // دالة الانتقال للخطوة التالية في التسلسل
-        function nextSequence() {
-            if (currentSequenceIndex >= ArabicMessages.length) {
-                startFinalHeart();
-                return;
+      function getTextPoints(text, options = {}) {
+        if (!offCtx) return [];
+
+        const rtl = !!options.rtl;
+        const maxWidth = width * (options.maxWidthRatio || 0.72);
+        const startSize = options.size || Math.min(width * 0.15, 150);
+        const size = fitTextSize(text, maxWidth, startSize, rtl);
+
+        offCtx.clearRect(0, 0, width, height);
+        offCtx.fillStyle = '#ffffff';
+        offCtx.textAlign = 'center';
+        offCtx.textBaseline = 'middle';
+        offCtx.direction = rtl ? 'rtl' : 'ltr';
+        offCtx.font = `900 ${size}px Arial Black, Inter, Arial, sans-serif`;
+        offCtx.fillText(text, width / 2, height / 2);
+
+        const step = options.step || 10;
+        const data = offCtx.getImageData(0, 0, width, height).data;
+        const pts = [];
+
+        for (let y = 0; y < height; y += step) {
+          for (let x = 0; x < width; x += step) {
+            const a = data[(y * width + x) * 4 + 3];
+            if (a > 110) {
+              pts.push({ x, y });
             }
-
-            let message = ArabicMessages[currentSequenceIndex];
-            let newTargets = createTextDots(message);
-            particles = []; // مسح الجسيمات السابقة لبدء الحركة من جديد
-
-            // إنشاء جسيمات جديدة في منتصف الشاشة للحركة نحو الأهداف
-            for (let i = 0; i < newTargets.length; i++) {
-                let p = new Particle(width / 2, height / 2);
-                p.targetX = newTargets[i].x;
-                p.targetY = newTargets[i].y;
-                particles.push(p);
-            }
-
-            currentSequenceIndex++;
-            setTimeout(nextSequence, 2000); // 2 ثانية لكل نص
+          }
         }
 
-        // بدء شاشة القلب النهائي
-        function startFinalHeart() {
-            finalHeartActive = true;
-            let heartTargets = createHeartPattern();
-            particles = []; 
+        return pts;
+      }
 
-            // إنشاء جسيمات للقلب النهائي
-            for (let i = 0; i < heartTargets.length; i++) {
-                let p = new Particle(width / 2, height / 2, finalHeartColor);
-                p.targetX = heartTargets[i].x;
-                p.targetY = heartTargets[i].y;
-                p.ease = 0.05; // أبطأ قليلاً لتعطيه شكل "تكوين"
-                particles.push(p);
-            }
+      function getHeartPoints() {
+        const pts = [];
+        const cx = width / 2;
+        const cy = height / 2 + 25;
+        const scale = Math.min(width, height) * 0.0115;
 
-            // بعد 3 ثوانٍ من ظهور القلب، ابدأ في إخفاء واجهة التراكب (Fade Out)
-            setTimeout(() => {
-                overlay.classList.add('fade-out');
-            }, 3000);
-        }
+        for (let t = 0; t <= Math.PI * 2; t += 0.03) {
+          const x = 16 * Math.pow(Math.sin(t), 3);
+          const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
 
-        // حلقة الرسم الرئيسية
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-
-            // رسم وتحديث خلفية النقاط المتساقطة
-            backgroundDots.forEach(dot => {
-                dot.update();
-                dot.draw();
+          for (let i = 0; i < 4; i++) {
+            pts.push({
+              x: cx + x * scale + (Math.random() - 0.5) * 6,
+              y: cy + y * scale + (Math.random() - 0.5) * 6,
             });
-
-            // رسم وتحديث جسيمات النصوص
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-
-            animationFrameId = requestAnimationFrame(animate);
+          }
         }
 
-        // تهيئة وبدء العرض
-        initBackground();
-        nextSequence();
-        animate();
+        return pts;
+      }
 
-        // تحديث الحجم عند تغيير حجم النافذة
-        window.addEventListener('resize', () => {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            initBackground();
-            // لإعادة تشكيل النص الحالي عند التكبير/التصغير، يجب تعديل nextSequence ليكون أكثر مرونة،
-            // لكن للتبسيط، دعنا نعيد تشغيل التسلسل.
-            currentSequenceIndex = 0;
-            finalHeartActive = false;
-            overlay.classList.remove('fade-out');
-            cancelAnimationFrame(animationFrameId);
-            animate();
-            nextSequence();
-        });
-    </script>
-</body>
-</html>
+      function morphTo(points, shapeName, isHeart = false) {
+        if (currentShape === shapeName) return;
+
+        currentShape = shapeName;
+        currentPoints = points;
+        ensureParticles(points.length);
+
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          const point = points[i];
+
+          if (point) {
+            p.setTarget(point.x, point.y, 'shape');
+            p.size = isHeart ? 2.2 + Math.random() * 1.8 : 2.3 + Math.random() * 1.6;
+            p.alpha = isHeart ? 0.9 : 0.95;
+          } else {
+            p.setTarget(Math.random() * width, height + 80 + Math.random() * 80, 'shape');
+            p.size = 1.2;
+            p.alpha = 0.05;
+          }
+        }
+      }
+
+      function triggerBurst() {
+        ensureParticles(Math.max(300, particles.length));
+
+        for (let i = 0; i < 280; i++) {
+          particles[i].burst(width / 2, height / 2);
+          particles[i].size = 2.2 + Math.random() * 2.2;
+          particles[i].alpha = 1;
+        }
+      }
+
+      function drawBackground() {
+        const bg = ctx.createLinearGradient(0, 0, 0, height);
+        bg.addColorStop(0, '#030309');
+        bg.addColorStop(1, '#080811');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, width, height);
+
+        const glow = ctx.createRadialGradient(
+          width / 2, height * 0.42, 30,
+          width / 2, height * 0.42, Math.max(width, height) * 0.55
+        );
+        glow.addColorStop(0, 'rgba(255, 70, 170, 0.12)');
+        glow.addColorStop(0.42, 'rgba(130, 70, 255, 0.06)');
+        glow.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      function drawBottomBand(time) {
+        const top = Math.floor(height * 0.72);
+        const cellX = 12;
+        const cellY = 11;
+
+        const band = ctx.createLinearGradient(0, top, 0, height);
+        band.addColorStop(0, 'rgba(255, 70, 170, 0.00)');
+        band.addColorStop(1, 'rgba(255, 70, 170, 0.06)');
+        ctx.fillStyle = band;
+        ctx.fillRect(0, top, width, height - top);
+
+        ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.shadowBlur = 0;
+
+        for (let y = top; y < height; y += cellY) {
+          for (let x = 0; x < width; x += cellX) {
+            const idx = Math.abs(Math.floor((x * 0.13) + (y * 0.09) + (time * 0.02))) % rainChars.length;
+            const ch = rainChars[idx];
+            const depth = (y - top) / (height - top);
+            const alpha = 0.12 + depth * 0.45;
+
+            ctx.fillStyle = `rgba(255, ${90 + ((x + y) % 50)}, ${170 + ((x + y) % 60)}, ${alpha})`;
+            ctx.fillText(ch, x, y);
+          }
+        }
+      }
+
+      function drawRain(time) {
+        columns.forEach((col) => col.draw(time));
+      }
+
+      function drawParticles(time, isHeart = false) {
+        for (const p of particles) {
+          p.update(time);
+          p.draw(isHeart);
+        }
+      }
+
+      function drawHeartText() {
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = 'rgba(255,255,255,0.95)';
+        ctx.font = `700 ${Math.min(width * 0.03, 24)}px Arial, sans-serif`;
+        ctx.fillText(heartPhrase, width / 2, height / 2 + 25);
+        ctx.restore();
+      }
+
+      function closeIntro() {
+        if (introEnded) return;
+        introEnded = true;
+
+        wrap.classList.add('is-hidden');
+        window.removeEventListener('resize', resize);
+        skipBtn.removeEventListener('click', closeIntro);
+
+        setTimeout(() => {
+          cancelAnimationFrame(animationFrame);
+          wrap.remove();
+        }, FADE_DURATION);
+      }
+
+      function updateScene(elapsed) {
+        // قبل العد
+        if (elapsed < START_3) {
+          currentShape = '';
+          return { heart: false, drawHeartText: false };
+        }
+
+        // رقم 3
+        if (elapsed >= START_3 && elapsed < START_2) {
+          morphTo(
+            getTextPoints('3', { size: Math.min(width * 0.18, 170), step: 10 }),
+            'count-3'
+          );
+          return { heart: false, drawHeartText: false };
+        }
+
+        // رقم 2
+        if (elapsed >= START_2 && elapsed < START_1) {
+          morphTo(
+            getTextPoints('2', { size: Math.min(width * 0.18, 170), step: 10 }),
+            'count-2'
+          );
+          return { heart: false, drawHeartText: false };
+        }
+
+        // رقم 1
+        if (elapsed >= START_1 && elapsed < AFTER_1) {
+          morphTo(
+            getTextPoints('1', { size: Math.min(width * 0.18, 170), step: 10 }),
+            'count-1'
+          );
+
+          const burstMoment = START_1 + 250;
+          if (elapsed > burstMoment && elapsed < burstMoment + 40) {
+            triggerBurst();
+          }
+
+          return { heart: false, drawHeartText: false };
+        }
+
+        // فراغ بسيط بعد العد
+        if (elapsed >= AFTER_1 && elapsed < WORDS_START) {
+          if (currentShape !== 'after-burst') {
+            triggerBurst();
+            currentShape = 'after-burst';
+          }
+          return { heart: false, drawHeartText: false };
+        }
+
+        // الكلمات كلمة كلمة وبطيئة
+        if (elapsed >= WORDS_START && elapsed < FINAL_TEXT_START) {
+          const index = Math.floor((elapsed - WORDS_START) / WORD_HOLD_MS);
+          const safeIndex = Math.min(index, words.length - 1);
+          const word = words[safeIndex];
+
+          morphTo(
+            getTextPoints(word, {
+              rtl: true,
+              size: Math.min(width * 0.13, 110),
+              step: 10,
+              maxWidthRatio: 0.65,
+            }),
+            `word-${safeIndex}`
+          );
+
+          return { heart: false, drawHeartText: false };
+        }
+
+        // الجملة النهائية
+        if (elapsed >= FINAL_TEXT_START && elapsed < HEART_START) {
+          morphTo(
+            getTextPoints(finalPhrase, {
+              rtl: true,
+              size: Math.min(width * 0.085, 64),
+              step: 10,
+              maxWidthRatio: 0.84,
+            }),
+            'final-phrase'
+          );
+          return { heart: false, drawHeartText: false };
+        }
+
+        // القلب النهائي
+        if (elapsed >= HEART_START && elapsed < END_AT) {
+          morphTo(getHeartPoints(), 'heart-final', true);
+          return { heart: true, drawHeartText: true };
+        }
+
+        closeIntro();
+        return { heart: false, drawHeartText: false };
+      }
+
+      function animate(time) {
+        if (!startTime) startTime = time;
+        const elapsed = time - startTime;
+
+        drawBackground();
+        drawRain(time);
+        drawBottomBand(time);
+
+        const scene = updateScene(elapsed);
+        drawParticles(time, scene.heart);
+
+        if (scene.drawHeartText) {
+          drawHeartText();
+        }
+
+        if (!introEnded) {
+          animationFrame = requestAnimationFrame(animate);
+        }
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+      skipBtn.addEventListener('click', closeIntro);
+      animationFrame = requestAnimationFrame(animate);
+    }
+  }
+</script>
