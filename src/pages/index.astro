@@ -1,6 +1,5 @@
 ---
 import Layout from '~/layouts/PageLayout.astro'
-import IntroOverlay from '~/components/IntroOverlay.astro'
 import fs from 'node:fs'
 import path from 'node:path'
 
@@ -20,8 +19,6 @@ const fanArtImages = fs.existsSync(fanArtDir)
 ---
 
 <Layout metadata={metadata}>
-  <IntroOverlay />
-  
   <section
     class="relative py-24 px-6 text-white bg-black/90 overflow-hidden"
   >
