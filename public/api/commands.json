@@ -1823,6 +1823,142 @@
     ]
   },
   {
+    "Id": "1e36eb5e-6a79-4c80-8a7b-834bacf0736d",
+    "Name": "TSO::Roulette[!duel]",
+    "Enabled": false,
+    "Group": "roulette",
+    "Mode": 0,
+    "Commands": [
+      "!duel"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message"
+    ]
+  },
+  {
+    "Id": "fba982be-ae41-49f6-93dc-7a1e621db9b8",
+    "Name": "TSO::Roulette[!join]",
+    "Enabled": false,
+    "Group": "roulette",
+    "Mode": 0,
+    "Commands": [
+      "!join"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message"
+    ]
+  },
+  {
+    "Id": "f758b36a-510e-482c-a949-b95a2b0c10e3",
+    "Name": "TSO::Roulette[!knockout]",
+    "Enabled": false,
+    "Group": "roulette",
+    "Mode": 0,
+    "Commands": [
+      "!knockout"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message"
+    ]
+  },
+  {
+    "Id": "53317dd9-17d3-4c5c-99f4-e1d558c2f00a",
+    "Name": "TSO::Roulette[!no]",
+    "Enabled": false,
+    "Group": "roulette",
+    "Mode": 0,
+    "Commands": [
+      "!no"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message"
+    ]
+  },
+  {
+    "Id": "ca612ac1-249a-4f89-b7fd-8b4e8db58041",
+    "Name": "TSO::Roulette[!normal]",
+    "Enabled": false,
+    "Group": "roulette",
+    "Mode": 0,
+    "Commands": [
+      "!normal"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message"
+    ]
+  },
+  {
+    "Id": "1f264bbe-e1ec-4cf0-b433-c9876fddc688",
+    "Name": "TSO::Roulette[!reset]",
+    "Enabled": false,
+    "Group": "roulette",
+    "Mode": 0,
+    "Commands": [
+      "!resetR"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message"
+    ]
+  },
+  {
+    "Id": "eceac417-5e42-4e36-8b33-58d3d61e927e",
+    "Name": "TSO::Roulette[!roulette]",
+    "Enabled": false,
+    "Group": "roulette",
+    "Mode": 0,
+    "Commands": [
+      "!roulette"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message"
+    ]
+  },
+  {
+    "Id": "69d7c095-39ce-423a-9e70-d42ef4916ae0",
+    "Name": "TSO::Roulette[!yes]",
+    "Enabled": false,
+    "Group": "roulette",
+    "Mode": 0,
+    "Commands": [
+      "!yes"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message"
+    ]
+  },
+  {
     "Id": "aee9a954-64a8-413c-bf9e-d17988b8bc6b",
     "Name": "8ball",
     "Enabled": true,
@@ -3123,7 +3259,8 @@
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message"
+      "Twitch Message",
+      "Kick Message"
     ]
   },
   {
@@ -3207,22 +3344,6 @@
     ]
   },
   {
-    "Id": "40fe138b-d5e8-46a0-b277-c4ed6d1ea1e3",
-    "Name": "!followage",
-    "Enabled": true,
-    "Group": "utilities & tools ",
-    "Mode": 0,
-    "Commands": [
-      "متى؟"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
     "Id": "7acfcb9f-2a4f-4abb-adb2-b349f81bc88c",
     "Name": "!fortune",
     "Enabled": true,
@@ -3294,14 +3415,16 @@
     "Group": "utilities & tools ",
     "Mode": 0,
     "Commands": [
-      "!settitle"
+      "!settitle",
+      "!تغير العنوان"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
     "Sources": [
       "None",
       "Twitch Message",
-      "YouTube Message"
+      "YouTube Message",
+      "Kick Message"
     ]
   },
   {
@@ -3452,6 +3575,23 @@
     ]
   },
   {
+    "Id": "40fe138b-d5e8-46a0-b277-c4ed6d1ea1e3",
+    "Name": "متى؟",
+    "Enabled": true,
+    "Group": "utilities & tools ",
+    "Mode": 0,
+    "Commands": [
+      "متى؟",
+      "!متى"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
     "Id": "46a04adc-3fa0-4f05-981e-b8e636ce3bdf",
     "Name": "!ليدربورد",
     "Enabled": true,
@@ -3485,7 +3625,9 @@
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message"
+      "Twitch Message",
+      "YouTube Message",
+      "Kick Message"
     ]
   },
   {
@@ -3521,7 +3663,9 @@
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message"
+      "Twitch Message",
+      "YouTube Message",
+      "Kick Message"
     ]
   },
   {
@@ -3540,7 +3684,9 @@
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message"
+      "Twitch Message",
+      "YouTube Message",
+      "Kick Message"
     ]
   },
   {
@@ -3576,7 +3722,9 @@
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message"
+      "Twitch Message",
+      "YouTube Message",
+      "Kick Message"
     ]
   },
   {
@@ -3591,6 +3739,25 @@
       "شويات واجي",
       "ثواني واجي",
       "دقايق واجي"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message",
+      "YouTube Message",
+      "Kick Message"
+    ]
+  },
+  {
+    "Id": "037d377f-79eb-4a2f-bf23-4ac008059311",
+    "Name": "روبن؟",
+    "Enabled": true,
+    "Group": "ردود البوت",
+    "Mode": 0,
+    "Commands": [
+      "روبن؟",
+      "!روبن"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -3647,7 +3814,9 @@
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message"
+      "Twitch Message",
+      "YouTube Message",
+      "Kick Message"
     ]
   },
   {
@@ -3667,7 +3836,9 @@
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message"
+      "Twitch Message",
+      "YouTube Message",
+      "Kick Message"
     ]
   },
   {
@@ -3815,7 +3986,8 @@
     "CaseSensitive": false,
     "Sources": [
       "None",
-      "Twitch Message"
+      "Twitch Message",
+      "Kick Message"
     ]
   },
   {
