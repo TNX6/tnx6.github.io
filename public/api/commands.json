@@ -231,7 +231,7 @@
   {
     "Id": "9bcc8aac-76aa-4ebb-8bd4-d69044fefd79",
     "Name": "CowboyDuel Shoot",
-    "Enabled": false,
+    "Enabled": true,
     "Group": "cowboy",
     "Mode": 0,
     "Commands": [
@@ -295,12 +295,12 @@
   },
   {
     "Id": "5a41c8c9-cd11-438b-bb15-ee91155ab9ac",
-    "Name": "!دخول",
+    "Name": "!بطاطا",
     "Enabled": true,
     "Group": "Hot Potato",
     "Mode": 0,
     "Commands": [
-      "!دخول"
+      "!بطاطا"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -342,6 +342,129 @@
     ]
   },
   {
+    "Id": "2e70b4c8-51c3-4c2c-be39-730ba78768d5",
+    "Name": "!mailbackup",
+    "Enabled": true,
+    "Group": "Mailbox",
+    "Mode": 0,
+    "Commands": [
+      "!mailbackup"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "c40dfef1-08b4-4412-be3c-4fd327ff0125",
+    "Name": "!ارسل للكل",
+    "Enabled": true,
+    "Group": "Mailbox",
+    "Mode": 0,
+    "Commands": [
+      "!ارسل للكل",
+      "!mailbroadcast",
+      "!ارسل بريد للكل"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "a7205682-5ea7-432d-abb7-12ce7996bfad",
+    "Name": "!حذف هدية النظام",
+    "Enabled": true,
+    "Group": "Mailbox",
+    "Mode": 0,
+    "Commands": [
+      "!حذف هدية النظام",
+      "!systemgiftundo"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "43a1f793-bb06-4caa-b35a-fbdba642dbe4",
+    "Name": "!رفض الهدية",
+    "Enabled": true,
+    "Group": "Mailbox",
+    "Mode": 0,
+    "Commands": [
+      "!رفض الهدية",
+      "!giftreject",
+      "!Giftreject",
+      "!رفض الهديه"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "95805115-3f9a-43a5-8aa2-8e6eadd023a0",
+    "Name": "!قبول الهدية",
+    "Enabled": true,
+    "Group": "Mailbox",
+    "Mode": 0,
+    "Commands": [
+      "!قبول الهدية",
+      "!giftaccept",
+      "!Giftaccept",
+      "!قبول الهديه"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "4110df19-1cf4-4567-9864-4c4acbb48752",
+    "Name": "!هدية",
+    "Enabled": true,
+    "Group": "Mailbox",
+    "Mode": 0,
+    "Commands": [
+      "!gift",
+      "!هدية"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "ecb8ab1d-0b96-445d-9957-73e9e6003172",
+    "Name": "!هدية للكل",
+    "Enabled": true,
+    "Group": "Mailbox",
+    "Mode": 0,
+    "Commands": [
+      "!systemgift",
+      "!هدية للكل"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
     "Id": "84d9cd00-f4e5-464f-aa8c-1b6a203b5db4",
     "Name": "ارسل رسالة",
     "Enabled": true,
@@ -353,7 +476,13 @@
       "!SendMil",
       "!sendmil",
       "!ارسل رساله",
-      "!أرسل رساله"
+      "!أرسل رساله",
+      "!ارسال رسالة",
+      "!ارسال رساله",
+      "!أرسال رسالة",
+      "!أرسال رساله",
+      "!ارسل بريد",
+      "!ارسال بريد"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -445,7 +574,9 @@
     "Commands": [
       "!مستخدمين البريد",
       "!mailusers",
-      "!Mailusers"
+      "!Mailusers",
+      "!اصحاب البريد",
+      "!أصحاب البريد"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -2090,6 +2221,74 @@
     ]
   },
   {
+    "Id": "18019f10-a191-47ad-93fa-360f71340a39",
+    "Name": "[TEMPORARY VIP] Add VIP Time",
+    "Enabled": true,
+    "Group": "TEMPORARY VIP",
+    "Mode": 0,
+    "Commands": [
+      "!vipAdd",
+      "!addVip"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "89d5964b-90e8-4415-be48-8562ffa7bff9",
+    "Name": "[TEMPORARY VIP] Check Expired VIPs",
+    "Enabled": true,
+    "Group": "TEMPORARY VIP",
+    "Mode": 0,
+    "Commands": [
+      "!refreshVip",
+      "!vipRefresh"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "ee427cd8-a60a-4061-9139-bc620b415147",
+    "Name": "[TEMPORARY VIP] Remove VIP Time",
+    "Enabled": true,
+    "Group": "TEMPORARY VIP",
+    "Mode": 0,
+    "Commands": [
+      "!vipRemove",
+      "!removeVip"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "2208162b-5529-448e-bda2-6007020d59f7",
+    "Name": "[TEMPORARY VIP] User Ending Date Check",
+    "Enabled": true,
+    "Group": "TEMPORARY VIP",
+    "Mode": 0,
+    "Commands": [
+      "!vipCheck",
+      "!checkVip"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
     "Id": "aee9a954-64a8-413c-bf9e-d17988b8bc6b",
     "Name": "8ball",
     "Enabled": true,
@@ -3094,8 +3293,41 @@
     "Mode": 0,
     "Commands": [
       "!give",
-      "!gift",
       "!اعطاء"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "5b825046-f318-49fd-b735-d17a762a20df",
+    "Name": "!GIVE ALL",
+    "Enabled": true,
+    "Group": "USER INVENTORY",
+    "Mode": 0,
+    "Commands": [
+      "!giveall",
+      "!Giveall",
+      "!تحويل اغراضي"
+    ],
+    "RegexCommand": null,
+    "CaseSensitive": false,
+    "Sources": [
+      "None",
+      "Twitch Message"
+    ]
+  },
+  {
+    "Id": "8c365fd7-06b7-42c1-90e3-483458f4dced",
+    "Name": "!scanbags",
+    "Enabled": true,
+    "Group": "USER INVENTORY",
+    "Mode": 0,
+    "Commands": [
+      "!scanbags"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
@@ -3689,23 +3921,6 @@
     ]
   },
   {
-    "Id": "2208162b-5529-448e-bda2-6007020d59f7",
-    "Name": "User Ending Date Check",
-    "Enabled": true,
-    "Group": "utilities & tools ",
-    "Mode": 0,
-    "Commands": [
-      "!vipCheck",
-      "!checkVip"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
     "Id": "40fe138b-d5e8-46a0-b277-c4ed6d1ea1e3",
     "Name": "متى؟",
     "Enabled": true,
@@ -4129,57 +4344,6 @@
     "Mode": 0,
     "Commands": [
       "!بدء لعبة الورق"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "18019f10-a191-47ad-93fa-360f71340a39",
-    "Name": "Add Vip Time",
-    "Enabled": true,
-    "Group": "مودز",
-    "Mode": 0,
-    "Commands": [
-      "!vipAdd",
-      "!addVip"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "89d5964b-90e8-4415-be48-8562ffa7bff9",
-    "Name": "Check Expired VIPs",
-    "Enabled": true,
-    "Group": "مودز",
-    "Mode": 0,
-    "Commands": [
-      "!refreshVip",
-      "!vipRefresh"
-    ],
-    "RegexCommand": null,
-    "CaseSensitive": false,
-    "Sources": [
-      "None",
-      "Twitch Message"
-    ]
-  },
-  {
-    "Id": "ee427cd8-a60a-4061-9139-bc620b415147",
-    "Name": "Remove Vip Time",
-    "Enabled": true,
-    "Group": "مودز",
-    "Mode": 0,
-    "Commands": [
-      "!vipRemove",
-      "!removeVip"
     ],
     "RegexCommand": null,
     "CaseSensitive": false,
