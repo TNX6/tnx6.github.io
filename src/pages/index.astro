@@ -693,48 +693,46 @@ const socialLinks = [
       font-size: 1.45rem;
     }
 
-    .tnx-countdown-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(58px, 1fr));
-      gap: 0.45rem;
-      direction: ltr;
-      width: 100%;
-      min-width: 210px;
-    }
-
-    .tnx-countdown-unit {
-      display: flex;
-      flex-direction: column;
+    .tnx-countdown-row {
+      display: inline-grid;
+      grid-template-columns: minmax(38px, auto) auto minmax(38px, auto) auto minmax(38px, auto);
       align-items: center;
       justify-content: center;
-      border-radius: 0.9rem;
-      border: 1px solid rgba(194, 146, 0, 0.25);
-      background: rgba(0, 0, 0, 0.45);
-      padding: 0.45rem 0.6rem;
+      gap: 0.42rem;
+      direction: ltr;
+      unicode-bidi: isolate;
+      min-width: 150px;
     }
 
-    .tnx-countdown-unit strong {
-      font-size: 1.15rem;
-      line-height: 1;
+    .tnx-countdown-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 38px;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(194, 146, 0, 0.22);
+      background: rgba(0, 0, 0, 0.42);
+      padding: 0.35rem 0.55rem;
+      font-weight: 900;
       color: #ffda6a;
+      line-height: 1;
     }
 
-    .tnx-countdown-unit span {
-      margin-top: 0.25rem;
-      font-size: 0.65rem;
-      font-family: system-ui, sans-serif;
-      color: rgba(229, 231, 235, 0.7);
+    .tnx-countdown-separator {
+      color: rgba(255, 218, 106, 0.75);
+      font-weight: 900;
+      line-height: 1;
     }
 
-    #hero-countdown-value .tnx-countdown-grid {
+    #hero-countdown-value .tnx-countdown-row {
+      width: 100%;
       min-width: 100%;
+      gap: 0.55rem;
     }
 
-    #hero-countdown-value .tnx-countdown-unit {
+    #hero-countdown-value .tnx-countdown-number {
+      min-width: 56px;
       padding: 0.65rem 0.75rem;
-    }
-
-    #hero-countdown-value .tnx-countdown-unit strong {
       font-size: 1.55rem;
     }
 
@@ -766,7 +764,6 @@ const socialLinks = [
     }
 
     .back-to-top-button:hover {
-      transform: translateY(8px);
       box-shadow:
         0 0 24px rgba(255, 218, 106, 0.42),
         0 16px 38px rgba(0, 0, 0, 0.48);
@@ -938,21 +935,12 @@ const socialLinks = [
         const { h, m, s } = getCountdownParts(totalSeconds)
 
         return `
-          <span class="tnx-countdown-grid" dir="ltr">
-            <span class="tnx-countdown-unit">
-              <strong>${h}</strong>
-              <span>ساعة</span>
-            </span>
-
-            <span class="tnx-countdown-unit">
-              <strong>${m}</strong>
-              <span>دقيقة</span>
-            </span>
-
-            <span class="tnx-countdown-unit">
-              <strong>${s}</strong>
-              <span>ثانية</span>
-            </span>
+          <span class="tnx-countdown-row" dir="ltr">
+            <span class="tnx-countdown-number">${h}</span>
+            <span class="tnx-countdown-separator">:</span>
+            <span class="tnx-countdown-number">${m}</span>
+            <span class="tnx-countdown-separator">:</span>
+            <span class="tnx-countdown-number">${s}</span>
           </span>
         `
       }
