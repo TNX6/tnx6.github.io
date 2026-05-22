@@ -22,36 +22,36 @@ const streamConfig = {
 }
 
 const scheduleItems = [
-  { day: 6, name: 'السبت',    time: '9:00 م', description: 'قصص ألعاب + سوالف', icon: '🎮' },
-  { day: 0, name: 'الأحد',    time: '9:00 م', description: 'رعب / تجربة لعبة',   icon: '👻' },
-  { day: 2, name: 'الثلاثاء', time: '9:00 م', description: 'تحديات المجتمع',     icon: '⚔️' },
-  { day: 3, name: 'الأربعاء', time: '9:00 م', description: 'بث مفتوح / ألعاب',  icon: '🎲' },
+  { day: 6, name: 'السبت', time: '9:00 م', description: 'قصص ألعاب + سوالف', icon: '🎮' },
+  { day: 0, name: 'الأحد', time: '9:00 م', description: 'رعب / تجربة لعبة', icon: '👻' },
+  { day: 2, name: 'الثلاثاء', time: '9:00 م', description: 'تحديات المجتمع', icon: '⚔️' },
+  { day: 3, name: 'الأربعاء', time: '9:00 م', description: 'بث مفتوح / ألعاب', icon: '🎲' },
 ]
 
 const features = [
-  { icon: '🏆', title: 'نظام نقاط وذهب',  desc: 'كل دقيقة تشاهد تكسب نقاط وذهب تقدر تصرفه.' },
-  { icon: '🎒', title: 'حقيبة وأغراض',     desc: 'اشتري أغراض، افتح صناديق، واستخدمها بالشات.' },
-  { icon: '🥇', title: 'بدجات نادرة',      desc: 'حصّل بدجات من التحديات وأطول مشاهدة.' },
-  { icon: '📬', title: 'بريد وهدايا',      desc: 'رسائل خاصة وهدايا بين أعضاء المجتمع.' },
-  { icon: '⚔️', title: 'تحديات الشات',     desc: 'تحديات تنافسية مباشرة أثناء البث.' },
-  { icon: '👑', title: 'VIP وألقاب',       desc: 'اشتري VIP مؤقت أو لقب مخصص للشات.' },
+  { icon: '🏆', title: 'نظام نقاط وذهب', desc: 'كل دقيقة تشاهد تكسب نقاط وذهب تقدر تصرفه.' },
+  { icon: '🎒', title: 'حقيبة وأغراض', desc: 'اشتري أغراض، افتح صناديق، واستخدمها بالشات.' },
+  { icon: '🥇', title: 'بدجات نادرة', desc: 'حصّل بدجات من التحديات وأطول مشاهدة.' },
+  { icon: '📬', title: 'بريد وهدايا', desc: 'رسائل خاصة وهدايا بين أعضاء المجتمع.' },
+  { icon: '⚔️', title: 'تحديات الشات', desc: 'تحديات تنافسية مباشرة أثناء البث.' },
+  { icon: '👑', title: 'VIP وألقاب', desc: 'اشتري VIP مؤقت أو لقب مخصص للشات.' },
 ]
 
 const socialLinks = [
-  { href: 'https://www.twitch.tv/tnx_6',   label: 'Twitch',  icon: 'tabler:brand-twitch'  },
-  { href: 'https://kick.com/tnx6',          label: 'Kick',    icon: 'tabler:letter-k'       },
+  { href: 'https://www.twitch.tv/tnx_6', label: 'Twitch', icon: 'tabler:brand-twitch' },
+  { href: 'https://kick.com/tnx6', label: 'Kick', icon: 'tabler:letter-k' },
   { href: 'https://www.youtube.com/@TNX66', label: 'YouTube', icon: 'tabler:brand-youtube' },
-  { href: 'https://www.tiktok.com/@itstnx', label: 'TikTok',  icon: 'tabler:brand-tiktok'  },
-  { href: 'https://discord.gg/x7FtrfM6Sk',  label: 'Discord', icon: 'tabler:brand-discord' },
+  { href: 'https://www.tiktok.com/@itstnx', label: 'TikTok', icon: 'tabler:brand-tiktok' },
+  { href: 'https://discord.gg/x7FtrfM6Sk', label: 'Discord', icon: 'tabler:brand-discord' },
 ]
 
 const quickLinks = [
-  { title: 'الأوامر',       href: '/commands',     icon: 'tabler:terminal-2', desc: 'كل أوامر الشات'      },
-  { title: 'الترتيب',       href: '/leaderboards', icon: 'tabler:trophy',     desc: 'من الأعلى نقاطاً؟'   },
-  { title: 'الأغراض',       href: '/items',        icon: 'tabler:backpack',   desc: 'الأغراض والصناديق'   },
-  { title: 'البدجات',       href: '/badges',       icon: 'tabler:badge',      desc: 'البدجات النادرة'     },
-  { title: 'معرض الرسمات',  href: '/fan-art',      icon: 'tabler:photo',      desc: 'رسمات المجتمع'       },
-  { title: 'الفائزون',      href: '/winners',      icon: 'tabler:crown',      desc: 'أبطال TNX6'          },
+  { title: 'الأوامر', href: '/commands', icon: 'tabler:terminal-2', desc: 'كل أوامر الشات' },
+  { title: 'الترتيب', href: '/leaderboards', icon: 'tabler:trophy', desc: 'من الأعلى نقاطاً؟' },
+  { title: 'الأغراض', href: '/items', icon: 'tabler:backpack', desc: 'الأغراض والصناديق' },
+  { title: 'البدجات', href: '/badges', icon: 'tabler:badge', desc: 'البدجات النادرة' },
+  { title: 'معرض الرسمات', href: '/fan-art', icon: 'tabler:photo', desc: 'رسمات المجتمع' },
+  { title: 'الفائزون', href: '/winners', icon: 'tabler:crown', desc: 'أبطال TNX6' },
 ]
 ---
 
@@ -73,7 +73,7 @@ const quickLinks = [
               </span>
             </div>
 
-            <h1 class="text-5xl md:text-6xl xl:text-7xl font-extrabold leading-[1.1] tracking-tight">
+            <h1 class="text-5xl md:text-6xl xl:text-7xl font-extrabold leading-tight tracking-tight">
               <span class="text-white">بثوث</span>
               <span class="hero-gold-text"> قصص،</span>
               <br />
@@ -93,20 +93,20 @@ const quickLinks = [
                 href="https://www.twitch.tv/tnx_6"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="btn-primary group flex items-center gap-2 rounded-xl px-7 py-3.5 font-bold text-black transition-all"
+                class="btn-primary group flex items-center gap-2 rounded-xl px-7 py-3 font-bold text-black transition-all"
               >
                 <iconify-icon icon="tabler:brand-twitch" class="text-xl"></iconify-icon>
                 شاهد البث الآن
               </a>
               
                 href="#stream"
-                class="rounded-xl border border-[#c29200]/60 px-7 py-3.5 font-semibold text-[#ffda6a] transition hover:bg-[#c29200]/10"
+                class="rounded-xl border border-[#c29200]/60 px-7 py-3 font-semibold text-[#ffda6a] transition hover:bg-[#c29200]/10"
               >
                 شوف الجدول
               </a>
               
                 href="#community"
-                class="rounded-xl border border-white/10 px-7 py-3.5 font-semibold text-gray-300 transition hover:border-[#c29200]/40 hover:text-[#ffda6a]"
+                class="rounded-xl border border-white/10 px-7 py-3 font-semibold text-gray-300 transition hover:border-[#c29200]/40 hover:text-[#ffda6a]"
               >
                 عن المجتمع
               </a>
@@ -128,7 +128,7 @@ const quickLinks = [
           </div>
 
           <div class="md:order-2 flex justify-center">
-            <div class="avatar-wrapper relative w-72 h-72 md:w-96 md:h-96 xl:w-[420px] xl:h-[420px]">
+            <div class="avatar-wrapper relative w-72 h-72 md:w-96 md:h-96">
               <div class="ring ring-1"></div>
               <div class="ring ring-2"></div>
               <div class="ring ring-3"></div>
@@ -268,7 +268,7 @@ const quickLinks = [
               id="random-fanart-image-bottom"
               src="/assets/images/tnx-min.jpg"
               alt="TNX6 Fan Art"
-              class="w-full rounded-2xl border border-[#c29200]/30 object-cover aspect-square shadow-[0_0_40px_rgba(194,146,0,0.10)] transition-transform duration-500 hover:scale-[1.02]"
+              class="w-full rounded-2xl border border-[#c29200]/30 object-cover aspect-square shadow-[0_0_40px_rgba(194,146,0,0.10)] transition-transform duration-500 hover:scale-105"
               width="400"
               height="400"
               loading="lazy"
@@ -384,20 +384,20 @@ const quickLinks = [
       pointer-events: none;
     }
     .ring-1 { animation-delay: 0s; }
-    .ring-2 { animation-delay: 0.8s;  transform: scale(1.08); }
-    .ring-3 { animation-delay: 1.6s;  transform: scale(1.16); opacity: 0.4; }
+    .ring-2 { animation-delay: 0.8s; transform: scale(1.08); }
+    .ring-3 { animation-delay: 1.6s; transform: scale(1.16); opacity: 0.4; }
 
     @keyframes ring-expand {
       0%, 100% { opacity: 0.5; }
-      50%       { opacity: 1; }
+      50% { opacity: 1; }
     }
     @keyframes float-up-down {
       0%, 100% { transform: translateY(0); }
-      50%       { transform: translateY(-12px); }
+      50% { transform: translateY(-12px); }
     }
     @keyframes glow-pulse {
       0%, 100% { opacity: 0.6; }
-      50%       { opacity: 1; }
+      50% { opacity: 1; }
     }
 
     .heading-gold-glow {
@@ -412,7 +412,7 @@ const quickLinks = [
     }
     @keyframes cursor-blink {
       from, to { border-color: transparent; }
-      50%       { border-color: #ffda6a; }
+      50% { border-color: #ffda6a; }
     }
   </style>
 
@@ -424,7 +424,7 @@ const quickLinks = [
     }
     @keyframes tnx-live-pulse {
       0%, 100% { text-shadow: 0 0 4px #facc15, 0 0 10px #facc15, 0 0 18px #facc15; }
-      50%       { text-shadow: 0 0 8px #fde68a, 0 0 18px #facc15, 0 0 28px #fbbf24; }
+      50% { text-shadow: 0 0 8px #fde68a, 0 0 18px #facc15, 0 0 28px #fbbf24; }
     }
 
     .tnx-schedule-card {
@@ -481,10 +481,10 @@ const quickLinks = [
   </script>
 
   <script define:vars={{ streamConfig }}>
-    const STREAM_START_HOUR   = streamConfig.startHour
+    const STREAM_START_HOUR = streamConfig.startHour
     const STREAM_START_MINUTE = streamConfig.startMinute
-    const STREAM_END_HOUR     = streamConfig.endHour
-    const STREAM_DAYS         = streamConfig.days
+    const STREAM_END_HOUR = streamConfig.endHour
+    const STREAM_DAYS = streamConfig.days
 
     function isStreamDay(d) { return STREAM_DAYS.includes(d.getDay()) }
 
@@ -526,8 +526,8 @@ const quickLinks = [
     }
 
     function startCountdown() {
-      const timerEl   = document.getElementById('next-stream-timer')
-      const labelEl   = document.getElementById('next-stream-label')
+      const timerEl = document.getElementById('next-stream-timer')
+      const labelEl = document.getElementById('next-stream-label')
       const wrapperEl = document.getElementById('next-stream-wrapper')
       if (!timerEl) return
 
@@ -536,7 +536,7 @@ const quickLinks = [
         if (isInStreamWindow(now)) {
           timerEl.textContent = 'البث شغّال الآن'
           timerEl.classList.add('tnx-live-glow')
-          if (labelEl)   labelEl.textContent = 'ادخل البث'
+          if (labelEl) labelEl.textContent = 'ادخل البث'
           if (wrapperEl) wrapperEl.classList.add('ring-1', 'ring-yellow-400/40')
           return
         }
@@ -571,8 +571,8 @@ const quickLinks = [
   </script>
 
   <script define:vars={{ fanArtImages }}>
-    function getItem(k)    { try { return localStorage.getItem(k) }  catch { return null } }
-    function setItem(k, v) { try { localStorage.setItem(k, v) }      catch {} }
+    function getItem(k) { try { return localStorage.getItem(k) } catch { return null } }
+    function setItem(k, v) { try { localStorage.setItem(k, v) } catch {} }
 
     if (Array.isArray(fanArtImages) && fanArtImages.length > 0) {
       const last = getItem('tnx-last-fanart')
