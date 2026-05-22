@@ -56,37 +56,43 @@ const scheduleItems = [
 const shortcuts = [
   {
     title: 'الأوامر',
-    description: 'كل أوامر الشات.',
+    eyebrow: 'ابدأ من هنا',
+    description: 'كل أوامر الشات في صفحة واحدة.',
     href: '/commands',
     icon: 'tabler:terminal-2',
   },
   {
     title: 'الترتيب',
+    eyebrow: 'مين متصدر؟',
     description: 'النقاط، الذهب، والمشاهدة.',
     href: '/leaderboards',
     icon: 'tabler:trophy',
   },
   {
     title: 'الأغراض',
+    eyebrow: 'وش عندك؟',
     description: 'الصناديق وأغراض المجتمع.',
     href: '/items',
     icon: 'tabler:backpack',
   },
   {
     title: 'البدجات',
-    description: 'الشارات والإنجازات.',
+    eyebrow: 'إنجازاتك',
+    description: 'الشارات والبدجات النادرة.',
     href: '/badges',
     icon: 'tabler:badge',
   },
   {
     title: 'الرسمات',
-    description: 'إبداعات المجتمع.',
+    eyebrow: 'فن المجتمع',
+    description: 'رسمات ومشاركات المتابعين.',
     href: '/fan-art',
     icon: 'tabler:photo',
   },
   {
     title: 'الفائزون',
-    description: 'أسماء لها بصمة.',
+    eyebrow: 'لوحة الشرف',
+    description: 'أسماء لها بصمة في المجتمع.',
     href: '/winners',
     icon: 'tabler:crown',
   },
@@ -123,38 +129,24 @@ const socialLinks = [
 
 <Layout metadata={metadata}>
   <main class="min-h-screen bg-black text-white">
-    <section class="relative overflow-hidden px-6 py-24 md:py-28">
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,218,106,0.16),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(194,146,0,0.12),transparent_38%)]"></div>
-      <div class="absolute inset-0 bg-black/65"></div>
+    <section class="relative overflow-hidden px-6 pb-16 pt-24 md:pb-20 md:pt-28">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,218,106,0.17),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(194,146,0,0.12),transparent_36%)]"></div>
+      <div class="absolute inset-0 bg-black/70"></div>
 
       <div
-        class="relative mx-auto grid max-w-7xl items-center gap-12 text-center md:grid-cols-2 md:text-right"
+        class="relative mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]"
         dir="rtl"
       >
-        <div class="relative flex justify-center md:order-2">
-          <div class="tnx-avatar-animation group relative w-full max-w-sm">
-            <img
-              id="random-fanart-image-top"
-              src="/assets/images/tnx-min.jpg"
-              alt="TNX6"
-              class="aspect-square w-full rounded-full border-2 border-[#ffda6a]/80 object-cover shadow-lg transition-transform duration-500 group-hover:scale-105"
-              width="400"
-              height="400"
-            />
-
-            <div class="pointer-events-none absolute inset-0 rounded-full opacity-80 shadow-[0_0_20px_#ffda6a,0_0_52px_#c29200]"></div>
+        <div class="text-center lg:text-right">
+          <div class="mb-5 inline-flex items-center gap-2 rounded-full border border-[#c29200]/35 bg-black/50 px-4 py-2 text-xs font-semibold text-[#ffda6a] shadow-[0_0_18px_rgba(194,146,0,0.18)]">
+            <span class="h-2 w-2 rounded-full bg-[#ffda6a] shadow-[0_0_10px_#ffda6a]"></span>
+            TNX6 STREAM HUB
           </div>
-        </div>
 
-        <div class="md:order-1">
-          <p class="mb-3 text-sm font-semibold tracking-[0.35em] text-[#ffda6a] md:text-base">
-            TNX6
-          </p>
-
-          <h1 class="mb-6 text-5xl font-extrabold leading-tight tracking-wide text-white drop-shadow-lg md:text-6xl">
+          <h1 class="mb-5 text-5xl font-extrabold leading-tight tracking-wide text-white md:text-7xl">
             TNX6
             <br />
-            <span class="text-[#ffda6a] glow-text">
+            <span class="glow-text text-[#ffda6a]">
               <span
                 id="changing-title"
                 class="border-l-4 border-[#ffda6a] pl-1"
@@ -163,168 +155,240 @@ const socialLinks = [
             </span>
           </h1>
 
-          <p class="mx-auto mb-10 max-w-xl text-lg leading-relaxed text-gray-200 md:mx-0">
-            بثوث فيها رعب، قصص، وسوالف. ومعها أنظمة تخلي المشاهد جزء من البث:
-            ترتيب، أغراض، بدجات، ورسمات المجتمع.
+          <p class="mx-auto mb-8 max-w-2xl text-lg leading-relaxed text-gray-200 lg:mx-0">
+            رعب، قصص، سوالف، وتفاعل يخلي الشات جزء من البث.
+            هنا تلقى الجدول، الأوامر، الترتيب، الأغراض، البدجات، والرسمات.
           </p>
 
-          <div class="flex flex-wrap justify-center gap-4 md:justify-start">
+          <div class="mb-8 flex flex-wrap justify-center gap-4 lg:justify-start">
             <a
               href="https://www.twitch.tv/tnx_6"
               target="_blank"
               rel="noopener noreferrer"
-              class="rounded-lg bg-gradient-to-r from-[#ffda6a] to-[#c29200] px-8 py-3 font-semibold text-black shadow-lg shadow-[#c29200]/30 transition hover:opacity-90"
+              class="rounded-xl bg-gradient-to-r from-[#ffda6a] to-[#c29200] px-7 py-3 font-bold text-black shadow-lg shadow-[#c29200]/25 transition hover:-translate-y-0.5 hover:opacity-90"
             >
               شاهد البث
             </a>
 
             <a
-              href="#stream"
-              class="rounded-lg border border-[#c29200] px-8 py-3 text-[#ffda6a] transition hover:bg-[#c29200]/10"
+              href="#live"
+              class="rounded-xl border border-[#c29200]/70 px-7 py-3 font-semibold text-[#ffda6a] transition hover:-translate-y-0.5 hover:bg-[#c29200]/10"
             >
-              جدول البث
+              حالة البث
             </a>
 
             <a
               href="/links"
-              class="rounded-lg border border-white/15 px-8 py-3 text-gray-200 transition hover:border-[#c29200]/70 hover:text-[#ffda6a]"
+              class="rounded-xl border border-white/15 px-7 py-3 font-semibold text-gray-200 transition hover:-translate-y-0.5 hover:border-[#c29200]/70 hover:text-[#ffda6a]"
             >
               الروابط
             </a>
           </div>
 
-          <div class="mt-8 flex justify-center gap-4 md:justify-start">
+          <div class="flex justify-center gap-4 lg:justify-start">
             {socialLinks.map((link) => (
               <a
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={link.label}
-                class="social-icon"
+                class="social-icon flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-black/50 transition hover:border-[#c29200]/60 hover:bg-[#c29200]/10"
               >
                 <iconify-icon
                   icon={link.icon}
-                  class="text-3xl text-gray-400 transition hover:text-[#ffda6a]"
+                  class="text-2xl text-gray-300 transition hover:text-[#ffda6a]"
                 ></iconify-icon>
               </a>
             ))}
+          </div>
+        </div>
+
+        <div class="grid gap-5">
+          <div class="relative mx-auto w-full max-w-md">
+            <div class="absolute -inset-1 rounded-[2rem] bg-gradient-to-br from-[#ffda6a]/50 via-[#c29200]/15 to-transparent blur-xl"></div>
+
+            <div class="relative rounded-[2rem] border border-[#c29200]/35 bg-[#060606]/90 p-4 shadow-2xl">
+              <img
+                id="random-fanart-image-top"
+                src="/assets/images/tnx-min.jpg"
+                alt="TNX6"
+                class="aspect-square w-full rounded-[1.5rem] object-cover"
+                width="460"
+                height="460"
+              />
+
+              <div class="mt-4 flex items-center justify-between gap-3" dir="rtl">
+                <div>
+                  <p class="text-sm font-bold text-[#ffda6a]">من المجتمع</p>
+                  <p class="text-xs text-gray-400">صورة عشوائية من معرض الرسمات</p>
+                </div>
+
+                <a
+                  href="/fan-art"
+                  class="rounded-lg border border-[#c29200]/50 px-4 py-2 text-xs font-semibold text-[#ffda6a] transition hover:bg-[#c29200]/10"
+                >
+                  المعرض
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="hero-live-card"
+            class="mx-auto w-full max-w-md rounded-3xl border border-[#c29200]/30 bg-black/70 p-5 shadow-[0_0_30px_rgba(0,0,0,0.45)]"
+            dir="rtl"
+          >
+            <div class="mb-3 flex items-center justify-between gap-3">
+              <div>
+                <p id="hero-live-kicker" class="text-xs font-semibold text-gray-400">
+                  حالة البث
+                </p>
+                <h2 id="hero-live-title" class="mt-1 text-xl font-extrabold text-[#ffda6a]">
+                  جاري التحقق من Twitch...
+                </h2>
+              </div>
+
+              <div
+                id="hero-live-dot"
+                class="h-3 w-3 rounded-full bg-gray-500"
+              ></div>
+            </div>
+
+            <p id="hero-live-meta" class="text-sm leading-relaxed text-gray-300">
+              بنعرض لك حالة البث الفعلية هنا.
+            </p>
           </div>
         </div>
       </div>
     </section>
 
     <section
-      id="stream"
-      class="relative border-y border-[#c29200]/10 bg-black/85 px-6 py-20 text-center"
+      id="live"
+      class="relative border-y border-[#c29200]/10 bg-black/85 px-6 py-14 md:py-16"
     >
-      <div class="mx-auto max-w-5xl">
-        <div class="mb-5 flex justify-center">
-          <div
-            id="next-stream-wrapper"
-            class="inline-flex flex-wrap items-center justify-center gap-3 rounded-full border border-[#c29200]/70 bg-black/70 px-5 py-2 text-xs shadow-[0_0_25px_rgba(0,0,0,0.7)] md:text-sm"
-          >
-            <span
-              id="next-stream-timer"
-              class="font-mono text-sm font-semibold text-[#ffda6a] md:text-base"
+      <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[1fr_360px]" dir="rtl">
+        <div class="rounded-[2rem] border border-[#c29200]/30 bg-[#050505]/90 p-4 shadow-2xl">
+          <div class="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-xs font-semibold tracking-[0.25em] text-[#c29200]">
+                LIVE
+              </p>
+              <h2 class="heading-gold-glow mt-1 text-2xl font-extrabold text-[#ffda6a]">
+                البث
+              </h2>
+            </div>
+
+            <div
+              id="next-stream-wrapper"
+              class="inline-flex flex-wrap items-center justify-center gap-3 rounded-full border border-[#c29200]/60 bg-black/70 px-4 py-2 text-xs shadow-[0_0_20px_rgba(0,0,0,0.45)] md:text-sm"
             >
-              -- : -- : --
-            </span>
+              <span
+                id="next-stream-timer"
+                class="font-mono text-sm font-semibold text-[#ffda6a] md:text-base"
+              >
+                -- : -- : --
+              </span>
 
-            <span id="next-stream-label" class="text-[13px] text-slate-100 md:text-sm">
-              موعد البث القادم
-            </span>
+              <span id="next-stream-label" class="text-[13px] text-slate-100 md:text-sm">
+                موعد البث القادم
+              </span>
 
-            <span class="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#c29200]/70 bg-black/60 text-[12px] text-[#ffda6a]">
-              🎥
-            </span>
+              <span class="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#c29200]/60 bg-black/60 text-[12px] text-[#ffda6a]">
+                🎥
+              </span>
+            </div>
+          </div>
+
+          <div
+            id="live-details"
+            class="mb-4 hidden rounded-2xl border border-[#c29200]/20 bg-black/60 px-4 py-3 text-sm text-gray-300"
+          >
+            <span id="live-title" class="text-[#ffda6a]"></span>
+            <span id="live-game" class="text-gray-400"></span>
+          </div>
+
+          <div class="aspect-video w-full overflow-hidden rounded-2xl border border-[#c29200]/30 bg-black shadow-2xl">
+            <iframe
+              src="https://player.twitch.tv/?channel=tnx_6&parent=tnx6.xyz&parent=www.tnx6.xyz&parent=tnx6.github.io"
+              allowfullscreen
+              frameborder="0"
+              scrolling="no"
+              width="100%"
+              height="100%"
+              title="TNX6 Twitch Stream"
+            ></iframe>
           </div>
         </div>
 
-        <div
-          id="live-details"
-          class="mx-auto mb-6 hidden max-w-2xl rounded-2xl border border-[#c29200]/25 bg-black/60 px-5 py-3 text-sm text-gray-300"
-          dir="rtl"
-        >
-          <span id="live-title" class="text-[#ffda6a]"></span>
-          <span id="live-game" class="text-gray-400"></span>
-        </div>
-
-        <div class="mx-auto aspect-video w-full max-w-4xl overflow-hidden rounded-2xl border border-[#c29200]/40 shadow-2xl">
-          <iframe
-            src="https://player.twitch.tv/?channel=tnx_6&parent=tnx6.xyz&parent=www.tnx6.xyz&parent=tnx6.github.io"
-            allowfullscreen
-            frameborder="0"
-            scrolling="no"
-            width="100%"
-            height="100%"
-            title="TNX6 Twitch Stream"
-          ></iframe>
-        </div>
-
-        <div class="mx-auto mt-10 w-full max-w-5xl" dir="rtl">
-          <div class="rounded-3xl border border-[#c29200]/40 bg-black/70 px-5 py-4 shadow-[0_0_25px_rgba(0,0,0,0.65)] md:px-8 md:py-6">
-            <div class="mb-4 flex items-center justify-center">
-              <div class="flex items-center gap-2 text-sm md:text-base">
-                <iconify-icon
-                  icon="tabler:calendar-time"
-                  class="text-lg text-[#ffda6a] md:text-xl"
-                ></iconify-icon>
-
-                <h2 class="heading-gold-glow text-base font-bold text-[#ffda6a] md:text-lg">
-                  جدول البث الأسبوعي
-                </h2>
-              </div>
+        <aside class="rounded-[2rem] border border-[#c29200]/30 bg-[#050505]/90 p-5 shadow-2xl">
+          <div class="mb-5 flex items-center justify-between gap-3">
+            <div>
+              <p class="text-xs font-semibold tracking-[0.25em] text-[#c29200]">
+                SCHEDULE
+              </p>
+              <h2 class="heading-gold-glow mt-1 text-2xl font-extrabold text-[#ffda6a]">
+                جدول البث
+              </h2>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-              {scheduleItems.map((item) => (
-                <div
-                  class="tnx-schedule-card flex min-h-[125px] flex-col items-center justify-center gap-2 rounded-2xl border border-[#c29200]/15 px-4 py-4 text-center text-xs text-gray-200 md:px-5 md:py-5 md:text-sm"
-                  data-schedule-day={item.day}
-                >
-                  <div class="text-sm font-bold text-white md:text-base">
+            <iconify-icon
+              icon="tabler:calendar-time"
+              class="text-3xl text-[#ffda6a]"
+            ></iconify-icon>
+          </div>
+
+          <div class="space-y-3">
+            {scheduleItems.map((item) => (
+              <div
+                class="tnx-schedule-card flex items-center justify-between gap-4 rounded-2xl border border-[#c29200]/15 px-4 py-4 text-sm text-gray-200"
+                data-schedule-day={item.day}
+              >
+                <div>
+                  <div class="font-bold text-white">
                     {item.name}
                   </div>
 
-                  <div class="flex items-center justify-center text-sm font-semibold text-[#ffda6a] md:text-base">
-                    <span>{item.time}</span>
-                  </div>
-
-                  <div class="text-[11px] leading-relaxed text-gray-400 md:text-xs">
+                  <div class="mt-1 text-xs text-gray-400">
                     {item.description}
                   </div>
                 </div>
-              ))}
-            </div>
+
+                <div class="shrink-0 rounded-xl border border-[#c29200]/30 bg-black/60 px-3 py-2 font-bold text-[#ffda6a]">
+                  {item.time}
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        </aside>
       </div>
     </section>
 
-    <section class="relative bg-black px-6 py-24">
-      <div class="mx-auto max-w-6xl" dir="rtl">
-        <div class="mb-10 text-center">
-          <p class="mb-3 text-sm font-semibold tracking-[0.25em] text-[#c29200]">
-            TNX6 HUB
+    <section class="relative bg-black px-6 py-16">
+      <div class="mx-auto max-w-7xl" dir="rtl">
+        <div class="mb-7 flex flex-col gap-2 text-center md:text-right">
+          <p class="text-xs font-semibold tracking-[0.25em] text-[#c29200]">
+            QUICK ACCESS
           </p>
 
-          <h2 class="heading-gold-glow mb-3 text-3xl font-extrabold text-[#ffda6a] md:text-4xl">
-            استكشف الموقع
+          <h2 class="heading-gold-glow text-3xl font-extrabold text-[#ffda6a]">
+            اختصارات المجتمع
           </h2>
-
-          <p class="mx-auto max-w-2xl text-gray-300">
-            اختصارات سريعة لأهم صفحات المجتمع.
-          </p>
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {shortcuts.map((card) => (
             <a
               href={card.href}
-              class="group rounded-2xl border border-[#c29200]/20 bg-[#080808] p-5 text-right transition hover:-translate-y-1 hover:border-[#c29200]/70 hover:shadow-[0_0_22px_rgba(194,146,0,0.25)]"
+              class="group rounded-3xl border border-[#c29200]/18 bg-[#070707] p-5 text-right transition hover:-translate-y-1 hover:border-[#c29200]/70 hover:shadow-[0_0_24px_rgba(194,146,0,0.22)]"
             >
-              <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-[#c29200]/30 bg-black text-[#ffda6a]">
-                <iconify-icon icon={card.icon} class="text-2xl"></iconify-icon>
+              <div class="mb-4 flex items-start justify-between gap-4">
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#c29200]/30 bg-black text-[#ffda6a]">
+                  <iconify-icon icon={card.icon} class="text-2xl"></iconify-icon>
+                </div>
+
+                <span class="rounded-full border border-white/10 px-3 py-1 text-[11px] font-semibold text-gray-400">
+                  {card.eyebrow}
+                </span>
               </div>
 
               <h3 class="mb-2 text-xl font-bold text-white group-hover:text-[#ffda6a]">
@@ -340,50 +404,44 @@ const socialLinks = [
       </div>
     </section>
 
-    <section class="relative border-y border-[#c29200]/10 bg-black/85 px-6 py-24">
-      <div class="mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-2">
-        <div class="relative">
+    <section class="relative bg-black/85 px-6 py-16">
+      <div
+        class="mx-auto grid max-w-7xl overflow-hidden rounded-[2rem] border border-[#c29200]/30 bg-[#050505]/90 shadow-2xl md:grid-cols-[0.9fr_1.1fr]"
+        dir="rtl"
+      >
+        <div class="relative min-h-[320px] border-b border-[#c29200]/20 md:border-b-0 md:border-l">
           <img
             id="random-fanart-image-bottom"
             src="/assets/images/tnx-min.jpg"
             alt="TNX6 Fan Art"
-            class="mx-auto aspect-square w-full max-w-sm rounded-2xl border border-[#c29200]/40 object-cover shadow-lg transition-transform duration-500 hover:scale-105"
-            width="300"
-            height="300"
+            class="h-full min-h-[320px] w-full object-cover"
+            width="620"
+            height="620"
             loading="lazy"
           />
-
-          <div class="mx-auto mt-4 max-w-sm text-center text-sm text-gray-400">
-            من رسم المجتمع
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+          <div class="absolute bottom-5 right-5">
+            <p class="text-sm font-bold text-[#ffda6a]">من رسم المجتمع</p>
+            <p class="text-xs text-gray-300">الصورة تتغير من معرض الرسمات</p>
           </div>
         </div>
 
-        <div dir="rtl">
-          <p class="mb-3 text-sm font-semibold tracking-[0.25em] text-[#c29200]">
+        <div class="p-7 md:p-10">
+          <p class="mb-3 text-xs font-semibold tracking-[0.25em] text-[#c29200]">
             ABOUT
           </p>
 
-          <h2 class="heading-gold-glow mb-6 text-3xl font-bold text-[#ffda6a]">
-            مين TNX6؟
+          <h2 class="heading-gold-glow mb-5 text-3xl font-extrabold text-[#ffda6a]">
+            عن TNX6
           </h2>
 
-          <p class="mb-8 text-lg leading-relaxed text-gray-200">
-            ستريمر عربي يقدم بثوث تجمع بين القصص، الرعب، السوالف، وتحديات المجتمع.
-            الموقع هذا معمول عشان يكون مدخل واضح لكل شيء يصير حول البث.
+          <p class="mb-8 max-w-2xl text-lg leading-relaxed text-gray-200">
+            بثوث رعب وقصص وسوالف، لكن التفاعل هو الأساس.
+            النقاط، الأغراض، البدجات، والتحديات تخلي المشاهد جزء من البث، مو مجرد اسم في الشات.
           </p>
 
-          <div class="grid gap-3 sm:grid-cols-3">
-            <div class="rounded-2xl border border-white/10 bg-[#090909] p-4 text-center">
-              <iconify-icon
-                icon="tabler:message-circle"
-                class="mb-2 text-2xl text-[#ffda6a]"
-              ></iconify-icon>
-              <div class="text-sm font-semibold text-gray-200">
-                سوالف
-              </div>
-            </div>
-
-            <div class="rounded-2xl border border-white/10 bg-[#090909] p-4 text-center">
+          <div class="mb-8 grid gap-3 sm:grid-cols-3">
+            <div class="rounded-2xl border border-white/10 bg-black/60 p-4 text-center">
               <iconify-icon
                 icon="tabler:ghost-2"
                 class="mb-2 text-2xl text-[#ffda6a]"
@@ -393,7 +451,17 @@ const socialLinks = [
               </div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-[#090909] p-4 text-center">
+            <div class="rounded-2xl border border-white/10 bg-black/60 p-4 text-center">
+              <iconify-icon
+                icon="tabler:message-circle"
+                class="mb-2 text-2xl text-[#ffda6a]"
+              ></iconify-icon>
+              <div class="text-sm font-semibold text-gray-200">
+                سوالف
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-black/60 p-4 text-center">
               <iconify-icon
                 icon="tabler:users"
                 class="mb-2 text-2xl text-[#ffda6a]"
@@ -404,17 +472,17 @@ const socialLinks = [
             </div>
           </div>
 
-          <div class="mt-8 flex flex-wrap gap-3">
+          <div class="flex flex-wrap gap-3">
             <a
               href="/fan-art"
-              class="inline-flex rounded-lg border border-[#c29200] px-6 py-3 text-[#ffda6a] transition hover:bg-[#c29200]/10"
+              class="rounded-xl border border-[#c29200]/70 px-6 py-3 font-semibold text-[#ffda6a] transition hover:bg-[#c29200]/10"
             >
               معرض الرسمات
             </a>
 
             <a
               href="/winners"
-              class="inline-flex rounded-lg border border-white/15 px-6 py-3 text-gray-200 transition hover:border-[#c29200]/70 hover:text-[#ffda6a]"
+              class="rounded-xl border border-white/15 px-6 py-3 font-semibold text-gray-200 transition hover:border-[#c29200]/70 hover:text-[#ffda6a]"
             >
               الفائزون
             </a>
@@ -425,24 +493,6 @@ const socialLinks = [
   </main>
 
   <style>
-    @keyframes float-up-down {
-      0% {
-        transform: translateY(0);
-      }
-
-      50% {
-        transform: translateY(-10px);
-      }
-
-      100% {
-        transform: translateY(0);
-      }
-    }
-
-    .tnx-avatar-animation {
-      animation: float-up-down 4s ease-in-out infinite;
-    }
-
     .glow-text {
       text-shadow:
         0 0 5px rgba(255, 218, 106, 0.7),
@@ -493,7 +543,6 @@ const socialLinks = [
           0 0 4px #facc15,
           0 0 10px #facc15,
           0 0 18px #facc15;
-        transform: translateY(0);
       }
 
       50% {
@@ -501,7 +550,6 @@ const socialLinks = [
           0 0 8px #fde68a,
           0 0 18px #facc15,
           0 0 28px #fbbf24;
-        transform: translateY(-0.5px);
       }
     }
 
@@ -516,7 +564,7 @@ const socialLinks = [
     }
 
     .tnx-schedule-card:hover {
-      transform: translateY(-3px);
+      transform: translateY(-2px);
       border-color: rgba(194, 146, 0, 0.35);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
@@ -619,27 +667,6 @@ const socialLinks = [
       return STREAM_DAYS.includes(date.getDay())
     }
 
-    function isInStreamWindow(now) {
-      const today = new Date(now)
-      const yesterday = new Date(now)
-      yesterday.setDate(yesterday.getDate() - 1)
-
-      function inWindowFor(dateObj) {
-        if (!isStreamDay(dateObj)) return false
-
-        const start = new Date(dateObj)
-        start.setHours(STREAM_START_HOUR, STREAM_START_MINUTE, 0, 0)
-
-        const end = new Date(start)
-        end.setDate(end.getDate() + 1)
-        end.setHours(STREAM_END_HOUR, 0, 0, 0)
-
-        return now >= start && now < end
-      }
-
-      return inWindowFor(today) || inWindowFor(yesterday)
-    }
-
     function getNextStreamStart(now) {
       for (let offset = 0; offset < 14; offset++) {
         const candidateDay = new Date(now)
@@ -654,6 +681,17 @@ const socialLinks = [
       }
 
       return null
+    }
+
+    function getNextStreamText(next, now) {
+      if (!next) return 'موعد البث القادم'
+
+      const dayNames = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت']
+      const isToday = next.toDateString() === now.toDateString()
+
+      return isToday
+        ? 'بث اليوم'
+        : `${dayNames[next.getDay()]} — 9:00 م`
     }
 
     function highlightTodayScheduleCard() {
@@ -685,12 +723,49 @@ const socialLinks = [
         return
       }
 
-      const title = twitchLiveStatus.title || 'البث مباشر الآن'
-      const game = twitchLiveStatus.game ? ` — ${twitchLiveStatus.game}` : ''
-
-      titleEl.textContent = title
-      gameEl.textContent = game
+      titleEl.textContent = twitchLiveStatus.title || 'البث مباشر الآن'
+      gameEl.textContent = twitchLiveStatus.game ? ` — ${twitchLiveStatus.game}` : ''
       detailsEl.classList.remove('hidden')
+    }
+
+    function updateHeroLiveCard(next, totalSeconds) {
+      const cardEl = document.getElementById('hero-live-card')
+      const kickerEl = document.getElementById('hero-live-kicker')
+      const titleEl = document.getElementById('hero-live-title')
+      const metaEl = document.getElementById('hero-live-meta')
+      const dotEl = document.getElementById('hero-live-dot')
+
+      if (!cardEl || !kickerEl || !titleEl || !metaEl || !dotEl) return
+
+      if (twitchLiveStatus.live) {
+        kickerEl.textContent = 'مباشر الآن'
+        titleEl.textContent = twitchLiveStatus.title || 'البث شغال'
+        metaEl.textContent =
+          twitchLiveStatus.viewers > 0
+            ? `${twitchLiveStatus.viewers} مشاهد على Twitch${twitchLiveStatus.game ? ` — ${twitchLiveStatus.game}` : ''}`
+            : `على Twitch${twitchLiveStatus.game ? ` — ${twitchLiveStatus.game}` : ''}`
+
+        dotEl.className = 'h-3 w-3 rounded-full bg-red-500 shadow-[0_0_14px_rgba(239,68,68,0.9)]'
+        cardEl.classList.add('border-red-500/40')
+        return
+      }
+
+      cardEl.classList.remove('border-red-500/40')
+      dotEl.className = 'h-3 w-3 rounded-full bg-[#ffda6a] shadow-[0_0_14px_rgba(255,218,106,0.7)]'
+
+      kickerEl.textContent = 'البث القادم'
+
+      if (!next || typeof totalSeconds !== 'number') {
+        titleEl.textContent = 'حسب الجدول'
+        metaEl.textContent = 'العداد يظهر عند توفر الموعد القادم.'
+        return
+      }
+
+      const hours = Math.floor(totalSeconds / 3600)
+      const minutes = Math.floor((totalSeconds % 3600) / 60)
+
+      titleEl.textContent = getNextStreamText(next, new Date())
+      metaEl.textContent = `باقي تقريبًا ${hours} ساعة و ${minutes} دقيقة`
     }
 
     function startNextStreamCountdown() {
@@ -703,7 +778,7 @@ const socialLinks = [
       function resetLiveStyles() {
         timerEl.classList.add('font-mono')
         timerEl.classList.remove('font-bold', 'tnx-live-glow')
-        wrapperEl?.classList.remove('ring-1', 'ring-yellow-400/60')
+        wrapperEl?.classList.remove('ring-1', 'ring-red-400/60')
       }
 
       function update() {
@@ -723,7 +798,8 @@ const socialLinks = [
                 : 'على Twitch'
           }
 
-          wrapperEl?.classList.add('ring-1', 'ring-yellow-400/60')
+          wrapperEl?.classList.add('ring-1', 'ring-red-400/60')
+          updateHeroLiveCard(null, null)
           return
         }
 
@@ -737,6 +813,7 @@ const socialLinks = [
           }
 
           resetLiveStyles()
+          updateHeroLiveCard(null, null)
           return
         }
 
@@ -753,12 +830,11 @@ const socialLinks = [
           String(s).padStart(2, '0')
 
         if (labelEl) {
-          labelEl.textContent = isStreamDay(now)
-            ? 'موعد البث القادم'
-            : 'البث القادم حسب الجدول'
+          labelEl.textContent = getNextStreamText(next, now)
         }
 
         resetLiveStyles()
+        updateHeroLiveCard(next, totalSeconds)
       }
 
       fetchTwitchLiveStatus().then(update)
