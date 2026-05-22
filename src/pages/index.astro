@@ -554,22 +554,20 @@ const socialLinks = [
           </div>
 
           <div class="mb-8 rounded-2xl border border-white/10 bg-black/45 p-4">
-            <p class="mb-3 text-sm font-black text-[#ffda6a]">
-              آخر تطويرات الموقع
-            </p>
+            <div class="mb-3 flex items-center justify-between gap-3">
+              <p class="text-sm font-black text-[#ffda6a]">
+                آخر تطويرات الموقع
+              </p>
 
-            <ul class="space-y-2 text-sm text-gray-300">
+              <span class="rounded-full border border-[#c29200]/30 px-3 py-1 text-[11px] font-bold text-gray-400">
+                يتحدث تلقائيًا
+              </span>
+            </div>
+
+            <ul id="site-updates-list" class="space-y-2 text-sm text-gray-300">
               <li class="flex gap-2">
                 <span class="text-[#ffda6a]">•</span>
-                تم ربط حالة البث مباشرة من Twitch.
-              </li>
-              <li class="flex gap-2">
-                <span class="text-[#ffda6a]">•</span>
-                تم تحديث جدول البث إلى 9:00 م.
-              </li>
-              <li class="flex gap-2">
-                <span class="text-[#ffda6a]">•</span>
-                القادم: تحسين صفحات الأغراض والبدجات.
+                جاري تحميل التحديثات...
               </li>
             </ul>
           </div>
@@ -717,7 +715,7 @@ const socialLinks = [
     }
   </style>
 
-  <script define:vars={{ streamConfig, fanArtImages, twitchStatusUrl }}>
+  <script define:vars={{ streamConfig, fanArtImages, twitchStatusUrl }} data-reinit>
     ;(() => {
       const STREAM_START_HOUR = streamConfig.startHour
       const STREAM_START_MINUTE = streamConfig.startMinute
@@ -750,6 +748,15 @@ const socialLinks = [
       window[cleanupKey] = () => {
         intervals.forEach((id) => window.clearInterval(id))
         intervals.length = 0
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#039;')
       }
 
       function isStreamDay(date) {
@@ -829,6 +836,69 @@ const socialLinks = [
             game: null,
             viewers: 0,
           }
+        }
+      }
+
+      async function loadSiteUpdates() {
+        const listEl = document.getElementById('site-updates-list')
+
+        if (!listEl) return
+
+        try {
+          const response = await fetch('/api/site-updates.json', {
+            cache: 'no-store',
+          })
+
+          if (!response.ok) {
+            throw new Error('Failed to load updates')
+          }
+
+          const updates = await response.json()
+
+          if (!Array.isArray(updates) || updates.length === 0) {
+            listEl.innerHTML = `
+              <li class="flex gap-2">
+                <span class="text-[#ffda6a]">•</span>
+                لا توجد تحديثات حالية.
+              </li>
+            `
+            return
+          }
+
+          const latestUpdates = updates.slice(0, 3)
+
+          listEl.innerHTML = latestUpdates
+            .map((update) => {
+              const title = String(update.title || '').trim()
+              const type = String(update.type || 'تحديث').trim()
+              const date = String(update.date || '').trim()
+
+              if (!title) return ''
+
+              const meta = [type, date].filter(Boolean).join(' — ')
+
+              return `
+                <li class="flex items-start gap-2">
+                  <span class="mt-1 text-[#ffda6a]">•</span>
+                  <span class="leading-relaxed">
+                    <span>${escapeHtml(title)}</span>
+                    ${
+                      meta
+                        ? `<span class="mr-2 text-xs text-gray-500">${escapeHtml(meta)}</span>`
+                        : ''
+                    }
+                  </span>
+                </li>
+              `
+            })
+            .join('')
+        } catch {
+          listEl.innerHTML = `
+            <li class="flex gap-2">
+              <span class="text-[#ffda6a]">•</span>
+              تعذر تحميل تحديثات الموقع.
+            </li>
+          `
         }
       }
 
@@ -1025,6 +1095,7 @@ const socialLinks = [
       function init() {
         highlightTodayScheduleCard()
         updateRandomFanArt()
+        loadSiteUpdates()
 
         fetchTwitchLiveStatus().then(updateStreamPanel)
         updateStreamPanel()
