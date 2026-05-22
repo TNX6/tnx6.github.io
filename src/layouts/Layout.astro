@@ -15,6 +15,7 @@ import type { MetaData as MetaDataType } from '~/types'
 const { metadata = {} } = Astro.props
 const { language, textDirection } = I18N
 ---
+
 <!doctype html>
 <html lang={language} dir={textDirection} class="2xl:text-[20px]">
   <head>
@@ -25,31 +26,46 @@ const { language, textDirection } = I18N
     <Metadata {...metadata} />
     <SiteVerification />
     <Analytics />
+
+    <!-- Iconify icons support -->
+    <script
+      src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"
+      defer
+    ></script>
+
     <ClientRouter fallback="swap" />
+
+    <style is:global>
+      iconify-icon {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        vertical-align: -0.125em;
+      }
+    </style>
   </head>
+
   <body class="antialiased text-default tracking-tight relative">
     <div
       class="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
       style="background-image: url('/assets/03.webp');"
     ></div>
+
     <div class="fixed inset-0 -z-10 bg-black/40"></div>
+
     <slot />
+
     <BasicScripts />
 
-
-<script is:inline>
-  document.addEventListener('astro:page-load', () => {
-    // reload page-specific inline scripts manually
-    document.querySelectorAll('script[data-reinit]').forEach(s => {
-      const clone = document.createElement('script')
-      clone.textContent = s.textContent
-      clone.setAttribute('data-reinit', '')
-      s.replaceWith(clone)
-    })
-  })
-</script>
-
-
-    
+    <script is:inline>
+      document.addEventListener('astro:page-load', () => {
+        document.querySelectorAll('script[data-reinit]').forEach((script) => {
+          const clone = document.createElement('script')
+          clone.textContent = script.textContent
+          clone.setAttribute('data-reinit', '')
+          script.replaceWith(clone)
+        })
+      })
+    </script>
   </body>
 </html>
