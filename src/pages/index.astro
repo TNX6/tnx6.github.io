@@ -4,10 +4,10 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const metadata = {
-  title: 'TNX6 — مجتمع البث والتحديات',
+  title: 'TNX6 — Streamer Hub',
   ignoreTitleTemplate: true,
   description:
-    'مركز مجتمع TNX6: البث، جدول البث، الأوامر، الترتيب، الأغراض، البدجات، الرسمات، والفائزين.',
+    'موقع TNX6 الرسمي: البث، جدول البث، الأوامر، الترتيب، الأغراض، البدجات، الرسمات، والفائزين.',
 }
 
 const fanArtDir = path.join(process.cwd(), 'public', 'FANART')
@@ -31,13 +31,13 @@ const scheduleItems = [
     day: 6,
     name: 'السبت',
     time: '9:00 م',
-    description: 'قصص ألعاب + سوالف',
+    description: 'قصص وسوالف',
   },
   {
     day: 0,
     name: 'الأحد',
     time: '9:00 م',
-    description: 'رعب / تجربة لعبة',
+    description: 'رعب وتجارب',
   },
   {
     day: 2,
@@ -49,66 +49,47 @@ const scheduleItems = [
     day: 3,
     name: 'الأربعاء',
     time: '9:00 م',
-    description: 'بث مفتوح / ألعاب',
+    description: 'بث مفتوح',
   },
 ]
 
-const quickLinks = [
+const shortcuts = [
   {
     title: 'الأوامر',
-    description: 'كل أوامر الشات المهمة في مكان واحد.',
+    description: 'كل أوامر الشات.',
     href: '/commands',
     icon: 'tabler:terminal-2',
   },
   {
     title: 'الترتيب',
-    description: 'شوف المتصدرين في النقاط والذهب والمشاهدة.',
+    description: 'النقاط، الذهب، والمشاهدة.',
     href: '/leaderboards',
     icon: 'tabler:trophy',
   },
   {
     title: 'الأغراض',
-    description: 'تعرف على أغراض المجتمع والصناديق والجوائز.',
+    description: 'الصناديق وأغراض المجتمع.',
     href: '/items',
     icon: 'tabler:backpack',
   },
   {
     title: 'البدجات',
-    description: 'استعرض البدجات النادرة والقابلة للفتح.',
+    description: 'الشارات والإنجازات.',
     href: '/badges',
     icon: 'tabler:badge',
   },
   {
-    title: 'معرض الرسمات',
-    description: 'رسمات المجتمع والمشاركات الفنية.',
+    title: 'الرسمات',
+    description: 'إبداعات المجتمع.',
     href: '/fan-art',
     icon: 'tabler:photo',
   },
   {
     title: 'الفائزون',
-    description: 'أسماء تركت بصمة في مجتمع TNX6.',
+    description: 'أسماء لها بصمة.',
     href: '/winners',
     icon: 'tabler:crown',
   },
-]
-
-const quickCommands = [
-  { command: '!بريد', description: 'افتح بريدك ورسائلك.' },
-  { command: '!حقيبة', description: 'شوف أغراضك.' },
-  { command: '!ترتيب', description: 'اعرف مركزك.' },
-  { command: '!بادج', description: 'اعرض بدجاتك.' },
-  { command: '!هدية', description: 'أرسل نقاط أو غرض.' },
-]
-
-const communitySystems = [
-  'نظام نقاط',
-  'حقيبة وأغراض',
-  'صناديق وجوائز',
-  'بدجات نادرة',
-  'بريد وهدايا',
-  'تحديات الشات',
-  'VIP مؤقت',
-  'ليدربورد',
 ]
 
 const socialLinks = [
@@ -142,21 +123,25 @@ const socialLinks = [
 
 <Layout metadata={metadata}>
   <main class="min-h-screen bg-black text-white">
-    <section class="relative overflow-hidden px-6 py-24">
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,218,106,0.18),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(194,146,0,0.13),transparent_38%)]"></div>
-      <div class="absolute inset-0 bg-black/60"></div>
+    <section class="relative overflow-hidden px-6 py-24 md:py-28">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,218,106,0.16),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(194,146,0,0.12),transparent_38%)]"></div>
+      <div class="absolute inset-0 bg-black/65"></div>
 
-      <div class="relative mx-auto grid max-w-7xl items-center gap-12 text-center md:grid-cols-2 md:text-right" dir="rtl">
+      <div
+        class="relative mx-auto grid max-w-7xl items-center gap-12 text-center md:grid-cols-2 md:text-right"
+        dir="rtl"
+      >
         <div class="relative flex justify-center md:order-2">
           <div class="tnx-avatar-animation group relative w-full max-w-sm">
             <img
               id="random-fanart-image-top"
               src="/assets/images/tnx-min.jpg"
-              alt="TNX6 Fan Art"
+              alt="TNX6"
               class="aspect-square w-full rounded-full border-2 border-[#ffda6a]/80 object-cover shadow-lg transition-transform duration-500 group-hover:scale-105"
               width="400"
               height="400"
             />
+
             <div class="pointer-events-none absolute inset-0 rounded-full opacity-80 shadow-[0_0_20px_#ffda6a,0_0_52px_#c29200]"></div>
           </div>
         </div>
@@ -167,10 +152,9 @@ const socialLinks = [
           </p>
 
           <h1 class="mb-6 text-5xl font-extrabold leading-tight tracking-wide text-white drop-shadow-lg md:text-6xl">
-            بثوث قصص، رعب، سوالف
+            مو مجرد بث.
             <br />
             <span class="text-[#ffda6a] glow-text">
-              و
               <span
                 id="changing-title"
                 class="border-l-4 border-[#ffda6a] pl-1"
@@ -180,8 +164,8 @@ const socialLinks = [
           </h1>
 
           <p class="mx-auto mb-10 max-w-xl text-lg leading-relaxed text-gray-200 md:mx-0">
-            موقع TNX6 هو مركز المجتمع: تابع البث، شوف الجدول، اعرف الأوامر،
-            تابع الترتيب، واستكشف الأغراض والبدجات والرسمات.
+            قصص، رعب، سوالف، وتحديات مجتمع. هنا تلقى كل شيء يخص TNX6:
+            البث، الجدول، الأوامر، الترتيب، الأغراض، البدجات، والرسمات.
           </p>
 
           <div class="flex flex-wrap justify-center gap-4 md:justify-start">
@@ -191,21 +175,21 @@ const socialLinks = [
               rel="noopener noreferrer"
               class="rounded-lg bg-gradient-to-r from-[#ffda6a] to-[#c29200] px-8 py-3 font-semibold text-black shadow-lg shadow-[#c29200]/30 transition hover:opacity-90"
             >
-              شاهد البث الآن
+              شاهد البث
             </a>
 
             <a
-              href="#majlis"
+              href="#stream"
               class="rounded-lg border border-[#c29200] px-8 py-3 text-[#ffda6a] transition hover:bg-[#c29200]/10"
             >
-              ادخل مجلس TNX6
+              جدول البث
             </a>
 
             <a
               href="/links"
               class="rounded-lg border border-white/15 px-8 py-3 text-gray-200 transition hover:border-[#c29200]/70 hover:text-[#ffda6a]"
             >
-              كل الروابط
+              الروابط
             </a>
           </div>
 
@@ -229,9 +213,12 @@ const socialLinks = [
       </div>
     </section>
 
-    <section class="relative border-y border-[#c29200]/10 bg-black/85 px-6 py-20 text-center">
+    <section
+      id="stream"
+      class="relative border-y border-[#c29200]/10 bg-black/85 px-6 py-20 text-center"
+    >
       <div class="mx-auto max-w-5xl">
-        <div class="mb-4 flex justify-center">
+        <div class="mb-5 flex justify-center">
           <div
             id="next-stream-wrapper"
             class="inline-flex flex-wrap items-center justify-center gap-3 rounded-full border border-[#c29200]/70 bg-black/70 px-5 py-2 text-xs shadow-[0_0_25px_rgba(0,0,0,0.7)] md:text-sm"
@@ -244,7 +231,7 @@ const socialLinks = [
             </span>
 
             <span id="next-stream-label" class="text-[13px] text-slate-100 md:text-sm">
-              البث القادم خلال
+              موعد البث القادم
             </span>
 
             <span class="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#c29200]/70 bg-black/60 text-[12px] text-[#ffda6a]">
@@ -252,10 +239,6 @@ const socialLinks = [
             </span>
           </div>
         </div>
-
-        <p class="mb-6 text-xs text-gray-500">
-          حالة البث هنا محسوبة حسب جدول البث. الحالة الفعلية تكون من Twitch.
-        </p>
 
         <div class="mx-auto aspect-video w-full max-w-4xl overflow-hidden rounded-2xl border border-[#c29200]/40 shadow-2xl">
           <iframe
@@ -309,47 +292,24 @@ const socialLinks = [
       </div>
     </section>
 
-    <section id="majlis" class="relative bg-black px-6 py-24">
+    <section class="relative bg-black px-6 py-24">
       <div class="mx-auto max-w-6xl" dir="rtl">
         <div class="mb-10 text-center">
           <p class="mb-3 text-sm font-semibold tracking-[0.25em] text-[#c29200]">
-            COMMUNITY HUB
+            TNX6 HUB
           </p>
 
-          <h2 class="heading-gold-glow mb-3 text-4xl font-extrabold text-[#ffda6a]">
-            مجلس TNX6
+          <h2 class="heading-gold-glow mb-3 text-3xl font-extrabold text-[#ffda6a] md:text-4xl">
+            استكشف الموقع
           </h2>
 
           <p class="mx-auto max-w-2xl text-gray-300">
-            هنا تلقى الأوامر، الترتيب، الأغراض، البدجات، والرسمات. كل بث يعطيك فرصة
-            تكسب، تتحدى، وتطلع باسمك داخل المجتمع.
-          </p>
-        </div>
-
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {communitySystems.map((system) => (
-            <div class="rounded-2xl border border-[#c29200]/20 bg-[#080808] px-5 py-4 text-center text-sm font-semibold text-gray-200 shadow-[0_0_18px_rgba(0,0,0,0.35)]">
-              {system}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section class="relative bg-black/90 px-6 py-24">
-      <div class="mx-auto max-w-6xl" dir="rtl">
-        <div class="mb-10 text-center">
-          <h2 class="heading-gold-glow mb-3 text-3xl font-bold text-[#ffda6a]">
-            وش تقدر تسوي بالموقع؟
-          </h2>
-
-          <p class="mx-auto max-w-2xl text-gray-300">
-            الموقع مو صفحة روابط فقط. هذا مدخل لكل أنظمة مجتمع TNX6.
+            اختصارات سريعة لأهم صفحات المجتمع.
           </p>
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {quickLinks.map((card) => (
+          {shortcuts.map((card) => (
             <a
               href={card.href}
               class="group rounded-2xl border border-[#c29200]/20 bg-[#080808] p-5 text-right transition hover:-translate-y-1 hover:border-[#c29200]/70 hover:shadow-[0_0_22px_rgba(194,146,0,0.25)]"
@@ -371,44 +331,7 @@ const socialLinks = [
       </div>
     </section>
 
-    <section class="relative border-y border-[#c29200]/10 bg-black/80 px-6 py-20">
-      <div class="mx-auto max-w-5xl" dir="rtl">
-        <div class="mb-8 flex flex-col items-center justify-between gap-4 text-center md:flex-row md:text-right">
-          <div>
-            <h2 class="heading-gold-glow mb-2 text-3xl font-bold text-[#ffda6a]">
-              أوامر سريعة
-            </h2>
-
-            <p class="text-gray-400">
-              أهم أوامر الشات للمشاهد الجديد.
-            </p>
-          </div>
-
-          <a
-            href="/commands"
-            class="rounded-lg border border-[#c29200] px-5 py-3 text-sm text-[#ffda6a] transition hover:bg-[#c29200]/10"
-          >
-            عرض كل الأوامر
-          </a>
-        </div>
-
-        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {quickCommands.map((item) => (
-            <div class="rounded-2xl border border-white/10 bg-[#090909] p-4 text-center">
-              <div class="mb-2 font-mono text-lg font-bold text-[#ffda6a]" dir="ltr">
-                {item.command}
-              </div>
-
-              <p class="text-sm text-gray-400">
-                {item.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section class="relative bg-black/85 px-6 py-24">
+    <section class="relative border-y border-[#c29200]/10 bg-black/85 px-6 py-24">
       <div class="mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-2">
         <div class="relative">
           <img
@@ -427,58 +350,64 @@ const socialLinks = [
         </div>
 
         <div dir="rtl">
+          <p class="mb-3 text-sm font-semibold tracking-[0.25em] text-[#c29200]">
+            ABOUT
+          </p>
+
           <h2 class="heading-gold-glow mb-6 text-3xl font-bold text-[#ffda6a]">
-            من أنا؟
+            مين TNX6؟
           </h2>
 
           <p class="mb-8 text-lg leading-relaxed text-gray-200">
-            <strong class="heading-gold-glow text-[#ffda6a]">TNX6</strong>
             ستريمر عربي يقدم بثوث تجمع بين القصص، الرعب، السوالف، وتحديات المجتمع.
-            الفكرة مو بس إنك تشاهد بث؛ الفكرة إنك تكون جزء من نظام كامل داخل المجتمع.
+            الموقع هذا معمول عشان يكون مدخل واضح لكل شيء يصير حول البث.
           </p>
 
-          <ul class="space-y-4 text-gray-300">
-            <li class="flex items-start gap-3">
+          <div class="grid gap-3 sm:grid-cols-3">
+            <div class="rounded-2xl border border-white/10 bg-[#090909] p-4 text-center">
               <iconify-icon
-                icon="tabler:bolt"
-                class="mt-1 text-xl text-[#c29200]"
+                icon="tabler:message-circle"
+                class="mb-2 text-2xl text-[#ffda6a]"
               ></iconify-icon>
+              <div class="text-sm font-semibold text-gray-200">
+                سوالف
+              </div>
+            </div>
 
-              <span>بثوث تفاعلية فيها أنظمة وألعاب وتحديات مرتبطة بالشات.</span>
-            </li>
-
-            <li class="flex items-start gap-3">
+            <div class="rounded-2xl border border-white/10 bg-[#090909] p-4 text-center">
               <iconify-icon
-                icon="tabler:medal"
-                class="mt-1 text-xl text-[#c29200]"
+                icon="tabler:ghost-2"
+                class="mb-2 text-2xl text-[#ffda6a]"
               ></iconify-icon>
+              <div class="text-sm font-semibold text-gray-200">
+                رعب
+              </div>
+            </div>
 
-              <span>أغراض، صناديق، بدجات، وترتيب يخلي وجودك بالبث له قيمة.</span>
-            </li>
-
-            <li class="flex items-start gap-3">
+            <div class="rounded-2xl border border-white/10 bg-[#090909] p-4 text-center">
               <iconify-icon
                 icon="tabler:users"
-                class="mt-1 text-xl text-[#c29200]"
+                class="mb-2 text-2xl text-[#ffda6a]"
               ></iconify-icon>
-
-              <span>مجتمع عربي تفاعلي، مو مجرد شات عابر.</span>
-            </li>
-          </ul>
+              <div class="text-sm font-semibold text-gray-200">
+                مجتمع
+              </div>
+            </div>
+          </div>
 
           <div class="mt-8 flex flex-wrap gap-3">
             <a
               href="/fan-art"
               class="inline-flex rounded-lg border border-[#c29200] px-6 py-3 text-[#ffda6a] transition hover:bg-[#c29200]/10"
             >
-              شاهد معرض الرسمات
+              معرض الرسمات
             </a>
 
             <a
               href="/winners"
               class="inline-flex rounded-lg border border-white/15 px-6 py-3 text-gray-200 transition hover:border-[#c29200]/70 hover:text-[#ffda6a]"
             >
-              شوف الفائزين
+              الفائزون
             </a>
           </div>
         </div>
@@ -590,7 +519,7 @@ const socialLinks = [
   </style>
 
   <script>
-    const titles = ['تفاعل المجتمع', 'تحديات الشات', 'بثوث رعب', 'قصص ألعاب']
+    const titles = ['قصص ورعب', 'سوالف وتحديات', 'مجتمع داخل القصة']
     const titleElement = document.getElementById('changing-title')
 
     let currentTitleIndex = 0
@@ -712,10 +641,14 @@ const socialLinks = [
         const now = new Date()
 
         if (isInStreamWindow(now)) {
-          timerEl.textContent = 'البث شغّال الآن'
+          timerEl.textContent = 'البث غالبًا شغّال الآن'
           timerEl.classList.remove('font-mono')
           timerEl.classList.add('font-bold', 'tnx-live-glow')
-          labelEl && (labelEl.textContent = 'ادخل البث')
+
+          if (labelEl) {
+            labelEl.textContent = 'حسب الجدول'
+          }
+
           wrapperEl?.classList.add('ring-1', 'ring-yellow-400/60')
           return
         }
@@ -724,7 +657,11 @@ const socialLinks = [
 
         if (!next) {
           timerEl.textContent = '-- : -- : --'
-          labelEl && (labelEl.textContent = 'البث القادم خلال')
+
+          if (labelEl) {
+            labelEl.textContent = 'موعد البث القادم'
+          }
+
           resetLiveStyles()
           return
         }
@@ -741,10 +678,11 @@ const socialLinks = [
           ' : ' +
           String(s).padStart(2, '0')
 
-        labelEl &&
-          (labelEl.textContent = isStreamDay(now)
-            ? 'البث القادم خلال'
-            : 'اليوم ما فيه بث - البث القادم بعد')
+        if (labelEl) {
+          labelEl.textContent = isStreamDay(now)
+            ? 'موعد البث القادم'
+            : 'البث القادم حسب الجدول'
+        }
 
         resetLiveStyles()
       }
