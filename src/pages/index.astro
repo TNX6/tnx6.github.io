@@ -4,19 +4,14 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const metadata = {
-  title: 'TNX6 — Streamer Hub',
+  title: 'TNX6 — مجتمع البث والتحديات',
   ignoreTitleTemplate: true,
-  description:
-    'موقع TNX6 الرسمي: البث، جدول البث، الأوامر، الترتيب، الأغراض، البدجات، الرسمات، والفائزين.',
+  description: 'مركز مجتمع TNX6: البث، جدول البث، الأوامر، الترتيب، الأغراض، البدجات، الرسمات، والفائزين.',
 }
 
 const fanArtDir = path.join(process.cwd(), 'public', 'FANART')
-
 const fanArtImages = fs.existsSync(fanArtDir)
-  ? fs
-      .readdirSync(fanArtDir)
-      .filter((file) => /\.(png|jpe?g|webp|gif)$/i.test(file))
-      .map((file) => `/FANART/${file}`)
+  ? fs.readdirSync(fanArtDir).filter((file) => /\.(png|jpe?g|webp|gif)$/i.test(file)).map((file) => `/FANART/${file}`)
   : []
 
 const streamConfig = {
@@ -27,220 +22,146 @@ const streamConfig = {
 }
 
 const scheduleItems = [
-  {
-    day: 6,
-    name: 'السبت',
-    time: '9:00 م',
-    description: 'قصص وسوالف',
-  },
-  {
-    day: 0,
-    name: 'الأحد',
-    time: '9:00 م',
-    description: 'رعب وتجارب',
-  },
-  {
-    day: 2,
-    name: 'الثلاثاء',
-    time: '9:00 م',
-    description: 'تحديات المجتمع',
-  },
-  {
-    day: 3,
-    name: 'الأربعاء',
-    time: '9:00 م',
-    description: 'بث مفتوح',
-  },
+  { day: 6, name: 'السبت',    time: '9:00 م', description: 'قصص ألعاب + سوالف', icon: '🎮' },
+  { day: 0, name: 'الأحد',    time: '9:00 م', description: 'رعب / تجربة لعبة',   icon: '👻' },
+  { day: 2, name: 'الثلاثاء', time: '9:00 م', description: 'تحديات المجتمع',     icon: '⚔️' },
+  { day: 3, name: 'الأربعاء', time: '9:00 م', description: 'بث مفتوح / ألعاب',  icon: '🎲' },
 ]
 
-const shortcuts = [
-  {
-    title: 'الأوامر',
-    description: 'كل أوامر الشات.',
-    href: '/commands',
-    icon: 'tabler:terminal-2',
-  },
-  {
-    title: 'الترتيب',
-    description: 'النقاط، الذهب، والمشاهدة.',
-    href: '/leaderboards',
-    icon: 'tabler:trophy',
-  },
-  {
-    title: 'الأغراض',
-    description: 'الصناديق وأغراض المجتمع.',
-    href: '/items',
-    icon: 'tabler:backpack',
-  },
-  {
-    title: 'البدجات',
-    description: 'الشارات والإنجازات.',
-    href: '/badges',
-    icon: 'tabler:badge',
-  },
-  {
-    title: 'الرسمات',
-    description: 'إبداعات المجتمع.',
-    href: '/fan-art',
-    icon: 'tabler:photo',
-  },
-  {
-    title: 'الفائزون',
-    description: 'أسماء لها بصمة.',
-    href: '/winners',
-    icon: 'tabler:crown',
-  },
+const features = [
+  { icon: '🏆', title: 'نظام نقاط وذهب',  desc: 'كل دقيقة تشاهد تكسب نقاط وذهب تقدر تصرفه.' },
+  { icon: '🎒', title: 'حقيبة وأغراض',     desc: 'اشتري أغراض، افتح صناديق، واستخدمها بالشات.' },
+  { icon: '🥇', title: 'بدجات نادرة',      desc: 'حصّل بدجات من التحديات وأطول مشاهدة.' },
+  { icon: '📬', title: 'بريد وهدايا',      desc: 'رسائل خاصة وهدايا بين أعضاء المجتمع.' },
+  { icon: '⚔️', title: 'تحديات الشات',     desc: 'تحديات تنافسية مباشرة أثناء البث.' },
+  { icon: '👑', title: 'VIP وألقاب',       desc: 'اشتري VIP مؤقت أو لقب مخصص للشات.' },
 ]
 
 const socialLinks = [
-  {
-    href: 'https://www.twitch.tv/tnx_6',
-    label: 'Twitch',
-    icon: 'tabler:brand-twitch',
-  },
-  {
-    href: 'https://kick.com/tnx6',
-    label: 'Kick',
-    icon: 'tabler:letter-k',
-  },
-  {
-    href: 'https://www.youtube.com/@TNX66',
-    label: 'YouTube',
-    icon: 'tabler:brand-youtube',
-  },
-  {
-    href: 'https://www.tiktok.com/@itstnx',
-    label: 'TikTok',
-    icon: 'tabler:brand-tiktok',
-  },
-  {
-    href: 'https://discord.gg/x7FtrfM6Sk',
-    label: 'Discord',
-    icon: 'tabler:brand-discord',
-  },
+  { href: 'https://www.twitch.tv/tnx_6',   label: 'Twitch',  icon: 'tabler:brand-twitch'  },
+  { href: 'https://kick.com/tnx6',          label: 'Kick',    icon: 'tabler:letter-k'       },
+  { href: 'https://www.youtube.com/@TNX66', label: 'YouTube', icon: 'tabler:brand-youtube' },
+  { href: 'https://www.tiktok.com/@itstnx', label: 'TikTok',  icon: 'tabler:brand-tiktok'  },
+  { href: 'https://discord.gg/x7FtrfM6Sk',  label: 'Discord', icon: 'tabler:brand-discord' },
+]
+
+const quickLinks = [
+  { title: 'الأوامر',       href: '/commands',     icon: 'tabler:terminal-2', desc: 'كل أوامر الشات'      },
+  { title: 'الترتيب',       href: '/leaderboards', icon: 'tabler:trophy',     desc: 'من الأعلى نقاطاً؟'   },
+  { title: 'الأغراض',       href: '/items',        icon: 'tabler:backpack',   desc: 'الأغراض والصناديق'   },
+  { title: 'البدجات',       href: '/badges',       icon: 'tabler:badge',      desc: 'البدجات النادرة'     },
+  { title: 'معرض الرسمات',  href: '/fan-art',      icon: 'tabler:photo',      desc: 'رسمات المجتمع'       },
+  { title: 'الفائزون',      href: '/winners',      icon: 'tabler:crown',      desc: 'أبطال TNX6'          },
 ]
 ---
 
 <Layout metadata={metadata}>
-  <main class="min-h-screen bg-black text-white">
-    <section class="relative overflow-hidden px-6 py-24 md:py-28">
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,218,106,0.16),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(194,146,0,0.12),transparent_38%)]"></div>
-      <div class="absolute inset-0 bg-black/65"></div>
+  <main class="min-h-screen bg-[#050505] text-white">
 
-      <div
-        class="relative mx-auto grid max-w-7xl items-center gap-12 text-center md:grid-cols-2 md:text-right"
-        dir="rtl"
-      >
-        <div class="relative flex justify-center md:order-2">
-          <div class="tnx-avatar-animation group relative w-full max-w-sm">
-            <img
-              id="random-fanart-image-top"
-              src="/assets/images/tnx-min.jpg"
-              alt="TNX6"
-              class="aspect-square w-full rounded-full border-2 border-[#ffda6a]/80 object-cover shadow-lg transition-transform duration-500 group-hover:scale-105"
-              width="400"
-              height="400"
-            />
+    <section class="hero-section relative min-h-screen overflow-hidden flex items-center">
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_60%_40%,rgba(255,218,106,0.10),transparent),radial-gradient(ellipse_50%_50%_at_10%_80%,rgba(194,146,0,0.08),transparent)]"></div>
+      <div class="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#c29200]/60 to-transparent"></div>
 
-            <div class="pointer-events-none absolute inset-0 rounded-full opacity-80 shadow-[0_0_20px_#ffda6a,0_0_52px_#c29200]"></div>
-          </div>
-        </div>
+      <div class="relative mx-auto w-full max-w-7xl px-6 py-32">
+        <div class="grid md:grid-cols-2 gap-16 items-center" dir="rtl">
 
-        <div class="md:order-1">
-          <p class="mb-3 text-sm font-semibold tracking-[0.35em] text-[#ffda6a] md:text-base">
-            TNX6
-          </p>
+          <div class="md:order-1 flex flex-col gap-6">
+            <div class="flex justify-center md:justify-start">
+              <span class="inline-flex items-center gap-2 rounded-full border border-[#c29200]/50 bg-[#c29200]/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-[#ffda6a]">
+                <span class="h-1.5 w-1.5 rounded-full bg-[#ffda6a] animate-pulse"></span>
+                TWITCH STREAMER
+              </span>
+            </div>
 
-          <h1 class="mb-6 text-5xl font-extrabold leading-tight tracking-wide text-white drop-shadow-lg md:text-6xl">
-            مو مجرد بث.
-            <br />
-            <span class="text-[#ffda6a] glow-text">
-              <span
-                id="changing-title"
-                class="border-l-4 border-[#ffda6a] pl-1"
-                dir="rtl"
-              ></span>
-            </span>
-          </h1>
+            <h1 class="text-5xl md:text-6xl xl:text-7xl font-extrabold leading-[1.1] tracking-tight">
+              <span class="text-white">بثوث</span>
+              <span class="hero-gold-text"> قصص،</span>
+              <br />
+              <span class="text-white">رعب،</span>
+              <span class="hero-gold-text"> سوالف</span>
+              <br />
+              <span class="text-white text-4xl md:text-5xl">و</span>
+              <span id="changing-title" class="hero-gold-text text-4xl md:text-5xl border-l-4 border-[#ffda6a] pl-2" dir="rtl"></span>
+            </h1>
 
-          <p class="mx-auto mb-10 max-w-xl text-lg leading-relaxed text-gray-200 md:mx-0">
-            قصص، رعب، سوالف، وتحديات مجتمع. هنا تلقى كل شيء يخص TNX6:
-            البث، الجدول، الأوامر، الترتيب، الأغراض، البدجات، والرسمات.
-          </p>
+            <p class="text-lg text-gray-300 leading-relaxed max-w-lg">
+              ما تجي تشاهد بث فقط — تجي تكون جزء من مجتمع عنده نقاط، أغراض، بدجات، تحديات، وترتيب.
+            </p>
 
-          <div class="flex flex-wrap justify-center gap-4 md:justify-start">
-            <a
-              href="https://www.twitch.tv/tnx_6"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="rounded-lg bg-gradient-to-r from-[#ffda6a] to-[#c29200] px-8 py-3 font-semibold text-black shadow-lg shadow-[#c29200]/30 transition hover:opacity-90"
-            >
-              شاهد البث
-            </a>
-
-            <a
-              href="#stream"
-              class="rounded-lg border border-[#c29200] px-8 py-3 text-[#ffda6a] transition hover:bg-[#c29200]/10"
-            >
-              جدول البث
-            </a>
-
-            <a
-              href="/links"
-              class="rounded-lg border border-white/15 px-8 py-3 text-gray-200 transition hover:border-[#c29200]/70 hover:text-[#ffda6a]"
-            >
-              الروابط
-            </a>
-          </div>
-
-          <div class="mt-8 flex justify-center gap-4 md:justify-start">
-            {socialLinks.map((link) => (
-              <a
-                href={link.href}
+            <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+              
+                href="https://www.twitch.tv/tnx_6"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={link.label}
-                class="social-icon"
+                class="btn-primary group flex items-center gap-2 rounded-xl px-7 py-3.5 font-bold text-black transition-all"
               >
-                <iconify-icon
-                  icon={link.icon}
-                  class="text-3xl text-gray-400 transition hover:text-[#ffda6a]"
-                ></iconify-icon>
+                <iconify-icon icon="tabler:brand-twitch" class="text-xl"></iconify-icon>
+                شاهد البث الآن
               </a>
-            ))}
+              
+                href="#stream"
+                class="rounded-xl border border-[#c29200]/60 px-7 py-3.5 font-semibold text-[#ffda6a] transition hover:bg-[#c29200]/10"
+              >
+                شوف الجدول
+              </a>
+              
+                href="#community"
+                class="rounded-xl border border-white/10 px-7 py-3.5 font-semibold text-gray-300 transition hover:border-[#c29200]/40 hover:text-[#ffda6a]"
+              >
+                عن المجتمع
+              </a>
+            </div>
+
+            <div class="flex gap-4 justify-center md:justify-start mt-2">
+              {socialLinks.map((link) => (
+                
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={link.label}
+                  class="social-btn flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-gray-400 transition hover:border-[#c29200]/60 hover:text-[#ffda6a]"
+                >
+                  <iconify-icon icon={link.icon} class="text-xl"></iconify-icon>
+                </a>
+              ))}
+            </div>
           </div>
+
+          <div class="md:order-2 flex justify-center">
+            <div class="avatar-wrapper relative w-72 h-72 md:w-96 md:h-96 xl:w-[420px] xl:h-[420px]">
+              <div class="ring ring-1"></div>
+              <div class="ring ring-2"></div>
+              <div class="ring ring-3"></div>
+              <img
+                id="random-fanart-image-top"
+                src="/assets/images/tnx-min.jpg"
+                alt="TNX6"
+                class="avatar-img relative z-10 w-full h-full rounded-full object-cover border-2 border-[#ffda6a]/70"
+              />
+              <div class="avatar-glow absolute inset-0 rounded-full"></div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
 
-    <section
-      id="stream"
-      class="relative border-y border-[#c29200]/10 bg-black/85 px-6 py-20 text-center"
-    >
+    <section id="stream" class="relative border-t border-[#c29200]/10 bg-black px-6 py-20">
       <div class="mx-auto max-w-5xl">
-        <div class="mb-5 flex justify-center">
+
+        <div class="mb-8 flex justify-center">
           <div
             id="next-stream-wrapper"
-            class="inline-flex flex-wrap items-center justify-center gap-3 rounded-full border border-[#c29200]/70 bg-black/70 px-5 py-2 text-xs shadow-[0_0_25px_rgba(0,0,0,0.7)] md:text-sm"
+            class="inline-flex items-center gap-3 rounded-full border border-[#c29200]/60 bg-[#0a0a0a] px-6 py-2.5 shadow-[0_0_30px_rgba(194,146,0,0.15)]"
           >
-            <span
-              id="next-stream-timer"
-              class="font-mono text-sm font-semibold text-[#ffda6a] md:text-base"
-            >
-              -- : -- : --
-            </span>
-
-            <span id="next-stream-label" class="text-[13px] text-slate-100 md:text-sm">
-              موعد البث القادم
-            </span>
-
-            <span class="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#c29200]/70 bg-black/60 text-[12px] text-[#ffda6a]">
-              🎥
-            </span>
+            <span class="h-2 w-2 rounded-full bg-[#ffda6a] animate-pulse"></span>
+            <span id="next-stream-label" class="text-sm text-gray-300">البث القادم خلال</span>
+            <span id="next-stream-timer" class="font-mono text-lg font-bold text-[#ffda6a]">-- : -- : --</span>
+            <span class="text-base">🎥</span>
           </div>
         </div>
 
-        <div class="mx-auto aspect-video w-full max-w-4xl overflow-hidden rounded-2xl border border-[#c29200]/40 shadow-2xl">
+        <div class="mx-auto aspect-video w-full max-w-4xl overflow-hidden rounded-2xl border border-[#c29200]/30 shadow-[0_0_60px_rgba(194,146,0,0.12)]">
           <iframe
             src="https://player.twitch.tv/?channel=tnx_6&parent=tnx6.xyz&parent=www.tnx6.xyz&parent=tnx6.github.io"
             allowfullscreen
@@ -252,306 +173,303 @@ const socialLinks = [
           ></iframe>
         </div>
 
-        <div class="mx-auto mt-10 w-full max-w-5xl" dir="rtl">
-          <div class="rounded-3xl border border-[#c29200]/40 bg-black/70 px-5 py-4 shadow-[0_0_25px_rgba(0,0,0,0.65)] md:px-8 md:py-6">
-            <div class="mb-4 flex items-center justify-center">
-              <div class="flex items-center gap-2 text-sm md:text-base">
-                <iconify-icon
-                  icon="tabler:calendar-time"
-                  class="text-lg text-[#ffda6a] md:text-xl"
-                ></iconify-icon>
+        <div class="mt-10" dir="rtl">
+          <div class="mb-5 flex items-center gap-3 justify-center">
+            <iconify-icon icon="tabler:calendar-time" class="text-2xl text-[#ffda6a]"></iconify-icon>
+            <h2 class="text-xl font-bold text-[#ffda6a] heading-gold-glow">جدول البث الأسبوعي</h2>
+          </div>
 
-                <h2 class="heading-gold-glow text-base font-bold text-[#ffda6a] md:text-lg">
-                  جدول البث الأسبوعي
-                </h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {scheduleItems.map((item) => (
+              <div
+                class="tnx-schedule-card group relative overflow-hidden rounded-2xl border border-[#c29200]/15 p-5 text-center transition-all"
+                data-schedule-day={item.day}
+              >
+                <div class="mb-2 text-2xl">{item.icon}</div>
+                <div class="text-base font-bold text-white">{item.name}</div>
+                <div class="mt-1 text-sm font-semibold text-[#ffda6a]">{item.time}</div>
+                <div class="mt-1 text-xs text-gray-400 leading-relaxed">{item.description}</div>
               </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-              {scheduleItems.map((item) => (
-                <div
-                  class="tnx-schedule-card flex min-h-[125px] flex-col items-center justify-center gap-2 rounded-2xl border border-[#c29200]/15 px-4 py-4 text-center text-xs text-gray-200 md:px-5 md:py-5 md:text-sm"
-                  data-schedule-day={item.day}
-                >
-                  <div class="text-sm font-bold text-white md:text-base">
-                    {item.name}
-                  </div>
-
-                  <div class="flex items-center justify-center text-sm font-semibold text-[#ffda6a] md:text-base">
-                    <span>{item.time}</span>
-                  </div>
-
-                  <div class="text-[11px] leading-relaxed text-gray-400 md:text-xs">
-                    {item.description}
-                  </div>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
+
       </div>
     </section>
 
-    <section class="relative bg-black px-6 py-24">
+    <section id="community" class="relative border-t border-[#c29200]/10 bg-[#050505] px-6 py-24">
       <div class="mx-auto max-w-6xl" dir="rtl">
-        <div class="mb-10 text-center">
-          <p class="mb-3 text-sm font-semibold tracking-[0.25em] text-[#c29200]">
-            TNX6 HUB
-          </p>
 
-          <h2 class="heading-gold-glow mb-3 text-3xl font-extrabold text-[#ffda6a] md:text-4xl">
-            استكشف الموقع
+        <div class="mb-14 text-center">
+          <p class="mb-3 text-xs font-bold tracking-[0.4em] text-[#c29200] uppercase">Community Systems</p>
+          <h2 class="heading-gold-glow mb-4 text-4xl font-extrabold text-[#ffda6a]">
+            مجتمع TNX6 مو مجرد شات
           </h2>
-
-          <p class="mx-auto max-w-2xl text-gray-300">
-            اختصارات سريعة لأهم صفحات المجتمع.
+          <p class="mx-auto max-w-2xl text-gray-400 leading-relaxed">
+            كل بث تشاهده يعطيك نقاط، كل تحدي تكمله يعطيك جائزة، وكل غرض تفتحه قد يغير وضعك بالمجتمع.
           </p>
+        </div>
+
+        <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((f) => (
+            <div class="feature-card group relative overflow-hidden rounded-2xl border border-[#c29200]/15 bg-[#080808] p-6 transition-all hover:border-[#c29200]/50 hover:shadow-[0_0_30px_rgba(194,146,0,0.12)]">
+              <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-[#c29200]/25 bg-black text-2xl">
+                {f.icon}
+              </div>
+              <h3 class="mb-2 text-lg font-bold text-white group-hover:text-[#ffda6a] transition-colors">{f.title}</h3>
+              <p class="text-sm leading-relaxed text-gray-400">{f.desc}</p>
+              <div class="absolute bottom-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#c29200]/0 to-transparent transition-all group-hover:via-[#c29200]/60"></div>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </section>
+
+    <section class="relative border-t border-[#c29200]/10 bg-black px-6 py-24">
+      <div class="mx-auto max-w-6xl" dir="rtl">
+
+        <div class="mb-12 text-center">
+          <h2 class="heading-gold-glow mb-3 text-3xl font-extrabold text-[#ffda6a]">
+            وش تبي تسوي؟
+          </h2>
+          <p class="text-gray-400">كل شيء في مكانه — اختار وجه.</p>
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {shortcuts.map((card) => (
-            <a
+          {quickLinks.map((card) => (
+            
               href={card.href}
-              class="group rounded-2xl border border-[#c29200]/20 bg-[#080808] p-5 text-right transition hover:-translate-y-1 hover:border-[#c29200]/70 hover:shadow-[0_0_22px_rgba(194,146,0,0.25)]"
+              class="quick-card group relative overflow-hidden rounded-2xl border border-[#c29200]/15 bg-[#080808] p-6 text-right transition-all hover:-translate-y-1 hover:border-[#c29200]/60 hover:shadow-[0_8px_30px_rgba(194,146,0,0.15)]"
             >
-              <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-[#c29200]/30 bg-black text-[#ffda6a]">
+              <div class="mb-5 flex h-12 w-12 items-center justify-center rounded-xl border border-[#c29200]/25 bg-black text-[#ffda6a] transition-all group-hover:border-[#c29200]/70 group-hover:bg-[#c29200]/10">
                 <iconify-icon icon={card.icon} class="text-2xl"></iconify-icon>
               </div>
-
-              <h3 class="mb-2 text-xl font-bold text-white group-hover:text-[#ffda6a]">
+              <h3 class="mb-1 text-xl font-bold text-white transition-colors group-hover:text-[#ffda6a]">
                 {card.title}
               </h3>
-
-              <p class="text-sm leading-relaxed text-gray-400">
-                {card.description}
-              </p>
+              <p class="text-sm text-gray-400">{card.desc}</p>
+              <div class="absolute left-5 top-1/2 -translate-y-1/2 text-[#ffda6a] opacity-0 transition-all group-hover:opacity-100">
+                <iconify-icon icon="tabler:arrow-left" class="text-xl"></iconify-icon>
+              </div>
             </a>
           ))}
         </div>
+
       </div>
     </section>
 
-    <section class="relative border-y border-[#c29200]/10 bg-black/85 px-6 py-24">
+    <section class="relative border-t border-[#c29200]/10 bg-[#050505] px-6 py-24">
       <div class="mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-2">
-        <div class="relative">
-          <img
-            id="random-fanart-image-bottom"
-            src="/assets/images/tnx-min.jpg"
-            alt="TNX6 Fan Art"
-            class="mx-auto aspect-square w-full max-w-sm rounded-2xl border border-[#c29200]/40 object-cover shadow-lg transition-transform duration-500 hover:scale-105"
-            width="300"
-            height="300"
-            loading="lazy"
-          />
 
-          <div class="mx-auto mt-4 max-w-sm text-center text-sm text-gray-400">
-            من رسم المجتمع
+        <div class="relative flex flex-col items-center gap-4">
+          <div class="relative w-full max-w-sm">
+            <img
+              id="random-fanart-image-bottom"
+              src="/assets/images/tnx-min.jpg"
+              alt="TNX6 Fan Art"
+              class="w-full rounded-2xl border border-[#c29200]/30 object-cover aspect-square shadow-[0_0_40px_rgba(194,146,0,0.10)] transition-transform duration-500 hover:scale-[1.02]"
+              width="400"
+              height="400"
+              loading="lazy"
+            />
+            <div class="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
           </div>
+          <p class="text-sm text-gray-500">رسمة من المجتمع 🎨</p>
+          
+            href="/fan-art"
+            class="rounded-lg border border-[#c29200]/40 px-5 py-2.5 text-sm text-[#ffda6a] transition hover:bg-[#c29200]/10"
+          >
+            شوف كل الرسمات
+          </a>
         </div>
 
         <div dir="rtl">
-          <p class="mb-3 text-sm font-semibold tracking-[0.25em] text-[#c29200]">
-            ABOUT
+          <p class="mb-3 text-xs font-bold tracking-[0.4em] text-[#c29200] uppercase">About TNX6</p>
+          <h2 class="heading-gold-glow mb-6 text-4xl font-extrabold text-[#ffda6a]">من أنا؟</h2>
+
+          <p class="mb-6 text-lg leading-relaxed text-gray-200">
+            <strong class="text-[#ffda6a]">TNX6</strong> — ستريمر عربي يقدم بثوث تجمع القصص، الرعب، والسوالف مع مجتمع تفاعلي حقيقي.
           </p>
 
-          <h2 class="heading-gold-glow mb-6 text-3xl font-bold text-[#ffda6a]">
-            مين TNX6؟
-          </h2>
-
-          <p class="mb-8 text-lg leading-relaxed text-gray-200">
-            ستريمر عربي يقدم بثوث تجمع بين القصص، الرعب، السوالف، وتحديات المجتمع.
-            الموقع هذا معمول عشان يكون مدخل واضح لكل شيء يصير حول البث.
+          <p class="mb-8 text-base leading-relaxed text-gray-400">
+            الفكرة مو بس إنك تشاهد بث — الفكرة إنك تكون جزء من نظام كامل: نقاط، أغراض، تحديات، وترتيب يحدد مكانتك داخل المجتمع.
           </p>
 
-          <div class="grid gap-3 sm:grid-cols-3">
-            <div class="rounded-2xl border border-white/10 bg-[#090909] p-4 text-center">
-              <iconify-icon
-                icon="tabler:message-circle"
-                class="mb-2 text-2xl text-[#ffda6a]"
-              ></iconify-icon>
-              <div class="text-sm font-semibold text-gray-200">
-                سوالف
+          <div class="space-y-4">
+            <div class="flex items-start gap-4 rounded-xl border border-[#c29200]/10 bg-[#080808] p-4">
+              <span class="text-2xl mt-0.5">⚡</span>
+              <div>
+                <div class="font-bold text-white mb-0.5">بثوث تفاعلية</div>
+                <div class="text-sm text-gray-400">أنظمة وألعاب وتحديات مرتبطة بالشات مباشرة.</div>
               </div>
             </div>
-
-            <div class="rounded-2xl border border-white/10 bg-[#090909] p-4 text-center">
-              <iconify-icon
-                icon="tabler:ghost-2"
-                class="mb-2 text-2xl text-[#ffda6a]"
-              ></iconify-icon>
-              <div class="text-sm font-semibold text-gray-200">
-                رعب
+            <div class="flex items-start gap-4 rounded-xl border border-[#c29200]/10 bg-[#080808] p-4">
+              <span class="text-2xl mt-0.5">🏅</span>
+              <div>
+                <div class="font-bold text-white mb-0.5">نظام مكافآت</div>
+                <div class="text-sm text-gray-400">أغراض، صناديق، وبدجات تحصلها بالوقت والتحديات.</div>
               </div>
             </div>
-
-            <div class="rounded-2xl border border-white/10 bg-[#090909] p-4 text-center">
-              <iconify-icon
-                icon="tabler:users"
-                class="mb-2 text-2xl text-[#ffda6a]"
-              ></iconify-icon>
-              <div class="text-sm font-semibold text-gray-200">
-                مجتمع
+            <div class="flex items-start gap-4 rounded-xl border border-[#c29200]/10 bg-[#080808] p-4">
+              <span class="text-2xl mt-0.5">🤝</span>
+              <div>
+                <div class="font-bold text-white mb-0.5">مجتمع عربي حقيقي</div>
+                <div class="text-sm text-gray-400">مو مجرد شات عابر — في ناس تعرفهم وتتنافس معهم.</div>
               </div>
             </div>
           </div>
 
           <div class="mt-8 flex flex-wrap gap-3">
-            <a
-              href="/fan-art"
-              class="inline-flex rounded-lg border border-[#c29200] px-6 py-3 text-[#ffda6a] transition hover:bg-[#c29200]/10"
+            
+              href="https://www.twitch.tv/tnx_6"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-primary rounded-xl px-6 py-3 font-bold text-black transition-all"
             >
-              معرض الرسمات
+              ابدأ الحين
             </a>
-
-            <a
+            
               href="/winners"
-              class="inline-flex rounded-lg border border-white/15 px-6 py-3 text-gray-200 transition hover:border-[#c29200]/70 hover:text-[#ffda6a]"
+              class="rounded-xl border border-white/10 px-6 py-3 text-gray-300 transition hover:border-[#c29200]/40 hover:text-[#ffda6a]"
             >
-              الفائزون
+              شوف الفائزين
             </a>
           </div>
         </div>
+
       </div>
     </section>
+
   </main>
 
   <style>
-    @keyframes float-up-down {
-      0% {
-        transform: translateY(0);
-      }
-
-      50% {
-        transform: translateY(-10px);
-      }
-
-      100% {
-        transform: translateY(0);
-      }
+    .hero-gold-text {
+      background: linear-gradient(135deg, #ffda6a 0%, #c29200 60%, #ffda6a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 12px rgba(255,218,106,0.35));
     }
 
-    .tnx-avatar-animation {
+    .btn-primary {
+      background: linear-gradient(135deg, #ffda6a 0%, #c29200 100%);
+      box-shadow: 0 4px 20px rgba(194,146,0,0.35);
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+      box-shadow: 0 6px 28px rgba(194,146,0,0.50);
+      transform: translateY(-1px);
+    }
+
+    .avatar-wrapper {
       animation: float-up-down 4s ease-in-out infinite;
     }
+    .avatar-img {
+      position: relative;
+      z-index: 10;
+    }
+    .avatar-glow {
+      background: radial-gradient(circle, rgba(255,218,106,0.18) 0%, transparent 70%);
+      animation: glow-pulse 3s ease-in-out infinite;
+      pointer-events: none;
+    }
 
-    .glow-text {
-      text-shadow:
-        0 0 5px rgba(255, 218, 106, 0.7),
-        0 0 15px rgba(194, 146, 0, 0.7);
+    .ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 9999px;
+      border: 1px solid rgba(194,146,0,0.25);
+      animation: ring-expand 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .ring-1 { animation-delay: 0s; }
+    .ring-2 { animation-delay: 0.8s;  transform: scale(1.08); }
+    .ring-3 { animation-delay: 1.6s;  transform: scale(1.16); opacity: 0.4; }
+
+    @keyframes ring-expand {
+      0%, 100% { opacity: 0.5; }
+      50%       { opacity: 1; }
+    }
+    @keyframes float-up-down {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-12px); }
+    }
+    @keyframes glow-pulse {
+      0%, 100% { opacity: 0.6; }
+      50%       { opacity: 1; }
     }
 
     .heading-gold-glow {
       text-shadow:
-        0 0 6px rgba(255, 218, 106, 0.55),
-        0 0 14px rgba(255, 218, 106, 0.35),
-        0 0 24px rgba(194, 146, 0, 0.3);
-    }
-
-    .social-icon:hover iconify-icon {
-      filter: drop-shadow(0 0 4px #ffda6a);
+        0 0 8px rgba(255,218,106,0.55),
+        0 0 20px rgba(255,218,106,0.30),
+        0 0 35px rgba(194,146,0,0.20);
     }
 
     #changing-title {
       animation: cursor-blink 1s step-end infinite;
     }
-
     @keyframes cursor-blink {
-      from,
-      to {
-        border-color: transparent;
-      }
-
-      50% {
-        border-color: #ffda6a;
-      }
+      from, to { border-color: transparent; }
+      50%       { border-color: #ffda6a; }
     }
   </style>
 
   <style is:global>
     .tnx-live-glow {
       color: #fef08a;
-      text-shadow:
-        0 0 5px #facc15,
-        0 0 12px #facc15,
-        0 0 20px #facc15;
+      text-shadow: 0 0 5px #facc15, 0 0 12px #facc15, 0 0 20px #facc15;
       animation: tnx-live-pulse 1.4s ease-in-out infinite;
     }
-
     @keyframes tnx-live-pulse {
-      0%,
-      100% {
-        text-shadow:
-          0 0 4px #facc15,
-          0 0 10px #facc15,
-          0 0 18px #facc15;
-        transform: translateY(0);
-      }
-
-      50% {
-        text-shadow:
-          0 0 8px #fde68a,
-          0 0 18px #facc15,
-          0 0 28px #fbbf24;
-        transform: translateY(-0.5px);
-      }
+      0%, 100% { text-shadow: 0 0 4px #facc15, 0 0 10px #facc15, 0 0 18px #facc15; }
+      50%       { text-shadow: 0 0 8px #fde68a, 0 0 18px #facc15, 0 0 28px #fbbf24; }
     }
 
     .tnx-schedule-card {
-      background: linear-gradient(
-        180deg,
-        rgba(12, 15, 24, 0.96) 0%,
-        rgba(7, 9, 15, 0.98) 100%
-      );
+      background: linear-gradient(160deg, rgba(12,15,24,0.97) 0%, rgba(6,8,14,0.99) 100%);
       backdrop-filter: blur(8px);
       transition: all 0.25s ease;
     }
-
     .tnx-schedule-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(194, 146, 0, 0.35);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      transform: translateY(-4px);
+      border-color: rgba(194,146,0,0.40) !important;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.40);
     }
-
     .tnx-schedule-card--active {
-      border-color: rgba(194, 146, 0, 0.9) !important;
-      box-shadow: 0 0 22px rgba(194, 146, 0, 0.45);
+      border-color: rgba(194,146,0,0.85) !important;
+      box-shadow: 0 0 0 1px rgba(194,146,0,0.3), 0 0 28px rgba(194,146,0,0.35) !important;
+      background: linear-gradient(160deg, rgba(20,18,8,0.97) 0%, rgba(10,9,4,0.99) 100%) !important;
     }
   </style>
 
   <script>
-    const titles = ['قصص ورعب', 'سوالف وتحديات', 'مجتمع داخل القصة']
+    const titles = ['تفاعل المجتمع', 'تحديات الشات', 'بثوث رعب', 'قصص ألعاب']
     const titleElement = document.getElementById('changing-title')
-
-    let currentTitleIndex = 0
-    let charIndex = 0
-    let isDeleting = false
-    let typingSpeed = 100
-    const delayAfterTyping = 1500
+    let currentTitleIndex = 0, charIndex = 0, isDeleting = false, typingSpeed = 100
+    const delayAfterTyping = 1800
 
     function typeWriterEffect() {
       if (!titleElement) return
-
       const currentTitle = titles[currentTitleIndex]
-
       if (isDeleting) {
         titleElement.textContent = currentTitle.substring(0, charIndex - 1)
         charIndex--
-        typingSpeed = 50
+        typingSpeed = 45
       } else {
         titleElement.textContent = currentTitle.substring(0, charIndex + 1)
         charIndex++
         typingSpeed = 100
       }
-
       if (!isDeleting && charIndex === currentTitle.length) {
         isDeleting = true
         typingSpeed = delayAfterTyping
       } else if (isDeleting && charIndex === 0) {
         isDeleting = false
         currentTitleIndex = (currentTitleIndex + 1) % titles.length
-        typingSpeed = 200
+        typingSpeed = 250
       }
-
       window.setTimeout(typeWriterEffect, typingSpeed)
     }
 
@@ -563,128 +481,78 @@ const socialLinks = [
   </script>
 
   <script define:vars={{ streamConfig }}>
-    const STREAM_START_HOUR = streamConfig.startHour
+    const STREAM_START_HOUR   = streamConfig.startHour
     const STREAM_START_MINUTE = streamConfig.startMinute
-    const STREAM_END_HOUR = streamConfig.endHour
-    const STREAM_DAYS = streamConfig.days
+    const STREAM_END_HOUR     = streamConfig.endHour
+    const STREAM_DAYS         = streamConfig.days
 
-    function isStreamDay(date) {
-      return STREAM_DAYS.includes(date.getDay())
-    }
+    function isStreamDay(d) { return STREAM_DAYS.includes(d.getDay()) }
 
     function isInStreamWindow(now) {
-      const today = new Date(now)
-      const yesterday = new Date(now)
-      yesterday.setDate(yesterday.getDate() - 1)
-
       function inWindowFor(dateObj) {
         if (!isStreamDay(dateObj)) return false
-
         const start = new Date(dateObj)
         start.setHours(STREAM_START_HOUR, STREAM_START_MINUTE, 0, 0)
-
         const end = new Date(start)
         end.setDate(end.getDate() + 1)
         end.setHours(STREAM_END_HOUR, 0, 0, 0)
-
         return now >= start && now < end
       }
-
-      return inWindowFor(today) || inWindowFor(yesterday)
+      const yesterday = new Date(now)
+      yesterday.setDate(yesterday.getDate() - 1)
+      return inWindowFor(now) || inWindowFor(yesterday)
     }
 
     function getNextStreamStart(now) {
-      for (let offset = 0; offset < 14; offset++) {
-        const candidateDay = new Date(now)
-        candidateDay.setDate(candidateDay.getDate() + offset)
-
-        if (!isStreamDay(candidateDay)) continue
-
-        const start = new Date(candidateDay)
-        start.setHours(STREAM_START_HOUR, STREAM_START_MINUTE, 0, 0)
-
-        if (start > now) return start
+      for (let i = 0; i < 14; i++) {
+        const d = new Date(now)
+        d.setDate(d.getDate() + i)
+        if (!isStreamDay(d)) continue
+        const s = new Date(d)
+        s.setHours(STREAM_START_HOUR, STREAM_START_MINUTE, 0, 0)
+        if (s > now) return s
       }
-
       return null
     }
 
     function highlightTodayScheduleCard() {
-      const todayDay = new Date().getDay()
-
+      const today = new Date().getDay()
       document.querySelectorAll('.tnx-schedule-card').forEach((card) => {
         card.classList.remove('tnx-schedule-card--active')
-
-        const dayAttr = card.getAttribute('data-schedule-day')
-        if (!dayAttr) return
-
-        if (Number.parseInt(dayAttr, 10) === todayDay) {
+        if (Number.parseInt(card.getAttribute('data-schedule-day') || '-1', 10) === today) {
           card.classList.add('tnx-schedule-card--active')
         }
       })
     }
 
-    function startNextStreamCountdown() {
-      const timerEl = document.getElementById('next-stream-timer')
+    function startCountdown() {
+      const timerEl   = document.getElementById('next-stream-timer')
+      const labelEl   = document.getElementById('next-stream-label')
       const wrapperEl = document.getElementById('next-stream-wrapper')
-      const labelEl = document.getElementById('next-stream-label')
-
       if (!timerEl) return
-
-      function resetLiveStyles() {
-        timerEl.classList.add('font-mono')
-        timerEl.classList.remove('font-bold', 'tnx-live-glow')
-        wrapperEl?.classList.remove('ring-1', 'ring-yellow-400/60')
-      }
 
       function update() {
         const now = new Date()
-
         if (isInStreamWindow(now)) {
-          timerEl.textContent = 'البث غالبًا شغّال الآن'
-          timerEl.classList.remove('font-mono')
-          timerEl.classList.add('font-bold', 'tnx-live-glow')
-
-          if (labelEl) {
-            labelEl.textContent = 'حسب الجدول'
-          }
-
-          wrapperEl?.classList.add('ring-1', 'ring-yellow-400/60')
+          timerEl.textContent = 'البث شغّال الآن'
+          timerEl.classList.add('tnx-live-glow')
+          if (labelEl)   labelEl.textContent = 'ادخل البث'
+          if (wrapperEl) wrapperEl.classList.add('ring-1', 'ring-yellow-400/40')
           return
         }
-
+        timerEl.classList.remove('tnx-live-glow')
+        if (wrapperEl) wrapperEl.classList.remove('ring-1', 'ring-yellow-400/40')
         const next = getNextStreamStart(now)
-
-        if (!next) {
-          timerEl.textContent = '-- : -- : --'
-
-          if (labelEl) {
-            labelEl.textContent = 'موعد البث القادم'
-          }
-
-          resetLiveStyles()
-          return
-        }
-
-        const totalSeconds = Math.max(0, Math.floor((next.getTime() - now.getTime()) / 1000))
-        const h = Math.floor(totalSeconds / 3600)
-        const m = Math.floor((totalSeconds % 3600) / 60)
-        const s = totalSeconds % 60
-
+        if (!next) { timerEl.textContent = '-- : -- : --'; return }
+        const sec = Math.max(0, Math.floor((next.getTime() - now.getTime()) / 1000))
+        const h = Math.floor(sec / 3600)
+        const m = Math.floor((sec % 3600) / 60)
+        const s = sec % 60
         timerEl.textContent =
-          String(h).padStart(2, '0') +
-          ' : ' +
-          String(m).padStart(2, '0') +
-          ' : ' +
+          String(h).padStart(2, '0') + ' : ' +
+          String(m).padStart(2, '0') + ' : ' +
           String(s).padStart(2, '0')
-
-        if (labelEl) {
-          labelEl.textContent = isStreamDay(now)
-            ? 'موعد البث القادم'
-            : 'البث القادم حسب الجدول'
-        }
-
-        resetLiveStyles()
+        if (labelEl) labelEl.textContent = isStreamDay(now) ? 'البث القادم خلال' : 'اليوم ما فيه بث — البث بعد'
       }
 
       update()
@@ -693,58 +561,31 @@ const socialLinks = [
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        startNextStreamCountdown()
+        startCountdown()
         highlightTodayScheduleCard()
       })
     } else {
-      startNextStreamCountdown()
+      startCountdown()
       highlightTodayScheduleCard()
     }
   </script>
 
   <script define:vars={{ fanArtImages }}>
-    const topImg = document.getElementById('random-fanart-image-top')
-    const bottomImg = document.getElementById('random-fanart-image-bottom')
-
-    function getStorageItem(key) {
-      try {
-        return window.localStorage.getItem(key)
-      } catch {
-        return null
-      }
-    }
-
-    function setStorageItem(key, value) {
-      try {
-        window.localStorage.setItem(key, value)
-      } catch {
-        // Ignore storage errors.
-      }
-    }
+    function getItem(k)    { try { return localStorage.getItem(k) }  catch { return null } }
+    function setItem(k, v) { try { localStorage.setItem(k, v) }      catch {} }
 
     if (Array.isArray(fanArtImages) && fanArtImages.length > 0) {
-      const lastImage = getStorageItem('tnx-last-fanart')
-
-      let availableImages = fanArtImages
-
-      if (fanArtImages.length > 1 && lastImage) {
-        availableImages = fanArtImages.filter((image) => image !== lastImage)
-      }
-
-      const randomImage = availableImages[Math.floor(Math.random() * availableImages.length)]
-
-      if (randomImage) {
-        if (topImg) {
-          topImg.setAttribute('src', randomImage)
-          topImg.setAttribute('alt', 'TNX6 Fan Art')
-        }
-
-        if (bottomImg) {
-          bottomImg.setAttribute('src', randomImage)
-          bottomImg.setAttribute('alt', 'TNX6 Fan Art')
-        }
-
-        setStorageItem('tnx-last-fanart', randomImage)
+      const last = getItem('tnx-last-fanart')
+      const pool = (fanArtImages.length > 1 && last)
+        ? fanArtImages.filter((x) => x !== last)
+        : fanArtImages
+      const pick = pool[Math.floor(Math.random() * pool.length)]
+      if (pick) {
+        const top = document.getElementById('random-fanart-image-top')
+        const bot = document.getElementById('random-fanart-image-bottom')
+        if (top) { top.setAttribute('src', pick); top.setAttribute('alt', 'TNX6 Fan Art') }
+        if (bot) { bot.setAttribute('src', pick); bot.setAttribute('alt', 'TNX6 Fan Art') }
+        setItem('tnx-last-fanart', pick)
       }
     }
   </script>
