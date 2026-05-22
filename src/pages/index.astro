@@ -116,10 +116,11 @@ const socialLinks = [
 ---
 
 <Layout metadata={metadata}>
-  <main class="relative min-h-screen overflow-hidden bg-black text-white">
-    <div class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_20%_10%,rgba(255,218,106,0.13),transparent_30%),radial-gradient(circle_at_85%_25%,rgba(194,146,0,0.09),transparent_28%),linear-gradient(180deg,rgba(0,0,0,0.2),#000)]"></div>
+  <main class="relative min-h-screen overflow-hidden bg-[#08050d] text-white">
+    <div class="tnx-page-bg pointer-events-none fixed inset-0 z-0"></div>
+    <div class="tnx-page-grid pointer-events-none fixed inset-0 z-0"></div>
 
-    <section class="px-4 pb-10 pt-20 md:px-6 md:pb-14 md:pt-24">
+    <section class="relative z-10 px-4 pb-10 pt-20 md:px-6 md:pb-14 md:pt-24">
       <div
         class="mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-[#c29200]/25 bg-[#050505]/88 shadow-[0_0_55px_rgba(0,0,0,0.65)] backdrop-blur"
         dir="rtl"
@@ -268,7 +269,7 @@ const socialLinks = [
                 />
 
                 <div class="absolute bottom-6 right-6">
-                  <p class="text-sm font-black text-[#ffda6a]">من المجتمع</p>
+                  <p class="fanart-kicker text-sm font-black text-[#ffda6a]">من رسم المجتمع</p>
                   <p class="text-xs text-gray-300">صورة عشوائية من معرض الرسمات</p>
                 </div>
 
@@ -302,7 +303,7 @@ const socialLinks = [
       </div>
     </section>
 
-    <section id="live" class="px-4 py-10 md:px-6">
+    <section id="live" class="relative z-10 px-4 py-10 md:px-6">
       <div class="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[1fr_360px]" dir="rtl">
         <div class="rounded-[2rem] border border-[#c29200]/25 bg-[#050505]/90 p-4 shadow-[0_0_45px_rgba(0,0,0,0.45)]">
           <div class="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -398,22 +399,16 @@ const socialLinks = [
       </div>
     </section>
 
-    <section class="px-4 py-10 md:px-6">
+    <section class="relative z-10 px-4 py-10 md:px-6">
       <div class="mx-auto max-w-7xl" dir="rtl">
-        <div class="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p class="text-xs font-bold tracking-[0.25em] text-[#c29200]">
-              COMMUNITY
-            </p>
-
-            <h2 class="heading-gold-glow mt-1 text-3xl font-black text-[#ffda6a]">
-              اختصارات المجتمع
-            </h2>
-          </div>
-
-          <p class="max-w-xl text-sm leading-relaxed text-gray-400">
-            أهم الصفحات للمشاهد الجديد والقديم. لا تحتاج تدور بالأوامر كل مرة.
+        <div class="mb-6">
+          <p class="text-xs font-bold tracking-[0.25em] text-[#c29200]">
+            COMMUNITY
           </p>
+
+          <h2 class="heading-gold-glow mt-1 text-3xl font-black text-[#ffda6a]">
+            اختصارات المجتمع
+          </h2>
         </div>
 
         <div class="grid gap-4 lg:grid-cols-3">
@@ -498,7 +493,7 @@ const socialLinks = [
       </div>
     </section>
 
-    <section class="px-4 pb-16 pt-10 md:px-6">
+    <section class="relative z-10 px-4 pb-16 pt-10 md:px-6">
       <div
         class="mx-auto grid max-w-7xl overflow-hidden rounded-[2rem] border border-[#c29200]/25 bg-[#050505]/90 shadow-[0_0_45px_rgba(0,0,0,0.45)] lg:grid-cols-[0.9fr_1.1fr]"
         dir="rtl"
@@ -517,7 +512,7 @@ const socialLinks = [
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
 
           <div class="absolute bottom-6 right-6">
-            <p class="text-sm font-black text-[#ffda6a]">من رسم المجتمع</p>
+            <p class="fanart-kicker text-sm font-black text-[#ffda6a]">من رسم المجتمع</p>
             <p class="text-xs text-gray-300">الصورة تتغير من معرض الرسمات</p>
           </div>
         </div>
@@ -590,9 +585,36 @@ const socialLinks = [
         </div>
       </div>
     </section>
+
+    <button
+      id="back-to-top"
+      type="button"
+      aria-label="ارجع للأعلى"
+      class="back-to-top-button"
+    >
+      <iconify-icon icon="tabler:arrow-up" class="text-xl"></iconify-icon>
+      <span>الأعلى</span>
+    </button>
   </main>
 
   <style>
+    .tnx-page-bg {
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255, 218, 106, 0.2), transparent 28%),
+        radial-gradient(circle at 82% 18%, rgba(147, 51, 234, 0.16), transparent 30%),
+        radial-gradient(circle at 55% 88%, rgba(239, 68, 68, 0.12), transparent 34%),
+        linear-gradient(135deg, #09050f 0%, #05070d 45%, #120905 100%);
+    }
+
+    .tnx-page-grid {
+      opacity: 0.08;
+      background-image:
+        linear-gradient(rgba(255, 218, 106, 0.45) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 218, 106, 0.45) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 72%);
+    }
+
     .glow-text {
       text-shadow:
         0 0 5px rgba(255, 218, 106, 0.7),
@@ -604,6 +626,12 @@ const socialLinks = [
         0 0 6px rgba(255, 218, 106, 0.55),
         0 0 14px rgba(255, 218, 106, 0.35),
         0 0 24px rgba(194, 146, 0, 0.3);
+    }
+
+    .fanart-kicker {
+      text-shadow:
+        0 0 6px rgba(255, 218, 106, 0.65),
+        0 0 16px rgba(194, 146, 0, 0.35);
     }
 
     .social-icon:hover iconify-icon {
@@ -663,6 +691,95 @@ const socialLinks = [
     .about-chip iconify-icon {
       color: #ffda6a;
       font-size: 1.45rem;
+    }
+
+    .tnx-countdown-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(58px, 1fr));
+      gap: 0.45rem;
+      direction: ltr;
+      width: 100%;
+      min-width: 210px;
+    }
+
+    .tnx-countdown-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.9rem;
+      border: 1px solid rgba(194, 146, 0, 0.25);
+      background: rgba(0, 0, 0, 0.45);
+      padding: 0.45rem 0.6rem;
+    }
+
+    .tnx-countdown-unit strong {
+      font-size: 1.15rem;
+      line-height: 1;
+      color: #ffda6a;
+    }
+
+    .tnx-countdown-unit span {
+      margin-top: 0.25rem;
+      font-size: 0.65rem;
+      font-family: system-ui, sans-serif;
+      color: rgba(229, 231, 235, 0.7);
+    }
+
+    #hero-countdown-value .tnx-countdown-grid {
+      min-width: 100%;
+    }
+
+    #hero-countdown-value .tnx-countdown-unit {
+      padding: 0.65rem 0.75rem;
+    }
+
+    #hero-countdown-value .tnx-countdown-unit strong {
+      font-size: 1.55rem;
+    }
+
+    .back-to-top-button {
+      position: fixed;
+      right: 1.25rem;
+      bottom: 1.25rem;
+      z-index: 50;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border-radius: 999px;
+      border: 1px solid rgba(194, 146, 0, 0.65);
+      background: linear-gradient(135deg, rgba(255, 218, 106, 0.96), rgba(194, 146, 0, 0.95));
+      color: #08050d;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 900;
+      box-shadow:
+        0 0 18px rgba(255, 218, 106, 0.25),
+        0 14px 35px rgba(0, 0, 0, 0.45);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition:
+        opacity 180ms ease,
+        transform 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .back-to-top-button:hover {
+      transform: translateY(8px);
+      box-shadow:
+        0 0 24px rgba(255, 218, 106, 0.42),
+        0 16px 38px rgba(0, 0, 0, 0.48);
+    }
+
+    .back-to-top-button--visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .back-to-top-button--visible:hover {
+      transform: translateY(-2px);
     }
   </style>
 
@@ -730,6 +847,7 @@ const socialLinks = [
       }
 
       const intervals = []
+      const cleanups = []
 
       let twitchLiveStatus = {
         checked: false,
@@ -745,9 +863,16 @@ const socialLinks = [
         return id
       }
 
+      function addCleanup(callback) {
+        cleanups.push(callback)
+      }
+
       window[cleanupKey] = () => {
         intervals.forEach((id) => window.clearInterval(id))
         intervals.length = 0
+
+        cleanups.forEach((callback) => callback())
+        cleanups.length = 0
       }
 
       function escapeHtml(value) {
@@ -797,18 +922,39 @@ const socialLinks = [
         return isToday ? 'بث اليوم' : `${dayNames[next.getDay()]} — 9:00 م`
       }
 
-      function formatCountdown(totalSeconds) {
+      function getCountdownParts(totalSeconds) {
         const h = Math.floor(totalSeconds / 3600)
         const m = Math.floor((totalSeconds % 3600) / 60)
         const s = totalSeconds % 60
 
-        return (
-          String(h).padStart(2, '0') +
-          ' : ' +
-          String(m).padStart(2, '0') +
-          ' : ' +
-          String(s).padStart(2, '0')
-        )
+        return {
+          h: String(h).padStart(2, '0'),
+          m: String(m).padStart(2, '0'),
+          s: String(s).padStart(2, '0'),
+        }
+      }
+
+      function renderCountdown(totalSeconds) {
+        const { h, m, s } = getCountdownParts(totalSeconds)
+
+        return `
+          <span class="tnx-countdown-grid" dir="ltr">
+            <span class="tnx-countdown-unit">
+              <strong>${h}</strong>
+              <span>ساعة</span>
+            </span>
+
+            <span class="tnx-countdown-unit">
+              <strong>${m}</strong>
+              <span>دقيقة</span>
+            </span>
+
+            <span class="tnx-countdown-unit">
+              <strong>${s}</strong>
+              <span>ثانية</span>
+            </span>
+          </span>
+        `
       }
 
       async function fetchTwitchLiveStatus() {
@@ -985,7 +1131,7 @@ const socialLinks = [
 
         titleEl.textContent = getNextStreamText(next, new Date())
         metaEl.textContent = `باقي تقريبًا ${hours} ساعة و ${minutes} دقيقة`
-        countdownValueEl.textContent = formatCountdown(totalSeconds)
+        countdownValueEl.innerHTML = renderCountdown(totalSeconds)
         countdownLabelEl.textContent = 'العد التنازلي'
       }
 
@@ -1033,7 +1179,7 @@ const socialLinks = [
 
         const totalSeconds = Math.max(0, Math.floor((next.getTime() - now.getTime()) / 1000))
 
-        timerEl.textContent = formatCountdown(totalSeconds)
+        timerEl.innerHTML = renderCountdown(totalSeconds)
         timerEl.classList.add('font-mono')
         timerEl.classList.remove('font-bold', 'tnx-live-glow')
 
@@ -1092,10 +1238,42 @@ const socialLinks = [
         setStorageItem('tnx-last-fanart', randomImage)
       }
 
+      function initBackToTopButton() {
+        const button = document.getElementById('back-to-top')
+
+        if (!button) return
+
+        function updateButtonVisibility() {
+          if (window.scrollY > 520) {
+            button.classList.add('back-to-top-button--visible')
+          } else {
+            button.classList.remove('back-to-top-button--visible')
+          }
+        }
+
+        function scrollToTop() {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          })
+        }
+
+        window.addEventListener('scroll', updateButtonVisibility, { passive: true })
+        button.addEventListener('click', scrollToTop)
+
+        addCleanup(() => {
+          window.removeEventListener('scroll', updateButtonVisibility)
+          button.removeEventListener('click', scrollToTop)
+        })
+
+        updateButtonVisibility()
+      }
+
       function init() {
         highlightTodayScheduleCard()
         updateRandomFanArt()
         loadSiteUpdates()
+        initBackToTopButton()
 
         fetchTwitchLiveStatus().then(updateStreamPanel)
         updateStreamPanel()
