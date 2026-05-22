@@ -19,11 +19,9 @@ const fanArtImages = fs.existsSync(fanArtDir)
 ---
 
 <Layout metadata={metadata}>
-  <section
-    class="relative py-24 px-6 text-white bg-black/90 overflow-hidden"
-  >
+  <section class="relative py-24 px-6 text-white bg-black/90 overflow-hidden">
     <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center text-center md:text-right" dir="rtl">
-      
+
       <div class="relative flex justify-center md:order-2">
         <div class="relative w-full max-w-sm group tnx-avatar-animation">
           <img
@@ -39,8 +37,8 @@ const fanArtImages = fs.existsSync(fanArtDir)
       </div>
 
       <div class="md:order-1">
-        <p class="text-xl text-gray-300 mb-2">اهلًا، أنا </p>
-        
+        <p class="text-xl text-gray-300 mb-2">اهلًا، أنا</p>
+
         <h1 class="text-5xl md:text-6xl font-extrabold tracking-wide mb-6 bg-clip-text text-transparent drop-shadow-lg leading-tight">
           أنا <span id="changing-title" class="text-[#ffda6a] glow-text border-l-4 border-[#ffda6a] pl-1" dir="ltr"></span>
         </h1>
@@ -57,7 +55,6 @@ const fanArtImages = fs.existsSync(fanArtDir)
           >
             شاهد البث الآن
           </a>
-
           
             href="/links"
             class="px-8 py-3 rounded-lg border border-[#c29200] text-[#ffda6a] hover:bg-[#c29200]/10 transition"
@@ -95,23 +92,13 @@ const fanArtImages = fs.existsSync(fanArtDir)
           id="next-stream-wrapper"
           class="inline-flex items-center gap-3 rounded-full border border-[#c29200]/70 bg-black/70 px-5 py-2 text-xs md:text-sm shadow-[0_0_25px_rgba(0,0,0,0.7)]"
         >
-          <span
-            id="next-stream-timer"
-            class="font-mono text-sm md:text-base font-semibold text-[#ffda6a]"
-          >
+          <span id="next-stream-timer" class="font-mono text-sm md:text-base font-semibold text-[#ffda6a]">
             -- : -- : --
           </span>
-
-          <span
-            id="next-stream-label"
-            class="text-slate-100 text-[13px] md:text-sm"
-          >
+          <span id="next-stream-label" class="text-slate-100 text-[13px] md:text-sm">
             البث القادم خلال
           </span>
-
-          <span
-            class="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#c29200]/70 text-[12px] text-[#ffda6a] bg-black/60"
-          >
+          <span class="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#c29200]/70 text-[12px] text-[#ffda6a] bg-black/60">
             🎥
           </span>
         </div>
@@ -141,56 +128,36 @@ const fanArtImages = fs.existsSync(fanArtDir)
           </div>
 
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            <div
-              class="tnx-schedule-card rounded-2xl border border-[#c29200]/15 px-4 py-4 md:px-5 md:py-5 text-center text-xs md:text-sm text-gray-200 flex flex-col items-center justify-center min-h-[125px] gap-2"
-              data-schedule-day="6"
-            >
+            <div class="tnx-schedule-card rounded-2xl border border-[#c29200]/15 px-4 py-4 md:px-5 md:py-5 text-center text-xs md:text-sm text-gray-200 flex flex-col items-center justify-center min-h-[125px] gap-2" data-schedule-day="6">
               <div class="font-bold text-sm md:text-base text-white">السبت</div>
               <div class="flex items-center justify-center text-sm md:text-base font-semibold text-[#ffda6a]">
                 <span>9:00 م</span>
               </div>
-              <div class="text-[11px] md:text-xs text-gray-400 leading-relaxed">
-                قصص ألعاب + سوالف
-              </div>
+              <div class="text-[11px] md:text-xs text-gray-400 leading-relaxed">قصص ألعاب + سوالف</div>
             </div>
 
-            <div
-              class="tnx-schedule-card rounded-2xl border border-[#c29200]/15 px-4 py-4 md:px-5 md:py-5 text-center text-xs md:text-sm text-gray-200 flex flex-col items-center justify-center min-h-[125px] gap-2"
-              data-schedule-day="0"
-            >
+            <div class="tnx-schedule-card rounded-2xl border border-[#c29200]/15 px-4 py-4 md:px-5 md:py-5 text-center text-xs md:text-sm text-gray-200 flex flex-col items-center justify-center min-h-[125px] gap-2" data-schedule-day="0">
               <div class="font-bold text-sm md:text-base text-white">الأحد</div>
               <div class="flex items-center justify-center text-sm md:text-base font-semibold text-[#ffda6a]">
                 <span>9:00 م</span>
               </div>
-              <div class="text-[11px] md:text-xs text-gray-400 leading-relaxed">
-                قصص ألعاب + سوالف
-              </div>
+              <div class="text-[11px] md:text-xs text-gray-400 leading-relaxed">قصص ألعاب + سوالف</div>
             </div>
 
-            <div
-              class="tnx-schedule-card rounded-2xl border border-[#c29200]/15 px-4 py-4 md:px-5 md:py-5 text-center text-xs md:text-sm text-gray-200 flex flex-col items-center justify-center min-h-[125px] gap-2"
-              data-schedule-day="2"
-            >
+            <div class="tnx-schedule-card rounded-2xl border border-[#c29200]/15 px-4 py-4 md:px-5 md:py-5 text-center text-xs md:text-sm text-gray-200 flex flex-col items-center justify-center min-h-[125px] gap-2" data-schedule-day="2">
               <div class="font-bold text-sm md:text-base text-white">الثلاثاء</div>
               <div class="flex items-center justify-center text-sm md:text-base font-semibold text-[#ffda6a]">
                 <span>9:00 م</span>
               </div>
-              <div class="text-[11px] md:text-xs text-gray-400 leading-relaxed">
-                قصص ألعاب + سوالف
-              </div>
+              <div class="text-[11px] md:text-xs text-gray-400 leading-relaxed">قصص ألعاب + سوالف</div>
             </div>
 
-            <div
-              class="tnx-schedule-card rounded-2xl border border-[#c29200]/15 px-4 py-4 md:px-5 md:py-5 text-center text-xs md:text-sm text-gray-200 flex flex-col items-center justify-center min-h-[125px] gap-2"
-              data-schedule-day="3"
-            >
+            <div class="tnx-schedule-card rounded-2xl border border-[#c29200]/15 px-4 py-4 md:px-5 md:py-5 text-center text-xs md:text-sm text-gray-200 flex flex-col items-center justify-center min-h-[125px] gap-2" data-schedule-day="3">
               <div class="font-bold text-sm md:text-base text-white">الأربعاء</div>
               <div class="flex items-center justify-center text-sm md:text-base font-semibold text-[#ffda6a]">
                 <span>9:00 م</span>
               </div>
-              <div class="text-[11px] md:text-xs text-gray-400 leading-relaxed">
-                قصص ألعاب + سوالف
-              </div>
+              <div class="text-[11px] md:text-xs text-gray-400 leading-relaxed">قصص ألعاب + سوالف</div>
             </div>
           </div>
 
@@ -216,12 +183,10 @@ const fanArtImages = fs.existsSync(fanArtDir)
         <h2 class="text-3xl font-bold mb-6 text-[#ffda6a] heading-gold-glow">
           من أنا؟
         </h2>
-
         <p class="text-gray-200 mb-8 text-lg leading-relaxed">
           <strong class="text-[#ffda6a] heading-gold-glow">TNX6</strong> — ستريمر عربي على Twitch يحب القصص، السوالف، وبناء مجتمع يستاهل.
           البث عندي مو بس ألعاب، في تفاعل، تحديات، ونظام كامل يخليك جزء من الحكاية.
         </p>
-
         <ul class="space-y-4 text-gray-300">
           <li class="flex items-start gap-3">
             <iconify-icon icon="tabler:bolt" class="text-[#c29200] text-xl mt-1"></iconify-icon>
@@ -247,32 +212,21 @@ const fanArtImages = fs.existsSync(fanArtDir)
       50% { transform: translateY(-10px); }
       100% { transform: translateY(0); }
     }
-
     .tnx-avatar-animation {
       animation: float-up-down 4s ease-in-out infinite;
     }
-
     .glow-text {
-      text-shadow:
-        0 0 5px rgba(255, 218, 106, 0.7),
-        0 0 15px rgba(194, 146, 0, 0.7);
+      text-shadow: 0 0 5px rgba(255,218,106,0.7), 0 0 15px rgba(194,146,0,0.7);
     }
-
     .heading-gold-glow {
-      text-shadow:
-        0 0 6px rgba(255, 218, 106, 0.55),
-        0 0 14px rgba(255, 218, 106, 0.35),
-        0 0 24px rgba(194, 146, 0, 0.3);
+      text-shadow: 0 0 6px rgba(255,218,106,0.55), 0 0 14px rgba(255,218,106,0.35), 0 0 24px rgba(194,146,0,0.3);
     }
-
     .social-icon:hover iconify-icon {
       filter: drop-shadow(0 0 4px #ffda6a);
     }
-
     #changing-title {
       animation: cursor-blink 1s step-end infinite;
     }
-
     @keyframes cursor-blink {
       from, to { border-color: transparent }
       50% { border-color: #ffda6a }
@@ -282,261 +236,200 @@ const fanArtImages = fs.existsSync(fanArtDir)
   <style is:global>
     .tnx-live-glow {
       color: #fef08a;
-      text-shadow:
-        0 0 5px #facc15,
-        0 0 12px #facc15,
-        0 0 20px #facc15;
+      text-shadow: 0 0 5px #facc15, 0 0 12px #facc15, 0 0 20px #facc15;
       animation: tnx-live-pulse 1.4s ease-in-out infinite;
     }
-
     @keyframes tnx-live-pulse {
       0%, 100% {
-        text-shadow:
-          0 0 4px #facc15,
-          0 0 10px #facc15,
-          0 0 18px #facc15;
+        text-shadow: 0 0 4px #facc15, 0 0 10px #facc15, 0 0 18px #facc15;
         transform: translateY(0);
       }
       50% {
-        text-shadow:
-          0 0 8px #fde68a,
-          0 0 18px #facc15,
-          0 0 28px #fbbf24;
+        text-shadow: 0 0 8px #fde68a, 0 0 18px #facc15, 0 0 28px #fbbf24;
         transform: translateY(-0.5px);
       }
     }
-
     .tnx-schedule-card {
-      background: linear-gradient(180deg, rgba(12, 15, 24, 0.96) 0%, rgba(7, 9, 15, 0.98) 100%);
+      background: linear-gradient(180deg, rgba(12,15,24,0.96) 0%, rgba(7,9,15,0.98) 100%);
       backdrop-filter: blur(8px);
       transition: all 0.25s ease;
     }
-
     .tnx-schedule-card:hover {
       transform: translateY(-3px);
-      border-color: rgba(194, 146, 0, 0.35);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      border-color: rgba(194,146,0,0.35);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     }
-
     .tnx-schedule-card--active {
-      border-color: rgba(194, 146, 0, 0.9) !important;
-      box-shadow: 0 0 22px rgba(194, 146, 0, 0.45);
+      border-color: rgba(194,146,0,0.9) !important;
+      box-shadow: 0 0 22px rgba(194,146,0,0.45);
     }
   </style>
 
   <script>
-    const titles = [
-      "ستريمر",
-      "صانع محتوى",
-    ];
-
-    let titleElement = document.getElementById('changing-title');
-    let currentTitleIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-    let typingSpeed = 100;
-    let delayAfterTyping = 1500;
+    const titles = ['ستريمر', 'صانع محتوى']
+    let titleElement = document.getElementById('changing-title')
+    let currentTitleIndex = 0
+    let charIndex = 0
+    let isDeleting = false
+    let typingSpeed = 100
+    const delayAfterTyping = 1500
 
     function typeWriterEffect() {
-      if (!titleElement) return;
-
-      const currentTitle = titles[currentTitleIndex];
-
+      if (!titleElement) return
+      const currentTitle = titles[currentTitleIndex]
       if (isDeleting) {
-        titleElement.textContent = currentTitle.substring(0, charIndex - 1);
-        charIndex--;
-        typingSpeed = 50;
+        titleElement.textContent = currentTitle.substring(0, charIndex - 1)
+        charIndex--
+        typingSpeed = 50
       } else {
-        titleElement.textContent = currentTitle.substring(0, charIndex + 1);
-        charIndex++;
-        typingSpeed = 100;
+        titleElement.textContent = currentTitle.substring(0, charIndex + 1)
+        charIndex++
+        typingSpeed = 100
       }
-
       if (!isDeleting && charIndex === currentTitle.length) {
-        isDeleting = true;
-        typingSpeed = delayAfterTyping;
+        isDeleting = true
+        typingSpeed = delayAfterTyping
       } else if (isDeleting && charIndex === 0) {
-        isDeleting = false;
-        currentTitleIndex = (currentTitleIndex + 1) % titles.length;
-        typingSpeed = 200;
+        isDeleting = false
+        currentTitleIndex = (currentTitleIndex + 1) % titles.length
+        typingSpeed = 200
       }
-
-      setTimeout(typeWriterEffect, typingSpeed);
+      setTimeout(typeWriterEffect, typingSpeed)
     }
 
     if (typeof window !== 'undefined' && document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => {
-        typeWriterEffect();
-      });
+      document.addEventListener('DOMContentLoaded', () => { typeWriterEffect() })
     } else if (titleElement) {
-      typeWriterEffect();
+      typeWriterEffect()
     }
   </script>
 
   <script>
-    const STREAM_START_HOUR = 21;
-    const STREAM_START_MINUTE = 0;
-    const STREAM_END_HOUR = 2;
-    const STREAM_DAYS = [6, 0, 2, 3];
+    const STREAM_START_HOUR = 21
+    const STREAM_START_MINUTE = 0
+    const STREAM_END_HOUR = 2
+    const STREAM_DAYS = [6, 0, 2, 3]
 
     function isStreamDay(date) {
-      return STREAM_DAYS.includes(date.getDay());
+      return STREAM_DAYS.includes(date.getDay())
     }
 
     function isInStreamWindow(now) {
-      const today = new Date(now);
-      const yesterday = new Date(now);
-      yesterday.setDate(yesterday.getDate() - 1);
+      const today = new Date(now)
+      const yesterday = new Date(now)
+      yesterday.setDate(yesterday.getDate() - 1)
 
       function inWindowFor(dateObj) {
-        if (!isStreamDay(dateObj)) return false;
-
-        const start = new Date(dateObj);
-        start.setHours(STREAM_START_HOUR, STREAM_START_MINUTE, 0, 0);
-
-        const end = new Date(start);
-        end.setDate(end.getDate() + 1);
-        end.setHours(STREAM_END_HOUR, 0, 0, 0);
-
-        return now >= start && now < end;
+        if (!isStreamDay(dateObj)) return false
+        const start = new Date(dateObj)
+        start.setHours(STREAM_START_HOUR, STREAM_START_MINUTE, 0, 0)
+        const end = new Date(start)
+        end.setDate(end.getDate() + 1)
+        end.setHours(STREAM_END_HOUR, 0, 0, 0)
+        return now >= start && now < end
       }
 
-      return inWindowFor(today) || inWindowFor(yesterday);
+      return inWindowFor(today) || inWindowFor(yesterday)
     }
 
     function getNextStreamStart(now) {
       for (let offset = 0; offset < 10; offset++) {
-        const candidateDay = new Date(now);
-        candidateDay.setDate(candidateDay.getDate() + offset);
-
-        if (!isStreamDay(candidateDay)) continue;
-
-        const start = new Date(candidateDay);
-        start.setHours(STREAM_START_HOUR, STREAM_START_MINUTE, 0, 0);
-
-        if (start > now) {
-          return start;
-        }
+        const candidateDay = new Date(now)
+        candidateDay.setDate(candidateDay.getDate() + offset)
+        if (!isStreamDay(candidateDay)) continue
+        const start = new Date(candidateDay)
+        start.setHours(STREAM_START_HOUR, STREAM_START_MINUTE, 0, 0)
+        if (start > now) return start
       }
-      return null;
+      return null
     }
 
     function highlightTodayScheduleCard() {
-      const today = new Date();
-      const todayDay = today.getDay();
-      const cards = document.querySelectorAll('.tnx-schedule-card');
-
-      cards.forEach((card) => {
-        card.classList.remove('tnx-schedule-card--active');
-        const dayAttr = card.getAttribute('data-schedule-day');
-        if (!dayAttr) return;
-        const cardDay = parseInt(dayAttr, 10);
-        if (cardDay === todayDay) {
-          card.classList.add('tnx-schedule-card--active');
+      const todayDay = new Date().getDay()
+      document.querySelectorAll('.tnx-schedule-card').forEach((card) => {
+        card.classList.remove('tnx-schedule-card--active')
+        const dayAttr = card.getAttribute('data-schedule-day')
+        if (dayAttr && parseInt(dayAttr, 10) === todayDay) {
+          card.classList.add('tnx-schedule-card--active')
         }
-      });
+      })
     }
 
     function startNextStreamCountdown() {
-      const timerEl = document.getElementById('next-stream-timer');
-      const wrapperEl = document.getElementById('next-stream-wrapper');
-      const labelEl = document.getElementById('next-stream-label');
-      if (!timerEl) return;
+      const timerEl = document.getElementById('next-stream-timer')
+      const wrapperEl = document.getElementById('next-stream-wrapper')
+      const labelEl = document.getElementById('next-stream-label')
+      if (!timerEl) return
 
       function update() {
-        const now = new Date();
-
+        const now = new Date()
         if (isInStreamWindow(now)) {
-          timerEl.textContent = 'البث شغّال الآن! انضم للبث 👇';
-          timerEl.classList.remove('font-mono');
-          timerEl.classList.add('font-bold', 'tnx-live-glow');
-
-          if (labelEl) labelEl.textContent = 'البث مباشر';
-          if (wrapperEl) wrapperEl.classList.add('ring-1', 'ring-yellow-400/60');
-          return;
+          timerEl.textContent = 'البث شغّال الآن! انضم للبث 👇'
+          timerEl.classList.remove('font-mono')
+          timerEl.classList.add('font-bold', 'tnx-live-glow')
+          if (labelEl) labelEl.textContent = 'البث مباشر'
+          if (wrapperEl) wrapperEl.classList.add('ring-1', 'ring-yellow-400/60')
+          return
         }
-
-        const next = getNextStreamStart(now);
+        const next = getNextStreamStart(now)
         if (!next) {
-          timerEl.textContent = '-- : -- : --';
-          timerEl.classList.add('font-mono');
-          timerEl.classList.remove('font-bold', 'tnx-live-glow');
-          if (labelEl) labelEl.textContent = 'البث القادم خلال';
-          if (wrapperEl) wrapperEl.classList.remove('ring-1', 'ring-yellow-400/60');
-          return;
+          timerEl.textContent = '-- : -- : --'
+          timerEl.classList.add('font-mono')
+          timerEl.classList.remove('font-bold', 'tnx-live-glow')
+          if (labelEl) labelEl.textContent = 'البث القادم خلال'
+          if (wrapperEl) wrapperEl.classList.remove('ring-1', 'ring-yellow-400/60')
+          return
         }
-
-        const diffMs = next - now;
-        const totalSeconds = Math.max(0, Math.floor(diffMs / 1000));
-        const h = Math.floor(totalSeconds / 3600);
-        const m = Math.floor((totalSeconds % 3600) / 60);
-        const s = totalSeconds % 60;
-
+        const totalSeconds = Math.max(0, Math.floor((next - now) / 1000))
+        const h = Math.floor(totalSeconds / 3600)
+        const m = Math.floor((totalSeconds % 3600) / 60)
+        const s = totalSeconds % 60
         timerEl.textContent =
           String(h).padStart(2, '0') + ' : ' +
           String(m).padStart(2, '0') + ' : ' +
-          String(s).padStart(2, '0');
-
-        timerEl.classList.add('font-mono');
-        timerEl.classList.remove('font-bold', 'tnx-live-glow');
-
+          String(s).padStart(2, '0')
+        timerEl.classList.add('font-mono')
+        timerEl.classList.remove('font-bold', 'tnx-live-glow')
         if (labelEl) {
-          if (!isStreamDay(now)) {
-            labelEl.textContent = 'اليوم ما فيه بث - البث القادم بعد';
-          } else {
-            labelEl.textContent = 'البث القادم خلال';
-          }
+          labelEl.textContent = isStreamDay(now)
+            ? 'البث القادم خلال'
+            : 'اليوم ما فيه بث - البث القادم بعد'
         }
-
-        if (wrapperEl) {
-          wrapperEl.classList.remove('ring-1', 'ring-yellow-400/60');
-        }
+        if (wrapperEl) wrapperEl.classList.remove('ring-1', 'ring-yellow-400/60')
       }
 
-      update();
-      setInterval(update, 1000);
+      update()
+      setInterval(update, 1000)
     }
 
     if (typeof window !== 'undefined') {
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-          startNextStreamCountdown();
-          highlightTodayScheduleCard();
-        });
+          startNextStreamCountdown()
+          highlightTodayScheduleCard()
+        })
       } else {
-        startNextStreamCountdown();
-        highlightTodayScheduleCard();
+        startNextStreamCountdown()
+        highlightTodayScheduleCard()
       }
     }
   </script>
 
   <script define:vars={{ fanArtImages }}>
-    const topImg = document.getElementById('random-fanart-image-top');
-    const bottomImg = document.getElementById('random-fanart-image-bottom');
+    const topImg = document.getElementById('random-fanart-image-top')
+    const bottomImg = document.getElementById('random-fanart-image-bottom')
 
     if (Array.isArray(fanArtImages) && fanArtImages.length > 0) {
-      const lastImage = localStorage.getItem('tnx-last-fanart');
-      let availableImages = fanArtImages;
-
+      const lastImage = localStorage.getItem('tnx-last-fanart')
+      let availableImages = fanArtImages
       if (fanArtImages.length > 1 && lastImage) {
-        availableImages = fanArtImages.filter((image) => image !== lastImage);
+        availableImages = fanArtImages.filter((image) => image !== lastImage)
       }
-
-      const randomImage =
-        availableImages[Math.floor(Math.random() * availableImages.length)];
-
+      const randomImage = availableImages[Math.floor(Math.random() * availableImages.length)]
       if (randomImage) {
-        if (topImg) {
-          topImg.src = randomImage;
-          topImg.alt = 'TNX6 Fan Art';
-        }
-
-        if (bottomImg) {
-          bottomImg.src = randomImage;
-          bottomImg.alt = 'TNX6 Fan Art';
-        }
-
-        localStorage.setItem('tnx-last-fanart', randomImage);
+        if (topImg) { topImg.src = randomImage; topImg.alt = 'TNX6 Fan Art' }
+        if (bottomImg) { bottomImg.src = randomImage; bottomImg.alt = 'TNX6 Fan Art' }
+        localStorage.setItem('tnx-last-fanart', randomImage)
       }
     }
   </script>
