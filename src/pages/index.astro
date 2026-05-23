@@ -990,11 +990,11 @@ const socialLinks = [
     }
 
     .tnx-community-row {
-      display: flex !important;
+      display: grid !important;
+      grid-template-columns: 88px minmax(0, 1fr) !important;
       align-items: center !important;
-      justify-content: space-between !important;
       gap: 1rem !important;
-      direction: rtl !important;
+      direction: ltr !important;
       text-align: right !important;
       border-radius: 0.95rem;
       border: 1px solid rgba(194, 146, 0, 0.18);
@@ -1008,9 +1008,10 @@ const socialLinks = [
     }
 
     .tnx-community-row strong {
-      min-width: 82px !important;
-      flex: 0 0 auto !important;
-      order: 2 !important;
+      grid-column: 1 !important;
+      grid-row: 1 !important;
+      justify-self: start !important;
+      min-width: 88px !important;
       color: #ffda6a !important;
       font-size: 1rem;
       font-weight: 950;
@@ -1023,20 +1024,28 @@ const socialLinks = [
     }
 
     .tnx-community-platform {
-      display: inline-flex !important;
+      grid-column: 2 !important;
+      grid-row: 1 !important;
+      justify-self: stretch !important;
+      display: flex !important;
       min-width: 0;
-      flex: 1 1 auto !important;
-      order: 1 !important;
       align-items: center !important;
-      justify-content: flex-start !important;
+      justify-content: flex-end !important;
       gap: 0.55rem;
       color: rgb(229, 231, 235);
       font-weight: 800;
       text-align: right !important;
-      direction: rtl !important;
+      direction: ltr !important;
+      white-space: nowrap;
+    }
+
+    .tnx-community-platform > span:not(.tnx-community-platform-icon) {
+      order: 1 !important;
+      text-align: right !important;
     }
 
     .tnx-community-platform-icon {
+      order: 2 !important;
       display: inline-flex;
       height: 1.7rem;
       width: 1.7rem;
