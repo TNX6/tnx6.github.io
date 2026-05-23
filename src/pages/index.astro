@@ -990,10 +990,12 @@ const socialLinks = [
     }
 
     .tnx-community-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 1rem !important;
+      direction: rtl !important;
+      text-align: right !important;
       border-radius: 0.95rem;
       border: 1px solid rgba(194, 146, 0, 0.18);
       background:
@@ -1003,35 +1005,35 @@ const socialLinks = [
       color: rgb(209, 213, 219);
       font-size: 0.9rem;
       font-weight: 800;
-      direction: rtl;
-      text-align: right;
     }
 
     .tnx-community-row strong {
-      min-width: 78px;
-      flex-shrink: 0;
-      color: #ffda6a;
+      min-width: 82px !important;
+      flex: 0 0 auto !important;
+      order: 2 !important;
+      color: #ffda6a !important;
       font-size: 1rem;
       font-weight: 950;
       letter-spacing: 0.01em;
-      text-align: left;
-      direction: ltr;
+      text-align: left !important;
+      direction: ltr !important;
       text-shadow:
         0 0 5px rgba(255, 218, 106, 0.34),
         0 0 12px rgba(194, 146, 0, 0.2);
     }
 
     .tnx-community-platform {
-      display: inline-flex;
+      display: inline-flex !important;
       min-width: 0;
-      flex: 1 1 auto;
-      align-items: center;
-      justify-content: flex-start;
+      flex: 1 1 auto !important;
+      order: 1 !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
       gap: 0.55rem;
       color: rgb(229, 231, 235);
       font-weight: 800;
-      flex-direction: row-reverse;
-      text-align: right;
+      text-align: right !important;
+      direction: rtl !important;
     }
 
     .tnx-community-platform-icon {
