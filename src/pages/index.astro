@@ -304,7 +304,10 @@ const socialLinks = [
 
     <section id="live" class="relative z-10 px-4 py-10 md:px-6">
       <div class="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[1fr_360px]" dir="rtl">
-        <div class="rounded-[2rem] border border-[#c29200]/25 bg-[#050505]/90 p-4 shadow-[0_0_45px_rgba(0,0,0,0.45)]">
+        <div
+          class="rounded-[2rem] border border-[#c29200]/25 bg-[#050505]/90 p-4 shadow-[0_0_45px_rgba(0,0,0,0.45)]"
+          data-reveal="up"
+        >
           <div class="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
               <p class="text-xs font-bold tracking-[0.25em] text-[#c29200]">
@@ -350,7 +353,11 @@ const socialLinks = [
           </div>
         </div>
 
-        <aside class="rounded-[2rem] border border-[#c29200]/25 bg-[#050505]/90 p-5 shadow-[0_0_45px_rgba(0,0,0,0.45)]">
+        <aside
+          class="rounded-[2rem] border border-[#c29200]/25 bg-[#050505]/90 p-5 shadow-[0_0_45px_rgba(0,0,0,0.45)]"
+          data-reveal="up"
+          style="--reveal-delay: 90ms"
+        >
           <div class="mb-5 flex items-center justify-between gap-3">
             <div>
               <p class="text-xs font-bold tracking-[0.25em] text-[#c29200]">
@@ -369,10 +376,12 @@ const socialLinks = [
           </div>
 
           <div class="space-y-3">
-            {scheduleItems.map((item) => (
+            {scheduleItems.map((item, index) => (
               <div
                 class="tnx-schedule-card flex items-center justify-between gap-4 rounded-2xl border border-[#c29200]/15 px-4 py-4 text-sm text-gray-200"
                 data-schedule-day={item.day}
+                data-reveal="up"
+                style={`--reveal-delay: ${140 + index * 70}ms`}
               >
                 <div>
                   <div class="font-bold text-white">
@@ -396,7 +405,7 @@ const socialLinks = [
 
     <section class="relative z-10 px-4 py-10 md:px-6">
       <div class="mx-auto max-w-7xl" dir="rtl">
-        <div class="mb-6">
+        <div class="mb-6" data-reveal="up">
           <p class="text-xs font-bold tracking-[0.25em] text-[#c29200]">
             COMMUNITY
           </p>
@@ -410,6 +419,7 @@ const socialLinks = [
           <a
             href="/commands"
             class="group relative overflow-hidden rounded-[2rem] border border-[#c29200]/35 bg-[#070707] p-6 text-right shadow-[0_0_35px_rgba(0,0,0,0.35)] transition hover:-translate-y-1 hover:border-[#c29200]/80 lg:row-span-2"
+            data-reveal="up"
           >
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,218,106,0.16),transparent_36%)]"></div>
 
@@ -437,10 +447,12 @@ const socialLinks = [
             </div>
           </a>
 
-          {shortcutCards.map((card) => (
+          {shortcutCards.map((card, index) => (
             <a
               href={card.href}
               class="group rounded-[2rem] border border-[#c29200]/18 bg-[#070707] p-5 text-right shadow-[0_0_30px_rgba(0,0,0,0.28)] transition hover:-translate-y-1 hover:border-[#c29200]/70 hover:shadow-[0_0_24px_rgba(194,146,0,0.22)]"
+              data-reveal="up"
+              style={`--reveal-delay: ${90 + index * 70}ms`}
             >
               <div class="mb-4 flex items-start justify-between gap-4">
                 <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#c29200]/30 bg-black text-[#ffda6a]">
@@ -465,6 +477,8 @@ const socialLinks = [
           <a
             href="/winners"
             class="group rounded-[2rem] border border-[#c29200]/18 bg-[#070707] p-5 text-right shadow-[0_0_30px_rgba(0,0,0,0.28)] transition hover:-translate-y-1 hover:border-[#c29200]/70 hover:shadow-[0_0_24px_rgba(194,146,0,0.22)]"
+            data-reveal="up"
+            style="--reveal-delay: 380ms"
           >
             <div class="mb-4 flex items-start justify-between gap-4">
               <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#c29200]/30 bg-black text-[#ffda6a]">
@@ -493,7 +507,10 @@ const socialLinks = [
         class="mx-auto grid max-w-7xl overflow-hidden rounded-[2rem] border border-[#c29200]/25 bg-[#050505]/90 shadow-[0_0_45px_rgba(0,0,0,0.45)] lg:grid-cols-[0.9fr_1.1fr]"
         dir="rtl"
       >
-        <div class="relative min-h-[340px] border-b border-[#c29200]/20 lg:border-b-0 lg:border-l">
+        <div
+          class="relative min-h-[340px] border-b border-[#c29200]/20 lg:border-b-0 lg:border-l"
+          data-reveal="up"
+        >
           <img
             id="random-fanart-image-bottom"
             src="/assets/images/tnx-min.jpg"
@@ -512,7 +529,7 @@ const socialLinks = [
           </div>
         </div>
 
-        <div class="p-6 md:p-10">
+        <div class="p-6 md:p-10" data-reveal="up" style="--reveal-delay: 100ms">
           <p class="mb-3 text-xs font-bold tracking-[0.25em] text-[#c29200]">
             ABOUT TNX6
           </p>
@@ -527,17 +544,17 @@ const socialLinks = [
           </p>
 
           <div class="mb-8 grid gap-3 sm:grid-cols-3">
-            <div class="about-chip">
+            <div class="about-chip" data-reveal="up" style="--reveal-delay: 160ms">
               <iconify-icon icon="tabler:ghost-2"></iconify-icon>
               <span>رعب</span>
             </div>
 
-            <div class="about-chip">
+            <div class="about-chip" data-reveal="up" style="--reveal-delay: 220ms">
               <iconify-icon icon="tabler:message-circle"></iconify-icon>
               <span>سوالف</span>
             </div>
 
-            <div class="about-chip">
+            <div class="about-chip" data-reveal="up" style="--reveal-delay: 280ms">
               <iconify-icon icon="tabler:users"></iconify-icon>
               <span>مجتمع</span>
             </div>
@@ -729,6 +746,33 @@ const socialLinks = [
       min-width: 56px;
       padding: 0.65rem 0.75rem;
       font-size: 1.55rem;
+    }
+
+    [data-reveal] {
+      opacity: 0;
+      transform: translate3d(0, 26px, 0);
+      filter: blur(6px);
+      transition:
+        opacity 650ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        transform 650ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        filter 650ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition-delay: var(--reveal-delay, 0ms);
+      will-change: opacity, transform, filter;
+    }
+
+    [data-reveal].is-visible {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      filter: blur(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [data-reveal] {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        transition: none;
+      }
     }
 
     .back-to-top-button {
@@ -1201,6 +1245,40 @@ const socialLinks = [
         setStorageItem('tnx-last-fanart', randomImage)
       }
 
+      function initScrollReveal() {
+        const revealElements = Array.from(document.querySelectorAll('[data-reveal]'))
+
+        if (revealElements.length === 0) return
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+        if (reduceMotion || !('IntersectionObserver' in window)) {
+          revealElements.forEach((element) => element.classList.add('is-visible'))
+          return
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return
+
+              entry.target.classList.add('is-visible')
+              observer.unobserve(entry.target)
+            })
+          },
+          {
+            threshold: 0.12,
+            rootMargin: '0px 0px -70px 0px',
+          }
+        )
+
+        revealElements.forEach((element) => observer.observe(element))
+
+        addCleanup(() => {
+          observer.disconnect()
+        })
+      }
+
       function initBackToTopButton() {
         const button = document.getElementById('back-to-top')
 
@@ -1236,6 +1314,7 @@ const socialLinks = [
         highlightTodayScheduleCard()
         updateRandomFanArt()
         loadSiteUpdates()
+        initScrollReveal()
         initBackToTopButton()
 
         fetchTwitchLiveStatus().then(updateStreamPanel)
