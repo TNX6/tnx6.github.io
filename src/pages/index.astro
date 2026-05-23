@@ -1249,6 +1249,80 @@ const socialLinks = [
       border-color: rgba(194, 146, 0, 0.9) !important;
       box-shadow: 0 0 22px rgba(194, 146, 0, 0.45);
     }
+
+    /* These rows are injected with innerHTML, so they must be global. */
+    .tnx-community-row {
+      display: grid !important;
+      grid-template-columns: 92px minmax(0, 1fr) !important;
+      align-items: center !important;
+      gap: 1rem !important;
+      direction: ltr !important;
+      text-align: right !important;
+      border-radius: 0.95rem !important;
+      border: 1px solid rgba(194, 146, 0, 0.18) !important;
+      background:
+        radial-gradient(circle at top left, rgba(255, 218, 106, 0.07), transparent 40%),
+        rgba(255, 255, 255, 0.035) !important;
+      padding: 0.7rem 0.8rem !important;
+      color: rgb(209, 213, 219) !important;
+      font-size: 0.9rem !important;
+      font-weight: 800 !important;
+    }
+
+    .tnx-community-row strong {
+      grid-column: 1 !important;
+      grid-row: 1 !important;
+      justify-self: start !important;
+      min-width: 92px !important;
+      color: #ffda6a !important;
+      font-size: 1rem !important;
+      font-weight: 950 !important;
+      letter-spacing: 0.01em !important;
+      text-align: left !important;
+      direction: ltr !important;
+      text-shadow:
+        0 0 5px rgba(255, 218, 106, 0.34),
+        0 0 12px rgba(194, 146, 0, 0.2) !important;
+    }
+
+    .tnx-community-platform {
+      grid-column: 2 !important;
+      grid-row: 1 !important;
+      justify-self: stretch !important;
+      display: flex !important;
+      min-width: 0 !important;
+      align-items: center !important;
+      justify-content: flex-end !important;
+      gap: 0.55rem !important;
+      color: rgb(229, 231, 235) !important;
+      font-weight: 800 !important;
+      text-align: right !important;
+      direction: ltr !important;
+      white-space: nowrap !important;
+    }
+
+    .tnx-community-platform > span:not(.tnx-community-platform-icon) {
+      order: 1 !important;
+      text-align: right !important;
+    }
+
+    .tnx-community-platform-icon {
+      order: 2 !important;
+      display: inline-flex !important;
+      height: 1.7rem !important;
+      width: 1.7rem !important;
+      flex-shrink: 0 !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-radius: 0.55rem !important;
+      border: 1px solid rgba(194, 146, 0, 0.25) !important;
+      background: rgba(0, 0, 0, 0.42) !important;
+      color: #ffda6a !important;
+    }
+
+    .tnx-community-platform-icon iconify-icon {
+      font-size: 1.05rem !important;
+    }
   </style>
 
   <script define:vars={{ streamConfig, fanArtImages, twitchStatusUrl, socialStatsUrl }} data-reinit>
