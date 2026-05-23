@@ -20,6 +20,7 @@ const fanArtImages = fs.existsSync(fanArtDir)
   : []
 
 const twitchStatusUrl = 'https://tnx6-twitch-status.ddxdx240.workers.dev'
+const socialStatsUrl = 'https://tnx6-social-stats.ddxdx240.workers.dev/stats'
 
 const streamConfig = {
   startHour: 21,
@@ -309,6 +310,70 @@ const socialLinks = [
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="relative z-20 px-4 pb-8 md:px-6">
+      <div class="mx-auto max-w-7xl" dir="rtl">
+        <div
+          class="stats-strip grid gap-3 rounded-[1.7rem] border border-[#c29200]/25 bg-black/55 p-3 shadow-[0_0_35px_rgba(0,0,0,0.45)] backdrop-blur md:grid-cols-3"
+          data-reveal="up"
+        >
+          <div class="stats-card">
+            <div class="stats-card-icon">
+              <iconify-icon icon="tabler:clock-hour-4"></iconify-icon>
+            </div>
+
+            <div>
+              <p class="stats-card-label">ساعات البث</p>
+              <p id="stream-hours-total" class="stats-card-value">--</p>
+              <p id="stream-hours-subtitle" class="stats-card-subtitle">آخر 30 يوم</p>
+            </div>
+          </div>
+
+          <button
+            id="community-stat-card"
+            type="button"
+            class="stats-card stats-card--interactive"
+            aria-expanded="false"
+          >
+            <div class="stats-card-icon">
+              <iconify-icon icon="tabler:users-group"></iconify-icon>
+            </div>
+
+            <div>
+              <p class="stats-card-label">إجمالي المجتمع</p>
+              <p id="community-total" class="stats-card-value">--</p>
+              <p class="stats-card-subtitle">مرر الماوس للتفاصيل</p>
+            </div>
+
+            <div id="community-popover" class="community-popover">
+              <div class="mb-3 flex items-center justify-between gap-3">
+                <span class="text-sm font-black text-[#ffda6a]">تفصيل المنصات</span>
+                <span class="text-[11px] font-bold text-gray-500">TNX6</span>
+              </div>
+
+              <div id="community-breakdown-list" class="space-y-2">
+                <div class="community-breakdown-row">
+                  <span>جاري التحميل...</span>
+                  <strong>--</strong>
+                </div>
+              </div>
+            </div>
+          </button>
+
+          <a href="/winners" class="stats-card stats-card--link">
+            <div class="stats-card-icon">
+              <iconify-icon icon="tabler:crown"></iconify-icon>
+            </div>
+
+            <div>
+              <p class="stats-card-label">إجمالي الفائزين</p>
+              <p id="winners-total" class="stats-card-value">--</p>
+              <p class="stats-card-subtitle">من صفحة الفائزين</p>
+            </div>
+          </a>
         </div>
       </div>
     </section>
@@ -754,6 +819,138 @@ const socialLinks = [
         0 12px 24px rgba(0, 0, 0, 0.38);
     }
 
+    .stats-strip {
+      position: relative;
+      overflow: visible;
+    }
+
+    .stats-card {
+      position: relative;
+      display: flex;
+      min-height: 104px;
+      align-items: center;
+      gap: 1rem;
+      border-radius: 1.25rem;
+      border: 1px solid rgba(194, 146, 0, 0.22);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 36%),
+        rgba(5, 5, 5, 0.72);
+      padding: 1rem;
+      text-align: right;
+      color: white;
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        background 180ms ease;
+    }
+
+    .stats-card:hover,
+    .stats-card.is-open {
+      transform: translateY(-2px);
+      border-color: rgba(194, 146, 0, 0.72);
+      box-shadow:
+        0 0 22px rgba(194, 146, 0, 0.18),
+        0 18px 38px rgba(0, 0, 0, 0.38);
+    }
+
+    .stats-card--interactive {
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .stats-card--link {
+      text-decoration: none;
+    }
+
+    .stats-card-icon {
+      display: flex;
+      height: 3rem;
+      width: 3rem;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border-radius: 1rem;
+      border: 1px solid rgba(194, 146, 0, 0.32);
+      background: rgba(0, 0, 0, 0.52);
+      color: #ffda6a;
+      box-shadow: inset 0 0 18px rgba(255, 218, 106, 0.08);
+    }
+
+    .stats-card-icon iconify-icon {
+      font-size: 1.55rem;
+    }
+
+    .stats-card-label {
+      margin-bottom: 0.25rem;
+      font-size: 0.82rem;
+      font-weight: 900;
+      color: rgb(209, 213, 219);
+    }
+
+    .stats-card-value {
+      font-size: 1.8rem;
+      line-height: 1.1;
+      font-weight: 950;
+      color: #ffda6a;
+      text-shadow:
+        0 0 6px rgba(255, 218, 106, 0.44),
+        0 0 16px rgba(194, 146, 0, 0.28);
+    }
+
+    .stats-card-subtitle {
+      margin-top: 0.2rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: rgb(156, 163, 175);
+    }
+
+    .community-popover {
+      position: absolute;
+      top: calc(100% + 0.8rem);
+      left: 50%;
+      z-index: 30;
+      width: min(320px, calc(100vw - 2rem));
+      transform: translateX(-50%) translateY(8px);
+      border-radius: 1.25rem;
+      border: 1px solid rgba(194, 146, 0, 0.38);
+      background: rgba(5, 5, 5, 0.96);
+      padding: 1rem;
+      color: rgb(229, 231, 235);
+      box-shadow:
+        0 0 30px rgba(194, 146, 0, 0.18),
+        0 20px 45px rgba(0, 0, 0, 0.55);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        opacity 160ms ease,
+        transform 160ms ease;
+    }
+
+    .stats-card--interactive:hover .community-popover,
+    .stats-card--interactive.is-open .community-popover {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .community-breakdown-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      border-radius: 0.85rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.035);
+      padding: 0.55rem 0.7rem;
+      font-size: 0.86rem;
+    }
+
+    .community-breakdown-row strong {
+      color: #ffda6a;
+      font-weight: 950;
+    }
+
     .tnx-countdown-row {
       display: inline-grid;
       grid-template-columns: minmax(38px, auto) auto minmax(38px, auto) auto minmax(38px, auto);
@@ -917,13 +1114,14 @@ const socialLinks = [
     }
   </style>
 
-  <script define:vars={{ streamConfig, fanArtImages, twitchStatusUrl }} data-reinit>
+  <script define:vars={{ streamConfig, fanArtImages, twitchStatusUrl, socialStatsUrl }} data-reinit>
     ;(() => {
       const STREAM_START_HOUR = streamConfig.startHour
       const STREAM_START_MINUTE = streamConfig.startMinute
       const STREAM_END_HOUR = streamConfig.endHour
       const STREAM_DAYS = streamConfig.days
       const TWITCH_STATUS_URL = twitchStatusUrl
+      const SOCIAL_STATS_URL = socialStatsUrl
 
       const cleanupKey = '__tnxHomeCleanup'
 
@@ -967,6 +1165,14 @@ const socialLinks = [
           .replaceAll('>', '&gt;')
           .replaceAll('"', '&quot;')
           .replaceAll("'", '&#039;')
+      }
+
+      function formatNumber(value) {
+        const number = Number(value)
+
+        if (!Number.isFinite(number)) return '--'
+
+        return new Intl.NumberFormat('en-US').format(number)
       }
 
       function isStreamDay(date) {
@@ -1057,6 +1263,141 @@ const socialLinks = [
             viewers: 0,
           }
         }
+      }
+
+      async function loadSocialStats() {
+        const hoursEl = document.getElementById('stream-hours-total')
+        const hoursSubtitleEl = document.getElementById('stream-hours-subtitle')
+        const communityTotalEl = document.getElementById('community-total')
+        const breakdownListEl = document.getElementById('community-breakdown-list')
+
+        if (!hoursEl || !communityTotalEl || !breakdownListEl) return
+
+        try {
+          const response = await fetch(`${SOCIAL_STATS_URL}?site=${Date.now()}`, {
+            cache: 'no-store',
+          })
+
+          if (!response.ok) {
+            throw new Error('Failed to load social stats')
+          }
+
+          const data = await response.json()
+
+          const streamHours = data.last30DaysStreamHours || data.monthlyStreamHours || null
+          const communityTotal = Number(data.communityTotal || 0)
+          const stats = Array.isArray(data.stats) ? data.stats : []
+
+          hoursEl.textContent =
+            streamHours && typeof streamHours.value === 'number'
+              ? `${streamHours.value} ساعة`
+              : '--'
+
+          if (hoursSubtitleEl) {
+            const vodCount = streamHours && typeof streamHours.vodCount === 'number'
+              ? streamHours.vodCount
+              : null
+
+            hoursSubtitleEl.textContent = vodCount
+              ? `آخر 30 يوم — ${vodCount} فود`
+              : 'آخر 30 يوم'
+          }
+
+          communityTotalEl.textContent = communityTotal > 0 ? formatNumber(communityTotal) : '--'
+
+          const platformOrder = ['twitch', 'youtube', 'discord', 'instagram', 'tiktok', 'kick']
+
+          const sortedStats = stats
+            .filter((item) => item && item.key)
+            .sort((a, b) => {
+              const aIndex = platformOrder.indexOf(a.key)
+              const bIndex = platformOrder.indexOf(b.key)
+
+              return (aIndex === -1 ? 99 : aIndex) - (bIndex === -1 ? 99 : bIndex)
+            })
+
+          breakdownListEl.innerHTML = sortedStats
+            .map((item) => {
+              const label = escapeHtml(item.label || item.key)
+              const value = typeof item.value === 'number' ? formatNumber(item.value) : '--'
+
+              return `
+                <div class="community-breakdown-row">
+                  <span>${label}</span>
+                  <strong>${value}</strong>
+                </div>
+              `
+            })
+            .join('')
+        } catch {
+          hoursEl.textContent = '--'
+          communityTotalEl.textContent = '--'
+
+          breakdownListEl.innerHTML = `
+            <div class="community-breakdown-row">
+              <span>تعذر تحميل الإحصائيات</span>
+              <strong>--</strong>
+            </div>
+          `
+        }
+      }
+
+      async function loadWinnersCount() {
+        const winnersTotalEl = document.getElementById('winners-total')
+
+        if (!winnersTotalEl) return
+
+        try {
+          const response = await fetch('/winners', {
+            cache: 'no-store',
+          })
+
+          if (!response.ok) {
+            throw new Error('Failed to load winners page')
+          }
+
+          const html = await response.text()
+          const parser = new DOMParser()
+          const doc = parser.parseFromString(html, 'text/html')
+          const count = doc.querySelectorAll('.user-card[data-name]').length
+
+          winnersTotalEl.textContent = count > 0 ? formatNumber(count) : '--'
+        } catch {
+          winnersTotalEl.textContent = '--'
+        }
+      }
+
+      function initCommunityStatsPopover() {
+        const card = document.getElementById('community-stat-card')
+
+        if (!card) return
+
+        function togglePopover(event) {
+          event.stopPropagation()
+          const isOpen = card.classList.toggle('is-open')
+          card.setAttribute('aria-expanded', String(isOpen))
+        }
+
+        function closePopover() {
+          card.classList.remove('is-open')
+          card.setAttribute('aria-expanded', 'false')
+        }
+
+        function closeOnEscape(event) {
+          if (event.key === 'Escape') {
+            closePopover()
+          }
+        }
+
+        card.addEventListener('click', togglePopover)
+        document.addEventListener('click', closePopover)
+        document.addEventListener('keydown', closeOnEscape)
+
+        addCleanup(() => {
+          card.removeEventListener('click', togglePopover)
+          document.removeEventListener('click', closePopover)
+          document.removeEventListener('keydown', closeOnEscape)
+        })
       }
 
       async function loadSiteUpdates() {
@@ -1366,6 +1707,9 @@ const socialLinks = [
         highlightTodayScheduleCard()
         updateRandomFanArt()
         loadSiteUpdates()
+        loadSocialStats()
+        loadWinnersCount()
+        initCommunityStatsPopover()
         initScrollReveal()
         initBackToTopButton()
 
