@@ -136,15 +136,15 @@ const socialLinks = [
               </div>
 
               <h1 class="mb-5 text-5xl font-black leading-[1.05] tracking-tight text-white md:text-7xl">
-                مرحبا بكم
+                حياكم في
                 <br />
                 <span class="glow-text text-[#ffda6a]">
-                  في موقعي
+                  موقع TNX6
                 </span>
               </h1>
 
               <p class="mb-8 max-w-2xl text-lg leading-relaxed text-gray-200">
-                هنا تلقى الجدول، الأوامر، الترتيب، الأغراض، البدجات، والرسمات.
+                هنا تلقى جدول البث، الأوامر، الترتيب، الأغراض، البدجات، والرسمات.
               </p>
 
               <div class="mb-8 flex flex-wrap gap-3">
@@ -253,6 +253,17 @@ const socialLinks = [
                     موعد البث القادم
                   </div>
                 </div>
+
+                <a
+                  id="hero-live-button"
+                  href="https://www.twitch.tv/tnx_6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="hero-live-button mt-4"
+                >
+                  <iconify-icon icon="tabler:brand-twitch" class="text-lg"></iconify-icon>
+                  <span>ادخل البث</span>
+                </a>
               </div>
 
               <div class="relative overflow-hidden rounded-[1.7rem] border border-[#c29200]/30 bg-[#080808]/95 p-3 shadow-[0_0_35px_rgba(0,0,0,0.45)]">
@@ -705,6 +716,44 @@ const socialLinks = [
       font-size: 1.45rem;
     }
 
+    .hero-live-button {
+      display: inline-flex;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(194, 146, 0, 0.55);
+      background: linear-gradient(135deg, rgba(255, 218, 106, 0.95), rgba(194, 146, 0, 0.92));
+      color: #08050d;
+      padding: 0.8rem 1rem;
+      font-size: 0.95rem;
+      font-weight: 950;
+      box-shadow:
+        0 0 18px rgba(255, 218, 106, 0.18),
+        0 12px 24px rgba(0, 0, 0, 0.35);
+      transition:
+        transform 180ms ease,
+        opacity 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .hero-live-button:hover {
+      transform: translateY(-2px);
+      opacity: 0.94;
+      box-shadow:
+        0 0 24px rgba(255, 218, 106, 0.32),
+        0 14px 28px rgba(0, 0, 0, 0.42);
+    }
+
+    .hero-live-button.is-live {
+      border-color: rgba(239, 68, 68, 0.45);
+      background: linear-gradient(135deg, #ef4444, #facc15);
+      box-shadow:
+        0 0 22px rgba(239, 68, 68, 0.28),
+        0 12px 24px rgba(0, 0, 0, 0.38);
+    }
+
     .tnx-countdown-row {
       display: inline-grid;
       grid-template-columns: minmax(38px, auto) auto minmax(38px, auto) auto minmax(38px, auto);
@@ -1115,6 +1164,7 @@ const socialLinks = [
         const dotEl = document.getElementById('hero-live-dot')
         const countdownValueEl = document.getElementById('hero-countdown-value')
         const countdownLabelEl = document.getElementById('hero-countdown-label')
+        const liveButtonEl = document.getElementById('hero-live-button')
 
         if (!cardEl || !kickerEl || !titleEl || !metaEl || !dotEl || !countdownValueEl || !countdownLabelEl) {
           return
@@ -1134,10 +1184,12 @@ const socialLinks = [
           dotEl.className =
             'mt-2 h-3 w-3 rounded-full bg-red-500 shadow-[0_0_14px_rgba(239,68,68,0.9)]'
           cardEl.classList.add('border-red-500/40')
+          liveButtonEl?.classList.add('is-live')
           return
         }
 
         cardEl.classList.remove('border-red-500/40')
+        liveButtonEl?.classList.remove('is-live')
         dotEl.className =
           'mt-2 h-3 w-3 rounded-full bg-[#ffda6a] shadow-[0_0_14px_rgba(255,218,106,0.7)]'
 
