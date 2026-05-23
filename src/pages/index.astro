@@ -901,7 +901,7 @@ const socialLinks = [
         return null
       }
 
-      function getNextStreamText(next, now) {
+      function getNextStreamText(next) {
         if (!next) return 'موعد البث القادم'
 
         const dayNames = [
@@ -914,9 +914,7 @@ const socialLinks = [
           'السبت',
         ]
 
-        const isToday = next.toDateString() === now.toDateString()
-
-        return isToday ? 'بث اليوم' : `${dayNames[next.getDay()]} — 9:00 م`
+        return `${dayNames[next.getDay()]} — 9:00 م`
       }
 
       function getCountdownParts(totalSeconds) {
@@ -1108,17 +1106,14 @@ const socialLinks = [
 
         if (!next || typeof totalSeconds !== 'number') {
           titleEl.textContent = 'حسب الجدول'
-          metaEl.textContent = 'العداد يظهر عند توفر الموعد القادم.'
+          metaEl.textContent = ''
           countdownValueEl.textContent = '-- : -- : --'
           countdownLabelEl.textContent = 'موعد البث القادم'
           return
         }
 
-        const hours = Math.floor(totalSeconds / 3600)
-        const minutes = Math.floor((totalSeconds % 3600) / 60)
-
-        titleEl.textContent = getNextStreamText(next, new Date())
-        metaEl.textContent = `باقي تقريبًا ${hours} ساعة و ${minutes} دقيقة`
+        titleEl.textContent = getNextStreamText(next)
+        metaEl.textContent = ''
         countdownValueEl.innerHTML = renderCountdown(totalSeconds)
         countdownLabelEl.textContent = 'العد التنازلي'
       }
@@ -1172,7 +1167,7 @@ const socialLinks = [
         timerEl.classList.remove('font-bold', 'tnx-live-glow')
 
         if (labelEl) {
-          labelEl.textContent = getNextStreamText(next, now)
+          labelEl.textContent = getNextStreamText(next)
         }
 
         wrapperEl?.classList.remove('ring-1', 'ring-red-400/60')
