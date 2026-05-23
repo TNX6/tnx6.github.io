@@ -1003,14 +1003,19 @@ const socialLinks = [
       color: rgb(209, 213, 219);
       font-size: 0.9rem;
       font-weight: 800;
-      direction: ltr;
+      direction: rtl;
+      text-align: right;
     }
 
     .tnx-community-row strong {
+      min-width: 78px;
+      flex-shrink: 0;
       color: #ffda6a;
       font-size: 1rem;
       font-weight: 950;
       letter-spacing: 0.01em;
+      text-align: left;
+      direction: ltr;
       text-shadow:
         0 0 5px rgba(255, 218, 106, 0.34),
         0 0 12px rgba(194, 146, 0, 0.2);
@@ -1019,10 +1024,14 @@ const socialLinks = [
     .tnx-community-platform {
       display: inline-flex;
       min-width: 0;
+      flex: 1 1 auto;
       align-items: center;
+      justify-content: flex-start;
       gap: 0.55rem;
       color: rgb(229, 231, 235);
       font-weight: 800;
+      flex-direction: row-reverse;
+      text-align: right;
     }
 
     .tnx-community-platform-icon {
