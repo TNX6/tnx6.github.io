@@ -314,64 +314,67 @@ const socialLinks = [
       </div>
     </section>
 
-    <section class="relative z-20 px-4 pb-8 md:px-6">
-      <div class="mx-auto max-w-7xl" dir="rtl">
-        <div
-          class="stats-strip grid gap-3 rounded-[1.7rem] border border-[#c29200]/25 bg-black/55 p-3 shadow-[0_0_35px_rgba(0,0,0,0.45)] backdrop-blur md:grid-cols-3"
-          data-reveal="up"
-        >
-          <div class="stats-card">
-            <div class="stats-card-icon">
+    <section class="relative z-10 px-4 pb-6 md:px-6" dir="rtl" data-reveal="up">
+      <div class="mx-auto max-w-7xl">
+        <div class="tnx-stats-strip">
+          <div class="tnx-stat-card">
+            <div class="tnx-stat-icon">
               <iconify-icon icon="tabler:clock-hour-4"></iconify-icon>
             </div>
 
             <div>
-              <p class="stats-card-label">ساعات البث</p>
-              <p id="stream-hours-total" class="stats-card-value">--</p>
-              <p id="stream-hours-subtitle" class="stats-card-subtitle">آخر 30 يوم</p>
+              <p class="tnx-stat-label">ساعات البث</p>
+              <p id="stat-stream-hours" class="tnx-stat-value">--</p>
+              <p id="stat-stream-hours-meta" class="tnx-stat-meta">آخر 30 يوم</p>
             </div>
           </div>
 
           <button
             id="community-stat-card"
             type="button"
-            class="stats-card stats-card--interactive"
+            class="tnx-stat-card tnx-stat-card--interactive"
             aria-expanded="false"
+            aria-controls="community-breakdown"
           >
-            <div class="stats-card-icon">
+            <div class="tnx-stat-icon">
               <iconify-icon icon="tabler:users-group"></iconify-icon>
             </div>
 
-            <div>
-              <p class="stats-card-label">إجمالي المجتمع</p>
-              <p id="community-total" class="stats-card-value">--</p>
-              <p class="stats-card-subtitle">مرر الماوس للتفاصيل</p>
+            <div class="min-w-0">
+              <p class="tnx-stat-label">إجمالي المجتمع</p>
+              <p id="stat-community-total" class="tnx-stat-value">--</p>
+              <p class="tnx-stat-meta">مرر الماوس للتفاصيل</p>
             </div>
 
-            <div id="community-popover" class="community-popover">
+            <div id="community-breakdown" class="tnx-community-popover" role="dialog" aria-label="تفصيل إجمالي المجتمع">
               <div class="mb-3 flex items-center justify-between gap-3">
-                <span class="text-sm font-black text-[#ffda6a]">تفصيل المنصات</span>
-                <span class="text-[11px] font-bold text-gray-500">TNX6</span>
+                <p class="text-sm font-black text-[#ffda6a]">تفصيل المنصات</p>
+                <span class="rounded-full border border-[#c29200]/30 px-2 py-1 text-[10px] font-bold text-gray-400">LIVE STATS</span>
               </div>
 
               <div id="community-breakdown-list" class="space-y-2">
-                <div class="community-breakdown-row">
-                  <span>جاري التحميل...</span>
+                <div class="tnx-community-row">
+                  <span class="tnx-community-platform">
+                    <span class="tnx-community-platform-icon">
+                      <iconify-icon icon="tabler:loader-2"></iconify-icon>
+                    </span>
+                    <span>جاري التحميل</span>
+                  </span>
                   <strong>--</strong>
                 </div>
               </div>
             </div>
           </button>
 
-          <a href="/winners" class="stats-card stats-card--link">
-            <div class="stats-card-icon">
+          <a href="/winners" class="tnx-stat-card">
+            <div class="tnx-stat-icon">
               <iconify-icon icon="tabler:crown"></iconify-icon>
             </div>
 
             <div>
-              <p class="stats-card-label">إجمالي الفائزين</p>
-              <p id="winners-total" class="stats-card-value">--</p>
-              <p class="stats-card-subtitle">من صفحة الفائزين</p>
+              <p class="tnx-stat-label">إجمالي الفائزين</p>
+              <p id="stat-winners-total" class="tnx-stat-value">--</p>
+              <p class="tnx-stat-meta">من صفحة الجوائز</p>
             </div>
           </a>
         </div>
@@ -819,22 +822,33 @@ const socialLinks = [
         0 12px 24px rgba(0, 0, 0, 0.38);
     }
 
-    .stats-strip {
-      position: relative;
-      overflow: visible;
+    .tnx-stats-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+      border-radius: 1.6rem;
+      border: 1px solid rgba(194, 146, 0, 0.28);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.11), transparent 36%),
+        rgba(5, 5, 5, 0.78);
+      padding: 0.9rem;
+      box-shadow:
+        0 0 38px rgba(0, 0, 0, 0.42),
+        inset 0 0 18px rgba(255, 218, 106, 0.03);
+      backdrop-filter: blur(12px);
     }
 
-    .stats-card {
+    .tnx-stat-card {
       position: relative;
       display: flex;
-      min-height: 104px;
+      min-height: 112px;
       align-items: center;
-      gap: 1rem;
+      gap: 0.9rem;
+      overflow: visible;
       border-radius: 1.25rem;
-      border: 1px solid rgba(194, 146, 0, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.09);
       background:
-        radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 36%),
-        rgba(5, 5, 5, 0.72);
+        linear-gradient(180deg, rgba(10, 12, 18, 0.92), rgba(5, 6, 10, 0.96));
       padding: 1rem;
       text-align: right;
       color: white;
@@ -845,110 +859,215 @@ const socialLinks = [
         background 180ms ease;
     }
 
-    .stats-card:hover,
-    .stats-card.is-open {
+    .tnx-stat-card:hover,
+    .tnx-stat-card:focus-visible {
       transform: translateY(-2px);
-      border-color: rgba(194, 146, 0, 0.72);
-      box-shadow:
-        0 0 22px rgba(194, 146, 0, 0.18),
-        0 18px 38px rgba(0, 0, 0, 0.38);
+      border-color: rgba(194, 146, 0, 0.58);
+      box-shadow: 0 0 28px rgba(194, 146, 0, 0.16);
+      outline: none;
     }
 
-    .stats-card--interactive {
-      cursor: pointer;
+    .tnx-stat-card--interactive {
       width: 100%;
+      cursor: pointer;
     }
 
-    .stats-card--link {
-      text-decoration: none;
-    }
-
-    .stats-card-icon {
+    .tnx-stat-icon {
       display: flex;
-      height: 3rem;
-      width: 3rem;
+      height: 3.1rem;
+      width: 3.1rem;
       flex-shrink: 0;
       align-items: center;
       justify-content: center;
       border-radius: 1rem;
-      border: 1px solid rgba(194, 146, 0, 0.32);
-      background: rgba(0, 0, 0, 0.52);
+      border: 1px solid rgba(194, 146, 0, 0.34);
+      background: rgba(0, 0, 0, 0.48);
       color: #ffda6a;
-      box-shadow: inset 0 0 18px rgba(255, 218, 106, 0.08);
+      box-shadow: inset 0 0 12px rgba(255, 218, 106, 0.06);
     }
 
-    .stats-card-icon iconify-icon {
+    .tnx-stat-icon iconify-icon {
       font-size: 1.55rem;
+      filter: drop-shadow(0 0 5px rgba(255, 218, 106, 0.35));
     }
 
-    .stats-card-label {
-      margin-bottom: 0.25rem;
-      font-size: 0.82rem;
+    .tnx-stat-label {
+      margin-bottom: 0.2rem;
+      font-size: 0.78rem;
       font-weight: 900;
-      color: rgb(209, 213, 219);
-    }
-
-    .stats-card-value {
-      font-size: 1.8rem;
-      line-height: 1.1;
-      font-weight: 950;
-      color: #ffda6a;
-      text-shadow:
-        0 0 6px rgba(255, 218, 106, 0.44),
-        0 0 16px rgba(194, 146, 0, 0.28);
-    }
-
-    .stats-card-subtitle {
-      margin-top: 0.2rem;
-      font-size: 0.72rem;
-      font-weight: 700;
       color: rgb(156, 163, 175);
     }
 
-    .community-popover {
+    .tnx-stat-value {
+      color: #ffda6a;
+      font-size: 1.65rem;
+      font-weight: 950;
+      line-height: 1.05;
+      text-shadow:
+        0 0 6px rgba(255, 218, 106, 0.44),
+        0 0 16px rgba(194, 146, 0, 0.24);
+    }
+
+    .tnx-stat-meta {
+      margin-top: 0.25rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: rgb(107, 114, 128);
+    }
+
+    .tnx-community-popover {
       position: absolute;
-      top: calc(100% + 0.8rem);
-      left: 50%;
+      right: 50%;
+      top: calc(100% + 0.75rem);
       z-index: 30;
       width: min(320px, calc(100vw - 2rem));
-      transform: translateX(-50%) translateY(8px);
       border-radius: 1.25rem;
-      border: 1px solid rgba(194, 146, 0, 0.38);
-      background: rgba(5, 5, 5, 0.96);
+      border: 1px solid rgba(194, 146, 0, 0.34);
+      background: rgba(4, 4, 5, 0.96);
       padding: 1rem;
-      color: rgb(229, 231, 235);
+      text-align: right;
       box-shadow:
-        0 0 30px rgba(194, 146, 0, 0.18),
-        0 20px 45px rgba(0, 0, 0, 0.55);
+        0 20px 50px rgba(0, 0, 0, 0.55),
+        0 0 24px rgba(194, 146, 0, 0.12);
       opacity: 0;
       pointer-events: none;
+      transform: translateX(50%) translateY(8px) scale(0.98);
       transition:
         opacity 160ms ease,
         transform 160ms ease;
+      backdrop-filter: blur(12px);
     }
 
-    .stats-card--interactive:hover .community-popover,
-    .stats-card--interactive.is-open .community-popover {
+    .tnx-community-popover::before {
+      content: "";
+      position: absolute;
+      top: -7px;
+      right: 50%;
+      height: 14px;
+      width: 14px;
+      transform: translateX(50%) rotate(45deg);
+      border-right: 1px solid rgba(194, 146, 0, 0.34);
+      border-top: 1px solid rgba(194, 146, 0, 0.34);
+      background: rgba(4, 4, 5, 0.96);
+    }
+
+    .tnx-stat-card--interactive:hover .tnx-community-popover,
+    .tnx-stat-card--interactive:focus-visible .tnx-community-popover,
+    .tnx-stat-card--interactive.is-open .tnx-community-popover {
       opacity: 1;
       pointer-events: auto;
-      transform: translateX(-50%) translateY(0);
+      transform: translateX(50%) translateY(0) scale(1);
     }
 
-    .community-breakdown-row {
+    .tnx-community-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      border-radius: 0.85rem;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.035);
-      padding: 0.55rem 0.7rem;
-      font-size: 0.86rem;
+      border-radius: 0.95rem;
+      border: 1px solid rgba(194, 146, 0, 0.18);
+      background:
+        radial-gradient(circle at top left, rgba(255, 218, 106, 0.07), transparent 40%),
+        rgba(255, 255, 255, 0.035);
+      padding: 0.7rem 0.8rem;
+      color: rgb(209, 213, 219);
+      font-size: 0.9rem;
+      font-weight: 800;
+      direction: ltr;
     }
 
-    .community-breakdown-row strong {
+    .tnx-community-row strong {
       color: #ffda6a;
+      font-size: 1rem;
       font-weight: 950;
+      letter-spacing: 0.01em;
+      text-shadow:
+        0 0 5px rgba(255, 218, 106, 0.34),
+        0 0 12px rgba(194, 146, 0, 0.2);
+    }
+
+    .tnx-stat-card {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 0.75rem;
+    }
+
+    .tnx-stat-card > div:not(.tnx-stat-icon):not(.tnx-community-popover) {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .tnx-stat-icon {
+      margin-inline: auto;
+    }
+
+    .tnx-stat-label,
+    .tnx-stat-value,
+    .tnx-stat-meta {
+      width: 100%;
+      text-align: center;
+    }
+
+    .tnx-community-popover {
+      text-align: initial;
+    }
+
+    .tnx-community-platform {
+      display: inline-flex;
+      min-width: 0;
+      align-items: center;
+      gap: 0.55rem;
+      color: rgb(229, 231, 235);
+      font-weight: 800;
+    }
+
+    .tnx-community-platform-icon {
+      display: inline-flex;
+      height: 1.7rem;
+      width: 1.7rem;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.55rem;
+      border: 1px solid rgba(194, 146, 0, 0.25);
+      background: rgba(0, 0, 0, 0.42);
+      color: #ffda6a;
+    }
+
+    .tnx-community-platform-icon iconify-icon {
+      font-size: 1.05rem;
+    }
+
+    @media (max-width: 860px) {
+      .tnx-stats-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-stat-card {
+        min-height: 96px;
+      }
+
+      .tnx-community-popover {
+        right: 0;
+        transform: translateY(8px) scale(0.98);
+      }
+
+      .tnx-community-popover::before {
+        right: 2rem;
+        transform: rotate(45deg);
+      }
+
+      .tnx-stat-card--interactive:hover .tnx-community-popover,
+      .tnx-stat-card--interactive:focus-visible .tnx-community-popover,
+      .tnx-stat-card--interactive.is-open .tnx-community-popover {
+        transform: translateY(0) scale(1);
+      }
     }
 
     .tnx-countdown-row {
@@ -1167,14 +1286,6 @@ const socialLinks = [
           .replaceAll("'", '&#039;')
       }
 
-      function formatNumber(value) {
-        const number = Number(value)
-
-        if (!Number.isFinite(number)) return '--'
-
-        return new Intl.NumberFormat('en-US').format(number)
-      }
-
       function isStreamDay(date) {
         return STREAM_DAYS.includes(date.getDay())
       }
@@ -1265,141 +1376,6 @@ const socialLinks = [
         }
       }
 
-      async function loadSocialStats() {
-        const hoursEl = document.getElementById('stream-hours-total')
-        const hoursSubtitleEl = document.getElementById('stream-hours-subtitle')
-        const communityTotalEl = document.getElementById('community-total')
-        const breakdownListEl = document.getElementById('community-breakdown-list')
-
-        if (!hoursEl || !communityTotalEl || !breakdownListEl) return
-
-        try {
-          const response = await fetch(`${SOCIAL_STATS_URL}?site=${Date.now()}`, {
-            cache: 'no-store',
-          })
-
-          if (!response.ok) {
-            throw new Error('Failed to load social stats')
-          }
-
-          const data = await response.json()
-
-          const streamHours = data.last30DaysStreamHours || data.monthlyStreamHours || null
-          const communityTotal = Number(data.communityTotal || 0)
-          const stats = Array.isArray(data.stats) ? data.stats : []
-
-          hoursEl.textContent =
-            streamHours && typeof streamHours.value === 'number'
-              ? `${streamHours.value} ساعة`
-              : '--'
-
-          if (hoursSubtitleEl) {
-            const vodCount = streamHours && typeof streamHours.vodCount === 'number'
-              ? streamHours.vodCount
-              : null
-
-            hoursSubtitleEl.textContent = vodCount
-              ? `آخر 30 يوم — ${vodCount} فود`
-              : 'آخر 30 يوم'
-          }
-
-          communityTotalEl.textContent = communityTotal > 0 ? formatNumber(communityTotal) : '--'
-
-          const platformOrder = ['twitch', 'youtube', 'discord', 'instagram', 'tiktok', 'kick']
-
-          const sortedStats = stats
-            .filter((item) => item && item.key)
-            .sort((a, b) => {
-              const aIndex = platformOrder.indexOf(a.key)
-              const bIndex = platformOrder.indexOf(b.key)
-
-              return (aIndex === -1 ? 99 : aIndex) - (bIndex === -1 ? 99 : bIndex)
-            })
-
-          breakdownListEl.innerHTML = sortedStats
-            .map((item) => {
-              const label = escapeHtml(item.label || item.key)
-              const value = typeof item.value === 'number' ? formatNumber(item.value) : '--'
-
-              return `
-                <div class="community-breakdown-row">
-                  <span>${label}</span>
-                  <strong>${value}</strong>
-                </div>
-              `
-            })
-            .join('')
-        } catch {
-          hoursEl.textContent = '--'
-          communityTotalEl.textContent = '--'
-
-          breakdownListEl.innerHTML = `
-            <div class="community-breakdown-row">
-              <span>تعذر تحميل الإحصائيات</span>
-              <strong>--</strong>
-            </div>
-          `
-        }
-      }
-
-      async function loadWinnersCount() {
-        const winnersTotalEl = document.getElementById('winners-total')
-
-        if (!winnersTotalEl) return
-
-        try {
-          const response = await fetch('/winners', {
-            cache: 'no-store',
-          })
-
-          if (!response.ok) {
-            throw new Error('Failed to load winners page')
-          }
-
-          const html = await response.text()
-          const parser = new DOMParser()
-          const doc = parser.parseFromString(html, 'text/html')
-          const count = doc.querySelectorAll('.user-card[data-name]').length
-
-          winnersTotalEl.textContent = count > 0 ? formatNumber(count) : '--'
-        } catch {
-          winnersTotalEl.textContent = '--'
-        }
-      }
-
-      function initCommunityStatsPopover() {
-        const card = document.getElementById('community-stat-card')
-
-        if (!card) return
-
-        function togglePopover(event) {
-          event.stopPropagation()
-          const isOpen = card.classList.toggle('is-open')
-          card.setAttribute('aria-expanded', String(isOpen))
-        }
-
-        function closePopover() {
-          card.classList.remove('is-open')
-          card.setAttribute('aria-expanded', 'false')
-        }
-
-        function closeOnEscape(event) {
-          if (event.key === 'Escape') {
-            closePopover()
-          }
-        }
-
-        card.addEventListener('click', togglePopover)
-        document.addEventListener('click', closePopover)
-        document.addEventListener('keydown', closeOnEscape)
-
-        addCleanup(() => {
-          card.removeEventListener('click', togglePopover)
-          document.removeEventListener('click', closePopover)
-          document.removeEventListener('keydown', closeOnEscape)
-        })
-      }
-
       async function loadSiteUpdates() {
         const listEl = document.getElementById('site-updates-list')
 
@@ -1463,16 +1439,197 @@ const socialLinks = [
         }
       }
 
-      function highlightTodayScheduleCard() {
-        const todayDay = new Date().getDay()
+      function formatNumber(value) {
+        const number = Number(value)
+
+        if (!Number.isFinite(number)) return '--'
+
+        return new Intl.NumberFormat('en-US').format(number)
+      }
+
+      function formatStatHours(value) {
+        const number = Number(value)
+
+        if (!Number.isFinite(number)) return '--'
+
+        return `${number.toFixed(1)} ساعة`
+      }
+
+      function getPlatformArabicLabel(key, fallbackLabel) {
+        const labels = {
+          twitch: 'Twitch',
+          youtube: 'YouTube',
+          discord: 'Discord',
+          instagram: 'Instagram',
+          tiktok: 'TikTok',
+          kick: 'Kick',
+        }
+
+        return labels[key] || fallbackLabel || key
+      }
+
+      async function loadSocialStats() {
+        const streamHoursEl = document.getElementById('stat-stream-hours')
+        const streamHoursMetaEl = document.getElementById('stat-stream-hours-meta')
+        const communityTotalEl = document.getElementById('stat-community-total')
+        const breakdownListEl = document.getElementById('community-breakdown-list')
+
+        if (!streamHoursEl || !communityTotalEl || !breakdownListEl) return
+
+        try {
+          const response = await fetch(`${SOCIAL_STATS_URL}?site=${Date.now()}`, {
+            cache: 'no-store',
+          })
+
+          if (!response.ok) {
+            throw new Error('Failed to load social stats')
+          }
+
+          const data = await response.json()
+          const hoursData = data.last30DaysStreamHours || data.monthlyStreamHours || null
+          const hoursValue = hoursData && typeof hoursData.value === 'number' ? hoursData.value : null
+          const stats = Array.isArray(data.stats) ? data.stats : []
+          const communityTotal = typeof data.communityTotal === 'number'
+            ? data.communityTotal
+            : stats.reduce((total, item) => total + (typeof item.value === 'number' ? item.value : 0), 0)
+
+          const platformOrder = ['twitch', 'youtube', 'discord', 'instagram', 'tiktok', 'kick']
+          const platformIconMap = {
+            twitch: 'tabler:brand-twitch',
+            youtube: 'tabler:brand-youtube',
+            discord: 'tabler:brand-discord',
+            instagram: 'tabler:brand-instagram',
+            tiktok: 'tabler:brand-tiktok',
+            kick: 'tabler:letter-k',
+          }
+
+          streamHoursEl.textContent = formatStatHours(hoursValue)
+
+          if (streamHoursMetaEl) {
+            streamHoursMetaEl.textContent = 'آخر 30 يوم'
+          }
+
+          communityTotalEl.textContent = formatNumber(communityTotal)
+
+          const sortedStats = stats
+            .filter((item) => item && item.key)
+            .sort((a, b) => {
+              const aIndex = platformOrder.indexOf(a.key)
+              const bIndex = platformOrder.indexOf(b.key)
+
+              return (aIndex === -1 ? 99 : aIndex) - (bIndex === -1 ? 99 : bIndex)
+            })
+
+          breakdownListEl.innerHTML = sortedStats
+            .map((item) => {
+              const key = String(item.key || '').trim()
+              const label = escapeHtml(getPlatformArabicLabel(item.key, item.label))
+              const value = typeof item.value === 'number' ? formatNumber(item.value) : '--'
+              const icon = platformIconMap[key] || 'tabler:circle'
+
+              return `
+                <div class="tnx-community-row">
+                  <span class="tnx-community-platform">
+                    <span class="tnx-community-platform-icon">
+                      <iconify-icon icon="${icon}"></iconify-icon>
+                    </span>
+                    <span>${label}</span>
+                  </span>
+                  <strong>${value}</strong>
+                </div>
+              `
+            })
+            .join('')
+        } catch {
+          streamHoursEl.textContent = '--'
+          communityTotalEl.textContent = '--'
+
+          if (streamHoursMetaEl) {
+            streamHoursMetaEl.textContent = 'آخر 30 يوم'
+          }
+
+          breakdownListEl.innerHTML = `
+            <div class="tnx-community-row">
+              <span class="tnx-community-platform">
+                <span class="tnx-community-platform-icon">
+                  <iconify-icon icon="tabler:alert-circle"></iconify-icon>
+                </span>
+                <span>تعذر تحميل الإحصائيات</span>
+              </span>
+              <strong>--</strong>
+            </div>
+          `
+        }
+      }
+
+      async function loadWinnersCount() {
+        const winnersTotalEl = document.getElementById('stat-winners-total')
+
+        if (!winnersTotalEl) return
+
+        try {
+          const response = await fetch('/winners', {
+            cache: 'no-store',
+          })
+
+          if (!response.ok) {
+            throw new Error('Failed to load winners page')
+          }
+
+          const html = await response.text()
+          const doc = new DOMParser().parseFromString(html, 'text/html')
+          const count = doc.querySelectorAll('.user-card[data-name]').length
+
+          winnersTotalEl.textContent = count > 0 ? formatNumber(count) : '--'
+        } catch {
+          winnersTotalEl.textContent = '--'
+        }
+      }
+
+      function initCommunityStatsPopover() {
+        const card = document.getElementById('community-stat-card')
+
+        if (!card) return
+
+        function togglePopover(event) {
+          event.stopPropagation()
+          const isOpen = card.classList.toggle('is-open')
+          card.setAttribute('aria-expanded', String(isOpen))
+        }
+
+        function closePopover() {
+          card.classList.remove('is-open')
+          card.setAttribute('aria-expanded', 'false')
+        }
+
+        function closeOnEscape(event) {
+          if (event.key === 'Escape') {
+            closePopover()
+          }
+        }
+
+        card.addEventListener('click', togglePopover)
+        document.addEventListener('click', closePopover)
+        document.addEventListener('keydown', closeOnEscape)
+
+        addCleanup(() => {
+          card.removeEventListener('click', togglePopover)
+          document.removeEventListener('click', closePopover)
+          document.removeEventListener('keydown', closeOnEscape)
+        })
+      }
+
+      function highlightActiveScheduleCard(now = new Date()) {
+        const activeDate = twitchLiveStatus.live ? now : getNextStreamStart(now)
+        const activeDay = activeDate ? activeDate.getDay() : null
 
         document.querySelectorAll('.tnx-schedule-card').forEach((card) => {
           card.classList.remove('tnx-schedule-card--active')
 
           const dayAttr = card.getAttribute('data-schedule-day')
-          if (!dayAttr) return
+          if (!dayAttr || activeDay === null) return
 
-          if (Number.parseInt(dayAttr, 10) === todayDay) {
+          if (Number.parseInt(dayAttr, 10) === activeDay) {
             card.classList.add('tnx-schedule-card--active')
           }
         })
@@ -1558,6 +1715,7 @@ const socialLinks = [
 
         const now = new Date()
 
+        highlightActiveScheduleCard(now)
         updateLiveDetails()
 
         if (twitchLiveStatus.live) {
@@ -1704,7 +1862,7 @@ const socialLinks = [
       }
 
       function init() {
-        highlightTodayScheduleCard()
+        highlightActiveScheduleCard(new Date())
         updateRandomFanArt()
         loadSiteUpdates()
         loadSocialStats()
