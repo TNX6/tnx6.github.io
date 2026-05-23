@@ -144,8 +144,7 @@ const socialLinks = [
               </h1>
 
               <p class="mb-8 max-w-2xl text-lg leading-relaxed text-gray-200">
-                هنا تلقى الجدول
-                الأوامر، الترتيب، الأغراض، البدجات، والرسمات.
+                هنا تلقى الجدول، الأوامر، الترتيب، الأغراض، البدجات، والرسمات.
               </p>
 
               <div class="mb-8 flex flex-wrap gap-3">
@@ -319,17 +318,13 @@ const socialLinks = [
 
             <div
               id="next-stream-wrapper"
-              class="inline-flex flex-wrap items-center justify-center gap-3 rounded-full border border-[#c29200]/50 bg-black/70 px-4 py-2 text-xs shadow-[0_0_20px_rgba(0,0,0,0.45)] md:text-sm"
+              class="inline-flex items-center justify-center rounded-full border border-[#c29200]/50 bg-black/70 px-4 py-2 text-xs shadow-[0_0_20px_rgba(0,0,0,0.45)] md:text-sm"
             >
               <span
                 id="next-stream-timer"
                 class="font-mono text-sm font-bold text-[#ffda6a] md:text-base"
               >
                 -- : -- : --
-              </span>
-
-              <span id="next-stream-label" class="text-[13px] text-slate-100 md:text-sm">
-                موعد البث القادم
               </span>
             </div>
           </div>
@@ -1121,7 +1116,6 @@ const socialLinks = [
       function updateStreamPanel() {
         const timerEl = document.getElementById('next-stream-timer')
         const wrapperEl = document.getElementById('next-stream-wrapper')
-        const labelEl = document.getElementById('next-stream-label')
 
         if (!timerEl) return
 
@@ -1134,11 +1128,6 @@ const socialLinks = [
           timerEl.classList.remove('font-mono')
           timerEl.classList.add('font-bold', 'tnx-live-glow')
 
-          if (labelEl) {
-            labelEl.textContent =
-              twitchLiveStatus.viewers > 0 ? `${twitchLiveStatus.viewers} مشاهد` : 'على Twitch'
-          }
-
           wrapperEl?.classList.add('ring-1', 'ring-red-400/60')
           updateHeroCard(null, null)
           return
@@ -1148,11 +1137,6 @@ const socialLinks = [
 
         if (!next) {
           timerEl.textContent = '-- : -- : --'
-
-          if (labelEl) {
-            labelEl.textContent = 'موعد البث القادم'
-          }
-
           timerEl.classList.add('font-mono')
           timerEl.classList.remove('font-bold', 'tnx-live-glow')
           wrapperEl?.classList.remove('ring-1', 'ring-red-400/60')
@@ -1165,10 +1149,6 @@ const socialLinks = [
         timerEl.innerHTML = renderCountdown(totalSeconds)
         timerEl.classList.add('font-mono')
         timerEl.classList.remove('font-bold', 'tnx-live-glow')
-
-        if (labelEl) {
-          labelEl.textContent = getNextStreamText(next)
-        }
 
         wrapperEl?.classList.remove('ring-1', 'ring-red-400/60')
         updateHeroCard(next, totalSeconds)
