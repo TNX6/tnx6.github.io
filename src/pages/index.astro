@@ -200,6 +200,53 @@ const socialLinks = [
                   </a>
                 </div>
               </div>
+
+              <section class="tnx-top-leaders" aria-label="توب 3 المتصدرين">
+                <div class="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <p class="text-xs font-black tracking-[0.24em] text-[#c29200]">
+                      TOP 3
+                    </p>
+                    <h2 class="heading-gold-glow mt-1 text-2xl font-black text-[#ffda6a]">
+                      متصدرين المجتمع
+                    </h2>
+                  </div>
+
+                  <a href="/leaderboards" class="tnx-top-leaders-link">
+                    صفحة الترتيب
+                    <iconify-icon icon="tabler:arrow-left" class="text-base"></iconify-icon>
+                  </a>
+                </div>
+
+                <div id="top-leaders-list" class="tnx-top-leaders-grid">
+                  <article class="tnx-leader-card tnx-leader-card--first">
+                    <span class="tnx-leader-rank">#1</span>
+                    <div class="tnx-leader-medal">
+                      <iconify-icon icon="tabler:crown"></iconify-icon>
+                    </div>
+                    <p class="tnx-leader-name">جاري التحميل...</p>
+                    <p class="tnx-leader-score">--</p>
+                  </article>
+
+                  <article class="tnx-leader-card">
+                    <span class="tnx-leader-rank">#2</span>
+                    <div class="tnx-leader-medal">
+                      <iconify-icon icon="tabler:medal-2"></iconify-icon>
+                    </div>
+                    <p class="tnx-leader-name">جاري التحميل...</p>
+                    <p class="tnx-leader-score">--</p>
+                  </article>
+
+                  <article class="tnx-leader-card">
+                    <span class="tnx-leader-rank">#3</span>
+                    <div class="tnx-leader-medal">
+                      <iconify-icon icon="tabler:medal"></iconify-icon>
+                    </div>
+                    <p class="tnx-leader-name">جاري التحميل...</p>
+                    <p class="tnx-leader-score">--</p>
+                  </article>
+                </div>
+              </section>
             </div>
           </div>
 
@@ -688,7 +735,7 @@ const socialLinks = [
     </button>
   </main>
 
-  <style>
+  <style is:global>
     .tnx-page-bg {
       background:
         radial-gradient(circle at 18% 12%, rgba(255, 218, 106, 0.2), transparent 28%),
@@ -822,6 +869,161 @@ const socialLinks = [
         0 12px 24px rgba(0, 0, 0, 0.38);
     }
 
+    .tnx-top-leaders {
+      margin-top: 1.25rem;
+      border-radius: 1.7rem;
+      border: 1px solid rgba(194, 146, 0, 0.24);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.1), transparent 38%),
+        linear-gradient(180deg, rgba(8, 9, 14, 0.82), rgba(4, 4, 7, 0.92));
+      padding: 1.1rem;
+      box-shadow:
+        0 0 32px rgba(0, 0, 0, 0.38),
+        inset 0 0 18px rgba(255, 218, 106, 0.025);
+    }
+
+    .tnx-top-leaders-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border-radius: 999px;
+      border: 1px solid rgba(194, 146, 0, 0.32);
+      background: rgba(0, 0, 0, 0.34);
+      padding: 0.5rem 0.75rem;
+      color: rgb(209, 213, 219);
+      font-size: 0.74rem;
+      font-weight: 900;
+      transition:
+        border-color 160ms ease,
+        color 160ms ease,
+        background 160ms ease,
+        transform 160ms ease;
+    }
+
+    .tnx-top-leaders-link:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 218, 106, 0.68);
+      background: rgba(194, 146, 0, 0.08);
+      color: #ffda6a;
+    }
+
+    .tnx-top-leaders-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.92fr 0.92fr;
+      gap: 0.75rem;
+      align-items: stretch;
+    }
+
+    .tnx-leader-card {
+      position: relative;
+      min-height: 142px;
+      overflow: hidden;
+      border-radius: 1.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 42%),
+        rgba(0, 0, 0, 0.46);
+      padding: 1rem;
+      text-align: center;
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .tnx-leader-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(194, 146, 0, 0.55);
+      box-shadow: 0 0 24px rgba(194, 146, 0, 0.14);
+    }
+
+    .tnx-leader-card--first {
+      border-color: rgba(255, 218, 106, 0.36);
+      background:
+        radial-gradient(circle at top, rgba(255, 218, 106, 0.22), transparent 46%),
+        linear-gradient(180deg, rgba(20, 16, 7, 0.72), rgba(0, 0, 0, 0.58));
+      box-shadow: inset 0 0 22px rgba(255, 218, 106, 0.04);
+    }
+
+    .tnx-leader-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent, rgba(255, 218, 106, 0.05), transparent);
+      opacity: 0;
+      transition: opacity 180ms ease;
+    }
+
+    .tnx-leader-card:hover::before {
+      opacity: 1;
+    }
+
+    .tnx-leader-rank {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2.1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(194, 146, 0, 0.28);
+      background: rgba(0, 0, 0, 0.45);
+      padding: 0.25rem 0.45rem;
+      color: #ffda6a;
+      font-size: 0.72rem;
+      font-weight: 950;
+    }
+
+    .tnx-leader-medal {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      height: 2.7rem;
+      width: 2.7rem;
+      align-items: center;
+      justify-content: center;
+      border-radius: 1rem;
+      border: 1px solid rgba(194, 146, 0, 0.32);
+      background: rgba(0, 0, 0, 0.42);
+      color: #ffda6a;
+      box-shadow: inset 0 0 14px rgba(255, 218, 106, 0.06);
+    }
+
+    .tnx-leader-medal iconify-icon {
+      font-size: 1.45rem;
+      filter: drop-shadow(0 0 6px rgba(255, 218, 106, 0.38));
+    }
+
+    .tnx-leader-name {
+      position: relative;
+      z-index: 1;
+      margin-top: 0.8rem;
+      min-height: 1.55rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: white;
+      font-size: 1.05rem;
+      font-weight: 950;
+    }
+
+    .tnx-leader-card--first .tnx-leader-name {
+      font-size: 1.22rem;
+    }
+
+    .tnx-leader-score {
+      position: relative;
+      z-index: 1;
+      margin-top: 0.35rem;
+      color: #ffda6a;
+      font-size: 0.92rem;
+      font-weight: 950;
+      text-shadow:
+        0 0 5px rgba(255, 218, 106, 0.38),
+        0 0 12px rgba(194, 146, 0, 0.2);
+    }
+
     .tnx-stats-strip {
       position: relative;
       z-index: 60;
@@ -853,8 +1055,7 @@ const socialLinks = [
       overflow: visible;
       border-radius: 1.25rem;
       border: 1px solid rgba(255, 255, 255, 0.09);
-      background:
-        linear-gradient(180deg, rgba(10, 12, 18, 0.92), rgba(5, 6, 10, 0.96));
+      background: linear-gradient(180deg, rgba(10, 12, 18, 0.92), rgba(5, 6, 10, 0.96));
       padding: 1rem;
       text-align: center;
       color: white;
@@ -991,268 +1192,6 @@ const socialLinks = [
 
     .tnx-community-row {
       display: grid !important;
-      grid-template-columns: 88px minmax(0, 1fr) !important;
-      align-items: center !important;
-      gap: 1rem !important;
-      direction: ltr !important;
-      text-align: right !important;
-      border-radius: 0.95rem;
-      border: 1px solid rgba(194, 146, 0, 0.18);
-      background:
-        radial-gradient(circle at top left, rgba(255, 218, 106, 0.07), transparent 40%),
-        rgba(255, 255, 255, 0.035);
-      padding: 0.7rem 0.8rem;
-      color: rgb(209, 213, 219);
-      font-size: 0.9rem;
-      font-weight: 800;
-    }
-
-    .tnx-community-row strong {
-      grid-column: 1 !important;
-      grid-row: 1 !important;
-      justify-self: start !important;
-      min-width: 88px !important;
-      color: #ffda6a !important;
-      font-size: 1rem;
-      font-weight: 950;
-      letter-spacing: 0.01em;
-      text-align: left !important;
-      direction: ltr !important;
-      text-shadow:
-        0 0 5px rgba(255, 218, 106, 0.34),
-        0 0 12px rgba(194, 146, 0, 0.2);
-    }
-
-    .tnx-community-platform {
-      grid-column: 2 !important;
-      grid-row: 1 !important;
-      justify-self: stretch !important;
-      display: flex !important;
-      min-width: 0;
-      align-items: center !important;
-      justify-content: flex-end !important;
-      gap: 0.55rem;
-      color: rgb(229, 231, 235);
-      font-weight: 800;
-      text-align: right !important;
-      direction: ltr !important;
-      white-space: nowrap;
-    }
-
-    .tnx-community-platform > span:not(.tnx-community-platform-icon) {
-      order: 1 !important;
-      text-align: right !important;
-    }
-
-    .tnx-community-platform-icon {
-      order: 2 !important;
-      display: inline-flex;
-      height: 1.7rem;
-      width: 1.7rem;
-      flex-shrink: 0;
-      align-items: center;
-      justify-content: center;
-      border-radius: 0.55rem;
-      border: 1px solid rgba(194, 146, 0, 0.25);
-      background: rgba(0, 0, 0, 0.42);
-      color: #ffda6a;
-    }
-
-    .tnx-community-platform-icon iconify-icon {
-      font-size: 1.05rem;
-    }
-
-    @media (max-width: 860px) {
-      .tnx-stats-strip {
-        grid-template-columns: 1fr;
-      }
-
-      .tnx-stat-card {
-        min-height: 96px;
-      }
-
-      .tnx-community-popover {
-        right: 0;
-        transform: translateY(8px) scale(0.98);
-      }
-
-      .tnx-community-popover::before {
-        right: 2rem;
-        transform: rotate(45deg);
-      }
-
-      .tnx-stat-card--interactive:hover .tnx-community-popover,
-      .tnx-stat-card--interactive:focus-visible .tnx-community-popover,
-      .tnx-stat-card--interactive.is-open .tnx-community-popover {
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .tnx-countdown-row {
-      display: inline-grid;
-      grid-template-columns: minmax(38px, auto) auto minmax(38px, auto) auto minmax(38px, auto);
-      align-items: center;
-      justify-content: center;
-      gap: 0.42rem;
-      direction: ltr;
-      unicode-bidi: isolate;
-      min-width: 150px;
-    }
-
-    .tnx-countdown-number {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 38px;
-      border-radius: 0.75rem;
-      border: 1px solid rgba(194, 146, 0, 0.22);
-      background: rgba(0, 0, 0, 0.42);
-      padding: 0.35rem 0.55rem;
-      font-weight: 900;
-      color: #ffda6a;
-      line-height: 1;
-    }
-
-    .tnx-countdown-separator {
-      color: rgba(255, 218, 106, 0.75);
-      font-weight: 900;
-      line-height: 1;
-    }
-
-    #hero-countdown-value .tnx-countdown-row {
-      width: 100%;
-      min-width: 100%;
-      gap: 0.55rem;
-    }
-
-    #hero-countdown-value .tnx-countdown-number {
-      min-width: 56px;
-      padding: 0.65rem 0.75rem;
-      font-size: 1.55rem;
-    }
-
-    [data-reveal] {
-      opacity: 0;
-      transform: translate3d(0, 26px, 0);
-      filter: blur(6px);
-      transition:
-        opacity 650ms cubic-bezier(0.2, 0.8, 0.2, 1),
-        transform 650ms cubic-bezier(0.2, 0.8, 0.2, 1),
-        filter 650ms cubic-bezier(0.2, 0.8, 0.2, 1);
-      transition-delay: var(--reveal-delay, 0ms);
-      will-change: opacity, transform, filter;
-    }
-
-    [data-reveal].is-visible {
-      opacity: 1;
-      transform: translate3d(0, 0, 0);
-      filter: blur(0);
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      [data-reveal] {
-        opacity: 1;
-        transform: none;
-        filter: none;
-        transition: none;
-      }
-    }
-
-    .back-to-top-button {
-      position: fixed;
-      right: 1.25rem;
-      bottom: 1.25rem;
-      z-index: 50;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      border-radius: 999px;
-      border: 1px solid rgba(194, 146, 0, 0.65);
-      background: linear-gradient(135deg, rgba(255, 218, 106, 0.96), rgba(194, 146, 0, 0.95));
-      color: #08050d;
-      padding: 0.75rem 1rem;
-      font-size: 0.85rem;
-      font-weight: 900;
-      box-shadow:
-        0 0 18px rgba(255, 218, 106, 0.25),
-        0 14px 35px rgba(0, 0, 0, 0.45);
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(12px);
-      transition:
-        opacity 180ms ease,
-        transform 180ms ease,
-        box-shadow 180ms ease;
-    }
-
-    .back-to-top-button:hover {
-      box-shadow:
-        0 0 24px rgba(255, 218, 106, 0.42),
-        0 16px 38px rgba(0, 0, 0, 0.48);
-    }
-
-    .back-to-top-button--visible {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
-
-    .back-to-top-button--visible:hover {
-      transform: translateY(-2px);
-    }
-  </style>
-
-  <style is:global>
-    .tnx-live-glow {
-      color: #fef08a;
-      text-shadow:
-        0 0 5px #facc15,
-        0 0 12px #facc15,
-        0 0 20px #facc15;
-      animation: tnx-live-pulse 1.4s ease-in-out infinite;
-    }
-
-    @keyframes tnx-live-pulse {
-      0%,
-      100% {
-        text-shadow:
-          0 0 4px #facc15,
-          0 0 10px #facc15,
-          0 0 18px #facc15;
-      }
-
-      50% {
-        text-shadow:
-          0 0 8px #fde68a,
-          0 0 18px #facc15,
-          0 0 28px #fbbf24;
-      }
-    }
-
-    .tnx-schedule-card {
-      background: linear-gradient(
-        180deg,
-        rgba(12, 15, 24, 0.96) 0%,
-        rgba(7, 9, 15, 0.98) 100%
-      );
-      backdrop-filter: blur(8px);
-      transition: all 0.25s ease;
-    }
-
-    .tnx-schedule-card:hover {
-      transform: translateY(-2px);
-      border-color: rgba(194, 146, 0, 0.35);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-    }
-
-    .tnx-schedule-card--active {
-      border-color: rgba(194, 146, 0, 0.9) !important;
-      box-shadow: 0 0 22px rgba(194, 146, 0, 0.45);
-    }
-
-    /* These rows are injected with innerHTML, so they must be global. */
-    .tnx-community-row {
-      display: grid !important;
       grid-template-columns: 92px minmax(0, 1fr) !important;
       align-items: center !important;
       gap: 1rem !important;
@@ -1322,6 +1261,202 @@ const socialLinks = [
 
     .tnx-community-platform-icon iconify-icon {
       font-size: 1.05rem !important;
+    }
+
+    .tnx-countdown-row {
+      display: inline-grid;
+      grid-template-columns: minmax(38px, auto) auto minmax(38px, auto) auto minmax(38px, auto);
+      align-items: center;
+      justify-content: center;
+      gap: 0.42rem;
+      direction: ltr;
+      unicode-bidi: isolate;
+      min-width: 150px;
+    }
+
+    .tnx-countdown-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 38px;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(194, 146, 0, 0.22);
+      background: rgba(0, 0, 0, 0.42);
+      padding: 0.35rem 0.55rem;
+      font-weight: 900;
+      color: #ffda6a;
+      line-height: 1;
+    }
+
+    .tnx-countdown-separator {
+      color: rgba(255, 218, 106, 0.75);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    #hero-countdown-value .tnx-countdown-row {
+      width: 100%;
+      min-width: 100%;
+      gap: 0.55rem;
+    }
+
+    #hero-countdown-value .tnx-countdown-number {
+      min-width: 56px;
+      padding: 0.65rem 0.75rem;
+      font-size: 1.55rem;
+    }
+
+    .tnx-live-glow {
+      color: #fef08a;
+      text-shadow:
+        0 0 5px #facc15,
+        0 0 12px #facc15,
+        0 0 20px #facc15;
+      animation: tnx-live-pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes tnx-live-pulse {
+      0%,
+      100% {
+        text-shadow:
+          0 0 4px #facc15,
+          0 0 10px #facc15,
+          0 0 18px #facc15;
+      }
+
+      50% {
+        text-shadow:
+          0 0 8px #fde68a,
+          0 0 18px #facc15,
+          0 0 28px #fbbf24;
+      }
+    }
+
+    .tnx-schedule-card {
+      background: linear-gradient(
+        180deg,
+        rgba(12, 15, 24, 0.96) 0%,
+        rgba(7, 9, 15, 0.98) 100%
+      );
+      backdrop-filter: blur(8px);
+      transition: all 0.25s ease;
+    }
+
+    .tnx-schedule-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(194, 146, 0, 0.35);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .tnx-schedule-card--active {
+      border-color: rgba(194, 146, 0, 0.9) !important;
+      box-shadow: 0 0 22px rgba(194, 146, 0, 0.45);
+    }
+
+    [data-reveal] {
+      opacity: 0;
+      transform: translate3d(0, 26px, 0);
+      filter: blur(6px);
+      transition:
+        opacity 650ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        transform 650ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        filter 650ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition-delay: var(--reveal-delay, 0ms);
+      will-change: opacity, transform, filter;
+    }
+
+    [data-reveal].is-visible {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      filter: blur(0);
+    }
+
+    .back-to-top-button {
+      position: fixed;
+      right: 1.25rem;
+      bottom: 1.25rem;
+      z-index: 50;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border-radius: 999px;
+      border: 1px solid rgba(194, 146, 0, 0.65);
+      background: linear-gradient(135deg, rgba(255, 218, 106, 0.96), rgba(194, 146, 0, 0.95));
+      color: #08050d;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 900;
+      box-shadow:
+        0 0 18px rgba(255, 218, 106, 0.25),
+        0 14px 35px rgba(0, 0, 0, 0.45);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition:
+        opacity 180ms ease,
+        transform 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .back-to-top-button:hover {
+      box-shadow:
+        0 0 24px rgba(255, 218, 106, 0.42),
+        0 16px 38px rgba(0, 0, 0, 0.48);
+    }
+
+    .back-to-top-button--visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .back-to-top-button--visible:hover {
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 860px) {
+      .tnx-stats-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-stat-card {
+        min-height: 96px;
+      }
+
+      .tnx-community-popover {
+        right: 0;
+        transform: translateY(8px) scale(0.98);
+      }
+
+      .tnx-community-popover::before {
+        right: 2rem;
+        transform: rotate(45deg);
+      }
+
+      .tnx-stat-card--interactive:hover .tnx-community-popover,
+      .tnx-stat-card--interactive:focus-visible .tnx-community-popover,
+      .tnx-stat-card--interactive.is-open .tnx-community-popover {
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .tnx-top-leaders-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-leader-card {
+        min-height: 118px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [data-reveal] {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        transition: none;
+      }
     }
   </style>
 
@@ -1440,6 +1575,35 @@ const socialLinks = [
         `
       }
 
+      function formatNumber(value) {
+        const number = Number(String(value).replaceAll(',', ''))
+
+        if (!Number.isFinite(number)) return '--'
+
+        return new Intl.NumberFormat('en-US').format(number)
+      }
+
+      function formatStatHours(value) {
+        const number = Number(value)
+
+        if (!Number.isFinite(number)) return '--'
+
+        return `${number.toFixed(1)} ساعة`
+      }
+
+      function getPlatformLabel(key, fallbackLabel) {
+        const labels = {
+          twitch: 'Twitch',
+          youtube: 'YouTube',
+          discord: 'Discord',
+          instagram: 'Instagram',
+          tiktok: 'TikTok',
+          kick: 'Kick',
+        }
+
+        return labels[key] || fallbackLabel || key
+      }
+
       async function fetchTwitchLiveStatus() {
         try {
           const response = await fetch(TWITCH_STATUS_URL, {
@@ -1531,35 +1695,6 @@ const socialLinks = [
         }
       }
 
-      function formatNumber(value) {
-        const number = Number(value)
-
-        if (!Number.isFinite(number)) return '--'
-
-        return new Intl.NumberFormat('en-US').format(number)
-      }
-
-      function formatStatHours(value) {
-        const number = Number(value)
-
-        if (!Number.isFinite(number)) return '--'
-
-        return `${number.toFixed(1)} ساعة`
-      }
-
-      function getPlatformArabicLabel(key, fallbackLabel) {
-        const labels = {
-          twitch: 'Twitch',
-          youtube: 'YouTube',
-          discord: 'Discord',
-          instagram: 'Instagram',
-          tiktok: 'TikTok',
-          kick: 'Kick',
-        }
-
-        return labels[key] || fallbackLabel || key
-      }
-
       async function loadSocialStats() {
         const streamHoursEl = document.getElementById('stat-stream-hours')
         const streamHoursMetaEl = document.getElementById('stat-stream-hours-meta')
@@ -1581,9 +1716,10 @@ const socialLinks = [
           const hoursData = data.last30DaysStreamHours || data.monthlyStreamHours || null
           const hoursValue = hoursData && typeof hoursData.value === 'number' ? hoursData.value : null
           const stats = Array.isArray(data.stats) ? data.stats : []
-          const communityTotal = typeof data.communityTotal === 'number'
-            ? data.communityTotal
-            : stats.reduce((total, item) => total + (typeof item.value === 'number' ? item.value : 0), 0)
+          const communityTotal =
+            typeof data.communityTotal === 'number'
+              ? data.communityTotal
+              : stats.reduce((total, item) => total + (typeof item.value === 'number' ? item.value : 0), 0)
 
           const platformOrder = ['twitch', 'youtube', 'discord', 'instagram', 'tiktok', 'kick']
           const platformIconMap = {
@@ -1615,7 +1751,7 @@ const socialLinks = [
           breakdownListEl.innerHTML = sortedStats
             .map((item) => {
               const key = String(item.key || '').trim()
-              const label = escapeHtml(getPlatformArabicLabel(item.key, item.label))
+              const label = escapeHtml(getPlatformLabel(item.key, item.label))
               const value = typeof item.value === 'number' ? formatNumber(item.value) : '--'
               const icon = platformIconMap[key] || 'tabler:circle'
 
@@ -1652,6 +1788,306 @@ const socialLinks = [
             </div>
           `
         }
+      }
+
+      async function loadTopLeaders() {
+        const listEl = document.getElementById('top-leaders-list')
+
+        if (!listEl) return
+
+        try {
+          const leaders = await getTopLeaders()
+
+          if (!leaders.length) {
+            throw new Error('No leaders found')
+          }
+
+          const medals = ['tabler:crown', 'tabler:medal-2', 'tabler:medal']
+
+          listEl.innerHTML = leaders
+            .slice(0, 3)
+            .map((leader, index) => {
+              const rank = index + 1
+              const safeName = escapeHtml(leader.name || `المركز ${rank}`)
+              const safeScore = leader.score ? escapeHtml(leader.score) : '--'
+              const firstClass = index === 0 ? ' tnx-leader-card--first' : ''
+
+              return `
+                <article class="tnx-leader-card${firstClass}">
+                  <span class="tnx-leader-rank">#${rank}</span>
+                  <div class="tnx-leader-medal">
+                    <iconify-icon icon="${medals[index]}"></iconify-icon>
+                  </div>
+                  <p class="tnx-leader-name" title="${safeName}">${safeName}</p>
+                  <p class="tnx-leader-score">${safeScore}</p>
+                </article>
+              `
+            })
+            .join('')
+        } catch {
+          listEl.innerHTML = `
+            <article class="tnx-leader-card tnx-leader-card--first">
+              <span class="tnx-leader-rank">TOP</span>
+              <div class="tnx-leader-medal">
+                <iconify-icon icon="tabler:trophy"></iconify-icon>
+              </div>
+              <p class="tnx-leader-name">تعذر تحميل الترتيب</p>
+              <p class="tnx-leader-score">راجع صفحة الترتيب</p>
+            </article>
+          `
+        }
+      }
+
+      async function getTopLeaders() {
+        const apiLeaders = await tryLoadLeadersFromApi()
+
+        if (apiLeaders.length) {
+          return apiLeaders
+        }
+
+        return tryLoadLeadersFromPage()
+      }
+
+      async function tryLoadLeadersFromApi() {
+        const urls = [
+          '/api/leaderboards.json',
+          '/api/leaderboard.json',
+          '/leaderboards.json',
+        ]
+
+        for (const url of urls) {
+          try {
+            const response = await fetch(`${url}?site=${Date.now()}`, {
+              cache: 'no-store',
+            })
+
+            if (!response.ok) continue
+
+            const data = await response.json()
+            const rawList =
+              Array.isArray(data)
+                ? data
+                : Array.isArray(data.leaders)
+                  ? data.leaders
+                  : Array.isArray(data.leaderboard)
+                    ? data.leaderboard
+                    : Array.isArray(data.data)
+                      ? data.data
+                      : Array.isArray(data.points)
+                        ? data.points
+                        : []
+
+            const parsed = rawList.map(parseLeaderObject).filter(Boolean)
+
+            if (parsed.length) {
+              return parsed
+            }
+          } catch {
+            // Try next endpoint.
+          }
+        }
+
+        return []
+      }
+
+      function parseLeaderObject(item) {
+        if (!item || typeof item !== 'object') return null
+
+        const name =
+          item.name ||
+          item.username ||
+          item.user ||
+          item.displayName ||
+          item.display_name ||
+          item.login ||
+          item.twitchName ||
+          item.twitch_name
+
+        const score =
+          item.points ??
+          item.score ??
+          item.value ??
+          item.total ??
+          item.gold ??
+          item.balance ??
+          item.amount
+
+        if (!name || score === undefined || score === null) return null
+
+        return {
+          name: cleanLeaderName(name),
+          score: `${formatNumber(score)} نقطة`,
+        }
+      }
+
+      async function tryLoadLeadersFromPage() {
+        try {
+          const response = await fetch(`/leaderboards?site=${Date.now()}`, {
+            cache: 'no-store',
+          })
+
+          if (!response.ok) {
+            throw new Error('Failed to load leaderboards page')
+          }
+
+          const html = await response.text()
+          const doc = new DOMParser().parseFromString(html, 'text/html')
+
+          return extractTopLeadersFromDocument(doc).slice(0, 3)
+        } catch {
+          return []
+        }
+      }
+
+      function extractTopLeadersFromDocument(doc) {
+        const selectors = [
+          '[data-rank]',
+          '[data-leaderboard-rank]',
+          '.leaderboard-row',
+          '.leaderboard-card',
+          '.rank-row',
+          '.user-card',
+          'tbody tr',
+          'tr',
+        ]
+
+        for (const selector of selectors) {
+          const items = Array.from(doc.querySelectorAll(selector))
+          const parsed = items.map(parseLeaderElement).filter(Boolean)
+
+          if (parsed.length >= 3) {
+            return parsed
+          }
+        }
+
+        const bodyText = doc.body?.innerText || ''
+        return parseLeadersFromText(bodyText)
+      }
+
+      function parseLeaderElement(element) {
+        const nameSelectors = [
+          '[data-name]',
+          '[data-username]',
+          '.username',
+          '.user-name',
+          '.name',
+          '.display-name',
+          'td:nth-child(2)',
+        ]
+
+        const scoreSelectors = [
+          '[data-points]',
+          '[data-score]',
+          '[data-value]',
+          '.points',
+          '.score',
+          '.value',
+          'td:last-child',
+        ]
+
+        let name = ''
+        let score = ''
+
+        for (const selector of nameSelectors) {
+          const target = element.matches(selector) ? element : element.querySelector(selector)
+          const value =
+            target?.getAttribute('data-name') ||
+            target?.getAttribute('data-username') ||
+            target?.textContent
+
+          if (value && String(value).trim()) {
+            name = String(value).trim()
+            break
+          }
+        }
+
+        for (const selector of scoreSelectors) {
+          const target = element.matches(selector) ? element : element.querySelector(selector)
+          const value =
+            target?.getAttribute('data-points') ||
+            target?.getAttribute('data-score') ||
+            target?.getAttribute('data-value') ||
+            target?.textContent
+
+          if (value && /\d/.test(String(value))) {
+            score = cleanLeaderScore(value)
+            break
+          }
+        }
+
+        if (!name || !score) {
+          const text = String(element.innerText || element.textContent || '')
+            .replace(/\s+/g, ' ')
+            .trim()
+
+          if (!text) return null
+
+          const numberMatches = text.match(/[\d,]+(?:\.\d+)?/g) || []
+          const scoreCandidate = numberMatches[numberMatches.length - 1]
+
+          if (!score && scoreCandidate) {
+            score = cleanLeaderScore(scoreCandidate)
+          }
+
+          if (!name && scoreCandidate) {
+            name = text
+              .replace(scoreCandidate, '')
+              .replace(/^#?\d+\s*/g, '')
+              .replace(/نقطة|نقاط|ذهب|مشاهدة|ساعة/gi, '')
+              .trim()
+          }
+        }
+
+        name = cleanLeaderName(name)
+
+        if (!name || !score || name.length > 32) return null
+
+        return {
+          name,
+          score,
+        }
+      }
+
+      function parseLeadersFromText(text) {
+        return String(text || '')
+          .split('\n')
+          .map((line) => line.replace(/\s+/g, ' ').trim())
+          .filter(Boolean)
+          .map((line) => {
+            const scoreMatch = line.match(/[\d,]+(?:\.\d+)?/)
+            if (!scoreMatch) return null
+
+            const score = cleanLeaderScore(scoreMatch[0])
+            const name = cleanLeaderName(
+              line
+                .replace(scoreMatch[0], '')
+                .replace(/^#?\d+\s*/g, '')
+                .replace(/نقطة|نقاط|ذهب|مشاهدة|ساعة/gi, '')
+                .trim()
+            )
+
+            if (!name || !score || name.length > 32) return null
+
+            return {
+              name,
+              score,
+            }
+          })
+          .filter(Boolean)
+      }
+
+      function cleanLeaderName(value) {
+        return String(value || '')
+          .replace(/[#•|]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim()
+      }
+
+      function cleanLeaderScore(value) {
+        const numberText = String(value || '').match(/[\d,]+(?:\.\d+)?/)?.[0]
+        if (!numberText) return ''
+
+        return `${formatNumber(numberText.replaceAll(',', ''))} نقطة`
       }
 
       async function loadWinnersCount() {
@@ -1864,7 +2300,6 @@ const socialLinks = [
         if (!Array.isArray(fanArtImages) || fanArtImages.length === 0) return
 
         const lastImage = getStorageItem('tnx-last-fanart')
-
         let availableImages = fanArtImages
 
         if (fanArtImages.length > 1 && lastImage) {
@@ -1958,6 +2393,7 @@ const socialLinks = [
         updateRandomFanArt()
         loadSiteUpdates()
         loadSocialStats()
+        loadTopLeaders()
         loadWinnersCount()
         initCommunityStatsPopover()
         initScrollReveal()
