@@ -56,10 +56,10 @@
       watchtime: [],
     }
 
-    let indexes = {
-      points: 0,
-      gold: 0,
-      watchtime: 0,
+    let visibleCount = {
+      points: perPage,
+      gold: perPage,
+      watchtime: perPage,
     }
 
     let revealObserver = null
@@ -67,7 +67,6 @@
 
     function addListener(target, event, handler, options) {
       if (!target) return
-
       target.addEventListener(event, handler, options)
       listeners.push(() => target.removeEventListener(event, handler, options))
     }
@@ -101,7 +100,6 @@
         .replace(/[^\d.-]/g, '')
 
       const number = Number(cleaned)
-
       return Number.isFinite(number) ? number : 0
     }
 
@@ -137,11 +135,6 @@
       return user?.Value ?? user?.value ?? user?.points ?? user?.score ?? 0
     }
 
-    function getAvatarLetter(name) {
-      const clean = String(name || '').trim()
-      return clean ? clean.charAt(0).toUpperCase() : '?'
-    }
-
     function formatValue(boardId, value) {
       const config = boardConfig[boardId]
       const raw = String(value ?? '').trim()
@@ -161,6 +154,17 @@
       return `${raw} ${config.unit}`.trim()
     }
 
+    function getAvatarLetter(name) {
+      const clean = String(name || '').trim()
+      return clean ? clean.charAt(0).toUpperCase() : '?'
+    }
+
+    function makeUserId(boardId, user, index) {
+      const login = getLogin(user)
+      const name = getDisplayName(user)
+      return `${boardId}-${index + 1}-${String(login || name).toLowerCase()}`
+    }
+
     function normalizeBoardData(data, boardId) {
       const list = Array.isArray(data?.[boardId]) ? data[boardId] : []
 
@@ -176,8 +180,8 @@
         .sort((a, b) => b.__number - a.__number)
         .map((user, index) => ({
           ...user,
-          __globalRank: index + 1,
-          __id: `${boardId}-${index + 1}-${String(user.__login || user.__name).toLowerCase()}`,
+          __rank: index + 1,
+          __id: makeUserId(boardId, user, index),
         }))
     }
 
@@ -196,7 +200,9 @@
         topThreeList: document.getElementById('top-three-list'),
         compareA: document.getElementById('compare-user-a'),
         compareB: document.getElementById('compare-user-b'),
+        compareButton: document.getElementById('compare-button'),
         compareResult: document.getElementById('compare-result'),
+        usersDatalist: document.getElementById('leaderboard-users-list'),
         shareSelect: document.getElementById('share-user-select'),
         shareCanvas: document.getElementById('share-card-canvas'),
         shareDownload: document.getElementById('download-share-card'),
@@ -235,7 +241,6 @@
           (entries) => {
             entries.forEach((entry) => {
               if (!entry.isIntersecting) return
-
               entry.target.classList.add('is-visible')
               revealObserver.unobserve(entry.target)
             })
@@ -270,13 +275,11 @@
     function renderRow(user, boardId) {
       const name = user.__name
       const login = user.__login
-      const rank = user.__globalRank || 0
       const showLogin = login && login.toLowerCase() !== name.toLowerCase()
-      const value = formatValue(boardId, user.__value)
 
       return `
         <article class="tnx-lb-row" data-reveal="up">
-          <div class="tnx-lb-row-rank">#${rank}</div>
+          <div class="tnx-lb-row-rank">#${user.__rank}</div>
 
           <div class="tnx-lb-user">
             <div class="tnx-lb-avatar">${escapeHtml(getAvatarLetter(name))}</div>
@@ -291,7 +294,7 @@
             </div>
           </div>
 
-          <div class="tnx-lb-row-value">${escapeHtml(value)}</div>
+          <div class="tnx-lb-row-value">${escapeHtml(formatValue(boardId, user.__value))}</div>
         </article>
       `
     }
@@ -304,12 +307,16 @@
       `
     }
 
-    function renderSegment(boardId) {
+    function getActiveUsers() {
+      return filteredData[activeBoard] || []
+    }
+
+    function renderActiveBoard() {
       const elements = getElements()
-      const container = elements.containers[boardId]
-      const loadMoreButton = elements.loadMoreButtons[boardId]
-      const showLessButton = elements.showLessButtons[boardId]
-      const users = filteredData[boardId] || []
+      const container = elements.containers[activeBoard]
+      const loadMoreButton = elements.loadMoreButtons[activeBoard]
+      const showLessButton = elements.showLessButtons[activeBoard]
+      const users = getActiveUsers()
 
       if (!container) return
 
@@ -318,7 +325,7 @@
 
         renderEmptyState(
           container,
-          boardId,
+          activeBoard,
           hasSearch ? 'ما حصلت العضو' : undefined,
           hasSearch ? 'جرّب تكتب الاسم أو اليوزر بطريقة ثانية.' : undefined
         )
@@ -328,88 +335,35 @@
         return
       }
 
-      const start = indexes[boardId]
-      const end = start + perPage
-      const slice = users.slice(start, end)
+      const limit = visibleCount[activeBoard]
+      const visibleUsers = users.slice(0, limit)
 
-      const html = slice
+      container.innerHTML = visibleUsers
         .map((user) => {
-          const needsDivider = !searchQuery && user.__globalRank === 11
-          return `${needsDivider ? renderEliteDivider() : ''}${renderRow(user, boardId)}`
+          const needsDivider = !searchQuery && user.__rank === 11
+          return `${needsDivider ? renderEliteDivider() : ''}${renderRow(user, activeBoard)}`
         })
         .join('')
 
-      container.insertAdjacentHTML('beforeend', html)
-
-      indexes[boardId] += slice.length
-
       if (loadMoreButton) {
-        loadMoreButton.classList.toggle('hidden', indexes[boardId] >= users.length)
+        loadMoreButton.classList.toggle('hidden', limit >= users.length)
       }
 
       if (showLessButton) {
-        showLessButton.classList.toggle('hidden', indexes[boardId] <= perPage)
+        showLessButton.classList.toggle('hidden', limit <= perPage)
       }
 
       initScrollReveal()
     }
 
-    function resetBoard(boardId) {
-      const elements = getElements()
-      const container = elements.containers[boardId]
-      const loadMoreButton = elements.loadMoreButtons[boardId]
-      const showLessButton = elements.showLessButtons[boardId]
-
-      if (!container) return
-
-      container.innerHTML = ''
-      indexes[boardId] = 0
-
-      if (loadMoreButton) loadMoreButton.classList.remove('hidden')
-      if (showLessButton) showLessButton.classList.add('hidden')
-
-      renderSegment(boardId)
-    }
-
-    function resetAllBoards() {
-      Object.keys(boardConfig).forEach((boardId) => resetBoard(boardId))
-      updateBoardMeta()
-      renderTopThree()
-      updateCompareOptions()
-      renderCompare()
-      updateShareOptions()
-      renderShareCard()
-    }
-
-    function showLess(boardId) {
-      const elements = getElements()
-      const container = elements.containers[boardId]
-      const users = filteredData[boardId] || []
-      const loadMoreButton = elements.loadMoreButtons[boardId]
-      const showLessButton = elements.showLessButtons[boardId]
-
-      if (!container || users.length === 0) return
-
-      const newIndex = Math.max(perPage, indexes[boardId] - perPage)
-      indexes[boardId] = newIndex
-
-      container.innerHTML = users
-        .slice(0, newIndex)
-        .map((user) => {
-          const needsDivider = !searchQuery && user.__globalRank === 11
-          return `${needsDivider ? renderEliteDivider() : ''}${renderRow(user, boardId)}`
-        })
-        .join('')
-
-      if (loadMoreButton) {
-        loadMoreButton.classList.toggle('hidden', indexes[boardId] >= users.length)
-      }
-
-      if (showLessButton) {
-        showLessButton.classList.toggle('hidden', indexes[boardId] <= perPage)
-      }
-
-      initScrollReveal()
+    function renderAllPanelsOnce() {
+      Object.keys(boardConfig).forEach((boardId) => {
+        const currentActive = activeBoard
+        activeBoard = boardId
+        visibleCount[boardId] = perPage
+        renderActiveBoard()
+        activeBoard = currentActive
+      })
     }
 
     function setActiveBoard(boardId) {
@@ -431,10 +385,10 @@
 
       updateBoardMeta()
       renderTopThree()
-      updateCompareOptions()
-      renderCompare()
+      updateCompareTools()
       updateShareOptions()
       renderShareCard()
+      renderActiveBoard()
     }
 
     function updateBoardMeta() {
@@ -443,23 +397,16 @@
       const count = filteredData[activeBoard]?.length || 0
       const totalCount = allData[activeBoard]?.length || 0
 
-      if (elements.boardHeading) {
-        elements.boardHeading.textContent = config.heading
-      }
+      if (elements.boardHeading) elements.boardHeading.textContent = config.heading
 
       if (elements.boardDescription) {
         elements.boardDescription.textContent = searchQuery
-          ? `نتائج البحث تظهر برتبة العضو الأصلية من أصل ${formatNumber(totalCount)} عضو.`
+          ? `نتائج البحث تعرض الرتبة الأصلية من أصل ${formatNumber(totalCount)} عضو.`
           : config.description
       }
 
-      if (elements.boardCount) {
-        elements.boardCount.textContent = formatNumber(count)
-      }
-
-      if (elements.activeBoardTitle) {
-        elements.activeBoardTitle.textContent = config.title
-      }
+      if (elements.boardCount) elements.boardCount.textContent = formatNumber(count)
+      if (elements.activeBoardTitle) elements.activeBoardTitle.textContent = config.title
 
       if (elements.activeBoardSubtitle) {
         elements.activeBoardSubtitle.textContent = searchQuery
@@ -481,9 +428,7 @@
     function renderTopThree() {
       const elements = getElements()
       const container = elements.topThreeList
-      const users = searchQuery
-        ? filteredData[activeBoard] || []
-        : allData[activeBoard] || []
+      const users = searchQuery ? getActiveUsers() : allData[activeBoard] || []
 
       if (!container) return
 
@@ -509,7 +454,6 @@
       container.innerHTML = users
         .slice(0, 3)
         .map((user, index) => {
-          const rank = user.__globalRank || index + 1
           const name = user.__name
           const login = user.__login
           const showLogin = login && login.toLowerCase() !== name.toLowerCase()
@@ -517,7 +461,7 @@
 
           return `
             <article class="tnx-lb-top-card${firstClass}" data-reveal="up">
-              <span class="tnx-lb-rank">#${rank}</span>
+              <span class="tnx-lb-rank">#${user.__rank}</span>
               <div class="tnx-lb-medal">
                 <iconify-icon icon="${medals[index] || 'tabler:user'}"></iconify-icon>
               </div>
@@ -536,91 +480,102 @@
       initScrollReveal()
     }
 
-    function updateCompareOptions() {
+    function handleSearch(query) {
+      searchQuery = String(query || '').trim().toLowerCase()
+
+      Object.keys(boardConfig).forEach((boardId) => {
+        filteredData[boardId] = allData[boardId].filter((user) => {
+          const name = String(user.__name || '').toLowerCase()
+          const login = String(user.__login || '').toLowerCase()
+          return name.includes(searchQuery) || login.includes(searchQuery)
+        })
+
+        visibleCount[boardId] = perPage
+      })
+
+      renderAllPanelsOnce()
+      updateBoardMeta()
+      renderTopThree()
+    }
+
+    function findUserByInput(value) {
+      const query = String(value || '').trim().toLowerCase()
+      if (!query) return null
+
+      const users = allData[activeBoard] || []
+
+      return (
+        users.find((user) => user.__name.toLowerCase() === query) ||
+        users.find((user) => user.__login.toLowerCase() === query) ||
+        users.find((user) => user.__name.toLowerCase().includes(query)) ||
+        users.find((user) => user.__login.toLowerCase().includes(query)) ||
+        null
+      )
+    }
+
+    function updateCompareTools() {
       const elements = getElements()
       const users = allData[activeBoard] || []
 
-      if (!elements.compareA || !elements.compareB) return
+      if (!elements.usersDatalist) return
 
-      const currentA = elements.compareA.value
-      const currentB = elements.compareB.value
-
-      const options = users
+      elements.usersDatalist.innerHTML = users
+        .slice(0, 250)
         .map((user) => {
-          const label = `#${user.__globalRank} — ${user.__name} — ${formatValue(activeBoard, user.__value)}`
-          return `<option value="${escapeHtml(user.__id)}">${escapeHtml(label)}</option>`
+          const label = `#${user.__rank} — ${user.__name}`
+          return `<option value="${escapeHtml(user.__name)}">${escapeHtml(label)}</option>`
         })
         .join('')
-
-      elements.compareA.innerHTML = options
-      elements.compareB.innerHTML = options
-
-      if (users.some((user) => user.__id === currentA)) {
-        elements.compareA.value = currentA
-      } else if (users[0]) {
-        elements.compareA.value = users[0].__id
-      }
-
-      if (users.some((user) => user.__id === currentB)) {
-        elements.compareB.value = currentB
-      } else if (users[1]) {
-        elements.compareB.value = users[1].__id
-      } else if (users[0]) {
-        elements.compareB.value = users[0].__id
-      }
-    }
-
-    function findUserById(userId) {
-      return (allData[activeBoard] || []).find((user) => user.__id === userId) || null
     }
 
     function renderCompare() {
       const elements = getElements()
-
       if (!elements.compareResult || !elements.compareA || !elements.compareB) return
 
-      const userA = findUserById(elements.compareA.value)
-      const userB = findUserById(elements.compareB.value)
+      const userA = findUserByInput(elements.compareA.value)
+      const userB = findUserByInput(elements.compareB.value)
 
       if (!userA || !userB) {
         elements.compareResult.innerHTML = `
           <div class="tnx-lb-empty">
             <iconify-icon icon="tabler:arrows-diff"></iconify-icon>
-            <strong>ما فيه بيانات كافية للمقارنة</strong>
-            <span>اختر عضوين من القائمة بعد تحميل الترتيب.</span>
+            <strong>اكتب اسمين صحيحين</strong>
+            <span>اكتب اسم العضو أو اليوزر، ثم اضغط قارن.</span>
           </div>
         `
         return
       }
 
       const valueDiff = Math.abs(userA.__number - userB.__number)
-      const rankDiff = Math.abs(userA.__globalRank - userB.__globalRank)
-      const leader = userA.__number >= userB.__number ? userA : userB
+      const rankDiff = Math.abs(userA.__rank - userB.__rank)
+      const betterRankUser = userA.__rank < userB.__rank ? userA : userB
+      const higherValueUser = userA.__number >= userB.__number ? userA : userB
 
       elements.compareResult.innerHTML = `
         <div class="tnx-lb-compare-grid">
           <div class="tnx-lb-compare-card">
             <strong>${escapeHtml(userA.__name)}</strong>
             <span>${escapeHtml(formatValue(activeBoard, userA.__value))}</span>
-            <small>المركز #${userA.__globalRank}</small>
+            <small>المركز #${userA.__rank}</small>
           </div>
 
           <div class="tnx-lb-compare-diff">
             <div>
               <strong>${escapeHtml(formatValue(activeBoard, valueDiff))}</strong>
               <span>فرق القيمة</span>
-              <br />
-              <strong>#${rankDiff}</strong>
+
+              <strong class="mt-3 block">#${rankDiff}</strong>
               <span>فرق المراكز</span>
-              <br />
-              <span>المتقدم: ${escapeHtml(leader.__name)}</span>
+
+              <span class="mt-3">الأعلى ترتيبًا: ${escapeHtml(betterRankUser.__name)}</span>
+              <span>الأعلى قيمة: ${escapeHtml(higherValueUser.__name)}</span>
             </div>
           </div>
 
           <div class="tnx-lb-compare-card">
             <strong>${escapeHtml(userB.__name)}</strong>
             <span>${escapeHtml(formatValue(activeBoard, userB.__value))}</span>
-            <small>المركز #${userB.__globalRank}</small>
+            <small>المركز #${userB.__rank}</small>
           </div>
         </div>
       `
@@ -635,8 +590,9 @@
       const current = elements.shareSelect.value
 
       elements.shareSelect.innerHTML = users
+        .slice(0, 250)
         .map((user) => {
-          const label = `#${user.__globalRank} — ${user.__name}`
+          const label = `#${user.__rank} — ${user.__name}`
           return `<option value="${escapeHtml(user.__id)}">${escapeHtml(label)}</option>`
         })
         .join('')
@@ -651,7 +607,7 @@
     function getSelectedShareUser() {
       const elements = getElements()
       if (!elements.shareSelect) return null
-      return findUserById(elements.shareSelect.value)
+      return (allData[activeBoard] || []).find((user) => user.__id === elements.shareSelect.value) || null
     }
 
     function drawRoundedRect(ctx, x, y, width, height, radius) {
@@ -744,7 +700,7 @@
 
       ctx.fillStyle = '#ffda6a'
       ctx.font = `900 86px ${font}`
-      ctx.fillText(`#${user.__globalRank}`, width / 2, 450)
+      ctx.fillText(`#${user.__rank}`, width / 2, 450)
 
       ctx.fillStyle = '#ffffff'
       drawTextFit(ctx, user.__name, width / 2, 565, width - 260, 76, font, '900')
@@ -785,7 +741,7 @@
       ctx.fillText('Generated from TNX6 Leaderboards', width / 2, 1190)
 
       if (elements.shareStatus) {
-        elements.shareStatus.textContent = `البطاقة جاهزة: ${user.__name} — المركز #${user.__globalRank}`
+        elements.shareStatus.textContent = `البطاقة جاهزة: ${user.__name} — المركز #${user.__rank}`
       }
     }
 
@@ -797,7 +753,7 @@
       if (!canvas || !user) return
 
       const link = document.createElement('a')
-      link.download = `tnx6-rank-${user.__globalRank}-${user.__name}.png`
+      link.download = `tnx6-rank-${user.__rank}-${user.__name}.png`
       link.href = canvas.toDataURL('image/png')
       link.click()
     }
@@ -812,7 +768,7 @@
       canvas.toBlob(async (blob) => {
         if (!blob) return
 
-        const file = new File([blob], `tnx6-rank-${user.__globalRank}.png`, {
+        const file = new File([blob], `tnx6-rank-${user.__rank}.png`, {
           type: 'image/png',
         })
 
@@ -821,31 +777,16 @@
             await navigator.share({
               files: [file],
               title: 'TNX6 Rank Card',
-              text: `مركزي في TNX6: #${user.__globalRank}`,
+              text: `مركزي في TNX6: #${user.__rank}`,
             })
             return
           } catch {
-            // fallback below
+            // fallback
           }
         }
 
         downloadShareCard()
       }, 'image/png')
-    }
-
-    function handleSearch(query) {
-      searchQuery = String(query || '').trim().toLowerCase()
-
-      Object.keys(boardConfig).forEach((boardId) => {
-        filteredData[boardId] = allData[boardId].filter((user) => {
-          const name = String(user.__name || '').toLowerCase()
-          const login = String(user.__login || '').toLowerCase()
-
-          return name.includes(searchQuery) || login.includes(searchQuery)
-        })
-      })
-
-      resetAllBoards()
     }
 
     async function loadData() {
@@ -874,7 +815,7 @@
           watchtime: [...allData.watchtime],
         }
 
-        resetAllBoards()
+        renderAllPanelsOnce()
         setActiveBoard(activeBoard)
       } catch {
         Object.keys(boardConfig).forEach((boardId) => {
@@ -890,10 +831,6 @@
         })
 
         renderTopThree()
-        updateCompareOptions()
-        renderCompare()
-        updateShareOptions()
-        renderShareCard()
       }
     }
 
@@ -908,11 +845,13 @@
 
       Object.keys(boardConfig).forEach((boardId) => {
         addListener(elements.loadMoreButtons[boardId], 'click', () => {
-          renderSegment(boardId)
+          visibleCount[boardId] += perPage
+          if (activeBoard === boardId) renderActiveBoard()
         })
 
         addListener(elements.showLessButtons[boardId], 'click', () => {
-          showLess(boardId)
+          visibleCount[boardId] = Math.max(perPage, visibleCount[boardId] - perPage)
+          if (activeBoard === boardId) renderActiveBoard()
         })
       })
 
@@ -920,8 +859,14 @@
         handleSearch(event.target.value)
       })
 
-      addListener(elements.compareA, 'change', renderCompare)
-      addListener(elements.compareB, 'change', renderCompare)
+      addListener(elements.compareButton, 'click', renderCompare)
+      addListener(elements.compareA, 'keydown', (event) => {
+        if (event.key === 'Enter') renderCompare()
+      })
+      addListener(elements.compareB, 'keydown', (event) => {
+        if (event.key === 'Enter') renderCompare()
+      })
+
       addListener(elements.shareSelect, 'change', renderShareCard)
       addListener(elements.shareDownload, 'click', downloadShareCard)
       addListener(elements.shareNative, 'click', shareCardNative)
