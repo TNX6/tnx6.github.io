@@ -14,21 +14,18 @@ const boards = [
     title: 'النقاط',
     subtitle: 'أكثر الأعضاء نقاطًا',
     icon: 'tabler:coins',
-    accent: 'gold',
   },
   {
     id: 'gold',
     title: 'الذهب',
     subtitle: 'ترتيب الذهب',
     icon: 'tabler:coin',
-    accent: 'yellow',
   },
   {
     id: 'watchtime',
     title: 'المشاهدة',
     subtitle: 'أكثر الأعضاء مشاهدة',
     icon: 'tabler:clock-hour-4',
-    accent: 'gold',
   },
 ]
 ---
@@ -40,7 +37,7 @@ const boards = [
 
     <section class="relative z-10 px-4 pb-16 pt-24 md:px-6">
       <div class="mx-auto max-w-7xl">
-        <div class="tnx-lb-hero">
+        <div class="tnx-lb-hero" data-reveal="up">
           <div class="relative z-10">
             <div class="mb-5 inline-flex items-center gap-2 rounded-full border border-[#c29200]/40 bg-black/45 px-4 py-2 text-xs font-black tracking-[0.24em] text-[#ffda6a]">
               <span class="h-2 w-2 rounded-full bg-[#ffda6a] shadow-[0_0_14px_#ffda6a]"></span>
@@ -75,7 +72,7 @@ const boards = [
           </div>
         </div>
 
-        <section class="tnx-lb-top-section">
+        <section class="tnx-lb-top-section" data-reveal="up">
           <div class="mb-5 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <p class="text-xs font-black tracking-[0.24em] text-[#c29200]">
@@ -122,7 +119,45 @@ const boards = [
           </div>
         </section>
 
-        <section class="tnx-lb-board-shell">
+        <section class="tnx-lb-compare-section" data-reveal="up">
+          <div class="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p class="text-xs font-black tracking-[0.24em] text-[#c29200]">
+                COMPARE
+              </p>
+              <h2 class="tnx-lb-section-title">
+                مقارنة عضوين
+              </h2>
+              <p class="mt-2 text-sm font-bold text-gray-500">
+                اختر عضوين وشوف فرق المركز والقيمة بينهم حسب التبويب الحالي.
+              </p>
+            </div>
+          </div>
+
+          <div class="tnx-lb-compare-picker">
+            <label class="tnx-lb-select-label">
+              العضو الأول
+              <select id="compare-user-a" class="tnx-lb-select"></select>
+            </label>
+
+            <div class="tnx-lb-vs-badge">VS</div>
+
+            <label class="tnx-lb-select-label">
+              العضو الثاني
+              <select id="compare-user-b" class="tnx-lb-select"></select>
+            </label>
+          </div>
+
+          <div id="compare-result" class="tnx-lb-compare-result">
+            <div class="tnx-lb-empty">
+              <iconify-icon icon="tabler:arrows-diff"></iconify-icon>
+              <strong>جاري تحميل المقارنة...</strong>
+              <span>البيانات بتظهر بعد تحميل الترتيب.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="tnx-lb-board-shell" data-reveal="up">
           <div class="mb-6 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
             <div class="tnx-lb-tabs" role="tablist" aria-label="أقسام الترتيب">
               {boards.map((board, index) => (
@@ -204,6 +239,49 @@ const boards = [
             </div>
           </div>
         </section>
+
+        <section class="tnx-lb-share-section" data-reveal="up">
+          <div class="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p class="text-xs font-black tracking-[0.24em] text-[#c29200]">
+                SHARE CARD
+              </p>
+              <h2 class="tnx-lb-section-title">
+                بطاقة قابلة للمشاركة
+              </h2>
+              <p class="mt-2 text-sm font-bold text-gray-500">
+                اختر العضو وحمّل بطاقة فيها مركزه وقيمته عشان تنشرها بالسوشيال.
+              </p>
+            </div>
+          </div>
+
+          <div class="tnx-lb-share-grid">
+            <div class="tnx-lb-share-controls">
+              <label class="tnx-lb-select-label">
+                العضو
+                <select id="share-user-select" class="tnx-lb-select"></select>
+              </label>
+
+              <div class="tnx-lb-share-actions">
+                <button type="button" id="download-share-card" class="tnx-lb-action-btn">
+                  تحميل البطاقة PNG
+                </button>
+
+                <button type="button" id="native-share-card" class="tnx-lb-action-btn tnx-lb-action-btn--ghost">
+                  مشاركة
+                </button>
+              </div>
+
+              <p id="share-card-status" class="tnx-lb-share-status">
+                البطاقة تتحدث حسب التبويب الحالي.
+              </p>
+            </div>
+
+            <div class="tnx-lb-canvas-wrap">
+              <canvas id="share-card-canvas" width="1080" height="1350"></canvas>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
   </main>
@@ -242,15 +320,6 @@ const boards = [
       backdrop-filter: blur(12px);
     }
 
-    .tnx-lb-hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(90deg, transparent, rgba(255, 218, 106, 0.04), transparent);
-      pointer-events: none;
-    }
-
     .tnx-lb-title {
       color: #ffda6a;
       font-size: clamp(2.6rem, 6vw, 5rem);
@@ -273,18 +342,22 @@ const boards = [
       padding: 1.25rem;
     }
 
-    .tnx-lb-hero-icon {
+    .tnx-lb-hero-icon,
+    .tnx-lb-medal {
       display: flex;
-      height: 4rem;
-      width: 4rem;
-      flex-shrink: 0;
       align-items: center;
       justify-content: center;
-      border-radius: 1.25rem;
       border: 1px solid rgba(194, 146, 0, 0.36);
       background: rgba(0, 0, 0, 0.45);
       color: #ffda6a;
       box-shadow: inset 0 0 16px rgba(255, 218, 106, 0.08);
+    }
+
+    .tnx-lb-hero-icon {
+      height: 4rem;
+      width: 4rem;
+      flex-shrink: 0;
+      border-radius: 1.25rem;
     }
 
     .tnx-lb-hero-icon iconify-icon {
@@ -293,7 +366,9 @@ const boards = [
     }
 
     .tnx-lb-top-section,
-    .tnx-lb-board-shell {
+    .tnx-lb-board-shell,
+    .tnx-lb-compare-section,
+    .tnx-lb-share-section {
       margin-top: 1.25rem;
       border-radius: 2rem;
       border: 1px solid rgba(194, 146, 0, 0.24);
@@ -398,13 +473,7 @@ const boards = [
       display: inline-flex;
       height: 3rem;
       width: 3rem;
-      align-items: center;
-      justify-content: center;
       border-radius: 1rem;
-      border: 1px solid rgba(194, 146, 0, 0.34);
-      background: rgba(0, 0, 0, 0.44);
-      color: #ffda6a;
-      box-shadow: inset 0 0 14px rgba(255, 218, 106, 0.06);
     }
 
     .tnx-lb-medal iconify-icon {
@@ -675,11 +744,33 @@ const boards = [
         0 0 12px rgba(194, 146, 0, 0.18);
     }
 
-    .tnx-lb-actions {
+    .tnx-lb-elite-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 0.75rem 0;
+      color: #ffda6a;
+      font-size: 0.78rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-align: center;
+    }
+
+    .tnx-lb-elite-divider::before,
+    .tnx-lb-elite-divider::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: linear-gradient(90deg, transparent, rgba(255, 218, 106, 0.55), transparent);
+    }
+
+    .tnx-lb-actions,
+    .tnx-lb-share-actions {
       margin-top: 1rem;
       display: flex;
       justify-content: center;
       gap: 0.75rem;
+      flex-wrap: wrap;
     }
 
     .tnx-lb-action-btn {
@@ -740,17 +831,189 @@ const boards = [
       font-weight: 750;
     }
 
+    .tnx-lb-compare-picker,
+    .tnx-lb-share-grid {
+      display: grid;
+      gap: 1rem;
+      align-items: end;
+    }
+
+    .tnx-lb-compare-picker {
+      grid-template-columns: 1fr auto 1fr;
+    }
+
+    .tnx-lb-select-label {
+      display: grid;
+      gap: 0.5rem;
+      color: rgb(209, 213, 219);
+      font-size: 0.85rem;
+      font-weight: 950;
+    }
+
+    .tnx-lb-select {
+      width: 100%;
+      border-radius: 1rem;
+      border: 1px solid rgba(194, 146, 0, 0.28);
+      background: rgba(0, 0, 0, 0.48);
+      color: white;
+      padding: 0.9rem 1rem;
+      font-weight: 900;
+      outline: none;
+    }
+
+    .tnx-lb-select:focus {
+      border-color: rgba(255, 218, 106, 0.65);
+      box-shadow: 0 0 0 3px rgba(255, 218, 106, 0.08);
+    }
+
+    .tnx-lb-vs-badge {
+      display: inline-flex;
+      height: 3.1rem;
+      min-width: 3.1rem;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid rgba(194, 146, 0, 0.34);
+      background: rgba(0, 0, 0, 0.46);
+      color: #ffda6a;
+      font-weight: 950;
+    }
+
+    .tnx-lb-compare-result {
+      margin-top: 1rem;
+    }
+
+    .tnx-lb-compare-grid {
+      display: grid;
+      grid-template-columns: 1fr minmax(220px, 0.8fr) 1fr;
+      gap: 0.85rem;
+      align-items: stretch;
+    }
+
+    .tnx-lb-compare-card,
+    .tnx-lb-compare-diff {
+      border-radius: 1.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.08), transparent 42%),
+        rgba(0, 0, 0, 0.38);
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .tnx-lb-compare-card strong {
+      display: block;
+      overflow: hidden;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 950;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tnx-lb-compare-card span {
+      display: block;
+      margin-top: 0.35rem;
+      color: #ffda6a;
+      font-size: 0.95rem;
+      font-weight: 950;
+    }
+
+    .tnx-lb-compare-card small {
+      display: block;
+      margin-top: 0.3rem;
+      color: rgb(107, 114, 128);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .tnx-lb-compare-diff {
+      display: grid;
+      place-items: center;
+    }
+
+    .tnx-lb-compare-diff strong {
+      color: #ffda6a;
+      font-size: 1.4rem;
+      font-weight: 950;
+      text-shadow:
+        0 0 5px rgba(255, 218, 106, 0.35),
+        0 0 12px rgba(194, 146, 0, 0.2);
+    }
+
+    .tnx-lb-compare-diff span {
+      color: rgb(156, 163, 175);
+      font-size: 0.82rem;
+      font-weight: 850;
+    }
+
+    .tnx-lb-share-grid {
+      grid-template-columns: 360px minmax(0, 1fr);
+    }
+
+    .tnx-lb-share-controls {
+      border-radius: 1.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.34);
+      padding: 1rem;
+    }
+
+    .tnx-lb-share-status {
+      margin-top: 0.85rem;
+      color: rgb(107, 114, 128);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .tnx-lb-canvas-wrap {
+      display: flex;
+      justify-content: center;
+      border-radius: 1.25rem;
+      border: 1px solid rgba(194, 146, 0, 0.18);
+      background:
+        radial-gradient(circle at top, rgba(255, 218, 106, 0.08), transparent 45%),
+        rgba(0, 0, 0, 0.32);
+      padding: 1rem;
+      overflow: hidden;
+    }
+
+    #share-card-canvas {
+      width: min(100%, 360px);
+      height: auto;
+      border-radius: 1.1rem;
+      box-shadow:
+        0 20px 45px rgba(0, 0, 0, 0.42),
+        0 0 22px rgba(194, 146, 0, 0.12);
+    }
+
+    [data-reveal] {
+      opacity: 0;
+      transform: translate3d(0, 26px, 0);
+      filter: blur(6px);
+      transition:
+        opacity 650ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        transform 650ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        filter 650ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition-delay: var(--reveal-delay, 0ms);
+      will-change: opacity, transform, filter;
+    }
+
+    [data-reveal].is-visible {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      filter: blur(0);
+    }
+
     .hidden {
       display: none !important;
     }
 
     @media (max-width: 960px) {
-      .tnx-lb-hero {
+      .tnx-lb-hero,
+      .tnx-lb-share-grid,
+      .tnx-lb-compare-grid {
         grid-template-columns: 1fr;
-      }
-
-      .tnx-lb-hero-card {
-        align-items: flex-start;
       }
 
       .tnx-lb-top-grid {
@@ -768,12 +1031,22 @@ const boards = [
       .tnx-lb-search-wrap {
         min-width: 100%;
       }
+
+      .tnx-lb-compare-picker {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-lb-vs-badge {
+        justify-self: center;
+      }
     }
 
     @media (max-width: 640px) {
       .tnx-lb-hero,
       .tnx-lb-top-section,
-      .tnx-lb-board-shell {
+      .tnx-lb-board-shell,
+      .tnx-lb-compare-section,
+      .tnx-lb-share-section {
         border-radius: 1.5rem;
         padding: 1rem;
       }
@@ -798,6 +1071,15 @@ const boards = [
 
       .tnx-lb-row-rank {
         min-width: 3rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [data-reveal] {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        transition: none;
       }
     }
   </style>
