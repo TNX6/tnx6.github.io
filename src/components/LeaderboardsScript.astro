@@ -1,39 +1,11 @@
 <style is:global>
+  .hidden,
+  .tnx-lb-modal.hidden {
+    display: none !important;
+  }
+
   .tnx-modal-open {
     overflow: hidden;
-  }
-
-  .tnx-lb-empty {
-    display: grid;
-    place-items: center;
-    gap: 0.8rem;
-    min-height: 240px;
-    padding: 2rem;
-    border-radius: 1.5rem;
-    border: 1px solid rgba(194, 146, 0, 0.18);
-    background:
-      radial-gradient(circle at top, rgba(255, 218, 106, 0.08), transparent 58%),
-      rgba(0, 0, 0, 0.26);
-    text-align: center;
-  }
-
-  .tnx-lb-empty iconify-icon {
-    font-size: 2.7rem;
-    color: #ffda6a;
-    filter: drop-shadow(0 0 12px rgba(255, 218, 106, 0.25));
-  }
-
-  .tnx-lb-empty strong {
-    color: #fff;
-    font-size: 1.05rem;
-    font-weight: 950;
-  }
-
-  .tnx-lb-empty span {
-    color: rgb(156, 163, 175);
-    font-size: 0.9rem;
-    line-height: 1.7;
-    font-weight: 800;
   }
 
   .tnx-lb-row {
@@ -47,17 +19,14 @@
     border-radius: 1.4rem;
     border: 1px solid rgba(194, 146, 0, 0.16);
     background:
-      linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01)),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01)),
       rgba(0, 0, 0, 0.34);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     cursor: pointer;
+    overflow: hidden;
     transition:
       transform 0.22s ease,
       border-color 0.22s ease,
-      box-shadow 0.22s ease,
-      background 0.22s ease;
-    overflow: hidden;
+      box-shadow 0.22s ease;
   }
 
   .tnx-lb-row:hover,
@@ -65,110 +34,120 @@
     transform: translateY(-2px);
     border-color: rgba(255, 218, 106, 0.34);
     box-shadow:
-      0 0 0 1px rgba(255, 218, 106, 0.05),
       0 12px 36px rgba(0, 0, 0, 0.28),
       0 0 22px rgba(255, 218, 106, 0.08);
     outline: none;
   }
 
-  .tnx-lb-row::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.22s ease;
-    background: linear-gradient(
-      90deg,
-      rgba(255, 218, 106, 0.05),
-      rgba(255, 218, 106, 0),
-      rgba(255, 218, 106, 0.04)
-    );
-  }
-
-  .tnx-lb-row:hover::before,
-  .tnx-lb-row:focus-visible::before {
-    opacity: 1;
-  }
-
   .tnx-lb-row-rank {
     display: inline-flex;
+    min-height: 54px;
     align-items: center;
     justify-content: center;
-    min-height: 54px;
-    padding: 0.8rem 1rem;
     border-radius: 999px;
     border: 1px solid rgba(194, 146, 0, 0.22);
     background: rgba(255, 218, 106, 0.05);
     color: #ffda6a;
-    font-size: 1rem;
     font-weight: 950;
-    letter-spacing: 0.02em;
-    text-align: center;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
   }
 
   .tnx-lb-user {
     display: flex;
+    min-width: 0;
     align-items: center;
     gap: 0.85rem;
-    min-width: 0;
   }
 
   .tnx-lb-avatar {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
     width: 52px;
     height: 52px;
     flex: 0 0 52px;
+    align-items: center;
+    justify-content: center;
     border-radius: 1rem;
     border: 1px solid rgba(194, 146, 0, 0.22);
     background:
       radial-gradient(circle at 30% 30%, rgba(255, 218, 106, 0.16), transparent 65%),
       rgba(255, 255, 255, 0.03);
     color: #ffda6a;
-    font-size: 1rem;
     font-weight: 950;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
   }
 
   .tnx-lb-user-main {
-    min-width: 0;
     display: grid;
+    min-width: 0;
     gap: 0.16rem;
   }
 
   .tnx-lb-user-name {
     margin: 0;
+    overflow: hidden;
     color: #fff;
-    font-size: 1rem;
     font-weight: 900;
     line-height: 1.35;
-    white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .tnx-lb-user-login {
     margin: 0;
+    overflow: hidden;
     color: rgb(148, 163, 184);
+    direction: ltr;
     font-size: 0.82rem;
     font-weight: 800;
-    line-height: 1.35;
-    direction: ltr;
     text-align: left;
-    white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .tnx-lb-row-value {
     color: #fff;
-    font-size: 1rem;
     font-weight: 950;
     text-align: right;
     white-space: nowrap;
+  }
+
+  .tnx-lb-row--rank-1,
+  .tnx-lb-row--rank-2,
+  .tnx-lb-row--rank-3 {
+    border-color: rgba(255, 218, 106, 0.34);
+  }
+
+  .tnx-lb-row--rank-1 {
+    background:
+      linear-gradient(90deg, rgba(255, 218, 106, 0.18), rgba(255, 218, 106, 0.05) 35%, rgba(0, 0, 0, 0.32)),
+      rgba(0, 0, 0, 0.28);
+  }
+
+  .tnx-lb-row--rank-2 {
+    background:
+      linear-gradient(90deg, rgba(255, 215, 140, 0.14), rgba(255, 218, 106, 0.04) 35%, rgba(0, 0, 0, 0.32)),
+      rgba(0, 0, 0, 0.28);
+  }
+
+  .tnx-lb-row--rank-3 {
+    background:
+      linear-gradient(90deg, rgba(226, 180, 96, 0.12), rgba(255, 218, 106, 0.035) 35%, rgba(0, 0, 0, 0.32)),
+      rgba(0, 0, 0, 0.28);
+  }
+
+  .tnx-lb-row--rank-1 .tnx-lb-row-rank {
+    animation: tnx-first-row-pulse 2.8s ease-in-out infinite;
+  }
+
+  @keyframes tnx-first-row-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(255, 218, 106, 0.18);
+    }
+
+    50% {
+      transform: scale(1.035);
+      box-shadow: 0 0 0 10px rgba(255, 218, 106, 0);
+    }
   }
 
   .tnx-lb-elite-divider {
@@ -183,8 +162,39 @@
     color: #ffda6a;
     font-size: 0.82rem;
     font-weight: 950;
-    letter-spacing: 0.06em;
     text-align: center;
+  }
+
+  .tnx-lb-empty {
+    display: grid;
+    min-height: 220px;
+    place-items: center;
+    gap: 0.8rem;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    border: 1px solid rgba(194, 146, 0, 0.18);
+    background:
+      radial-gradient(circle at top, rgba(255, 218, 106, 0.08), transparent 58%),
+      rgba(0, 0, 0, 0.26);
+    text-align: center;
+  }
+
+  .tnx-lb-empty iconify-icon {
+    color: #ffda6a;
+    font-size: 2.7rem;
+  }
+
+  .tnx-lb-empty strong {
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 950;
+  }
+
+  .tnx-lb-empty span {
+    color: rgb(156, 163, 175);
+    font-size: 0.9rem;
+    font-weight: 800;
+    line-height: 1.7;
   }
 
   .tnx-lb-top-card {
@@ -196,15 +206,12 @@
     border-radius: 1.5rem;
     border: 1px solid rgba(194, 146, 0, 0.18);
     background:
-      linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.012)),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.012)),
       rgba(0, 0, 0, 0.28);
     text-align: center;
     cursor: pointer;
-    transition:
-      transform 0.22s ease,
-      border-color 0.22s ease,
-      box-shadow 0.22s ease;
     overflow: hidden;
+    transition: 0.22s ease;
   }
 
   .tnx-lb-top-card:hover,
@@ -212,7 +219,7 @@
     transform: translateY(-3px);
     border-color: rgba(255, 218, 106, 0.36);
     box-shadow:
-      0 14px 30px rgba(0,0,0,0.28),
+      0 14px 30px rgba(0, 0, 0, 0.28),
       0 0 24px rgba(255, 218, 106, 0.12);
     outline: none;
   }
@@ -222,10 +229,10 @@
     top: 0.9rem;
     inset-inline-start: 0.9rem;
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
     min-width: 58px;
     min-height: 34px;
+    align-items: center;
+    justify-content: center;
     padding: 0.32rem 0.8rem;
     border-radius: 999px;
     border: 1px solid rgba(194, 146, 0, 0.22);
@@ -237,10 +244,10 @@
 
   .tnx-lb-medal {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
     width: 66px;
     height: 66px;
+    align-items: center;
+    justify-content: center;
     border-radius: 1.3rem;
     border: 1px solid rgba(194, 146, 0, 0.22);
     background:
@@ -250,21 +257,37 @@
     font-size: 1.8rem;
   }
 
+  .tnx-lb-top-card--first .tnx-lb-medal {
+    animation: tnx-first-pulse 2.6s ease-in-out infinite;
+  }
+
+  @keyframes tnx-first-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(255, 218, 106, 0.2);
+    }
+
+    50% {
+      transform: scale(1.04);
+      box-shadow: 0 0 0 10px rgba(255, 218, 106, 0);
+    }
+  }
+
   .tnx-lb-top-name {
     margin: 0;
     color: #fff;
     font-size: 1.06rem;
     font-weight: 950;
     line-height: 1.35;
-    max-width: 100%;
     word-break: break-word;
   }
 
   .tnx-lb-top-login {
     color: rgb(148, 163, 184);
+    direction: ltr;
     font-size: 0.82rem;
     font-weight: 800;
-    direction: ltr;
   }
 
   .tnx-lb-top-value {
@@ -274,145 +297,16 @@
     font-weight: 950;
   }
 
-  .tnx-lb-top-card--first {
-    border-color: rgba(255, 218, 106, 0.34);
-    box-shadow:
-      0 0 0 1px rgba(255, 218, 106, 0.06),
-      0 0 34px rgba(255, 218, 106, 0.11);
-  }
-
-  .tnx-lb-top-card--first .tnx-lb-medal {
-    animation: tnx-firstPulse 2.6s ease-in-out infinite;
-    box-shadow:
-      0 0 0 0 rgba(255, 218, 106, 0.22),
-      0 0 22px rgba(255, 218, 106, 0.14);
-  }
-
-  @keyframes tnx-firstPulse {
-    0% {
-      transform: scale(1);
-      box-shadow:
-        0 0 0 0 rgba(255, 218, 106, 0.20),
-        0 0 18px rgba(255, 218, 106, 0.10);
-    }
-
-    50% {
-      transform: scale(1.04);
-      box-shadow:
-        0 0 0 10px rgba(255, 218, 106, 0),
-        0 0 28px rgba(255, 218, 106, 0.20);
-    }
-
-    100% {
-      transform: scale(1);
-      box-shadow:
-        0 0 0 0 rgba(255, 218, 106, 0),
-        0 0 18px rgba(255, 218, 106, 0.10);
-    }
-  }
-
-  .tnx-lb-row--rank-1,
-  .tnx-lb-row--rank-2,
-  .tnx-lb-row--rank-3 {
-    border-color: rgba(255, 218, 106, 0.34);
-    box-shadow:
-      0 0 0 1px rgba(255, 218, 106, 0.04),
-      inset 0 1px 0 rgba(255,255,255,0.04);
-  }
-
-  .tnx-lb-row--rank-1 {
-    background:
-      linear-gradient(90deg, rgba(255, 218, 106, 0.18), rgba(255, 218, 106, 0.05) 32%, rgba(0,0,0,0.3) 85%),
-      linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
-      rgba(0, 0, 0, 0.26);
-  }
-
-  .tnx-lb-row--rank-2 {
-    background:
-      linear-gradient(90deg, rgba(255, 215, 140, 0.14), rgba(255, 218, 106, 0.04) 30%, rgba(0,0,0,0.3) 82%),
-      linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
-      rgba(0, 0, 0, 0.27);
-  }
-
-  .tnx-lb-row--rank-3 {
-    background:
-      linear-gradient(90deg, rgba(226, 180, 96, 0.12), rgba(255, 218, 106, 0.035) 28%, rgba(0,0,0,0.3) 82%),
-      linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
-      rgba(0, 0, 0, 0.28);
-  }
-
-  .tnx-lb-row--rank-1 .tnx-lb-row-rank,
-  .tnx-lb-row--rank-2 .tnx-lb-row-rank,
-  .tnx-lb-row--rank-3 .tnx-lb-row-rank {
-    background: rgba(255, 218, 106, 0.12);
-    border-color: rgba(255, 218, 106, 0.34);
-    box-shadow: 0 0 18px rgba(255, 218, 106, 0.10);
-  }
-
-  .tnx-lb-row--rank-1 .tnx-lb-avatar,
-  .tnx-lb-row--rank-2 .tnx-lb-avatar,
-  .tnx-lb-row--rank-3 .tnx-lb-avatar {
-    border-color: rgba(255, 218, 106, 0.34);
-    box-shadow: 0 0 18px rgba(255, 218, 106, 0.08);
-  }
-
-  .tnx-lb-row--rank-1 .tnx-lb-row-value,
-  .tnx-lb-row--rank-2 .tnx-lb-row-value,
-  .tnx-lb-row--rank-3 .tnx-lb-row-value {
-    color: #ffda6a;
-    text-shadow: 0 0 16px rgba(255, 218, 106, 0.12);
-  }
-
-  .tnx-lb-row--rank-1::after,
-  .tnx-lb-row--rank-2::after,
-  .tnx-lb-row--rank-3::after {
-    content: '';
-    position: absolute;
-    inset-inline-start: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    border-radius: 0 999px 999px 0;
-    background: linear-gradient(180deg, #ffefad, #ffda6a, #c29200);
-    box-shadow: 0 0 16px rgba(255, 218, 106, 0.22);
-  }
-
-  .tnx-lb-row--rank-1 .tnx-lb-row-rank {
-    animation: tnx-firstRowPulse 2.8s ease-in-out infinite;
-  }
-
-  @keyframes tnx-firstRowPulse {
-    0% {
-      transform: scale(1);
-      box-shadow: 0 0 0 0 rgba(255, 218, 106, 0.18);
-    }
-
-    50% {
-      transform: scale(1.035);
-      box-shadow: 0 0 0 10px rgba(255, 218, 106, 0);
-    }
-
-    100% {
-      transform: scale(1);
-      box-shadow: 0 0 0 0 rgba(255, 218, 106, 0);
-    }
-  }
-
   .tnx-lb-modal {
     position: fixed;
     inset: 0;
-    z-index: 200;
+    z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 1rem;
-    background: rgba(0, 0, 0, 0.72);
+    background: rgba(0, 0, 0, 0.74);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-
-  .tnx-lb-modal.hidden {
-    display: none;
   }
 
   .tnx-lb-modal-card {
@@ -423,167 +317,140 @@
     border: 1px solid rgba(194, 146, 0, 0.22);
     background:
       radial-gradient(circle at top, rgba(255, 218, 106, 0.07), transparent 48%),
-      linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01)),
-      rgba(10, 10, 12, 0.97);
-    padding: 1.5rem;
+      rgba(10, 10, 12, 0.98);
+    padding: 1.35rem;
     box-shadow:
       0 28px 80px rgba(0, 0, 0, 0.54),
       0 0 34px rgba(255, 218, 106, 0.08);
   }
 
+  .tnx-lb-modal-topbar {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 0.85rem;
+  }
+
   .tnx-lb-modal-close {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-inline-start: auto;
     width: 46px;
     height: 46px;
+    align-items: center;
+    justify-content: center;
     border-radius: 999px;
     border: 1px solid rgba(194, 146, 0, 0.24);
     background: rgba(255, 255, 255, 0.03);
     color: #ffda6a;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     cursor: pointer;
-    transition: 0.2s ease;
   }
 
-  .tnx-lb-modal-close:hover {
-    border-color: rgba(255, 218, 106, 0.45);
-    box-shadow: 0 0 18px rgba(255, 218, 106, 0.12);
-  }
-
-  .tnx-lb-modal-layout,
-  #leaderboard-user-modal .tnx-lb-modal-layout,
-  #leaderboard-user-modal .tnx-lb-modal-content,
-  #leaderboard-user-modal .tnx-lb-modal-body {
+  .tnx-lb-modal-layout {
     display: grid;
-    grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
-    gap: 1.35rem;
+    grid-template-columns: minmax(290px, 390px) minmax(0, 1fr);
+    gap: 1.25rem;
     align-items: stretch;
-    margin-top: 0.8rem;
   }
 
   .tnx-lb-preview-side,
-  .tnx-lb-preview-box,
-  .tnx-lb-preview-inner,
-  #leaderboard-user-modal .tnx-lb-modal-layout > :first-child,
-  #leaderboard-user-modal .tnx-lb-modal-content > :first-child,
-  #leaderboard-user-modal .tnx-lb-modal-body > :first-child {
+  .tnx-lb-preview-box {
     display: flex;
+    min-width: 0;
     align-items: center;
     justify-content: center;
   }
 
-  .tnx-lb-preview-side,
-  #leaderboard-user-modal .tnx-lb-modal-layout > :first-child,
-  #leaderboard-user-modal .tnx-lb-modal-content > :first-child,
-  #leaderboard-user-modal .tnx-lb-modal-body > :first-child {
-    min-height: 100%;
-    align-self: stretch;
-  }
-
   .tnx-lb-preview-box {
     width: 100%;
-    min-height: 100%;
-    border-radius: 1.7rem;
-    border: 1px solid rgba(194, 146, 0, 0.14);
-    background:
-      linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)),
-      rgba(0, 0, 0, 0.26);
-    padding: 1.25rem;
+    border-radius: 1.65rem;
+    border: 1px solid rgba(194, 146, 0, 0.16);
+    background: rgba(0, 0, 0, 0.28);
+    padding: 1rem;
   }
 
-  .tnx-lb-preview-inner {
-    width: 100%;
-  }
-
-  #share-card-canvas,
-  .tnx-lb-preview-inner canvas,
-  .tnx-lb-preview-inner img {
+  #share-card-canvas {
     display: block;
-    max-width: 100%;
     width: 100%;
+    max-width: 360px;
     height: auto;
-    margin: auto;
-    border-radius: 1.45rem;
+    border-radius: 1.35rem;
     box-shadow:
       0 0 0 1px rgba(255, 218, 106, 0.1),
       0 0 26px rgba(255, 218, 106, 0.08);
   }
 
   .tnx-lb-info-side {
-    border-radius: 1.7rem;
-    border: 1px solid rgba(194, 146, 0, 0.14);
-    background:
-      linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)),
-      rgba(0, 0, 0, 0.24);
-    padding: 1.2rem;
     display: grid;
-    gap: 1rem;
+    min-width: 0;
     align-content: start;
+    gap: 1rem;
+    border-radius: 1.65rem;
+    border: 1px solid rgba(194, 146, 0, 0.16);
+    background: rgba(0, 0, 0, 0.24);
+    padding: 1.1rem;
   }
 
   .tnx-lb-modal-head {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 92px minmax(0, 1fr);
     align-items: center;
     gap: 1rem;
   }
 
   .tnx-lb-modal-avatar {
     display: inline-flex;
+    width: 92px;
+    height: 92px;
     align-items: center;
     justify-content: center;
-    width: 88px;
-    height: 88px;
-    border-radius: 1.5rem;
-    border: 1px solid rgba(194, 146, 0, 0.24);
+    border-radius: 1.45rem;
+    border: 1px solid rgba(194, 146, 0, 0.28);
     background:
       radial-gradient(circle at 30% 30%, rgba(255, 218, 106, 0.18), transparent 65%),
-      rgba(255,255,255,0.03);
+      rgba(255, 255, 255, 0.03);
     color: #ffda6a;
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 950;
   }
 
   .tnx-lb-modal-name-wrap {
-    min-width: 0;
     display: grid;
+    min-width: 0;
     gap: 0.35rem;
+    text-align: right;
   }
 
   .tnx-lb-modal-board {
     color: #ffda6a;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 900;
   }
 
   .tnx-lb-modal-name {
-    color: #ffffff;
-    font-size: 2rem;
+    color: #fff;
+    font-size: clamp(1.7rem, 3vw, 2.6rem);
     font-weight: 950;
-    line-height: 1.2;
+    line-height: 1.1;
     word-break: break-word;
   }
 
   .tnx-lb-modal-login {
     color: rgb(148, 163, 184);
-    font-size: 0.92rem;
-    font-weight: 800;
     direction: ltr;
-    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-align: right;
   }
 
   .tnx-lb-stats-grid,
-  .tnx-lb-modal-badges {
+  .tnx-lb-modal-actions {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.9rem;
   }
 
-  .tnx-lb-stat-box,
-  .tnx-lb-modal-badge {
-    border-radius: 1.2rem;
+  .tnx-lb-stat-box {
+    min-width: 0;
+    border-radius: 1.25rem;
     border: 1px solid rgba(194, 146, 0, 0.18);
     background: rgba(0, 0, 0, 0.26);
     padding: 1rem;
@@ -592,77 +459,26 @@
 
   .tnx-lb-stat-box span {
     display: block;
+    margin-bottom: 0.45rem;
     color: rgb(148, 163, 184);
     font-size: 0.9rem;
     font-weight: 800;
-    margin-bottom: 0.45rem;
   }
 
-  .tnx-lb-stat-box strong,
-  .tnx-lb-modal-badge {
+  .tnx-lb-stat-box strong {
     display: block;
+    overflow-wrap: anywhere;
     color: #ffda6a;
-    font-size: 1.25rem;
+    font-size: clamp(1.3rem, 2.4vw, 2rem);
     font-weight: 950;
+    line-height: 1.1;
   }
 
-  .tnx-lb-panel {
-    border-radius: 1.3rem;
-    border: 1px solid rgba(194, 146, 0, 0.16);
-    background: rgba(255,255,255,0.02);
-    padding: 1rem;
-  }
-
-  .tnx-lb-panel h4 {
-    margin: 0 0 0.8rem;
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 950;
-  }
-
-  .tnx-lb-modal-actions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.8rem;
-    margin-top: 1rem;
-  }
-
-  .tnx-lb-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 52px;
-    padding: 0.8rem 1.2rem;
-    border-radius: 1rem;
-    border: 1px solid rgba(194, 146, 0, 0.24);
-    background: rgba(255, 218, 106, 0.08);
-    color: #ffda6a;
-    font-size: 0.95rem;
-    font-weight: 950;
-    cursor: pointer;
-    transition: 0.2s ease;
-  }
-
-  .tnx-lb-btn:hover {
-    border-color: rgba(255, 218, 106, 0.45);
-    background: rgba(255, 218, 106, 0.14);
-  }
-
-  .tnx-lb-btn--solid {
-    background: linear-gradient(180deg, rgba(255, 218, 106, 0.92), rgba(194, 146, 0, 0.92));
-    color: #111;
-  }
-
-  .tnx-lb-btn--solid:hover {
-    background: linear-gradient(180deg, rgba(255, 226, 132, 1), rgba(214, 162, 0, 1));
-  }
-
-  .tnx-lb-card-mode-control {
+  .tnx-lb-card-mode-control,
+  .tnx-lb-compare-box {
     border-radius: 1.3rem;
     border: 1px solid rgba(194, 146, 0, 0.18);
-    background:
-      linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)),
-      rgba(0, 0, 0, 0.22);
+    background: rgba(0, 0, 0, 0.22);
     padding: 1rem;
   }
 
@@ -685,7 +501,8 @@
     font-weight: 950;
   }
 
-  .tnx-lb-card-mode-copy span {
+  .tnx-lb-card-mode-copy span,
+  .tnx-lb-card-mode-hint {
     color: rgb(156, 163, 175);
     font-size: 0.82rem;
     font-weight: 800;
@@ -700,7 +517,6 @@
 
   .tnx-lb-card-mode-status {
     min-width: 82px;
-    text-align: center;
     border-radius: 999px;
     border: 1px solid rgba(194, 146, 0, 0.25);
     background: rgba(255, 218, 106, 0.08);
@@ -708,96 +524,67 @@
     padding: 0.4rem 0.85rem;
     font-size: 0.8rem;
     font-weight: 950;
+    text-align: center;
   }
 
   .tnx-lb-switch {
     position: relative;
     width: 74px;
     height: 40px;
-    border: 1px solid rgba(194, 146, 0, 0.3);
-    background: rgba(255,255,255,0.06);
     border-radius: 999px;
+    border: 1px solid rgba(194, 146, 0, 0.3);
+    background: rgba(255, 255, 255, 0.06);
     cursor: pointer;
-    transition: all 0.25s ease;
-    display: inline-flex;
-    align-items: center;
-    padding: 0 5px;
-  }
-
-  .tnx-lb-switch-track {
-    position: relative;
-    display: block;
-    width: 100%;
-    height: 100%;
   }
 
   .tnx-lb-switch-thumb {
     position: absolute;
-    top: 4px;
-    right: 4px;
+    top: 5px;
+    right: 5px;
     width: 28px;
     height: 28px;
     border-radius: 999px;
     background: #c5c7cf;
-    box-shadow:
-      0 4px 14px rgba(0,0,0,0.28),
-      inset 0 1px 1px rgba(255,255,255,0.28);
-    transition: all 0.25s ease;
+    transition: 0.25s ease;
   }
 
   .tnx-lb-switch.is-on {
-    background: linear-gradient(180deg, rgba(255, 218, 106, 0.28), rgba(194, 146, 0, 0.24));
     border-color: rgba(255, 218, 106, 0.68);
-    box-shadow:
-      0 0 0 1px rgba(255, 218, 106, 0.12),
-      0 0 20px rgba(255, 218, 106, 0.18);
+    background: linear-gradient(180deg, rgba(255, 218, 106, 0.28), rgba(194, 146, 0, 0.24));
   }
 
   .tnx-lb-switch.is-on .tnx-lb-switch-thumb {
-    right: calc(100% - 32px);
+    right: calc(100% - 33px);
     background: linear-gradient(180deg, #ffea99, #ffda6a);
-    box-shadow:
-      0 4px 16px rgba(255, 218, 106, 0.22),
-      inset 0 1px 1px rgba(255,255,255,0.42);
   }
 
-  .tnx-lb-card-mode-hint {
-    margin-top: 0.75rem;
-    color: rgb(107, 114, 128);
-    font-size: 0.78rem;
-    font-weight: 800;
-    line-height: 1.8;
+  .tnx-lb-btn {
+    display: inline-flex;
+    min-height: 52px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    border: 1px solid rgba(194, 146, 0, 0.24);
+    background: rgba(255, 218, 106, 0.08);
+    color: #ffda6a;
+    padding: 0.8rem 1.2rem;
+    font-size: 0.95rem;
+    font-weight: 950;
+    cursor: pointer;
   }
 
-  .tnx-lb-share-wrap {
-    display: none !important;
-  }
-
-  .tnx-lb-original-compare-hidden {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    height: 0 !important;
-    max-height: 0 !important;
-    overflow: hidden !important;
-    pointer-events: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-  }
-
-  #leaderboard-user-modal .tnx-lb-original-compare-hidden {
-    display: none !important;
-  }
-
-  .tnx-lb-compare-accordion-root {
-    display: block;
-    width: 100%;
+  .tnx-lb-btn--solid {
+    background: linear-gradient(180deg, rgba(255, 218, 106, 0.92), rgba(194, 146, 0, 0.92));
+    color: #111;
   }
 
   .tnx-lb-compare-strip {
+    display: flex;
     width: 100%;
     min-height: 58px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     border-radius: 1rem;
     border: 1px solid rgba(194, 146, 0, 0.24);
     background:
@@ -805,57 +592,34 @@
       rgba(0, 0, 0, 0.28);
     color: #fff;
     padding: 0.85rem 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
     text-align: right;
-    transition:
-      border-color 0.2s ease,
-      background 0.2s ease,
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
-  }
-
-  .tnx-lb-compare-strip:hover,
-  .tnx-lb-compare-strip:focus-visible {
-    outline: none;
-    transform: translateY(-1px);
-    border-color: rgba(255, 218, 106, 0.45);
-    background:
-      radial-gradient(circle at top right, rgba(255, 218, 106, 0.15), transparent 42%),
-      rgba(0, 0, 0, 0.34);
-    box-shadow: 0 0 20px rgba(255, 218, 106, 0.09);
+    cursor: pointer;
   }
 
   .tnx-lb-compare-strip-text {
     display: grid;
     gap: 0.15rem;
-    min-width: 0;
   }
 
   .tnx-lb-compare-strip-text strong {
     color: #ffda6a;
     font-size: 0.95rem;
     font-weight: 950;
-    line-height: 1.4;
   }
 
   .tnx-lb-compare-strip-text small {
     color: rgb(156, 163, 175);
     font-size: 0.78rem;
     font-weight: 800;
-    line-height: 1.5;
   }
 
   .tnx-lb-compare-strip-icon {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
     width: 2.2rem;
     height: 2.2rem;
     flex: 0 0 2.2rem;
+    align-items: center;
+    justify-content: center;
     border-radius: 0.8rem;
     border: 1px solid rgba(194, 146, 0, 0.28);
     background: rgba(255, 218, 106, 0.07);
@@ -863,39 +627,18 @@
     transition: transform 0.22s ease;
   }
 
-  .tnx-lb-compare-strip-icon iconify-icon {
-    font-size: 1.2rem;
+  .tnx-lb-compare-accordion-body {
+    display: none;
+    margin-top: 0;
+  }
+
+  .tnx-lb-compare-accordion-root.is-open .tnx-lb-compare-accordion-body {
+    display: grid;
+    margin-top: 0.85rem;
   }
 
   .tnx-lb-compare-accordion-root.is-open .tnx-lb-compare-strip-icon {
     transform: rotate(180deg);
-  }
-
-  .tnx-lb-compare-accordion-body {
-    display: none !important;
-    opacity: 0 !important;
-    max-height: 0 !important;
-    margin-top: 0 !important;
-    overflow: hidden !important;
-    pointer-events: none !important;
-  }
-
-  .tnx-lb-compare-accordion-root.is-open .tnx-lb-compare-accordion-body {
-    display: grid !important;
-    gap: 0.8rem;
-    opacity: 1 !important;
-    max-height: 900px !important;
-    margin-top: 0.85rem !important;
-    pointer-events: auto !important;
-  }
-
-  .tnx-lb-compare-box-moved {
-    display: grid;
-    gap: 0.8rem;
-    border-radius: 1.15rem;
-    border: 1px solid rgba(194, 146, 0, 0.16);
-    background: rgba(255, 255, 255, 0.02);
-    padding: 1rem;
   }
 
   .tnx-lb-compare-box {
@@ -921,20 +664,16 @@
     font-size: 0.95rem;
     font-weight: 800;
     outline: none;
-  }
-
-  .tnx-lb-compare-controls input:focus {
-    border-color: rgba(255, 218, 106, 0.4);
-    box-shadow: 0 0 0 3px rgba(255, 218, 106, 0.08);
+    text-align: right;
   }
 
   .tnx-lb-compare-result {
+    min-height: 76px;
     border-radius: 1rem;
     border: 1px dashed rgba(194, 146, 0, 0.18);
     background: rgba(0, 0, 0, 0.18);
-    padding: 1rem;
-    min-height: 76px;
     color: rgb(156, 163, 175);
+    padding: 1rem;
     font-size: 0.92rem;
     font-weight: 800;
     line-height: 1.8;
@@ -943,26 +682,24 @@
 
   .tnx-lb-compare-grid {
     display: grid;
-    grid-template-columns: 1fr minmax(160px, 220px) 1fr;
+    grid-template-columns: 1fr minmax(150px, 210px) 1fr;
     gap: 0.8rem;
-    align-items: stretch;
   }
 
   .tnx-lb-compare-card,
   .tnx-lb-compare-diff {
+    display: grid;
+    place-items: center;
     border-radius: 1rem;
     border: 1px solid rgba(194, 146, 0, 0.15);
     background: rgba(255, 255, 255, 0.02);
     padding: 1rem;
-    display: grid;
-    place-items: center;
     text-align: center;
   }
 
   .tnx-lb-compare-card strong,
   .tnx-lb-compare-diff strong {
     color: #fff;
-    font-size: 1rem;
     font-weight: 950;
   }
 
@@ -971,88 +708,6 @@
     color: #ffda6a;
     font-size: 0.9rem;
     font-weight: 900;
-    margin-top: 0.3rem;
-  }
-
-  .tnx-lb-compare-card small {
-    color: rgb(148, 163, 184);
-    font-size: 0.8rem;
-    font-weight: 800;
-    margin-top: 0.35rem;
-  }
-
-
-  .tnx-lb-compare-panel {
-    padding: 0 !important;
-    border: 0 !important;
-    background: transparent !important;
-  }
-
-  .tnx-lb-compare-panel > h4 {
-    display: none !important;
-  }
-
-  .tnx-lb-compare-panel:not(.is-open) .tnx-lb-compare-box {
-    display: none !important;
-    opacity: 0 !important;
-    max-height: 0 !important;
-    margin-top: 0 !important;
-    overflow: hidden !important;
-    pointer-events: none !important;
-  }
-
-  .tnx-lb-compare-panel.is-open .tnx-lb-compare-box {
-    display: grid !important;
-    opacity: 1 !important;
-    max-height: 900px !important;
-    margin-top: 0.85rem !important;
-    overflow: visible !important;
-    pointer-events: auto !important;
-  }
-
-  .tnx-lb-stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
-  }
-
-  .tnx-lb-stat-box strong,
-  .tnx-lb-modal-badge {
-    overflow-wrap: anywhere;
-    line-height: 1.15;
-  }
-
-  .tnx-lb-modal-head {
-    grid-template-columns: minmax(0, 1fr) auto !important;
-  }
-
-  #leaderboard-user-modal .tnx-lb-modal-card {
-    min-height: min(860px, calc(100vh - 2rem)) !important;
-  }
-
-  #leaderboard-user-modal .tnx-lb-force-preview-column {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    align-self: stretch !important;
-    height: auto !important;
-    min-height: clamp(560px, calc(100vh - 8rem), 760px) !important;
-  }
-
-  #leaderboard-user-modal .tnx-lb-force-preview-wrapper {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-height: inherit !important;
-  }
-
-  #leaderboard-user-modal #share-card-canvas {
-    display: block !important;
-    margin: auto !important;
-    align-self: center !important;
-    justify-self: center !important;
-    max-width: 100% !important;
-    height: auto !important;
   }
 
   [data-reveal] {
@@ -1061,11 +716,6 @@
     transition:
       opacity 0.55s ease,
       transform 0.55s ease;
-    will-change: opacity, transform;
-  }
-
-  [data-reveal="up"] {
-    transform: translateY(18px);
   }
 
   [data-reveal].is-visible {
@@ -1073,28 +723,21 @@
     transform: translateY(0);
   }
 
-  .hidden {
-    display: none !important;
-  }
-
   @media (max-width: 980px) {
-    .tnx-lb-modal-layout,
-    #leaderboard-user-modal .tnx-lb-modal-layout,
-    #leaderboard-user-modal .tnx-lb-modal-content,
-    #leaderboard-user-modal .tnx-lb-modal-body {
+    .tnx-lb-modal-layout {
       grid-template-columns: 1fr;
     }
 
-    .tnx-lb-preview-side,
-    .tnx-lb-preview-box,
-    #leaderboard-user-modal .tnx-lb-modal-layout > :first-child,
-    #leaderboard-user-modal .tnx-lb-modal-content > :first-child,
-    #leaderboard-user-modal .tnx-lb-modal-body > :first-child {
-      min-height: auto;
+    .tnx-lb-preview-side {
+      order: 2;
     }
 
-    #leaderboard-user-modal .tnx-lb-force-preview-column {
-      min-height: auto !important;
+    .tnx-lb-info-side {
+      order: 1;
+    }
+
+    #share-card-canvas {
+      max-width: 320px;
     }
   }
 
@@ -1107,45 +750,23 @@
   @media (max-width: 640px) {
     .tnx-lb-row {
       grid-template-columns: 78px minmax(0, 1fr);
-      gap: 0.85rem;
     }
 
     .tnx-lb-row-value {
       grid-column: 2;
       justify-self: start;
-      margin-top: -0.1rem;
     }
 
+    .tnx-lb-modal-head,
     .tnx-lb-stats-grid,
-    .tnx-lb-modal-badges {
-      grid-template-columns: 1fr;
-    }
-
-    .tnx-lb-modal-head {
-      grid-template-columns: 1fr;
-      justify-items: center;
-      text-align: center;
-    }
-
-    .tnx-lb-modal-login {
-      text-align: center;
-    }
-
-    .tnx-lb-modal-actions {
-      grid-template-columns: 1fr;
-    }
-
+    .tnx-lb-modal-actions,
     .tnx-lb-compare-controls {
       grid-template-columns: 1fr;
     }
 
-    .tnx-lb-card-mode-row {
-      align-items: flex-start;
-    }
-
-    .tnx-lb-card-mode-side {
-      width: 100%;
-      justify-content: space-between;
+    .tnx-lb-modal-name-wrap,
+    .tnx-lb-modal-login {
+      text-align: center;
     }
   }
 </style>
@@ -1251,17 +872,17 @@
         return Number.isFinite(value) ? value : 0
       }
 
-      const cleaned = String(value ?? '')
-        .replaceAll(',', '')
-        .replace(/[^\d.-]/g, '')
+      const number = Number(
+        String(value ?? '')
+          .replaceAll(',', '')
+          .replace(/[^\d.-]/g, '')
+      )
 
-      const number = Number(cleaned)
       return Number.isFinite(number) ? number : 0
     }
 
     function formatNumber(value) {
-      const number = toNumber(value)
-      return new Intl.NumberFormat('en-US').format(number)
+      return new Intl.NumberFormat('en-US').format(toNumber(value))
     }
 
     function formatCardDate(date = new Date()) {
@@ -1269,15 +890,6 @@
       const month = String(date.getMonth() + 1).padStart(2, '0')
       const year = String(date.getFullYear())
       return `${day}/${month}/${year}`
-    }
-
-    function isNumericValue(value) {
-      if (typeof value === 'number') return Number.isFinite(value)
-
-      const raw = String(value ?? '').trim()
-      if (!raw) return false
-
-      return /^-?[\d,]+(\.\d+)?$/.test(raw)
     }
 
     function getDisplayName(user) {
@@ -1298,8 +910,13 @@
       return user?.Value ?? user?.value ?? user?.points ?? user?.score ?? 0
     }
 
+    function isNumericValue(value) {
+      if (typeof value === 'number') return Number.isFinite(value)
+      const raw = String(value ?? '').trim()
+      return Boolean(raw) && /^-?[\d,]+(\.\d+)?$/.test(raw)
+    }
+
     function formatValue(boardId, value) {
-      const config = boardConfig[boardId]
       const raw = String(value ?? '').trim()
 
       if (boardId === 'watchtime') {
@@ -1307,14 +924,10 @@
       }
 
       if (isNumericValue(value)) {
-        return `${formatNumber(value)} ${config.unit}`.trim()
+        return `${formatNumber(value)} ${boardConfig[boardId].unit}`.trim()
       }
 
-      if (!raw) {
-        return `0 ${config.unit}`.trim()
-      }
-
-      return `${raw} ${config.unit}`.trim()
+      return `${raw || '0'} ${boardConfig[boardId].unit}`.trim()
     }
 
     function getAvatarLetter(name) {
@@ -1335,6 +948,7 @@
         .filter((user) => user && (user.UserName || user.UserLogin || user.username || user.name))
         .map((user) => ({
           ...user,
+          __board: boardId,
           __name: getDisplayName(user),
           __login: getLogin(user),
           __value: getValue(user),
@@ -1373,8 +987,6 @@
       const watchtimeUser = findMatchingUserInBoard('watchtime', user)
 
       return {
-        pointsUser,
-        watchtimeUser,
         pointsRank: pointsUser ? `#${pointsUser.__rank}` : '--',
         pointsValue: pointsUser ? formatValue('points', pointsUser.__value) : '--',
         watchtimeRank: watchtimeUser ? `#${watchtimeUser.__rank}` : '--',
@@ -1386,7 +998,7 @@
       return {
         tabs: Array.from(document.querySelectorAll('[data-board-tab]')),
         panels: Array.from(document.querySelectorAll('[data-board-panel]')),
-        search: document.getElementById('leaderboard-search'),
+        search: document.getElementById('leaderboard-search') || document.getElementById('search'),
         boardHeading: document.getElementById('board-heading'),
         boardDescription: document.getElementById('board-description'),
         boardCount: document.getElementById('board-count'),
@@ -1396,6 +1008,159 @@
         activeBoardIcon: document.getElementById('active-board-icon'),
         topThreeList: document.getElementById('top-three-list'),
 
+        containers: {
+          points: document.getElementById('points-list'),
+          gold: document.getElementById('gold-list'),
+          watchtime: document.getElementById('watchtime-list'),
+        },
+
+        loadMoreButtons: {
+          points: document.querySelector('[data-load-more="points"]') || document.getElementById('loadMorePoints'),
+          gold: document.querySelector('[data-load-more="gold"]') || document.getElementById('loadMoreGold'),
+          watchtime: document.querySelector('[data-load-more="watchtime"]') || document.getElementById('loadMoreWatchtime'),
+        },
+
+        showLessButtons: {
+          points: document.querySelector('[data-show-less="points"]') || document.getElementById('showLessPoints'),
+          gold: document.querySelector('[data-show-less="gold"]') || document.getElementById('showLessGold'),
+          watchtime: document.querySelector('[data-show-less="watchtime"]') || document.getElementById('showLessWatchtime'),
+        },
+      }
+    }
+
+    function ensureModalShell() {
+      let modal = document.getElementById('leaderboard-user-modal')
+
+      if (!modal) {
+        modal = document.createElement('div')
+        modal.id = 'leaderboard-user-modal'
+        document.body.appendChild(modal)
+      }
+
+      modal.className = 'tnx-lb-modal hidden'
+      modal.setAttribute('aria-hidden', 'true')
+
+      modal.innerHTML = `
+        <div class="tnx-lb-modal-card" dir="rtl" role="dialog" aria-modal="true" aria-label="بطاقة العضو">
+          <div class="tnx-lb-modal-topbar">
+            <button type="button" class="tnx-lb-modal-close" data-close-user-modal aria-label="إغلاق">×</button>
+          </div>
+
+          <div class="tnx-lb-modal-layout">
+            <aside class="tnx-lb-preview-side">
+              <div class="tnx-lb-preview-box">
+                <canvas id="share-card-canvas" width="1080" height="1350"></canvas>
+              </div>
+            </aside>
+
+            <section class="tnx-lb-info-side">
+              <div class="tnx-lb-modal-head">
+                <div id="modal-user-avatar" class="tnx-lb-modal-avatar">?</div>
+
+                <div class="tnx-lb-modal-name-wrap">
+                  <div id="modal-board-label" class="tnx-lb-modal-board">ترتيب النقاط</div>
+                  <div id="modal-user-name" class="tnx-lb-modal-name">---</div>
+                  <div id="modal-user-login" class="tnx-lb-modal-login"></div>
+                </div>
+              </div>
+
+              <div class="tnx-lb-stats-grid">
+                <div class="tnx-lb-stat-box">
+                  <span>المركز</span>
+                  <strong id="modal-user-rank">--</strong>
+                </div>
+
+                <div class="tnx-lb-stat-box">
+                  <span>القيمة</span>
+                  <strong id="modal-user-value">--</strong>
+                </div>
+              </div>
+
+              <div class="tnx-lb-card-mode-control">
+                <div class="tnx-lb-card-mode-row">
+                  <div class="tnx-lb-card-mode-copy">
+                    <strong>نوع البطاقة</strong>
+                    <span>تقدر تبدّل بين بطاقة منفصلة أو بطاقة مدمجة.</span>
+                  </div>
+
+                  <div class="tnx-lb-card-mode-side">
+                    <button
+                      type="button"
+                      id="share-card-mode-switch"
+                      class="tnx-lb-switch"
+                      role="switch"
+                      aria-checked="false"
+                      aria-label="تبديل نوع البطاقة"
+                    >
+                      <span class="tnx-lb-switch-thumb"></span>
+                    </button>
+
+                    <span id="share-card-mode-status" class="tnx-lb-card-mode-status">منفصلة</span>
+                  </div>
+                </div>
+
+                <div id="share-card-mode-hint" class="tnx-lb-card-mode-hint">
+                  الآن البطاقة تعرض ترتيب وقيمة التبويب الحالي فقط.
+                </div>
+              </div>
+
+              <div class="tnx-lb-modal-actions">
+                <button type="button" id="native-share-card" class="tnx-lb-btn">مشاركة</button>
+                <button type="button" id="download-share-card" class="tnx-lb-btn tnx-lb-btn--solid">
+                  تحميل البطاقة PNG
+                </button>
+              </div>
+
+              <div id="tnx-compare-accordion-root" class="tnx-lb-compare-accordion-root">
+                <button
+                  type="button"
+                  id="tnx-compare-accordion-toggle"
+                  class="tnx-lb-compare-strip"
+                  aria-expanded="false"
+                  aria-controls="tnx-compare-accordion-body"
+                >
+                  <span class="tnx-lb-compare-strip-text">
+                    <strong>قارن هذا العضو مع شخص ثاني</strong>
+                    <small>اضغط لفتح المقارنة</small>
+                  </span>
+
+                  <span class="tnx-lb-compare-strip-icon" aria-hidden="true">
+                    <iconify-icon icon="tabler:chevron-down"></iconify-icon>
+                  </span>
+                </button>
+
+                <div id="tnx-compare-accordion-body" class="tnx-lb-compare-accordion-body">
+                  <div class="tnx-lb-compare-box">
+                    <div class="tnx-lb-compare-controls">
+                      <button type="button" id="compare-button" class="tnx-lb-btn tnx-lb-btn--solid">قارن</button>
+
+                      <input
+                        id="compare-target-input"
+                        type="text"
+                        list="leaderboard-users-list"
+                        placeholder="اكتب اسم العضو الثاني"
+                        autocomplete="off"
+                      />
+                    </div>
+
+                    <div id="compare-result" class="tnx-lb-compare-result">
+                      اختر عضو ثاني عشان تظهر المقارنة.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <datalist id="leaderboard-users-list"></datalist>
+            </section>
+          </div>
+        </div>
+      `
+
+      return modal
+    }
+
+    function getModalElements() {
+      return {
         modal: document.getElementById('leaderboard-user-modal'),
         modalUserAvatar: document.getElementById('modal-user-avatar'),
         modalUserName: document.getElementById('modal-user-name'),
@@ -1404,161 +1169,26 @@
         modalUserValue: document.getElementById('modal-user-value'),
         modalBoardLabel: document.getElementById('modal-board-label'),
 
+        compareRoot: document.getElementById('tnx-compare-accordion-root'),
+        compareToggle: document.getElementById('tnx-compare-accordion-toggle'),
+        compareBody: document.getElementById('tnx-compare-accordion-body'),
         compareTargetInput: document.getElementById('compare-target-input'),
-        compareButton: document.getElementById('compare-button'),
         compareResult: document.getElementById('compare-result'),
         usersDatalist: document.getElementById('leaderboard-users-list'),
 
         shareCanvas: document.getElementById('share-card-canvas'),
-        shareDownload: document.getElementById('download-share-card'),
-        shareNative: document.getElementById('native-share-card'),
         shareCardModeSwitch: document.getElementById('share-card-mode-switch'),
         shareCardModeStatus: document.getElementById('share-card-mode-status'),
         shareCardModeHint: document.getElementById('share-card-mode-hint'),
-
-        containers: {
-          points: document.getElementById('points-list'),
-          gold: document.getElementById('gold-list'),
-          watchtime: document.getElementById('watchtime-list'),
-        },
-
-        loadMoreButtons: {
-          points: document.querySelector('[data-load-more="points"]'),
-          gold: document.querySelector('[data-load-more="gold"]'),
-          watchtime: document.querySelector('[data-load-more="watchtime"]'),
-        },
-
-        showLessButtons: {
-          points: document.querySelector('[data-show-less="points"]'),
-          gold: document.querySelector('[data-show-less="gold"]'),
-          watchtime: document.querySelector('[data-show-less="watchtime"]'),
-        },
       }
-    }
-
-    function forceCenterSharePreview() {
-      const modal = document.getElementById('leaderboard-user-modal')
-      const canvas = document.getElementById('share-card-canvas')
-
-      if (!modal || !canvas) return
-
-      const modalCard = canvas.closest('.tnx-lb-modal-card')
-      const directCanvasParent = canvas.parentElement
-
-      const path = []
-      let node = canvas.parentElement
-
-      while (node && node !== modalCard && node !== document.body) {
-        path.push(node)
-        node = node.parentElement
-      }
-
-      const gridColumn = path.find((element) => {
-        const parent = element.parentElement
-        if (!parent) return false
-
-        const style = window.getComputedStyle(parent)
-        const isGrid = style.display.includes('grid')
-        const hasSiblings = parent.children.length >= 2
-
-        return isGrid && hasSiblings
-      })
-
-      const previewColumn =
-        canvas.closest('.tnx-lb-preview-side') ||
-        canvas.closest('.tnx-lb-share-preview') ||
-        canvas.closest('.tnx-lb-card-preview') ||
-        gridColumn ||
-        directCanvasParent?.parentElement ||
-        directCanvasParent
-
-      const layout =
-        canvas.closest('.tnx-lb-modal-layout') ||
-        canvas.closest('.tnx-lb-modal-content') ||
-        canvas.closest('.tnx-lb-modal-body') ||
-        previewColumn?.parentElement ||
-        null
-
-      if (previewColumn) {
-        previewColumn.classList.add('tnx-lb-force-preview-column')
-      }
-
-      if (directCanvasParent) {
-        directCanvasParent.classList.add('tnx-lb-force-preview-wrapper')
-      }
-
-      window.requestAnimationFrame(() => {
-        if (!previewColumn) return
-
-        const rightSide = layout
-          ? Array.from(layout.children).find((child) => !child.contains(canvas))
-          : null
-
-        const rightHeight = rightSide ? rightSide.getBoundingClientRect().height : 0
-        const cardHeight = modalCard ? modalCard.getBoundingClientRect().height : 0
-        const wantedHeight = Math.max(rightHeight, cardHeight - 110, 560)
-        const maxHeight = Math.max(420, window.innerHeight - 120)
-
-        previewColumn.style.minHeight = `${Math.min(wantedHeight, maxHeight)}px`
-      })
-    }
-
-    function ensureCardModeControl() {
-      const existingSwitch = document.getElementById('share-card-mode-switch')
-
-      if (existingSwitch) {
-        syncShareCardModeUI()
-        return
-      }
-
-      const modalActions = document.querySelector('.tnx-lb-modal-actions')
-      if (!modalActions || !modalActions.parentElement) return
-
-      const wrapper = document.createElement('div')
-      wrapper.className = 'tnx-lb-card-mode-control'
-      wrapper.innerHTML = `
-        <div class="tnx-lb-card-mode-row">
-          <div class="tnx-lb-card-mode-copy">
-            <strong>نوع البطاقة</strong>
-            <span>تقدر تبدّل بين بطاقة منفصلة أو بطاقة مدمجة.</span>
-          </div>
-
-          <div class="tnx-lb-card-mode-side">
-            <button
-              type="button"
-              id="share-card-mode-switch"
-              class="tnx-lb-switch"
-              role="switch"
-              aria-checked="false"
-              aria-label="تبديل نوع البطاقة"
-              title="تبديل نوع البطاقة"
-            >
-              <span class="tnx-lb-switch-track">
-                <span class="tnx-lb-switch-thumb"></span>
-              </span>
-            </button>
-
-            <span id="share-card-mode-status" class="tnx-lb-card-mode-status">منفصلة</span>
-          </div>
-        </div>
-
-        <div id="share-card-mode-hint" class="tnx-lb-card-mode-hint">
-          الآن البطاقة تعرض ترتيب وقيمة التبويب الحالي فقط.
-        </div>
-      `
-
-      modalActions.parentElement.insertBefore(wrapper, modalActions)
-      syncShareCardModeUI()
     }
 
     function syncShareCardModeUI() {
-      const elements = getElements()
+      const elements = getModalElements()
       const isCombined = shareCardMode === 'combined'
 
-      if (elements.shareCardModeSwitch) {
-        elements.shareCardModeSwitch.classList.toggle('is-on', isCombined)
-        elements.shareCardModeSwitch.setAttribute('aria-checked', String(isCombined))
-      }
+      elements.shareCardModeSwitch?.classList.toggle('is-on', isCombined)
+      elements.shareCardModeSwitch?.setAttribute('aria-checked', String(isCombined))
 
       if (elements.shareCardModeStatus) {
         elements.shareCardModeStatus.textContent = isCombined ? 'مدمجة' : 'منفصلة'
@@ -1571,92 +1201,28 @@
       }
     }
 
-    function getCompareParts() {
-      const input = document.getElementById('compare-target-input')
-      const compareBox = input?.closest('.tnx-lb-compare-box')
-      const comparePanel = input?.closest('.tnx-lb-panel') || compareBox?.parentElement || null
-      const toggle = comparePanel?.querySelector('.tnx-lb-compare-strip') || null
-
-      return {
-        input,
-        compareBox,
-        comparePanel,
-        toggle,
-      }
-    }
-
-    function ensureCompareAccordion() {
-      const { input, compareBox, comparePanel } = getCompareParts()
-
-      if (!input || !compareBox || !comparePanel) return
-
-      comparePanel.classList.add('tnx-lb-compare-panel')
-
-      if (comparePanel.dataset.compareAccordionReady === 'true') {
-        setCompareAccordionOpen(false)
-        return
-      }
-
-      comparePanel.dataset.compareAccordionReady = 'true'
-
-      const titleEl = comparePanel.querySelector('h4')
-      const titleText = titleEl?.textContent?.trim() || 'قارن هذا العضو مع شخص ثاني'
-
-      const toggle = document.createElement('button')
-      toggle.type = 'button'
-      toggle.className = 'tnx-lb-compare-strip'
-      toggle.setAttribute('aria-expanded', 'false')
-      toggle.innerHTML = `
-        <span class="tnx-lb-compare-strip-text">
-          <strong>${escapeHtml(titleText)}</strong>
-          <small>اضغط لفتح المقارنة</small>
-        </span>
-
-        <span class="tnx-lb-compare-strip-icon" aria-hidden="true">
-          <iconify-icon icon="tabler:chevron-down"></iconify-icon>
-        </span>
-      `
-
-      if (titleEl) {
-        titleEl.replaceWith(toggle)
-      } else {
-        comparePanel.insertBefore(toggle, comparePanel.firstChild)
-      }
-
-      addListener(toggle, 'click', () => {
-        const isOpen = comparePanel.classList.contains('is-open')
-        setCompareAccordionOpen(!isOpen)
-      })
-
-      setCompareAccordionOpen(false)
-    }
-
     function setCompareAccordionOpen(open) {
-      const { compareBox, comparePanel, toggle } = getCompareParts()
+      const elements = getModalElements()
 
-      if (!compareBox || !comparePanel) return
+      if (!elements.compareRoot || !elements.compareToggle) return
 
-      comparePanel.classList.add('tnx-lb-compare-panel')
-      comparePanel.classList.toggle('is-open', Boolean(open))
+      elements.compareRoot.classList.toggle('is-open', open)
+      elements.compareToggle.setAttribute('aria-expanded', String(open))
+    }
 
-      if (toggle) {
-        toggle.setAttribute('aria-expanded', String(Boolean(open)))
-      }
+    function updateUserDatalist() {
+      const elements = getModalElements()
+      const users = allData[activeBoard] || []
 
-      if (open) {
-        compareBox.style.setProperty('display', 'grid', 'important')
-        compareBox.style.setProperty('opacity', '1', 'important')
-        compareBox.style.setProperty('max-height', '900px', 'important')
-        compareBox.style.setProperty('margin-top', '0.85rem', 'important')
-        compareBox.style.setProperty('pointer-events', 'auto', 'important')
-        return
-      }
+      if (!elements.usersDatalist) return
 
-      compareBox.style.setProperty('display', 'none', 'important')
-      compareBox.style.setProperty('opacity', '0', 'important')
-      compareBox.style.setProperty('max-height', '0', 'important')
-      compareBox.style.setProperty('margin-top', '0', 'important')
-      compareBox.style.setProperty('pointer-events', 'none', 'important')
+      elements.usersDatalist.innerHTML = users
+        .slice(0, 600)
+        .map((user) => {
+          const label = `#${user.__rank} — ${user.__name}`
+          return `<option value="${escapeHtml(user.__name)}">${escapeHtml(label)}</option>`
+        })
+        .join('')
     }
 
     function initScrollReveal() {
@@ -1664,9 +1230,7 @@
 
       if (revealElements.length === 0) return
 
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-      if (reduceMotion || !('IntersectionObserver' in window)) {
+      if (!('IntersectionObserver' in window)) {
         revealElements.forEach((element) => element.classList.add('is-visible'))
         return
       }
@@ -1698,7 +1262,6 @@
       forceRevealVisibleElements()
       window.requestAnimationFrame(forceRevealVisibleElements)
       window.setTimeout(forceRevealVisibleElements, 120)
-      window.setTimeout(forceRevealVisibleElements, 420)
     }
 
     function forceRevealVisibleElements() {
@@ -1739,17 +1302,25 @@
       return ''
     }
 
+    function renderEliteDivider() {
+      return `
+        <div class="tnx-lb-elite-divider" data-reveal="up">
+          نهاية النخبة — بعد المركز 10
+        </div>
+      `
+    }
+
     function renderRow(user, boardId) {
       const name = user.__name
       const login = user.__login
       const showLogin = login && login.toLowerCase() !== name.toLowerCase()
-      const specialClass = getRankSpecialClass(user.__rank)
 
       return `
         <article
-          class="tnx-lb-row ${specialClass}"
+          class="tnx-lb-row ${getRankSpecialClass(user.__rank)}"
           data-reveal="up"
           data-open-user="${escapeHtml(user.__id)}"
+          data-board-id="${escapeHtml(boardId)}"
           tabindex="0"
           role="button"
           aria-label="فتح بطاقة ${escapeHtml(name)}"
@@ -1774,24 +1345,12 @@
       `
     }
 
-    function renderEliteDivider() {
-      return `
-        <div class="tnx-lb-elite-divider" data-reveal="up">
-          نهاية النخبة — بعد المركز 10
-        </div>
-      `
-    }
-
-    function getActiveUsers() {
-      return filteredData[activeBoard] || []
-    }
-
-    function renderActiveBoard() {
+    function renderBoard(boardId) {
       const elements = getElements()
-      const container = elements.containers[activeBoard]
-      const loadMoreButton = elements.loadMoreButtons[activeBoard]
-      const showLessButton = elements.showLessButtons[activeBoard]
-      const users = getActiveUsers()
+      const container = elements.containers[boardId]
+      const loadMoreButton = elements.loadMoreButtons[boardId]
+      const showLessButton = elements.showLessButtons[boardId]
+      const users = filteredData[boardId] || []
 
       if (!container) return
 
@@ -1800,83 +1359,33 @@
 
         renderEmptyState(
           container,
-          activeBoard,
+          boardId,
           hasSearch ? 'ما حصلت العضو' : undefined,
           hasSearch ? 'جرّب تكتب الاسم أو اليوزر بطريقة ثانية.' : undefined
         )
 
-        if (loadMoreButton) loadMoreButton.classList.add('hidden')
-        if (showLessButton) showLessButton.classList.add('hidden')
+        loadMoreButton?.classList.add('hidden')
+        showLessButton?.classList.add('hidden')
         return
       }
 
-      const limit = visibleCount[activeBoard]
-      const visibleUsers = users.slice(0, limit)
+      const visibleUsers = users.slice(0, visibleCount[boardId])
 
       container.innerHTML = visibleUsers
         .map((user) => {
-          const needsDivider = !searchQuery && user.__rank === 11
-          return `${needsDivider ? renderEliteDivider() : ''}${renderRow(user, activeBoard)}`
+          const divider = !searchQuery && user.__rank === 11 ? renderEliteDivider() : ''
+          return `${divider}${renderRow(user, boardId)}`
         })
         .join('')
 
-      if (loadMoreButton) {
-        loadMoreButton.classList.toggle('hidden', limit >= users.length)
-      }
-
-      if (showLessButton) {
-        showLessButton.classList.toggle('hidden', limit <= perPage)
-      }
+      loadMoreButton?.classList.toggle('hidden', visibleCount[boardId] >= users.length)
+      showLessButton?.classList.toggle('hidden', visibleCount[boardId] <= perPage)
 
       initScrollReveal()
     }
 
-    function renderAllPanelsOnce() {
-      const currentActive = activeBoard
-
-      Object.keys(boardConfig).forEach((boardId) => {
-        activeBoard = boardId
-        visibleCount[boardId] = perPage
-        renderActiveBoard()
-      })
-
-      activeBoard = currentActive
-    }
-
-    function setActiveBoard(boardId) {
-      if (!boardConfig[boardId]) return
-
-      activeBoard = boardId
-
-      const elements = getElements()
-
-      elements.tabs.forEach((tab) => {
-        const isActive = tab.dataset.boardTab === boardId
-        tab.classList.toggle('is-active', isActive)
-        tab.setAttribute('aria-selected', String(isActive))
-      })
-
-      elements.panels.forEach((panel) => {
-        panel.classList.toggle('is-active', panel.dataset.boardPanel === boardId)
-      })
-
-      updateBoardMeta()
-      renderTopThree()
-      updateUserDatalist()
-      renderActiveBoard()
-
-      if (activeModalUser) {
-        const freshUser =
-          findUserById(activeModalUser.__id) ||
-          findUserByInput(activeModalUser.__login) ||
-          findUserByInput(activeModalUser.__name)
-
-        if (freshUser) {
-          openUserModal(freshUser)
-        }
-      }
-
-      initScrollReveal()
+    function renderAllBoards() {
+      Object.keys(boardConfig).forEach((boardId) => renderBoard(boardId))
     }
 
     function updateBoardMeta() {
@@ -1903,9 +1412,7 @@
       }
 
       if (elements.activeBoardPill) {
-        elements.activeBoardPill.textContent = searchQuery
-          ? 'بحث بالترتيب الحقيقي'
-          : config.heading
+        elements.activeBoardPill.textContent = searchQuery ? 'بحث بالترتيب الحقيقي' : config.heading
       }
 
       if (elements.activeBoardIcon) {
@@ -1916,7 +1423,7 @@
     function renderTopThree() {
       const elements = getElements()
       const container = elements.topThreeList
-      const users = searchQuery ? getActiveUsers() : allData[activeBoard] || []
+      const users = searchQuery ? filteredData[activeBoard] || [] : allData[activeBoard] || []
 
       if (!container) return
 
@@ -1946,33 +1453,61 @@
           const name = user.__name
           const login = user.__login
           const showLogin = login && login.toLowerCase() !== name.toLowerCase()
-          const firstClass = index === 0 ? ' tnx-lb-top-card--first' : ''
 
           return `
             <article
-              class="tnx-lb-top-card${firstClass}"
+              class="tnx-lb-top-card${index === 0 ? ' tnx-lb-top-card--first' : ''}"
               data-reveal="up"
               data-open-user="${escapeHtml(user.__id)}"
+              data-board-id="${escapeHtml(activeBoard)}"
               tabindex="0"
               role="button"
               aria-label="فتح بطاقة ${escapeHtml(name)}"
             >
               <span class="tnx-lb-rank">#${user.__rank}</span>
+
               <div class="tnx-lb-medal">
                 <iconify-icon icon="${medals[index] || 'tabler:user'}"></iconify-icon>
               </div>
+
               <p class="tnx-lb-top-name" title="${escapeHtml(name)}">${escapeHtml(name)}</p>
+
               ${
                 showLogin
                   ? `<span class="tnx-lb-top-login">@${escapeHtml(login)}</span>`
                   : ''
               }
+
               <p class="tnx-lb-top-value">${escapeHtml(formatValue(activeBoard, user.__value))}</p>
             </article>
           `
         })
         .join('')
 
+      initScrollReveal()
+    }
+
+    function setActiveBoard(boardId) {
+      if (!boardConfig[boardId]) return
+
+      activeBoard = boardId
+
+      const elements = getElements()
+
+      elements.tabs.forEach((tab) => {
+        const isActive = tab.dataset.boardTab === boardId
+        tab.classList.toggle('is-active', isActive)
+        tab.setAttribute('aria-selected', String(isActive))
+      })
+
+      elements.panels.forEach((panel) => {
+        panel.classList.toggle('is-active', panel.dataset.boardPanel === boardId)
+      })
+
+      updateBoardMeta()
+      renderTopThree()
+      updateUserDatalist()
+      renderBoard(boardId)
       initScrollReveal()
     }
 
@@ -1989,30 +1524,22 @@
         visibleCount[boardId] = perPage
       })
 
-      renderAllPanelsOnce()
+      renderAllBoards()
       updateBoardMeta()
       renderTopThree()
-      renderActiveBoard()
       initScrollReveal()
     }
 
-    function updateUserDatalist() {
-      const elements = getElements()
-      const users = allData[activeBoard] || []
+    function findUserById(userId, boardId = activeBoard) {
+      const direct = (allData[boardId] || []).find((user) => user.__id === userId)
+      if (direct) return direct
 
-      if (!elements.usersDatalist) return
+      for (const key of Object.keys(boardConfig)) {
+        const user = (allData[key] || []).find((item) => item.__id === userId)
+        if (user) return user
+      }
 
-      elements.usersDatalist.innerHTML = users
-        .slice(0, 500)
-        .map((user) => {
-          const label = `#${user.__rank} — ${user.__name}`
-          return `<option value="${escapeHtml(user.__name)}">${escapeHtml(label)}</option>`
-        })
-        .join('')
-    }
-
-    function findUserById(userId) {
-      return (allData[activeBoard] || []).find((user) => user.__id === userId) || null
+      return null
     }
 
     function findUserByInput(value) {
@@ -2030,72 +1557,45 @@
       )
     }
 
-    function openUserModal(user) {
-      const elements = getElements()
-      const config = boardConfig[activeBoard]
-
-      if (!elements.modal || !user) return
+    function openUserModal(user, boardId = activeBoard) {
+      const modal = ensureModalShell()
+      const elements = getModalElements()
+      const realBoard = user.__board || boardId || activeBoard
+      const config = boardConfig[realBoard] || boardConfig.points
 
       activeModalUser = user
+      activeBoard = realBoard
 
-      ensureCardModeControl()
-      ensureCompareAccordion()
-      setCompareAccordionOpen(false)
+      updateUserDatalist()
       syncShareCardModeUI()
+      setCompareAccordionOpen(false)
 
-      if (elements.modalUserAvatar) {
-        elements.modalUserAvatar.textContent = getAvatarLetter(user.__name)
-      }
-
-      if (elements.modalUserName) {
-        elements.modalUserName.textContent = user.__name
-      }
+      if (elements.modalUserAvatar) elements.modalUserAvatar.textContent = getAvatarLetter(user.__name)
+      if (elements.modalUserName) elements.modalUserName.textContent = user.__name
 
       if (elements.modalUserLogin) {
         const showLogin = user.__login && user.__login.toLowerCase() !== user.__name.toLowerCase()
         elements.modalUserLogin.textContent = showLogin ? `@${user.__login}` : ''
       }
 
-      if (elements.modalUserRank) {
-        elements.modalUserRank.textContent = `#${user.__rank}`
-      }
+      if (elements.modalUserRank) elements.modalUserRank.textContent = `#${user.__rank}`
+      if (elements.modalUserValue) elements.modalUserValue.textContent = formatValue(activeBoard, user.__value)
+      if (elements.modalBoardLabel) elements.modalBoardLabel.textContent = config.heading
 
-      if (elements.modalUserValue) {
-        elements.modalUserValue.textContent = formatValue(activeBoard, user.__value)
-      }
-
-      if (elements.modalBoardLabel) {
-        elements.modalBoardLabel.textContent = config.heading
-      }
-
-      if (elements.compareTargetInput) {
-        elements.compareTargetInput.value = ''
-      }
-
-      if (elements.compareResult) {
-        elements.compareResult.textContent = 'اختر عضو ثاني عشان تظهر المقارنة.'
-      }
+      if (elements.compareTargetInput) elements.compareTargetInput.value = ''
+      if (elements.compareResult) elements.compareResult.textContent = 'اختر عضو ثاني عشان تظهر المقارنة.'
 
       renderShareCard(user)
 
-      elements.modal.classList.remove('hidden')
-      elements.modal.setAttribute('aria-hidden', 'false')
+      modal.classList.remove('hidden')
+      modal.setAttribute('aria-hidden', 'false')
       document.body.classList.add('tnx-modal-open')
 
       setCompareAccordionOpen(false)
-
-      forceCenterSharePreview()
-      window.setTimeout(forceCenterSharePreview, 50)
-      window.setTimeout(forceCenterSharePreview, 250)
-      window.setTimeout(forceCenterSharePreview, 500)
-
-      window.setTimeout(() => setCompareAccordionOpen(false), 0)
-      window.setTimeout(() => setCompareAccordionOpen(false), 50)
-      window.setTimeout(() => setCompareAccordionOpen(false), 250)
     }
 
     function closeUserModal() {
-      const elements = getElements()
+      const elements = getModalElements()
 
       activeModalUser = null
       setCompareAccordionOpen(false)
@@ -2109,19 +1609,17 @@
     }
 
     function renderCompare() {
-      const elements = getElements()
+      const elements = getModalElements()
 
       if (!activeModalUser || !elements.compareTargetInput || !elements.compareResult) return
-
-      setCompareAccordionOpen(true)
 
       const targetUser = findUserByInput(elements.compareTargetInput.value)
 
       if (!targetUser) {
         elements.compareResult.innerHTML = `
-          <div class="text-center">
-            <strong class="block text-white">ما حصلت العضو الثاني</strong>
-            <span class="mt-1 block text-gray-500">اكتب الاسم أو اليوزر بشكل أوضح.</span>
+          <div>
+            <strong style="display:block;color:#fff">ما حصلت العضو الثاني</strong>
+            <span style="display:block;margin-top:.35rem;color:rgb(107,114,128)">اكتب الاسم أو اليوزر بشكل أوضح.</span>
           </div>
         `
         return
@@ -2129,9 +1627,9 @@
 
       if (targetUser.__id === activeModalUser.__id) {
         elements.compareResult.innerHTML = `
-          <div class="text-center">
-            <strong class="block text-white">اختر عضو مختلف</strong>
-            <span class="mt-1 block text-gray-500">ما تقدر تقارن الشخص بنفسه.</span>
+          <div>
+            <strong style="display:block;color:#fff">اختر عضو مختلف</strong>
+            <span style="display:block;margin-top:.35rem;color:rgb(107,114,128)">ما تقدر تقارن الشخص بنفسه.</span>
           </div>
         `
         return
@@ -2155,10 +1653,10 @@
               <strong>${escapeHtml(formatValue(activeBoard, valueDiff))}</strong>
               <span>فرق القيمة</span>
 
-              <strong class="mt-3">${formatNumber(rankDiff)}</strong>
+              <strong style="margin-top:.8rem">${formatNumber(rankDiff)}</strong>
               <span>فرق المراكز</span>
 
-              <span class="mt-3">الأعلى ترتيبًا: ${escapeHtml(betterRankUser.__name)}</span>
+              <span style="margin-top:.8rem">الأعلى ترتيبًا: ${escapeHtml(betterRankUser.__name)}</span>
               <span>الأعلى قيمة: ${escapeHtml(higherValueUser.__name)}</span>
             </div>
           </div>
@@ -2210,7 +1708,7 @@
         font,
       } = options
 
-      ctx.fillStyle = 'rgba(0,0,0,0.42)'
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.42)'
       drawRoundedRect(ctx, x, y, width, height, 34)
       ctx.fill()
 
@@ -2222,7 +1720,7 @@
       ctx.direction = 'rtl'
       ctx.textAlign = 'center'
 
-      ctx.fillStyle = 'rgba(255,255,255,0.68)'
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.68)'
       ctx.font = `800 30px ${font}`
       ctx.fillText(title, x + width / 2, y + 58)
 
@@ -2238,11 +1736,11 @@
       ctx.direction = 'ltr'
       ctx.textAlign = 'left'
 
-      ctx.fillStyle = 'rgba(255,255,255,0.42)'
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.42)'
       ctx.font = `800 24px ${font}`
       ctx.fillText('DATE', 92, height - 130)
 
-      ctx.fillStyle = 'rgba(255,255,255,0.68)'
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.68)'
       ctx.font = `900 30px ${font}`
       ctx.fillText(cardDate, 92, height - 96)
 
@@ -2251,13 +1749,13 @@
     }
 
     function renderSingleShareCard(ctx, user, width, height, font, cardDate) {
-      const config = boardConfig[activeBoard]
+      const config = boardConfig[activeBoard] || boardConfig.points
 
       ctx.fillStyle = '#ffda6a'
       ctx.font = `900 54px ${font}`
       ctx.fillText('TNX6 COMMUNITY', width / 2, 180)
 
-      ctx.fillStyle = 'rgba(255,255,255,0.78)'
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.78)'
       ctx.font = `800 34px ${font}`
       ctx.fillText(config.heading, width / 2, 238)
 
@@ -2269,7 +1767,7 @@
         return
       }
 
-      ctx.fillStyle = 'rgba(0,0,0,0.42)'
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.42)'
       drawRoundedRect(ctx, 140, 315, width - 280, 650, 46)
       ctx.fill()
 
@@ -2286,7 +1784,7 @@
       drawTextFit(ctx, user.__name, width / 2, 565, width - 260, 76, font, '900')
 
       if (user.__login && user.__login.toLowerCase() !== user.__name.toLowerCase()) {
-        ctx.fillStyle = 'rgba(255,255,255,0.46)'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.46)'
         ctx.font = `800 34px ${font}`
         ctx.direction = 'ltr'
         ctx.fillText(`@${user.__login}`, width / 2, 620)
@@ -2297,7 +1795,7 @@
       ctx.font = `900 60px ${font}`
       ctx.fillText(formatValue(activeBoard, user.__value), width / 2, 740)
 
-      ctx.fillStyle = 'rgba(255,255,255,0.68)'
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.68)'
       ctx.font = `800 30px ${font}`
       ctx.fillText('مركزك داخل مجتمع TNX6', width / 2, 805)
 
@@ -2308,7 +1806,7 @@
       ctx.lineTo(width - 230, 860)
       ctx.stroke()
 
-      ctx.fillStyle = 'rgba(255,255,255,0.78)'
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.78)'
       ctx.font = `800 32px ${font}`
       ctx.fillText('tnx6.xyz', width / 2, 930)
 
@@ -2316,7 +1814,7 @@
       ctx.font = `900 42px ${font}`
       ctx.fillText('شارك بطاقتك وورنا مركزك', width / 2, 1115)
 
-      ctx.fillStyle = 'rgba(255,255,255,0.38)'
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.38)'
       ctx.font = `700 26px ${font}`
       ctx.fillText('Generated from TNX6 Leaderboards', width / 2, 1190)
 
@@ -2330,7 +1828,7 @@
       ctx.font = `900 54px ${font}`
       ctx.fillText('TNX6 COMMUNITY', width / 2, 180)
 
-      ctx.fillStyle = 'rgba(255,255,255,0.78)'
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.78)'
       ctx.font = `800 34px ${font}`
       ctx.fillText('بطاقة المجتمع', width / 2, 238)
 
@@ -2342,7 +1840,7 @@
         return
       }
 
-      ctx.fillStyle = 'rgba(0,0,0,0.42)'
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.42)'
       drawRoundedRect(ctx, 140, 315, width - 280, 320, 46)
       ctx.fill()
 
@@ -2355,14 +1853,14 @@
       drawTextFit(ctx, user.__name, width / 2, 445, width - 260, 82, font, '900')
 
       if (user.__login && user.__login.toLowerCase() !== user.__name.toLowerCase()) {
-        ctx.fillStyle = 'rgba(255,255,255,0.46)'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.46)'
         ctx.font = `800 34px ${font}`
         ctx.direction = 'ltr'
         ctx.fillText(`@${user.__login}`, width / 2, 505)
         ctx.direction = 'rtl'
       }
 
-      ctx.fillStyle = 'rgba(255,255,255,0.66)'
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.66)'
       ctx.font = `800 30px ${font}`
       ctx.fillText('نقاطك ومشاهدتك في مجتمع TNX6', width / 2, 575)
 
@@ -2395,7 +1893,7 @@
       ctx.lineTo(width - 230, 1010)
       ctx.stroke()
 
-      ctx.fillStyle = 'rgba(255,255,255,0.78)'
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.78)'
       ctx.font = `800 32px ${font}`
       ctx.fillText('tnx6.xyz', width / 2, 1080)
 
@@ -2403,7 +1901,7 @@
       ctx.font = `900 42px ${font}`
       ctx.fillText('شارك بطاقتك وورنا مركزك', width / 2, 1155)
 
-      ctx.fillStyle = 'rgba(255,255,255,0.38)'
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.38)'
       ctx.font = `700 26px ${font}`
       ctx.fillText('Generated from TNX6 Leaderboards', width / 2, 1218)
 
@@ -2411,7 +1909,7 @@
     }
 
     function renderShareCard(user = activeModalUser) {
-      const elements = getElements()
+      const elements = getModalElements()
       const canvas = elements.shareCanvas
 
       if (!canvas) return
@@ -2430,12 +1928,14 @@
       bg.addColorStop(0, '#09050f')
       bg.addColorStop(0.45, '#05070d')
       bg.addColorStop(1, '#120905')
+
       ctx.fillStyle = bg
       ctx.fillRect(0, 0, width, height)
 
       const glow = ctx.createRadialGradient(width * 0.75, height * 0.18, 0, width * 0.75, height * 0.18, 620)
       glow.addColorStop(0, 'rgba(255, 218, 106, 0.30)')
       glow.addColorStop(1, 'rgba(255, 218, 106, 0)')
+
       ctx.fillStyle = glow
       ctx.fillRect(0, 0, width, height)
 
@@ -2461,7 +1961,7 @@
     }
 
     function downloadShareCard() {
-      const elements = getElements()
+      const elements = getModalElements()
       const canvas = elements.shareCanvas
       const user = activeModalUser
 
@@ -2478,7 +1978,7 @@
     }
 
     function shareCardNative() {
-      const elements = getElements()
+      const elements = getModalElements()
       const canvas = elements.shareCanvas
       const user = activeModalUser
 
@@ -2505,7 +2005,7 @@
             })
             return
           } catch {
-            // fallback
+            // fallback to download
           }
         }
 
@@ -2539,11 +2039,9 @@
           watchtime: [...allData.watchtime],
         }
 
-        renderAllPanelsOnce()
+        renderAllBoards()
         setActiveBoard(activeBoard)
         updateUserDatalist()
-        ensureCompareAccordion()
-        setCompareAccordionOpen(false)
         initScrollReveal()
       } catch {
         Object.keys(boardConfig).forEach((boardId) => {
@@ -2575,12 +2073,12 @@
       Object.keys(boardConfig).forEach((boardId) => {
         addListener(elements.loadMoreButtons[boardId], 'click', () => {
           visibleCount[boardId] += perPage
-          if (activeBoard === boardId) renderActiveBoard()
+          renderBoard(boardId)
         })
 
         addListener(elements.showLessButtons[boardId], 'click', () => {
           visibleCount[boardId] = Math.max(perPage, visibleCount[boardId] - perPage)
-          if (activeBoard === boardId) renderActiveBoard()
+          renderBoard(boardId)
         })
       })
 
@@ -2593,31 +2091,56 @@
 
         if (!(target instanceof Element)) return
 
-        const closeTrigger = target.closest('[data-close-user-modal]')
-        if (closeTrigger) {
+        if (target.closest('[data-close-user-modal]')) {
           closeUserModal()
           return
         }
 
-        const switchTrigger = target.closest('#share-card-mode-switch')
-        if (switchTrigger) {
+        if (target.closest('#tnx-compare-accordion-toggle')) {
+          const modalElements = getModalElements()
+          const isOpen = modalElements.compareRoot?.classList.contains('is-open')
+          setCompareAccordionOpen(!isOpen)
+          return
+        }
+
+        if (target.closest('#share-card-mode-switch')) {
           shareCardMode = shareCardMode === 'combined' ? 'single' : 'combined'
           syncShareCardModeUI()
           renderShareCard(activeModalUser)
-          forceCenterSharePreview()
-          window.setTimeout(forceCenterSharePreview, 50)
-          window.setTimeout(forceCenterSharePreview, 250)
+          return
+        }
+
+        if (target.closest('#compare-button')) {
+          renderCompare()
+          return
+        }
+
+        if (target.closest('#download-share-card')) {
+          downloadShareCard()
+          return
+        }
+
+        if (target.closest('#native-share-card')) {
+          shareCardNative()
           return
         }
 
         const userTrigger = target.closest('[data-open-user]')
-        if (!userTrigger) return
+        if (userTrigger) {
+          const userId = userTrigger.getAttribute('data-open-user')
+          const boardId = userTrigger.getAttribute('data-board-id') || activeBoard
+          const user = findUserById(userId, boardId)
 
-        const userId = userTrigger.getAttribute('data-open-user')
-        const user = findUserById(userId)
+          if (user) {
+            openUserModal(user, boardId)
+          }
 
-        if (user) {
-          openUserModal(user)
+          return
+        }
+
+        const modal = document.getElementById('leaderboard-user-modal')
+        if (modal && target === modal) {
+          closeUserModal()
         }
       })
 
@@ -2630,71 +2153,35 @@
         const target = event.target
         if (!(target instanceof Element)) return
 
-        if (target.closest('#share-card-mode-switch') && (event.key === 'Enter' || event.key === ' ')) {
-          event.preventDefault()
-          shareCardMode = shareCardMode === 'combined' ? 'single' : 'combined'
-          syncShareCardModeUI()
-          renderShareCard(activeModalUser)
-          forceCenterSharePreview()
-          window.setTimeout(forceCenterSharePreview, 50)
-          window.setTimeout(forceCenterSharePreview, 250)
+        if (target.closest('#compare-target-input') && event.key === 'Enter') {
+          renderCompare()
           return
         }
 
-        if (event.key !== 'Enter') return
+        if (target.closest('[data-open-user]') && event.key === 'Enter') {
+          const userId = target.closest('[data-open-user]').getAttribute('data-open-user')
+          const boardId = target.closest('[data-open-user]').getAttribute('data-board-id') || activeBoard
+          const user = findUserById(userId, boardId)
 
-        const userTrigger = target.closest('[data-open-user]')
-        if (!userTrigger) return
-
-        const userId = userTrigger.getAttribute('data-open-user')
-        const user = findUserById(userId)
-
-        if (user) {
-          openUserModal(user)
+          if (user) {
+            openUserModal(user, boardId)
+          }
         }
       })
-
-      addListener(elements.compareButton, 'click', renderCompare)
-
-      addListener(elements.compareTargetInput, 'keydown', (event) => {
-        if (event.key === 'Enter') {
-          renderCompare()
-        }
-      })
-
-      addListener(elements.shareDownload, 'click', downloadShareCard)
-      addListener(elements.shareNative, 'click', shareCardNative)
 
       addListener(window, 'scroll', forceRevealVisibleElements, { passive: true })
-
-      addListener(window, 'resize', () => {
-        forceRevealVisibleElements()
-        forceCenterSharePreview()
-      })
+      addListener(window, 'resize', forceRevealVisibleElements)
     }
 
     function initLeaderboards() {
-      ensureCardModeControl()
-      ensureCompareAccordion()
-      setCompareAccordionOpen(false)
-      syncShareCardModeUI()
+      ensureModalShell()
       bindEvents()
       updateBoardMeta()
       initScrollReveal()
       loadData()
 
-      window.requestAnimationFrame(() => {
-        ensureCompareAccordion()
-        setCompareAccordionOpen(false)
-        initScrollReveal()
-      })
-
-      window.setTimeout(() => {
-        ensureCompareAccordion()
-        setCompareAccordionOpen(false)
-        initScrollReveal()
-      }, 300)
-
+      window.requestAnimationFrame(initScrollReveal)
+      window.setTimeout(initScrollReveal, 300)
       window.setTimeout(initScrollReveal, 900)
     }
 
@@ -2705,7 +2192,7 @@
     }
 
     document.addEventListener('astro:page-load', () => {
-      if (!document.querySelector('[data-board-tab]')) return
+      if (!document.querySelector('[data-board-tab]') && !document.getElementById('points-list')) return
 
       if (window[cleanupKey]) {
         window[cleanupKey]()
