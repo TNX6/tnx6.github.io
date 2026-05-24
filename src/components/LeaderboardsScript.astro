@@ -773,7 +773,6 @@
     display: none;
   }
 
-  /* Compare accordion */
   .tnx-lb-compare-panel {
     padding: 0.85rem;
     overflow: hidden;
@@ -848,27 +847,33 @@
     font-size: 1.25rem;
   }
 
+  .tnx-lb-compare-panel.is-open .tnx-lb-compare-toggle-icon {
+    transform: rotate(180deg);
+  }
+
   .tnx-lb-compare-body {
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    margin-top: 0;
-    pointer-events: none;
-    transition:
-      max-height 0.28s ease,
-      opacity 0.22s ease,
-      margin-top 0.22s ease;
+    overflow: hidden !important;
+    display: none !important;
+    max-height: 0 !important;
+    opacity: 0 !important;
+    margin-top: 0 !important;
+    pointer-events: none !important;
   }
 
   .tnx-lb-compare-panel.is-open .tnx-lb-compare-body {
-    max-height: 680px;
-    opacity: 1;
-    margin-top: 0.9rem;
-    pointer-events: auto;
+    display: grid !important;
+    max-height: none !important;
+    opacity: 1 !important;
+    margin-top: 0.9rem !important;
+    pointer-events: auto !important;
   }
 
-  .tnx-lb-compare-panel.is-open .tnx-lb-compare-toggle-icon {
-    transform: rotate(180deg);
+  #leaderboard-user-modal .tnx-lb-panel:has(#compare-target-input):not(.is-open) .tnx-lb-compare-box {
+    display: none !important;
+  }
+
+  #leaderboard-user-modal .tnx-lb-panel:has(#compare-target-input).is-open .tnx-lb-compare-box {
+    display: grid !important;
   }
 
   .tnx-lb-compare-box {
@@ -1501,61 +1506,68 @@
       }
     }
 
-    function ensureCompareAccordion() {
-      const compareInput = document.getElementById('compare-target-input')
-      const compareBox = compareInput?.closest('.tnx-lb-compare-box')
-      const comparePanel = compareInput?.closest('.tnx-lb-panel')
+    function getCompareParts() {
+      const input = document.getElementById('compare-target-input')
+      const compareBox = input?.closest('.tnx-lb-compare-box')
+      const comparePanel = input?.closest('.tnx-lb-panel')
 
-      if (!compareInput || !compareBox || !comparePanel) return
+      return {
+        input,
+        compareBox,
+        comparePanel,
+      }
+    }
+
+    function ensureCompareAccordion() {
+      const { input, compareBox, comparePanel } = getCompareParts()
+
+      if (!input || !compareBox || !comparePanel) return
 
       comparePanel.classList.add('tnx-lb-compare-panel')
       compareBox.classList.add('tnx-lb-compare-body')
-
-      if (comparePanel.dataset.compareAccordionReady === 'true') {
-        setCompareAccordionOpen(false)
-        return
-      }
-
-      comparePanel.dataset.compareAccordionReady = 'true'
-
-      const oldTitle = comparePanel.querySelector('h4')
-      const titleText = oldTitle?.textContent?.trim() || 'قارن هذا العضو مع شخص ثاني'
-
-      const toggle = document.createElement('button')
-      toggle.type = 'button'
-      toggle.className = 'tnx-lb-compare-toggle'
-      toggle.setAttribute('aria-expanded', 'false')
-      toggle.setAttribute('aria-controls', 'compare-accordion-body')
-      toggle.innerHTML = `
-        <span class="tnx-lb-compare-toggle-main">
-          <strong>${escapeHtml(titleText)}</strong>
-          <span>اضغط هنا لفتح المقارنة بين عضوين.</span>
-        </span>
-
-        <span class="tnx-lb-compare-toggle-icon" aria-hidden="true">
-          <iconify-icon icon="tabler:chevron-down"></iconify-icon>
-        </span>
-      `
-
       compareBox.id = 'compare-accordion-body'
 
-      if (oldTitle) {
-        oldTitle.replaceWith(toggle)
-      } else {
-        comparePanel.insertBefore(toggle, comparePanel.firstChild)
-      }
+      if (comparePanel.dataset.compareAccordionReady !== 'true') {
+        comparePanel.dataset.compareAccordionReady = 'true'
 
-      addListener(toggle, 'click', () => {
-        const isOpen = comparePanel.classList.contains('is-open')
-        setCompareAccordionOpen(!isOpen)
-      })
+        const oldTitle = comparePanel.querySelector('h4')
+        const titleText = oldTitle?.textContent?.trim() || 'قارن هذا العضو مع شخص ثاني'
+
+        const toggle = document.createElement('button')
+        toggle.type = 'button'
+        toggle.className = 'tnx-lb-compare-toggle'
+        toggle.setAttribute('aria-expanded', 'false')
+        toggle.setAttribute('aria-controls', 'compare-accordion-body')
+        toggle.innerHTML = `
+          <span class="tnx-lb-compare-toggle-main">
+            <strong>${escapeHtml(titleText)}</strong>
+            <span>اضغط هنا لفتح المقارنة بين عضوين.</span>
+          </span>
+
+          <span class="tnx-lb-compare-toggle-icon" aria-hidden="true">
+            <iconify-icon icon="tabler:chevron-down"></iconify-icon>
+          </span>
+        `
+
+        if (oldTitle) {
+          oldTitle.replaceWith(toggle)
+        } else {
+          comparePanel.insertBefore(toggle, comparePanel.firstChild)
+        }
+
+        addListener(toggle, 'click', () => {
+          const isOpen = comparePanel.classList.contains('is-open')
+          setCompareAccordionOpen(!isOpen)
+        })
+      }
 
       setCompareAccordionOpen(false)
     }
 
     function setCompareAccordionOpen(open) {
-      const comparePanel = document.querySelector('.tnx-lb-compare-panel')
-      if (!comparePanel) return
+      const { input, compareBox, comparePanel } = getCompareParts()
+
+      if (!input || !compareBox || !comparePanel) return
 
       const toggle = comparePanel.querySelector('.tnx-lb-compare-toggle')
 
@@ -1565,6 +1577,21 @@
       if (toggle) {
         toggle.setAttribute('aria-expanded', String(open))
       }
+
+      if (open) {
+        compareBox.style.setProperty('display', 'grid', 'important')
+        compareBox.style.setProperty('opacity', '1', 'important')
+        compareBox.style.setProperty('max-height', 'none', 'important')
+        compareBox.style.setProperty('margin-top', '0.9rem', 'important')
+        compareBox.style.setProperty('pointer-events', 'auto', 'important')
+        return
+      }
+
+      compareBox.style.setProperty('display', 'none', 'important')
+      compareBox.style.setProperty('opacity', '0', 'important')
+      compareBox.style.setProperty('max-height', '0', 'important')
+      compareBox.style.setProperty('margin-top', '0', 'important')
+      compareBox.style.setProperty('pointer-events', 'none', 'important')
     }
 
     function initScrollReveal() {
@@ -1948,8 +1975,8 @@
 
       ensureCardModeControl()
       ensureCompareAccordion()
-      syncShareCardModeUI()
       setCompareAccordionOpen(false)
+      syncShareCardModeUI()
 
       if (elements.modalUserAvatar) {
         elements.modalUserAvatar.textContent = getAvatarLetter(user.__name)
@@ -1990,10 +2017,15 @@
       elements.modal.setAttribute('aria-hidden', 'false')
       document.body.classList.add('tnx-modal-open')
 
+      setCompareAccordionOpen(false)
+
       forceCenterSharePreview()
       window.setTimeout(forceCenterSharePreview, 50)
       window.setTimeout(forceCenterSharePreview, 250)
       window.setTimeout(forceCenterSharePreview, 500)
+      window.setTimeout(() => setCompareAccordionOpen(false), 0)
+      window.setTimeout(() => setCompareAccordionOpen(false), 100)
+      window.setTimeout(() => setCompareAccordionOpen(false), 300)
     }
 
     function closeUserModal() {
@@ -2445,6 +2477,7 @@
         setActiveBoard(activeBoard)
         updateUserDatalist()
         ensureCompareAccordion()
+        setCompareAccordionOpen(false)
         initScrollReveal()
       } catch {
         Object.keys(boardConfig).forEach((boardId) => {
@@ -2577,6 +2610,7 @@
     function initLeaderboards() {
       ensureCardModeControl()
       ensureCompareAccordion()
+      setCompareAccordionOpen(false)
       syncShareCardModeUI()
       bindEvents()
       updateBoardMeta()
@@ -2585,11 +2619,13 @@
 
       window.requestAnimationFrame(() => {
         ensureCompareAccordion()
+        setCompareAccordionOpen(false)
         initScrollReveal()
       })
 
       window.setTimeout(() => {
         ensureCompareAccordion()
+        setCompareAccordionOpen(false)
         initScrollReveal()
       }, 300)
 
