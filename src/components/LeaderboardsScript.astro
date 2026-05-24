@@ -852,6 +852,38 @@
     display: none;
   }
 
+  /* هذا الجزء يجبر معاينة البطاقة أنها تكون بالنص داخل العمود */
+  #leaderboard-user-modal .tnx-lb-modal-card {
+    min-height: min(860px, calc(100vh - 2rem)) !important;
+  }
+
+  #leaderboard-user-modal .tnx-lb-force-preview-column {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    align-self: stretch !important;
+    height: auto !important;
+    min-height: clamp(560px, calc(100vh - 8rem), 760px) !important;
+  }
+
+  #leaderboard-user-modal .tnx-lb-force-preview-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: inherit !important;
+  }
+
+  #leaderboard-user-modal #share-card-canvas {
+    display: block !important;
+    margin: auto !important;
+    align-self: center !important;
+    justify-self: center !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
   [data-reveal] {
     opacity: 0;
     transform: translateY(16px);
@@ -888,6 +920,10 @@
     #leaderboard-user-modal .tnx-lb-modal-content > :first-child,
     #leaderboard-user-modal .tnx-lb-modal-body > :first-child {
       min-height: auto;
+    }
+
+    #leaderboard-user-modal .tnx-lb-force-preview-column {
+      min-height: auto !important;
     }
   }
 
@@ -1227,6 +1263,73 @@
           watchtime: document.querySelector('[data-show-less="watchtime"]'),
         },
       }
+    }
+
+    function forceCenterSharePreview() {
+      const modal = document.getElementById('leaderboard-user-modal')
+      const canvas = document.getElementById('share-card-canvas')
+
+      if (!modal || !canvas) return
+
+      const modalCard = canvas.closest('.tnx-lb-modal-card')
+      const directCanvasParent = canvas.parentElement
+
+      const path = []
+      let node = canvas.parentElement
+
+      while (node && node !== modalCard && node !== document.body) {
+        path.push(node)
+        node = node.parentElement
+      }
+
+      const gridColumn = path.find((element) => {
+        const parent = element.parentElement
+        if (!parent) return false
+
+        const style = window.getComputedStyle(parent)
+        const isGrid = style.display.includes('grid')
+        const hasSiblings = parent.children.length >= 2
+
+        return isGrid && hasSiblings
+      })
+
+      const previewColumn =
+        canvas.closest('.tnx-lb-preview-side') ||
+        canvas.closest('.tnx-lb-share-preview') ||
+        canvas.closest('.tnx-lb-card-preview') ||
+        gridColumn ||
+        directCanvasParent?.parentElement ||
+        directCanvasParent
+
+      const layout =
+        canvas.closest('.tnx-lb-modal-layout') ||
+        canvas.closest('.tnx-lb-modal-content') ||
+        canvas.closest('.tnx-lb-modal-body') ||
+        previewColumn?.parentElement ||
+        null
+
+      if (previewColumn) {
+        previewColumn.classList.add('tnx-lb-force-preview-column')
+      }
+
+      if (directCanvasParent) {
+        directCanvasParent.classList.add('tnx-lb-force-preview-wrapper')
+      }
+
+      window.requestAnimationFrame(() => {
+        if (!previewColumn) return
+
+        const rightSide = layout
+          ? Array.from(layout.children).find((child) => !child.contains(canvas))
+          : null
+
+        const rightHeight = rightSide ? rightSide.getBoundingClientRect().height : 0
+        const cardHeight = modalCard ? modalCard.getBoundingClientRect().height : 0
+        const wantedHeight = Math.max(rightHeight, cardHeight - 110, 560)
+        const maxHeight = Math.max(420, window.innerHeight - 120)
+
+        previewColumn.style.minHeight = `${Math.min(wantedHeight, maxHeight)}px`
+      })
     }
 
     function ensureCardModeControl() {
@@ -1717,6 +1820,11 @@
       elements.modal.classList.remove('hidden')
       elements.modal.setAttribute('aria-hidden', 'false')
       document.body.classList.add('tnx-modal-open')
+
+      forceCenterSharePreview()
+      window.setTimeout(forceCenterSharePreview, 50)
+      window.setTimeout(forceCenterSharePreview, 250)
+      window.setTimeout(forceCenterSharePreview, 500)
     }
 
     function closeUserModal() {
@@ -2224,6 +2332,9 @@
           shareCardMode = shareCardMode === 'combined' ? 'single' : 'combined'
           syncShareCardModeUI()
           renderShareCard(activeModalUser)
+          forceCenterSharePreview()
+          window.setTimeout(forceCenterSharePreview, 50)
+          window.setTimeout(forceCenterSharePreview, 250)
           return
         }
 
@@ -2252,6 +2363,9 @@
           shareCardMode = shareCardMode === 'combined' ? 'single' : 'combined'
           syncShareCardModeUI()
           renderShareCard(activeModalUser)
+          forceCenterSharePreview()
+          window.setTimeout(forceCenterSharePreview, 50)
+          window.setTimeout(forceCenterSharePreview, 250)
           return
         }
 
@@ -2280,7 +2394,10 @@
       addListener(elements.shareNative, 'click', shareCardNative)
 
       addListener(window, 'scroll', forceRevealVisibleElements, { passive: true })
-      addListener(window, 'resize', forceRevealVisibleElements)
+      addListener(window, 'resize', () => {
+        forceRevealVisibleElements()
+        forceCenterSharePreview()
+      })
     }
 
     function initLeaderboards() {
