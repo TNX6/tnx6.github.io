@@ -42,16 +42,20 @@
     }
 
     let activeBoard = 'points'
+    let searchQuery = ''
+
     let allData = {
       points: [],
       gold: [],
       watchtime: [],
     }
+
     let filteredData = {
       points: [],
       gold: [],
       watchtime: [],
     }
+
     let indexes = {
       points: 0,
       gold: 0,
@@ -82,7 +86,9 @@
     }
 
     function toNumber(value) {
-      if (typeof value === 'number') return Number.isFinite(value) ? value : 0
+      if (typeof value === 'number') {
+        return Number.isFinite(value) ? value : 0
+      }
 
       const cleaned = String(value ?? '')
         .replaceAll(',', '')
@@ -109,7 +115,13 @@
     }
 
     function getDisplayName(user) {
-      return String(user?.UserName || user?.UserLogin || user?.username || user?.name || 'Unknown').trim()
+      return String(
+        user?.UserName ||
+        user?.UserLogin ||
+        user?.username ||
+        user?.name ||
+        'Unknown'
+      ).trim()
     }
 
     function getLogin(user) {
@@ -157,6 +169,10 @@
           __number: toNumber(getValue(user)),
         }))
         .sort((a, b) => b.__number - a.__number)
+        .map((user, index) => ({
+          ...user,
+          __globalRank: index + 1,
+        }))
     }
 
     function getElements() {
@@ -202,9 +218,10 @@
       `
     }
 
-    function renderRow(user, boardId, rank) {
+    function renderRow(user, boardId) {
       const name = user.__name
       const login = user.__login
+      const rank = user.__globalRank || 0
       const showLogin = login && login.toLowerCase() !== name.toLowerCase()
       const value = formatValue(boardId, user.__value)
 
@@ -240,7 +257,15 @@
       if (!container) return
 
       if (users.length === 0) {
-        renderEmptyState(container, boardId)
+        const hasSearch = searchQuery.length > 0
+
+        renderEmptyState(
+          container,
+          boardId,
+          hasSearch ? 'ما حصلت العضو' : undefined,
+          hasSearch ? 'جرّب تكتب الاسم أو اليوزر بطريقة ثانية.' : undefined
+        )
+
         if (loadMoreButton) loadMoreButton.classList.add('hidden')
         if (showLessButton) showLessButton.classList.add('hidden')
         return
@@ -250,9 +275,7 @@
       const end = start + perPage
       const slice = users.slice(start, end)
 
-      const html = slice
-        .map((user, index) => renderRow(user, boardId, start + index + 1))
-        .join('')
+      const html = slice.map((user) => renderRow(user, boardId)).join('')
 
       container.insertAdjacentHTML('beforeend', html)
 
@@ -304,7 +327,7 @@
 
       container.innerHTML = users
         .slice(0, newIndex)
-        .map((user, index) => renderRow(user, boardId, index + 1))
+        .map((user) => renderRow(user, boardId))
         .join('')
 
       if (loadMoreButton) {
@@ -341,13 +364,16 @@
       const elements = getElements()
       const config = boardConfig[activeBoard]
       const count = filteredData[activeBoard]?.length || 0
+      const totalCount = allData[activeBoard]?.length || 0
 
       if (elements.boardHeading) {
         elements.boardHeading.textContent = config.heading
       }
 
       if (elements.boardDescription) {
-        elements.boardDescription.textContent = config.description
+        elements.boardDescription.textContent = searchQuery
+          ? `نتائج البحث تظهر برتبة العضو الأصلية من أصل ${formatNumber(totalCount)} عضو.`
+          : config.description
       }
 
       if (elements.boardCount) {
@@ -359,11 +385,15 @@
       }
 
       if (elements.activeBoardSubtitle) {
-        elements.activeBoardSubtitle.textContent = config.subtitle
+        elements.activeBoardSubtitle.textContent = searchQuery
+          ? 'نتائج البحث بالترتيب الحقيقي'
+          : config.subtitle
       }
 
       if (elements.activeBoardPill) {
-        elements.activeBoardPill.textContent = config.heading
+        elements.activeBoardPill.textContent = searchQuery
+          ? 'بحث بالترتيب الحقيقي'
+          : config.heading
       }
 
       if (elements.activeBoardIcon) {
@@ -374,7 +404,9 @@
     function renderTopThree() {
       const elements = getElements()
       const container = elements.topThreeList
-      const users = filteredData[activeBoard] || []
+      const users = searchQuery
+        ? filteredData[activeBoard] || []
+        : allData[activeBoard] || []
 
       if (!container) return
 
@@ -387,8 +419,8 @@
             <div class="tnx-lb-medal">
               <iconify-icon icon="tabler:trophy"></iconify-icon>
             </div>
-            <p class="tnx-lb-top-name">${escapeHtml(config.emptyTitle)}</p>
-            <p class="tnx-lb-top-value">${escapeHtml(config.emptyText)}</p>
+            <p class="tnx-lb-top-name">${escapeHtml(searchQuery ? 'ما حصلت العضو' : config.emptyTitle)}</p>
+            <p class="tnx-lb-top-value">${escapeHtml(searchQuery ? 'جرّب تبحث باسم ثاني' : config.emptyText)}</p>
           </article>
         `
         return
@@ -399,17 +431,17 @@
       container.innerHTML = users
         .slice(0, 3)
         .map((user, index) => {
-          const rank = index + 1
+          const rank = user.__globalRank || index + 1
           const name = user.__name
           const login = user.__login
           const showLogin = login && login.toLowerCase() !== name.toLowerCase()
-          const firstClass = index === 0 ? ' tnx-lb-top-card--first' : ''
+          const firstClass = !searchQuery && index === 0 ? ' tnx-lb-top-card--first' : index === 0 ? ' tnx-lb-top-card--first' : ''
 
           return `
             <article class="tnx-lb-top-card${firstClass}">
               <span class="tnx-lb-rank">#${rank}</span>
               <div class="tnx-lb-medal">
-                <iconify-icon icon="${medals[index]}"></iconify-icon>
+                <iconify-icon icon="${medals[index] || 'tabler:user'}"></iconify-icon>
               </div>
               <p class="tnx-lb-top-name" title="${escapeHtml(name)}">${escapeHtml(name)}</p>
               ${
@@ -425,14 +457,14 @@
     }
 
     function handleSearch(query) {
-      const q = String(query || '').trim().toLowerCase()
+      searchQuery = String(query || '').trim().toLowerCase()
 
       Object.keys(boardConfig).forEach((boardId) => {
         filteredData[boardId] = allData[boardId].filter((user) => {
           const name = String(user.__name || '').toLowerCase()
           const login = String(user.__login || '').toLowerCase()
 
-          return name.includes(q) || login.includes(q)
+          return name.includes(searchQuery) || login.includes(searchQuery)
         })
       })
 
