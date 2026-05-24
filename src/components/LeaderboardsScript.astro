@@ -62,6 +62,7 @@
       watchtime: 0,
     }
 
+    let revealObserver = null
     const listeners = []
 
     function addListener(target, event, handler, options) {
@@ -74,6 +75,11 @@
     window[cleanupKey] = () => {
       listeners.forEach((cleanup) => cleanup())
       listeners.length = 0
+
+      if (revealObserver) {
+        revealObserver.disconnect()
+        revealObserver = null
+      }
     }
 
     function escapeHtml(value) {
@@ -171,6 +177,7 @@
         .map((user, index) => ({
           ...user,
           __globalRank: index + 1,
+          __id: `${boardId}-${index + 1}-${String(user.__login || user.__name).toLowerCase()}`,
         }))
     }
 
@@ -187,6 +194,14 @@
         activeBoardPill: document.getElementById('active-board-pill'),
         activeBoardIcon: document.getElementById('active-board-icon'),
         topThreeList: document.getElementById('top-three-list'),
+        compareA: document.getElementById('compare-user-a'),
+        compareB: document.getElementById('compare-user-b'),
+        compareResult: document.getElementById('compare-result'),
+        shareSelect: document.getElementById('share-user-select'),
+        shareCanvas: document.getElementById('share-card-canvas'),
+        shareDownload: document.getElementById('download-share-card'),
+        shareNative: document.getElementById('native-share-card'),
+        shareStatus: document.getElementById('share-card-status'),
         containers: {
           points: document.getElementById('points-list'),
           gold: document.getElementById('gold-list'),
@@ -205,16 +220,51 @@
       }
     }
 
+    function initScrollReveal() {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      if (reduceMotion || !('IntersectionObserver' in window)) {
+        document.querySelectorAll('[data-reveal]').forEach((element) => {
+          element.classList.add('is-visible')
+        })
+        return
+      }
+
+      if (!revealObserver) {
+        revealObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return
+
+              entry.target.classList.add('is-visible')
+              revealObserver.unobserve(entry.target)
+            })
+          },
+          {
+            threshold: 0.12,
+            rootMargin: '0px 0px -70px 0px',
+          }
+        )
+      }
+
+      document.querySelectorAll('[data-reveal]:not(.is-visible):not([data-reveal-observed])').forEach((element) => {
+        element.setAttribute('data-reveal-observed', 'true')
+        revealObserver.observe(element)
+      })
+    }
+
     function renderEmptyState(container, boardId, customTitle, customText) {
       const config = boardConfig[boardId]
 
       container.innerHTML = `
-        <div class="tnx-lb-empty">
+        <div class="tnx-lb-empty" data-reveal="up">
           <iconify-icon icon="tabler:database-off"></iconify-icon>
           <strong>${escapeHtml(customTitle || config.emptyTitle)}</strong>
           <span>${escapeHtml(customText || config.emptyText)}</span>
         </div>
       `
+
+      initScrollReveal()
     }
 
     function renderRow(user, boardId) {
@@ -225,7 +275,7 @@
       const value = formatValue(boardId, user.__value)
 
       return `
-        <article class="tnx-lb-row">
+        <article class="tnx-lb-row" data-reveal="up">
           <div class="tnx-lb-row-rank">#${rank}</div>
 
           <div class="tnx-lb-user">
@@ -243,6 +293,14 @@
 
           <div class="tnx-lb-row-value">${escapeHtml(value)}</div>
         </article>
+      `
+    }
+
+    function renderEliteDivider() {
+      return `
+        <div class="tnx-lb-elite-divider" data-reveal="up">
+          نهاية النخبة — بعد المركز 10
+        </div>
       `
     }
 
@@ -274,7 +332,12 @@
       const end = start + perPage
       const slice = users.slice(start, end)
 
-      const html = slice.map((user) => renderRow(user, boardId)).join('')
+      const html = slice
+        .map((user) => {
+          const needsDivider = !searchQuery && user.__globalRank === 11
+          return `${needsDivider ? renderEliteDivider() : ''}${renderRow(user, boardId)}`
+        })
+        .join('')
 
       container.insertAdjacentHTML('beforeend', html)
 
@@ -287,6 +350,8 @@
       if (showLessButton) {
         showLessButton.classList.toggle('hidden', indexes[boardId] <= perPage)
       }
+
+      initScrollReveal()
     }
 
     function resetBoard(boardId) {
@@ -310,6 +375,10 @@
       Object.keys(boardConfig).forEach((boardId) => resetBoard(boardId))
       updateBoardMeta()
       renderTopThree()
+      updateCompareOptions()
+      renderCompare()
+      updateShareOptions()
+      renderShareCard()
     }
 
     function showLess(boardId) {
@@ -326,7 +395,10 @@
 
       container.innerHTML = users
         .slice(0, newIndex)
-        .map((user) => renderRow(user, boardId))
+        .map((user) => {
+          const needsDivider = !searchQuery && user.__globalRank === 11
+          return `${needsDivider ? renderEliteDivider() : ''}${renderRow(user, boardId)}`
+        })
         .join('')
 
       if (loadMoreButton) {
@@ -336,6 +408,8 @@
       if (showLessButton) {
         showLessButton.classList.toggle('hidden', indexes[boardId] <= perPage)
       }
+
+      initScrollReveal()
     }
 
     function setActiveBoard(boardId) {
@@ -357,6 +431,10 @@
 
       updateBoardMeta()
       renderTopThree()
+      updateCompareOptions()
+      renderCompare()
+      updateShareOptions()
+      renderShareCard()
     }
 
     function updateBoardMeta() {
@@ -413,7 +491,7 @@
         const config = boardConfig[activeBoard]
 
         container.innerHTML = `
-          <article class="tnx-lb-top-card tnx-lb-top-card--first">
+          <article class="tnx-lb-top-card tnx-lb-top-card--first" data-reveal="up">
             <span class="tnx-lb-rank">TOP</span>
             <div class="tnx-lb-medal">
               <iconify-icon icon="tabler:trophy"></iconify-icon>
@@ -422,6 +500,7 @@
             <p class="tnx-lb-top-value">${escapeHtml(searchQuery ? 'جرّب تبحث باسم ثاني' : config.emptyText)}</p>
           </article>
         `
+        initScrollReveal()
         return
       }
 
@@ -437,7 +516,7 @@
           const firstClass = index === 0 ? ' tnx-lb-top-card--first' : ''
 
           return `
-            <article class="tnx-lb-top-card${firstClass}">
+            <article class="tnx-lb-top-card${firstClass}" data-reveal="up">
               <span class="tnx-lb-rank">#${rank}</span>
               <div class="tnx-lb-medal">
                 <iconify-icon icon="${medals[index] || 'tabler:user'}"></iconify-icon>
@@ -453,6 +532,305 @@
           `
         })
         .join('')
+
+      initScrollReveal()
+    }
+
+    function updateCompareOptions() {
+      const elements = getElements()
+      const users = allData[activeBoard] || []
+
+      if (!elements.compareA || !elements.compareB) return
+
+      const currentA = elements.compareA.value
+      const currentB = elements.compareB.value
+
+      const options = users
+        .map((user) => {
+          const label = `#${user.__globalRank} — ${user.__name} — ${formatValue(activeBoard, user.__value)}`
+          return `<option value="${escapeHtml(user.__id)}">${escapeHtml(label)}</option>`
+        })
+        .join('')
+
+      elements.compareA.innerHTML = options
+      elements.compareB.innerHTML = options
+
+      if (users.some((user) => user.__id === currentA)) {
+        elements.compareA.value = currentA
+      } else if (users[0]) {
+        elements.compareA.value = users[0].__id
+      }
+
+      if (users.some((user) => user.__id === currentB)) {
+        elements.compareB.value = currentB
+      } else if (users[1]) {
+        elements.compareB.value = users[1].__id
+      } else if (users[0]) {
+        elements.compareB.value = users[0].__id
+      }
+    }
+
+    function findUserById(userId) {
+      return (allData[activeBoard] || []).find((user) => user.__id === userId) || null
+    }
+
+    function renderCompare() {
+      const elements = getElements()
+
+      if (!elements.compareResult || !elements.compareA || !elements.compareB) return
+
+      const userA = findUserById(elements.compareA.value)
+      const userB = findUserById(elements.compareB.value)
+
+      if (!userA || !userB) {
+        elements.compareResult.innerHTML = `
+          <div class="tnx-lb-empty">
+            <iconify-icon icon="tabler:arrows-diff"></iconify-icon>
+            <strong>ما فيه بيانات كافية للمقارنة</strong>
+            <span>اختر عضوين من القائمة بعد تحميل الترتيب.</span>
+          </div>
+        `
+        return
+      }
+
+      const valueDiff = Math.abs(userA.__number - userB.__number)
+      const rankDiff = Math.abs(userA.__globalRank - userB.__globalRank)
+      const leader = userA.__number >= userB.__number ? userA : userB
+
+      elements.compareResult.innerHTML = `
+        <div class="tnx-lb-compare-grid">
+          <div class="tnx-lb-compare-card">
+            <strong>${escapeHtml(userA.__name)}</strong>
+            <span>${escapeHtml(formatValue(activeBoard, userA.__value))}</span>
+            <small>المركز #${userA.__globalRank}</small>
+          </div>
+
+          <div class="tnx-lb-compare-diff">
+            <div>
+              <strong>${escapeHtml(formatValue(activeBoard, valueDiff))}</strong>
+              <span>فرق القيمة</span>
+              <br />
+              <strong>#${rankDiff}</strong>
+              <span>فرق المراكز</span>
+              <br />
+              <span>المتقدم: ${escapeHtml(leader.__name)}</span>
+            </div>
+          </div>
+
+          <div class="tnx-lb-compare-card">
+            <strong>${escapeHtml(userB.__name)}</strong>
+            <span>${escapeHtml(formatValue(activeBoard, userB.__value))}</span>
+            <small>المركز #${userB.__globalRank}</small>
+          </div>
+        </div>
+      `
+    }
+
+    function updateShareOptions() {
+      const elements = getElements()
+      const users = allData[activeBoard] || []
+
+      if (!elements.shareSelect) return
+
+      const current = elements.shareSelect.value
+
+      elements.shareSelect.innerHTML = users
+        .map((user) => {
+          const label = `#${user.__globalRank} — ${user.__name}`
+          return `<option value="${escapeHtml(user.__id)}">${escapeHtml(label)}</option>`
+        })
+        .join('')
+
+      if (users.some((user) => user.__id === current)) {
+        elements.shareSelect.value = current
+      } else if (users[0]) {
+        elements.shareSelect.value = users[0].__id
+      }
+    }
+
+    function getSelectedShareUser() {
+      const elements = getElements()
+      if (!elements.shareSelect) return null
+      return findUserById(elements.shareSelect.value)
+    }
+
+    function drawRoundedRect(ctx, x, y, width, height, radius) {
+      ctx.beginPath()
+      ctx.moveTo(x + radius, y)
+      ctx.lineTo(x + width - radius, y)
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius)
+      ctx.lineTo(x + width, y + height - radius)
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height)
+      ctx.lineTo(x + radius, y + height)
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius)
+      ctx.lineTo(x, y + radius)
+      ctx.quadraticCurveTo(x, y, x + radius, y)
+      ctx.closePath()
+    }
+
+    function drawTextFit(ctx, text, x, y, maxWidth, fontSize, fontFamily, weight = '900') {
+      let size = fontSize
+      ctx.font = `${weight} ${size}px ${fontFamily}`
+
+      while (ctx.measureText(text).width > maxWidth && size > 34) {
+        size -= 2
+        ctx.font = `${weight} ${size}px ${fontFamily}`
+      }
+
+      ctx.fillText(text, x, y)
+    }
+
+    function renderShareCard() {
+      const elements = getElements()
+      const canvas = elements.shareCanvas
+      const user = getSelectedShareUser()
+
+      if (!canvas) return
+
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+
+      const width = canvas.width
+      const height = canvas.height
+      const font = 'Arial, Tahoma, sans-serif'
+      const config = boardConfig[activeBoard]
+
+      ctx.clearRect(0, 0, width, height)
+
+      const bg = ctx.createLinearGradient(0, 0, width, height)
+      bg.addColorStop(0, '#09050f')
+      bg.addColorStop(0.45, '#05070d')
+      bg.addColorStop(1, '#120905')
+      ctx.fillStyle = bg
+      ctx.fillRect(0, 0, width, height)
+
+      const glow = ctx.createRadialGradient(width * 0.75, height * 0.18, 0, width * 0.75, height * 0.18, 620)
+      glow.addColorStop(0, 'rgba(255, 218, 106, 0.30)')
+      glow.addColorStop(1, 'rgba(255, 218, 106, 0)')
+      ctx.fillStyle = glow
+      ctx.fillRect(0, 0, width, height)
+
+      ctx.strokeStyle = 'rgba(255, 218, 106, 0.45)'
+      ctx.lineWidth = 6
+      drawRoundedRect(ctx, 52, 52, width - 104, height - 104, 54)
+      ctx.stroke()
+
+      ctx.direction = 'rtl'
+      ctx.textAlign = 'center'
+
+      ctx.fillStyle = '#ffda6a'
+      ctx.font = `900 54px ${font}`
+      ctx.fillText('TNX6 COMMUNITY', width / 2, 180)
+
+      ctx.fillStyle = 'rgba(255,255,255,0.78)'
+      ctx.font = `800 34px ${font}`
+      ctx.fillText(config.heading, width / 2, 238)
+
+      if (!user) {
+        ctx.fillStyle = '#ffffff'
+        ctx.font = `900 58px ${font}`
+        ctx.fillText('ما فيه بيانات', width / 2, 620)
+        return
+      }
+
+      ctx.fillStyle = 'rgba(0,0,0,0.42)'
+      drawRoundedRect(ctx, 140, 315, width - 280, 650, 46)
+      ctx.fill()
+
+      ctx.strokeStyle = 'rgba(255, 218, 106, 0.28)'
+      ctx.lineWidth = 3
+      drawRoundedRect(ctx, 140, 315, width - 280, 650, 46)
+      ctx.stroke()
+
+      ctx.fillStyle = '#ffda6a'
+      ctx.font = `900 86px ${font}`
+      ctx.fillText(`#${user.__globalRank}`, width / 2, 450)
+
+      ctx.fillStyle = '#ffffff'
+      drawTextFit(ctx, user.__name, width / 2, 565, width - 260, 76, font, '900')
+
+      if (user.__login && user.__login.toLowerCase() !== user.__name.toLowerCase()) {
+        ctx.fillStyle = 'rgba(255,255,255,0.46)'
+        ctx.font = `800 34px ${font}`
+        ctx.direction = 'ltr'
+        ctx.fillText(`@${user.__login}`, width / 2, 620)
+        ctx.direction = 'rtl'
+      }
+
+      ctx.fillStyle = '#ffda6a'
+      ctx.font = `900 60px ${font}`
+      ctx.fillText(formatValue(activeBoard, user.__value), width / 2, 740)
+
+      ctx.fillStyle = 'rgba(255,255,255,0.68)'
+      ctx.font = `800 30px ${font}`
+      ctx.fillText('مركزك داخل مجتمع TNX6', width / 2, 805)
+
+      ctx.strokeStyle = 'rgba(255, 218, 106, 0.22)'
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.moveTo(230, 860)
+      ctx.lineTo(width - 230, 860)
+      ctx.stroke()
+
+      ctx.fillStyle = 'rgba(255,255,255,0.78)'
+      ctx.font = `800 32px ${font}`
+      ctx.fillText('tnx6.xyz', width / 2, 930)
+
+      ctx.fillStyle = '#ffda6a'
+      ctx.font = `900 42px ${font}`
+      ctx.fillText('شارك بطاقتك وورنا مركزك', width / 2, 1115)
+
+      ctx.fillStyle = 'rgba(255,255,255,0.38)'
+      ctx.font = `700 26px ${font}`
+      ctx.fillText('Generated from TNX6 Leaderboards', width / 2, 1190)
+
+      if (elements.shareStatus) {
+        elements.shareStatus.textContent = `البطاقة جاهزة: ${user.__name} — المركز #${user.__globalRank}`
+      }
+    }
+
+    function downloadShareCard() {
+      const elements = getElements()
+      const canvas = elements.shareCanvas
+      const user = getSelectedShareUser()
+
+      if (!canvas || !user) return
+
+      const link = document.createElement('a')
+      link.download = `tnx6-rank-${user.__globalRank}-${user.__name}.png`
+      link.href = canvas.toDataURL('image/png')
+      link.click()
+    }
+
+    function shareCardNative() {
+      const elements = getElements()
+      const canvas = elements.shareCanvas
+      const user = getSelectedShareUser()
+
+      if (!canvas || !user) return
+
+      canvas.toBlob(async (blob) => {
+        if (!blob) return
+
+        const file = new File([blob], `tnx6-rank-${user.__globalRank}.png`, {
+          type: 'image/png',
+        })
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: 'TNX6 Rank Card',
+              text: `مركزي في TNX6: #${user.__globalRank}`,
+            })
+            return
+          } catch {
+            // fallback below
+          }
+        }
+
+        downloadShareCard()
+      }, 'image/png')
     }
 
     function handleSearch(query) {
@@ -512,6 +890,10 @@
         })
 
         renderTopThree()
+        updateCompareOptions()
+        renderCompare()
+        updateShareOptions()
+        renderShareCard()
       }
     }
 
@@ -537,11 +919,18 @@
       addListener(elements.search, 'input', (event) => {
         handleSearch(event.target.value)
       })
+
+      addListener(elements.compareA, 'change', renderCompare)
+      addListener(elements.compareB, 'change', renderCompare)
+      addListener(elements.shareSelect, 'change', renderShareCard)
+      addListener(elements.shareDownload, 'click', downloadShareCard)
+      addListener(elements.shareNative, 'click', shareCardNative)
     }
 
     function initLeaderboards() {
       bindEvents()
       updateBoardMeta()
+      initScrollReveal()
       loadData()
     }
 
