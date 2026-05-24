@@ -67,6 +67,7 @@
 
     function addListener(target, event, handler, options) {
       if (!target) return
+
       target.addEventListener(event, handler, options)
       listeners.push(() => target.removeEventListener(event, handler, options))
     }
@@ -198,26 +199,31 @@
         activeBoardPill: document.getElementById('active-board-pill'),
         activeBoardIcon: document.getElementById('active-board-icon'),
         topThreeList: document.getElementById('top-three-list'),
+
         compareA: document.getElementById('compare-user-a'),
         compareB: document.getElementById('compare-user-b'),
         compareButton: document.getElementById('compare-button'),
         compareResult: document.getElementById('compare-result'),
         usersDatalist: document.getElementById('leaderboard-users-list'),
+
         shareSelect: document.getElementById('share-user-select'),
         shareCanvas: document.getElementById('share-card-canvas'),
         shareDownload: document.getElementById('download-share-card'),
         shareNative: document.getElementById('native-share-card'),
         shareStatus: document.getElementById('share-card-status'),
+
         containers: {
           points: document.getElementById('points-list'),
           gold: document.getElementById('gold-list'),
           watchtime: document.getElementById('watchtime-list'),
         },
+
         loadMoreButtons: {
           points: document.querySelector('[data-load-more="points"]'),
           gold: document.querySelector('[data-load-more="gold"]'),
           watchtime: document.querySelector('[data-load-more="watchtime"]'),
         },
+
         showLessButtons: {
           points: document.querySelector('[data-show-less="points"]'),
           gold: document.querySelector('[data-show-less="gold"]'),
@@ -226,36 +232,65 @@
       }
     }
 
+    function forceRevealVisibleElements() {
+      const buffer = 260
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight
+
+      document.querySelectorAll('[data-reveal]:not(.is-visible)').forEach((element) => {
+        const rect = element.getBoundingClientRect()
+
+        if (rect.top <= viewportHeight + buffer && rect.bottom >= -buffer) {
+          element.classList.add('is-visible')
+
+          if (revealObserver) {
+            revealObserver.unobserve(element)
+          }
+        }
+      })
+    }
+
     function initScrollReveal() {
+      const revealElements = Array.from(document.querySelectorAll('[data-reveal]'))
+
+      if (revealElements.length === 0) return
+
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
       if (reduceMotion || !('IntersectionObserver' in window)) {
-        document.querySelectorAll('[data-reveal]').forEach((element) => {
-          element.classList.add('is-visible')
-        })
+        revealElements.forEach((element) => element.classList.add('is-visible'))
         return
       }
 
-      if (!revealObserver) {
-        revealObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (!entry.isIntersecting) return
-              entry.target.classList.add('is-visible')
-              revealObserver.unobserve(entry.target)
-            })
-          },
-          {
-            threshold: 0.12,
-            rootMargin: '0px 0px -70px 0px',
-          }
-        )
+      if (revealObserver) {
+        revealObserver.disconnect()
       }
 
-      document.querySelectorAll('[data-reveal]:not(.is-visible):not([data-reveal-observed])').forEach((element) => {
-        element.setAttribute('data-reveal-observed', 'true')
-        revealObserver.observe(element)
+      revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return
+
+            entry.target.classList.add('is-visible')
+            revealObserver.unobserve(entry.target)
+          })
+        },
+        {
+          threshold: 0,
+          rootMargin: '260px 0px 260px 0px',
+        }
+      )
+
+      revealElements.forEach((element) => {
+        if (!element.classList.contains('is-visible')) {
+          revealObserver.observe(element)
+        }
       })
+
+      forceRevealVisibleElements()
+
+      window.requestAnimationFrame(forceRevealVisibleElements)
+      window.setTimeout(forceRevealVisibleElements, 100)
+      window.setTimeout(forceRevealVisibleElements, 400)
     }
 
     function renderEmptyState(container, boardId, customTitle, customText) {
@@ -357,13 +392,15 @@
     }
 
     function renderAllPanelsOnce() {
+      const currentActive = activeBoard
+
       Object.keys(boardConfig).forEach((boardId) => {
-        const currentActive = activeBoard
         activeBoard = boardId
         visibleCount[boardId] = perPage
         renderActiveBoard()
-        activeBoard = currentActive
       })
+
+      activeBoard = currentActive
     }
 
     function setActiveBoard(boardId) {
@@ -389,6 +426,12 @@
       updateShareOptions()
       renderShareCard()
       renderActiveBoard()
+
+      if (elements.compareA?.value || elements.compareB?.value) {
+        renderCompare()
+      }
+
+      initScrollReveal()
     }
 
     function updateBoardMeta() {
@@ -445,6 +488,7 @@
             <p class="tnx-lb-top-value">${escapeHtml(searchQuery ? 'جرّب تبحث باسم ثاني' : config.emptyText)}</p>
           </article>
         `
+
         initScrollReveal()
         return
       }
@@ -496,6 +540,8 @@
       renderAllPanelsOnce()
       updateBoardMeta()
       renderTopThree()
+      renderActiveBoard()
+      initScrollReveal()
     }
 
     function findUserByInput(value) {
@@ -537,12 +583,13 @@
 
       if (!userA || !userB) {
         elements.compareResult.innerHTML = `
-          <div class="tnx-lb-empty">
+          <div class="tnx-lb-empty" data-reveal="up">
             <iconify-icon icon="tabler:arrows-diff"></iconify-icon>
             <strong>اكتب اسمين صحيحين</strong>
             <span>اكتب اسم العضو أو اليوزر، ثم اضغط قارن.</span>
           </div>
         `
+        initScrollReveal()
         return
       }
 
@@ -552,7 +599,7 @@
       const higherValueUser = userA.__number >= userB.__number ? userA : userB
 
       elements.compareResult.innerHTML = `
-        <div class="tnx-lb-compare-grid">
+        <div class="tnx-lb-compare-grid" data-reveal="up">
           <div class="tnx-lb-compare-card">
             <strong>${escapeHtml(userA.__name)}</strong>
             <span>${escapeHtml(formatValue(activeBoard, userA.__value))}</span>
@@ -579,6 +626,8 @@
           </div>
         </div>
       `
+
+      initScrollReveal()
     }
 
     function updateShareOptions() {
@@ -817,6 +866,10 @@
 
         renderAllPanelsOnce()
         setActiveBoard(activeBoard)
+        updateCompareTools()
+        updateShareOptions()
+        renderShareCard()
+        initScrollReveal()
       } catch {
         Object.keys(boardConfig).forEach((boardId) => {
           const container = elements.containers[boardId]
@@ -831,6 +884,7 @@
         })
 
         renderTopThree()
+        initScrollReveal()
       }
     }
 
@@ -860,9 +914,11 @@
       })
 
       addListener(elements.compareButton, 'click', renderCompare)
+
       addListener(elements.compareA, 'keydown', (event) => {
         if (event.key === 'Enter') renderCompare()
       })
+
       addListener(elements.compareB, 'keydown', (event) => {
         if (event.key === 'Enter') renderCompare()
       })
@@ -870,6 +926,9 @@
       addListener(elements.shareSelect, 'change', renderShareCard)
       addListener(elements.shareDownload, 'click', downloadShareCard)
       addListener(elements.shareNative, 'click', shareCardNative)
+
+      addListener(window, 'scroll', forceRevealVisibleElements, { passive: true })
+      addListener(window, 'resize', forceRevealVisibleElements)
     }
 
     function initLeaderboards() {
@@ -877,6 +936,10 @@
       updateBoardMeta()
       initScrollReveal()
       loadData()
+
+      window.requestAnimationFrame(initScrollReveal)
+      window.setTimeout(initScrollReveal, 300)
+      window.setTimeout(initScrollReveal, 900)
     }
 
     if (document.readyState === 'loading') {
