@@ -196,6 +196,40 @@
         }))
     }
 
+    function findMatchingUserInBoard(boardId, sourceUser) {
+      if (!sourceUser) return null
+
+      const users = allData[boardId] || []
+      const sourceLogin = String(sourceUser.__login || '').trim().toLowerCase()
+      const sourceName = String(sourceUser.__name || '').trim().toLowerCase()
+
+      if (sourceLogin) {
+        const byLogin = users.find((user) => String(user.__login || '').trim().toLowerCase() === sourceLogin)
+        if (byLogin) return byLogin
+      }
+
+      if (sourceName) {
+        const byName = users.find((user) => String(user.__name || '').trim().toLowerCase() === sourceName)
+        if (byName) return byName
+      }
+
+      return null
+    }
+
+    function getCombinedCardStats(user) {
+      const pointsUser = findMatchingUserInBoard('points', user)
+      const watchtimeUser = findMatchingUserInBoard('watchtime', user)
+
+      return {
+        pointsUser,
+        watchtimeUser,
+        pointsRank: pointsUser ? `#${pointsUser.__rank}` : '--',
+        pointsValue: pointsUser ? formatValue('points', pointsUser.__value) : '--',
+        watchtimeRank: watchtimeUser ? `#${watchtimeUser.__rank}` : '--',
+        watchtimeValue: watchtimeUser ? formatValue('watchtime', watchtimeUser.__value) : '--',
+      }
+    }
+
     function getElements() {
       return {
         tabs: Array.from(document.querySelectorAll('[data-board-tab]')),
@@ -759,6 +793,42 @@
       ctx.fillText(text, x, y)
     }
 
+    function drawMetricBox(ctx, options) {
+      const {
+        x,
+        y,
+        width,
+        height,
+        title,
+        rank,
+        value,
+        font,
+      } = options
+
+      ctx.fillStyle = 'rgba(0,0,0,0.42)'
+      drawRoundedRect(ctx, x, y, width, height, 34)
+      ctx.fill()
+
+      ctx.strokeStyle = 'rgba(255, 218, 106, 0.26)'
+      ctx.lineWidth = 3
+      drawRoundedRect(ctx, x, y, width, height, 34)
+      ctx.stroke()
+
+      ctx.direction = 'rtl'
+      ctx.textAlign = 'center'
+
+      ctx.fillStyle = 'rgba(255,255,255,0.68)'
+      ctx.font = `800 30px ${font}`
+      ctx.fillText(title, x + width / 2, y + 58)
+
+      ctx.fillStyle = '#ffda6a'
+      ctx.font = `900 58px ${font}`
+      ctx.fillText(rank, x + width / 2, y + 132)
+
+      ctx.fillStyle = '#ffffff'
+      drawTextFit(ctx, value, x + width / 2, y + 196, width - 52, 38, font, '900')
+    }
+
     function renderShareCard(user = activeModalUser) {
       const elements = getElements()
       const canvas = elements.shareCanvas
@@ -771,8 +841,8 @@
       const width = canvas.width
       const height = canvas.height
       const font = 'Arial, Tahoma, sans-serif'
-      const config = boardConfig[activeBoard]
       const cardDate = formatCardDate()
+      const combinedStats = getCombinedCardStats(user)
 
       ctx.clearRect(0, 0, width, height)
 
@@ -803,7 +873,7 @@
 
       ctx.fillStyle = 'rgba(255,255,255,0.78)'
       ctx.font = `800 34px ${font}`
-      ctx.fillText(config.heading, width / 2, 238)
+      ctx.fillText('بطاقة المجتمع', width / 2, 238)
 
       if (!user) {
         ctx.fillStyle = '#ffffff'
@@ -820,55 +890,69 @@
       }
 
       ctx.fillStyle = 'rgba(0,0,0,0.42)'
-      drawRoundedRect(ctx, 140, 315, width - 280, 650, 46)
+      drawRoundedRect(ctx, 140, 315, width - 280, 320, 46)
       ctx.fill()
 
       ctx.strokeStyle = 'rgba(255, 218, 106, 0.28)'
       ctx.lineWidth = 3
-      drawRoundedRect(ctx, 140, 315, width - 280, 650, 46)
+      drawRoundedRect(ctx, 140, 315, width - 280, 320, 46)
       ctx.stroke()
 
-      ctx.fillStyle = '#ffda6a'
-      ctx.font = `900 86px ${font}`
-      ctx.fillText(`#${user.__rank}`, width / 2, 450)
-
       ctx.fillStyle = '#ffffff'
-      drawTextFit(ctx, user.__name, width / 2, 565, width - 260, 76, font, '900')
+      drawTextFit(ctx, user.__name, width / 2, 445, width - 260, 82, font, '900')
 
       if (user.__login && user.__login.toLowerCase() !== user.__name.toLowerCase()) {
         ctx.fillStyle = 'rgba(255,255,255,0.46)'
         ctx.font = `800 34px ${font}`
         ctx.direction = 'ltr'
-        ctx.fillText(`@${user.__login}`, width / 2, 620)
+        ctx.fillText(`@${user.__login}`, width / 2, 505)
         ctx.direction = 'rtl'
       }
 
-      ctx.fillStyle = '#ffda6a'
-      ctx.font = `900 60px ${font}`
-      ctx.fillText(formatValue(activeBoard, user.__value), width / 2, 740)
-
-      ctx.fillStyle = 'rgba(255,255,255,0.68)'
+      ctx.fillStyle = 'rgba(255,255,255,0.66)'
       ctx.font = `800 30px ${font}`
-      ctx.fillText('مركزك داخل مجتمع TNX6', width / 2, 805)
+      ctx.fillText('نقاطك ومشاهدتك في مجتمع TNX6', width / 2, 575)
+
+      drawMetricBox(ctx, {
+        x: 130,
+        y: 700,
+        width: 390,
+        height: 250,
+        title: 'المشاهدة',
+        rank: combinedStats.watchtimeRank,
+        value: combinedStats.watchtimeValue,
+        font,
+      })
+
+      drawMetricBox(ctx, {
+        x: 560,
+        y: 700,
+        width: 390,
+        height: 250,
+        title: 'النقاط',
+        rank: combinedStats.pointsRank,
+        value: combinedStats.pointsValue,
+        font,
+      })
 
       ctx.strokeStyle = 'rgba(255, 218, 106, 0.22)'
       ctx.lineWidth = 2
       ctx.beginPath()
-      ctx.moveTo(230, 860)
-      ctx.lineTo(width - 230, 860)
+      ctx.moveTo(230, 1010)
+      ctx.lineTo(width - 230, 1010)
       ctx.stroke()
 
       ctx.fillStyle = 'rgba(255,255,255,0.78)'
       ctx.font = `800 32px ${font}`
-      ctx.fillText('tnx6.xyz', width / 2, 930)
+      ctx.fillText('tnx6.xyz', width / 2, 1080)
 
       ctx.fillStyle = '#ffda6a'
       ctx.font = `900 42px ${font}`
-      ctx.fillText('شارك بطاقتك وورنا مركزك', width / 2, 1115)
+      ctx.fillText('شارك بطاقتك وورنا مركزك', width / 2, 1155)
 
       ctx.fillStyle = 'rgba(255,255,255,0.38)'
       ctx.font = `700 26px ${font}`
-      ctx.fillText('Generated from TNX6 Leaderboards', width / 2, 1190)
+      ctx.fillText('Generated from TNX6 Leaderboards', width / 2, 1218)
 
       ctx.direction = 'ltr'
       ctx.textAlign = 'left'
@@ -897,7 +981,7 @@
       const safeName = user.__name.replace(/[^\w\u0600-\u06FF-]+/g, '-')
       const link = document.createElement('a')
 
-      link.download = `tnx6-rank-${user.__rank}-${safeName}.png`
+      link.download = `tnx6-community-card-${safeName}.png`
       link.href = canvas.toDataURL('image/png')
       link.click()
     }
@@ -914,7 +998,8 @@
       canvas.toBlob(async (blob) => {
         if (!blob) return
 
-        const file = new File([blob], `tnx6-rank-${user.__rank}.png`, {
+        const safeName = user.__name.replace(/[^\w\u0600-\u06FF-]+/g, '-')
+        const file = new File([blob], `tnx6-community-card-${safeName}.png`, {
           type: 'image/png',
         })
 
@@ -922,8 +1007,8 @@
           try {
             await navigator.share({
               files: [file],
-              title: 'TNX6 Rank Card',
-              text: `مركزي في TNX6: #${user.__rank}`,
+              title: 'TNX6 Community Card',
+              text: `بطاقتي في مجتمع TNX6`,
             })
             return
           } catch {
