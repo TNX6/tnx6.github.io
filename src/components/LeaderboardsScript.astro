@@ -43,6 +43,7 @@
 
     let activeBoard = 'points'
     let searchQuery = ''
+    let activeModalUser = null
 
     let allData = {
       points: [],
@@ -67,7 +68,6 @@
 
     function addListener(target, event, handler, options) {
       if (!target) return
-
       target.addEventListener(event, handler, options)
       listeners.push(() => target.removeEventListener(event, handler, options))
     }
@@ -80,6 +80,8 @@
         revealObserver.disconnect()
         revealObserver = null
       }
+
+      document.body.classList.remove('tnx-modal-open')
     }
 
     function escapeHtml(value) {
@@ -200,17 +202,22 @@
         activeBoardIcon: document.getElementById('active-board-icon'),
         topThreeList: document.getElementById('top-three-list'),
 
-        compareA: document.getElementById('compare-user-a'),
-        compareB: document.getElementById('compare-user-b'),
+        modal: document.getElementById('leaderboard-user-modal'),
+        modalUserAvatar: document.getElementById('modal-user-avatar'),
+        modalUserName: document.getElementById('modal-user-name'),
+        modalUserLogin: document.getElementById('modal-user-login'),
+        modalUserRank: document.getElementById('modal-user-rank'),
+        modalUserValue: document.getElementById('modal-user-value'),
+        modalBoardLabel: document.getElementById('modal-board-label'),
+
+        compareTargetInput: document.getElementById('compare-target-input'),
         compareButton: document.getElementById('compare-button'),
         compareResult: document.getElementById('compare-result'),
         usersDatalist: document.getElementById('leaderboard-users-list'),
 
-        shareSelect: document.getElementById('share-user-select'),
         shareCanvas: document.getElementById('share-card-canvas'),
         shareDownload: document.getElementById('download-share-card'),
         shareNative: document.getElementById('native-share-card'),
-        shareStatus: document.getElementById('share-card-status'),
 
         containers: {
           points: document.getElementById('points-list'),
@@ -230,23 +237,6 @@
           watchtime: document.querySelector('[data-show-less="watchtime"]'),
         },
       }
-    }
-
-    function forceRevealVisibleElements() {
-      const buffer = 260
-      const viewportHeight = window.innerHeight || document.documentElement.clientHeight
-
-      document.querySelectorAll('[data-reveal]:not(.is-visible)').forEach((element) => {
-        const rect = element.getBoundingClientRect()
-
-        if (rect.top <= viewportHeight + buffer && rect.bottom >= -buffer) {
-          element.classList.add('is-visible')
-
-          if (revealObserver) {
-            revealObserver.unobserve(element)
-          }
-        }
-      })
     }
 
     function initScrollReveal() {
@@ -269,7 +259,6 @@
         (entries) => {
           entries.forEach((entry) => {
             if (!entry.isIntersecting) return
-
             entry.target.classList.add('is-visible')
             revealObserver.unobserve(entry.target)
           })
@@ -287,10 +276,26 @@
       })
 
       forceRevealVisibleElements()
-
       window.requestAnimationFrame(forceRevealVisibleElements)
-      window.setTimeout(forceRevealVisibleElements, 100)
-      window.setTimeout(forceRevealVisibleElements, 400)
+      window.setTimeout(forceRevealVisibleElements, 120)
+      window.setTimeout(forceRevealVisibleElements, 420)
+    }
+
+    function forceRevealVisibleElements() {
+      const buffer = 260
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight
+
+      document.querySelectorAll('[data-reveal]:not(.is-visible)').forEach((element) => {
+        const rect = element.getBoundingClientRect()
+
+        if (rect.top <= viewportHeight + buffer && rect.bottom >= -buffer) {
+          element.classList.add('is-visible')
+
+          if (revealObserver) {
+            revealObserver.unobserve(element)
+          }
+        }
+      })
     }
 
     function renderEmptyState(container, boardId, customTitle, customText) {
@@ -313,7 +318,14 @@
       const showLogin = login && login.toLowerCase() !== name.toLowerCase()
 
       return `
-        <article class="tnx-lb-row" data-reveal="up">
+        <article
+          class="tnx-lb-row"
+          data-reveal="up"
+          data-open-user="${escapeHtml(user.__id)}"
+          tabindex="0"
+          role="button"
+          aria-label="فتح بطاقة ${escapeHtml(name)}"
+        >
           <div class="tnx-lb-row-rank">#${user.__rank}</div>
 
           <div class="tnx-lb-user">
@@ -422,13 +434,14 @@
 
       updateBoardMeta()
       renderTopThree()
-      updateCompareTools()
-      updateShareOptions()
-      renderShareCard()
+      updateUserDatalist()
       renderActiveBoard()
 
-      if (elements.compareA?.value || elements.compareB?.value) {
-        renderCompare()
+      if (activeModalUser) {
+        const freshUser = findUserById(activeModalUser.__id)
+        if (freshUser) {
+          openUserModal(freshUser)
+        }
       }
 
       initScrollReveal()
@@ -504,7 +517,14 @@
           const firstClass = index === 0 ? ' tnx-lb-top-card--first' : ''
 
           return `
-            <article class="tnx-lb-top-card${firstClass}" data-reveal="up">
+            <article
+              class="tnx-lb-top-card${firstClass}"
+              data-reveal="up"
+              data-open-user="${escapeHtml(user.__id)}"
+              tabindex="0"
+              role="button"
+              aria-label="فتح بطاقة ${escapeHtml(name)}"
+            >
               <span class="tnx-lb-rank">#${user.__rank}</span>
               <div class="tnx-lb-medal">
                 <iconify-icon icon="${medals[index] || 'tabler:user'}"></iconify-icon>
@@ -544,6 +564,25 @@
       initScrollReveal()
     }
 
+    function updateUserDatalist() {
+      const elements = getElements()
+      const users = allData[activeBoard] || []
+
+      if (!elements.usersDatalist) return
+
+      elements.usersDatalist.innerHTML = users
+        .slice(0, 500)
+        .map((user) => {
+          const label = `#${user.__rank} — ${user.__name}`
+          return `<option value="${escapeHtml(user.__name)}">${escapeHtml(label)}</option>`
+        })
+        .join('')
+    }
+
+    function findUserById(userId) {
+      return (allData[activeBoard] || []).find((user) => user.__id === userId) || null
+    }
+
     function findUserByInput(value) {
       const query = String(value || '').trim().toLowerCase()
       if (!query) return null
@@ -559,51 +598,105 @@
       )
     }
 
-    function updateCompareTools() {
+    function openUserModal(user) {
       const elements = getElements()
-      const users = allData[activeBoard] || []
+      const config = boardConfig[activeBoard]
 
-      if (!elements.usersDatalist) return
+      if (!elements.modal || !user) return
 
-      elements.usersDatalist.innerHTML = users
-        .slice(0, 250)
-        .map((user) => {
-          const label = `#${user.__rank} — ${user.__name}`
-          return `<option value="${escapeHtml(user.__name)}">${escapeHtml(label)}</option>`
-        })
-        .join('')
+      activeModalUser = user
+
+      if (elements.modalUserAvatar) {
+        elements.modalUserAvatar.textContent = getAvatarLetter(user.__name)
+      }
+
+      if (elements.modalUserName) {
+        elements.modalUserName.textContent = user.__name
+      }
+
+      if (elements.modalUserLogin) {
+        const showLogin = user.__login && user.__login.toLowerCase() !== user.__name.toLowerCase()
+        elements.modalUserLogin.textContent = showLogin ? `@${user.__login}` : ''
+      }
+
+      if (elements.modalUserRank) {
+        elements.modalUserRank.textContent = `#${user.__rank}`
+      }
+
+      if (elements.modalUserValue) {
+        elements.modalUserValue.textContent = formatValue(activeBoard, user.__value)
+      }
+
+      if (elements.modalBoardLabel) {
+        elements.modalBoardLabel.textContent = config.heading
+      }
+
+      if (elements.compareTargetInput) {
+        elements.compareTargetInput.value = ''
+      }
+
+      if (elements.compareResult) {
+        elements.compareResult.textContent = 'اختر عضو ثاني عشان تظهر المقارنة.'
+      }
+
+      renderShareCard(user)
+
+      elements.modal.classList.remove('hidden')
+      elements.modal.setAttribute('aria-hidden', 'false')
+      document.body.classList.add('tnx-modal-open')
+    }
+
+    function closeUserModal() {
+      const elements = getElements()
+
+      activeModalUser = null
+
+      if (elements.modal) {
+        elements.modal.classList.add('hidden')
+        elements.modal.setAttribute('aria-hidden', 'true')
+      }
+
+      document.body.classList.remove('tnx-modal-open')
     }
 
     function renderCompare() {
       const elements = getElements()
-      if (!elements.compareResult || !elements.compareA || !elements.compareB) return
 
-      const userA = findUserByInput(elements.compareA.value)
-      const userB = findUserByInput(elements.compareB.value)
+      if (!activeModalUser || !elements.compareTargetInput || !elements.compareResult) return
 
-      if (!userA || !userB) {
+      const targetUser = findUserByInput(elements.compareTargetInput.value)
+
+      if (!targetUser) {
         elements.compareResult.innerHTML = `
-          <div class="tnx-lb-empty" data-reveal="up">
-            <iconify-icon icon="tabler:arrows-diff"></iconify-icon>
-            <strong>اكتب اسمين صحيحين</strong>
-            <span>اكتب اسم العضو أو اليوزر، ثم اضغط قارن.</span>
+          <div class="text-center">
+            <strong class="block text-white">ما حصلت العضو الثاني</strong>
+            <span class="mt-1 block text-gray-500">اكتب الاسم أو اليوزر بشكل أوضح.</span>
           </div>
         `
-        initScrollReveal()
         return
       }
 
-      const valueDiff = Math.abs(userA.__number - userB.__number)
-      const rankDiff = Math.abs(userA.__rank - userB.__rank)
-      const betterRankUser = userA.__rank < userB.__rank ? userA : userB
-      const higherValueUser = userA.__number >= userB.__number ? userA : userB
+      if (targetUser.__id === activeModalUser.__id) {
+        elements.compareResult.innerHTML = `
+          <div class="text-center">
+            <strong class="block text-white">اختر عضو مختلف</strong>
+            <span class="mt-1 block text-gray-500">ما تقدر تقارن الشخص بنفسه.</span>
+          </div>
+        `
+        return
+      }
+
+      const valueDiff = Math.abs(activeModalUser.__number - targetUser.__number)
+      const rankDiff = Math.abs(activeModalUser.__rank - targetUser.__rank)
+      const betterRankUser = activeModalUser.__rank < targetUser.__rank ? activeModalUser : targetUser
+      const higherValueUser = activeModalUser.__number >= targetUser.__number ? activeModalUser : targetUser
 
       elements.compareResult.innerHTML = `
-        <div class="tnx-lb-compare-grid" data-reveal="up">
+        <div class="tnx-lb-compare-grid">
           <div class="tnx-lb-compare-card">
-            <strong>${escapeHtml(userA.__name)}</strong>
-            <span>${escapeHtml(formatValue(activeBoard, userA.__value))}</span>
-            <small>المركز #${userA.__rank}</small>
+            <strong>${escapeHtml(activeModalUser.__name)}</strong>
+            <span>${escapeHtml(formatValue(activeBoard, activeModalUser.__value))}</span>
+            <small>المركز #${activeModalUser.__rank}</small>
           </div>
 
           <div class="tnx-lb-compare-diff">
@@ -611,7 +704,7 @@
               <strong>${escapeHtml(formatValue(activeBoard, valueDiff))}</strong>
               <span>فرق القيمة</span>
 
-              <strong class="mt-3 block">#${rankDiff}</strong>
+              <strong class="mt-3">${formatNumber(rankDiff)}</strong>
               <span>فرق المراكز</span>
 
               <span class="mt-3">الأعلى ترتيبًا: ${escapeHtml(betterRankUser.__name)}</span>
@@ -620,43 +713,12 @@
           </div>
 
           <div class="tnx-lb-compare-card">
-            <strong>${escapeHtml(userB.__name)}</strong>
-            <span>${escapeHtml(formatValue(activeBoard, userB.__value))}</span>
-            <small>المركز #${userB.__rank}</small>
+            <strong>${escapeHtml(targetUser.__name)}</strong>
+            <span>${escapeHtml(formatValue(activeBoard, targetUser.__value))}</span>
+            <small>المركز #${targetUser.__rank}</small>
           </div>
         </div>
       `
-
-      initScrollReveal()
-    }
-
-    function updateShareOptions() {
-      const elements = getElements()
-      const users = allData[activeBoard] || []
-
-      if (!elements.shareSelect) return
-
-      const current = elements.shareSelect.value
-
-      elements.shareSelect.innerHTML = users
-        .slice(0, 250)
-        .map((user) => {
-          const label = `#${user.__rank} — ${user.__name}`
-          return `<option value="${escapeHtml(user.__id)}">${escapeHtml(label)}</option>`
-        })
-        .join('')
-
-      if (users.some((user) => user.__id === current)) {
-        elements.shareSelect.value = current
-      } else if (users[0]) {
-        elements.shareSelect.value = users[0].__id
-      }
-    }
-
-    function getSelectedShareUser() {
-      const elements = getElements()
-      if (!elements.shareSelect) return null
-      return (allData[activeBoard] || []).find((user) => user.__id === elements.shareSelect.value) || null
     }
 
     function drawRoundedRect(ctx, x, y, width, height, radius) {
@@ -685,10 +747,9 @@
       ctx.fillText(text, x, y)
     }
 
-    function renderShareCard() {
+    function renderShareCard(user = activeModalUser) {
       const elements = getElements()
       const canvas = elements.shareCanvas
-      const user = getSelectedShareUser()
 
       if (!canvas) return
 
@@ -788,21 +849,19 @@
       ctx.fillStyle = 'rgba(255,255,255,0.38)'
       ctx.font = `700 26px ${font}`
       ctx.fillText('Generated from TNX6 Leaderboards', width / 2, 1190)
-
-      if (elements.shareStatus) {
-        elements.shareStatus.textContent = `البطاقة جاهزة: ${user.__name} — المركز #${user.__rank}`
-      }
     }
 
     function downloadShareCard() {
       const elements = getElements()
       const canvas = elements.shareCanvas
-      const user = getSelectedShareUser()
+      const user = activeModalUser
 
       if (!canvas || !user) return
 
+      const safeName = user.__name.replace(/[^\w\u0600-\u06FF-]+/g, '-')
       const link = document.createElement('a')
-      link.download = `tnx6-rank-${user.__rank}-${user.__name}.png`
+
+      link.download = `tnx6-rank-${user.__rank}-${safeName}.png`
       link.href = canvas.toDataURL('image/png')
       link.click()
     }
@@ -810,7 +869,7 @@
     function shareCardNative() {
       const elements = getElements()
       const canvas = elements.shareCanvas
-      const user = getSelectedShareUser()
+      const user = activeModalUser
 
       if (!canvas || !user) return
 
@@ -866,9 +925,7 @@
 
         renderAllPanelsOnce()
         setActiveBoard(activeBoard)
-        updateCompareTools()
-        updateShareOptions()
-        renderShareCard()
+        updateUserDatalist()
         initScrollReveal()
       } catch {
         Object.keys(boardConfig).forEach((boardId) => {
@@ -913,17 +970,58 @@
         handleSearch(event.target.value)
       })
 
+      addListener(document, 'click', (event) => {
+        const target = event.target
+
+        if (!(target instanceof Element)) return
+
+        const closeTrigger = target.closest('[data-close-user-modal]')
+        if (closeTrigger) {
+          closeUserModal()
+          return
+        }
+
+        const userTrigger = target.closest('[data-open-user]')
+        if (!userTrigger) return
+
+        const userId = userTrigger.getAttribute('data-open-user')
+        const user = findUserById(userId)
+
+        if (user) {
+          openUserModal(user)
+        }
+      })
+
+      addListener(document, 'keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeUserModal()
+          return
+        }
+
+        if (event.key !== 'Enter') return
+
+        const target = event.target
+        if (!(target instanceof Element)) return
+
+        const userTrigger = target.closest('[data-open-user]')
+        if (!userTrigger) return
+
+        const userId = userTrigger.getAttribute('data-open-user')
+        const user = findUserById(userId)
+
+        if (user) {
+          openUserModal(user)
+        }
+      })
+
       addListener(elements.compareButton, 'click', renderCompare)
 
-      addListener(elements.compareA, 'keydown', (event) => {
-        if (event.key === 'Enter') renderCompare()
+      addListener(elements.compareTargetInput, 'keydown', (event) => {
+        if (event.key === 'Enter') {
+          renderCompare()
+        }
       })
 
-      addListener(elements.compareB, 'keydown', (event) => {
-        if (event.key === 'Enter') renderCompare()
-      })
-
-      addListener(elements.shareSelect, 'change', renderShareCard)
       addListener(elements.shareDownload, 'click', downloadShareCard)
       addListener(elements.shareNative, 'click', shareCardNative)
 
