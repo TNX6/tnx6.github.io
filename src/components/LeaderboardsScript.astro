@@ -346,9 +346,17 @@
 
   .tnx-lb-modal-layout {
     display: grid;
-    grid-template-columns: minmax(290px, 390px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(290px, 390px);
     gap: 1.25rem;
     align-items: stretch;
+  }
+
+  .tnx-lb-info-side {
+    order: 1;
+  }
+
+  .tnx-lb-preview-side {
+    order: 2;
   }
 
   .tnx-lb-preview-side,
@@ -728,12 +736,12 @@
       grid-template-columns: 1fr;
     }
 
-    .tnx-lb-preview-side {
-      order: 2;
-    }
-
     .tnx-lb-info-side {
       order: 1;
+    }
+
+    .tnx-lb-preview-side {
+      order: 2;
     }
 
     #share-card-canvas {
