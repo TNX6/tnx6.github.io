@@ -65,6 +65,7 @@
     flex: 0 0 52px;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
     border-radius: 1rem;
     border: 1px solid rgba(194, 146, 0, 0.22);
     background:
@@ -72,6 +73,13 @@
       rgba(255, 255, 255, 0.03);
     color: #ffda6a;
     font-weight: 950;
+  }
+
+  .tnx-lb-avatar-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .tnx-lb-user-main {
@@ -248,6 +256,7 @@
     height: 66px;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
     border-radius: 1.3rem;
     border: 1px solid rgba(194, 146, 0, 0.22);
     background:
@@ -255,6 +264,13 @@
       rgba(255, 255, 255, 0.03);
     color: #ffda6a;
     font-size: 1.8rem;
+  }
+
+  .tnx-lb-top-avatar-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .tnx-lb-top-card--first .tnx-lb-medal {
@@ -410,6 +426,7 @@
     height: 92px;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
     border-radius: 1.45rem;
     border: 1px solid rgba(194, 146, 0, 0.28);
     background:
@@ -418,6 +435,13 @@
     color: #ffda6a;
     font-size: 2.2rem;
     font-weight: 950;
+  }
+
+  .tnx-lb-modal-avatar-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .tnx-lb-modal-name-wrap {
@@ -903,6 +927,7 @@
     function getDisplayName(user) {
       return String(
         user?.UserName ||
+        user?.TwitchDisplayName ||
         user?.UserLogin ||
         user?.username ||
         user?.name ||
@@ -916,6 +941,17 @@
 
     function getValue(user) {
       return user?.Value ?? user?.value ?? user?.points ?? user?.score ?? 0
+    }
+
+    function getAvatarUrl(user) {
+      return String(
+        user?.AvatarUrl ||
+        user?.avatarUrl ||
+        user?.profile_image_url ||
+        user?.ProfileImageUrl ||
+        user?.TwitchProfileImageUrl ||
+        ''
+      ).trim()
     }
 
     function isNumericValue(value) {
@@ -943,6 +979,26 @@
       return clean ? clean.charAt(0).toUpperCase() : '?'
     }
 
+    function getAvatarHtml(user, imageClassName) {
+      const avatarUrl = String(user?.__avatar || getAvatarUrl(user)).trim()
+      const name = String(user?.__name || getDisplayName(user)).trim()
+
+      if (avatarUrl) {
+        return `
+          <img
+            src="${escapeHtml(avatarUrl)}"
+            alt="${escapeHtml(name)}"
+            class="${escapeHtml(imageClassName)}"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+            onerror="this.remove(); this.parentElement.textContent='${escapeHtml(getAvatarLetter(name))}'"
+          />
+        `
+      }
+
+      return escapeHtml(getAvatarLetter(name))
+    }
+
     function makeUserId(boardId, user, index) {
       const login = getLogin(user)
       const name = getDisplayName(user)
@@ -961,6 +1017,7 @@
           __login: getLogin(user),
           __value: getValue(user),
           __number: toNumber(getValue(user)),
+          __avatar: getAvatarUrl(user),
         }))
         .sort((a, b) => b.__number - a.__number)
         .map((user, index) => ({
@@ -1336,7 +1393,7 @@
           <div class="tnx-lb-row-rank">#${user.__rank}</div>
 
           <div class="tnx-lb-user">
-            <div class="tnx-lb-avatar">${escapeHtml(getAvatarLetter(name))}</div>
+            <div class="tnx-lb-avatar">${getAvatarHtml(user, 'tnx-lb-avatar-img')}</div>
 
             <div class="tnx-lb-user-main">
               <p class="tnx-lb-user-name" title="${escapeHtml(name)}">${escapeHtml(name)}</p>
@@ -1453,8 +1510,6 @@
         return
       }
 
-      const medals = ['tabler:crown', 'tabler:medal-2', 'tabler:medal']
-
       container.innerHTML = users
         .slice(0, 3)
         .map((user, index) => {
@@ -1475,7 +1530,7 @@
               <span class="tnx-lb-rank">#${user.__rank}</span>
 
               <div class="tnx-lb-medal">
-                <iconify-icon icon="${medals[index] || 'tabler:user'}"></iconify-icon>
+                ${getAvatarHtml(user, 'tnx-lb-top-avatar-img')}
               </div>
 
               <p class="tnx-lb-top-name" title="${escapeHtml(name)}">${escapeHtml(name)}</p>
@@ -1578,7 +1633,10 @@
       syncShareCardModeUI()
       setCompareAccordionOpen(false)
 
-      if (elements.modalUserAvatar) elements.modalUserAvatar.textContent = getAvatarLetter(user.__name)
+      if (elements.modalUserAvatar) {
+        elements.modalUserAvatar.innerHTML = getAvatarHtml(user, 'tnx-lb-modal-avatar-img')
+      }
+
       if (elements.modalUserName) elements.modalUserName.textContent = user.__name
 
       if (elements.modalUserLogin) {
@@ -2167,8 +2225,9 @@
         }
 
         if (target.closest('[data-open-user]') && event.key === 'Enter') {
-          const userId = target.closest('[data-open-user]').getAttribute('data-open-user')
-          const boardId = target.closest('[data-open-user]').getAttribute('data-board-id') || activeBoard
+          const trigger = target.closest('[data-open-user]')
+          const userId = trigger.getAttribute('data-open-user')
+          const boardId = trigger.getAttribute('data-board-id') || activeBoard
           const user = findUserById(userId, boardId)
 
           if (user) {
