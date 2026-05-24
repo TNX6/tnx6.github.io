@@ -770,23 +770,41 @@
   }
 
   .tnx-lb-share-wrap {
-    display: none;
+    display: none !important;
   }
 
-  .tnx-lb-compare-panel {
-    padding: 0.85rem;
-    overflow: hidden;
+  .tnx-lb-original-compare-hidden {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
   }
 
-  .tnx-lb-compare-toggle {
+  #leaderboard-user-modal .tnx-lb-original-compare-hidden {
+    display: none !important;
+  }
+
+  .tnx-lb-compare-accordion-root {
+    display: block;
     width: 100%;
-    border: 1px solid rgba(194, 146, 0, 0.2);
-    border-radius: 1.1rem;
+  }
+
+  .tnx-lb-compare-strip {
+    width: 100%;
+    min-height: 58px;
+    border-radius: 1rem;
+    border: 1px solid rgba(194, 146, 0, 0.24);
     background:
-      radial-gradient(circle at top right, rgba(255, 218, 106, 0.08), transparent 42%),
-      rgba(0, 0, 0, 0.26);
+      radial-gradient(circle at top right, rgba(255, 218, 106, 0.1), transparent 42%),
+      rgba(0, 0, 0, 0.28);
     color: #fff;
-    padding: 0.9rem 1rem;
+    padding: 0.85rem 1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -796,84 +814,88 @@
     transition:
       border-color 0.2s ease,
       background 0.2s ease,
-      box-shadow 0.2s ease;
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
   }
 
-  .tnx-lb-compare-toggle:hover,
-  .tnx-lb-compare-toggle:focus-visible {
+  .tnx-lb-compare-strip:hover,
+  .tnx-lb-compare-strip:focus-visible {
     outline: none;
-    border-color: rgba(255, 218, 106, 0.42);
+    transform: translateY(-1px);
+    border-color: rgba(255, 218, 106, 0.45);
     background:
-      radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 42%),
-      rgba(0, 0, 0, 0.32);
-    box-shadow: 0 0 20px rgba(255, 218, 106, 0.08);
+      radial-gradient(circle at top right, rgba(255, 218, 106, 0.15), transparent 42%),
+      rgba(0, 0, 0, 0.34);
+    box-shadow: 0 0 20px rgba(255, 218, 106, 0.09);
   }
 
-  .tnx-lb-compare-toggle-main {
+  .tnx-lb-compare-strip-text {
     display: grid;
-    gap: 0.2rem;
+    gap: 0.15rem;
     min-width: 0;
   }
 
-  .tnx-lb-compare-toggle-main strong {
+  .tnx-lb-compare-strip-text strong {
     color: #ffda6a;
     font-size: 0.95rem;
     font-weight: 950;
     line-height: 1.4;
   }
 
-  .tnx-lb-compare-toggle-main span {
+  .tnx-lb-compare-strip-text small {
     color: rgb(156, 163, 175);
     font-size: 0.78rem;
     font-weight: 800;
-    line-height: 1.6;
+    line-height: 1.5;
   }
 
-  .tnx-lb-compare-toggle-icon {
+  .tnx-lb-compare-strip-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.35rem;
-    height: 2.35rem;
-    flex: 0 0 2.35rem;
-    border-radius: 0.85rem;
+    width: 2.2rem;
+    height: 2.2rem;
+    flex: 0 0 2.2rem;
+    border-radius: 0.8rem;
     border: 1px solid rgba(194, 146, 0, 0.28);
     background: rgba(255, 218, 106, 0.07);
     color: #ffda6a;
     transition: transform 0.22s ease;
   }
 
-  .tnx-lb-compare-toggle-icon iconify-icon {
-    font-size: 1.25rem;
+  .tnx-lb-compare-strip-icon iconify-icon {
+    font-size: 1.2rem;
   }
 
-  .tnx-lb-compare-panel.is-open .tnx-lb-compare-toggle-icon {
+  .tnx-lb-compare-accordion-root.is-open .tnx-lb-compare-strip-icon {
     transform: rotate(180deg);
   }
 
-  .tnx-lb-compare-body {
-    overflow: hidden !important;
+  .tnx-lb-compare-accordion-body {
     display: none !important;
-    max-height: 0 !important;
     opacity: 0 !important;
+    max-height: 0 !important;
     margin-top: 0 !important;
+    overflow: hidden !important;
     pointer-events: none !important;
   }
 
-  .tnx-lb-compare-panel.is-open .tnx-lb-compare-body {
+  .tnx-lb-compare-accordion-root.is-open .tnx-lb-compare-accordion-body {
     display: grid !important;
-    max-height: none !important;
+    gap: 0.8rem;
     opacity: 1 !important;
-    margin-top: 0.9rem !important;
+    max-height: 900px !important;
+    margin-top: 0.85rem !important;
     pointer-events: auto !important;
   }
 
-  #leaderboard-user-modal .tnx-lb-panel:has(#compare-target-input):not(.is-open) .tnx-lb-compare-box {
-    display: none !important;
-  }
-
-  #leaderboard-user-modal .tnx-lb-panel:has(#compare-target-input).is-open .tnx-lb-compare-box {
-    display: grid !important;
+  .tnx-lb-compare-box-moved {
+    display: grid;
+    gap: 0.8rem;
+    border-radius: 1.15rem;
+    border: 1px solid rgba(194, 146, 0, 0.16);
+    background: rgba(255, 255, 255, 0.02);
+    padding: 1rem;
   }
 
   .tnx-lb-compare-box {
@@ -1509,89 +1531,131 @@
     function getCompareParts() {
       const input = document.getElementById('compare-target-input')
       const compareBox = input?.closest('.tnx-lb-compare-box')
-      const comparePanel = input?.closest('.tnx-lb-panel')
+      const movedBody = document.getElementById('tnx-compare-accordion-body')
+      const originalPanel =
+        document.querySelector('[data-tnx-original-compare-panel="true"]') ||
+        input?.closest('.tnx-lb-panel')
 
       return {
         input,
         compareBox,
-        comparePanel,
+        movedBody,
+        originalPanel,
       }
     }
 
     function ensureCompareAccordion() {
-      const { input, compareBox, comparePanel } = getCompareParts()
+      const { input, compareBox, originalPanel } = getCompareParts()
 
-      if (!input || !compareBox || !comparePanel) return
+      if (!input || !compareBox || !originalPanel) return
 
-      comparePanel.classList.add('tnx-lb-compare-panel')
-      compareBox.classList.add('tnx-lb-compare-body')
-      compareBox.id = 'compare-accordion-body'
+      const existingAccordion = document.getElementById('tnx-compare-accordion-root')
 
-      if (comparePanel.dataset.compareAccordionReady !== 'true') {
-        comparePanel.dataset.compareAccordionReady = 'true'
+      if (existingAccordion) {
+        originalPanel.classList.add('tnx-lb-original-compare-hidden')
+        originalPanel.style.setProperty('display', 'none', 'important')
+        originalPanel.setAttribute('data-tnx-original-compare-panel', 'true')
+        setCompareAccordionOpen(false)
+        return
+      }
 
-        const oldTitle = comparePanel.querySelector('h4')
-        const titleText = oldTitle?.textContent?.trim() || 'قارن هذا العضو مع شخص ثاني'
+      const titleEl = originalPanel.querySelector('h4')
+      const titleText = titleEl?.textContent?.trim() || 'قارن هذا العضو مع شخص ثاني'
 
-        const toggle = document.createElement('button')
-        toggle.type = 'button'
-        toggle.className = 'tnx-lb-compare-toggle'
-        toggle.setAttribute('aria-expanded', 'false')
-        toggle.setAttribute('aria-controls', 'compare-accordion-body')
-        toggle.innerHTML = `
-          <span class="tnx-lb-compare-toggle-main">
+      const accordion = document.createElement('div')
+      accordion.id = 'tnx-compare-accordion-root'
+      accordion.className = 'tnx-lb-compare-accordion-root'
+
+      accordion.innerHTML = `
+        <button
+          type="button"
+          id="tnx-compare-accordion-toggle"
+          class="tnx-lb-compare-strip"
+          aria-expanded="false"
+          aria-controls="tnx-compare-accordion-body"
+        >
+          <span class="tnx-lb-compare-strip-text">
             <strong>${escapeHtml(titleText)}</strong>
-            <span>اضغط هنا لفتح المقارنة بين عضوين.</span>
+            <small>اضغط لفتح المقارنة</small>
           </span>
 
-          <span class="tnx-lb-compare-toggle-icon" aria-hidden="true">
+          <span class="tnx-lb-compare-strip-icon" aria-hidden="true">
             <iconify-icon icon="tabler:chevron-down"></iconify-icon>
           </span>
-        `
+        </button>
 
-        if (oldTitle) {
-          oldTitle.replaceWith(toggle)
-        } else {
-          comparePanel.insertBefore(toggle, comparePanel.firstChild)
-        }
+        <div id="tnx-compare-accordion-body" class="tnx-lb-compare-accordion-body"></div>
+      `
 
-        addListener(toggle, 'click', () => {
-          const isOpen = comparePanel.classList.contains('is-open')
-          setCompareAccordionOpen(!isOpen)
-        })
-      }
+      originalPanel.parentElement.insertBefore(accordion, originalPanel)
+
+      const body = accordion.querySelector('#tnx-compare-accordion-body')
+      body.appendChild(compareBox)
+
+      compareBox.classList.remove('tnx-lb-compare-body')
+      compareBox.classList.add('tnx-lb-compare-box-moved')
+
+      originalPanel.setAttribute('data-tnx-original-compare-panel', 'true')
+      originalPanel.classList.add('tnx-lb-original-compare-hidden')
+      originalPanel.style.setProperty('display', 'none', 'important')
+      originalPanel.style.setProperty('visibility', 'hidden', 'important')
+      originalPanel.style.setProperty('height', '0', 'important')
+      originalPanel.style.setProperty('max-height', '0', 'important')
+      originalPanel.style.setProperty('overflow', 'hidden', 'important')
+      originalPanel.style.setProperty('padding', '0', 'important')
+      originalPanel.style.setProperty('margin', '0', 'important')
+      originalPanel.style.setProperty('border', '0', 'important')
+
+      const toggle = accordion.querySelector('#tnx-compare-accordion-toggle')
+
+      addListener(toggle, 'click', () => {
+        const isOpen = accordion.classList.contains('is-open')
+        setCompareAccordionOpen(!isOpen)
+      })
 
       setCompareAccordionOpen(false)
     }
 
     function setCompareAccordionOpen(open) {
-      const { input, compareBox, comparePanel } = getCompareParts()
+      const accordion = document.getElementById('tnx-compare-accordion-root')
+      const body = document.getElementById('tnx-compare-accordion-body')
+      const toggle = document.getElementById('tnx-compare-accordion-toggle')
+      const originalPanel = document.querySelector('[data-tnx-original-compare-panel="true"]')
 
-      if (!input || !compareBox || !comparePanel) return
+      if (originalPanel) {
+        originalPanel.classList.add('tnx-lb-original-compare-hidden')
+        originalPanel.style.setProperty('display', 'none', 'important')
+        originalPanel.style.setProperty('visibility', 'hidden', 'important')
+        originalPanel.style.setProperty('height', '0', 'important')
+        originalPanel.style.setProperty('max-height', '0', 'important')
+        originalPanel.style.setProperty('overflow', 'hidden', 'important')
+        originalPanel.style.setProperty('padding', '0', 'important')
+        originalPanel.style.setProperty('margin', '0', 'important')
+        originalPanel.style.setProperty('border', '0', 'important')
+      }
 
-      const toggle = comparePanel.querySelector('.tnx-lb-compare-toggle')
+      if (!accordion || !body) return
 
-      comparePanel.classList.toggle('is-open', open)
-      comparePanel.classList.toggle('is-closed', !open)
+      accordion.classList.toggle('is-open', open)
 
       if (toggle) {
         toggle.setAttribute('aria-expanded', String(open))
       }
 
       if (open) {
-        compareBox.style.setProperty('display', 'grid', 'important')
-        compareBox.style.setProperty('opacity', '1', 'important')
-        compareBox.style.setProperty('max-height', 'none', 'important')
-        compareBox.style.setProperty('margin-top', '0.9rem', 'important')
-        compareBox.style.setProperty('pointer-events', 'auto', 'important')
+        body.style.setProperty('display', 'grid', 'important')
+        body.style.setProperty('opacity', '1', 'important')
+        body.style.setProperty('max-height', '900px', 'important')
+        body.style.setProperty('margin-top', '0.85rem', 'important')
+        body.style.setProperty('pointer-events', 'auto', 'important')
         return
       }
 
-      compareBox.style.setProperty('display', 'none', 'important')
-      compareBox.style.setProperty('opacity', '0', 'important')
-      compareBox.style.setProperty('max-height', '0', 'important')
-      compareBox.style.setProperty('margin-top', '0', 'important')
-      compareBox.style.setProperty('pointer-events', 'none', 'important')
+      body.style.setProperty('display', 'none', 'important')
+      body.style.setProperty('opacity', '0', 'important')
+      body.style.setProperty('max-height', '0', 'important')
+      body.style.setProperty('margin-top', '0', 'important')
+      body.style.setProperty('pointer-events', 'none', 'important')
     }
 
     function initScrollReveal() {
@@ -2023,9 +2087,10 @@
       window.setTimeout(forceCenterSharePreview, 50)
       window.setTimeout(forceCenterSharePreview, 250)
       window.setTimeout(forceCenterSharePreview, 500)
+
       window.setTimeout(() => setCompareAccordionOpen(false), 0)
-      window.setTimeout(() => setCompareAccordionOpen(false), 100)
-      window.setTimeout(() => setCompareAccordionOpen(false), 300)
+      window.setTimeout(() => setCompareAccordionOpen(false), 50)
+      window.setTimeout(() => setCompareAccordionOpen(false), 250)
     }
 
     function closeUserModal() {
