@@ -1,114 +1,533 @@
-<script client:load>
-function initLeaderboards() {
-  const perPage = 20
-  let allData = { points: [], watchtime: [] }
-  let filteredData = { points: [], watchtime: [] }
-  let indexes = { points: 0, watchtime: 0 }
+<script is:inline>
+  ;(() => {
+    const cleanupKey = '__tnxLeaderboardsCleanup'
 
-  const containers = {
-    points: document.getElementById('points-list'),
-    watchtime: document.getElementById('watchtime-list'),
-  }
-  const buttons = {
-    points: document.getElementById('loadMorePoints'),
-    watchtime: document.getElementById('loadMoreWatchtime'),
-  }
-  const lessButtons = {
-    points: document.getElementById('showLessPoints'),
-    watchtime: document.getElementById('showLessWatchtime'),
-  }
+    if (window[cleanupKey]) {
+      window[cleanupKey]()
+    }
 
-  function renderSegment(id) {
-    const container = containers[id]
-    const button = buttons[id]
-    const lessButton = lessButtons[id]
-    const users = filteredData[id]
-    const start = indexes[id]
-    const end = start + perPage
-    const slice = users.slice(start, end)
+    const perPage = 20
 
-    slice.forEach((user, i) => {
-      const rank = start + i + 1
-      const showLogin =
-        user.UserName.toLowerCase() !== user.UserLogin.toLowerCase()
-          ? ` <span class='text-gray-400 text-sm'>(${user.UserLogin})</span>`
-          : ''
-      const el = document.createElement('div')
-      el.className =
-        'flex justify-between items-center bg-black/40 p-4 rounded-xl border border-[#c6a44f]/30 backdrop-blur-sm'
-      el.innerHTML = `
-        <div class="flex items-center gap-3 text-gray-200">
-          <span class="text-[#f7e6ac] font-bold w-8 text-right">${rank}.</span>
-          <span class="font-semibold">${user.UserName}</span>${showLogin}
-        </div>
-        <span class="text-[#f7e6ac] font-bold">${user.Value}</span>
-      `
-      container.appendChild(el)
-    })
+    const boardConfig = {
+      points: {
+        title: 'النقاط',
+        heading: 'ترتيب النقاط',
+        subtitle: 'أكثر الأعضاء نقاطًا',
+        description: 'أكثر الأعضاء نقاطًا في المجتمع.',
+        icon: 'tabler:coins',
+        unit: 'نقطة',
+        emptyTitle: 'ما فيه بيانات نقاط',
+        emptyText: 'تأكد أن ملف leaderboard_data.json يحتوي على points.',
+      },
+      gold: {
+        title: 'الذهب',
+        heading: 'ترتيب الذهب',
+        subtitle: 'ترتيب الذهب',
+        description: 'أكثر الأعضاء امتلاكًا للذهب.',
+        icon: 'tabler:coin',
+        unit: 'ذهب',
+        emptyTitle: 'الذهب غير مفعل حاليًا',
+        emptyText: 'القسم جاهز، وبيظهر الترتيب إذا بدأت تسجل بيانات gold.',
+      },
+      watchtime: {
+        title: 'المشاهدة',
+        heading: 'ترتيب المشاهدة',
+        subtitle: 'أكثر الأعضاء مشاهدة',
+        description: 'أكثر الأعضاء حضورًا ومشاهدة.',
+        icon: 'tabler:clock-hour-4',
+        unit: '',
+        emptyTitle: 'ما فيه بيانات مشاهدة',
+        emptyText: 'تأكد أن ملف leaderboard_data.json يحتوي على watchtime.',
+      },
+    }
 
-    indexes[id] += perPage
-    button.style.display = indexes[id] >= users.length ? 'none' : 'block'
-    lessButton.style.display = indexes[id] > perPage ? 'block' : 'none'
-  }
+    let activeBoard = 'points'
+    let allData = {
+      points: [],
+      gold: [],
+      watchtime: [],
+    }
+    let filteredData = {
+      points: [],
+      gold: [],
+      watchtime: [],
+    }
+    let indexes = {
+      points: 0,
+      gold: 0,
+      watchtime: 0,
+    }
 
-  function removeSegment(id) {
-    const container = containers[id]
-    const button = buttons[id]
-    const lessButton = lessButtons[id]
-    if (indexes[id] > perPage) {
-      indexes[id] -= perPage
-      for (let i = 0; i < perPage && container.children.length > perPage; i++) {
-        container.removeChild(container.lastChild)
+    const listeners = []
+
+    function addListener(target, event, handler, options) {
+      if (!target) return
+
+      target.addEventListener(event, handler, options)
+      listeners.push(() => target.removeEventListener(event, handler, options))
+    }
+
+    window[cleanupKey] = () => {
+      listeners.forEach((cleanup) => cleanup())
+      listeners.length = 0
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;')
+    }
+
+    function toNumber(value) {
+      if (typeof value === 'number') return Number.isFinite(value) ? value : 0
+
+      const cleaned = String(value ?? '')
+        .replaceAll(',', '')
+        .replace(/[^\d.-]/g, '')
+
+      const number = Number(cleaned)
+
+      return Number.isFinite(number) ? number : 0
+    }
+
+    function formatNumber(value) {
+      const number = toNumber(value)
+
+      return new Intl.NumberFormat('en-US').format(number)
+    }
+
+    function isNumericValue(value) {
+      if (typeof value === 'number') return Number.isFinite(value)
+
+      const raw = String(value ?? '').trim()
+      if (!raw) return false
+
+      return /^-?[\d,]+(\.\d+)?$/.test(raw)
+    }
+
+    function getDisplayName(user) {
+      return String(user?.UserName || user?.UserLogin || user?.username || user?.name || 'Unknown').trim()
+    }
+
+    function getLogin(user) {
+      return String(user?.UserLogin || user?.login || '').trim()
+    }
+
+    function getValue(user) {
+      return user?.Value ?? user?.value ?? user?.points ?? user?.score ?? 0
+    }
+
+    function getAvatarLetter(name) {
+      const clean = String(name || '').trim()
+      return clean ? clean.charAt(0).toUpperCase() : '?'
+    }
+
+    function formatValue(boardId, value) {
+      const config = boardConfig[boardId]
+      const raw = String(value ?? '').trim()
+
+      if (boardId === 'watchtime') {
+        return raw || '0'
+      }
+
+      if (isNumericValue(value)) {
+        return `${formatNumber(value)} ${config.unit}`.trim()
+      }
+
+      if (!raw) {
+        return `0 ${config.unit}`.trim()
+      }
+
+      return `${raw} ${config.unit}`.trim()
+    }
+
+    function normalizeBoardData(data, boardId) {
+      const list = Array.isArray(data?.[boardId]) ? data[boardId] : []
+
+      return list
+        .filter((user) => user && (user.UserName || user.UserLogin || user.username || user.name))
+        .map((user) => ({
+          ...user,
+          __name: getDisplayName(user),
+          __login: getLogin(user),
+          __value: getValue(user),
+          __number: toNumber(getValue(user)),
+        }))
+        .sort((a, b) => b.__number - a.__number)
+    }
+
+    function getElements() {
+      return {
+        tabs: Array.from(document.querySelectorAll('[data-board-tab]')),
+        panels: Array.from(document.querySelectorAll('[data-board-panel]')),
+        search: document.getElementById('leaderboard-search'),
+        boardHeading: document.getElementById('board-heading'),
+        boardDescription: document.getElementById('board-description'),
+        boardCount: document.getElementById('board-count'),
+        activeBoardTitle: document.getElementById('active-board-title'),
+        activeBoardSubtitle: document.getElementById('active-board-subtitle'),
+        activeBoardPill: document.getElementById('active-board-pill'),
+        activeBoardIcon: document.getElementById('active-board-icon'),
+        topThreeList: document.getElementById('top-three-list'),
+        containers: {
+          points: document.getElementById('points-list'),
+          gold: document.getElementById('gold-list'),
+          watchtime: document.getElementById('watchtime-list'),
+        },
+        loadMoreButtons: {
+          points: document.querySelector('[data-load-more="points"]'),
+          gold: document.querySelector('[data-load-more="gold"]'),
+          watchtime: document.querySelector('[data-load-more="watchtime"]'),
+        },
+        showLessButtons: {
+          points: document.querySelector('[data-show-less="points"]'),
+          gold: document.querySelector('[data-show-less="gold"]'),
+          watchtime: document.querySelector('[data-show-less="watchtime"]'),
+        },
       }
     }
-    button.style.display = 'block'
-    lessButton.style.display = indexes[id] > perPage ? 'block' : 'none'
-  }
 
-  function resetAndRender() {
-    for (const key in containers) {
-      containers[key].innerHTML = ''
-      indexes[key] = 0
-      buttons[key].style.display = 'block'
-      lessButtons[key].style.display = 'none'
-      renderSegment(key)
+    function renderEmptyState(container, boardId, customTitle, customText) {
+      const config = boardConfig[boardId]
+
+      container.innerHTML = `
+        <div class="tnx-lb-empty">
+          <iconify-icon icon="tabler:database-off"></iconify-icon>
+          <strong>${escapeHtml(customTitle || config.emptyTitle)}</strong>
+          <span>${escapeHtml(customText || config.emptyText)}</span>
+        </div>
+      `
     }
-  }
 
-  function handleSearch(value) {
-    const q = value.toLowerCase()
-    filteredData.points = allData.points.filter(
-      u =>
-        u.UserName.toLowerCase().includes(q) ||
-        u.UserLogin.toLowerCase().includes(q)
-    )
-    filteredData.watchtime = allData.watchtime.filter(
-      u =>
-        u.UserName.toLowerCase().includes(q) ||
-        u.UserLogin.toLowerCase().includes(q)
-    )
-    resetAndRender()
-  }
+    function renderRow(user, boardId, rank) {
+      const name = user.__name
+      const login = user.__login
+      const showLogin = login && login.toLowerCase() !== name.toLowerCase()
+      const value = formatValue(boardId, user.__value)
 
-  buttons.points?.addEventListener('click', () => renderSegment('points'))
-  buttons.watchtime?.addEventListener('click', () => renderSegment('watchtime'))
-  lessButtons.points?.addEventListener('click', () => removeSegment('points'))
-  lessButtons.watchtime?.addEventListener('click', () => removeSegment('watchtime'))
-  document.getElementById('search')?.addEventListener('input', e => handleSearch(e.target.value))
+      return `
+        <article class="tnx-lb-row">
+          <div class="tnx-lb-row-rank">#${rank}</div>
 
-  fetch('/api/leaderboard_data.json', { cache: 'no-store' })
-    .then(res => res.json())
-    .then(data => {
-      allData = data
-      filteredData = structuredClone(allData)
-      resetAndRender()
+          <div class="tnx-lb-user">
+            <div class="tnx-lb-avatar">${escapeHtml(getAvatarLetter(name))}</div>
+
+            <div class="tnx-lb-user-main">
+              <p class="tnx-lb-user-name" title="${escapeHtml(name)}">${escapeHtml(name)}</p>
+              ${
+                showLogin
+                  ? `<p class="tnx-lb-user-login" title="${escapeHtml(login)}">@${escapeHtml(login)}</p>`
+                  : `<p class="tnx-lb-user-login">TNX6</p>`
+              }
+            </div>
+          </div>
+
+          <div class="tnx-lb-row-value">${escapeHtml(value)}</div>
+        </article>
+      `
+    }
+
+    function renderSegment(boardId) {
+      const elements = getElements()
+      const container = elements.containers[boardId]
+      const loadMoreButton = elements.loadMoreButtons[boardId]
+      const showLessButton = elements.showLessButtons[boardId]
+      const users = filteredData[boardId] || []
+
+      if (!container) return
+
+      if (users.length === 0) {
+        renderEmptyState(container, boardId)
+        if (loadMoreButton) loadMoreButton.classList.add('hidden')
+        if (showLessButton) showLessButton.classList.add('hidden')
+        return
+      }
+
+      const start = indexes[boardId]
+      const end = start + perPage
+      const slice = users.slice(start, end)
+
+      const html = slice
+        .map((user, index) => renderRow(user, boardId, start + index + 1))
+        .join('')
+
+      container.insertAdjacentHTML('beforeend', html)
+
+      indexes[boardId] += slice.length
+
+      if (loadMoreButton) {
+        loadMoreButton.classList.toggle('hidden', indexes[boardId] >= users.length)
+      }
+
+      if (showLessButton) {
+        showLessButton.classList.toggle('hidden', indexes[boardId] <= perPage)
+      }
+    }
+
+    function resetBoard(boardId) {
+      const elements = getElements()
+      const container = elements.containers[boardId]
+      const loadMoreButton = elements.loadMoreButtons[boardId]
+      const showLessButton = elements.showLessButtons[boardId]
+
+      if (!container) return
+
+      container.innerHTML = ''
+      indexes[boardId] = 0
+
+      if (loadMoreButton) loadMoreButton.classList.remove('hidden')
+      if (showLessButton) showLessButton.classList.add('hidden')
+
+      renderSegment(boardId)
+    }
+
+    function resetAllBoards() {
+      Object.keys(boardConfig).forEach((boardId) => resetBoard(boardId))
+      updateBoardMeta()
+      renderTopThree()
+    }
+
+    function showLess(boardId) {
+      const elements = getElements()
+      const container = elements.containers[boardId]
+      const users = filteredData[boardId] || []
+      const loadMoreButton = elements.loadMoreButtons[boardId]
+      const showLessButton = elements.showLessButtons[boardId]
+
+      if (!container || users.length === 0) return
+
+      const newIndex = Math.max(perPage, indexes[boardId] - perPage)
+      indexes[boardId] = newIndex
+
+      container.innerHTML = users
+        .slice(0, newIndex)
+        .map((user, index) => renderRow(user, boardId, index + 1))
+        .join('')
+
+      if (loadMoreButton) {
+        loadMoreButton.classList.toggle('hidden', indexes[boardId] >= users.length)
+      }
+
+      if (showLessButton) {
+        showLessButton.classList.toggle('hidden', indexes[boardId] <= perPage)
+      }
+    }
+
+    function setActiveBoard(boardId) {
+      if (!boardConfig[boardId]) return
+
+      activeBoard = boardId
+
+      const elements = getElements()
+
+      elements.tabs.forEach((tab) => {
+        const isActive = tab.dataset.boardTab === boardId
+        tab.classList.toggle('is-active', isActive)
+        tab.setAttribute('aria-selected', String(isActive))
+      })
+
+      elements.panels.forEach((panel) => {
+        panel.classList.toggle('is-active', panel.dataset.boardPanel === boardId)
+      })
+
+      updateBoardMeta()
+      renderTopThree()
+    }
+
+    function updateBoardMeta() {
+      const elements = getElements()
+      const config = boardConfig[activeBoard]
+      const count = filteredData[activeBoard]?.length || 0
+
+      if (elements.boardHeading) {
+        elements.boardHeading.textContent = config.heading
+      }
+
+      if (elements.boardDescription) {
+        elements.boardDescription.textContent = config.description
+      }
+
+      if (elements.boardCount) {
+        elements.boardCount.textContent = formatNumber(count)
+      }
+
+      if (elements.activeBoardTitle) {
+        elements.activeBoardTitle.textContent = config.title
+      }
+
+      if (elements.activeBoardSubtitle) {
+        elements.activeBoardSubtitle.textContent = config.subtitle
+      }
+
+      if (elements.activeBoardPill) {
+        elements.activeBoardPill.textContent = config.heading
+      }
+
+      if (elements.activeBoardIcon) {
+        elements.activeBoardIcon.setAttribute('icon', config.icon)
+      }
+    }
+
+    function renderTopThree() {
+      const elements = getElements()
+      const container = elements.topThreeList
+      const users = filteredData[activeBoard] || []
+
+      if (!container) return
+
+      if (users.length === 0) {
+        const config = boardConfig[activeBoard]
+
+        container.innerHTML = `
+          <article class="tnx-lb-top-card tnx-lb-top-card--first">
+            <span class="tnx-lb-rank">TOP</span>
+            <div class="tnx-lb-medal">
+              <iconify-icon icon="tabler:trophy"></iconify-icon>
+            </div>
+            <p class="tnx-lb-top-name">${escapeHtml(config.emptyTitle)}</p>
+            <p class="tnx-lb-top-value">${escapeHtml(config.emptyText)}</p>
+          </article>
+        `
+        return
+      }
+
+      const medals = ['tabler:crown', 'tabler:medal-2', 'tabler:medal']
+
+      container.innerHTML = users
+        .slice(0, 3)
+        .map((user, index) => {
+          const rank = index + 1
+          const name = user.__name
+          const login = user.__login
+          const showLogin = login && login.toLowerCase() !== name.toLowerCase()
+          const firstClass = index === 0 ? ' tnx-lb-top-card--first' : ''
+
+          return `
+            <article class="tnx-lb-top-card${firstClass}">
+              <span class="tnx-lb-rank">#${rank}</span>
+              <div class="tnx-lb-medal">
+                <iconify-icon icon="${medals[index]}"></iconify-icon>
+              </div>
+              <p class="tnx-lb-top-name" title="${escapeHtml(name)}">${escapeHtml(name)}</p>
+              ${
+                showLogin
+                  ? `<span class="tnx-lb-top-login">@${escapeHtml(login)}</span>`
+                  : `<span class="tnx-lb-top-login">TNX6</span>`
+              }
+              <p class="tnx-lb-top-value">${escapeHtml(formatValue(activeBoard, user.__value))}</p>
+            </article>
+          `
+        })
+        .join('')
+    }
+
+    function handleSearch(query) {
+      const q = String(query || '').trim().toLowerCase()
+
+      Object.keys(boardConfig).forEach((boardId) => {
+        filteredData[boardId] = allData[boardId].filter((user) => {
+          const name = String(user.__name || '').toLowerCase()
+          const login = String(user.__login || '').toLowerCase()
+
+          return name.includes(q) || login.includes(q)
+        })
+      })
+
+      resetAllBoards()
+    }
+
+    async function loadData() {
+      const elements = getElements()
+
+      try {
+        const response = await fetch(`/api/leaderboard_data.json?site=${Date.now()}`, {
+          cache: 'no-store',
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to load leaderboard data')
+        }
+
+        const data = await response.json()
+
+        allData = {
+          points: normalizeBoardData(data, 'points'),
+          gold: normalizeBoardData(data, 'gold'),
+          watchtime: normalizeBoardData(data, 'watchtime'),
+        }
+
+        filteredData = {
+          points: [...allData.points],
+          gold: [...allData.gold],
+          watchtime: [...allData.watchtime],
+        }
+
+        resetAllBoards()
+        setActiveBoard(activeBoard)
+      } catch {
+        Object.keys(boardConfig).forEach((boardId) => {
+          const container = elements.containers[boardId]
+          if (!container) return
+
+          renderEmptyState(
+            container,
+            boardId,
+            'تعذر تحميل الترتيب',
+            'تأكد أن /api/leaderboard_data.json موجود ويرجع JSON صحيح.'
+          )
+        })
+
+        renderTopThree()
+      }
+    }
+
+    function bindEvents() {
+      const elements = getElements()
+
+      elements.tabs.forEach((tab) => {
+        addListener(tab, 'click', () => {
+          setActiveBoard(tab.dataset.boardTab)
+        })
+      })
+
+      Object.keys(boardConfig).forEach((boardId) => {
+        addListener(elements.loadMoreButtons[boardId], 'click', () => {
+          renderSegment(boardId)
+        })
+
+        addListener(elements.showLessButtons[boardId], 'click', () => {
+          showLess(boardId)
+        })
+      })
+
+      addListener(elements.search, 'input', (event) => {
+        handleSearch(event.target.value)
+      })
+    }
+
+    function initLeaderboards() {
+      bindEvents()
+      updateBoardMeta()
+      loadData()
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initLeaderboards, { once: true })
+    } else {
+      initLeaderboards()
+    }
+
+    document.addEventListener('astro:page-load', () => {
+      if (!document.querySelector('[data-board-tab]')) return
+
+      if (window[cleanupKey]) {
+        window[cleanupKey]()
+      }
+
+      initLeaderboards()
     })
-    .catch(err => console.error('Failed to load leaderboard data', err))
-}
-
-document.addEventListener('astro:page-load', () => {
-  requestAnimationFrame(() => {
-    initLeaderboards()
-  })
-})
+  })()
 </script>
