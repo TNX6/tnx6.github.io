@@ -295,12 +295,14 @@
         0 0 0 0 rgba(255, 218, 106, 0.20),
         0 0 18px rgba(255, 218, 106, 0.10);
     }
+
     50% {
       transform: scale(1.04);
       box-shadow:
         0 0 0 10px rgba(255, 218, 106, 0),
         0 0 28px rgba(255, 218, 106, 0.20);
     }
+
     100% {
       transform: scale(1);
       box-shadow:
@@ -384,10 +386,12 @@
       transform: scale(1);
       box-shadow: 0 0 0 0 rgba(255, 218, 106, 0.18);
     }
+
     50% {
       transform: scale(1.035);
       box-shadow: 0 0 0 10px rgba(255, 218, 106, 0);
     }
+
     100% {
       transform: scale(1);
       box-shadow: 0 0 0 0 rgba(255, 218, 106, 0);
@@ -653,89 +657,6 @@
     background: linear-gradient(180deg, rgba(255, 226, 132, 1), rgba(214, 162, 0, 1));
   }
 
-  .tnx-lb-compare-box {
-    display: grid;
-    gap: 0.8rem;
-  }
-
-  .tnx-lb-compare-controls {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.8rem;
-  }
-
-  .tnx-lb-compare-controls input {
-    width: 100%;
-    min-width: 0;
-    height: 52px;
-    border-radius: 1rem;
-    border: 1px solid rgba(194, 146, 0, 0.18);
-    background: rgba(0, 0, 0, 0.26);
-    color: #fff;
-    padding: 0 1rem;
-    font-size: 0.95rem;
-    font-weight: 800;
-    outline: none;
-  }
-
-  .tnx-lb-compare-controls input:focus {
-    border-color: rgba(255, 218, 106, 0.4);
-    box-shadow: 0 0 0 3px rgba(255, 218, 106, 0.08);
-  }
-
-  .tnx-lb-compare-result {
-    border-radius: 1rem;
-    border: 1px dashed rgba(194, 146, 0, 0.18);
-    background: rgba(0, 0, 0, 0.18);
-    padding: 1rem;
-    min-height: 76px;
-    color: rgb(156, 163, 175);
-    font-size: 0.92rem;
-    font-weight: 800;
-    line-height: 1.8;
-    text-align: center;
-  }
-
-  .tnx-lb-compare-grid {
-    display: grid;
-    grid-template-columns: 1fr minmax(160px, 220px) 1fr;
-    gap: 0.8rem;
-    align-items: stretch;
-  }
-
-  .tnx-lb-compare-card,
-  .tnx-lb-compare-diff {
-    border-radius: 1rem;
-    border: 1px solid rgba(194, 146, 0, 0.15);
-    background: rgba(255, 255, 255, 0.02);
-    padding: 1rem;
-    display: grid;
-    place-items: center;
-    text-align: center;
-  }
-
-  .tnx-lb-compare-card strong,
-  .tnx-lb-compare-diff strong {
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 950;
-  }
-
-  .tnx-lb-compare-card span,
-  .tnx-lb-compare-diff span {
-    color: #ffda6a;
-    font-size: 0.9rem;
-    font-weight: 900;
-    margin-top: 0.3rem;
-  }
-
-  .tnx-lb-compare-card small {
-    color: rgb(148, 163, 184);
-    font-size: 0.8rem;
-    font-weight: 800;
-    margin-top: 0.35rem;
-  }
-
   .tnx-lb-card-mode-control {
     border-radius: 1.3rem;
     border: 1px solid rgba(194, 146, 0, 0.18);
@@ -852,7 +773,187 @@
     display: none;
   }
 
-  /* هذا الجزء يجبر معاينة البطاقة أنها تكون بالنص داخل العمود */
+  /* Compare accordion */
+  .tnx-lb-compare-panel {
+    padding: 0.85rem;
+    overflow: hidden;
+  }
+
+  .tnx-lb-compare-toggle {
+    width: 100%;
+    border: 1px solid rgba(194, 146, 0, 0.2);
+    border-radius: 1.1rem;
+    background:
+      radial-gradient(circle at top right, rgba(255, 218, 106, 0.08), transparent 42%),
+      rgba(0, 0, 0, 0.26);
+    color: #fff;
+    padding: 0.9rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    text-align: right;
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .tnx-lb-compare-toggle:hover,
+  .tnx-lb-compare-toggle:focus-visible {
+    outline: none;
+    border-color: rgba(255, 218, 106, 0.42);
+    background:
+      radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 42%),
+      rgba(0, 0, 0, 0.32);
+    box-shadow: 0 0 20px rgba(255, 218, 106, 0.08);
+  }
+
+  .tnx-lb-compare-toggle-main {
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+
+  .tnx-lb-compare-toggle-main strong {
+    color: #ffda6a;
+    font-size: 0.95rem;
+    font-weight: 950;
+    line-height: 1.4;
+  }
+
+  .tnx-lb-compare-toggle-main span {
+    color: rgb(156, 163, 175);
+    font-size: 0.78rem;
+    font-weight: 800;
+    line-height: 1.6;
+  }
+
+  .tnx-lb-compare-toggle-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.35rem;
+    height: 2.35rem;
+    flex: 0 0 2.35rem;
+    border-radius: 0.85rem;
+    border: 1px solid rgba(194, 146, 0, 0.28);
+    background: rgba(255, 218, 106, 0.07);
+    color: #ffda6a;
+    transition: transform 0.22s ease;
+  }
+
+  .tnx-lb-compare-toggle-icon iconify-icon {
+    font-size: 1.25rem;
+  }
+
+  .tnx-lb-compare-body {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    pointer-events: none;
+    transition:
+      max-height 0.28s ease,
+      opacity 0.22s ease,
+      margin-top 0.22s ease;
+  }
+
+  .tnx-lb-compare-panel.is-open .tnx-lb-compare-body {
+    max-height: 680px;
+    opacity: 1;
+    margin-top: 0.9rem;
+    pointer-events: auto;
+  }
+
+  .tnx-lb-compare-panel.is-open .tnx-lb-compare-toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .tnx-lb-compare-box {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .tnx-lb-compare-controls {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.8rem;
+  }
+
+  .tnx-lb-compare-controls input {
+    width: 100%;
+    min-width: 0;
+    height: 52px;
+    border-radius: 1rem;
+    border: 1px solid rgba(194, 146, 0, 0.18);
+    background: rgba(0, 0, 0, 0.26);
+    color: #fff;
+    padding: 0 1rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+    outline: none;
+  }
+
+  .tnx-lb-compare-controls input:focus {
+    border-color: rgba(255, 218, 106, 0.4);
+    box-shadow: 0 0 0 3px rgba(255, 218, 106, 0.08);
+  }
+
+  .tnx-lb-compare-result {
+    border-radius: 1rem;
+    border: 1px dashed rgba(194, 146, 0, 0.18);
+    background: rgba(0, 0, 0, 0.18);
+    padding: 1rem;
+    min-height: 76px;
+    color: rgb(156, 163, 175);
+    font-size: 0.92rem;
+    font-weight: 800;
+    line-height: 1.8;
+    text-align: center;
+  }
+
+  .tnx-lb-compare-grid {
+    display: grid;
+    grid-template-columns: 1fr minmax(160px, 220px) 1fr;
+    gap: 0.8rem;
+    align-items: stretch;
+  }
+
+  .tnx-lb-compare-card,
+  .tnx-lb-compare-diff {
+    border-radius: 1rem;
+    border: 1px solid rgba(194, 146, 0, 0.15);
+    background: rgba(255, 255, 255, 0.02);
+    padding: 1rem;
+    display: grid;
+    place-items: center;
+    text-align: center;
+  }
+
+  .tnx-lb-compare-card strong,
+  .tnx-lb-compare-diff strong {
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 950;
+  }
+
+  .tnx-lb-compare-card span,
+  .tnx-lb-compare-diff span {
+    color: #ffda6a;
+    font-size: 0.9rem;
+    font-weight: 900;
+    margin-top: 0.3rem;
+  }
+
+  .tnx-lb-compare-card small {
+    color: rgb(148, 163, 184);
+    font-size: 0.8rem;
+    font-weight: 800;
+    margin-top: 0.35rem;
+  }
+
   #leaderboard-user-modal .tnx-lb-modal-card {
     min-height: min(860px, calc(100vh - 2rem)) !important;
   }
@@ -1400,6 +1501,72 @@
       }
     }
 
+    function ensureCompareAccordion() {
+      const compareInput = document.getElementById('compare-target-input')
+      const compareBox = compareInput?.closest('.tnx-lb-compare-box')
+      const comparePanel = compareInput?.closest('.tnx-lb-panel')
+
+      if (!compareInput || !compareBox || !comparePanel) return
+
+      comparePanel.classList.add('tnx-lb-compare-panel')
+      compareBox.classList.add('tnx-lb-compare-body')
+
+      if (comparePanel.dataset.compareAccordionReady === 'true') {
+        setCompareAccordionOpen(false)
+        return
+      }
+
+      comparePanel.dataset.compareAccordionReady = 'true'
+
+      const oldTitle = comparePanel.querySelector('h4')
+      const titleText = oldTitle?.textContent?.trim() || 'قارن هذا العضو مع شخص ثاني'
+
+      const toggle = document.createElement('button')
+      toggle.type = 'button'
+      toggle.className = 'tnx-lb-compare-toggle'
+      toggle.setAttribute('aria-expanded', 'false')
+      toggle.setAttribute('aria-controls', 'compare-accordion-body')
+      toggle.innerHTML = `
+        <span class="tnx-lb-compare-toggle-main">
+          <strong>${escapeHtml(titleText)}</strong>
+          <span>اضغط هنا لفتح المقارنة بين عضوين.</span>
+        </span>
+
+        <span class="tnx-lb-compare-toggle-icon" aria-hidden="true">
+          <iconify-icon icon="tabler:chevron-down"></iconify-icon>
+        </span>
+      `
+
+      compareBox.id = 'compare-accordion-body'
+
+      if (oldTitle) {
+        oldTitle.replaceWith(toggle)
+      } else {
+        comparePanel.insertBefore(toggle, comparePanel.firstChild)
+      }
+
+      addListener(toggle, 'click', () => {
+        const isOpen = comparePanel.classList.contains('is-open')
+        setCompareAccordionOpen(!isOpen)
+      })
+
+      setCompareAccordionOpen(false)
+    }
+
+    function setCompareAccordionOpen(open) {
+      const comparePanel = document.querySelector('.tnx-lb-compare-panel')
+      if (!comparePanel) return
+
+      const toggle = comparePanel.querySelector('.tnx-lb-compare-toggle')
+
+      comparePanel.classList.toggle('is-open', open)
+      comparePanel.classList.toggle('is-closed', !open)
+
+      if (toggle) {
+        toggle.setAttribute('aria-expanded', String(open))
+      }
+    }
+
     function initScrollReveal() {
       const revealElements = Array.from(document.querySelectorAll('[data-reveal]'))
 
@@ -1780,7 +1947,9 @@
       activeModalUser = user
 
       ensureCardModeControl()
+      ensureCompareAccordion()
       syncShareCardModeUI()
+      setCompareAccordionOpen(false)
 
       if (elements.modalUserAvatar) {
         elements.modalUserAvatar.textContent = getAvatarLetter(user.__name)
@@ -1831,6 +2000,7 @@
       const elements = getElements()
 
       activeModalUser = null
+      setCompareAccordionOpen(false)
 
       if (elements.modal) {
         elements.modal.classList.add('hidden')
@@ -1844,6 +2014,8 @@
       const elements = getElements()
 
       if (!activeModalUser || !elements.compareTargetInput || !elements.compareResult) return
+
+      setCompareAccordionOpen(true)
 
       const targetUser = findUserByInput(elements.compareTargetInput.value)
 
@@ -2272,6 +2444,7 @@
         renderAllPanelsOnce()
         setActiveBoard(activeBoard)
         updateUserDatalist()
+        ensureCompareAccordion()
         initScrollReveal()
       } catch {
         Object.keys(boardConfig).forEach((boardId) => {
@@ -2394,6 +2567,7 @@
       addListener(elements.shareNative, 'click', shareCardNative)
 
       addListener(window, 'scroll', forceRevealVisibleElements, { passive: true })
+
       addListener(window, 'resize', () => {
         forceRevealVisibleElements()
         forceCenterSharePreview()
@@ -2402,14 +2576,23 @@
 
     function initLeaderboards() {
       ensureCardModeControl()
+      ensureCompareAccordion()
       syncShareCardModeUI()
       bindEvents()
       updateBoardMeta()
       initScrollReveal()
       loadData()
 
-      window.requestAnimationFrame(initScrollReveal)
-      window.setTimeout(initScrollReveal, 300)
+      window.requestAnimationFrame(() => {
+        ensureCompareAccordion()
+        initScrollReveal()
+      })
+
+      window.setTimeout(() => {
+        ensureCompareAccordion()
+        initScrollReveal()
+      }, 300)
+
       window.setTimeout(initScrollReveal, 900)
     }
 
