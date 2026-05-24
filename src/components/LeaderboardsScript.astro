@@ -101,7 +101,6 @@
 
     function formatNumber(value) {
       const number = toNumber(value)
-
       return new Intl.NumberFormat('en-US').format(number)
     }
 
@@ -237,7 +236,7 @@
               ${
                 showLogin
                   ? `<p class="tnx-lb-user-login" title="${escapeHtml(login)}">@${escapeHtml(login)}</p>`
-                  : `<p class="tnx-lb-user-login">TNX6</p>`
+                  : ''
               }
             </div>
           </div>
@@ -435,7 +434,7 @@
           const name = user.__name
           const login = user.__login
           const showLogin = login && login.toLowerCase() !== name.toLowerCase()
-          const firstClass = !searchQuery && index === 0 ? ' tnx-lb-top-card--first' : index === 0 ? ' tnx-lb-top-card--first' : ''
+          const firstClass = index === 0 ? ' tnx-lb-top-card--first' : ''
 
           return `
             <article class="tnx-lb-top-card${firstClass}">
@@ -447,7 +446,7 @@
               ${
                 showLogin
                   ? `<span class="tnx-lb-top-login">@${escapeHtml(login)}</span>`
-                  : `<span class="tnx-lb-top-login">TNX6</span>`
+                  : ''
               }
               <p class="tnx-lb-top-value">${escapeHtml(formatValue(activeBoard, user.__value))}</p>
             </article>
