@@ -981,6 +981,49 @@
     margin-top: 0.35rem;
   }
 
+
+  .tnx-lb-compare-panel {
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+  }
+
+  .tnx-lb-compare-panel > h4 {
+    display: none !important;
+  }
+
+  .tnx-lb-compare-panel:not(.is-open) .tnx-lb-compare-box {
+    display: none !important;
+    opacity: 0 !important;
+    max-height: 0 !important;
+    margin-top: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+  }
+
+  .tnx-lb-compare-panel.is-open .tnx-lb-compare-box {
+    display: grid !important;
+    opacity: 1 !important;
+    max-height: 900px !important;
+    margin-top: 0.85rem !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+  }
+
+  .tnx-lb-stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  }
+
+  .tnx-lb-stat-box strong,
+  .tnx-lb-modal-badge {
+    overflow-wrap: anywhere;
+    line-height: 1.15;
+  }
+
+  .tnx-lb-modal-head {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+  }
+
   #leaderboard-user-modal .tnx-lb-modal-card {
     min-height: min(860px, calc(100vh - 2rem)) !important;
   }
@@ -1531,85 +1574,57 @@
     function getCompareParts() {
       const input = document.getElementById('compare-target-input')
       const compareBox = input?.closest('.tnx-lb-compare-box')
-      const movedBody = document.getElementById('tnx-compare-accordion-body')
-      const originalPanel =
-        document.querySelector('[data-tnx-original-compare-panel="true"]') ||
-        input?.closest('.tnx-lb-panel')
+      const comparePanel = input?.closest('.tnx-lb-panel') || compareBox?.parentElement || null
+      const toggle = comparePanel?.querySelector('.tnx-lb-compare-strip') || null
 
       return {
         input,
         compareBox,
-        movedBody,
-        originalPanel,
+        comparePanel,
+        toggle,
       }
     }
 
     function ensureCompareAccordion() {
-      const { input, compareBox, originalPanel } = getCompareParts()
+      const { input, compareBox, comparePanel } = getCompareParts()
 
-      if (!input || !compareBox || !originalPanel) return
+      if (!input || !compareBox || !comparePanel) return
 
-      const existingAccordion = document.getElementById('tnx-compare-accordion-root')
+      comparePanel.classList.add('tnx-lb-compare-panel')
 
-      if (existingAccordion) {
-        originalPanel.classList.add('tnx-lb-original-compare-hidden')
-        originalPanel.style.setProperty('display', 'none', 'important')
-        originalPanel.setAttribute('data-tnx-original-compare-panel', 'true')
+      if (comparePanel.dataset.compareAccordionReady === 'true') {
         setCompareAccordionOpen(false)
         return
       }
 
-      const titleEl = originalPanel.querySelector('h4')
+      comparePanel.dataset.compareAccordionReady = 'true'
+
+      const titleEl = comparePanel.querySelector('h4')
       const titleText = titleEl?.textContent?.trim() || 'قارن هذا العضو مع شخص ثاني'
 
-      const accordion = document.createElement('div')
-      accordion.id = 'tnx-compare-accordion-root'
-      accordion.className = 'tnx-lb-compare-accordion-root'
+      const toggle = document.createElement('button')
+      toggle.type = 'button'
+      toggle.className = 'tnx-lb-compare-strip'
+      toggle.setAttribute('aria-expanded', 'false')
+      toggle.innerHTML = `
+        <span class="tnx-lb-compare-strip-text">
+          <strong>${escapeHtml(titleText)}</strong>
+          <small>اضغط لفتح المقارنة</small>
+        </span>
 
-      accordion.innerHTML = `
-        <button
-          type="button"
-          id="tnx-compare-accordion-toggle"
-          class="tnx-lb-compare-strip"
-          aria-expanded="false"
-          aria-controls="tnx-compare-accordion-body"
-        >
-          <span class="tnx-lb-compare-strip-text">
-            <strong>${escapeHtml(titleText)}</strong>
-            <small>اضغط لفتح المقارنة</small>
-          </span>
-
-          <span class="tnx-lb-compare-strip-icon" aria-hidden="true">
-            <iconify-icon icon="tabler:chevron-down"></iconify-icon>
-          </span>
-        </button>
-
-        <div id="tnx-compare-accordion-body" class="tnx-lb-compare-accordion-body"></div>
+        <span class="tnx-lb-compare-strip-icon" aria-hidden="true">
+          <iconify-icon icon="tabler:chevron-down"></iconify-icon>
+        </span>
       `
 
-      originalPanel.parentElement.insertBefore(accordion, originalPanel)
-
-      const body = accordion.querySelector('#tnx-compare-accordion-body')
-      body.appendChild(compareBox)
-
-      compareBox.classList.remove('tnx-lb-compare-body')
-      compareBox.classList.add('tnx-lb-compare-box-moved')
-
-      originalPanel.setAttribute('data-tnx-original-compare-panel', 'true')
-      originalPanel.classList.add('tnx-lb-original-compare-hidden')
-      originalPanel.style.setProperty('display', 'none', 'important')
-      originalPanel.style.setProperty('visibility', 'hidden', 'important')
-      originalPanel.style.setProperty('height', '0', 'important')
-      originalPanel.style.setProperty('max-height', '0', 'important')
-      originalPanel.style.setProperty('overflow', 'hidden', 'important')
-      originalPanel.style.setProperty('padding', '0', 'important')
-      originalPanel.style.setProperty('margin', '0', 'important')
-      originalPanel.style.setProperty('border', '0', 'important')
-
-      const toggle = accordion.querySelector('#tnx-compare-accordion-toggle')
+      if (titleEl) {
+        titleEl.replaceWith(toggle)
+      } else {
+        comparePanel.insertBefore(toggle, comparePanel.firstChild)
+      }
 
       addListener(toggle, 'click', () => {
-        const isOpen = accordion.classList.contains('is-open')
+        const isOpen = comparePanel.classList.contains('is-open')
         setCompareAccordionOpen(!isOpen)
       })
 
@@ -1617,45 +1632,31 @@
     }
 
     function setCompareAccordionOpen(open) {
-      const accordion = document.getElementById('tnx-compare-accordion-root')
-      const body = document.getElementById('tnx-compare-accordion-body')
-      const toggle = document.getElementById('tnx-compare-accordion-toggle')
-      const originalPanel = document.querySelector('[data-tnx-original-compare-panel="true"]')
+      const { compareBox, comparePanel, toggle } = getCompareParts()
 
-      if (originalPanel) {
-        originalPanel.classList.add('tnx-lb-original-compare-hidden')
-        originalPanel.style.setProperty('display', 'none', 'important')
-        originalPanel.style.setProperty('visibility', 'hidden', 'important')
-        originalPanel.style.setProperty('height', '0', 'important')
-        originalPanel.style.setProperty('max-height', '0', 'important')
-        originalPanel.style.setProperty('overflow', 'hidden', 'important')
-        originalPanel.style.setProperty('padding', '0', 'important')
-        originalPanel.style.setProperty('margin', '0', 'important')
-        originalPanel.style.setProperty('border', '0', 'important')
-      }
+      if (!compareBox || !comparePanel) return
 
-      if (!accordion || !body) return
-
-      accordion.classList.toggle('is-open', open)
+      comparePanel.classList.add('tnx-lb-compare-panel')
+      comparePanel.classList.toggle('is-open', Boolean(open))
 
       if (toggle) {
-        toggle.setAttribute('aria-expanded', String(open))
+        toggle.setAttribute('aria-expanded', String(Boolean(open)))
       }
 
       if (open) {
-        body.style.setProperty('display', 'grid', 'important')
-        body.style.setProperty('opacity', '1', 'important')
-        body.style.setProperty('max-height', '900px', 'important')
-        body.style.setProperty('margin-top', '0.85rem', 'important')
-        body.style.setProperty('pointer-events', 'auto', 'important')
+        compareBox.style.setProperty('display', 'grid', 'important')
+        compareBox.style.setProperty('opacity', '1', 'important')
+        compareBox.style.setProperty('max-height', '900px', 'important')
+        compareBox.style.setProperty('margin-top', '0.85rem', 'important')
+        compareBox.style.setProperty('pointer-events', 'auto', 'important')
         return
       }
 
-      body.style.setProperty('display', 'none', 'important')
-      body.style.setProperty('opacity', '0', 'important')
-      body.style.setProperty('max-height', '0', 'important')
-      body.style.setProperty('margin-top', '0', 'important')
-      body.style.setProperty('pointer-events', 'none', 'important')
+      compareBox.style.setProperty('display', 'none', 'important')
+      compareBox.style.setProperty('opacity', '0', 'important')
+      compareBox.style.setProperty('max-height', '0', 'important')
+      compareBox.style.setProperty('margin-top', '0', 'important')
+      compareBox.style.setProperty('pointer-events', 'none', 'important')
     }
 
     function initScrollReveal() {
