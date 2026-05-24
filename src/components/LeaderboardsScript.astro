@@ -44,6 +44,7 @@
     let activeBoard = 'points'
     let searchQuery = ''
     let activeModalUser = null
+    let shareCardMode = 'single'
 
     let allData = {
       points: [],
@@ -260,6 +261,7 @@
         shareCanvas: document.getElementById('share-card-canvas'),
         shareDownload: document.getElementById('download-share-card'),
         shareNative: document.getElementById('native-share-card'),
+        shareCardModeSelect: document.getElementById('share-card-mode'),
 
         containers: {
           points: document.getElementById('points-list'),
@@ -279,6 +281,81 @@
           watchtime: document.querySelector('[data-show-less="watchtime"]'),
         },
       }
+    }
+
+    function ensureCardModeControl() {
+      if (!document.getElementById('tnx-lb-card-mode-style')) {
+        const style = document.createElement('style')
+        style.id = 'tnx-lb-card-mode-style'
+        style.textContent = `
+          .tnx-lb-card-mode-control {
+            margin-top: 1rem;
+            border-radius: 1.25rem;
+            border: 1px solid rgba(194, 146, 0, 0.2);
+            background: rgba(0, 0, 0, 0.28);
+            padding: 1rem;
+          }
+
+          .tnx-lb-card-mode-control label {
+            display: grid;
+            gap: 0.5rem;
+            color: rgb(209, 213, 219);
+            font-size: 0.85rem;
+            font-weight: 950;
+          }
+
+          .tnx-lb-card-mode-control small {
+            display: block;
+            margin-top: 0.55rem;
+            color: rgb(107, 114, 128);
+            font-size: 0.78rem;
+            font-weight: 800;
+            line-height: 1.6;
+          }
+        `
+        document.head.appendChild(style)
+      }
+
+      const existingSelect = document.getElementById('share-card-mode')
+
+      if (existingSelect) {
+        existingSelect.value = shareCardMode
+        addListener(existingSelect, 'change', () => {
+          shareCardMode = existingSelect.value === 'combined' ? 'combined' : 'single'
+          renderShareCard(activeModalUser)
+        })
+        return
+      }
+
+      const modalActions = document.querySelector('.tnx-lb-modal-actions')
+      if (!modalActions || !modalActions.parentElement) return
+
+      const wrapper = document.createElement('div')
+      wrapper.className = 'tnx-lb-card-mode-control'
+      wrapper.innerHTML = `
+        <label>
+          نوع البطاقة
+          <select id="share-card-mode" class="tnx-lb-select">
+            <option value="single" selected>حسب التبويب الحالي فقط</option>
+            <option value="combined">دمج النقاط + المشاهدة</option>
+          </select>
+        </label>
+        <small>
+          الافتراضي: يعرض ترتيب وقيمة التبويب الحالي فقط. الدمج يعرض النقاط والمشاهدة في نفس الصورة.
+        </small>
+      `
+
+      modalActions.parentElement.insertBefore(wrapper, modalActions)
+
+      const select = document.getElementById('share-card-mode')
+      if (!select) return
+
+      select.value = shareCardMode
+
+      addListener(select, 'change', () => {
+        shareCardMode = select.value === 'combined' ? 'combined' : 'single'
+        renderShareCard(activeModalUser)
+      })
     }
 
     function initScrollReveal() {
@@ -652,6 +729,14 @@
 
       activeModalUser = user
 
+      ensureCardModeControl()
+
+      const refreshedElements = getElements()
+
+      if (refreshedElements.shareCardModeSelect) {
+        refreshedElements.shareCardModeSelect.value = shareCardMode
+      }
+
       if (elements.modalUserAvatar) {
         elements.modalUserAvatar.textContent = getAvatarLetter(user.__name)
       }
@@ -829,43 +914,97 @@
       drawTextFit(ctx, value, x + width / 2, y + 196, width - 52, 38, font, '900')
     }
 
-    function renderShareCard(user = activeModalUser) {
-      const elements = getElements()
-      const canvas = elements.shareCanvas
+    function drawDate(ctx, width, height, font, cardDate) {
+      ctx.direction = 'ltr'
+      ctx.textAlign = 'left'
 
-      if (!canvas) return
+      ctx.fillStyle = 'rgba(255,255,255,0.42)'
+      ctx.font = `800 24px ${font}`
+      ctx.fillText('DATE', 92, height - 130)
 
-      const ctx = canvas.getContext('2d')
-      if (!ctx) return
-
-      const width = canvas.width
-      const height = canvas.height
-      const font = 'Arial, Tahoma, sans-serif'
-      const cardDate = formatCardDate()
-      const combinedStats = getCombinedCardStats(user)
-
-      ctx.clearRect(0, 0, width, height)
-
-      const bg = ctx.createLinearGradient(0, 0, width, height)
-      bg.addColorStop(0, '#09050f')
-      bg.addColorStop(0.45, '#05070d')
-      bg.addColorStop(1, '#120905')
-      ctx.fillStyle = bg
-      ctx.fillRect(0, 0, width, height)
-
-      const glow = ctx.createRadialGradient(width * 0.75, height * 0.18, 0, width * 0.75, height * 0.18, 620)
-      glow.addColorStop(0, 'rgba(255, 218, 106, 0.30)')
-      glow.addColorStop(1, 'rgba(255, 218, 106, 0)')
-      ctx.fillStyle = glow
-      ctx.fillRect(0, 0, width, height)
-
-      ctx.strokeStyle = 'rgba(255, 218, 106, 0.45)'
-      ctx.lineWidth = 6
-      drawRoundedRect(ctx, 52, 52, width - 104, height - 104, 54)
-      ctx.stroke()
+      ctx.fillStyle = 'rgba(255,255,255,0.68)'
+      ctx.font = `900 30px ${font}`
+      ctx.fillText(cardDate, 92, height - 96)
 
       ctx.direction = 'rtl'
       ctx.textAlign = 'center'
+    }
+
+    function renderSingleShareCard(ctx, user, width, height, font, cardDate) {
+      const config = boardConfig[activeBoard]
+
+      ctx.fillStyle = '#ffda6a'
+      ctx.font = `900 54px ${font}`
+      ctx.fillText('TNX6 COMMUNITY', width / 2, 180)
+
+      ctx.fillStyle = 'rgba(255,255,255,0.78)'
+      ctx.font = `800 34px ${font}`
+      ctx.fillText(config.heading, width / 2, 238)
+
+      if (!user) {
+        ctx.fillStyle = '#ffffff'
+        ctx.font = `900 58px ${font}`
+        ctx.fillText('ما فيه بيانات', width / 2, 620)
+        drawDate(ctx, width, height, font, cardDate)
+        return
+      }
+
+      ctx.fillStyle = 'rgba(0,0,0,0.42)'
+      drawRoundedRect(ctx, 140, 315, width - 280, 650, 46)
+      ctx.fill()
+
+      ctx.strokeStyle = 'rgba(255, 218, 106, 0.28)'
+      ctx.lineWidth = 3
+      drawRoundedRect(ctx, 140, 315, width - 280, 650, 46)
+      ctx.stroke()
+
+      ctx.fillStyle = '#ffda6a'
+      ctx.font = `900 86px ${font}`
+      ctx.fillText(`#${user.__rank}`, width / 2, 450)
+
+      ctx.fillStyle = '#ffffff'
+      drawTextFit(ctx, user.__name, width / 2, 565, width - 260, 76, font, '900')
+
+      if (user.__login && user.__login.toLowerCase() !== user.__name.toLowerCase()) {
+        ctx.fillStyle = 'rgba(255,255,255,0.46)'
+        ctx.font = `800 34px ${font}`
+        ctx.direction = 'ltr'
+        ctx.fillText(`@${user.__login}`, width / 2, 620)
+        ctx.direction = 'rtl'
+      }
+
+      ctx.fillStyle = '#ffda6a'
+      ctx.font = `900 60px ${font}`
+      ctx.fillText(formatValue(activeBoard, user.__value), width / 2, 740)
+
+      ctx.fillStyle = 'rgba(255,255,255,0.68)'
+      ctx.font = `800 30px ${font}`
+      ctx.fillText('مركزك داخل مجتمع TNX6', width / 2, 805)
+
+      ctx.strokeStyle = 'rgba(255, 218, 106, 0.22)'
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.moveTo(230, 860)
+      ctx.lineTo(width - 230, 860)
+      ctx.stroke()
+
+      ctx.fillStyle = 'rgba(255,255,255,0.78)'
+      ctx.font = `800 32px ${font}`
+      ctx.fillText('tnx6.xyz', width / 2, 930)
+
+      ctx.fillStyle = '#ffda6a'
+      ctx.font = `900 42px ${font}`
+      ctx.fillText('شارك بطاقتك وورنا مركزك', width / 2, 1115)
+
+      ctx.fillStyle = 'rgba(255,255,255,0.38)'
+      ctx.font = `700 26px ${font}`
+      ctx.fillText('Generated from TNX6 Leaderboards', width / 2, 1190)
+
+      drawDate(ctx, width, height, font, cardDate)
+    }
+
+    function renderCombinedShareCard(ctx, user, width, height, font, cardDate) {
+      const combinedStats = getCombinedCardStats(user)
 
       ctx.fillStyle = '#ffda6a'
       ctx.font = `900 54px ${font}`
@@ -879,13 +1018,7 @@
         ctx.fillStyle = '#ffffff'
         ctx.font = `900 58px ${font}`
         ctx.fillText('ما فيه بيانات', width / 2, 620)
-
-        ctx.direction = 'ltr'
-        ctx.textAlign = 'left'
-        ctx.fillStyle = 'rgba(255,255,255,0.48)'
-        ctx.font = `800 26px ${font}`
-        ctx.fillText(cardDate, 92, height - 96)
-
+        drawDate(ctx, width, height, font, cardDate)
         return
       }
 
@@ -954,19 +1087,57 @@
       ctx.font = `700 26px ${font}`
       ctx.fillText('Generated from TNX6 Leaderboards', width / 2, 1218)
 
-      ctx.direction = 'ltr'
-      ctx.textAlign = 'left'
+      drawDate(ctx, width, height, font, cardDate)
+    }
 
-      ctx.fillStyle = 'rgba(255,255,255,0.42)'
-      ctx.font = `800 24px ${font}`
-      ctx.fillText('DATE', 92, height - 130)
+    function renderShareCard(user = activeModalUser) {
+      const elements = getElements()
+      const canvas = elements.shareCanvas
 
-      ctx.fillStyle = 'rgba(255,255,255,0.68)'
-      ctx.font = `900 30px ${font}`
-      ctx.fillText(cardDate, 92, height - 96)
+      if (!canvas) return
+
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+
+      const width = canvas.width
+      const height = canvas.height
+      const font = 'Arial, Tahoma, sans-serif'
+      const cardDate = formatCardDate()
+
+      ctx.clearRect(0, 0, width, height)
+
+      const bg = ctx.createLinearGradient(0, 0, width, height)
+      bg.addColorStop(0, '#09050f')
+      bg.addColorStop(0.45, '#05070d')
+      bg.addColorStop(1, '#120905')
+      ctx.fillStyle = bg
+      ctx.fillRect(0, 0, width, height)
+
+      const glow = ctx.createRadialGradient(width * 0.75, height * 0.18, 0, width * 0.75, height * 0.18, 620)
+      glow.addColorStop(0, 'rgba(255, 218, 106, 0.30)')
+      glow.addColorStop(1, 'rgba(255, 218, 106, 0)')
+      ctx.fillStyle = glow
+      ctx.fillRect(0, 0, width, height)
+
+      ctx.strokeStyle = 'rgba(255, 218, 106, 0.45)'
+      ctx.lineWidth = 6
+      drawRoundedRect(ctx, 52, 52, width - 104, height - 104, 54)
+      ctx.stroke()
 
       ctx.direction = 'rtl'
       ctx.textAlign = 'center'
+
+      if (shareCardMode === 'combined') {
+        renderCombinedShareCard(ctx, user, width, height, font, cardDate)
+      } else {
+        renderSingleShareCard(ctx, user, width, height, font, cardDate)
+      }
+    }
+
+    function getCardFilePrefix() {
+      return shareCardMode === 'combined'
+        ? 'tnx6-community-card'
+        : `tnx6-${activeBoard}-card`
     }
 
     function downloadShareCard() {
@@ -981,7 +1152,7 @@
       const safeName = user.__name.replace(/[^\w\u0600-\u06FF-]+/g, '-')
       const link = document.createElement('a')
 
-      link.download = `tnx6-community-card-${safeName}.png`
+      link.download = `${getCardFilePrefix()}-${safeName}.png`
       link.href = canvas.toDataURL('image/png')
       link.click()
     }
@@ -999,7 +1170,7 @@
         if (!blob) return
 
         const safeName = user.__name.replace(/[^\w\u0600-\u06FF-]+/g, '-')
-        const file = new File([blob], `tnx6-community-card-${safeName}.png`, {
+        const file = new File([blob], `${getCardFilePrefix()}-${safeName}.png`, {
           type: 'image/png',
         })
 
@@ -1007,8 +1178,10 @@
           try {
             await navigator.share({
               files: [file],
-              title: 'TNX6 Community Card',
-              text: `بطاقتي في مجتمع TNX6`,
+              title: shareCardMode === 'combined' ? 'TNX6 Community Card' : 'TNX6 Rank Card',
+              text: shareCardMode === 'combined'
+                ? 'بطاقتي في مجتمع TNX6'
+                : `مركزي في TNX6: #${user.__rank}`,
             })
             return
           } catch {
@@ -1153,6 +1326,7 @@
     }
 
     function initLeaderboards() {
+      ensureCardModeControl()
       bindEvents()
       updateBoardMeta()
       initScrollReveal()
