@@ -111,6 +111,14 @@
       return new Intl.NumberFormat('en-US').format(number)
     }
 
+    function formatCardDate(date = new Date()) {
+      const day = String(date.getDate()).padStart(2, '0')
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const year = String(date.getFullYear())
+
+      return `${day}/${month}/${year}`
+    }
+
     function isNumericValue(value) {
       if (typeof value === 'number') return Number.isFinite(value)
 
@@ -438,7 +446,11 @@
       renderActiveBoard()
 
       if (activeModalUser) {
-        const freshUser = findUserById(activeModalUser.__id)
+        const freshUser =
+          findUserById(activeModalUser.__id) ||
+          findUserByInput(activeModalUser.__login) ||
+          findUserByInput(activeModalUser.__name)
+
         if (freshUser) {
           openUserModal(freshUser)
         }
@@ -760,6 +772,7 @@
       const height = canvas.height
       const font = 'Arial, Tahoma, sans-serif'
       const config = boardConfig[activeBoard]
+      const cardDate = formatCardDate()
 
       ctx.clearRect(0, 0, width, height)
 
@@ -796,6 +809,13 @@
         ctx.fillStyle = '#ffffff'
         ctx.font = `900 58px ${font}`
         ctx.fillText('ما فيه بيانات', width / 2, 620)
+
+        ctx.direction = 'ltr'
+        ctx.textAlign = 'left'
+        ctx.fillStyle = 'rgba(255,255,255,0.48)'
+        ctx.font = `800 26px ${font}`
+        ctx.fillText(cardDate, 92, height - 96)
+
         return
       }
 
@@ -849,6 +869,20 @@
       ctx.fillStyle = 'rgba(255,255,255,0.38)'
       ctx.font = `700 26px ${font}`
       ctx.fillText('Generated from TNX6 Leaderboards', width / 2, 1190)
+
+      ctx.direction = 'ltr'
+      ctx.textAlign = 'left'
+
+      ctx.fillStyle = 'rgba(255,255,255,0.42)'
+      ctx.font = `800 24px ${font}`
+      ctx.fillText('DATE', 92, height - 130)
+
+      ctx.fillStyle = 'rgba(255,255,255,0.68)'
+      ctx.font = `900 30px ${font}`
+      ctx.fillText(cardDate, 92, height - 96)
+
+      ctx.direction = 'rtl'
+      ctx.textAlign = 'center'
     }
 
     function downloadShareCard() {
@@ -857,6 +891,8 @@
       const user = activeModalUser
 
       if (!canvas || !user) return
+
+      renderShareCard(user)
 
       const safeName = user.__name.replace(/[^\w\u0600-\u06FF-]+/g, '-')
       const link = document.createElement('a')
@@ -872,6 +908,8 @@
       const user = activeModalUser
 
       if (!canvas || !user) return
+
+      renderShareCard(user)
 
       canvas.toBlob(async (blob) => {
         if (!blob) return
