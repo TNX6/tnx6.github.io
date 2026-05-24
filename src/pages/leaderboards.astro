@@ -1,76 +1,806 @@
 ---
-import Layout from '~/layouts/PageLayout.astro';
-import LeaderboardsScript from '~/components/LeaderboardsScript.astro';
+import Layout from '~/layouts/PageLayout.astro'
+import LeaderboardsScript from '~/components/LeaderboardsScript.astro'
 
 const metadata = {
   title: 'Leaderboards — TNX6',
   ignoreTitleTemplate: true,
-};
+  description: 'ترتيب مجتمع TNX6 حسب النقاط، الذهب، ووقت المشاهدة.',
+}
+
+const boards = [
+  {
+    id: 'points',
+    title: 'النقاط',
+    subtitle: 'أكثر الأعضاء نقاطًا',
+    icon: 'tabler:coins',
+    accent: 'gold',
+  },
+  {
+    id: 'gold',
+    title: 'الذهب',
+    subtitle: 'ترتيب الذهب',
+    icon: 'tabler:coin',
+    accent: 'yellow',
+  },
+  {
+    id: 'watchtime',
+    title: 'المشاهدة',
+    subtitle: 'أكثر الأعضاء مشاهدة',
+    icon: 'tabler:clock-hour-4',
+    accent: 'gold',
+  },
+]
 ---
 
 <Layout metadata={metadata}>
-  <section class="max-w-6xl mx-auto py-16 px-6 space-y-16 text-white">
-    <h1 class="text-5xl font-extrabold text-center mb-12 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(198,164,79,0.5)] tracking-wide">
-      Leaderboards
-    </h1>
+  <main class="relative min-h-screen overflow-hidden bg-[#08050d] text-white" dir="rtl">
+    <div class="tnx-leaderboards-bg pointer-events-none fixed inset-0 z-0"></div>
+    <div class="tnx-leaderboards-grid-bg pointer-events-none fixed inset-0 z-0"></div>
 
-    <div class="text-center mb-12">
-      <input
-        id="search"
-        type="text"
-        placeholder="Search users..."
-        class="w-full max-w-md px-4 py-2 rounded-lg bg-black/40 border border-[#c6a44f]/30 text-[#f7e6ac] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#c6a44f]/60"
-      />
-    </div>
+    <section class="relative z-10 px-4 pb-16 pt-24 md:px-6">
+      <div class="mx-auto max-w-7xl">
+        <div class="tnx-lb-hero">
+          <div class="relative z-10">
+            <div class="mb-5 inline-flex items-center gap-2 rounded-full border border-[#c29200]/40 bg-black/45 px-4 py-2 text-xs font-black tracking-[0.24em] text-[#ffda6a]">
+              <span class="h-2 w-2 rounded-full bg-[#ffda6a] shadow-[0_0_14px_#ffda6a]"></span>
+              TNX6 RANKING
+            </div>
 
-    <!-- POINTS -->
-    <div>
-      <h2 class="text-3xl font-bold mb-8 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent">
-        Points
-      </h2>
-      <div id="points-list" class="space-y-3"></div>
-      <div class="flex justify-center gap-4 mt-6">
-        <button id="loadMorePoints" class="px-6 py-2 bg-[#c6a44f]/20 border border-[#c6a44f]/40 rounded-lg text-[#f7e6ac] hover:bg-[#c6a44f]/30 transition">
-          Show More
-        </button>
-        <button id="showLessPoints" class="px-6 py-2 bg-[#c6a44f]/10 border border-[#c6a44f]/30 rounded-lg text-[#f7e6ac] hover:bg-[#c6a44f]/20 transition hidden">
-          Show Less
-        </button>
+            <h1 class="tnx-lb-title">
+              ترتيب المجتمع
+            </h1>
+
+            <p class="mt-4 max-w-2xl text-base leading-relaxed text-gray-300 md:text-lg">
+              هنا تشوف المتصدرين في النقاط، الذهب، ووقت المشاهدة. الترتيب يتحدث من بيانات الموقع.
+            </p>
+          </div>
+
+          <div class="relative z-10 tnx-lb-hero-card">
+            <div class="tnx-lb-hero-icon">
+              <iconify-icon icon="tabler:trophy"></iconify-icon>
+            </div>
+
+            <div>
+              <p class="text-xs font-black tracking-[0.24em] text-[#c29200]">
+                CURRENT BOARD
+              </p>
+              <p id="active-board-title" class="mt-2 text-2xl font-black text-[#ffda6a]">
+                النقاط
+              </p>
+              <p id="active-board-subtitle" class="mt-1 text-sm font-bold text-gray-400">
+                أكثر الأعضاء نقاطًا
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <section class="tnx-lb-top-section">
+          <div class="mb-5 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p class="text-xs font-black tracking-[0.24em] text-[#c29200]">
+                TOP 3
+              </p>
+              <h2 class="tnx-lb-section-title">
+                المتصدرون
+              </h2>
+            </div>
+
+            <div class="tnx-lb-active-pill">
+              <iconify-icon id="active-board-icon" icon="tabler:coins"></iconify-icon>
+              <span id="active-board-pill">ترتيب النقاط</span>
+            </div>
+          </div>
+
+          <div id="top-three-list" class="tnx-lb-top-grid">
+            <article class="tnx-lb-top-card tnx-lb-top-card--first">
+              <span class="tnx-lb-rank">#1</span>
+              <div class="tnx-lb-medal">
+                <iconify-icon icon="tabler:crown"></iconify-icon>
+              </div>
+              <p class="tnx-lb-top-name">جاري التحميل...</p>
+              <p class="tnx-lb-top-value">--</p>
+            </article>
+
+            <article class="tnx-lb-top-card">
+              <span class="tnx-lb-rank">#2</span>
+              <div class="tnx-lb-medal">
+                <iconify-icon icon="tabler:medal-2"></iconify-icon>
+              </div>
+              <p class="tnx-lb-top-name">جاري التحميل...</p>
+              <p class="tnx-lb-top-value">--</p>
+            </article>
+
+            <article class="tnx-lb-top-card">
+              <span class="tnx-lb-rank">#3</span>
+              <div class="tnx-lb-medal">
+                <iconify-icon icon="tabler:medal"></iconify-icon>
+              </div>
+              <p class="tnx-lb-top-name">جاري التحميل...</p>
+              <p class="tnx-lb-top-value">--</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="tnx-lb-board-shell">
+          <div class="mb-6 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div class="tnx-lb-tabs" role="tablist" aria-label="أقسام الترتيب">
+              {boards.map((board, index) => (
+                <button
+                  type="button"
+                  class={`tnx-lb-tab ${index === 0 ? 'is-active' : ''}`}
+                  data-board-tab={board.id}
+                  aria-selected={index === 0 ? 'true' : 'false'}
+                >
+                  <iconify-icon icon={board.icon}></iconify-icon>
+                  <span>{board.title}</span>
+                </button>
+              ))}
+            </div>
+
+            <div class="tnx-lb-search-wrap">
+              <iconify-icon icon="tabler:search"></iconify-icon>
+              <input
+                id="leaderboard-search"
+                type="search"
+                placeholder="ابحث باسم العضو..."
+                autocomplete="off"
+                class="tnx-lb-search"
+              />
+            </div>
+          </div>
+
+          <div class="tnx-lb-board-head">
+            <div>
+              <p id="board-heading" class="text-2xl font-black text-white">
+                ترتيب النقاط
+              </p>
+              <p id="board-description" class="mt-1 text-sm font-bold text-gray-500">
+                أكثر الأعضاء نقاطًا في المجتمع.
+              </p>
+            </div>
+
+            <div class="tnx-lb-count-box">
+              <span id="board-count">--</span>
+              <small>عضو</small>
+            </div>
+          </div>
+
+          <div class="mt-5">
+            <div id="points-panel" class="tnx-lb-panel is-active" data-board-panel="points">
+              <div id="points-list" class="tnx-lb-list"></div>
+              <div class="tnx-lb-actions">
+                <button type="button" class="tnx-lb-action-btn" data-load-more="points">
+                  عرض المزيد
+                </button>
+                <button type="button" class="tnx-lb-action-btn tnx-lb-action-btn--ghost hidden" data-show-less="points">
+                  عرض أقل
+                </button>
+              </div>
+            </div>
+
+            <div id="gold-panel" class="tnx-lb-panel" data-board-panel="gold">
+              <div id="gold-list" class="tnx-lb-list"></div>
+              <div class="tnx-lb-actions">
+                <button type="button" class="tnx-lb-action-btn" data-load-more="gold">
+                  عرض المزيد
+                </button>
+                <button type="button" class="tnx-lb-action-btn tnx-lb-action-btn--ghost hidden" data-show-less="gold">
+                  عرض أقل
+                </button>
+              </div>
+            </div>
+
+            <div id="watchtime-panel" class="tnx-lb-panel" data-board-panel="watchtime">
+              <div id="watchtime-list" class="tnx-lb-list"></div>
+              <div class="tnx-lb-actions">
+                <button type="button" class="tnx-lb-action-btn" data-load-more="watchtime">
+                  عرض المزيد
+                </button>
+                <button type="button" class="tnx-lb-action-btn tnx-lb-action-btn--ghost hidden" data-show-less="watchtime">
+                  عرض أقل
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
-    </div>
+    </section>
+  </main>
 
-    <!-- GOLD -->
-    <div>
-      <h2 class="text-3xl font-bold mb-8 bg-gradient-to-r from-[#ffd700] to-[#c29200] bg-clip-text text-transparent">
-        Gold
-      </h2>
-      <div id="gold-list" class="space-y-3"></div>
-      <div class="flex justify-center gap-4 mt-6">
-        <button id="loadMoreGold" class="px-6 py-2 bg-[#ffd700]/20 border border-[#ffd700]/40 rounded-lg text-[#ffd700] hover:bg-[#ffd700]/30 transition">
-          Show More
-        </button>
-        <button id="showLessGold" class="px-6 py-2 bg-[#ffd700]/10 border border-[#ffd700]/30 rounded-lg text-[#ffd700] hover:bg-[#ffd700]/20 transition hidden">
-          Show Less
-        </button>
-      </div>
-    </div>
+  <style is:global>
+    .tnx-leaderboards-bg {
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255, 218, 106, 0.18), transparent 28%),
+        radial-gradient(circle at 82% 18%, rgba(147, 51, 234, 0.15), transparent 30%),
+        radial-gradient(circle at 55% 88%, rgba(239, 68, 68, 0.1), transparent 34%),
+        linear-gradient(135deg, #09050f 0%, #05070d 45%, #120905 100%);
+    }
 
-    <!-- WATCHTIME -->
-    <div>
-      <h2 class="text-3xl font-bold mb-8 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent">
-        Watchtime
-      </h2>
-      <div id="watchtime-list" class="space-y-3"></div>
-      <div class="flex justify-center gap-4 mt-6">
-        <button id="loadMoreWatchtime" class="px-6 py-2 bg-[#c6a44f]/20 border border-[#c6a44f]/40 rounded-lg text-[#f7e6ac] hover:bg-[#c6a44f]/30 transition">
-          Show More
-        </button>
-        <button id="showLessWatchtime" class="px-6 py-2 bg-[#c6a44f]/10 border border-[#c6a44f]/30 rounded-lg text-[#f7e6ac] hover:bg-[#c6a44f]/20 transition hidden">
-          Show Less
-        </button>
-      </div>
-    </div>
-  </section>
+    .tnx-leaderboards-grid-bg {
+      opacity: 0.08;
+      background-image:
+        linear-gradient(rgba(255, 218, 106, 0.42) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 218, 106, 0.42) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 72%);
+    }
+
+    .tnx-lb-hero {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 1.25rem;
+      overflow: hidden;
+      border-radius: 2rem;
+      border: 1px solid rgba(194, 146, 0, 0.26);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.13), transparent 34%),
+        rgba(5, 5, 5, 0.88);
+      padding: 2rem;
+      box-shadow: 0 0 55px rgba(0, 0, 0, 0.62);
+      backdrop-filter: blur(12px);
+    }
+
+    .tnx-lb-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent, rgba(255, 218, 106, 0.04), transparent);
+      pointer-events: none;
+    }
+
+    .tnx-lb-title {
+      color: #ffda6a;
+      font-size: clamp(2.6rem, 6vw, 5rem);
+      font-weight: 950;
+      line-height: 1.05;
+      text-shadow:
+        0 0 6px rgba(255, 218, 106, 0.62),
+        0 0 18px rgba(194, 146, 0, 0.45);
+    }
+
+    .tnx-lb-hero-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-radius: 1.5rem;
+      border: 1px solid rgba(194, 146, 0, 0.28);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.14), transparent 42%),
+        rgba(0, 0, 0, 0.44);
+      padding: 1.25rem;
+    }
+
+    .tnx-lb-hero-icon {
+      display: flex;
+      height: 4rem;
+      width: 4rem;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border-radius: 1.25rem;
+      border: 1px solid rgba(194, 146, 0, 0.36);
+      background: rgba(0, 0, 0, 0.45);
+      color: #ffda6a;
+      box-shadow: inset 0 0 16px rgba(255, 218, 106, 0.08);
+    }
+
+    .tnx-lb-hero-icon iconify-icon {
+      font-size: 2rem;
+      filter: drop-shadow(0 0 6px rgba(255, 218, 106, 0.45));
+    }
+
+    .tnx-lb-top-section,
+    .tnx-lb-board-shell {
+      margin-top: 1.25rem;
+      border-radius: 2rem;
+      border: 1px solid rgba(194, 146, 0, 0.24);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.1), transparent 38%),
+        rgba(5, 5, 5, 0.86);
+      padding: 1.25rem;
+      box-shadow:
+        0 0 42px rgba(0, 0, 0, 0.46),
+        inset 0 0 18px rgba(255, 218, 106, 0.025);
+      backdrop-filter: blur(12px);
+    }
+
+    .tnx-lb-section-title {
+      margin-top: 0.25rem;
+      color: #ffda6a;
+      font-size: 2rem;
+      font-weight: 950;
+      line-height: 1.1;
+      text-shadow:
+        0 0 6px rgba(255, 218, 106, 0.55),
+        0 0 18px rgba(194, 146, 0, 0.32);
+    }
+
+    .tnx-lb-active-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border-radius: 999px;
+      border: 1px solid rgba(194, 146, 0, 0.32);
+      background: rgba(0, 0, 0, 0.34);
+      padding: 0.65rem 0.95rem;
+      color: rgb(229, 231, 235);
+      font-size: 0.82rem;
+      font-weight: 950;
+    }
+
+    .tnx-lb-active-pill iconify-icon {
+      color: #ffda6a;
+      font-size: 1.25rem;
+    }
+
+    .tnx-lb-top-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.92fr 0.92fr;
+      gap: 0.85rem;
+      align-items: stretch;
+    }
+
+    .tnx-lb-top-card {
+      position: relative;
+      min-height: 160px;
+      overflow: hidden;
+      border-radius: 1.35rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 42%),
+        rgba(0, 0, 0, 0.46);
+      padding: 1.1rem;
+      text-align: center;
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .tnx-lb-top-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(194, 146, 0, 0.55);
+      box-shadow: 0 0 24px rgba(194, 146, 0, 0.14);
+    }
+
+    .tnx-lb-top-card--first {
+      border-color: rgba(255, 218, 106, 0.38);
+      background:
+        radial-gradient(circle at top, rgba(255, 218, 106, 0.23), transparent 46%),
+        linear-gradient(180deg, rgba(20, 16, 7, 0.74), rgba(0, 0, 0, 0.6));
+      box-shadow: inset 0 0 22px rgba(255, 218, 106, 0.04);
+    }
+
+    .tnx-lb-rank {
+      position: absolute;
+      top: 0.8rem;
+      right: 0.8rem;
+      display: inline-flex;
+      min-width: 2.2rem;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid rgba(194, 146, 0, 0.3);
+      background: rgba(0, 0, 0, 0.48);
+      padding: 0.26rem 0.5rem;
+      color: #ffda6a;
+      font-size: 0.75rem;
+      font-weight: 950;
+    }
+
+    .tnx-lb-medal {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      height: 3rem;
+      width: 3rem;
+      align-items: center;
+      justify-content: center;
+      border-radius: 1rem;
+      border: 1px solid rgba(194, 146, 0, 0.34);
+      background: rgba(0, 0, 0, 0.44);
+      color: #ffda6a;
+      box-shadow: inset 0 0 14px rgba(255, 218, 106, 0.06);
+    }
+
+    .tnx-lb-medal iconify-icon {
+      font-size: 1.6rem;
+      filter: drop-shadow(0 0 6px rgba(255, 218, 106, 0.4));
+    }
+
+    .tnx-lb-top-name {
+      position: relative;
+      z-index: 1;
+      margin-top: 0.9rem;
+      min-height: 1.7rem;
+      overflow: hidden;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 950;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tnx-lb-top-card--first .tnx-lb-top-name {
+      font-size: 1.28rem;
+    }
+
+    .tnx-lb-top-login {
+      margin-top: 0.18rem;
+      display: block;
+      overflow: hidden;
+      color: rgb(107, 114, 128);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tnx-lb-top-value {
+      position: relative;
+      z-index: 1;
+      margin-top: 0.45rem;
+      color: #ffda6a;
+      font-size: 0.96rem;
+      font-weight: 950;
+      text-shadow:
+        0 0 5px rgba(255, 218, 106, 0.38),
+        0 0 12px rgba(194, 146, 0, 0.2);
+    }
+
+    .tnx-lb-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.65rem;
+    }
+
+    .tnx-lb-tab {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: rgba(0, 0, 0, 0.38);
+      padding: 0.85rem 1rem;
+      color: rgb(209, 213, 219);
+      font-weight: 950;
+      transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease,
+        color 160ms ease,
+        box-shadow 160ms ease;
+    }
+
+    .tnx-lb-tab:hover,
+    .tnx-lb-tab.is-active {
+      transform: translateY(-1px);
+      border-color: rgba(255, 218, 106, 0.58);
+      background: rgba(194, 146, 0, 0.11);
+      color: #ffda6a;
+      box-shadow: 0 0 20px rgba(194, 146, 0, 0.11);
+    }
+
+    .tnx-lb-tab iconify-icon {
+      font-size: 1.25rem;
+    }
+
+    .tnx-lb-search-wrap {
+      display: flex;
+      min-width: min(420px, 100%);
+      align-items: center;
+      gap: 0.65rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(194, 146, 0, 0.28);
+      background: rgba(0, 0, 0, 0.42);
+      padding: 0 0.9rem;
+      color: #ffda6a;
+    }
+
+    .tnx-lb-search-wrap iconify-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .tnx-lb-search {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 0.9rem 0;
+      color: white;
+      font-weight: 850;
+      outline: none;
+    }
+
+    .tnx-lb-search::placeholder {
+      color: rgb(107, 114, 128);
+    }
+
+    .tnx-lb-board-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      border-radius: 1.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.36);
+      padding: 1rem;
+    }
+
+    .tnx-lb-count-box {
+      display: inline-flex;
+      min-width: 6.5rem;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 1rem;
+      border: 1px solid rgba(194, 146, 0, 0.28);
+      background: rgba(0, 0, 0, 0.38);
+      padding: 0.65rem 0.9rem;
+    }
+
+    .tnx-lb-count-box span {
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+      line-height: 1;
+      text-shadow:
+        0 0 5px rgba(255, 218, 106, 0.34),
+        0 0 14px rgba(194, 146, 0, 0.22);
+    }
+
+    .tnx-lb-count-box small {
+      margin-top: 0.25rem;
+      color: rgb(107, 114, 128);
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .tnx-lb-panel {
+      display: none;
+    }
+
+    .tnx-lb-panel.is-active {
+      display: block;
+    }
+
+    .tnx-lb-list {
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    .tnx-lb-row {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 0.85rem;
+      border-radius: 1.1rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.06), transparent 36%),
+        rgba(0, 0, 0, 0.38);
+      padding: 0.85rem;
+      transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease;
+    }
+
+    .tnx-lb-row:hover {
+      transform: translateY(-1px);
+      border-color: rgba(194, 146, 0, 0.44);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.1), transparent 36%),
+        rgba(0, 0, 0, 0.5);
+    }
+
+    .tnx-lb-row-rank {
+      display: inline-flex;
+      height: 2.7rem;
+      min-width: 3.7rem;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.9rem;
+      border: 1px solid rgba(194, 146, 0, 0.26);
+      background: rgba(0, 0, 0, 0.42);
+      color: #ffda6a;
+      font-weight: 950;
+    }
+
+    .tnx-lb-user {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .tnx-lb-avatar {
+      display: inline-flex;
+      height: 2.7rem;
+      width: 2.7rem;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.95rem;
+      border: 1px solid rgba(194, 146, 0, 0.28);
+      background:
+        radial-gradient(circle at top, rgba(255, 218, 106, 0.18), transparent 60%),
+        rgba(0, 0, 0, 0.42);
+      color: #ffda6a;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .tnx-lb-user-main {
+      min-width: 0;
+    }
+
+    .tnx-lb-user-name {
+      overflow: hidden;
+      color: white;
+      font-size: 0.98rem;
+      font-weight: 950;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tnx-lb-user-login {
+      margin-top: 0.15rem;
+      overflow: hidden;
+      color: rgb(107, 114, 128);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .tnx-lb-row-value {
+      border-radius: 0.9rem;
+      border: 1px solid rgba(194, 146, 0, 0.24);
+      background: rgba(0, 0, 0, 0.36);
+      padding: 0.65rem 0.85rem;
+      color: #ffda6a;
+      font-size: 0.95rem;
+      font-weight: 950;
+      white-space: nowrap;
+      text-shadow:
+        0 0 5px rgba(255, 218, 106, 0.32),
+        0 0 12px rgba(194, 146, 0, 0.18);
+    }
+
+    .tnx-lb-actions {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .tnx-lb-action-btn {
+      border-radius: 1rem;
+      border: 1px solid rgba(194, 146, 0, 0.45);
+      background: linear-gradient(135deg, rgba(255, 218, 106, 0.95), rgba(194, 146, 0, 0.94));
+      padding: 0.75rem 1.2rem;
+      color: #08050d;
+      font-size: 0.9rem;
+      font-weight: 950;
+      transition:
+        transform 160ms ease,
+        opacity 160ms ease,
+        box-shadow 160ms ease;
+    }
+
+    .tnx-lb-action-btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.94;
+      box-shadow: 0 0 18px rgba(255, 218, 106, 0.2);
+    }
+
+    .tnx-lb-action-btn--ghost {
+      background: rgba(0, 0, 0, 0.34);
+      color: #ffda6a;
+    }
+
+    .tnx-lb-empty {
+      display: flex;
+      min-height: 170px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 1.2rem;
+      border: 1px dashed rgba(194, 146, 0, 0.3);
+      background: rgba(0, 0, 0, 0.28);
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .tnx-lb-empty iconify-icon {
+      color: #ffda6a;
+      font-size: 2.2rem;
+      filter: drop-shadow(0 0 6px rgba(255, 218, 106, 0.32));
+    }
+
+    .tnx-lb-empty strong {
+      margin-top: 0.7rem;
+      color: white;
+      font-size: 1.05rem;
+      font-weight: 950;
+    }
+
+    .tnx-lb-empty span {
+      margin-top: 0.25rem;
+      color: rgb(107, 114, 128);
+      font-size: 0.86rem;
+      font-weight: 750;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 960px) {
+      .tnx-lb-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-lb-hero-card {
+        align-items: flex-start;
+      }
+
+      .tnx-lb-top-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-lb-top-card {
+        min-height: 136px;
+      }
+
+      .tnx-lb-tabs {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-lb-search-wrap {
+        min-width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .tnx-lb-hero,
+      .tnx-lb-top-section,
+      .tnx-lb-board-shell {
+        border-radius: 1.5rem;
+        padding: 1rem;
+      }
+
+      .tnx-lb-board-head {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .tnx-lb-count-box {
+        width: 100%;
+      }
+
+      .tnx-lb-row {
+        grid-template-columns: 52px minmax(0, 1fr);
+      }
+
+      .tnx-lb-row-value {
+        grid-column: 1 / -1;
+        text-align: center;
+      }
+
+      .tnx-lb-row-rank {
+        min-width: 3rem;
+      }
+    }
+  </style>
 
   <LeaderboardsScript />
 </Layout>
