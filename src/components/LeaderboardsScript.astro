@@ -1488,7 +1488,7 @@
     function renderTopThree() {
       const elements = getElements()
       const container = elements.topThreeList
-      const users = searchQuery ? filteredData[activeBoard] || [] : allData[activeBoard] || []
+      const users = allData[activeBoard] || []
 
       if (!container) return
 
@@ -1501,8 +1501,8 @@
             <div class="tnx-lb-medal">
               <iconify-icon icon="tabler:trophy"></iconify-icon>
             </div>
-            <p class="tnx-lb-top-name">${escapeHtml(searchQuery ? 'ما حصلت العضو' : config.emptyTitle)}</p>
-            <p class="tnx-lb-top-value">${escapeHtml(searchQuery ? 'جرّب تبحث باسم ثاني' : config.emptyText)}</p>
+            <p class="tnx-lb-top-name">${escapeHtml(config.emptyTitle)}</p>
+            <p class="tnx-lb-top-value">${escapeHtml(config.emptyText)}</p>
           </article>
         `
 
