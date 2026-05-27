@@ -539,16 +539,11 @@
     font-weight: 950;
   }
 
-  .tnx-lb-card-mode-copy span,
-  .tnx-lb-card-mode-hint {
+  .tnx-lb-card-mode-copy span {
     color: rgb(156, 163, 175);
     font-size: 0.82rem;
     font-weight: 800;
     line-height: 1.7;
-  }
-
-  .tnx-lb-card-mode-hint {
-    margin-top: 0.8rem;
   }
 
   .tnx-lb-card-mode-side {
@@ -1165,7 +1160,7 @@
                 <div class="tnx-lb-card-mode-row">
                   <div class="tnx-lb-card-mode-copy">
                     <strong>نوع البطاقة</strong>
-                    <span>تقدر تبدّل بين بطاقة منفصلة أو بطاقة مدمجة.</span>
+                    <span>بطاقة منفصلة أو بطاقة مدمجة.</span>
                   </div>
 
                   <div class="tnx-lb-card-mode-side">
@@ -1187,7 +1182,7 @@
                 <div class="tnx-lb-card-mode-row">
                   <div class="tnx-lb-card-mode-copy">
                     <strong>صورة Twitch</strong>
-                    <span>تقدر تضيف صورة العرض حق العضو داخل البطاقة.</span>
+                    <span>تقدر تضيف صورة العرض داخل البطاقة.</span>
                   </div>
 
                   <div class="tnx-lb-card-mode-side">
@@ -1204,14 +1199,6 @@
 
                     <span id="share-card-avatar-status" class="tnx-lb-card-mode-status">بدون صورة</span>
                   </div>
-                </div>
-
-                <div id="share-card-mode-hint" class="tnx-lb-card-mode-hint">
-                  الآن البطاقة تعرض ترتيب وقيمة التبويب الحالي فقط.
-                </div>
-
-                <div id="share-card-avatar-hint" class="tnx-lb-card-mode-hint">
-                  صورة Twitch مطفية حاليًا.
                 </div>
               </div>
 
@@ -1290,11 +1277,9 @@
         shareCanvas: document.getElementById('share-card-canvas'),
         shareCardModeSwitch: document.getElementById('share-card-mode-switch'),
         shareCardModeStatus: document.getElementById('share-card-mode-status'),
-        shareCardModeHint: document.getElementById('share-card-mode-hint'),
 
         shareCardAvatarSwitch: document.getElementById('share-card-avatar-switch'),
         shareCardAvatarStatus: document.getElementById('share-card-avatar-status'),
-        shareCardAvatarHint: document.getElementById('share-card-avatar-hint'),
       }
     }
 
@@ -1314,12 +1299,6 @@
         elements.shareCardModeStatus.textContent = isCombined ? 'مدمجة' : 'منفصلة'
       }
 
-      if (elements.shareCardModeHint) {
-        elements.shareCardModeHint.textContent = isCombined
-          ? 'الآن البطاقة تعرض النقاط والمشاهدة معًا في نفس الصورة.'
-          : 'الآن البطاقة تعرض ترتيب وقيمة التبويب الحالي فقط.'
-      }
-
       elements.shareCardAvatarSwitch?.classList.toggle('is-on', shareCardUseAvatar)
       elements.shareCardAvatarSwitch?.setAttribute('aria-checked', String(shareCardUseAvatar))
       elements.shareCardAvatarSwitch?.toggleAttribute('disabled', !avatarAvailable)
@@ -1330,14 +1309,6 @@
             ? 'مع صورة'
             : 'بدون صورة'
           : 'غير متاحة'
-      }
-
-      if (elements.shareCardAvatarHint) {
-        elements.shareCardAvatarHint.textContent = avatarAvailable
-          ? shareCardUseAvatar
-            ? 'صورة Twitch بتظهر داخل البطاقة عند التحميل أو المشاركة.'
-            : 'صورة Twitch مطفية حاليًا.'
-          : 'ما فيه AvatarUrl لهذا العضو، عشان كذا زر الصورة مقفل.'
       }
     }
 
