@@ -8,6 +8,43 @@
     overflow: hidden;
   }
 
+  .tnx-lb-confetti-layer {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    overflow: hidden;
+  }
+
+  .tnx-lb-confetti-piece {
+    position: absolute;
+    top: -24px;
+    width: var(--w);
+    height: var(--h);
+    border-radius: 3px;
+    background: var(--c);
+    opacity: 0.95;
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    animation: tnx-lb-confetti-fall var(--d) cubic-bezier(0.18, 0.74, 0.42, 1) forwards;
+    animation-delay: var(--delay);
+  }
+
+  @keyframes tnx-lb-confetti-fall {
+    0% {
+      transform: translate3d(0, -30px, 0) rotate(0deg);
+      opacity: 1;
+    }
+
+    80% {
+      opacity: 1;
+    }
+
+    100% {
+      transform: translate3d(var(--x), 110vh, 0) rotate(var(--r));
+      opacity: 0;
+    }
+  }
+
   .tnx-lb-row {
     position: relative;
     display: grid;
@@ -811,6 +848,14 @@
       text-align: center;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tnx-lb-confetti-piece,
+    .tnx-lb-row--rank-1 .tnx-lb-row-rank,
+    .tnx-lb-top-card--first .tnx-lb-medal {
+      animation: none !important;
+    }
+  }
 </style>
 
 <script is:inline>
@@ -822,6 +867,9 @@
     }
 
     const perPage = 20
+    const ENABLE_FIRST_OPEN_CONFETTI = true
+    const ENABLE_CARD_CLICK_SOUND = true
+    const CONFETTI_SESSION_KEY = 'tnx-leaderboards-confetti-seen-v1'
 
     const boardConfig = {
       points: {
@@ -861,6 +909,7 @@
     let activeModalUser = null
     let shareCardMode = 'single'
     let shareCardUseAvatar = false
+    let audioContext = null
 
     let allData = {
       points: [],
@@ -882,6 +931,12 @@
 
     let revealObserver = null
     const listeners = []
+    const timers = []
+
+    function addTimer(id) {
+      timers.push(id)
+      return id
+    }
 
     function addListener(target, event, handler, options) {
       if (!target) return
@@ -893,11 +948,15 @@
       listeners.forEach((cleanup) => cleanup())
       listeners.length = 0
 
+      timers.forEach((id) => window.clearTimeout(id))
+      timers.length = 0
+
       if (revealObserver) {
         revealObserver.disconnect()
         revealObserver = null
       }
 
+      document.querySelectorAll('.tnx-lb-confetti-layer').forEach((layer) => layer.remove())
       document.body.classList.remove('tnx-modal-open')
     }
 
@@ -933,6 +992,109 @@
       const month = String(date.getMonth() + 1).padStart(2, '0')
       const year = String(date.getFullYear())
       return `${day}/${month}/${year}`
+    }
+
+    function getSessionItem(key) {
+      try {
+        return window.sessionStorage.getItem(key)
+      } catch {
+        return null
+      }
+    }
+
+    function setSessionItem(key, value) {
+      try {
+        window.sessionStorage.setItem(key, value)
+      } catch {
+        // Ignore storage errors.
+      }
+    }
+
+    function prefersReducedMotion() {
+      return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    }
+
+    function runFirstOpenConfetti() {
+      if (!ENABLE_FIRST_OPEN_CONFETTI) return
+      if (prefersReducedMotion()) return
+      if (getSessionItem(CONFETTI_SESSION_KEY) === '1') return
+
+      setSessionItem(CONFETTI_SESSION_KEY, '1')
+
+      const layer = document.createElement('div')
+      layer.className = 'tnx-lb-confetti-layer'
+      document.body.appendChild(layer)
+
+      const colors = ['#ffda6a', '#c29200', '#ffffff', '#fef3c7', '#b45309']
+      const count = 72
+
+      for (let i = 0; i < count; i++) {
+        const piece = document.createElement('span')
+        piece.className = 'tnx-lb-confetti-piece'
+
+        const width = 6 + Math.random() * 8
+        const height = 8 + Math.random() * 14
+        const left = Math.random() * 100
+        const x = Math.round((Math.random() - 0.5) * 280)
+        const rotate = Math.round((Math.random() - 0.5) * 1080)
+        const duration = 2200 + Math.random() * 1500
+        const delay = Math.random() * 600
+        const color = colors[Math.floor(Math.random() * colors.length)]
+
+        piece.style.left = `${left}%`
+        piece.style.setProperty('--w', `${width}px`)
+        piece.style.setProperty('--h', `${height}px`)
+        piece.style.setProperty('--x', `${x}px`)
+        piece.style.setProperty('--r', `${rotate}deg`)
+        piece.style.setProperty('--d', `${duration}ms`)
+        piece.style.setProperty('--delay', `${delay}ms`)
+        piece.style.setProperty('--c', color)
+
+        layer.appendChild(piece)
+      }
+
+      addTimer(
+        window.setTimeout(() => {
+          layer.remove()
+        }, 4600)
+      )
+    }
+
+    function playCardOpenSound() {
+      if (!ENABLE_CARD_CLICK_SOUND) return
+
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext
+        if (!AudioContextClass) return
+
+        if (!audioContext) {
+          audioContext = new AudioContextClass()
+        }
+
+        if (audioContext.state === 'suspended') {
+          void audioContext.resume()
+        }
+
+        const now = audioContext.currentTime
+        const oscillator = audioContext.createOscillator()
+        const gain = audioContext.createGain()
+
+        oscillator.type = 'sine'
+        oscillator.frequency.setValueAtTime(620, now)
+        oscillator.frequency.exponentialRampToValueAtTime(420, now + 0.055)
+
+        gain.gain.setValueAtTime(0.0001, now)
+        gain.gain.exponentialRampToValueAtTime(0.035, now + 0.01)
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.075)
+
+        oscillator.connect(gain)
+        gain.connect(audioContext.destination)
+
+        oscillator.start(now)
+        oscillator.stop(now + 0.085)
+      } catch {
+        // Ignore audio errors.
+      }
     }
 
     function getDisplayName(user) {
@@ -1372,7 +1534,7 @@
 
       forceRevealVisibleElements()
       window.requestAnimationFrame(forceRevealVisibleElements)
-      window.setTimeout(forceRevealVisibleElements, 120)
+      addTimer(window.setTimeout(forceRevealVisibleElements, 120))
     }
 
     function forceRevealVisibleElements() {
@@ -1675,6 +1837,7 @@
       activeModalUser = user
       activeBoard = realBoard
 
+      playCardOpenSound()
       updateUserDatalist()
       syncShareCardOptionsUI()
       setCompareAccordionOpen(false)
@@ -1866,7 +2029,7 @@
         image.onload = () => finish(image)
         image.onerror = () => finish(null)
 
-        window.setTimeout(() => finish(null), 5000)
+        addTimer(window.setTimeout(() => finish(null), 5000))
 
         image.src = cleanSrc
       })
@@ -2292,6 +2455,8 @@
         setActiveBoard(activeBoard)
         updateUserDatalist()
         initScrollReveal()
+
+        addTimer(window.setTimeout(runFirstOpenConfetti, 350))
       } catch {
         Object.keys(boardConfig).forEach((boardId) => {
           const container = elements.containers[boardId]
@@ -2440,8 +2605,8 @@
       loadData()
 
       window.requestAnimationFrame(initScrollReveal)
-      window.setTimeout(initScrollReveal, 300)
-      window.setTimeout(initScrollReveal, 900)
+      addTimer(window.setTimeout(initScrollReveal, 300))
+      addTimer(window.setTimeout(initScrollReveal, 900))
     }
 
     if (document.readyState === 'loading') {
