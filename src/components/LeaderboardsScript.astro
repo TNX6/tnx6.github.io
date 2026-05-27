@@ -969,18 +969,85 @@
         .replaceAll("'", '&#039;')
     }
 
+    function normalizeDigits(value) {
+      const arabicDigits = '٠١٢٣٤٥٦٧٨٩'
+      const persianDigits = '۰۱۲۳۴۵۶۷۸۹'
+
+      return String(value ?? '').replace(/[٠-٩۰-۹]/g, (digit) => {
+        const arabicIndex = arabicDigits.indexOf(digit)
+        if (arabicIndex !== -1) return String(arabicIndex)
+
+        const persianIndex = persianDigits.indexOf(digit)
+        return persianIndex !== -1 ? String(persianIndex) : digit
+      })
+    }
+
     function toNumber(value) {
       if (typeof value === 'number') {
         return Number.isFinite(value) ? value : 0
       }
 
       const number = Number(
-        String(value ?? '')
+        normalizeDigits(value)
           .replaceAll(',', '')
           .replace(/[^\d.-]/g, '')
       )
 
       return Number.isFinite(number) ? number : 0
+    }
+
+    function parseWatchtimeToSeconds(value) {
+      if (typeof value === 'number') {
+        return Number.isFinite(value) ? value : 0
+      }
+
+      const raw = normalizeDigits(value)
+        .toLowerCase()
+        .replace(/,/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+
+      if (!raw) return 0
+
+      const colonMatch = raw.match(/^(\d+):(\d{1,2})(?::(\d{1,2}))?$/)
+      if (colonMatch) {
+        const first = Number(colonMatch[1]) || 0
+        const second = Number(colonMatch[2]) || 0
+        const third = Number(colonMatch[3]) || 0
+
+        return colonMatch[3]
+          ? first * 3600 + second * 60 + third
+          : first * 60 + second
+      }
+
+      let totalSeconds = 0
+      const unitPattern = /(\d+(?:\.\d+)?)\s*(days?|day|d|أيام|ايام|يوم|ساعات|ساعة|ساعه|hours?|hour|hrs?|hr|h|دقائق|دقيقة|دقيقه|minutes?|minute|mins?|min|m|ثواني|ثانية|ثانيه|seconds?|second|secs?|sec|s)\b/g
+      let match
+
+      while ((match = unitPattern.exec(raw)) !== null) {
+        const amount = Number(match[1])
+        const unit = match[2]
+
+        if (!Number.isFinite(amount)) continue
+
+        if (/^(days?|day|d|أيام|ايام|يوم)$/.test(unit)) {
+          totalSeconds += amount * 86400
+        } else if (/^(ساعات|ساعة|ساعه|hours?|hour|hrs?|hr|h)$/.test(unit)) {
+          totalSeconds += amount * 3600
+        } else if (/^(دقائق|دقيقة|دقيقه|minutes?|minute|mins?|min|m)$/.test(unit)) {
+          totalSeconds += amount * 60
+        } else if (/^(ثواني|ثانية|ثانيه|seconds?|second|secs?|sec|s)$/.test(unit)) {
+          totalSeconds += amount
+        }
+      }
+
+      if (totalSeconds > 0) return totalSeconds
+
+      return toNumber(raw)
+    }
+
+    function getSortNumber(boardId, value) {
+      return boardId === 'watchtime' ? parseWatchtimeToSeconds(value) : toNumber(value)
     }
 
     function formatNumber(value) {
@@ -1193,7 +1260,7 @@
           __name: getDisplayName(user),
           __login: getLogin(user),
           __value: getValue(user),
-          __number: toNumber(getValue(user)),
+          __number: getSortNumber(boardId, getValue(user)),
           __avatar: getAvatarUrl(user),
         }))
         .sort((a, b) => b.__number - a.__number)
