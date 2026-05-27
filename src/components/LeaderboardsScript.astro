@@ -522,6 +522,12 @@
     flex-wrap: wrap;
   }
 
+  .tnx-lb-card-mode-row + .tnx-lb-card-mode-row {
+    margin-top: 0.95rem;
+    padding-top: 0.95rem;
+    border-top: 1px solid rgba(194, 146, 0, 0.13);
+  }
+
   .tnx-lb-card-mode-copy {
     display: grid;
     gap: 0.3rem;
@@ -539,6 +545,10 @@
     font-size: 0.82rem;
     font-weight: 800;
     line-height: 1.7;
+  }
+
+  .tnx-lb-card-mode-hint {
+    margin-top: 0.8rem;
   }
 
   .tnx-lb-card-mode-side {
@@ -588,6 +598,11 @@
   .tnx-lb-switch.is-on .tnx-lb-switch-thumb {
     right: calc(100% - 33px);
     background: linear-gradient(180deg, #ffea99, #ffda6a);
+  }
+
+  .tnx-lb-switch:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
   }
 
   .tnx-lb-btn {
@@ -850,6 +865,7 @@
     let searchQuery = ''
     let activeModalUser = null
     let shareCardMode = 'single'
+    let shareCardUseAvatar = false
 
     let allData = {
       points: [],
@@ -952,6 +968,10 @@
         user?.TwitchProfileImageUrl ||
         ''
       ).trim()
+    }
+
+    function hasAvatar(user) {
+      return Boolean(String(user?.__avatar || getAvatarUrl(user)).trim())
     }
 
     function isNumericValue(value) {
@@ -1164,8 +1184,34 @@
                   </div>
                 </div>
 
+                <div class="tnx-lb-card-mode-row">
+                  <div class="tnx-lb-card-mode-copy">
+                    <strong>صورة Twitch</strong>
+                    <span>تقدر تضيف صورة العرض حق العضو داخل البطاقة.</span>
+                  </div>
+
+                  <div class="tnx-lb-card-mode-side">
+                    <button
+                      type="button"
+                      id="share-card-avatar-switch"
+                      class="tnx-lb-switch"
+                      role="switch"
+                      aria-checked="false"
+                      aria-label="تبديل صورة Twitch"
+                    >
+                      <span class="tnx-lb-switch-thumb"></span>
+                    </button>
+
+                    <span id="share-card-avatar-status" class="tnx-lb-card-mode-status">بدون صورة</span>
+                  </div>
+                </div>
+
                 <div id="share-card-mode-hint" class="tnx-lb-card-mode-hint">
                   الآن البطاقة تعرض ترتيب وقيمة التبويب الحالي فقط.
+                </div>
+
+                <div id="share-card-avatar-hint" class="tnx-lb-card-mode-hint">
+                  صورة Twitch مطفية حاليًا.
                 </div>
               </div>
 
@@ -1245,12 +1291,21 @@
         shareCardModeSwitch: document.getElementById('share-card-mode-switch'),
         shareCardModeStatus: document.getElementById('share-card-mode-status'),
         shareCardModeHint: document.getElementById('share-card-mode-hint'),
+
+        shareCardAvatarSwitch: document.getElementById('share-card-avatar-switch'),
+        shareCardAvatarStatus: document.getElementById('share-card-avatar-status'),
+        shareCardAvatarHint: document.getElementById('share-card-avatar-hint'),
       }
     }
 
-    function syncShareCardModeUI() {
+    function syncShareCardOptionsUI() {
       const elements = getModalElements()
       const isCombined = shareCardMode === 'combined'
+      const avatarAvailable = hasAvatar(activeModalUser)
+
+      if (!avatarAvailable) {
+        shareCardUseAvatar = false
+      }
 
       elements.shareCardModeSwitch?.classList.toggle('is-on', isCombined)
       elements.shareCardModeSwitch?.setAttribute('aria-checked', String(isCombined))
@@ -1263,6 +1318,26 @@
         elements.shareCardModeHint.textContent = isCombined
           ? 'الآن البطاقة تعرض النقاط والمشاهدة معًا في نفس الصورة.'
           : 'الآن البطاقة تعرض ترتيب وقيمة التبويب الحالي فقط.'
+      }
+
+      elements.shareCardAvatarSwitch?.classList.toggle('is-on', shareCardUseAvatar)
+      elements.shareCardAvatarSwitch?.setAttribute('aria-checked', String(shareCardUseAvatar))
+      elements.shareCardAvatarSwitch?.toggleAttribute('disabled', !avatarAvailable)
+
+      if (elements.shareCardAvatarStatus) {
+        elements.shareCardAvatarStatus.textContent = avatarAvailable
+          ? shareCardUseAvatar
+            ? 'مع صورة'
+            : 'بدون صورة'
+          : 'غير متاحة'
+      }
+
+      if (elements.shareCardAvatarHint) {
+        elements.shareCardAvatarHint.textContent = avatarAvailable
+          ? shareCardUseAvatar
+            ? 'صورة Twitch بتظهر داخل البطاقة عند التحميل أو المشاركة.'
+            : 'صورة Twitch مطفية حاليًا.'
+          : 'ما فيه AvatarUrl لهذا العضو، عشان كذا زر الصورة مقفل.'
       }
     }
 
@@ -1630,7 +1705,7 @@
       activeBoard = realBoard
 
       updateUserDatalist()
-      syncShareCardModeUI()
+      syncShareCardOptionsUI()
       setCompareAccordionOpen(false)
 
       if (elements.modalUserAvatar) {
@@ -1651,7 +1726,7 @@
       if (elements.compareTargetInput) elements.compareTargetInput.value = ''
       if (elements.compareResult) elements.compareResult.textContent = 'اختر عضو ثاني عشان تظهر المقارنة.'
 
-      renderShareCard(user)
+      void renderShareCard(user)
 
       modal.classList.remove('hidden')
       modal.setAttribute('aria-hidden', 'false')
@@ -1762,17 +1837,89 @@
       ctx.fillText(text, x, y)
     }
 
+    function drawImageCover(ctx, image, x, y, width, height) {
+      const imageRatio = image.width / image.height
+      const boxRatio = width / height
+
+      let sourceX = 0
+      let sourceY = 0
+      let sourceWidth = image.width
+      let sourceHeight = image.height
+
+      if (imageRatio > boxRatio) {
+        sourceWidth = image.height * boxRatio
+        sourceX = (image.width - sourceWidth) / 2
+      } else {
+        sourceHeight = image.width / boxRatio
+        sourceY = (image.height - sourceHeight) / 2
+      }
+
+      ctx.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, x, y, width, height)
+    }
+
+    function drawAvatarOnCard(ctx, image, x, y, size) {
+      if (!image) return
+
+      ctx.save()
+      drawRoundedRect(ctx, x, y, size, size, 42)
+      ctx.clip()
+      drawImageCover(ctx, image, x, y, size, size)
+      ctx.restore()
+
+      ctx.strokeStyle = 'rgba(255, 218, 106, 0.42)'
+      ctx.lineWidth = 4
+      drawRoundedRect(ctx, x, y, size, size, 42)
+      ctx.stroke()
+    }
+
+    function loadCanvasImage(src) {
+      return new Promise((resolve) => {
+        const cleanSrc = String(src || '').trim()
+
+        if (!cleanSrc) {
+          resolve(null)
+          return
+        }
+
+        const image = new Image()
+        let done = false
+
+        const finish = (value) => {
+          if (done) return
+          done = true
+          resolve(value)
+        }
+
+        image.crossOrigin = 'anonymous'
+        image.referrerPolicy = 'no-referrer'
+        image.onload = () => finish(image)
+        image.onerror = () => finish(null)
+
+        window.setTimeout(() => finish(null), 5000)
+
+        image.src = cleanSrc
+      })
+    }
+
+    function resetCanvas(canvas) {
+      const width = canvas.width
+      const height = canvas.height
+      canvas.width = width
+      canvas.height = height
+    }
+
+    function canvasToBlob(canvas) {
+      return new Promise((resolve) => {
+        try {
+          canvas.toBlob((blob) => resolve(blob), 'image/png')
+        } catch {
+          resolve(null)
+        }
+      })
+    }
+
     function drawMetricBox(ctx, options) {
-      const {
-        x,
-        y,
-        width,
-        height,
-        title,
-        rank,
-        value,
-        font,
-      } = options
+      const { x, y, width, height, title, rank, value, font } = options
 
       ctx.fillStyle = 'rgba(0, 0, 0, 0.42)'
       drawRoundedRect(ctx, x, y, width, height, 34)
@@ -1814,8 +1961,10 @@
       ctx.textAlign = 'center'
     }
 
-    function renderSingleShareCard(ctx, user, width, height, font, cardDate) {
+    async function renderSingleShareCard(ctx, user, width, height, font, cardDate) {
       const config = boardConfig[activeBoard] || boardConfig.points
+      const shouldDrawAvatar = shareCardUseAvatar && hasAvatar(user)
+      const avatarImage = shouldDrawAvatar ? await loadCanvasImage(user?.__avatar || getAvatarUrl(user)) : null
 
       ctx.fillStyle = '#ffda6a'
       ctx.font = `900 54px ${font}`
@@ -1842,53 +1991,82 @@
       drawRoundedRect(ctx, 140, 315, width - 280, 650, 46)
       ctx.stroke()
 
-      ctx.fillStyle = '#ffda6a'
-      ctx.font = `900 86px ${font}`
-      ctx.fillText(`#${user.__rank}`, width / 2, 450)
+      if (avatarImage) {
+        drawAvatarOnCard(ctx, avatarImage, width / 2 - 90, 350, 180)
 
-      ctx.fillStyle = '#ffffff'
-      drawTextFit(ctx, user.__name, width / 2, 565, width - 260, 76, font, '900')
+        ctx.fillStyle = '#ffda6a'
+        ctx.font = `900 76px ${font}`
+        ctx.fillText(`#${user.__rank}`, width / 2, 620)
 
-      if (user.__login && user.__login.toLowerCase() !== user.__name.toLowerCase()) {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.46)'
-        ctx.font = `800 34px ${font}`
-        ctx.direction = 'ltr'
-        ctx.fillText(`@${user.__login}`, width / 2, 620)
-        ctx.direction = 'rtl'
+        ctx.fillStyle = '#ffffff'
+        drawTextFit(ctx, user.__name, width / 2, 725, width - 260, 70, font, '900')
+
+        if (user.__login && user.__login.toLowerCase() !== user.__name.toLowerCase()) {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.46)'
+          ctx.font = `800 32px ${font}`
+          ctx.direction = 'ltr'
+          ctx.fillText(`@${user.__login}`, width / 2, 780)
+          ctx.direction = 'rtl'
+        }
+
+        ctx.fillStyle = '#ffda6a'
+        ctx.font = `900 52px ${font}`
+        ctx.fillText(formatValue(activeBoard, user.__value), width / 2, 875)
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.68)'
+        ctx.font = `800 28px ${font}`
+        ctx.fillText('مركزك داخل مجتمع TNX6', width / 2, 930)
+      } else {
+        ctx.fillStyle = '#ffda6a'
+        ctx.font = `900 86px ${font}`
+        ctx.fillText(`#${user.__rank}`, width / 2, 450)
+
+        ctx.fillStyle = '#ffffff'
+        drawTextFit(ctx, user.__name, width / 2, 565, width - 260, 76, font, '900')
+
+        if (user.__login && user.__login.toLowerCase() !== user.__name.toLowerCase()) {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.46)'
+          ctx.font = `800 34px ${font}`
+          ctx.direction = 'ltr'
+          ctx.fillText(`@${user.__login}`, width / 2, 620)
+          ctx.direction = 'rtl'
+        }
+
+        ctx.fillStyle = '#ffda6a'
+        ctx.font = `900 60px ${font}`
+        ctx.fillText(formatValue(activeBoard, user.__value), width / 2, 740)
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.68)'
+        ctx.font = `800 30px ${font}`
+        ctx.fillText('مركزك داخل مجتمع TNX6', width / 2, 805)
       }
-
-      ctx.fillStyle = '#ffda6a'
-      ctx.font = `900 60px ${font}`
-      ctx.fillText(formatValue(activeBoard, user.__value), width / 2, 740)
-
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.68)'
-      ctx.font = `800 30px ${font}`
-      ctx.fillText('مركزك داخل مجتمع TNX6', width / 2, 805)
 
       ctx.strokeStyle = 'rgba(255, 218, 106, 0.22)'
       ctx.lineWidth = 2
       ctx.beginPath()
-      ctx.moveTo(230, 860)
-      ctx.lineTo(width - 230, 860)
+      ctx.moveTo(230, 990)
+      ctx.lineTo(width - 230, 990)
       ctx.stroke()
 
       ctx.fillStyle = 'rgba(255, 255, 255, 0.78)'
       ctx.font = `800 32px ${font}`
-      ctx.fillText('tnx6.xyz', width / 2, 930)
+      ctx.fillText('tnx6.xyz', width / 2, 1060)
 
       ctx.fillStyle = '#ffda6a'
       ctx.font = `900 42px ${font}`
-      ctx.fillText('شارك بطاقتك وورنا مركزك', width / 2, 1115)
+      ctx.fillText('شارك بطاقتك وورنا مركزك', width / 2, 1145)
 
       ctx.fillStyle = 'rgba(255, 255, 255, 0.38)'
       ctx.font = `700 26px ${font}`
-      ctx.fillText('Generated from TNX6 Leaderboards', width / 2, 1190)
+      ctx.fillText('Generated from TNX6 Leaderboards', width / 2, 1210)
 
       drawDate(ctx, width, height, font, cardDate)
     }
 
-    function renderCombinedShareCard(ctx, user, width, height, font, cardDate) {
+    async function renderCombinedShareCard(ctx, user, width, height, font, cardDate) {
       const combinedStats = getCombinedCardStats(user)
+      const shouldDrawAvatar = shareCardUseAvatar && hasAvatar(user)
+      const avatarImage = shouldDrawAvatar ? await loadCanvasImage(user?.__avatar || getAvatarUrl(user)) : null
 
       ctx.fillStyle = '#ffda6a'
       ctx.font = `900 54px ${font}`
@@ -1907,32 +2085,47 @@
       }
 
       ctx.fillStyle = 'rgba(0, 0, 0, 0.42)'
-      drawRoundedRect(ctx, 140, 315, width - 280, 320, 46)
+      drawRoundedRect(ctx, 140, 315, width - 280, 360, 46)
       ctx.fill()
 
       ctx.strokeStyle = 'rgba(255, 218, 106, 0.28)'
       ctx.lineWidth = 3
-      drawRoundedRect(ctx, 140, 315, width - 280, 320, 46)
+      drawRoundedRect(ctx, 140, 315, width - 280, 360, 46)
       ctx.stroke()
 
-      ctx.fillStyle = '#ffffff'
-      drawTextFit(ctx, user.__name, width / 2, 445, width - 260, 82, font, '900')
+      if (avatarImage) {
+        drawAvatarOnCard(ctx, avatarImage, width / 2 - 78, 345, 156)
 
-      if (user.__login && user.__login.toLowerCase() !== user.__name.toLowerCase()) {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.46)'
-        ctx.font = `800 34px ${font}`
-        ctx.direction = 'ltr'
-        ctx.fillText(`@${user.__login}`, width / 2, 505)
-        ctx.direction = 'rtl'
+        ctx.fillStyle = '#ffffff'
+        drawTextFit(ctx, user.__name, width / 2, 570, width - 260, 68, font, '900')
+
+        if (user.__login && user.__login.toLowerCase() !== user.__name.toLowerCase()) {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.46)'
+          ctx.font = `800 32px ${font}`
+          ctx.direction = 'ltr'
+          ctx.fillText(`@${user.__login}`, width / 2, 625)
+          ctx.direction = 'rtl'
+        }
+      } else {
+        ctx.fillStyle = '#ffffff'
+        drawTextFit(ctx, user.__name, width / 2, 445, width - 260, 82, font, '900')
+
+        if (user.__login && user.__login.toLowerCase() !== user.__name.toLowerCase()) {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.46)'
+          ctx.font = `800 34px ${font}`
+          ctx.direction = 'ltr'
+          ctx.fillText(`@${user.__login}`, width / 2, 505)
+          ctx.direction = 'rtl'
+        }
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.66)'
+        ctx.font = `800 30px ${font}`
+        ctx.fillText('نقاطك ومشاهدتك في مجتمع TNX6', width / 2, 575)
       }
-
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.66)'
-      ctx.font = `800 30px ${font}`
-      ctx.fillText('نقاطك ومشاهدتك في مجتمع TNX6', width / 2, 575)
 
       drawMetricBox(ctx, {
         x: 130,
-        y: 700,
+        y: 735,
         width: 390,
         height: 250,
         title: 'المشاهدة',
@@ -1943,7 +2136,7 @@
 
       drawMetricBox(ctx, {
         x: 560,
-        y: 700,
+        y: 735,
         width: 390,
         height: 250,
         title: 'النقاط',
@@ -1955,30 +2148,32 @@
       ctx.strokeStyle = 'rgba(255, 218, 106, 0.22)'
       ctx.lineWidth = 2
       ctx.beginPath()
-      ctx.moveTo(230, 1010)
-      ctx.lineTo(width - 230, 1010)
+      ctx.moveTo(230, 1040)
+      ctx.lineTo(width - 230, 1040)
       ctx.stroke()
 
       ctx.fillStyle = 'rgba(255, 255, 255, 0.78)'
       ctx.font = `800 32px ${font}`
-      ctx.fillText('tnx6.xyz', width / 2, 1080)
+      ctx.fillText('tnx6.xyz', width / 2, 1105)
 
       ctx.fillStyle = '#ffda6a'
       ctx.font = `900 42px ${font}`
-      ctx.fillText('شارك بطاقتك وورنا مركزك', width / 2, 1155)
+      ctx.fillText('شارك بطاقتك وورنا مركزك', width / 2, 1170)
 
       ctx.fillStyle = 'rgba(255, 255, 255, 0.38)'
       ctx.font = `700 26px ${font}`
-      ctx.fillText('Generated from TNX6 Leaderboards', width / 2, 1218)
+      ctx.fillText('Generated from TNX6 Leaderboards', width / 2, 1230)
 
       drawDate(ctx, width, height, font, cardDate)
     }
 
-    function renderShareCard(user = activeModalUser) {
+    async function renderShareCard(user = activeModalUser) {
       const elements = getModalElements()
       const canvas = elements.shareCanvas
 
       if (!canvas) return
+
+      resetCanvas(canvas)
 
       const ctx = canvas.getContext('2d')
       if (!ctx) return
@@ -2014,9 +2209,9 @@
       ctx.textAlign = 'center'
 
       if (shareCardMode === 'combined') {
-        renderCombinedShareCard(ctx, user, width, height, font, cardDate)
+        await renderCombinedShareCard(ctx, user, width, height, font, cardDate)
       } else {
-        renderSingleShareCard(ctx, user, width, height, font, cardDate)
+        await renderSingleShareCard(ctx, user, width, height, font, cardDate)
       }
     }
 
@@ -2026,57 +2221,74 @@
         : `tnx6-${activeBoard}-card`
     }
 
-    function downloadShareCard() {
+    async function downloadShareCard() {
       const elements = getModalElements()
       const canvas = elements.shareCanvas
       const user = activeModalUser
 
       if (!canvas || !user) return
 
-      renderShareCard(user)
+      await renderShareCard(user)
 
       const safeName = user.__name.replace(/[^\w\u0600-\u06FF-]+/g, '-')
       const link = document.createElement('a')
 
-      link.download = `${getCardFilePrefix()}-${safeName}.png`
-      link.href = canvas.toDataURL('image/png')
-      link.click()
+      try {
+        link.download = `${getCardFilePrefix()}-${safeName}.png`
+        link.href = canvas.toDataURL('image/png')
+        link.click()
+      } catch {
+        shareCardUseAvatar = false
+        syncShareCardOptionsUI()
+        await renderShareCard(user)
+
+        link.download = `${getCardFilePrefix()}-${safeName}.png`
+        link.href = canvas.toDataURL('image/png')
+        link.click()
+      }
     }
 
-    function shareCardNative() {
+    async function shareCardNative() {
       const elements = getModalElements()
       const canvas = elements.shareCanvas
       const user = activeModalUser
 
       if (!canvas || !user) return
 
-      renderShareCard(user)
+      await renderShareCard(user)
 
-      canvas.toBlob(async (blob) => {
-        if (!blob) return
+      let blob = await canvasToBlob(canvas)
 
-        const safeName = user.__name.replace(/[^\w\u0600-\u06FF-]+/g, '-')
-        const file = new File([blob], `${getCardFilePrefix()}-${safeName}.png`, {
-          type: 'image/png',
-        })
+      if (!blob && shareCardUseAvatar) {
+        shareCardUseAvatar = false
+        syncShareCardOptionsUI()
+        await renderShareCard(user)
+        blob = await canvasToBlob(canvas)
+      }
 
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          try {
-            await navigator.share({
-              files: [file],
-              title: shareCardMode === 'combined' ? 'TNX6 Community Card' : 'TNX6 Rank Card',
-              text: shareCardMode === 'combined'
-                ? 'بطاقتي في مجتمع TNX6'
-                : `مركزي في TNX6: #${user.__rank}`,
-            })
-            return
-          } catch {
-            // fallback to download
-          }
+      if (!blob) return
+
+      const safeName = user.__name.replace(/[^\w\u0600-\u06FF-]+/g, '-')
+      const file = new File([blob], `${getCardFilePrefix()}-${safeName}.png`, {
+        type: 'image/png',
+      })
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: shareCardMode === 'combined' ? 'TNX6 Community Card' : 'TNX6 Rank Card',
+            text: shareCardMode === 'combined'
+              ? 'بطاقتي في مجتمع TNX6'
+              : `مركزي في TNX6: #${user.__rank}`,
+          })
+          return
+        } catch {
+          // fallback to download
         }
+      }
 
-        downloadShareCard()
-      }, 'image/png')
+      await downloadShareCard()
     }
 
     async function loadData() {
@@ -2171,8 +2383,17 @@
 
         if (target.closest('#share-card-mode-switch')) {
           shareCardMode = shareCardMode === 'combined' ? 'single' : 'combined'
-          syncShareCardModeUI()
-          renderShareCard(activeModalUser)
+          syncShareCardOptionsUI()
+          void renderShareCard(activeModalUser)
+          return
+        }
+
+        if (target.closest('#share-card-avatar-switch')) {
+          if (!activeModalUser || !hasAvatar(activeModalUser)) return
+
+          shareCardUseAvatar = !shareCardUseAvatar
+          syncShareCardOptionsUI()
+          void renderShareCard(activeModalUser)
           return
         }
 
@@ -2182,12 +2403,12 @@
         }
 
         if (target.closest('#download-share-card')) {
-          downloadShareCard()
+          void downloadShareCard()
           return
         }
 
         if (target.closest('#native-share-card')) {
-          shareCardNative()
+          void shareCardNative()
           return
         }
 
