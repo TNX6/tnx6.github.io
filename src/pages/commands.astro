@@ -931,7 +931,7 @@ const totalBeginnerCategories = beginnerCategories.length
           <div>
             <span>رحلة المشاهد الجديد</span>
             <h2>ثلاثة أنظمة فقط</h2>
-            <p>افتح البطاقات: النقاط، الحقيبة، البادج. بعد ما تخلصها، تقدر تنتقل لقائمة كل الأوامر.</p>
+            <p>افتح البطاقات: النقاط، الحقيبة، البادج. مربع التقدم بيلحقك وأنت تنزل داخل هذا القسم.</p>
           </div>
 
           <div class="tnx-progress-box">
@@ -1403,9 +1403,45 @@ const totalBeginnerCategories = beginnerCategories.length
     .tnx-progress-box {
       border: 1px solid rgba(255, 218, 106, 0.16);
       border-radius: 1.25rem;
-      background: rgba(0, 0, 0, 0.32);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.08), transparent 44%),
+        rgba(0, 0, 0, 0.58);
       padding: 1rem;
       text-align: center;
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.34),
+        inset 0 0 16px rgba(255, 218, 106, 0.025);
+      backdrop-filter: blur(16px);
+    }
+
+    .tnx-progress-box.is-floating {
+      position: fixed;
+      top: 5.6rem;
+      right: max(1rem, calc((100vw - 1240px) / 2 + 1rem));
+      z-index: 80;
+      width: 240px;
+      animation: tnxProgressFloatIn 160ms ease both;
+    }
+
+    .tnx-progress-placeholder {
+      display: none;
+      width: 100%;
+    }
+
+    .tnx-progress-placeholder.is-active {
+      display: block;
+    }
+
+    @keyframes tnxProgressFloatIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     .tnx-progress-box strong {
@@ -1952,6 +1988,13 @@ const totalBeginnerCategories = beginnerCategories.length
       .tnx-all-head {
         flex-direction: column;
       }
+
+      .tnx-progress-box.is-floating {
+        top: 4.75rem;
+        right: 1rem;
+        left: 1rem;
+        width: auto;
+      }
     }
 
     @media (max-width: 640px) {
@@ -2013,6 +2056,8 @@ const totalBeginnerCategories = beginnerCategories.length
 
         timers.forEach((id) => window.clearTimeout(id))
         timers.length = 0
+
+        stopFloatingProgress()
       }
 
       const entryChoice = document.getElementById('entryChoice')
@@ -2021,6 +2066,9 @@ const totalBeginnerCategories = beginnerCategories.length
       const progressCurrent = document.getElementById('progressCurrent')
       const progressTotal = document.getElementById('progressTotal')
       const progressBar = document.getElementById('progressBar')
+      const progressBox = document.querySelector('.tnx-progress-box')
+      let progressPlaceholder = null
+
       const completionBox = document.getElementById('completionBox')
       const systemPanels = Array.from(document.querySelectorAll('[data-system-panel]'))
       const systemCards = Array.from(document.querySelectorAll('[data-system-card]'))
@@ -2052,7 +2100,67 @@ const totalBeginnerCategories = beginnerCategories.length
           .trim()
       }
 
+      function getProgressStickyTop() {
+        return window.innerWidth <= 980 ? 76 : 90
+      }
+
+      function ensureProgressPlaceholder() {
+        if (!progressBox) return null
+
+        if (!progressPlaceholder) {
+          progressPlaceholder = document.createElement('div')
+          progressPlaceholder.className = 'tnx-progress-placeholder'
+          progressBox.parentNode?.insertBefore(progressPlaceholder, progressBox)
+        }
+
+        progressPlaceholder.style.height = `${progressBox.offsetHeight}px`
+        return progressPlaceholder
+      }
+
+      function stopFloatingProgress() {
+        if (!progressBox) return
+
+        progressBox.classList.remove('is-floating')
+
+        if (progressPlaceholder) {
+          progressPlaceholder.classList.remove('is-active')
+          progressPlaceholder.style.height = '0px'
+        }
+      }
+
+      function updateFloatingProgress() {
+        if (!progressBox || !newUserFlow) return
+
+        const isNewFlowHidden = newUserFlow.classList.contains('hidden')
+
+        if (isNewFlowHidden) {
+          stopFloatingProgress()
+          return
+        }
+
+        const stickyTop = getProgressStickyTop()
+        const flowRect = newUserFlow.getBoundingClientRect()
+        const placeholder = ensureProgressPlaceholder()
+
+        const referenceTop = progressBox.classList.contains('is-floating')
+          ? placeholder?.getBoundingClientRect().top ?? progressBox.getBoundingClientRect().top
+          : progressBox.getBoundingClientRect().top
+
+        const shouldFloat =
+          flowRect.top < stickyTop &&
+          flowRect.bottom > stickyTop + progressBox.offsetHeight + 24 &&
+          referenceTop < stickyTop
+
+        if (shouldFloat) {
+          placeholder?.classList.add('is-active')
+          progressBox.classList.add('is-floating')
+        } else {
+          stopFloatingProgress()
+        }
+      }
+
       function showEntry() {
+        stopFloatingProgress()
         entryChoice?.classList.remove('hidden')
         newUserFlow?.classList.add('hidden')
         allCommandsView?.classList.add('hidden')
@@ -2063,9 +2171,16 @@ const totalBeginnerCategories = beginnerCategories.length
         newUserFlow?.classList.remove('hidden')
         allCommandsView?.classList.add('hidden')
         newUserFlow?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+        addTimer(
+          window.setTimeout(() => {
+            updateFloatingProgress()
+          }, 250)
+        )
       }
 
       function showAllCommands() {
+        stopFloatingProgress()
         entryChoice?.classList.add('hidden')
         newUserFlow?.classList.add('hidden')
         allCommandsView?.classList.remove('hidden')
@@ -2098,6 +2213,8 @@ const totalBeginnerCategories = beginnerCategories.length
           const category = status.dataset.systemStatus || ''
           status.textContent = seenSystems.has(category) ? 'تم' : 'جديد'
         })
+
+        updateFloatingProgress()
       }
 
       function openSystem(category) {
@@ -2113,6 +2230,7 @@ const totalBeginnerCategories = beginnerCategories.length
             addTimer(
               window.setTimeout(() => {
                 panel.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                updateFloatingProgress()
               }, 80)
             )
           }
@@ -2235,9 +2353,13 @@ const totalBeginnerCategories = beginnerCategories.length
         })
       })
 
+      addListener(window, 'scroll', updateFloatingProgress, { passive: true })
+      addListener(window, 'resize', updateFloatingProgress)
+
       updateProgress()
       syncFilterButtons()
       applyAllCommandsFilters()
+      updateFloatingProgress()
     })()
   </script>
 </Layout>
