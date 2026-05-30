@@ -2062,9 +2062,6 @@ const totalBeginnerCategories = beginnerCategories.length
       const listeners = []
       const timers = []
 
-      let floatingProgressBox = null
-      let floatingProgressWasMovedToBody = false
-
       function addListener(target, event, handler, options) {
         if (!target) return
         target.addEventListener(event, handler, options)
@@ -2076,24 +2073,6 @@ const totalBeginnerCategories = beginnerCategories.length
         return id
       }
 
-      function stopFloatingProgress() {
-        floatingProgressBox?.classList.add('hidden')
-      }
-
-      window[cleanupKey] = () => {
-        listeners.forEach((cleanup) => cleanup())
-        listeners.length = 0
-
-        timers.forEach((id) => window.clearTimeout(id))
-        timers.length = 0
-
-        stopFloatingProgress()
-
-        if (floatingProgressWasMovedToBody && floatingProgressBox?.parentElement === document.body) {
-          floatingProgressBox.remove()
-        }
-      }
-
       const entryChoice = document.getElementById('entryChoice')
       const newUserFlow = document.getElementById('newUserFlow')
       const allCommandsView = document.getElementById('allCommandsView')
@@ -2103,16 +2082,10 @@ const totalBeginnerCategories = beginnerCategories.length
       const progressBar = document.getElementById('progressBar')
       const progressBox = document.querySelector('.tnx-progress-box')
 
-      floatingProgressBox = document.getElementById('floatingProgressBox')
-
-      if (floatingProgressBox && floatingProgressBox.parentElement !== document.body) {
-        document.body.appendChild(floatingProgressBox)
-        floatingProgressWasMovedToBody = true
-      }
-
-      const floatingProgressCurrent = document.getElementById('floatingProgressCurrent')
-      const floatingProgressTotal = document.getElementById('floatingProgressTotal')
-      const floatingProgressBar = document.getElementById('floatingProgressBar')
+      let floatingProgressBox = document.getElementById('floatingProgressBox')
+      let floatingProgressCurrent = document.getElementById('floatingProgressCurrent')
+      let floatingProgressTotal = document.getElementById('floatingProgressTotal')
+      let floatingProgressBar = document.getElementById('floatingProgressBar')
 
       const completionBox = document.getElementById('completionBox')
       const systemPanels = Array.from(document.querySelectorAll('[data-system-panel]'))
@@ -2145,11 +2118,52 @@ const totalBeginnerCategories = beginnerCategories.length
           .trim()
       }
 
-      function getProgressStickyTop() {
-        return window.innerWidth <= 980 ? 76 : 90
+      function ensureFloatingProgressBox() {
+        floatingProgressBox = document.getElementById('floatingProgressBox')
+
+        if (!floatingProgressBox) {
+          floatingProgressBox = document.createElement('div')
+          floatingProgressBox.id = 'floatingProgressBox'
+          floatingProgressBox.className = 'tnx-progress-float hidden'
+          floatingProgressBox.setAttribute('aria-hidden', 'true')
+
+          floatingProgressBox.innerHTML = `
+            <strong><span id="floatingProgressCurrent">0</span> / <span id="floatingProgressTotal">${progressTotal?.textContent || totalSystems}</span></strong>
+            <small>أنظمة شوفتها</small>
+            <div class="tnx-progress-track">
+              <div id="floatingProgressBar" class="tnx-progress-bar"></div>
+            </div>
+          `
+        }
+
+        if (floatingProgressBox.parentElement !== document.body) {
+          document.body.appendChild(floatingProgressBox)
+        }
+
+        floatingProgressCurrent = document.getElementById('floatingProgressCurrent')
+        floatingProgressTotal = document.getElementById('floatingProgressTotal')
+        floatingProgressBar = document.getElementById('floatingProgressBar')
+
+        return floatingProgressBox
+      }
+
+      function stopFloatingProgress() {
+        ensureFloatingProgressBox()?.classList.add('hidden')
+      }
+
+      window[cleanupKey] = () => {
+        listeners.forEach((cleanup) => cleanup())
+        listeners.length = 0
+
+        timers.forEach((id) => window.clearTimeout(id))
+        timers.length = 0
+
+        stopFloatingProgress()
       }
 
       function syncFloatingProgress(current, percent) {
+        ensureFloatingProgressBox()
+
         if (floatingProgressCurrent) {
           floatingProgressCurrent.textContent = String(current)
         }
@@ -2164,24 +2178,25 @@ const totalBeginnerCategories = beginnerCategories.length
       }
 
       function updateFloatingProgress() {
-        if (!progressBox || !newUserFlow || !floatingProgressBox) return
+        const floatingBox = ensureFloatingProgressBox()
+
+        if (!progressBox || !newUserFlow || !floatingBox) return
 
         if (newUserFlow.classList.contains('hidden')) {
-          stopFloatingProgress()
+          floatingBox.classList.add('hidden')
           return
         }
 
-        const stickyTop = getProgressStickyTop()
         const progressRect = progressBox.getBoundingClientRect()
         const flowRect = newUserFlow.getBoundingClientRect()
 
-        const originalProgressPassed = progressRect.bottom < stickyTop
-        const stillInsideNewFlow = flowRect.bottom > stickyTop + 120
+        const originalProgressPassed = progressRect.bottom < 0
+        const stillInsideNewFlow = flowRect.bottom > window.innerHeight * 0.35
 
         if (originalProgressPassed && stillInsideNewFlow) {
-          floatingProgressBox.classList.remove('hidden')
+          floatingBox.classList.remove('hidden')
         } else {
-          floatingProgressBox.classList.add('hidden')
+          floatingBox.classList.add('hidden')
         }
       }
 
@@ -2384,6 +2399,7 @@ const totalBeginnerCategories = beginnerCategories.length
       addListener(window, 'scroll', updateFloatingProgress, { passive: true })
       addListener(window, 'resize', updateFloatingProgress)
 
+      ensureFloatingProgressBox()
       updateProgress()
       syncFilterButtons()
       applyAllCommandsFilters()
