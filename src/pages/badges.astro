@@ -824,6 +824,7 @@ const metadata = {
       font-family: Poppins, system-ui, sans-serif;
       opacity: 0;
       animation: tnxUserCardIn 220ms ease forwards;
+      direction: ltr;
     }
 
     @keyframes tnxUserCardIn {
@@ -846,7 +847,10 @@ const metadata = {
       left: 20px;
       right: 20px;
       display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
       align-items: flex-start;
+      direction: ltr;
       z-index: 10;
     }
 
@@ -854,7 +858,9 @@ const metadata = {
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
       width: 170px;
+      flex: 0 0 170px;
     }
 
     .tnx-card-profile-picture {
@@ -870,6 +876,7 @@ const metadata = {
     .tnx-card-job-info {
       display: flex;
       align-items: center;
+      justify-content: flex-start;
       width: 100%;
       margin-top: 0.5rem;
       padding-left: 10px;
@@ -877,6 +884,8 @@ const metadata = {
       font-size: 1.35rem;
       font-weight: 800;
       text-shadow: 1px 1px 1px black;
+      text-align: left;
+      direction: ltr;
     }
 
     .tnx-card-job-info iconify-icon {
@@ -885,19 +894,23 @@ const metadata = {
 
     .tnx-card-stats-row {
       display: flex;
+      justify-content: flex-start;
       gap: 10px;
       width: 100%;
       margin-top: 4px;
       padding-left: 10px;
+      direction: ltr;
     }
 
     .tnx-card-points,
     .tnx-card-gold {
       display: flex;
       align-items: center;
+      justify-content: flex-start;
       color: white;
       font-size: 1rem;
       text-shadow: 1px 1px 1px black;
+      direction: ltr;
     }
 
     .tnx-card-gold {
@@ -912,22 +925,26 @@ const metadata = {
     .tnx-card-username {
       position: absolute;
       top: 85px;
-      left: 170px;
+      left: 190px;
       color: white;
       font-size: 2.4rem;
       font-weight: 800;
       text-shadow: 1px 2px 1px black;
       white-space: nowrap;
+      text-align: left;
+      direction: ltr;
     }
 
     .tnx-card-badges {
       position: absolute;
       top: 95px;
       right: 20px;
+      left: auto;
       display: grid;
       grid-template-columns: repeat(3, 70px);
       grid-template-rows: repeat(2, 70px);
       gap: 10px;
+      direction: ltr;
     }
 
     .tnx-card-badges img {
@@ -1610,6 +1627,7 @@ const metadata = {
         userCardContainer.innerHTML = `
           <div
             class="tnx-user-card-preview"
+            dir="ltr"
             style="background: linear-gradient(to bottom, ${baseColor} 70%, ${darkColor} 100%); --profile-border: ${baseColor};"
           >
             <div
