@@ -876,6 +876,75 @@ const beginnerCategories = BEGINNER_CATEGORY_ORDER.filter((category) => {
 })
 
 const totalBeginnerCategories = beginnerCategories.length
+
+const QUICK_ACTION_DEFINITIONS = [
+  {
+    title: 'أبي أعرف نقاطي',
+    description: 'يعرض رصيدك الحالي مباشرة.',
+    icon: '◆',
+    targetCommandId: 'points-balance',
+  },
+  {
+    title: 'أبي أشوف ترتيب النقاط',
+    description: 'يعرض المتصدرين في النقاط.',
+    icon: 'Ⅰ',
+    targetCommandId: 'points-board',
+  },
+  {
+    title: 'أبي أفتح حقيبتي',
+    description: 'يعرض أغراضك الحالية.',
+    icon: '▣',
+    targetCommandId: 'inventory-open',
+  },
+  {
+    title: 'أبي أشتري غرض',
+    description: 'يفتح لك أمر الشراء من المتجر.',
+    icon: '＋',
+    targetCommandId: 'inventory-buy',
+  },
+  {
+    title: 'أبي أعرف تقدمي بالبادجات',
+    description: 'يعرض أقرب بادج وكم باقي لك.',
+    icon: '⬟',
+    targetCommandId: 'badge-progress',
+  },
+  {
+    title: 'أبي ألبس بادج',
+    description: 'يخليك تختار بادج يظهر في بطاقتك.',
+    icon: '◇',
+    targetCommandId: 'badge-equip',
+  },
+  {
+    title: 'أبي أرسل هدية',
+    description: 'يرسل نقاط أو غرض لشخص ثاني.',
+    icon: '✉',
+    targetCommandId: 'gift-send',
+  },
+  {
+    title: 'أبي أسوي كليب',
+    description: 'ينشئ كليب من اللحظة الحالية.',
+    icon: '⌁',
+    targetCommandId: 'clip',
+  },
+  {
+    title: 'أبي ألعب شي',
+    description: 'يفتح لك أوامر ألعاب الشات.',
+    icon: '◈',
+    targetCommandId: 'family-feud',
+  },
+]
+
+const quickActions = QUICK_ACTION_DEFINITIONS
+  .map((action) => {
+    const command = findCommandById(action.targetCommandId)
+    if (!command) return null
+
+    return {
+      ...action,
+      command,
+    }
+  })
+  .filter(Boolean)
 ---
 
 <Layout metadata={metadata}>
@@ -1058,6 +1127,34 @@ const totalBeginnerCategories = beginnerCategories.length
 
           <button type="button" data-reset-choice>رجوع للاختيار</button>
         </div>
+
+        {quickActions.length > 0 && (
+          <section class="tnx-intent-section">
+            <div class="tnx-intent-head">
+              <span>اختصرها علي</span>
+              <h2>وش تبي تسوي؟</h2>
+              <p>بدل ما تدور بين الأوامر، اختر هدفك وراح نوديك للأمر المناسب مباشرة.</p>
+            </div>
+
+            <div class="tnx-intent-grid">
+              {quickActions.map((action) => (
+                <button
+                  type="button"
+                  class="tnx-intent-card"
+                  data-quick-command={action.command.hashId}
+                >
+                  <div class="tnx-intent-icon">{action.icon}</div>
+
+                  <div>
+                    <strong>{action.title}</strong>
+                    <p>{action.description}</p>
+                    <code>{action.command.primaryAlias}</code>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
         <div class="tnx-search-bar">
           <span>⌕</span>
@@ -1280,7 +1377,8 @@ const totalBeginnerCategories = beginnerCategories.length
     .tnx-completion,
     .tnx-all-view,
     .tnx-command-group,
-    .tnx-empty {
+    .tnx-empty,
+    .tnx-intent-section {
       border: 1px solid rgba(255, 218, 106, 0.18);
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
@@ -1324,7 +1422,8 @@ const totalBeginnerCategories = beginnerCategories.length
     .tnx-system-icon,
     .tnx-big-icon,
     .tnx-completion-icon,
-    .tnx-step-number {
+    .tnx-step-number,
+    .tnx-intent-icon {
       display: grid;
       place-items: center;
       border: 1px solid rgba(255, 218, 106, 0.22);
@@ -1385,7 +1484,8 @@ const totalBeginnerCategories = beginnerCategories.length
     .tnx-flow-head span,
     .tnx-all-head span,
     .tnx-system-panel-head span,
-    .tnx-command-group-head span {
+    .tnx-command-group-head span,
+    .tnx-intent-head span {
       color: #c29200;
       font-size: 0.78rem;
       font-weight: 950;
@@ -1395,7 +1495,8 @@ const totalBeginnerCategories = beginnerCategories.length
     .tnx-flow-head h2,
     .tnx-all-head h2,
     .tnx-system-panel-head h2,
-    .tnx-command-group-head h2 {
+    .tnx-command-group-head h2,
+    .tnx-intent-head h2 {
       margin: 0.3rem 0 0;
       color: #f7e6ac;
       font-size: 2rem;
@@ -1406,7 +1507,8 @@ const totalBeginnerCategories = beginnerCategories.length
     .tnx-flow-head p,
     .tnx-all-head p,
     .tnx-system-panel-head p,
-    .tnx-command-group-head p {
+    .tnx-command-group-head p,
+    .tnx-intent-head p {
       margin: 0.5rem 0 0;
       color: rgb(156, 163, 175);
       font-size: 0.92rem;
@@ -1842,6 +1944,93 @@ const totalBeginnerCategories = beginnerCategories.length
       padding-bottom: 1rem;
     }
 
+    .tnx-intent-section {
+      margin-bottom: 1rem;
+      border-radius: 1.55rem;
+      padding: 1rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.09), transparent 42%),
+        rgba(6, 6, 8, 0.78);
+    }
+
+    .tnx-intent-head {
+      margin-bottom: 0.9rem;
+      border-bottom: 1px solid rgba(255, 218, 106, 0.12);
+      padding-bottom: 0.9rem;
+    }
+
+    .tnx-intent-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .tnx-intent-card {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.8rem;
+      align-items: start;
+      min-height: 138px;
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 1.15rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.06), transparent 42%),
+        rgba(0, 0, 0, 0.3);
+      color: white;
+      padding: 0.85rem;
+      text-align: right;
+      cursor: pointer;
+      transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease;
+    }
+
+    .tnx-intent-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 218, 106, 0.5);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 42%),
+        rgba(0, 0, 0, 0.38);
+    }
+
+    .tnx-intent-icon {
+      width: 2.6rem;
+      height: 2.6rem;
+      border-radius: 0.9rem;
+      font-size: 1.05rem;
+    }
+
+    .tnx-intent-card strong {
+      display: block;
+      color: #fff;
+      font-size: 0.98rem;
+      font-weight: 950;
+      line-height: 1.35;
+    }
+
+    .tnx-intent-card p {
+      margin: 0.4rem 0 0;
+      color: rgb(209, 213, 219);
+      font-size: 0.78rem;
+      font-weight: 800;
+      line-height: 1.6;
+    }
+
+    .tnx-intent-card code {
+      display: inline-flex;
+      margin-top: 0.6rem;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 0.65rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      padding: 0.35rem 0.5rem;
+      direction: ltr;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      font-weight: 950;
+    }
+
     .tnx-search-bar {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr) auto;
@@ -2041,7 +2230,8 @@ const totalBeginnerCategories = beginnerCategories.length
       .tnx-entry-choice,
       .tnx-flow-head,
       .tnx-system-grid,
-      .tnx-command-grid {
+      .tnx-command-grid,
+      .tnx-intent-grid {
         grid-template-columns: 1fr;
       }
 
@@ -2158,6 +2348,7 @@ const totalBeginnerCategories = beginnerCategories.length
       const startModeButtons = Array.from(document.querySelectorAll('[data-start-mode]'))
       const copyButtons = Array.from(document.querySelectorAll('[data-copy]'))
       const commandLinkButtons = Array.from(document.querySelectorAll('[data-command-link]'))
+      const quickActionButtons = Array.from(document.querySelectorAll('[data-quick-command]'))
 
       const commandSearch = document.getElementById('commandSearch')
       const clearCommandSearch = document.getElementById('clearCommandSearch')
@@ -2436,8 +2627,7 @@ const totalBeginnerCategories = beginnerCategories.length
         return decodeURIComponent(rawHash.slice(1))
       }
 
-      function openCommandFromHash() {
-        const targetHash = getHashTarget()
+      function openCommandByHashId(targetHash, options = {}) {
         if (!targetHash) return
 
         const targetCard = document.getElementById(targetHash)
@@ -2461,6 +2651,10 @@ const totalBeginnerCategories = beginnerCategories.length
 
         targetCard.classList.add('is-linked')
 
+        if (options.updateHash !== false) {
+          history.replaceState(null, '', `#${targetHash}`)
+        }
+
         if (hashOpenTimer) {
           window.clearTimeout(hashOpenTimer)
         }
@@ -2468,6 +2662,13 @@ const totalBeginnerCategories = beginnerCategories.length
         hashOpenTimer = window.setTimeout(() => {
           targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' })
         }, 120)
+      }
+
+      function openCommandFromHash() {
+        const targetHash = getHashTarget()
+        if (!targetHash) return
+
+        openCommandByHashId(targetHash, { updateHash: false })
       }
 
       startModeButtons.forEach((button) => {
@@ -2497,6 +2698,13 @@ const totalBeginnerCategories = beginnerCategories.length
           if (category) {
             openSystem(category)
           }
+        })
+      })
+
+      quickActionButtons.forEach((button) => {
+        addListener(button, 'click', () => {
+          const targetHash = button.dataset.quickCommand
+          openCommandByHashId(targetHash)
         })
       })
 
@@ -2538,8 +2746,7 @@ const totalBeginnerCategories = beginnerCategories.length
           const url = `${window.location.origin}${window.location.pathname}#${hashId}`
           await copyTextToClipboard(url, button, 'تم نسخ الرابط')
 
-          history.replaceState(null, '', `#${hashId}`)
-          openCommandFromHash()
+          openCommandByHashId(hashId)
         })
       })
 
