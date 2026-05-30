@@ -12,13 +12,8 @@ const metadata = {
 function readJsonFile(relativePath, fallback) {
   try {
     const filePath = path.resolve(relativePath)
-
-    if (!fs.existsSync(filePath)) {
-      return fallback
-    }
-
-    const data = fs.readFileSync(filePath, 'utf-8')
-    return JSON.parse(data)
+    if (!fs.existsSync(filePath)) return fallback
+    return JSON.parse(fs.readFileSync(filePath, 'utf-8'))
   } catch (error) {
     console.error(`Failed to load ${relativePath}:`, error)
     return fallback
@@ -47,12 +42,6 @@ function normalizeAlias(value) {
   return normalizeText(value)
 }
 
-/*
-  فلترة المصدر:
-  الصفحة ما تثق في commands.json كامل.
-  أي أمر مطفي، أو إداري، أو مودز، أو داخلي، ما يدخل للصفحة.
-*/
-
 const HIDDEN_GROUP_KEYWORDS = [
   'mod tools',
   'مودز',
@@ -60,7 +49,6 @@ const HIDDEN_GROUP_KEYWORDS = [
   'admins',
   'moderator',
   'moderators',
-  'old',
   'setup',
   'bot responses',
   'ردود البوت',
@@ -123,6 +111,8 @@ const HIDDEN_NAME_KEYWORDS = [
   'أصحاب البريد',
   'مسح البريد',
   'حذف هدية النظام',
+  'remove badge',
+  'add badge',
 ]
 
 function commandIsEnabled(command) {
@@ -185,157 +175,33 @@ for (const command of rawCommands) {
   }
 }
 
-/*
-  هذا هو الكتالوج الحقيقي للصفحة.
-  أي أمر غير موجود هنا ما يظهر للمشاهد حتى لو موجود في Streamer.bot.
-*/
-
 const COMMAND_CATALOG = [
   {
     id: 'points-balance',
-    category: 'start',
+    category: 'points',
     title: 'اعرف نقاطك',
     description: 'يعرض رصيد نقاطك الحالي في الشات.',
     aliases: ['!نقاط', '!نقاطي', '!points'],
     example: '!نقاط',
     beginner: true,
-    badge: 'دائم',
+    badge: 'أساسي',
     requirement: 'بدون شروط',
     usage: 'اكتبه في الشات ويطلع لك رصيدك مباشرة.',
     keywords: ['نقاط', 'رصيد', 'فلوس', 'points'],
   },
   {
     id: 'points-board',
-    category: 'start',
-    title: 'شوف ترتيب النقاط',
+    category: 'points',
+    title: 'ترتيب النقاط',
     description: 'يعرض ترتيب أكثر الأعضاء نقاطًا.',
     aliases: ['!ليدربورد', '!pointsLeaderboard', '!leaderboardPoints'],
     example: '!ليدربورد',
     beginner: true,
-    badge: 'دائم',
+    badge: 'أساسي',
     requirement: 'بدون شروط',
-    usage: 'استخدمه إذا تبي تعرف المتصدرين.',
+    usage: 'استخدمه إذا تبي تعرف المتصدرين في النقاط.',
     keywords: ['ترتيب', 'ليدربورد', 'نقاط', 'leaderboard'],
   },
-  {
-    id: 'mail-open',
-    category: 'start',
-    title: 'افتح بريدك',
-    description: 'يعرض رسائلك والهدايا اللي وصلت لك.',
-    aliases: ['!بريد', '!mail', '!البريد'],
-    example: '!بريد',
-    beginner: true,
-    badge: 'دائم',
-    requirement: 'يفضل يكون عندك بريد',
-    usage: 'إذا وصلك شيء من شخص ثاني، افتح بريدك بهذا الأمر.',
-    keywords: ['بريد', 'رسائل', 'mail'],
-  },
-  {
-    id: 'gift-send',
-    category: 'start',
-    title: 'أرسل هدية',
-    description: 'ترسل نقاط أو غرض لشخص ثاني حسب النظام المتاح.',
-    aliases: ['!هدية', '!gift'],
-    example: '!هدية TNX6 | 5000 | تستاهل',
-    beginner: true,
-    badge: 'يحتاج رصيد',
-    requirement: 'لازم تملك النقاط أو الغرض',
-    usage: 'اكتب اسم الشخص، ثم المبلغ أو الغرض، ثم رسالة اختيارية.',
-    keywords: ['هدية', 'هديه', 'gift', 'ارسل'],
-  },
-  {
-    id: 'clip',
-    category: 'start',
-    title: 'سو كليب',
-    description: 'ينشئ كليب من اللحظة الحالية في البث.',
-    aliases: ['!clip'],
-    example: '!clip',
-    beginner: true,
-    badge: 'دائم',
-    requirement: 'بدون شروط',
-    usage: 'استخدمه وقت اللقطات القوية أو المواقف المضحكة.',
-    keywords: ['كليب', 'clip', 'لقطة'],
-  },
-  {
-    id: 'challenge',
-    category: 'start',
-    title: 'تحدي المجتمع',
-    description: 'يدخلك في نظام التحديات المتاح في البث.',
-    aliases: ['!تحدي'],
-    example: '!تحدي',
-    beginner: true,
-    badge: 'دائم',
-    requirement: 'حسب نظام التحدي',
-    usage: 'استخدمه إذا تبي تشوف تحدياتك أو تدخل نظام التحديات.',
-    keywords: ['تحدي', 'challenge'],
-  },
-
-  {
-    id: 'mail-help',
-    category: 'mail',
-    title: 'شرح البريد',
-    description: 'يعرض أوامر البريد داخل الشات.',
-    aliases: ['!اوامر البريد', '!أوامر البريد', '!mailhelp'],
-    example: '!اوامر البريد',
-    beginner: true,
-    badge: 'دائم',
-    requirement: 'بدون شروط',
-    usage: 'أفضل أمر تبدأ فيه لو ما تعرف نظام البريد.',
-    keywords: ['بريد', 'شرح', 'mailhelp'],
-  },
-  {
-    id: 'mail-send',
-    category: 'mail',
-    title: 'أرسل رسالة',
-    description: 'ترسل رسالة خاصة لعضو عنده بريد.',
-    aliases: ['!ارسل رسالة', '!أرسل رسالة', '!ارسل رساله', '!ارسال رسالة', '!ارسل بريد'],
-    example: '!ارسل رسالة TNX6 | السلام عليكم',
-    beginner: true,
-    badge: 'دائم',
-    requirement: 'المستلم يحتاج يكون عنده بريد',
-    usage: 'اكتب اسم الشخص، ثم علامة |، ثم الرسالة.',
-    keywords: ['رسالة', 'رساله', 'ارسل', 'بريد'],
-  },
-  {
-    id: 'gift-accept',
-    category: 'mail',
-    title: 'اقبل الهدية',
-    description: 'يقبل آخر هدية وصلت لك.',
-    aliases: ['!قبول الهدية', '!قبول الهديه', '!giftaccept'],
-    example: '!قبول الهدية',
-    beginner: true,
-    badge: 'بعد وصول هدية',
-    requirement: 'لازم تكون عندك هدية معلقة',
-    usage: 'استخدمه إذا جاك تنبيه إن فيه هدية وصلت لك.',
-    keywords: ['قبول', 'هدية', 'giftaccept'],
-  },
-  {
-    id: 'gift-reject',
-    category: 'mail',
-    title: 'ارفض الهدية',
-    description: 'يرفض آخر هدية وصلت لك.',
-    aliases: ['!رفض الهدية', '!رفض الهديه', '!giftreject'],
-    example: '!رفض الهدية',
-    beginner: false,
-    badge: 'بعد وصول هدية',
-    requirement: 'لازم تكون عندك هدية معلقة',
-    usage: 'استخدمه إذا ما تبي تستلم الهدية.',
-    keywords: ['رفض', 'هدية', 'giftreject'],
-  },
-  {
-    id: 'mail-count',
-    category: 'mail',
-    title: 'عدد رسائلك',
-    description: 'يعرض عدد الرسائل الموجودة في بريدك.',
-    aliases: ['!عدد الرسائل', '!عدد البريد', '!mailcount'],
-    example: '!عدد الرسائل',
-    beginner: false,
-    badge: 'دائم',
-    requirement: 'يحتاج بريد',
-    usage: 'مفيد إذا بريدك صار زحمة وتبي تعرف كم رسالة عندك.',
-    keywords: ['عدد', 'رسائل', 'بريد'],
-  },
-
   {
     id: 'points-transfer',
     category: 'points',
@@ -391,7 +257,7 @@ const COMMAND_CATALOG = [
   {
     id: 'duel-accept',
     category: 'points',
-    title: 'اقبل التحدي',
+    title: 'اقبل تحدي النقاط',
     description: 'يقبل تحدي النقاط المرسل لك.',
     aliases: ['!accept', '!قبول'],
     example: '!قبول',
@@ -403,13 +269,420 @@ const COMMAND_CATALOG = [
   },
 
   {
+    id: 'inventory-open',
+    category: 'inventory',
+    title: 'افتح حقيبتك',
+    description: 'يعرض الأغراض اللي تملكها.',
+    aliases: ['!اغراضي', '!اغراض', '!inventory', '!items'],
+    example: '!اغراضي',
+    beginner: true,
+    badge: 'أساسي',
+    requirement: 'بدون شروط',
+    usage: 'هذا أول أمر تستخدمه في نظام الحقيبة.',
+    keywords: ['حقيبة', 'اغراضي', 'اغراض', 'inventory', 'items'],
+  },
+  {
+    id: 'inventory-shop',
+    category: 'inventory',
+    title: 'افتح المتجر',
+    description: 'يعرض الأغراض المتاحة في المتجر.',
+    aliases: ['!متجر', '!itemList'],
+    example: '!متجر',
+    beginner: true,
+    badge: 'أساسي',
+    requirement: 'بدون شروط',
+    usage: 'استخدمه عشان تعرف وش الأغراض المتاحة.',
+    keywords: ['متجر', 'shop', 'itemList'],
+  },
+  {
+    id: 'inventory-buy',
+    category: 'inventory',
+    title: 'اشتر غرض',
+    description: 'يشتري غرض من المتجر إذا عندك رصيد كافي.',
+    aliases: ['!شراء', '!اشتري', '!buy', '!buyItem', '!itemBuy'],
+    example: '!شراء البريد',
+    beginner: true,
+    badge: 'يحتاج رصيد',
+    requirement: 'لازم عندك نقاط أو ذهب كافي',
+    usage: 'اكتب اسم الغرض بعد الأمر.',
+    keywords: ['شراء', 'اشتري', 'buy'],
+  },
+  {
+    id: 'inventory-sell',
+    category: 'inventory',
+    title: 'بع غرض',
+    description: 'يبيع غرض من حقيبتك إذا كان قابل للبيع.',
+    aliases: ['!بيع', '!ابيع', '!sell', '!sellItem', '!itemSell'],
+    example: '!بيع البريد',
+    beginner: true,
+    badge: 'نهائي غالبًا',
+    requirement: 'لازم تملك الغرض',
+    usage: 'انتبه، البيع قد يكون نهائي.',
+    keywords: ['بيع', 'ابيع', 'sell'],
+  },
+  {
+    id: 'inventory-use',
+    category: 'inventory',
+    title: 'استخدم غرض',
+    description: 'يستخدم غرض من حقيبتك.',
+    aliases: ['!استخدام', '!use', '!useItem'],
+    example: '!استخدام البريد',
+    beginner: true,
+    badge: 'يحتاج غرض',
+    requirement: 'لازم تملك الغرض',
+    usage: 'بعض الأغراض لها تأثير مباشر في البث.',
+    keywords: ['استخدام', 'استخدم', 'use'],
+  },
+  {
+    id: 'inventory-trade',
+    category: 'inventory',
+    title: 'اعرض تبادل',
+    description: 'يرسل عرض تبادل غرض مع شخص ثاني.',
+    aliases: ['!تريد', '!trade', '!tradeItem', '!offer', '!offerItem'],
+    example: '!تريد TNX6 | البريد',
+    beginner: true,
+    badge: 'يحتاج قبول',
+    requirement: 'الطرف الثاني لازم يقبل',
+    usage: 'اكتب اسم الشخص والغرض اللي تبي تعرضه.',
+    keywords: ['تبادل', 'تريد', 'trade', 'offer'],
+  },
+  {
+    id: 'inventory-accept-trade',
+    category: 'inventory',
+    title: 'اقبل عرض تبادل',
+    description: 'يقبل عرض التبادل المرسل لك.',
+    aliases: ['!قبول العرض', '!acceptTrade'],
+    example: '!قبول العرض',
+    beginner: false,
+    badge: 'بعد عرض',
+    requirement: 'لازم يكون عندك عرض تبادل',
+    usage: 'استخدمه إذا أحد أرسل لك عرض تبادل وتبي تقبله.',
+    keywords: ['قبول العرض', 'acceptTrade'],
+  },
+  {
+    id: 'inventory-reject-trade',
+    category: 'inventory',
+    title: 'ارفض عرض تبادل',
+    description: 'يرفض عرض التبادل المرسل لك.',
+    aliases: ['!رفض العرض', '!rejectTrade'],
+    example: '!رفض العرض',
+    beginner: false,
+    badge: 'بعد عرض',
+    requirement: 'لازم يكون عندك عرض تبادل',
+    usage: 'استخدمه إذا ما تبي تقبل عرض التبادل.',
+    keywords: ['رفض العرض', 'rejectTrade'],
+  },
+  {
+    id: 'inventory-value',
+    category: 'inventory',
+    title: 'اعرف سعر غرض',
+    description: 'يعرض قيمة أو سعر غرض معين.',
+    aliases: ['!سعر', '!itemValue', '!checkValue'],
+    example: '!سعر البريد',
+    beginner: false,
+    badge: 'معلومة',
+    requirement: 'اكتب اسم الغرض',
+    usage: 'مفيد قبل البيع أو الشراء.',
+    keywords: ['سعر', 'قيمة', 'itemValue'],
+  },
+  {
+    id: 'inventory-craft',
+    category: 'inventory',
+    title: 'اصنع غرض',
+    description: 'يصنع غرض إذا كانت عندك متطلبات التصنيع.',
+    aliases: ['!صناعة', '!صناعه', '!كرافت', '!craft', '!craftItem'],
+    example: '!صناعة اسم_الغرض',
+    beginner: false,
+    badge: 'متقدم',
+    requirement: 'يحتاج مواد تصنيع',
+    usage: 'استخدمه إذا عندك مكونات الغرض.',
+    keywords: ['صناعة', 'كرافت', 'craft'],
+  },
+
+  {
+    id: 'badge-progress',
+    category: 'badges',
+    title: 'تقدم البادجات',
+    description: 'يعرض كم بادج حققت، كم باقي لك، وأقرب بادج جاي.',
+    aliases: ['!تحدي'],
+    example: '!تحدي',
+    beginner: true,
+    badge: 'أساسي',
+    requirement: 'بدون شروط',
+    usage: 'هذا الأمر يعطيك وضعك الحالي في نظام البادجات والتقدم.',
+    keywords: ['تحدي', 'بادج', 'بادجات', 'تقدم', 'اقرب بادج'],
+  },
+  {
+    id: 'badge-list',
+    category: 'badges',
+    title: 'اعرض بادجاتك',
+    description: 'يعرض البادجات اللي تملكها.',
+    aliases: ['!بادج', '!myBadges'],
+    example: '!بادج',
+    beginner: true,
+    badge: 'أساسي',
+    requirement: 'بدون شروط',
+    usage: 'استخدمه عشان تشوف البادجات اللي فتحتها.',
+    keywords: ['بادج', 'بادجات', 'myBadges'],
+  },
+  {
+    id: 'badge-equip',
+    category: 'badges',
+    title: 'لبّس بادج',
+    description: 'يخليك تختار بادج يظهر في بطاقتك أو ملفك.',
+    aliases: ['!وضع البادج', '!equipBadge'],
+    example: '!وضع البادج vip',
+    beginner: true,
+    badge: 'يحتاج بادج',
+    requirement: 'لازم تملك البادج',
+    usage: 'اكتب الأمر ثم اسم البادج اللي تبي تلبسه.',
+    keywords: ['وضع البادج', 'لبس بادج', 'equipBadge'],
+  },
+  {
+    id: 'badge-unequip',
+    category: 'badges',
+    title: 'شيل بادج',
+    description: 'يزيل بادج معين من العرض.',
+    aliases: ['!الغاء البادج', '!unequipBadge'],
+    example: '!الغاء البادج vip',
+    beginner: false,
+    badge: 'يحتاج بادج',
+    requirement: 'لازم يكون البادج ملبوس',
+    usage: 'استخدمه إذا تبي تشيل بادج من العرض.',
+    keywords: ['الغاء البادج', 'unequipBadge'],
+  },
+  {
+    id: 'badge-unequip-all',
+    category: 'badges',
+    title: 'شيل كل البادجات',
+    description: 'يزيل كل البادجات المعروضة.',
+    aliases: ['!الغاء البادجات', '!unequipAllBadges'],
+    example: '!الغاء البادجات',
+    beginner: false,
+    badge: 'متقدم',
+    requirement: 'بدون شروط',
+    usage: 'يشيل كل البادجات المفعلة من العرض.',
+    keywords: ['الغاء البادجات', 'unequipAllBadges'],
+  },
+  {
+    id: 'user-card',
+    category: 'badges',
+    title: 'اعرض بطاقتك',
+    description: 'يعرض بطاقة المستخدم الخاصة بك.',
+    aliases: ['!بطاقتي', '!showUsercard'],
+    example: '!بطاقتي',
+    beginner: true,
+    badge: 'أساسي',
+    requirement: 'بدون شروط',
+    usage: 'يعرض بطاقتك وبادجاتك حسب النظام.',
+    keywords: ['بطاقتي', 'بطاقة', 'showUsercard'],
+  },
+  {
+    id: 'banner-set',
+    category: 'badges',
+    title: 'غير البنر',
+    description: 'يغير صورة البنر في بطاقتك.',
+    aliases: ['!بنر', '!setBanner'],
+    example: '!بنر رابط_الصورة',
+    beginner: false,
+    badge: 'تخصيص',
+    requirement: 'يحتاج رابط صورة',
+    usage: 'حط رابط الصورة بعد الأمر.',
+    keywords: ['بنر', 'banner', 'setBanner'],
+  },
+  {
+    id: 'banner-color',
+    category: 'badges',
+    title: 'غير لون البنر',
+    description: 'يغير لون خلفية أو بنر بطاقتك.',
+    aliases: ['!لون البنر', '!setBackgroundColor'],
+    example: '!لون البنر #c29200',
+    beginner: false,
+    badge: 'تخصيص',
+    requirement: 'يحتاج كود لون',
+    usage: 'اكتب كود اللون بعد الأمر.',
+    keywords: ['لون البنر', 'لون', 'background', 'setBackgroundColor'],
+  },
+  {
+    id: 'badge-coupon',
+    category: 'badges',
+    title: 'حوّل بادج إلى كوبون',
+    description: 'يحوّل البادج إلى كوبون إذا كان النظام يسمح.',
+    aliases: ['!badgeToCoupon'],
+    example: '!badgeToCoupon',
+    beginner: false,
+    badge: 'متقدم',
+    requirement: 'حسب نوع البادج',
+    usage: 'استخدمه فقط إذا تعرف أن البادج قابل للتحويل.',
+    keywords: ['coupon', 'badgeToCoupon', 'كوبون'],
+  },
+
+  {
+    id: 'mail-upgrade',
+    category: 'mail',
+    title: 'تفعيل أو تطوير البريد',
+    description: 'يستخدم لتفعيل البريد أو رفع سعته حسب نظامك.',
+    aliases: ['!تطوير البريد', '!mailupgrade'],
+    example: '!تطوير البريد',
+    beginner: false,
+    badge: 'يحتاج شراء',
+    requirement: 'البريد غير مفتوح للجميع',
+    usage: 'قبل استخدام البريد، لازم يكون البريد مفعل عندك.',
+    keywords: ['بريد', 'تطوير البريد', 'mailupgrade'],
+  },
+  {
+    id: 'mail-open',
+    category: 'mail',
+    title: 'افتح بريدك',
+    description: 'يعرض رسائلك وهداياك إذا كان البريد مفعلًا عندك.',
+    aliases: ['!بريد', '!mail', '!البريد'],
+    example: '!بريد',
+    beginner: false,
+    badge: 'يحتاج تفعيل',
+    requirement: 'لازم تكون شاري تفعيل البريد',
+    usage: 'إذا ما عندك بريد مفعل، الأمر ما يفيدك.',
+    keywords: ['بريد', 'mail'],
+  },
+  {
+    id: 'mail-help',
+    category: 'mail',
+    title: 'شرح البريد',
+    description: 'يعرض أوامر البريد داخل الشات.',
+    aliases: ['!اوامر البريد', '!أوامر البريد', '!mailhelp'],
+    example: '!اوامر البريد',
+    beginner: false,
+    badge: 'مساعدة',
+    requirement: 'بدون شروط',
+    usage: 'استخدمه إذا تبي تشوف أوامر البريد في الشات.',
+    keywords: ['بريد', 'شرح', 'mailhelp'],
+  },
+  {
+    id: 'mail-send',
+    category: 'mail',
+    title: 'أرسل رسالة',
+    description: 'ترسل رسالة خاصة لعضو عنده بريد.',
+    aliases: ['!ارسل رسالة', '!أرسل رسالة', '!ارسل رساله', '!ارسال رسالة', '!ارسل بريد'],
+    example: '!ارسل رسالة TNX6 | السلام عليكم',
+    beginner: false,
+    badge: 'يحتاج بريد',
+    requirement: 'المستلم يحتاج يكون عنده بريد',
+    usage: 'اكتب اسم الشخص، ثم علامة |، ثم الرسالة.',
+    keywords: ['رسالة', 'رساله', 'ارسل', 'بريد'],
+  },
+  {
+    id: 'gift-send',
+    category: 'mail',
+    title: 'أرسل هدية',
+    description: 'ترسل نقاط أو غرض لشخص ثاني حسب النظام المتاح.',
+    aliases: ['!هدية', '!gift'],
+    example: '!هدية TNX6 | 5000 | تستاهل',
+    beginner: false,
+    badge: 'يحتاج رصيد',
+    requirement: 'لازم تملك النقاط أو الغرض',
+    usage: 'اكتب اسم الشخص، ثم المبلغ أو الغرض، ثم رسالة اختيارية.',
+    keywords: ['هدية', 'هديه', 'gift', 'ارسل'],
+  },
+  {
+    id: 'gift-accept',
+    category: 'mail',
+    title: 'اقبل الهدية',
+    description: 'يقبل آخر هدية وصلت لك.',
+    aliases: ['!قبول الهدية', '!قبول الهديه', '!giftaccept'],
+    example: '!قبول الهدية',
+    beginner: false,
+    badge: 'بعد وصول هدية',
+    requirement: 'لازم تكون عندك هدية معلقة',
+    usage: 'استخدمه إذا جاك تنبيه إن فيه هدية وصلت لك.',
+    keywords: ['قبول', 'هدية', 'giftaccept'],
+  },
+  {
+    id: 'gift-reject',
+    category: 'mail',
+    title: 'ارفض الهدية',
+    description: 'يرفض آخر هدية وصلت لك.',
+    aliases: ['!رفض الهدية', '!رفض الهديه', '!giftreject'],
+    example: '!رفض الهدية',
+    beginner: false,
+    badge: 'بعد وصول هدية',
+    requirement: 'لازم تكون عندك هدية معلقة',
+    usage: 'استخدمه إذا ما تبي تستلم الهدية.',
+    keywords: ['رفض', 'هدية', 'giftreject'],
+  },
+
+  {
+    id: 'clip',
+    category: 'tools',
+    title: 'سو كليب',
+    description: 'ينشئ كليب من اللحظة الحالية في البث.',
+    aliases: ['!clip'],
+    example: '!clip',
+    beginner: false,
+    badge: 'أداة',
+    requirement: 'بدون شروط',
+    usage: 'استخدمه وقت اللقطات القوية أو المواقف المضحكة.',
+    keywords: ['كليب', 'clip', 'لقطة'],
+  },
+  {
+    id: 'lclip',
+    category: 'tools',
+    title: 'آخر كليب',
+    description: 'يعرض أو يتعامل مع آخر كليب حسب إعداد البث.',
+    aliases: ['!lclip'],
+    example: '!lclip',
+    beginner: false,
+    badge: 'أداة',
+    requirement: 'بدون شروط',
+    usage: 'أمر مساعد للكليبات.',
+    keywords: ['lclip', 'كليب'],
+  },
+  {
+    id: 'account-age',
+    category: 'tools',
+    title: 'عمر الحساب',
+    description: 'يعرض عمر حساب Twitch.',
+    aliases: ['!accountage'],
+    example: '!accountage TNX6',
+    beginner: false,
+    badge: 'أداة',
+    requirement: 'بدون شروط',
+    usage: 'أداة بسيطة لمعرفة عمر الحساب.',
+    keywords: ['عمر', 'حساب', 'accountage'],
+  },
+  {
+    id: 'lurk',
+    category: 'tools',
+    title: 'وضع lurk',
+    description: 'يقول إنك موجود لكن تتابع بهدوء.',
+    aliases: ['!lurk'],
+    example: '!lurk',
+    beginner: false,
+    badge: 'أداة',
+    requirement: 'بدون شروط',
+    usage: 'للي يتابعون بهدوء بدون كلام كثير.',
+    keywords: ['lurk', 'متربص', 'هدوء'],
+  },
+  {
+    id: 'coin-flip',
+    category: 'tools',
+    title: 'رمي عملة',
+    description: 'يرمي عملة عشوائيًا.',
+    aliases: ['!رمي عملة', '!flipcoin'],
+    example: '!رمي عملة',
+    beginner: false,
+    badge: 'أداة',
+    requirement: 'بدون شروط',
+    usage: 'للقرارات العشوائية السريعة.',
+    keywords: ['عملة', 'رمي', 'flipcoin'],
+  },
+
+  {
     id: 'auction',
     category: 'games',
     title: 'المزاد',
     description: 'يعرض معلومات المزاد الحالي إذا كان فيه مزاد شغال.',
     aliases: ['!مزاد', '!auction'],
     example: '!مزاد',
-    beginner: true,
+    beginner: false,
     badge: 'وقت المزاد',
     requirement: 'يحتاج مزاد شغال',
     usage: 'استخدمه لمعرفة وضع المزاد.',
@@ -422,7 +695,7 @@ const COMMAND_CATALOG = [
     description: 'يدخلك أو يعرض لك لعبة فاميلي فيود حسب وضع البث.',
     aliases: ['!فاميلي فيود', '!ffa'],
     example: '!فاميلي فيود',
-    beginner: true,
+    beginner: false,
     badge: 'وقت اللعبة',
     requirement: 'حسب تشغيل اللعبة',
     usage: 'لعبة جماعية داخل الشات.',
@@ -435,7 +708,7 @@ const COMMAND_CATALOG = [
     description: 'يدخلك أو يعرض لك لعبة البطاطا إذا كانت متاحة.',
     aliases: ['!بطاطا'],
     example: '!بطاطا',
-    beginner: true,
+    beginner: false,
     badge: 'وقت اللعبة',
     requirement: 'حسب تشغيل اللعبة',
     usage: 'لعبة سريعة بين المشاهدين.',
@@ -467,299 +740,67 @@ const COMMAND_CATALOG = [
     usage: 'للضحك والإحصائيات.',
     keywords: ['فاشلين', 'بطاطا', 'ترتيب'],
   },
-  {
-    id: 'high-low-high',
-    category: 'games',
-    title: 'High Low — أعلى',
-    description: 'تتوقع أن الرقم القادم أعلى.',
-    aliases: ['!high'],
-    example: '!high',
-    beginner: false,
-    badge: 'وقت اللعبة',
-    requirement: 'لعبة High Low تكون شغالة',
-    usage: 'استخدمه إذا تتوقع الرقم القادم أعلى.',
-    keywords: ['high', 'اعلى', 'أعلى'],
-  },
-  {
-    id: 'high-low-low',
-    category: 'games',
-    title: 'High Low — أقل',
-    description: 'تتوقع أن الرقم القادم أقل.',
-    aliases: ['!low'],
-    example: '!low',
-    beginner: false,
-    badge: 'وقت اللعبة',
-    requirement: 'لعبة High Low تكون شغالة',
-    usage: 'استخدمه إذا تتوقع الرقم القادم أقل.',
-    keywords: ['low', 'اقل', 'أقل'],
-  },
-  {
-    id: 'high-low-equal',
-    category: 'games',
-    title: 'High Low — مساوي',
-    description: 'تتوقع أن الرقم القادم مساوي.',
-    aliases: ['!equal'],
-    example: '!equal',
-    beginner: false,
-    badge: 'وقت اللعبة',
-    requirement: 'لعبة High Low تكون شغالة',
-    usage: 'توقع صعب لكنه موجود.',
-    keywords: ['equal', 'مساوي'],
-  },
-  {
-    id: 'high-low-stats',
-    category: 'games',
-    title: 'إحصائيات High Low',
-    description: 'يعرض إحصائياتك أو ترتيب اللعبة.',
-    aliases: ['!personalstats', '!alltime', '!session'],
-    example: '!personalstats',
-    beginner: false,
-    badge: 'إحصائيات',
-    requirement: 'بدون شروط',
-    usage: 'مفيد إذا تلعب High Low كثير.',
-    keywords: ['stats', 'احصائيات', 'highlow'],
-  },
-
-  {
-    id: 'inventory-open',
-    category: 'inventory',
-    title: 'افتح حقيبتك',
-    description: 'يعرض الأغراض اللي تملكها.',
-    aliases: ['!حقيبة', '!inventory', '!bag'],
-    example: '!حقيبة',
-    beginner: true,
-    badge: 'دائم',
-    requirement: 'نظام الحقيبة يكون مفعل',
-    usage: 'هذا أهم أمر في نظام الحقيبة.',
-    keywords: ['حقيبة', 'شنطة', 'inventory', 'bag'],
-  },
-  {
-    id: 'inventory-shop',
-    category: 'inventory',
-    title: 'افتح المتجر',
-    description: 'يعرض الأغراض المتاحة للشراء.',
-    aliases: ['!متجر', '!shop', '!itemList'],
-    example: '!متجر',
-    beginner: true,
-    badge: 'دائم',
-    requirement: 'نظام المتجر يكون مفعل',
-    usage: 'من هنا تعرف وش تقدر تشتري.',
-    keywords: ['متجر', 'shop', 'شراء'],
-  },
-  {
-    id: 'inventory-buy',
-    category: 'inventory',
-    title: 'اشتر غرض',
-    description: 'يشتري غرض من المتجر إذا عندك رصيد كافي.',
-    aliases: ['!شراء', '!buy', '!buyItem'],
-    example: '!شراء البريد',
-    beginner: false,
-    badge: 'يحتاج رصيد',
-    requirement: 'لازم عندك نقاط أو ذهب كافي',
-    usage: 'اكتب اسم الغرض بعد الأمر.',
-    keywords: ['شراء', 'buy'],
-  },
-  {
-    id: 'inventory-sell',
-    category: 'inventory',
-    title: 'بع غرض',
-    description: 'يبيع غرض من حقيبتك إذا كان قابل للبيع.',
-    aliases: ['!بيع', '!sell', '!sellItem', '!itemSell'],
-    example: '!بيع البريد',
-    beginner: false,
-    badge: 'نهائي غالبًا',
-    requirement: 'لازم تملك الغرض',
-    usage: 'انتبه، البيع قد يكون نهائي.',
-    keywords: ['بيع', 'sell'],
-  },
-  {
-    id: 'inventory-use',
-    category: 'inventory',
-    title: 'استخدم غرض',
-    description: 'يستخدم غرض من حقيبتك.',
-    aliases: ['!استخدام', '!use', '!useItem'],
-    example: '!استخدام البريد',
-    beginner: false,
-    badge: 'يحتاج غرض',
-    requirement: 'لازم تملك الغرض',
-    usage: 'بعض الأغراض لها تأثير مباشر.',
-    keywords: ['استخدام', 'استخدم', 'use'],
-  },
-  {
-    id: 'inventory-trade',
-    category: 'inventory',
-    title: 'تبادل غرض',
-    description: 'يرسل عرض تبادل غرض مع شخص ثاني.',
-    aliases: ['!تريد', '!trade', '!offer', '!tradeItem'],
-    example: '!تريد TNX6 | البريد',
-    beginner: false,
-    badge: 'يحتاج قبول',
-    requirement: 'الطرف الثاني لازم يقبل',
-    usage: 'اكتب اسم الشخص والغرض اللي تبي تتبادله.',
-    keywords: ['تبادل', 'تريد', 'trade'],
-  },
-
-  {
-    id: 'checkin',
-    category: 'community',
-    title: 'تسجيل حضور',
-    description: 'يسجل حضورك اليومي إذا كان النظام مفعل.',
-    aliases: ['!تسجيل', '!حضور', '!checkin'],
-    example: '!تسجيل',
-    beginner: true,
-    badge: 'يومي',
-    requirement: 'مرة في اليوم غالبًا',
-    usage: 'يساعدك تبني ستريك وحضور.',
-    keywords: ['تسجيل', 'حضور', 'checkin'],
-  },
-  {
-    id: 'streak',
-    category: 'community',
-    title: 'اعرف الستريك',
-    description: 'يعرض سلسلة حضورك أو تقدمك.',
-    aliases: ['!ستريك', '!streak'],
-    example: '!ستريك',
-    beginner: true,
-    badge: 'دائم',
-    requirement: 'بدون شروط',
-    usage: 'مفيد لمتابعة حضورك.',
-    keywords: ['ستريك', 'streak'],
-  },
-  {
-    id: 'badge',
-    category: 'community',
-    title: 'بادجاتك',
-    description: 'يعرض بادجاتك أو طريقة عرض البادج.',
-    aliases: ['!بادج', '!badges', '!badge'],
-    example: '!بادج',
-    beginner: true,
-    badge: 'دائم',
-    requirement: 'حسب البادجات المفتوحة',
-    usage: 'للي يجمعون إنجازات المجتمع.',
-    keywords: ['بادج', 'بادجات', 'badge'],
-  },
-  {
-    id: 'vip',
-    category: 'community',
-    title: 'VIP',
-    description: 'يعرض حالة VIP أو معلوماته إذا كان النظام مفعل.',
-    aliases: ['!vip', '!في اي بي'],
-    example: '!vip',
-    beginner: false,
-    badge: 'حسب النظام',
-    requirement: 'قد يحتاج VIP فعلي',
-    usage: 'مفيد لو عندك VIP مؤقت.',
-    keywords: ['vip', 'في اي بي'],
-  },
-
-  {
-    id: 'account-age',
-    category: 'tools',
-    title: 'عمر الحساب',
-    description: 'يعرض عمر حساب Twitch.',
-    aliases: ['!accountage'],
-    example: '!accountage TNX6',
-    beginner: false,
-    badge: 'أداة',
-    requirement: 'بدون شروط',
-    usage: 'أداة بسيطة لمعرفة عمر الحساب.',
-    keywords: ['عمر', 'حساب', 'accountage'],
-  },
-  {
-    id: 'lurk',
-    category: 'tools',
-    title: 'وضع lurk',
-    description: 'يقول إنك موجود لكن تتابع بهدوء.',
-    aliases: ['!lurk'],
-    example: '!lurk',
-    beginner: true,
-    badge: 'دائم',
-    requirement: 'بدون شروط',
-    usage: 'للي يتابعون بهدوء بدون كلام كثير.',
-    keywords: ['lurk', 'متربص', 'هدوء'],
-  },
-  {
-    id: 'coin-flip',
-    category: 'tools',
-    title: 'رمي عملة',
-    description: 'يرمي عملة عشوائيًا.',
-    aliases: ['!رمي عملة', '!flipcoin'],
-    example: '!رمي عملة',
-    beginner: false,
-    badge: 'أداة',
-    requirement: 'بدون شروط',
-    usage: 'للقرارات العشوائية السريعة.',
-    keywords: ['عملة', 'رمي', 'flipcoin'],
-  },
 ]
 
 const CATEGORY_META = {
-  start: {
-    title: 'أساسيات الشات',
-    short: 'البداية',
-    subtitle: 'أهم الأشياء اللي يحتاجها أي مشاهد جديد.',
-    icon: '✦',
-    introTitle: 'ابدأ من هنا',
-    introText: 'هذه أوامر تكفيك كبداية: نقاطك، بريدك، الهدية، الكليب، والتحديات.',
+  points: {
+    title: 'نظام النقاط',
+    short: 'النقاط',
+    subtitle: 'رصيدك، ترتيبك، وتحويل النقاط.',
+    icon: '◆',
+    introTitle: 'وش هو نظام النقاط؟',
+    introText: 'النقاط هي رصيدك داخل المجتمع. تقدر تعرف رصيدك، تشوف ترتيبك، وتحول نقاط لغيرك.',
     firstCommandId: 'points-balance',
+  },
+  inventory: {
+    title: 'نظام الحقيبة',
+    short: 'الحقيبة',
+    subtitle: 'أغراضك، المتجر، الشراء، البيع، الاستخدام، والتبادل.',
+    icon: '▣',
+    introTitle: 'وش هي الحقيبة؟',
+    introText: 'الحقيبة هي مكان أغراضك داخل المجتمع. تقدر تشتري، تبيع، تستخدم، أو تتبادل أغراض.',
+    firstCommandId: 'inventory-open',
+  },
+  badges: {
+    title: 'نظام البادج',
+    short: 'البادج',
+    subtitle: 'تقدمك، بادجاتك، بطاقتك، والبنر.',
+    icon: '⬟',
+    introTitle: 'وش هو نظام البادج؟',
+    introText: 'نظام يوريك تقدمك في البادجات، البادجات اللي فتحتها، وأقرب بادج جاي لك.',
+    firstCommandId: 'badge-progress',
   },
   mail: {
     title: 'البريد والهدايا',
     short: 'البريد',
-    subtitle: 'رسائل، هدايا، قبول ورفض.',
+    subtitle: 'البريد يحتاج تفعيل، وبعدها تقدر تستقبل رسائل وهدايا.',
     icon: '✉',
-    introTitle: 'وش هو البريد؟',
-    introText: 'نظام يخليك تستقبل رسائل وهدايا من المشاهدين، وترسل لهم رسائل أو هدايا.',
-    firstCommandId: 'mail-open',
-  },
-  points: {
-    title: 'النقاط والتحديات',
-    short: 'النقاط',
-    subtitle: 'رصيد، تحويل، تحديات، وحظ.',
-    icon: '◆',
-    introTitle: 'وش هي النقاط؟',
-    introText: 'رصيدك داخل المجتمع. تستخدمه في التحويل، التحديات، وبعض الأنظمة.',
-    firstCommandId: 'points-transfer',
-  },
-  games: {
-    title: 'ألعاب الشات',
-    short: 'الألعاب',
-    subtitle: 'ألعاب وتحديات داخل البث.',
-    icon: '◈',
-    introTitle: 'وش ألعاب الشات؟',
-    introText: 'ألعاب تظهر وقت البث. بعض أوامرها ما تشتغل إلا إذا اللعبة مفعلة.',
-    firstCommandId: 'family-feud',
-  },
-  inventory: {
-    title: 'الحقيبة والمتجر',
-    short: 'الحقيبة',
-    subtitle: 'أغراض، شراء، بيع، واستخدام.',
-    icon: '▣',
-    introTitle: 'وش هي الحقيبة؟',
-    introText: 'مكان أغراضك داخل المجتمع. تقدر تشتري، تستخدم، تبيع، أو تتبادل.',
-    firstCommandId: 'inventory-open',
-  },
-  community: {
-    title: 'المجتمع والبادجات',
-    short: 'المجتمع',
-    subtitle: 'حضور، ستريك، VIP، وبادجات.',
-    icon: '⬟',
-    introTitle: 'أنظمة المجتمع',
-    introText: 'تابع حضورك، الستريك، البادجات، وحالة VIP.',
-    firstCommandId: 'checkin',
+    introTitle: 'نظام البريد',
+    introText: 'البريد ليس مفتوحًا للجميع. لازم يكون مفعل عندك قبل استخدامه.',
+    firstCommandId: 'mail-upgrade',
   },
   tools: {
     title: 'أدوات سريعة',
     short: 'أدوات',
-    subtitle: 'أوامر صغيرة ومباشرة.',
+    subtitle: 'كليبات وأدوات بسيطة.',
     icon: '⌁',
-    introTitle: 'أدوات خفيفة',
-    introText: 'أوامر بسيطة تستخدمها وقت الحاجة.',
-    firstCommandId: 'lurk',
+    introTitle: 'أدوات سريعة',
+    introText: 'أوامر صغيرة تستخدمها وقت الحاجة.',
+    firstCommandId: 'clip',
+  },
+  games: {
+    title: 'ألعاب الشات',
+    short: 'الألعاب',
+    subtitle: 'أوامر الألعاب وقت تشغيلها في البث.',
+    icon: '◈',
+    introTitle: 'ألعاب الشات',
+    introText: 'بعض الأوامر تعمل فقط وقت تشغيل اللعبة.',
+    firstCommandId: 'family-feud',
   },
 }
 
-const CATEGORY_ORDER = ['start', 'mail', 'points', 'games', 'inventory', 'community', 'tools']
+const CATEGORY_ORDER = ['points', 'inventory', 'badges', 'mail', 'tools', 'games']
+const BEGINNER_CATEGORY_ORDER = ['points', 'inventory', 'badges']
 
 function getAvailableAliases(definition) {
   const result = []
@@ -786,11 +827,10 @@ function getAvailableAliases(definition) {
 const visibleCommands = COMMAND_CATALOG
   .map((definition) => {
     const aliases = getAvailableAliases(definition)
-
     if (aliases.length === 0) return null
 
     const category = definition.category
-    const meta = CATEGORY_META[category] || CATEGORY_META.start
+    const meta = CATEGORY_META[category] || CATEGORY_META.points
     const primaryAlias = aliases[0]
 
     return {
@@ -838,11 +878,10 @@ function findCommandById(id) {
   return visibleCommands.find((command) => command.id === id)
 }
 
-const beginnerCategories = visibleCategories.filter((category) => {
-  return commandsByCategory[category].some((command) => command.beginner)
+const beginnerCategories = BEGINNER_CATEGORY_ORDER.filter((category) => {
+  return commandsByCategory[category]?.some((command) => command.beginner)
 })
 
-const totalCommands = visibleCommands.length
 const totalBeginnerCategories = beginnerCategories.length
 ---
 
@@ -861,7 +900,7 @@ const totalBeginnerCategories = beginnerCategories.length
         <h1>وش تبي تسوي في الشات؟</h1>
 
         <p>
-          اختر وضعك. إذا أنت جديد بنمشيك خطوة خطوة. إذا تعرف النظام، ادخل على كل الأوامر مباشرة.
+          اختر وضعك. إذا أنت جديد بنشرح لك فقط نظام النقاط، الحقيبة، والبـادج. باقي الأوامر تلقاها في عرض الأوامر.
         </p>
       </header>
 
@@ -870,9 +909,9 @@ const totalBeginnerCategories = beginnerCategories.length
           <div class="tnx-entry-icon">✦</div>
 
           <div>
-            <span>أبي شرح بسيط</span>
+            <span>أبي الأساسيات</span>
             <strong>أنا جديد</strong>
-            <p>ابدأ من الصفر. بتشوف الأنظمة كبطاقات، وكل بطاقة تشرح لك أوامرها.</p>
+            <p>شرح مبسط لثلاثة أنظمة فقط: النقاط، الحقيبة، والبـادج.</p>
           </div>
         </button>
 
@@ -882,7 +921,7 @@ const totalBeginnerCategories = beginnerCategories.length
           <div>
             <span>أعرف وش أبي</span>
             <strong>عرض الأوامر</strong>
-            <p>ادخل مباشرة على كل الأوامر مع البحث والتصفية والنسخ السريع.</p>
+            <p>ادخل مباشرة على كل الأوامر المعروضة في الموقع مع البحث والنسخ.</p>
           </div>
         </button>
       </section>
@@ -891,8 +930,8 @@ const totalBeginnerCategories = beginnerCategories.length
         <div class="tnx-flow-head">
           <div>
             <span>رحلة المشاهد الجديد</span>
-            <h2>افتح البطاقات وتعلم الأنظمة الأساسية</h2>
-            <p>اضغط على أي بطاقة، وبتنزل لك أوامر النظام تحتها. إذا فتحت كل البطاقات، نوديك بعدها لقائمة كل الأوامر.</p>
+            <h2>ثلاثة أنظمة فقط</h2>
+            <p>افتح البطاقات: النقاط، الحقيبة، البادج. بعد ما تخلصها، تقدر تنتقل لقائمة كل الأوامر.</p>
           </div>
 
           <div class="tnx-progress-box">
@@ -1002,8 +1041,8 @@ const totalBeginnerCategories = beginnerCategories.length
 
         <div id="completionBox" class="tnx-completion hidden">
           <div class="tnx-completion-icon">✓</div>
-          <h2>ممتاز. كذا شفت أهم أنظمة الشات.</h2>
-          <p>الحين تقدر تدخل على صفحة كل الأوامر وتشوف التفاصيل الكاملة والاختصارات الإضافية.</p>
+          <h2>ممتاز. كذا عرفت الأنظمة الأساسية.</h2>
+          <p>شفت نظام النقاط، الحقيبة، والبـادج. الآن تقدر تنتقل لقائمة كل الأوامر.</p>
           <button type="button" data-open-all>عرض كل الأوامر</button>
         </div>
       </section>
@@ -1013,7 +1052,7 @@ const totalBeginnerCategories = beginnerCategories.length
           <div>
             <span>كل الأوامر</span>
             <h2>القائمة الكاملة</h2>
-            <p>ابحث أو اختر قسم. هنا تظهر الأوامر المختارة للموقع فقط، بدون أوامر المودز أو الأوامر المطفيّة.</p>
+            <p>هنا تظهر الأوامر المختارة للموقع فقط، بدون أوامر المودز أو الأوامر المطفيّة.</p>
           </div>
 
           <button type="button" data-reset-choice>رجوع للاختيار</button>
@@ -1021,7 +1060,7 @@ const totalBeginnerCategories = beginnerCategories.length
 
         <div class="tnx-search-bar">
           <span>⌕</span>
-          <input id="commandSearch" type="search" autocomplete="off" placeholder="ابحث: نقاط، بريد، هدية، لعبة..." />
+          <input id="commandSearch" type="search" autocomplete="off" placeholder="ابحث: نقاط، حقيبة، بادج، بريد، لعبة..." />
           <button type="button" id="clearCommandSearch">×</button>
         </div>
 
@@ -1037,7 +1076,7 @@ const totalBeginnerCategories = beginnerCategories.length
 
         <div id="emptyState" class="tnx-empty hidden">
           <strong>ما لقيت أمر مطابق</strong>
-          <span>جرّب كلمة أبسط مثل: نقاط، بريد، هدية، لعبة، ترتيب.</span>
+          <span>جرّب كلمة أبسط مثل: نقاط، حقيبة، بادج، بريد.</span>
         </div>
 
         <div class="tnx-command-sections">
@@ -2057,12 +2096,7 @@ const totalBeginnerCategories = beginnerCategories.length
 
         systemStatuses.forEach((status) => {
           const category = status.dataset.systemStatus || ''
-
-          if (seenSystems.has(category)) {
-            status.textContent = 'تم'
-          } else {
-            status.textContent = 'جديد'
-          }
+          status.textContent = seenSystems.has(category) ? 'تم' : 'جديد'
         })
       }
 
