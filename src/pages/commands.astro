@@ -734,6 +734,57 @@ const COMMAND_CATALOG = [
   },
 ]
 
+const PREVIEW_REPLIES = {
+  'points-balance': 'يرد عليك برصيد نقاطك الحالي داخل نظام المجتمع.',
+  'points-board': 'يعرض قائمة المتصدرين في النقاط، ومن هم أعلى الأعضاء رصيدًا.',
+  'points-transfer': 'إذا رصيدك كافي، يحوّل المبلغ للشخص المحدد ويخصمه من نقاطك.',
+  gamble: 'البوت يسحب المبلغ من رصيدك ثم يحدد النتيجة: فوز أو خسارة حسب الحظ.',
+  scratch: 'البوت يفتح بطاقة حظ ويعطيك النتيجة حسب الجائزة أو الخسارة.',
+  duel: 'يرسل تحدي نقاط للشخص المحدد وينتظر قبوله.',
+  'duel-accept': 'يقبل التحدي الموجود عليك، وبعدها يحدد البوت الفائز حسب نظام التحدي.',
+
+  'inventory-open': 'يعرض لك الأغراض الموجودة في حقيبتك.',
+  'inventory-shop': 'يعرض قائمة الأغراض المتاحة في المتجر وأسعارها.',
+  'inventory-buy': 'إذا عندك رصيد كافي، يشتري الغرض ويضيفه إلى حقيبتك.',
+  'inventory-sell': 'يبيع الغرض من حقيبتك إذا كان قابلًا للبيع ويرجع لك قيمته حسب النظام.',
+  'inventory-use': 'يستخدم الغرض المحدد من حقيبتك ويطبق تأثيره في البث أو الشات.',
+  'inventory-trade': 'يرسل عرض تبادل للشخص المحدد وينتظر قبوله أو رفضه.',
+  'inventory-accept-trade': 'يقبل عرض التبادل الموجود عليك وينفذ التبادل بين الطرفين.',
+  'inventory-reject-trade': 'يرفض عرض التبادل الموجود عليك وينهيه بدون تغيير أغراضك.',
+  'inventory-value': 'يعرض قيمة الغرض أو سعره قبل البيع أو الشراء.',
+  'inventory-craft': 'يتحقق من مواد التصنيع، وإذا كانت كاملة يصنع الغرض ويضيفه لحقيبتك.',
+
+  'badge-progress': 'يعرض عدد البادجات اللي حققتها، وكم باقي لك على أقرب بادج.',
+  'badge-list': 'يعرض البادجات اللي تملكها حاليًا.',
+  'badge-equip': 'إذا تملك البادج، يخليه ظاهرًا في بطاقتك.',
+  'badge-unequip': 'يشيل البادج المحدد من العرض في بطاقتك.',
+  'badge-unequip-all': 'يشيل كل البادجات المعروضة من بطاقتك.',
+  'user-card': 'يعرض بطاقة المستخدم الخاصة بك، وفيها معلوماتك وبادجاتك حسب النظام.',
+  'banner-set': 'يغير صورة البنر في بطاقتك إذا الرابط صحيح ومقبول.',
+  'banner-color': 'يغير لون البنر أو خلفية البطاقة حسب كود اللون.',
+  'badge-coupon': 'إذا كان البادج قابلًا للتحويل، يحوله إلى كوبون حسب نظام البوت.',
+
+  'mail-upgrade': 'يفعل البريد أو يطوره حسب نظام الشراء والسعة.',
+  'mail-open': 'إذا بريدك مفعل، يعرض الرسائل والهدايا الموجودة عندك.',
+  'mail-help': 'يعرض أوامر البريد المتاحة وكيف تستخدمها.',
+  'mail-send': 'يرسل رسالة للشخص المحدد إذا كان عنده بريد مفعل.',
+  'gift-send': 'يرسل هدية للشخص المحدد، وقد تكون نقاط أو غرض حسب اللي كتبته.',
+  'gift-accept': 'يقبل الهدية المعلقة ويضيف النقاط أو الغرض لحسابك.',
+  'gift-reject': 'يرفض الهدية المعلقة ولا تستلمها.',
+
+  clip: 'ينشئ كليب للحظة الحالية من البث إذا كان Twitch يسمح بذلك.',
+  lclip: 'يعرض آخر كليب أو يتعامل معه حسب إعداد البوت.',
+  'account-age': 'يعرض عمر حساب Twitch للشخص المطلوب.',
+  lurk: 'يسجل أنك موجود وتتابع بهدوء بدون مشاركة كثيرة.',
+  'coin-flip': 'يرمي عملة ويعطيك نتيجة عشوائية: وجه أو كتابة.',
+
+  auction: 'يعرض حالة المزاد الحالي إذا كان فيه مزاد شغال.',
+  'family-feud': 'يدخلك أو يعرض لك معلومات لعبة فاميلي فيود حسب وضع البث.',
+  'hot-potato': 'يدخلك أو يعرض لك لعبة البطاطا إذا كانت شغالة.',
+  'hot-potato-pass': 'يمرر البطاطا للشخص المحدد أثناء اللعبة.',
+  'hot-potato-losers': 'يعرض ترتيب الخاسرين في لعبة البطاطا.',
+}
+
 const CATEGORY_META = {
   points: {
     title: 'نظام النقاط',
@@ -824,11 +875,15 @@ const visibleCommands = COMMAND_CATALOG
     const category = definition.category
     const meta = CATEGORY_META[category] || CATEGORY_META.points
     const primaryAlias = aliases[0]
+    const previewInput = definition.example || primaryAlias
+    const previewReply = PREVIEW_REPLIES[definition.id] || `ينفذ أمر "${definition.title}" حسب إعدادات البوت في البث.`
 
     return {
       ...definition,
       aliases,
       primaryAlias,
+      previewInput,
+      previewReply,
       categoryTitle: meta.title,
       categoryShort: meta.short,
       categoryIcon: meta.icon,
@@ -841,6 +896,7 @@ const visibleCommands = COMMAND_CATALOG
           definition.badge,
           definition.requirement,
           definition.usage,
+          previewReply,
           ...(definition.keywords || []),
           ...aliases,
           meta.title,
@@ -1091,13 +1147,27 @@ const quickActions = QUICK_ACTION_DEFINITIONS
                         </div>
 
                         {command.example && (
-                          <div class="tnx-copy-row tnx-copy-row--example">
-                            <div>
-                              <span>مثال</span>
-                              <code>{command.example}</code>
+                          <div class="tnx-example-block">
+                            <div class="tnx-copy-row tnx-copy-row--example">
+                              <div>
+                                <span>مثال</span>
+                                <code>{command.example}</code>
+                              </div>
+
+                              <button type="button" data-preview-toggle={command.id} aria-expanded="false">معاينة</button>
                             </div>
 
-                            <button type="button" data-copy={command.example}>نسخ المثال</button>
+                            <div class="tnx-chat-preview hidden" data-preview-panel={command.id}>
+                              <div class="tnx-chat-line tnx-chat-line--user">
+                                <span>أنت</span>
+                                <p>{command.previewInput}</p>
+                              </div>
+
+                              <div class="tnx-chat-line tnx-chat-line--bot">
+                                <span>TNX BOT</span>
+                                <p>{command.previewReply}</p>
+                              </div>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -1226,13 +1296,27 @@ const quickActions = QUICK_ACTION_DEFINITIONS
                       </div>
 
                       {command.example && (
-                        <div class="tnx-copy-row tnx-copy-row--example">
-                          <div>
-                            <span>مثال</span>
-                            <code>{command.example}</code>
+                        <div class="tnx-example-block">
+                          <div class="tnx-copy-row tnx-copy-row--example">
+                            <div>
+                              <span>مثال</span>
+                              <code>{command.example}</code>
+                            </div>
+
+                            <button type="button" data-preview-toggle={command.id} aria-expanded="false">معاينة</button>
                           </div>
 
-                          <button type="button" data-copy={command.example}>نسخ المثال</button>
+                          <div class="tnx-chat-preview hidden" data-preview-panel={command.id}>
+                            <div class="tnx-chat-line tnx-chat-line--user">
+                              <span>أنت</span>
+                              <p>{command.previewInput}</p>
+                            </div>
+
+                            <div class="tnx-chat-line tnx-chat-line--bot">
+                              <span>TNX BOT</span>
+                              <p>{command.previewReply}</p>
+                            </div>
+                          </div>
                         </div>
                       )}
 
@@ -1855,6 +1939,11 @@ const quickActions = QUICK_ACTION_DEFINITIONS
       background: rgba(255, 218, 106, 0.035);
     }
 
+    .tnx-example-block {
+      display: grid;
+      gap: 0.65rem;
+    }
+
     .tnx-copy-row span {
       display: block;
       margin-bottom: 0.35rem;
@@ -1875,12 +1964,89 @@ const quickActions = QUICK_ACTION_DEFINITIONS
       font-weight: 950;
     }
 
+    .tnx-chat-preview {
+      display: grid;
+      gap: 0.7rem;
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 1rem;
+      background:
+        radial-gradient(circle at top left, rgba(255, 218, 106, 0.055), transparent 44%),
+        rgba(0, 0, 0, 0.36);
+      padding: 0.85rem;
+      animation: tnxPreviewIn 150ms ease both;
+    }
+
+    @keyframes tnxPreviewIn {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .tnx-chat-line {
+      display: grid;
+      gap: 0.35rem;
+      max-width: 92%;
+    }
+
+    .tnx-chat-line span {
+      color: rgb(148, 163, 184);
+      font-size: 0.7rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+    }
+
+    .tnx-chat-line p {
+      margin: 0;
+      border-radius: 1rem;
+      padding: 0.75rem 0.85rem;
+      font-size: 0.86rem;
+      font-weight: 850;
+      line-height: 1.65;
+    }
+
+    .tnx-chat-line--user {
+      justify-self: end;
+      text-align: right;
+    }
+
+    .tnx-chat-line--user p {
+      background: rgba(255, 218, 106, 0.13);
+      color: #ffefb0;
+      border: 1px solid rgba(255, 218, 106, 0.22);
+      direction: ltr;
+      text-align: left;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .tnx-chat-line--bot {
+      justify-self: start;
+      text-align: right;
+    }
+
+    .tnx-chat-line--bot p {
+      background: rgba(255, 255, 255, 0.065);
+      color: rgb(229, 231, 235);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
     .tnx-copy-row button.is-copied,
     .tnx-aliases button.is-copied,
     .tnx-link-row button.is-copied {
       border-color: rgba(52, 211, 153, 0.65) !important;
       background: rgba(52, 211, 153, 0.14) !important;
       color: rgb(167, 243, 208) !important;
+    }
+
+    .tnx-copy-row button.is-preview-open {
+      border-color: rgba(255, 218, 106, 0.62);
+      background: rgba(255, 218, 106, 0.16);
+      color: #ffda6a;
     }
 
     .tnx-link-row {
@@ -2297,6 +2463,10 @@ const quickActions = QUICK_ACTION_DEFINITIONS
         width: 100%;
       }
 
+      .tnx-chat-line {
+        max-width: 100%;
+      }
+
       .tnx-new-actions {
         flex-direction: column;
       }
@@ -2349,6 +2519,7 @@ const quickActions = QUICK_ACTION_DEFINITIONS
       const copyButtons = Array.from(document.querySelectorAll('[data-copy]'))
       const commandLinkButtons = Array.from(document.querySelectorAll('[data-command-link]'))
       const quickActionButtons = Array.from(document.querySelectorAll('[data-quick-command]'))
+      const previewButtons = Array.from(document.querySelectorAll('[data-preview-toggle]'))
 
       const commandSearch = document.getElementById('commandSearch')
       const clearCommandSearch = document.getElementById('clearCommandSearch')
@@ -2620,6 +2791,35 @@ const quickActions = QUICK_ACTION_DEFINITIONS
         })
       }
 
+      function closeOtherPreviewPanels(currentId) {
+        previewButtons.forEach((button) => {
+          const id = button.dataset.previewToggle
+          if (id === currentId) return
+
+          const panel = document.querySelector(`[data-preview-panel="${CSS.escape(id)}"]`)
+          panel?.classList.add('hidden')
+          button.textContent = 'معاينة'
+          button.classList.remove('is-preview-open')
+          button.setAttribute('aria-expanded', 'false')
+        })
+      }
+
+      function togglePreview(id, button) {
+        if (!id || !button) return
+
+        const panel = document.querySelector(`[data-preview-panel="${CSS.escape(id)}"]`)
+        if (!panel) return
+
+        const willOpen = panel.classList.contains('hidden')
+
+        closeOtherPreviewPanels(id)
+
+        panel.classList.toggle('hidden', !willOpen)
+        button.textContent = willOpen ? 'إخفاء المعاينة' : 'معاينة'
+        button.classList.toggle('is-preview-open', willOpen)
+        button.setAttribute('aria-expanded', willOpen ? 'true' : 'false')
+      }
+
       function getHashTarget() {
         const rawHash = window.location.hash || ''
         if (!rawHash.startsWith('#cmd-')) return null
@@ -2705,6 +2905,13 @@ const quickActions = QUICK_ACTION_DEFINITIONS
         addListener(button, 'click', () => {
           const targetHash = button.dataset.quickCommand
           openCommandByHashId(targetHash)
+        })
+      })
+
+      previewButtons.forEach((button) => {
+        addListener(button, 'click', () => {
+          const id = button.dataset.previewToggle
+          togglePreview(id, button)
         })
       })
 
