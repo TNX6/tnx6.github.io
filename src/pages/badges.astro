@@ -852,7 +852,10 @@ const metadata = {
       animation: tnxUserCardIn 220ms ease forwards;
       direction: ltr;
       flex: 0 0 800px;
-      background: #000;
+      background:
+        radial-gradient(circle at 82% 12%, rgba(255, 218, 106, 0.07), transparent 22%),
+        linear-gradient(180deg, #090909 0%, #0a0a0d 52%, #050506 100%);
+      isolation: isolate;
     }
 
     @keyframes tnxUserCardIn {
@@ -861,31 +864,84 @@ const metadata = {
       }
     }
 
+    .tnx-user-card-preview::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent 24%),
+        linear-gradient(90deg, rgba(255,218,106,0.02), transparent 35%, rgba(255,218,106,0.03) 70%, transparent 100%);
+      z-index: 0;
+    }
+
     .tnx-card-banner {
       position: absolute;
       inset: 0 0 auto 0;
       width: 100%;
       height: 180px;
-      background-color: rgba(0, 0, 0, 0.25);
       overflow: hidden;
       z-index: 1;
+      background:
+        radial-gradient(circle at 18% 25%, rgba(255, 255, 255, 0.08), transparent 16%),
+        radial-gradient(circle at 80% 12%, rgba(255, 218, 106, 0.12), transparent 20%),
+        linear-gradient(135deg, rgba(255,255,255,0.04), rgba(0,0,0,0.25));
     }
 
-    .tnx-card-banner img {
+    .tnx-card-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.2) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .tnx-card-banner-fallback {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 20% 28%, rgba(255,255,255,0.08), transparent 18%),
+        radial-gradient(circle at 75% 18%, rgba(255,218,106,0.10), transparent 18%),
+        linear-gradient(135deg, rgba(255,255,255,0.04), rgba(0,0,0,0.18));
+    }
+
+    .tnx-card-banner-fallback::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(rgba(255,218,106,0.35) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,218,106,0.35) 1px, transparent 1px);
+      background-size: 26px 26px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 78%);
+    }
+
+    .tnx-card-banner-image {
+      position: relative;
+      z-index: 1;
       display: block;
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
+    .tnx-card-banner-image.is-broken {
+      display: none;
+    }
+
     .tnx-card-lower-shade {
       position: absolute;
       left: 0;
       right: 0;
-      top: 170px;
-      height: 190px;
+      top: 165px;
+      height: 195px;
       z-index: 2;
-      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.22));
+      background:
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.18));
       pointer-events: none;
     }
 
@@ -916,8 +972,13 @@ const metadata = {
       height: 150px;
       border: 7px solid var(--profile-border, #423fff);
       border-radius: 999px;
-      background-color: var(--profile-border, #423fff);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.18)),
+        var(--profile-border, #423fff);
       overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.08),
+        0 14px 28px rgba(0,0,0,0.28);
     }
 
     .tnx-card-profile-picture img {
@@ -925,6 +986,10 @@ const metadata = {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+
+    .tnx-card-profile-picture img.is-broken {
+      display: none;
     }
 
     .tnx-card-job-info {
@@ -1753,6 +1818,9 @@ const metadata = {
 
         const fileName = `tnx6-card-${String(details.userLogin || details.userName || 'user').replace(/[^a-zA-Z0-9_-]/g, '')}.png`
 
+        const bannerUrl = safeUrl(details.bannerImage || '')
+        const profileUrl = safeUrl(details.profileImageUrl || '')
+
         userCardContainer.innerHTML = `
           <div class="tnx-card-download-wrap">
             <button type="button" class="tnx-download-card-btn" data-download-user-card="${esc(fileName)}">
@@ -1763,10 +1831,11 @@ const metadata = {
               class="tnx-user-card-preview"
               dir="ltr"
               data-export-card
-              style="background: linear-gradient(to bottom, ${baseColor} 70%, ${darkColor} 100%); --profile-border: ${baseColor};"
+              style="--profile-border: ${baseColor}; --accent-dark: ${darkColor};"
             >
               <div class="tnx-card-banner">
-                <img src="${safeUrl(details.bannerImage || '')}" alt="" crossorigin="anonymous" />
+                <div class="tnx-card-banner-fallback"></div>
+                ${bannerUrl ? `<img class="tnx-card-banner-image" src="${bannerUrl}" alt="" crossorigin="anonymous" referrerpolicy="no-referrer" onerror="this.classList.add('is-broken')" />` : ''}
               </div>
 
               <div class="tnx-card-lower-shade"></div>
@@ -1774,7 +1843,7 @@ const metadata = {
               <div class="tnx-card-profile-section">
                 <div class="tnx-card-picture-points">
                   <div class="tnx-card-profile-picture">
-                    <img src="${safeUrl(details.profileImageUrl || '')}" alt="${esc(username)}" crossorigin="anonymous" />
+                    ${profileUrl ? `<img src="${profileUrl}" alt="${esc(username)}" crossorigin="anonymous" referrerpolicy="no-referrer" onerror="this.classList.add('is-broken')" />` : ''}
                   </div>
 
                   <div class="tnx-card-job-info">
