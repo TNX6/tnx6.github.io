@@ -1342,8 +1342,8 @@ const metadata = {
 
       function cssUrl(value) {
         const url = safeUrl(value)
-        if (!url) return ''
-        return `url("${url}")`
+        if (!url) return 'none'
+        return `url('${url}')`
       }
 
       function safeColor(value, fallback = '#423fff') {
