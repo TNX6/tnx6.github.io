@@ -49,8 +49,8 @@ function normalizeAlias(value) {
 
 /*
   فلترة المصدر:
-  الصفحة ما تثق في commands.json كامل.
-  أي أمر مطفي، أو مودز، أو إداري، أو داخلي، ما يدخل أصلًا في الخريطة.
+  الصفحة لا تعرض كل شيء موجود في commands.json.
+  أي أمر مطفي، أو إداري، أو مودز، أو داخلي، ينحذف من البداية.
 */
 
 const HIDDEN_GROUP_KEYWORDS = [
@@ -84,7 +84,17 @@ const HIDDEN_NAME_KEYWORDS = [
   'edit custom',
   'remove custom',
 
-  'reward',
+  'change reward',
+  'reward cooldown',
+  'reward cost',
+  'reward max',
+  'reward prompt',
+  'reward title',
+  'disable reward',
+  'enable reward',
+  'pause reward',
+  'unpause reward',
+
   'prediction',
   'poll',
   'scene',
@@ -176,8 +186,8 @@ for (const command of rawCommands) {
 }
 
 /*
-  هذا هو الكتالوج الحقيقي للصفحة.
-  أي أمر غير موجود هنا ما يظهر للمشاهد حتى لو موجود في Streamer.bot.
+  الكتالوج هو اللي يقرر وش يظهر للمشاهد.
+  أي أمر غير موجود هنا ما يظهر، حتى لو موجود في Streamer.bot.
 */
 
 const COMMAND_CATALOG = [
@@ -188,6 +198,10 @@ const COMMAND_CATALOG = [
     description: 'يعرض رصيد نقاطك الحالي في الشات.',
     aliases: ['!نقاط', '!نقاطي', '!points'],
     example: '!نقاط',
+    beginner: true,
+    badge: 'دائم',
+    requirement: 'بدون شروط',
+    usage: 'اكتبه في الشات ويطلع لك رصيدك مباشرة.',
     keywords: ['نقاط', 'رصيد', 'فلوس', 'points'],
   },
   {
@@ -197,6 +211,10 @@ const COMMAND_CATALOG = [
     description: 'يعرض ترتيب أكثر الأعضاء نقاطًا.',
     aliases: ['!ليدربورد', '!pointsLeaderboard', '!leaderboardPoints'],
     example: '!ليدربورد',
+    beginner: true,
+    badge: 'دائم',
+    requirement: 'بدون شروط',
+    usage: 'استخدمه إذا تبي تعرف المتصدرين.',
     keywords: ['ترتيب', 'ليدربورد', 'نقاط', 'leaderboard'],
   },
   {
@@ -206,6 +224,10 @@ const COMMAND_CATALOG = [
     description: 'يعرض رسائلك والهدايا اللي وصلت لك.',
     aliases: ['!بريد', '!mail', '!البريد'],
     example: '!بريد',
+    beginner: true,
+    badge: 'دائم',
+    requirement: 'يفضل يكون عندك بريد',
+    usage: 'إذا وصلك شيء من شخص ثاني، افتح بريدك بهذا الأمر.',
     keywords: ['بريد', 'رسائل', 'mail'],
   },
   {
@@ -215,6 +237,10 @@ const COMMAND_CATALOG = [
     description: 'ترسل نقاط أو غرض لشخص ثاني حسب النظام المتاح.',
     aliases: ['!هدية', '!gift'],
     example: '!هدية TNX6 | 5000 | تستاهل',
+    beginner: true,
+    badge: 'يحتاج رصيد',
+    requirement: 'لازم تملك النقاط أو الغرض',
+    usage: 'اكتب اسم الشخص، ثم المبلغ أو الغرض، ثم رسالة اختيارية.',
     keywords: ['هدية', 'هديه', 'gift', 'ارسل'],
   },
   {
@@ -224,6 +250,10 @@ const COMMAND_CATALOG = [
     description: 'ينشئ كليب من اللحظة الحالية في البث.',
     aliases: ['!clip'],
     example: '!clip',
+    beginner: true,
+    badge: 'دائم',
+    requirement: 'بدون شروط',
+    usage: 'استخدمه وقت اللقطات القوية أو المواقف المضحكة.',
     keywords: ['كليب', 'clip', 'لقطة'],
   },
   {
@@ -233,6 +263,10 @@ const COMMAND_CATALOG = [
     description: 'يدخلك في نظام التحديات المتاح في البث.',
     aliases: ['!تحدي'],
     example: '!تحدي',
+    beginner: true,
+    badge: 'دائم',
+    requirement: 'حسب نظام التحدي',
+    usage: 'استخدمه إذا تبي تشوف تحدياتك أو تدخل نظام التحديات.',
     keywords: ['تحدي', 'challenge'],
   },
 
@@ -243,6 +277,10 @@ const COMMAND_CATALOG = [
     description: 'يعرض أوامر البريد داخل الشات.',
     aliases: ['!اوامر البريد', '!أوامر البريد', '!mailhelp'],
     example: '!اوامر البريد',
+    beginner: true,
+    badge: 'دائم',
+    requirement: 'بدون شروط',
+    usage: 'أفضل أمر تبدأ فيه لو ما تعرف نظام البريد.',
     keywords: ['بريد', 'شرح', 'mailhelp'],
   },
   {
@@ -252,6 +290,10 @@ const COMMAND_CATALOG = [
     description: 'ترسل رسالة خاصة لعضو عنده بريد.',
     aliases: ['!ارسل رسالة', '!أرسل رسالة', '!ارسل رساله', '!ارسال رسالة', '!ارسل بريد'],
     example: '!ارسل رسالة TNX6 | السلام عليكم',
+    beginner: true,
+    badge: 'دائم',
+    requirement: 'المستلم يحتاج يكون عنده بريد',
+    usage: 'اكتب اسم الشخص، ثم علامة |، ثم الرسالة.',
     keywords: ['رسالة', 'رساله', 'ارسل', 'بريد'],
   },
   {
@@ -261,6 +303,10 @@ const COMMAND_CATALOG = [
     description: 'يقبل آخر هدية وصلت لك.',
     aliases: ['!قبول الهدية', '!قبول الهديه', '!giftaccept'],
     example: '!قبول الهدية',
+    beginner: true,
+    badge: 'بعد وصول هدية',
+    requirement: 'لازم تكون عندك هدية معلقة',
+    usage: 'استخدمه إذا جاك تنبيه إن فيه هدية وصلت لك.',
     keywords: ['قبول', 'هدية', 'giftaccept'],
   },
   {
@@ -270,6 +316,10 @@ const COMMAND_CATALOG = [
     description: 'يرفض آخر هدية وصلت لك.',
     aliases: ['!رفض الهدية', '!رفض الهديه', '!giftreject'],
     example: '!رفض الهدية',
+    beginner: false,
+    badge: 'بعد وصول هدية',
+    requirement: 'لازم تكون عندك هدية معلقة',
+    usage: 'استخدمه إذا ما تبي تستلم الهدية.',
     keywords: ['رفض', 'هدية', 'giftreject'],
   },
   {
@@ -279,6 +329,10 @@ const COMMAND_CATALOG = [
     description: 'يعرض عدد الرسائل الموجودة في بريدك.',
     aliases: ['!عدد الرسائل', '!عدد البريد', '!mailcount'],
     example: '!عدد الرسائل',
+    beginner: false,
+    badge: 'دائم',
+    requirement: 'يحتاج بريد',
+    usage: 'مفيد إذا بريدك صار زحمة وتبي تعرف كم رسالة عندك.',
     keywords: ['عدد', 'رسائل', 'بريد'],
   },
 
@@ -289,6 +343,10 @@ const COMMAND_CATALOG = [
     description: 'ترسل نقاط من رصيدك لشخص ثاني.',
     aliases: ['!تحويل النقاط', '!givePoints', '!pointsGive', '!transferPoints', '!pointsTransfer'],
     example: '!تحويل النقاط TNX6 5000',
+    beginner: true,
+    badge: 'يحتاج رصيد',
+    requirement: 'لازم يكون عندك رصيد كافي',
+    usage: 'اكتب اسم الشخص ثم عدد النقاط.',
     keywords: ['تحويل', 'نقاط', 'ارسال', 'transfer'],
   },
   {
@@ -298,6 +356,10 @@ const COMMAND_CATALOG = [
     description: 'تخاطر بجزء من نقاطك. ممكن تكسب وممكن تخسر.',
     aliases: ['!gamble', '!roulette'],
     example: '!gamble 5000',
+    beginner: false,
+    badge: 'مخاطرة',
+    requirement: 'يحتاج نقاط',
+    usage: 'لا تستخدمه إلا وأنت عارف إنك ممكن تخسر.',
     keywords: ['قامبل', 'قمار', 'حظ', 'gamble', 'roulette'],
   },
   {
@@ -307,6 +369,10 @@ const COMMAND_CATALOG = [
     description: 'تشتري أو تستخدم بطاقة حظ بالنقاط.',
     aliases: ['!scratchCard', '!buyScratchCards'],
     example: '!scratchCard',
+    beginner: false,
+    badge: 'يحتاج نقاط',
+    requirement: 'حسب سعر البطاقة',
+    usage: 'استخدمها لو تبي تجربة حظ سريعة.',
     keywords: ['بطاقة', 'حظ', 'scratch'],
   },
   {
@@ -316,6 +382,10 @@ const COMMAND_CATALOG = [
     description: 'تتحدى عضو ثاني على مبلغ من النقاط.',
     aliases: ['!duel'],
     example: '!duel TNX6 5000',
+    beginner: false,
+    badge: 'يحتاج قبول',
+    requirement: 'الطرف الثاني لازم يقبل',
+    usage: 'اكتب اسم الشخص ثم قيمة التحدي.',
     keywords: ['تحدي', 'duel', 'نقاط'],
   },
   {
@@ -325,6 +395,10 @@ const COMMAND_CATALOG = [
     description: 'يقبل تحدي النقاط المرسل لك.',
     aliases: ['!accept', '!قبول'],
     example: '!قبول',
+    beginner: false,
+    badge: 'بعد تحدي',
+    requirement: 'لازم أحد يتحداك أول',
+    usage: 'لا تقبل إلا إذا فاهم الرهان.',
     keywords: ['قبول', 'تحدي', 'accept'],
   },
 
@@ -335,6 +409,10 @@ const COMMAND_CATALOG = [
     description: 'يعرض معلومات المزاد الحالي إذا كان فيه مزاد شغال.',
     aliases: ['!مزاد', '!auction'],
     example: '!مزاد',
+    beginner: true,
+    badge: 'وقت المزاد',
+    requirement: 'يحتاج مزاد شغال',
+    usage: 'استخدمه لمعرفة وضع المزاد.',
     keywords: ['مزاد', 'auction'],
   },
   {
@@ -344,6 +422,10 @@ const COMMAND_CATALOG = [
     description: 'يدخلك أو يعرض لك لعبة فاميلي فيود حسب وضع البث.',
     aliases: ['!فاميلي فيود', '!ffa'],
     example: '!فاميلي فيود',
+    beginner: true,
+    badge: 'وقت اللعبة',
+    requirement: 'حسب تشغيل اللعبة',
+    usage: 'لعبة جماعية داخل الشات.',
     keywords: ['فاميلي', 'فيود', 'family', 'ffa'],
   },
   {
@@ -353,6 +435,10 @@ const COMMAND_CATALOG = [
     description: 'يدخلك أو يعرض لك لعبة البطاطا إذا كانت متاحة.',
     aliases: ['!بطاطا'],
     example: '!بطاطا',
+    beginner: true,
+    badge: 'وقت اللعبة',
+    requirement: 'حسب تشغيل اللعبة',
+    usage: 'لعبة سريعة بين المشاهدين.',
     keywords: ['بطاطا', 'potato'],
   },
   {
@@ -362,6 +448,10 @@ const COMMAND_CATALOG = [
     description: 'يمرر البطاطا لشخص ثاني وقت اللعبة.',
     aliases: ['!pass'],
     example: '!pass TNX6',
+    beginner: false,
+    badge: 'وقت اللعبة فقط',
+    requirement: 'لازم تكون اللعبة شغالة',
+    usage: 'استخدمه أثناء لعبة البطاطا فقط.',
     keywords: ['pass', 'مرر', 'بطاطا'],
   },
   {
@@ -371,6 +461,10 @@ const COMMAND_CATALOG = [
     description: 'يعرض ترتيب الخاسرين في لعبة البطاطا.',
     aliases: ['!الفاشلين'],
     example: '!الفاشلين',
+    beginner: false,
+    badge: 'إحصائيات',
+    requirement: 'بدون شروط',
+    usage: 'للضحك والإحصائيات.',
     keywords: ['فاشلين', 'بطاطا', 'ترتيب'],
   },
   {
@@ -380,6 +474,10 @@ const COMMAND_CATALOG = [
     description: 'تتوقع أن الرقم القادم أعلى.',
     aliases: ['!high'],
     example: '!high',
+    beginner: false,
+    badge: 'وقت اللعبة',
+    requirement: 'لعبة High Low تكون شغالة',
+    usage: 'استخدمه إذا تتوقع الرقم القادم أعلى.',
     keywords: ['high', 'اعلى', 'أعلى'],
   },
   {
@@ -389,6 +487,10 @@ const COMMAND_CATALOG = [
     description: 'تتوقع أن الرقم القادم أقل.',
     aliases: ['!low'],
     example: '!low',
+    beginner: false,
+    badge: 'وقت اللعبة',
+    requirement: 'لعبة High Low تكون شغالة',
+    usage: 'استخدمه إذا تتوقع الرقم القادم أقل.',
     keywords: ['low', 'اقل', 'أقل'],
   },
   {
@@ -398,6 +500,10 @@ const COMMAND_CATALOG = [
     description: 'تتوقع أن الرقم القادم مساوي.',
     aliases: ['!equal'],
     example: '!equal',
+    beginner: false,
+    badge: 'وقت اللعبة',
+    requirement: 'لعبة High Low تكون شغالة',
+    usage: 'توقع صعب لكنه موجود.',
     keywords: ['equal', 'مساوي'],
   },
   {
@@ -407,6 +513,10 @@ const COMMAND_CATALOG = [
     description: 'يعرض إحصائياتك أو ترتيب اللعبة.',
     aliases: ['!personalstats', '!alltime', '!session'],
     example: '!personalstats',
+    beginner: false,
+    badge: 'إحصائيات',
+    requirement: 'بدون شروط',
+    usage: 'مفيد إذا تلعب High Low كثير.',
     keywords: ['stats', 'احصائيات', 'highlow'],
   },
 
@@ -417,6 +527,10 @@ const COMMAND_CATALOG = [
     description: 'يعرض الأغراض اللي تملكها.',
     aliases: ['!حقيبة', '!inventory', '!bag'],
     example: '!حقيبة',
+    beginner: true,
+    badge: 'دائم',
+    requirement: 'نظام الحقيبة يكون مفعل',
+    usage: 'هذا أهم أمر في نظام الحقيبة.',
     keywords: ['حقيبة', 'شنطة', 'inventory', 'bag'],
   },
   {
@@ -426,6 +540,10 @@ const COMMAND_CATALOG = [
     description: 'يعرض الأغراض المتاحة للشراء.',
     aliases: ['!متجر', '!shop', '!itemList'],
     example: '!متجر',
+    beginner: true,
+    badge: 'دائم',
+    requirement: 'نظام المتجر يكون مفعل',
+    usage: 'من هنا تعرف وش تقدر تشتري.',
     keywords: ['متجر', 'shop', 'شراء'],
   },
   {
@@ -435,6 +553,10 @@ const COMMAND_CATALOG = [
     description: 'يشتري غرض من المتجر إذا عندك رصيد كافي.',
     aliases: ['!شراء', '!buy', '!buyItem'],
     example: '!شراء البريد',
+    beginner: false,
+    badge: 'يحتاج رصيد',
+    requirement: 'لازم عندك نقاط أو ذهب كافي',
+    usage: 'اكتب اسم الغرض بعد الأمر.',
     keywords: ['شراء', 'buy'],
   },
   {
@@ -444,6 +566,10 @@ const COMMAND_CATALOG = [
     description: 'يبيع غرض من حقيبتك إذا كان قابل للبيع.',
     aliases: ['!بيع', '!sell', '!sellItem', '!itemSell'],
     example: '!بيع البريد',
+    beginner: false,
+    badge: 'نهائي غالبًا',
+    requirement: 'لازم تملك الغرض',
+    usage: 'انتبه، البيع قد يكون نهائي.',
     keywords: ['بيع', 'sell'],
   },
   {
@@ -453,6 +579,10 @@ const COMMAND_CATALOG = [
     description: 'يستخدم غرض من حقيبتك.',
     aliases: ['!استخدام', '!use', '!useItem'],
     example: '!استخدام البريد',
+    beginner: false,
+    badge: 'يحتاج غرض',
+    requirement: 'لازم تملك الغرض',
+    usage: 'بعض الأغراض لها تأثير مباشر.',
     keywords: ['استخدام', 'استخدم', 'use'],
   },
   {
@@ -462,6 +592,10 @@ const COMMAND_CATALOG = [
     description: 'يرسل عرض تبادل غرض مع شخص ثاني.',
     aliases: ['!تريد', '!trade', '!offer', '!tradeItem'],
     example: '!تريد TNX6 | البريد',
+    beginner: false,
+    badge: 'يحتاج قبول',
+    requirement: 'الطرف الثاني لازم يقبل',
+    usage: 'اكتب اسم الشخص والغرض اللي تبي تتبادله.',
     keywords: ['تبادل', 'تريد', 'trade'],
   },
 
@@ -472,6 +606,10 @@ const COMMAND_CATALOG = [
     description: 'يسجل حضورك اليومي إذا كان النظام مفعل.',
     aliases: ['!تسجيل', '!حضور', '!checkin'],
     example: '!تسجيل',
+    beginner: true,
+    badge: 'يومي',
+    requirement: 'مرة في اليوم غالبًا',
+    usage: 'يساعدك تبني ستريك وحضور.',
     keywords: ['تسجيل', 'حضور', 'checkin'],
   },
   {
@@ -481,6 +619,10 @@ const COMMAND_CATALOG = [
     description: 'يعرض سلسلة حضورك أو تقدمك.',
     aliases: ['!ستريك', '!streak'],
     example: '!ستريك',
+    beginner: true,
+    badge: 'دائم',
+    requirement: 'بدون شروط',
+    usage: 'مفيد لمتابعة حضورك.',
     keywords: ['ستريك', 'streak'],
   },
   {
@@ -490,6 +632,10 @@ const COMMAND_CATALOG = [
     description: 'يعرض بادجاتك أو طريقة عرض البادج.',
     aliases: ['!بادج', '!badges', '!badge'],
     example: '!بادج',
+    beginner: true,
+    badge: 'دائم',
+    requirement: 'حسب البادجات المفتوحة',
+    usage: 'للي يجمعون إنجازات المجتمع.',
     keywords: ['بادج', 'بادجات', 'badge'],
   },
   {
@@ -499,6 +645,10 @@ const COMMAND_CATALOG = [
     description: 'يعرض حالة VIP أو معلوماته إذا كان النظام مفعل.',
     aliases: ['!vip', '!في اي بي'],
     example: '!vip',
+    beginner: false,
+    badge: 'حسب النظام',
+    requirement: 'قد يحتاج VIP فعلي',
+    usage: 'مفيد لو عندك VIP مؤقت.',
     keywords: ['vip', 'في اي بي'],
   },
 
@@ -509,6 +659,10 @@ const COMMAND_CATALOG = [
     description: 'يعرض عمر حساب Twitch.',
     aliases: ['!accountage'],
     example: '!accountage TNX6',
+    beginner: false,
+    badge: 'أداة',
+    requirement: 'بدون شروط',
+    usage: 'أداة بسيطة لمعرفة عمر الحساب.',
     keywords: ['عمر', 'حساب', 'accountage'],
   },
   {
@@ -518,6 +672,10 @@ const COMMAND_CATALOG = [
     description: 'يقول إنك موجود لكن تتابع بهدوء.',
     aliases: ['!lurk'],
     example: '!lurk',
+    beginner: true,
+    badge: 'دائم',
+    requirement: 'بدون شروط',
+    usage: 'للي يتابعون بهدوء بدون كلام كثير.',
     keywords: ['lurk', 'متربص', 'هدوء'],
   },
   {
@@ -527,6 +685,10 @@ const COMMAND_CATALOG = [
     description: 'يرمي عملة عشوائيًا.',
     aliases: ['!رمي عملة', '!flipcoin'],
     example: '!رمي عملة',
+    beginner: false,
+    badge: 'أداة',
+    requirement: 'بدون شروط',
+    usage: 'للقرارات العشوائية السريعة.',
     keywords: ['عملة', 'رمي', 'flipcoin'],
   },
 ]
@@ -537,49 +699,56 @@ const CATEGORY_META = {
     short: 'البداية',
     subtitle: 'أهم أوامر يحتاجها أي مشاهد جديد.',
     icon: '✦',
-    color: 'gold',
+    systemTitle: 'أساسيات الشات',
+    systemText: 'ابدأ بالنقاط، البريد، الكليب، والتحديات. هذا القسم يكفي أي مشاهد جديد.',
   },
   mail: {
     title: 'البريد والهدايا',
     short: 'البريد',
     subtitle: 'رسائل، هدايا، قبول ورفض.',
     icon: '✉',
-    color: 'amber',
+    systemTitle: 'نظام البريد والهدايا',
+    systemText: 'استقبل رسائل وهدايا، أرسل لغيرك، واقبل أو ارفض الهدايا اللي توصلك.',
   },
   points: {
     title: 'النقاط والتحديات',
     short: 'النقاط',
     subtitle: 'رصيد، تحويل، تحديات، وحظ.',
     icon: '◆',
-    color: 'yellow',
+    systemTitle: 'نظام النقاط',
+    systemText: 'اعرف رصيدك، حوّل نقاط، ادخل تحديات، أو جرّب حظك.',
   },
   games: {
     title: 'ألعاب الشات',
     short: 'الألعاب',
     subtitle: 'ألعاب وتحديات داخل البث.',
     icon: '◈',
-    color: 'violet',
+    systemTitle: 'ألعاب البث',
+    systemText: 'أوامر الألعاب تظهر فائدتها وقت تشغيل اللعبة داخل البث.',
   },
   inventory: {
     title: 'الحقيبة والمتجر',
     short: 'الحقيبة',
     subtitle: 'أغراض، شراء، بيع، واستخدام.',
     icon: '▣',
-    color: 'green',
+    systemTitle: 'نظام الحقيبة',
+    systemText: 'كل أغراضك ومشترياتك وتبادلاتك تكون هنا.',
   },
   community: {
     title: 'المجتمع والبادجات',
     short: 'المجتمع',
     subtitle: 'حضور، ستريك، VIP، وبادجات.',
     icon: '⬟',
-    color: 'blue',
+    systemTitle: 'أنظمة المجتمع',
+    systemText: 'تابع حضورك، الستريك، البادجات، وحالة VIP.',
   },
   tools: {
     title: 'أدوات سريعة',
     short: 'أدوات',
     subtitle: 'أوامر صغيرة ومباشرة.',
     icon: '⌁',
-    color: 'gray',
+    systemTitle: 'أدوات خفيفة',
+    systemText: 'أوامر بسيطة تستخدمها وقت الحاجة.',
   },
 }
 
@@ -629,6 +798,9 @@ const visibleCommands = COMMAND_CATALOG
           definition.title,
           definition.description,
           definition.example,
+          definition.badge,
+          definition.requirement,
+          definition.usage,
           ...(definition.keywords || []),
           ...aliases,
           meta.title,
@@ -655,6 +827,7 @@ for (const command of visibleCommands) {
 
 const visibleCategories = CATEGORY_ORDER.filter((category) => commandsByCategory[category]?.length > 0)
 
+const beginnerCommands = visibleCommands.filter((command) => command.beginner)
 const featuredCommands = visibleCommands
   .filter((command) =>
     ['points-balance', 'mail-open', 'gift-send', 'clip', 'points-board', 'challenge'].includes(command.id)
@@ -662,6 +835,7 @@ const featuredCommands = visibleCommands
   .slice(0, 6)
 
 const totalCommands = visibleCommands.length
+const totalBeginnerCommands = beginnerCommands.length
 const totalCategories = visibleCategories.length
 const totalAliases = visibleCommands.reduce((sum, command) => sum + command.aliases.length, 0)
 ---
@@ -679,11 +853,20 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
             TNX6 COMMAND CENTER
           </div>
 
-          <h1>كل أوامر الشات<br />بدون تعقيد</h1>
+          <h1>وش تبي تسوي في الشات؟</h1>
 
           <p>
-            ما تحتاج تحفظ شيء. اختر وش تبي تسوي، انسخ الأمر، واكتبه في شات Twitch.
+            لا تحفظ أوامر كثيرة. اختر النظام، انسخ الأمر أو المثال، واكتبه في شات Twitch.
           </p>
+
+          <div class="tnx-mode-switch" aria-label="طريقة عرض الأوامر">
+            <button type="button" class="is-active" data-mode="beginner">
+              أنا جديد
+            </button>
+            <button type="button" data-mode="all">
+              عرض كل الأوامر
+            </button>
+          </div>
 
           <div class="tnx-launcher">
             <div class="tnx-launcher-icon">⌕</div>
@@ -691,7 +874,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
               id="commandSearch"
               type="search"
               autocomplete="off"
-              placeholder="اكتب مثلًا: نقاط، بريد، هدية، لعبة، بادج..."
+              placeholder="اكتب: نقاط، بريد، هدية، لعبة، بادج..."
             />
             <button type="button" id="clearCommandSearch" aria-label="مسح البحث">×</button>
           </div>
@@ -707,11 +890,16 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
 
         <aside class="tnx-hero-panel">
           <div class="tnx-panel-ring">
-            <strong>{totalCommands}</strong>
-            <span>أمر متاح</span>
+            <strong>{totalBeginnerCommands}</strong>
+            <span>أمر مناسب للمبتدئ</span>
           </div>
 
           <div class="tnx-panel-stats">
+            <div>
+              <b>{totalCommands}</b>
+              <span>كل الأوامر</span>
+            </div>
+
             <div>
               <b>{totalCategories}</b>
               <span>أقسام</span>
@@ -729,11 +917,34 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
         </aside>
       </header>
 
+      <section class="tnx-system-section">
+        <div class="tnx-section-title">
+          <span>اختصرها عليك</span>
+          <h2>اختر النظام</h2>
+        </div>
+
+        <div class="tnx-system-grid">
+          <button type="button" class="tnx-system-card is-active" data-category-filter="all">
+            <div class="tnx-system-icon">◎</div>
+            <strong>كل الأنظمة</strong>
+            <span>عرض الأوامر المهمة حسب وضعك الحالي.</span>
+          </button>
+
+          {visibleCategories.map((category) => (
+            <button type="button" class="tnx-system-card" data-category-filter={category}>
+              <div class="tnx-system-icon">{CATEGORY_META[category].icon}</div>
+              <strong>{CATEGORY_META[category].systemTitle}</strong>
+              <span>{CATEGORY_META[category].systemText}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
       {featuredCommands.length > 0 && (
         <section class="tnx-featured">
           <div class="tnx-section-title">
-            <span>الأكثر استخدامًا</span>
-            <h2>أوامر سريعة</h2>
+            <span>للمشاهد الجديد</span>
+            <h2>أوامر تبدأ فيها</h2>
           </div>
 
           <div class="tnx-featured-grid">
@@ -741,7 +952,9 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
               <article
                 class="tnx-feature-card"
                 data-command-card
+                data-featured-card
                 data-category={command.category}
+                data-beginner={command.beginner ? 'true' : 'false'}
                 data-search={command.searchText}
               >
                 <div class="tnx-card-glow"></div>
@@ -757,9 +970,14 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
 
                 <p>{command.description}</p>
 
+                <div class="tnx-badge-row">
+                  <span>{command.badge}</span>
+                  <span>{command.requirement}</span>
+                </div>
+
                 <button type="button" class="tnx-copy-primary" data-copy={command.primaryAlias}>
                   <code>{command.primaryAlias}</code>
-                  <span>نسخ</span>
+                  <span>نسخ الأمر</span>
                 </button>
               </article>
             ))}
@@ -770,7 +988,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       <section class="tnx-main-layout">
         <aside class="tnx-side-nav">
           <div class="tnx-side-title">
-            <span>وش تبي؟</span>
+            <span>القائمة</span>
             <strong>الأقسام</strong>
           </div>
 
@@ -778,7 +996,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
             <span class="tnx-nav-icon">◎</span>
             <span class="tnx-nav-copy">
               <b>كل الأوامر</b>
-              <small>عرض شامل</small>
+              <small>حسب وضع العرض</small>
             </span>
           </button>
 
@@ -831,6 +1049,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
                         class="tnx-command-card"
                         data-command-card
                         data-category={command.category}
+                        data-beginner={command.beginner ? 'true' : 'false'}
                         data-search={command.searchText}
                       >
                         <div class="tnx-command-card-header">
@@ -846,8 +1065,13 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
                           {command.description}
                         </p>
 
+                        <div class="tnx-badge-row">
+                          <span>{command.badge}</span>
+                          <span>{command.requirement}</span>
+                        </div>
+
                         <div class="tnx-command-box">
-                          <span>الأمر</span>
+                          <span>الأمر الجاهز</span>
 
                           <div>
                             <code>{command.primaryAlias}</code>
@@ -860,24 +1084,37 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
 
                         {command.example && (
                           <div class="tnx-example-box">
-                            <span>مثال</span>
-                            <code>{command.example}</code>
+                            <span>مثال جاهز</span>
+
+                            <div>
+                              <code>{command.example}</code>
+
+                              <button type="button" data-copy={command.example}>
+                                نسخ المثال
+                              </button>
+                            </div>
                           </div>
                         )}
 
-                        {command.aliases.length > 1 && (
-                          <details class="tnx-more-aliases">
-                            <summary>اختصارات ثانية</summary>
+                        <details class="tnx-how-box">
+                          <summary>كيف أستخدمه؟</summary>
 
-                            <div>
-                              {command.aliases.slice(1).map((alias) => (
-                                <button type="button" data-copy={alias}>
-                                  {alias}
-                                </button>
-                              ))}
+                          <p>{command.usage}</p>
+
+                          {command.aliases.length > 1 && (
+                            <div class="tnx-more-aliases">
+                              <strong>اختصارات ثانية</strong>
+
+                              <div>
+                                {command.aliases.slice(1).map((alias) => (
+                                  <button type="button" data-copy={alias}>
+                                    {alias}
+                                  </button>
+                                ))}
+                              </div>
                             </div>
-                          </details>
-                        )}
+                          )}
+                        </details>
                       </article>
                     ))}
                   </div>
@@ -946,6 +1183,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
     .tnx-hero-main,
     .tnx-hero-panel,
     .tnx-featured,
+    .tnx-system-section,
     .tnx-side-nav,
     .tnx-command-group,
     .tnx-empty {
@@ -1011,7 +1249,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       background: linear-gradient(90deg, #fff1a8, #ffda6a 42%, #c29200);
       background-clip: text;
       color: transparent;
-      font-size: clamp(3.2rem, 7vw, 6.6rem);
+      font-size: clamp(3.1rem, 7vw, 6.4rem);
       font-weight: 950;
       line-height: 0.98;
       letter-spacing: -0.05em;
@@ -1026,13 +1264,41 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       line-height: 1.9;
     }
 
+    .tnx-mode-switch {
+      display: inline-flex;
+      gap: 0.45rem;
+      margin-top: 1.35rem;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.36);
+      padding: 0.35rem;
+    }
+
+    .tnx-mode-switch button {
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: rgb(209, 213, 219);
+      padding: 0.72rem 1rem;
+      font-size: 0.86rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .tnx-mode-switch button:hover,
+    .tnx-mode-switch button.is-active {
+      background: rgba(255, 218, 106, 0.14);
+      color: #ffda6a;
+    }
+
     .tnx-launcher {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr) auto;
       align-items: center;
       gap: 0.8rem;
       max-width: 760px;
-      margin-top: 1.5rem;
+      margin-top: 1.1rem;
       border: 1px solid rgba(255, 218, 106, 0.28);
       border-radius: 1.25rem;
       background:
@@ -1134,7 +1400,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
     .tnx-panel-ring strong {
       display: block;
       color: #ffda6a;
-      font-size: 4.8rem;
+      font-size: 4.6rem;
       font-weight: 950;
       line-height: 0.9;
       text-shadow: 0 0 18px rgba(255, 218, 106, 0.24);
@@ -1142,15 +1408,17 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
 
     .tnx-panel-ring span {
       display: block;
+      max-width: 9rem;
       margin-top: 0.45rem;
       color: white;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 950;
+      line-height: 1.4;
     }
 
     .tnx-panel-stats {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.7rem;
     }
 
@@ -1158,32 +1426,33 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       border: 1px solid rgba(255, 218, 106, 0.16);
       border-radius: 1.1rem;
       background: rgba(0, 0, 0, 0.28);
-      padding: 0.85rem;
+      padding: 0.85rem 0.55rem;
       text-align: center;
     }
 
     .tnx-panel-stats b {
       display: block;
       color: #ffda6a;
-      font-size: 1.4rem;
+      font-size: 1.25rem;
       font-weight: 950;
     }
 
     .tnx-panel-stats span {
       color: rgb(148, 163, 184);
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 850;
     }
 
     .tnx-hero-panel p {
       margin: 0;
       color: rgb(156, 163, 175);
-      font-size: 0.86rem;
+      font-size: 0.84rem;
       font-weight: 800;
       line-height: 1.8;
       text-align: center;
     }
 
+    .tnx-system-section,
     .tnx-featured {
       margin-top: 1rem;
       border-radius: 1.8rem;
@@ -1211,6 +1480,77 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       font-size: 2rem;
       font-weight: 950;
       line-height: 1.1;
+    }
+
+    .tnx-system-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .tnx-system-card {
+      display: grid;
+      justify-items: start;
+      gap: 0.65rem;
+      min-height: 168px;
+      border: 1px solid rgba(255, 218, 106, 0.14);
+      border-radius: 1.35rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.06), transparent 42%),
+        rgba(0, 0, 0, 0.28);
+      color: white;
+      padding: 1rem;
+      text-align: right;
+      cursor: pointer;
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        background 180ms ease;
+    }
+
+    .tnx-system-card:hover,
+    .tnx-system-card.is-active {
+      transform: translateY(-3px);
+      border-color: rgba(255, 218, 106, 0.44);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 42%),
+        rgba(255, 218, 106, 0.07);
+    }
+
+    .tnx-system-icon,
+    .tnx-icon-badge,
+    .tnx-big-icon,
+    .tnx-mini-icon,
+    .tnx-nav-icon {
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 218, 106, 0.22);
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255, 218, 106, 0.18), transparent 62%),
+        rgba(255, 218, 106, 0.06);
+      color: #ffda6a;
+      font-weight: 950;
+    }
+
+    .tnx-system-icon {
+      width: 3.1rem;
+      height: 3.1rem;
+      border-radius: 1rem;
+      font-size: 1.25rem;
+    }
+
+    .tnx-system-card strong {
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 950;
+      line-height: 1.35;
+    }
+
+    .tnx-system-card span {
+      color: rgb(156, 163, 175);
+      font-size: 0.84rem;
+      font-weight: 800;
+      line-height: 1.7;
     }
 
     .tnx-featured-grid {
@@ -1264,20 +1604,6 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       min-width: 0;
     }
 
-    .tnx-icon-badge,
-    .tnx-big-icon,
-    .tnx-mini-icon,
-    .tnx-nav-icon {
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(255, 218, 106, 0.22);
-      background:
-        radial-gradient(circle at 35% 25%, rgba(255, 218, 106, 0.18), transparent 62%),
-        rgba(255, 218, 106, 0.06);
-      color: #ffda6a;
-      font-weight: 950;
-    }
-
     .tnx-icon-badge {
       width: 3.2rem;
       height: 3.2rem;
@@ -1308,6 +1634,25 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       font-size: 0.9rem;
       font-weight: 780;
       line-height: 1.7;
+    }
+
+    .tnx-badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    .tnx-badge-row span {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.06);
+      color: #f7e6ac;
+      padding: 0.38rem 0.65rem;
+      font-size: 0.72rem;
+      font-weight: 950;
+      line-height: 1;
     }
 
     .tnx-copy-primary {
@@ -1590,7 +1935,8 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       line-height: 1.8;
     }
 
-    .tnx-command-box {
+    .tnx-command-box,
+    .tnx-example-box {
       border: 1px solid rgba(255, 218, 106, 0.16);
       border-radius: 1rem;
       background: rgba(0, 0, 0, 0.32);
@@ -1606,7 +1952,8 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       font-weight: 900;
     }
 
-    .tnx-command-box > div {
+    .tnx-command-box > div,
+    .tnx-example-box > div {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
@@ -1628,6 +1975,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
     }
 
     .tnx-command-box button,
+    .tnx-example-box button,
     .tnx-more-aliases button {
       border: 1px solid rgba(255, 218, 106, 0.24);
       border-radius: 0.78rem;
@@ -1638,9 +1986,11 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       font-weight: 950;
       cursor: pointer;
       transition: 0.16s ease;
+      white-space: nowrap;
     }
 
     .tnx-command-box button:hover,
+    .tnx-example-box button:hover,
     .tnx-more-aliases button:hover {
       transform: translateY(-1px);
       border-color: rgba(255, 218, 106, 0.55);
@@ -1649,6 +1999,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
     }
 
     .tnx-command-box button.is-copied,
+    .tnx-example-box button.is-copied,
     .tnx-more-aliases button.is-copied,
     .tnx-copy-primary.is-copied {
       border-color: rgba(52, 211, 153, 0.65) !important;
@@ -1662,29 +2013,46 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
     }
 
     .tnx-example-box {
-      border: 1px dashed rgba(255, 218, 106, 0.15);
-      border-radius: 1rem;
+      border-style: dashed;
       background: rgba(255, 218, 106, 0.035);
-      padding: 0.75rem;
     }
 
-    .tnx-more-aliases {
+    .tnx-how-box {
       border-top: 1px solid rgba(255, 218, 106, 0.12);
       padding-top: 0.72rem;
     }
 
-    .tnx-more-aliases summary {
-      color: rgb(156, 163, 175);
-      font-size: 0.82rem;
-      font-weight: 900;
+    .tnx-how-box summary {
+      color: rgb(229, 231, 235);
+      font-size: 0.86rem;
+      font-weight: 950;
       cursor: pointer;
+    }
+
+    .tnx-how-box p {
+      margin: 0.7rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.85rem;
+      font-weight: 800;
+      line-height: 1.8;
+    }
+
+    .tnx-more-aliases {
+      margin-top: 0.85rem;
+    }
+
+    .tnx-more-aliases strong {
+      display: block;
+      color: #f7e6ac;
+      font-size: 0.82rem;
+      font-weight: 950;
     }
 
     .tnx-more-aliases div {
       display: flex;
       flex-wrap: wrap;
       gap: 0.45rem;
-      margin-top: 0.7rem;
+      margin-top: 0.55rem;
     }
 
     .tnx-more-aliases button {
@@ -1693,7 +2061,6 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       direction: ltr;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     .tnx-empty {
@@ -1741,6 +2108,10 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
         align-self: stretch;
       }
 
+      .tnx-system-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .tnx-main-layout {
         grid-template-columns: 1fr;
       }
@@ -1770,6 +2141,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       .tnx-hero-main,
       .tnx-hero-panel,
       .tnx-featured,
+      .tnx-system-section,
       .tnx-side-nav,
       .tnx-command-group {
         border-radius: 1.45rem;
@@ -1780,7 +2152,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       }
 
       .tnx-hero h1 {
-        font-size: 3.1rem;
+        font-size: 3rem;
       }
 
       .tnx-hero-panel {
@@ -1793,6 +2165,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
         margin: 0 auto;
       }
 
+      .tnx-system-grid,
       .tnx-featured-grid,
       .tnx-command-grid {
         grid-template-columns: 1fr;
@@ -1815,7 +2188,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
 
     @media (max-width: 520px) {
       .tnx-hero h1 {
-        font-size: 2.55rem;
+        font-size: 2.45rem;
       }
 
       .tnx-launcher {
@@ -1826,11 +2199,19 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
         display: none;
       }
 
-      .tnx-command-box > div {
+      .tnx-mode-switch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+
+      .tnx-command-box > div,
+      .tnx-example-box > div {
         grid-template-columns: 1fr;
       }
 
-      .tnx-command-box button {
+      .tnx-command-box button,
+      .tnx-example-box button {
         width: 100%;
       }
     }
@@ -1868,6 +2249,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
 
       const searchInput = document.getElementById('commandSearch')
       const clearSearchButton = document.getElementById('clearCommandSearch')
+      const modeButtons = Array.from(document.querySelectorAll('[data-mode]'))
       const categoryButtons = Array.from(document.querySelectorAll('[data-category-filter]'))
       const searchChips = Array.from(document.querySelectorAll('[data-search-chip]'))
       const commandCards = Array.from(document.querySelectorAll('[data-command-card]'))
@@ -1876,6 +2258,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       const copyButtons = Array.from(document.querySelectorAll('[data-copy]'))
 
       let activeCategory = 'all'
+      let activeMode = 'beginner'
 
       function normalize(value) {
         return String(value || '')
@@ -1888,6 +2271,20 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
           .trim()
       }
 
+      function syncCategoryButtons() {
+        categoryButtons.forEach((button) => {
+          const value = button.dataset.categoryFilter || 'all'
+          button.classList.toggle('is-active', value === activeCategory)
+        })
+      }
+
+      function syncModeButtons() {
+        modeButtons.forEach((button) => {
+          const value = button.dataset.mode || 'beginner'
+          button.classList.toggle('is-active', value === activeMode)
+        })
+      }
+
       function applyFilters() {
         const term = normalize(searchInput?.value || '')
         let visibleTotal = 0
@@ -1895,14 +2292,17 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
         commandCards.forEach((card) => {
           const cardCategory = card.dataset.category || ''
           const cardSearch = normalize(card.dataset.search || card.textContent || '')
+          const isBeginner = card.dataset.beginner === 'true'
+          const isFeatured = card.hasAttribute('data-featured-card')
 
           const categoryMatches = activeCategory === 'all' || cardCategory === activeCategory
+          const modeMatches = activeMode === 'all' || isBeginner
           const searchMatches = !term || cardSearch.includes(term)
-          const shouldShow = categoryMatches && searchMatches
+          const shouldShow = categoryMatches && modeMatches && searchMatches
 
           card.classList.toggle('is-hidden', !shouldShow)
 
-          if (shouldShow) {
+          if (shouldShow && !isFeatured) {
             visibleTotal++
           }
         })
@@ -1928,6 +2328,14 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
         applyFilters()
       })
 
+      modeButtons.forEach((button) => {
+        addListener(button, 'click', () => {
+          activeMode = button.dataset.mode || 'beginner'
+          syncModeButtons()
+          applyFilters()
+        })
+      })
+
       searchChips.forEach((chip) => {
         addListener(chip, 'click', () => {
           if (!searchInput) return
@@ -1941,10 +2349,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       categoryButtons.forEach((button) => {
         addListener(button, 'click', () => {
           activeCategory = button.dataset.categoryFilter || 'all'
-
-          categoryButtons.forEach((item) => item.classList.remove('is-active'))
-          button.classList.add('is-active')
-
+          syncCategoryButtons()
           applyFilters()
 
           const layout = document.querySelector('.tnx-main-layout')
@@ -1983,6 +2388,8 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
         })
       })
 
+      syncModeButtons()
+      syncCategoryButtons()
       applyFilters()
     })()
   </script>
