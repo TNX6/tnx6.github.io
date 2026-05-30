@@ -988,6 +988,20 @@ const metadata = {
       filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.35));
     }
 
+    .tnx-export-clone {
+      position: fixed !important;
+      left: -99999px !important;
+      top: 0 !important;
+      width: 800px !important;
+      min-width: 800px !important;
+      max-width: 800px !important;
+      height: 360px !important;
+      opacity: 1 !important;
+      animation: none !important;
+      transform: none !important;
+      pointer-events: none !important;
+    }
+
     @media (max-width: 1100px) {
       .tnx-vault-layout {
         grid-template-columns: 1fr;
@@ -1731,8 +1745,10 @@ const metadata = {
         }).join('')
 
         const fileName = `tnx6-card-${String(details.userLogin || details.userName || 'user').replace(/[^a-zA-Z0-9_-]/g, '')}.png`
-        const bannerImage = cssUrl(details.bannerImage || '')
-        const profileImage = cssUrl(details.profileImageUrl || '')
+        const bannerUrl = safeUrl(details.bannerImage || '')
+        const profileUrl = safeUrl(details.profileImageUrl || '')
+        const bannerImage = cssUrl(bannerUrl)
+        const profileImage = cssUrl(profileUrl)
 
         userCardContainer.innerHTML = `
           <div class="tnx-card-download-wrap">
@@ -1744,8 +1760,8 @@ const metadata = {
               class="tnx-user-card-preview"
               dir="ltr"
               data-export-card
-              data-preload-banner="${esc(safeUrl(details.bannerImage || ''))}"
-              data-preload-profile="${esc(safeUrl(details.profileImageUrl || ''))}"
+              data-preload-banner="${esc(bannerUrl)}"
+              data-preload-profile="${esc(profileUrl)}"
               style="background: linear-gradient(to bottom, ${baseColor} 70%, ${darkColor} 100%); --profile-border: ${baseColor};"
             >
               <div
@@ -1789,38 +1805,64 @@ const metadata = {
         `
       }
 
-      function preloadImage(url) {
-        return new Promise((resolve) => {
-          if (!url) {
-            resolve()
-            return
-          }
+      function addImageToElementBackground(element, url, altText = '') {
+        if (!element || !url) return
 
-          const img = new Image()
-          img.crossOrigin = 'anonymous'
-          img.onload = resolve
-          img.onerror = resolve
-          img.src = url
-        })
+        element.style.backgroundImage = 'none'
+
+        const img = document.createElement('img')
+        img.src = url
+        img.alt = altText
+        img.crossOrigin = 'anonymous'
+        img.referrerPolicy = 'no-referrer'
+        img.style.display = 'block'
+        img.style.width = '100%'
+        img.style.height = '100%'
+        img.style.objectFit = 'cover'
+
+        element.innerHTML = ''
+        element.appendChild(img)
       }
 
-      async function waitForImages(root) {
+      function createExportClone(card) {
+        const clone = card.cloneNode(true)
+
+        clone.classList.add('tnx-export-clone')
+        clone.style.position = 'fixed'
+        clone.style.left = '-99999px'
+        clone.style.top = '0'
+        clone.style.width = '800px'
+        clone.style.minWidth = '800px'
+        clone.style.maxWidth = '800px'
+        clone.style.height = '360px'
+        clone.style.opacity = '1'
+        clone.style.animation = 'none'
+        clone.style.transform = 'none'
+
+        const bannerUrl = card.dataset.preloadBanner || ''
+        const profileUrl = card.dataset.preloadProfile || ''
+
+        const banner = clone.querySelector('.tnx-card-banner')
+        const profile = clone.querySelector('.tnx-card-profile-picture')
+
+        addImageToElementBackground(banner, bannerUrl, '')
+        addImageToElementBackground(profile, profileUrl, 'profile')
+
+        document.body.appendChild(clone)
+        return clone
+      }
+
+      async function waitForCloneImages(root) {
         const images = Array.from(root.querySelectorAll('img'))
-        const bannerUrl = root.dataset.preloadBanner || ''
-        const profileUrl = root.dataset.preloadProfile || ''
 
-        await Promise.all([
-          preloadImage(bannerUrl),
-          preloadImage(profileUrl),
-          ...images.map((img) => {
-            if (img.complete) return Promise.resolve()
+        await Promise.all(images.map((img) => {
+          if (img.complete && img.naturalWidth > 0) return Promise.resolve()
 
-            return new Promise((resolve) => {
-              img.onload = resolve
-              img.onerror = resolve
-            })
-          }),
-        ])
+          return new Promise((resolve) => {
+            img.onload = resolve
+            img.onerror = resolve
+          })
+        }))
       }
 
       async function downloadUserCard(button) {
@@ -1833,25 +1875,28 @@ const metadata = {
         if (!card) return
 
         const oldText = button.textContent
+        let clone = null
 
         try {
           button.disabled = true
           button.textContent = 'جاري تجهيز الصورة...'
           button.classList.remove('is-error', 'is-done')
 
-          await waitForImages(card)
+          if (!window.html2canvas) {
+            throw new Error('html2canvas is not loaded')
+          }
+
+          clone = createExportClone(card)
+
+          await waitForCloneImages(clone)
 
           if (document.fonts?.ready) {
             await document.fonts.ready
           }
 
-          await new Promise((resolve) => setTimeout(resolve, 350))
+          await new Promise((resolve) => setTimeout(resolve, 250))
 
-          if (!window.html2canvas) {
-            throw new Error('html2canvas is not loaded')
-          }
-
-          const canvas = await window.html2canvas(card, {
+          const canvas = await window.html2canvas(clone, {
             backgroundColor: null,
             scale: 1,
             useCORS: true,
@@ -1890,6 +1935,8 @@ const metadata = {
             button.textContent = oldText
             button.classList.remove('is-error')
           }, 1800))
+        } finally {
+          if (clone) clone.remove()
         }
       }
 
