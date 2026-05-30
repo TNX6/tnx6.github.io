@@ -32,10 +32,12 @@ const metadata = {
             <strong id="statTotalBadges">0</strong>
             <span>بادج</span>
           </div>
+
           <div>
             <strong id="statCategories">0</strong>
             <span>تصنيف</span>
           </div>
+
           <div>
             <strong id="statRareBadges">0</strong>
             <span>نادر / خاص</span>
@@ -87,7 +89,12 @@ const metadata = {
 
           <div class="tnx-badge-search">
             <span>⌕</span>
-            <input id="badgeSearch" type="search" autocomplete="off" placeholder="ابحث: VIP، 100K، حضور، كويز، LAW..." />
+            <input
+              id="badgeSearch"
+              type="search"
+              autocomplete="off"
+              placeholder="ابحث: VIP، 100K، حضور، كويز، LAW..."
+            />
             <button type="button" id="clearBadgeSearch">×</button>
           </div>
         </div>
@@ -97,30 +104,37 @@ const metadata = {
             <span>الكل</span>
             <small id="count-all">0</small>
           </button>
+
           <button type="button" data-badge-filter="attendance">
             <span>الحضور</span>
             <small id="count-attendance">0</small>
           </button>
+
           <button type="button" data-badge-filter="points">
             <span>النقاط</span>
             <small id="count-points">0</small>
           </button>
+
           <button type="button" data-badge-filter="quiz">
             <span>الكويز</span>
             <small id="count-quiz">0</small>
           </button>
+
           <button type="button" data-badge-filter="status">
             <span>المكانة</span>
             <small id="count-status">0</small>
           </button>
+
           <button type="button" data-badge-filter="law">
             <span>المحكمة</span>
             <small id="count-law">0</small>
           </button>
+
           <button type="button" data-badge-filter="awards">
             <span>الجوائز</span>
             <small id="count-awards">0</small>
           </button>
+
           <button type="button" data-badge-filter="special">
             <span>خاص</span>
             <small id="count-special">0</small>
@@ -157,7 +171,12 @@ const metadata = {
         <div class="tnx-user-search">
           <div class="tnx-badge-search">
             <span>⌕</span>
-            <input id="userSearch" type="search" autocomplete="off" placeholder="ابحث عن مستخدم..." />
+            <input
+              id="userSearch"
+              type="search"
+              autocomplete="off"
+              placeholder="ابحث عن مستخدم..."
+            />
             <button type="button" id="clearUserSearch">×</button>
           </div>
 
@@ -741,8 +760,7 @@ const metadata = {
       font-weight: 950;
     }
 
-    .tnx-focus-copy,
-    .tnx-download-card-btn {
+    .tnx-focus-copy {
       border: 1px solid rgba(255, 218, 106, 0.24);
       border-radius: 0.9rem;
       background: rgba(255, 218, 106, 0.08);
@@ -755,18 +773,10 @@ const metadata = {
     }
 
     .tnx-focus-copy:hover,
-    .tnx-focus-copy.is-copied,
-    .tnx-download-card-btn:hover,
-    .tnx-download-card-btn.is-done {
+    .tnx-focus-copy.is-copied {
       border-color: rgba(52, 211, 153, 0.55);
       background: rgba(52, 211, 153, 0.14);
       color: rgb(167, 243, 208);
-    }
-
-    .tnx-download-card-btn.is-error {
-      border-color: rgba(248, 113, 113, 0.55);
-      background: rgba(248, 113, 113, 0.14);
-      color: rgb(254, 202, 202);
     }
 
     .tnx-empty {
@@ -828,10 +838,9 @@ const metadata = {
       padding-bottom: 0.5rem;
     }
 
-    .tnx-card-download-wrap {
+    .tnx-card-wrap {
       display: grid;
       justify-items: center;
-      gap: 0.8rem;
       width: 800px;
       min-width: 800px;
       max-width: 800px;
@@ -1730,22 +1739,16 @@ const metadata = {
           return `<img src="${esc(safeUrl(badge.url))}" alt="${esc(badge.name)}" loading="lazy" />`
         }).join('')
 
-        const fileName = `tnx6-card-${String(details.userLogin || details.userName || 'user').replace(/[^a-zA-Z0-9_-]/g, '')}.png`
         const bannerUrl = safeUrl(details.bannerImage || '')
         const profileUrl = safeUrl(details.profileImageUrl || '')
         const bannerImage = cssUrl(bannerUrl)
         const profileImage = cssUrl(profileUrl)
 
         userCardContainer.innerHTML = `
-          <div class="tnx-card-download-wrap">
-            <button type="button" class="tnx-download-card-btn" data-download-user-card="${esc(fileName)}">
-              تنزيل البطاقة كصورة
-            </button>
-
+          <div class="tnx-card-wrap">
             <div
               class="tnx-user-card-preview"
               dir="ltr"
-              data-export-card
               style="background: linear-gradient(to bottom, ${baseColor} 70%, ${darkColor} 100%); --profile-border: ${baseColor};"
             >
               <div
@@ -1789,287 +1792,6 @@ const metadata = {
         `
       }
 
-      async function imageToDataUrl(url) {
-        if (!url || typeof url !== 'string') return ''
-        if (url.startsWith('data:')) return url
-
-        try {
-          const response = await fetch(url, { mode: 'cors', credentials: 'omit' })
-          if (!response.ok) return ''
-
-          const blob = await response.blob()
-
-          return await new Promise((resolve, reject) => {
-            const reader = new FileReader()
-            reader.onload = () => resolve(String(reader.result || ''))
-            reader.onerror = () => reject(reader.error)
-            reader.readAsDataURL(blob)
-          })
-        } catch (error) {
-          console.warn('imageToDataUrl failed:', url, error)
-          return ''
-        }
-      }
-
-      async function inlineCardImages(root) {
-        const imgs = Array.from(root.querySelectorAll('img'))
-
-        await Promise.all(imgs.map(async (img) => {
-          const src = img.getAttribute('src') || ''
-          if (!src || src.startsWith('data:')) return
-
-          const dataUrl = await imageToDataUrl(src)
-
-          if (dataUrl) {
-            img.setAttribute('src', dataUrl)
-            img.removeAttribute('crossorigin')
-          }
-        }))
-
-        const bgElements = Array.from(root.querySelectorAll('[style*="background-image"]'))
-
-        await Promise.all(bgElements.map(async (el) => {
-          const style = el.getAttribute('style') || ''
-          const match = style.match(/background-image\s*:\s*url\(\s*['"]?([^'")]+)['"]?\s*\)/i)
-
-          if (!match || !match[1]) return
-
-          const url = match[1].trim()
-          if (!url || url === 'none' || url.startsWith('data:')) return
-
-          const dataUrl = await imageToDataUrl(url)
-
-          if (dataUrl) {
-            const newStyle = style.replace(
-              /background-image\s*:\s*url\(\s*['"]?[^'")]+['"]?\s*\)/i,
-              `background-image: url('${dataUrl}')`
-            )
-
-            el.setAttribute('style', newStyle)
-          }
-        }))
-      }
-
-      async function fetchIconSvgText(iconName) {
-        try {
-          const parts = String(iconName || '').split(':')
-          if (parts.length !== 2) return ''
-
-          const prefix = parts[0].trim()
-          const name = parts[1].trim()
-
-          if (!prefix || !name) return ''
-
-          const url = `https://api.iconify.design/${prefix}/${name}.svg`
-          const res = await fetch(url, { mode: 'cors' })
-
-          if (!res.ok) return ''
-          return await res.text()
-        } catch (error) {
-          console.warn('fetchIconSvgText failed:', iconName, error)
-          return ''
-        }
-      }
-
-      function makeFallbackIcon(iconName, computed) {
-        const span = document.createElement('span')
-
-        if (String(iconName).includes('gold')) {
-          span.textContent = '▴'
-        } else if (String(iconName).includes('star')) {
-          span.textContent = '✦'
-        } else if (String(iconName).includes('account')) {
-          span.textContent = '●'
-        } else if (String(iconName).includes('store')) {
-          span.textContent = '■'
-        } else {
-          span.textContent = '●'
-        }
-
-        span.style.display = 'inline-flex'
-        span.style.alignItems = 'center'
-        span.style.justifyContent = 'center'
-        span.style.width = '1em'
-        span.style.height = '1em'
-        span.style.color = computed?.color || 'currentColor'
-        span.style.marginRight = computed?.marginRight || '0.35rem'
-        span.style.marginLeft = computed?.marginLeft || '0'
-        span.style.verticalAlign = 'middle'
-        span.style.flexShrink = '0'
-        span.style.lineHeight = '1'
-
-        return span
-      }
-
-      async function inlineIconifyIcons(root) {
-        const icons = Array.from(root.querySelectorAll('iconify-icon'))
-
-        await Promise.all(icons.map(async (icon) => {
-          const iconName = icon.getAttribute('icon') || ''
-          const computed = window.getComputedStyle(icon)
-
-          const svgText = await fetchIconSvgText(iconName)
-
-          if (!svgText) {
-            icon.replaceWith(makeFallbackIcon(iconName, computed))
-            return
-          }
-
-          const parser = new DOMParser()
-          const svgDoc = parser.parseFromString(svgText, 'image/svg+xml')
-          const svg = svgDoc.documentElement
-
-          if (!svg || svg.tagName.toLowerCase() !== 'svg') {
-            icon.replaceWith(makeFallbackIcon(iconName, computed))
-            return
-          }
-
-          const wrapper = document.createElement('span')
-          wrapper.style.display = 'inline-flex'
-          wrapper.style.alignItems = 'center'
-          wrapper.style.justifyContent = 'center'
-          wrapper.style.width = '1em'
-          wrapper.style.height = '1em'
-          wrapper.style.color = computed.color || 'currentColor'
-          wrapper.style.marginRight = computed.marginRight || '0'
-          wrapper.style.marginLeft = computed.marginLeft || '0'
-          wrapper.style.verticalAlign = 'middle'
-          wrapper.style.flexShrink = '0'
-
-          svg.setAttribute('fill', 'currentColor')
-          svg.style.width = '100%'
-          svg.style.height = '100%'
-          svg.style.display = 'block'
-
-          wrapper.appendChild(svg)
-          icon.replaceWith(wrapper)
-        }))
-      }
-
-      function waitForCloneImages(root) {
-        const images = Array.from(root.querySelectorAll('img'))
-
-        return Promise.all(images.map((img) => {
-          if (img.complete && img.naturalWidth > 0) return Promise.resolve()
-
-          return new Promise((resolve) => {
-            const done = () => resolve()
-            img.addEventListener('load', done, { once: true })
-            img.addEventListener('error', done, { once: true })
-            window.setTimeout(done, 8000)
-          })
-        }))
-      }
-
-      async function downloadUserCard(button) {
-        if (!button) return
-
-        const wrapperEl = button.closest('.tnx-card-download-wrap')
-        const originalCard = wrapperEl?.querySelector('[data-export-card]')
-        const fileName = button.dataset.downloadUserCard || 'tnx6-card.png'
-
-        if (!originalCard) return
-
-        const oldText = button.textContent
-        let cloneHost = null
-
-        try {
-          button.disabled = true
-          button.textContent = 'جاري تجهيز الصورة...'
-          button.classList.remove('is-error', 'is-done')
-
-          if (!window.html2canvas) {
-            throw new Error('html2canvas is not loaded')
-          }
-
-          cloneHost = document.createElement('div')
-          cloneHost.setAttribute('aria-hidden', 'true')
-          cloneHost.style.position = 'fixed'
-          cloneHost.style.left = '-99999px'
-          cloneHost.style.top = '0'
-          cloneHost.style.width = '800px'
-          cloneHost.style.height = '360px'
-          cloneHost.style.pointerEvents = 'none'
-          cloneHost.style.zIndex = '-1'
-          cloneHost.style.background = 'transparent'
-
-          const clone = originalCard.cloneNode(true)
-          clone.style.opacity = '1'
-          clone.style.animation = 'none'
-          clone.style.transform = 'none'
-          clone.style.width = '800px'
-          clone.style.minWidth = '800px'
-          clone.style.maxWidth = '800px'
-          clone.style.height = '360px'
-
-          cloneHost.appendChild(clone)
-          document.body.appendChild(cloneHost)
-
-          await inlineCardImages(clone)
-          await inlineIconifyIcons(clone)
-          await waitForCloneImages(clone)
-
-          if (document.fonts?.ready) {
-            await document.fonts.ready
-          }
-
-          await new Promise((resolve) => window.setTimeout(resolve, 250))
-
-          const canvas = await window.html2canvas(clone, {
-            backgroundColor: null,
-            scale: 1,
-            useCORS: true,
-            allowTaint: false,
-            logging: false,
-            imageTimeout: 15000,
-            width: 800,
-            height: 360,
-            windowWidth: 800,
-            windowHeight: 360,
-            scrollX: 0,
-            scrollY: 0,
-          })
-
-          const link = document.createElement('a')
-          link.download = fileName
-          link.href = canvas.toDataURL('image/png')
-          link.click()
-
-          button.textContent = 'تم تنزيل الصورة'
-          button.classList.add('is-done')
-
-          addTimer(window.setTimeout(() => {
-            button.textContent = oldText
-            button.classList.remove('is-done')
-            button.disabled = false
-          }, 1200))
-        } catch (error) {
-          console.error('Failed to download user card', error)
-
-          const msg = String((error && error.message) || '')
-          let failText = 'تعذر تنزيل الصورة'
-
-          if (msg.includes('Tainted') || msg.includes('SecurityError')) {
-            failText = 'الصور محمية'
-          } else if (msg.includes('html2canvas')) {
-            failText = 'مكتبة الصورة لم تُحمَّل'
-          }
-
-          button.textContent = failText
-          button.classList.add('is-error')
-          button.disabled = false
-
-          addTimer(window.setTimeout(() => {
-            button.textContent = oldText
-            button.classList.remove('is-error')
-          }, 2500))
-        } finally {
-          if (cloneHost && cloneHost.parentElement) {
-            cloneHost.remove()
-          }
-        }
-      }
-
       async function loadUsers() {
         try {
           const res = await fetch('/api/user_badges.json')
@@ -2092,15 +1814,10 @@ const metadata = {
 
       addListener(document, 'click', (event) => {
         const linkButton = event.target.closest('[data-copy-badge-link]')
+
         if (linkButton) {
           const hashId = linkButton.dataset.copyBadgeLink || ''
           copyText(getBadgeLink(hashId), linkButton, 'تم نسخ الرابط')
-          return
-        }
-
-        const downloadButton = event.target.closest('[data-download-user-card]')
-        if (downloadButton) {
-          downloadUserCard(downloadButton)
         }
       })
 
@@ -2181,5 +1898,4 @@ const metadata = {
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </Layout>
