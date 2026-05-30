@@ -4,174 +4,1750 @@ import Layout from '~/layouts/PageLayout.astro';
 const metadata = {
   title: 'Badges — TNX6',
   ignoreTitleTemplate: true,
+  description: 'صفحة بادجات مجتمع TNX6.',
 };
 ---
 
 <Layout metadata={metadata}>
-  <section class="max-w-6xl mx-auto py-16 px-6 text-white">
-    <h1 class="text-4xl font-extrabold text-center mb-12 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(198,164,79,0.5)]">
-      Badges
-    </h1>
+  <main class="tnx-badges-page" dir="rtl">
+    <div class="tnx-badges-bg"></div>
+    <div class="tnx-badges-grid-bg"></div>
 
-    <div id="badge-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 justify-items-center mb-20"></div>
+    <section class="tnx-badges-shell">
+      <header class="tnx-badges-hero">
+        <div class="tnx-badges-eyebrow">
+          <span></span>
+          TNX6 BADGE VAULT
+        </div>
 
-    <div class="py-16 px-6 bg-black/40 border border-[#c6a44f]/30 rounded-2xl shadow-[0_0_15px_rgba(198,164,79,0.25)] backdrop-blur-md">
-      <h2 class="text-3xl font-extrabold text-center mb-10 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(198,164,79,0.5)]">
-        View User Badge Cards
-      </h2>
+        <h1>خزنة البادجات</h1>
 
-      <div class="max-w-md mx-auto text-center mb-12">
-        <input
-          id="userSearch"
-          type="text"
-          placeholder="Search user..."
-          class="w-full px-4 py-3 rounded-xl bg-black/40 border border-[#c6a44f]/40 text-white placeholder-gray-400 text-center focus:outline-none focus:ring-2 focus:ring-[#f7e6ac]"
-        />
-        <div id="userResults" class="mt-4 text-[#f7e6ac] text-sm"></div>
-      </div>
+        <p>
+          البادجات إنجازات تفتحها من الحضور، النقاط، الكويز، التفاعل، أو أحداث المجتمع.
+          هنا تعرف وش كل بادج، كيف تحصل عليه، وتشوف بطاقة أي عضو.
+        </p>
 
-      <div id="userCardContainer" class="flex justify-center"></div>
-    </div>
-  </section>
+        <div class="tnx-badges-hero-stats">
+          <div>
+            <strong id="statTotalBadges">0</strong>
+            <span>بادج</span>
+          </div>
+          <div>
+            <strong id="statCategories">0</strong>
+            <span>تصنيف</span>
+          </div>
+          <div>
+            <strong id="statRareBadges">0</strong>
+            <span>نادر / خاص</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="tnx-start-guide">
+        <div class="tnx-section-head">
+          <span>للمشاهد الجديد</span>
+          <h2>وش أبدأ أفتح؟</h2>
+          <p>هذه أسهل مسارات تبدأ فيها قبل البادجات الثقيلة والنادرة.</p>
+        </div>
+
+        <div class="tnx-guide-grid">
+          <button type="button" class="tnx-guide-card" data-guide-filter="attendance">
+            <div class="tnx-guide-icon">15</div>
+            <div>
+              <strong>ابدأ بالحضور</strong>
+              <p>سجّل حضورك وابدأ من بادجات 15D ثم 30D وبعدها تكمل.</p>
+            </div>
+          </button>
+
+          <button type="button" class="tnx-guide-card" data-guide-filter="points">
+            <div class="tnx-guide-icon">K</div>
+            <div>
+              <strong>اجمع نقاط</strong>
+              <p>بادجات 100K وما بعدها تعتمد على رصيدك وتفاعلك بالبث.</p>
+            </div>
+          </button>
+
+          <button type="button" class="tnx-guide-card" data-guide-filter="quiz">
+            <div class="tnx-guide-icon">Q</div>
+            <div>
+              <strong>جاوب بالكويز</strong>
+              <p>كل ما زادت إجاباتك الصحيحة تفتح بادجات كويز أعلى.</p>
+            </div>
+          </button>
+        </div>
+      </section>
+
+      <section class="tnx-vault">
+        <div class="tnx-vault-top">
+          <div class="tnx-section-head">
+            <span>كل البادجات</span>
+            <h2>استعرض البادجات</h2>
+            <p>اضغط على أي بادج عشان تشوف طريقة الحصول عليه وتفاصيله.</p>
+          </div>
+
+          <div class="tnx-badge-search">
+            <span>⌕</span>
+            <input id="badgeSearch" type="search" autocomplete="off" placeholder="ابحث: VIP، 100K، حضور، كويز، LAW..." />
+            <button type="button" id="clearBadgeSearch">×</button>
+          </div>
+        </div>
+
+        <div class="tnx-filter-row" id="badgeFilters">
+          <button type="button" class="is-active" data-badge-filter="all">
+            <span>الكل</span>
+            <small id="count-all">0</small>
+          </button>
+          <button type="button" data-badge-filter="attendance">
+            <span>الحضور</span>
+            <small id="count-attendance">0</small>
+          </button>
+          <button type="button" data-badge-filter="points">
+            <span>النقاط</span>
+            <small id="count-points">0</small>
+          </button>
+          <button type="button" data-badge-filter="quiz">
+            <span>الكويز</span>
+            <small id="count-quiz">0</small>
+          </button>
+          <button type="button" data-badge-filter="status">
+            <span>المكانة</span>
+            <small id="count-status">0</small>
+          </button>
+          <button type="button" data-badge-filter="law">
+            <span>المحكمة</span>
+            <small id="count-law">0</small>
+          </button>
+          <button type="button" data-badge-filter="awards">
+            <span>الجوائز</span>
+            <small id="count-awards">0</small>
+          </button>
+          <button type="button" data-badge-filter="special">
+            <span>خاص</span>
+            <small id="count-special">0</small>
+          </button>
+        </div>
+
+        <div class="tnx-vault-layout">
+          <div>
+            <div id="badgeGrid" class="tnx-badge-grid"></div>
+
+            <div id="badgeEmpty" class="tnx-empty hidden">
+              <strong>ما لقيت بادج مطابق</strong>
+              <span>جرّب تبحث باسم أبسط مثل: 100K، VIP، حضور، كويز.</span>
+            </div>
+          </div>
+
+          <aside id="badgeFocusPanel" class="tnx-badge-focus">
+            <div class="tnx-focus-placeholder">
+              <div class="tnx-focus-icon">⬟</div>
+              <h3>اختر بادج</h3>
+              <p>اضغط على أي بادج من القائمة عشان تظهر تفاصيله هنا.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="tnx-user-cards">
+        <div class="tnx-section-head tnx-section-head--center">
+          <span>بطاقات الأعضاء</span>
+          <h2>اعرض بطاقة مستخدم</h2>
+          <p>ابحث باسم العضو وشوف بطاقته، وظيفته، نقاطه، الذهب، والبـادجات اللي مركبها.</p>
+        </div>
+
+        <div class="tnx-user-search">
+          <div class="tnx-badge-search">
+            <span>⌕</span>
+            <input id="userSearch" type="search" autocomplete="off" placeholder="ابحث عن مستخدم..." />
+            <button type="button" id="clearUserSearch">×</button>
+          </div>
+
+          <div id="userResults" class="tnx-user-results"></div>
+        </div>
+
+        <div id="userCardContainer" class="tnx-user-card-container"></div>
+      </section>
+    </section>
+  </main>
+
+  <style is:global>
+    .hidden {
+      display: none !important;
+    }
+
+    .tnx-badges-page {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      background: #07050b;
+      color: white;
+    }
+
+    .tnx-badges-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 12% 9%, rgba(255, 218, 106, 0.18), transparent 28%),
+        radial-gradient(circle at 86% 14%, rgba(194, 146, 0, 0.16), transparent 34%),
+        radial-gradient(circle at 48% 92%, rgba(124, 58, 237, 0.12), transparent 38%),
+        linear-gradient(135deg, #07050b 0%, #050507 55%, #130c05 100%);
+    }
+
+    .tnx-badges-grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.07;
+      background-image:
+        linear-gradient(rgba(255, 218, 106, 0.4) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 218, 106, 0.4) 1px, transparent 1px);
+      background-size: 58px 58px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 74%);
+    }
+
+    .tnx-badges-shell {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 1240px);
+      margin: 0 auto;
+      padding: 6.5rem 1rem 5rem;
+    }
+
+    .tnx-badges-hero {
+      max-width: 920px;
+      margin: 0 auto 1.25rem;
+      text-align: center;
+    }
+
+    .tnx-badges-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      border: 1px solid rgba(255, 218, 106, 0.28);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.36);
+      color: #ffda6a;
+      padding: 0.55rem 0.9rem;
+      font-size: 0.78rem;
+      font-weight: 950;
+      letter-spacing: 0.18em;
+    }
+
+    .tnx-badges-eyebrow span {
+      width: 0.48rem;
+      height: 0.48rem;
+      border-radius: 999px;
+      background: #ffda6a;
+      box-shadow: 0 0 14px #ffda6a;
+    }
+
+    .tnx-badges-hero h1 {
+      margin: 1.15rem 0 0;
+      background: linear-gradient(90deg, #fff1a8, #ffda6a 44%, #c29200);
+      background-clip: text;
+      color: transparent;
+      font-size: clamp(3.2rem, 8vw, 6.8rem);
+      font-weight: 950;
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+    }
+
+    .tnx-badges-hero p {
+      max-width: 760px;
+      margin: 1.15rem auto 0;
+      color: rgb(209, 213, 219);
+      font-size: 1.03rem;
+      font-weight: 760;
+      line-height: 1.9;
+    }
+
+    .tnx-badges-hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+      max-width: 720px;
+      margin: 1.25rem auto 0;
+    }
+
+    .tnx-badges-hero-stats div,
+    .tnx-start-guide,
+    .tnx-vault,
+    .tnx-user-cards,
+    .tnx-badge-focus {
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
+        rgba(6, 6, 8, 0.78);
+      box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.44),
+        inset 0 0 22px rgba(255, 218, 106, 0.025);
+      backdrop-filter: blur(16px);
+    }
+
+    .tnx-badges-hero-stats div {
+      border-radius: 1.25rem;
+      padding: 1rem;
+    }
+
+    .tnx-badges-hero-stats strong {
+      display: block;
+      color: #ffda6a;
+      font-size: 1.8rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .tnx-badges-hero-stats span {
+      display: block;
+      margin-top: 0.35rem;
+      color: rgb(156, 163, 175);
+      font-size: 0.8rem;
+      font-weight: 850;
+    }
+
+    .tnx-start-guide,
+    .tnx-vault,
+    .tnx-user-cards {
+      margin-top: 1rem;
+      border-radius: 1.8rem;
+      padding: 1.25rem;
+    }
+
+    .tnx-section-head span {
+      color: #c29200;
+      font-size: 0.78rem;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+    }
+
+    .tnx-section-head h2 {
+      margin: 0.3rem 0 0;
+      color: #f7e6ac;
+      font-size: 2rem;
+      font-weight: 950;
+      line-height: 1.15;
+    }
+
+    .tnx-section-head p {
+      margin: 0.5rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.92rem;
+      font-weight: 800;
+      line-height: 1.75;
+    }
+
+    .tnx-section-head--center {
+      text-align: center;
+    }
+
+    .tnx-guide-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    .tnx-guide-card {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.85rem;
+      min-height: 138px;
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 1.25rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.07), transparent 42%),
+        rgba(0, 0, 0, 0.3);
+      color: white;
+      padding: 1rem;
+      text-align: right;
+      cursor: pointer;
+      transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease;
+    }
+
+    .tnx-guide-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 218, 106, 0.5);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 42%),
+        rgba(0, 0, 0, 0.38);
+    }
+
+    .tnx-guide-icon,
+    .tnx-badge-icon,
+    .tnx-focus-icon {
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255, 218, 106, 0.18), transparent 62%),
+        rgba(255, 218, 106, 0.06);
+      color: #ffda6a;
+      font-weight: 950;
+    }
+
+    .tnx-guide-icon {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 1rem;
+      font-size: 1rem;
+    }
+
+    .tnx-guide-card strong {
+      display: block;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 950;
+      line-height: 1.35;
+    }
+
+    .tnx-guide-card p {
+      margin: 0.45rem 0 0;
+      color: rgb(209, 213, 219);
+      font-size: 0.86rem;
+      font-weight: 800;
+      line-height: 1.7;
+    }
+
+    .tnx-vault-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+      gap: 1rem;
+      align-items: end;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 218, 106, 0.12);
+    }
+
+    .tnx-badge-search {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 0.75rem;
+      align-items: center;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 1.15rem;
+      background: rgba(0, 0, 0, 0.32);
+      padding: 0.85rem;
+    }
+
+    .tnx-badge-search span {
+      color: #ffda6a;
+      font-size: 1.4rem;
+      font-weight: 950;
+    }
+
+    .tnx-badge-search input {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 850;
+      outline: none;
+    }
+
+    .tnx-badge-search button {
+      display: grid;
+      place-items: center;
+      width: 2.2rem;
+      height: 2.2rem;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      font-size: 1.2rem;
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .tnx-filter-row {
+      position: sticky;
+      top: 5.25rem;
+      z-index: 30;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin: 1rem 0;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 1rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.07), transparent 40%),
+        rgba(7, 5, 11, 0.9);
+      padding: 0.7rem;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(14px);
+    }
+
+    .tnx-filter-row button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 0.9rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.62rem 0.8rem;
+      font-size: 0.82rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 0.16s ease;
+      white-space: nowrap;
+    }
+
+    .tnx-filter-row button:hover,
+    .tnx-filter-row button.is-active {
+      transform: translateY(-1px);
+      border-color: rgba(255, 218, 106, 0.55);
+      background: rgba(255, 218, 106, 0.14);
+      color: #ffda6a;
+    }
+
+    .tnx-filter-row small {
+      display: grid;
+      place-items: center;
+      min-width: 1.35rem;
+      height: 1.35rem;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.34);
+      color: rgb(229, 231, 235);
+      font-size: 0.68rem;
+    }
+
+    .tnx-vault-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .tnx-badge-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .tnx-badge-card {
+      position: relative;
+      display: grid;
+      gap: 0.8rem;
+      border: 1px solid rgba(255, 218, 106, 0.15);
+      border-radius: 1.35rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.055), transparent 42%),
+        rgba(0, 0, 0, 0.3);
+      color: white;
+      padding: 0.95rem;
+      text-align: right;
+      cursor: pointer;
+      transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        background 160ms ease;
+      overflow: hidden;
+    }
+
+    .tnx-badge-card:hover,
+    .tnx-badge-card.is-selected {
+      transform: translateY(-2px);
+      border-color: rgba(255, 218, 106, 0.56);
+      box-shadow: 0 0 28px rgba(255, 218, 106, 0.13);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.11), transparent 42%),
+        rgba(0, 0, 0, 0.38);
+    }
+
+    .tnx-badge-card.is-rare::before {
+      content: '';
+      position: absolute;
+      inset: -35%;
+      background: conic-gradient(from 180deg, transparent, rgba(255, 218, 106, 0.16), transparent 35%);
+      opacity: 0.7;
+      animation: tnxBadgeShine 5s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes tnxBadgeShine {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .tnx-badge-img-wrap {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      min-height: 112px;
+      border: 1px solid rgba(255, 218, 106, 0.11);
+      border-radius: 1.05rem;
+      background:
+        radial-gradient(circle at center, rgba(255, 218, 106, 0.1), transparent 58%),
+        rgba(255, 255, 255, 0.025);
+    }
+
+    .tnx-badge-img-wrap img {
+      width: 82px;
+      height: 82px;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.45));
+    }
+
+    .tnx-badge-card-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .tnx-badge-tag {
+      width: fit-content;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.07);
+      color: #f7e6ac;
+      padding: 0.32rem 0.55rem;
+      font-size: 0.68rem;
+      font-weight: 950;
+    }
+
+    .tnx-badge-card strong {
+      color: white;
+      font-size: 1rem;
+      font-weight: 950;
+      line-height: 1.35;
+    }
+
+    .tnx-badge-card p {
+      margin: 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.76rem;
+      font-weight: 800;
+      line-height: 1.55;
+    }
+
+    .tnx-badge-focus {
+      position: sticky;
+      top: 11rem;
+      min-height: 420px;
+      border-radius: 1.5rem;
+      padding: 1rem;
+    }
+
+    .tnx-focus-placeholder {
+      display: grid;
+      place-items: center;
+      min-height: 360px;
+      text-align: center;
+    }
+
+    .tnx-focus-icon {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 1.25rem;
+      font-size: 1.6rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .tnx-focus-placeholder h3 {
+      margin: 0;
+      color: #f7e6ac;
+      font-size: 1.45rem;
+      font-weight: 950;
+    }
+
+    .tnx-focus-placeholder p {
+      max-width: 240px;
+      margin: 0.55rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.86rem;
+      font-weight: 800;
+      line-height: 1.75;
+    }
+
+    .tnx-focus-card {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .tnx-focus-image {
+      display: grid;
+      place-items: center;
+      min-height: 180px;
+      border: 1px solid rgba(255, 218, 106, 0.14);
+      border-radius: 1.25rem;
+      background:
+        radial-gradient(circle at center, rgba(255, 218, 106, 0.14), transparent 56%),
+        rgba(0, 0, 0, 0.28);
+    }
+
+    .tnx-focus-image img {
+      width: 130px;
+      height: 130px;
+      object-fit: contain;
+      filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.55));
+    }
+
+    .tnx-focus-card h3 {
+      margin: 0;
+      color: white;
+      font-size: 1.7rem;
+      font-weight: 950;
+      line-height: 1.2;
+    }
+
+    .tnx-focus-card p {
+      margin: 0;
+      color: rgb(209, 213, 219);
+      font-size: 0.9rem;
+      font-weight: 800;
+      line-height: 1.75;
+    }
+
+    .tnx-focus-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.6rem;
+    }
+
+    .tnx-focus-meta div {
+      border: 1px solid rgba(255, 218, 106, 0.12);
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.26);
+      padding: 0.75rem;
+    }
+
+    .tnx-focus-meta span {
+      display: block;
+      color: rgb(148, 163, 184);
+      font-size: 0.72rem;
+      font-weight: 900;
+      margin-bottom: 0.25rem;
+    }
+
+    .tnx-focus-meta strong {
+      color: #ffda6a;
+      font-size: 0.86rem;
+      font-weight: 950;
+    }
+
+    .tnx-focus-copy {
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 0.9rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.78rem 1rem;
+      font-size: 0.86rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 0.16s ease;
+    }
+
+    .tnx-focus-copy:hover,
+    .tnx-focus-copy.is-copied {
+      border-color: rgba(52, 211, 153, 0.55);
+      background: rgba(52, 211, 153, 0.14);
+      color: rgb(167, 243, 208);
+    }
+
+    .tnx-empty {
+      display: grid;
+      place-items: center;
+      gap: 0.35rem;
+      border-radius: 1.5rem;
+      padding: 2rem;
+      text-align: center;
+      min-height: 220px;
+    }
+
+    .tnx-empty strong {
+      color: #ffda6a;
+      font-size: 1.4rem;
+      font-weight: 950;
+    }
+
+    .tnx-empty span {
+      color: rgb(156, 163, 175);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .tnx-user-search {
+      max-width: 620px;
+      margin: 1rem auto 0;
+    }
+
+    .tnx-user-results {
+      display: grid;
+      gap: 0.5rem;
+      margin-top: 0.7rem;
+    }
+
+    .tnx-user-result {
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 0.9rem;
+      background: rgba(0, 0, 0, 0.32);
+      color: #f7e6ac;
+      padding: 0.75rem 0.9rem;
+      text-align: right;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.16s ease;
+    }
+
+    .tnx-user-result:hover {
+      border-color: rgba(255, 218, 106, 0.45);
+      background: rgba(255, 218, 106, 0.09);
+      color: #ffda6a;
+    }
+
+    .tnx-user-card-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .tnx-user-card-preview {
+      position: relative;
+      width: min(800px, 100%);
+      min-width: 720px;
+      height: 360px;
+      border: 2px solid rgba(0, 0, 0, 0.75);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48);
+      font-family: Poppins, system-ui, sans-serif;
+      opacity: 0;
+      animation: tnxUserCardIn 220ms ease forwards;
+    }
+
+    @keyframes tnxUserCardIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    .tnx-card-banner {
+      width: 100%;
+      height: 180px;
+      background-position: center;
+      background-size: cover;
+      background-color: rgba(0, 0, 0, 0.25);
+    }
+
+    .tnx-card-profile-section {
+      position: absolute;
+      top: 100px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      align-items: flex-start;
+      z-index: 10;
+    }
+
+    .tnx-card-picture-points {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 170px;
+    }
+
+    .tnx-card-profile-picture {
+      width: 150px;
+      height: 150px;
+      border: 7px solid var(--profile-border, #423fff);
+      border-radius: 999px;
+      background-color: var(--profile-border, #423fff);
+      background-position: center;
+      background-size: cover;
+    }
+
+    .tnx-card-job-info {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-top: 0.5rem;
+      padding-left: 10px;
+      color: white;
+      font-size: 1.35rem;
+      font-weight: 800;
+      text-shadow: 1px 1px 1px black;
+    }
+
+    .tnx-card-job-info iconify-icon {
+      margin-right: 0.45rem;
+    }
+
+    .tnx-card-stats-row {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      margin-top: 4px;
+      padding-left: 10px;
+    }
+
+    .tnx-card-points,
+    .tnx-card-gold {
+      display: flex;
+      align-items: center;
+      color: white;
+      font-size: 1rem;
+      text-shadow: 1px 1px 1px black;
+    }
+
+    .tnx-card-gold {
+      color: #ffd700;
+    }
+
+    .tnx-card-points iconify-icon,
+    .tnx-card-gold iconify-icon {
+      margin-right: 0.3rem;
+    }
+
+    .tnx-card-username {
+      position: absolute;
+      top: 85px;
+      left: 170px;
+      color: white;
+      font-size: 2.4rem;
+      font-weight: 800;
+      text-shadow: 1px 2px 1px black;
+      white-space: nowrap;
+    }
+
+    .tnx-card-badges {
+      position: absolute;
+      top: 95px;
+      right: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 70px);
+      grid-template-rows: repeat(2, 70px);
+      gap: 10px;
+    }
+
+    .tnx-card-badges img {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+      border-radius: 0.5rem;
+      filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.35));
+    }
+
+    @media (max-width: 1100px) {
+      .tnx-vault-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-badge-focus {
+        position: static;
+        min-height: auto;
+      }
+
+      .tnx-badge-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .tnx-vault-top,
+      .tnx-guide-grid,
+      .tnx-badges-hero-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-filter-row {
+        top: 4.75rem;
+      }
+
+      .tnx-badge-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .tnx-badges-shell {
+        padding-top: 5.5rem;
+      }
+
+      .tnx-badges-hero h1 {
+        font-size: 3rem;
+      }
+
+      .tnx-badge-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-focus-meta {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 
   <script is:inline data-reinit>
-    // router-safe job icon map
-    var JOB_ICONS = window.JOB_ICONS || {
-      tier1_Citizen: 'mdi:account',
-      tier3_Merchant: 'mdi:store'
-    };
-    window.JOB_ICONS = JOB_ICONS;
+    ;(() => {
+      const cleanupKey = '__tnxBadgesPageCleanup'
 
-    async function loadBadges() {
-      try {
-        const res = await fetch('/api/badges.json');
-        const badges = await res.json();
-        const grid = document.getElementById('badge-grid');
-        badges.forEach(b => {
-          const el = document.createElement('div');
-          el.className = 'flex flex-col items-center bg-black/40 border border-[#c6a44f]/30 p-4 rounded-2xl shadow-lg backdrop-blur-sm transition-transform hover:scale-105 hover:border-[#f7e6ac]/60';
-          el.innerHTML = `
-            <img src="${b.image}" alt="${b.name}" class="w-20 h-20 object-contain rounded-lg mb-3 border border-[#c6a44f]/20">
-            <span class="text-[#f7e6ac] font-semibold text-center text-sm">${b.name}</span>
-          `;
-          grid.appendChild(el);
-        });
-      } catch (e) {
-        console.error('Failed to load badges.json', e);
+      if (window[cleanupKey]) {
+        window[cleanupKey]()
       }
-    }
 
-    async function loadUsers() {
-      try {
-        const res = await fetch('/api/user_badges.json');
-        const users = await res.json();
-        const search = document.getElementById('userSearch');
-        const results = document.getElementById('userResults');
-        const cardContainer = document.getElementById('userCardContainer');
+      const listeners = []
+      const timers = []
 
-        search.addEventListener('input', () => {
-          const q = search.value.trim().toLowerCase();
-          results.innerHTML = '';
-          if (!q) return;
+      function addListener(target, event, handler, options) {
+        if (!target) return
+        target.addEventListener(event, handler, options)
+        listeners.push(() => target.removeEventListener(event, handler, options))
+      }
 
-          const filtered = users.filter(u =>
-            u.userName.toLowerCase().includes(q) || u.userLogin.toLowerCase().includes(q)
-          ).slice(0, 10);
+      function addTimer(id) {
+        timers.push(id)
+        return id
+      }
 
-          filtered.forEach(u => {
-            const div = document.createElement('div');
-            div.className = 'cursor-pointer hover:underline hover:text-[#f7e6ac]/80';
-            div.textContent = `${u.userName}${u.userName.toLowerCase() !== u.userLogin.toLowerCase() ? ` (${u.userLogin})` : ''}`;
-            div.onclick = () => {
-              search.value = '';
-              results.innerHTML = '';
-              renderUserCard(u);
-            };
-            results.appendChild(div);
-          });
-        });
+      window[cleanupKey] = () => {
+        listeners.forEach((cleanup) => cleanup())
+        listeners.length = 0
 
-        function formatNumber(n) {
-          return (n || 0).toLocaleString('de-DE');
+        timers.forEach((id) => window.clearTimeout(id))
+        timers.length = 0
+      }
+
+      const CATEGORY_META = {
+        attendance: { label: 'الحضور', icon: 'D' },
+        points: { label: 'النقاط', icon: 'K' },
+        quiz: { label: 'الكويز', icon: 'Q' },
+        status: { label: 'المكانة', icon: '◆' },
+        law: { label: 'المحكمة', icon: '⚖' },
+        awards: { label: 'الجوائز', icon: '★' },
+        special: { label: 'خاص', icon: '⬟' },
+      }
+
+      const BADGE_META = {
+        king: {
+          title: 'ملك القناة',
+          category: 'status',
+          how: 'يفتح من نظام King of Channel Points أو حسب تفعيل ملك القناة.',
+          rarity: 'نادر',
+          duration: 'مؤقت غالبًا',
+          difficulty: 'صعب',
+        },
+        king2: {
+          title: 'ملك القناة المطور',
+          category: 'status',
+          how: 'نسخة أعلى من بادج الملك، وتكون مرتبطة بالمكانة أو التفعيل الخاص.',
+          rarity: 'نادر جدًا',
+          duration: 'حسب النظام',
+          difficulty: 'صعب جدًا',
+        },
+        Vip: {
+          title: 'VIP',
+          category: 'status',
+          how: 'يفتح من نظام VIP أو منحة خاصة حسب تفاعل العضو ومكانته.',
+          rarity: 'مميز',
+          duration: 'قد يكون مؤقت أو دائم',
+          difficulty: 'متوسط',
+        },
+        '15D': {
+          title: 'حضور 15 يوم',
+          category: 'attendance',
+          how: 'سجّل حضورك اليومي حتى توصل 15 يوم.',
+          rarity: 'أساسي',
+          duration: 'دائم',
+          difficulty: 'سهل',
+        },
+        '30D': {
+          title: 'حضور 30 يوم',
+          category: 'attendance',
+          how: 'كمل تسجيل الحضور اليومي حتى توصل 30 يوم.',
+          rarity: 'أساسي',
+          duration: 'دائم',
+          difficulty: 'سهل',
+        },
+        '60D': {
+          title: 'حضور 60 يوم',
+          category: 'attendance',
+          how: 'استمر بالحضور حتى توصل 60 يوم.',
+          rarity: 'متقدم',
+          duration: 'دائم',
+          difficulty: 'متوسط',
+        },
+        '100D': {
+          title: 'حضور 100 يوم',
+          category: 'attendance',
+          how: 'استمر في تسجيل الحضور حتى توصل 100 يوم.',
+          rarity: 'نادر',
+          duration: 'دائم',
+          difficulty: 'صعب',
+        },
+        '150D': {
+          title: 'حضور 150 يوم',
+          category: 'attendance',
+          how: 'واحد من أعلى بادجات الحضور. يحتاج استمرار طويل.',
+          rarity: 'نادر جدًا',
+          duration: 'دائم',
+          difficulty: 'صعب جدًا',
+        },
+        LAW: {
+          title: 'رخصة محامي',
+          category: 'law',
+          how: 'يفتح من نظام المحكمة أو بطاقة المحامي حسب شروط البث.',
+          rarity: 'مميز',
+          duration: 'قد يكون محدود',
+          difficulty: 'متوسط',
+        },
+        LAW2: {
+          title: 'محامي متقدم',
+          category: 'law',
+          how: 'نسخة أعلى من بادج المحامي، مرتبطة بنظام المحكمة أو إنجاز خاص.',
+          rarity: 'نادر',
+          duration: 'حسب النظام',
+          difficulty: 'صعب',
+        },
+        '50Q': {
+          title: '50 إجابة صحيحة',
+          category: 'quiz',
+          how: 'جاوب 50 سؤال كويز بشكل صحيح.',
+          rarity: 'أساسي',
+          duration: 'دائم',
+          difficulty: 'سهل',
+        },
+        '150Q': {
+          title: '150 إجابة صحيحة',
+          category: 'quiz',
+          how: 'جاوب 150 سؤال كويز بشكل صحيح.',
+          rarity: 'متقدم',
+          duration: 'دائم',
+          difficulty: 'متوسط',
+        },
+        '300Q': {
+          title: '300 إجابة صحيحة',
+          category: 'quiz',
+          how: 'جاوب 300 سؤال كويز بشكل صحيح.',
+          rarity: 'متقدم',
+          duration: 'دائم',
+          difficulty: 'صعب',
+        },
+        '600Q': {
+          title: '600 إجابة صحيحة',
+          category: 'quiz',
+          how: 'جاوب 600 سؤال كويز بشكل صحيح.',
+          rarity: 'نادر',
+          duration: 'دائم',
+          difficulty: 'صعب جدًا',
+        },
+        '1000Q': {
+          title: '1000 إجابة صحيحة',
+          category: 'quiz',
+          how: 'جاوب 1000 سؤال كويز بشكل صحيح.',
+          rarity: 'نادر جدًا',
+          duration: 'دائم',
+          difficulty: 'جلد',
+        },
+        '100K': {
+          title: 'رصيد 100K',
+          category: 'points',
+          how: 'وصل رصيدك إلى 100,000 نقطة.',
+          rarity: 'أساسي',
+          duration: 'دائم',
+          difficulty: 'سهل',
+        },
+        '250K': {
+          title: 'رصيد 250K',
+          category: 'points',
+          how: 'وصل رصيدك إلى 250,000 نقطة.',
+          rarity: 'متقدم',
+          duration: 'دائم',
+          difficulty: 'متوسط',
+        },
+        '500K': {
+          title: 'رصيد 500K',
+          category: 'points',
+          how: 'وصل رصيدك إلى 500,000 نقطة.',
+          rarity: 'متقدم',
+          duration: 'دائم',
+          difficulty: 'صعب',
+        },
+        '1M': {
+          title: 'رصيد مليون',
+          category: 'points',
+          how: 'وصل رصيدك إلى 1,000,000 نقطة.',
+          rarity: 'نادر',
+          duration: 'دائم',
+          difficulty: 'صعب جدًا',
+        },
+        '3M': {
+          title: 'رصيد 3 مليون',
+          category: 'points',
+          how: 'وصل رصيدك إلى 3,000,000 نقطة.',
+          rarity: 'نادر جدًا',
+          duration: 'دائم',
+          difficulty: 'جلد',
+        },
+        'BEST VIP': {
+          title: 'أفضل VIP',
+          category: 'awards',
+          how: 'بادج تكريمي يُمنح ضمن جوائز المجتمع.',
+          rarity: 'جائزة',
+          duration: 'دائم غالبًا',
+          difficulty: 'حسب الترشيح',
+        },
+        'BEST MOD': {
+          title: 'أفضل مود',
+          category: 'awards',
+          how: 'بادج تكريمي لأفضل مود في جوائز المجتمع.',
+          rarity: 'جائزة',
+          duration: 'دائم غالبًا',
+          difficulty: 'حسب الترشيح',
+        },
+        'BEST CHATER': {
+          title: 'أفضل متفاعل',
+          category: 'awards',
+          how: 'بادج تكريمي لأفضل شخص متفاعل في الشات.',
+          rarity: 'جائزة',
+          duration: 'دائم غالبًا',
+          difficulty: 'حسب الترشيح',
+        },
+        'BEST FOLLOWER': {
+          title: 'أفضل متابع',
+          category: 'awards',
+          how: 'بادج تكريمي لأفضل متابع في المجتمع.',
+          rarity: 'جائزة',
+          duration: 'دائم غالبًا',
+          difficulty: 'حسب الترشيح',
+        },
+        'BEST SUP': {
+          title: 'أفضل داعم',
+          category: 'awards',
+          how: 'بادج تكريمي لأفضل داعم في المجتمع.',
+          rarity: 'جائزة',
+          duration: 'دائم غالبًا',
+          difficulty: 'حسب الترشيح',
+        },
+        'Best Dessert': {
+          title: 'أفضل Dessert',
+          category: 'special',
+          how: 'بادج خاص أو مزحة داخلية من المجتمع.',
+          rarity: 'خاص',
+          duration: 'حسب النظام',
+          difficulty: 'خاص',
+        },
+      }
+
+      const JOB_ICONS = window.JOB_ICONS || {
+        tier1_Citizen: 'mdi:account',
+        tier3_Merchant: 'mdi:store',
+      }
+
+      window.JOB_ICONS = JOB_ICONS
+
+      const state = {
+        badges: [],
+        users: [],
+        filter: 'all',
+        search: '',
+        selectedBadgeName: '',
+      }
+
+      const badgeGrid = document.getElementById('badgeGrid')
+      const badgeEmpty = document.getElementById('badgeEmpty')
+      const badgeSearch = document.getElementById('badgeSearch')
+      const clearBadgeSearch = document.getElementById('clearBadgeSearch')
+      const badgeFocusPanel = document.getElementById('badgeFocusPanel')
+      const filterButtons = Array.from(document.querySelectorAll('[data-badge-filter]'))
+      const guideButtons = Array.from(document.querySelectorAll('[data-guide-filter]'))
+
+      const statTotalBadges = document.getElementById('statTotalBadges')
+      const statCategories = document.getElementById('statCategories')
+      const statRareBadges = document.getElementById('statRareBadges')
+
+      const userSearch = document.getElementById('userSearch')
+      const clearUserSearch = document.getElementById('clearUserSearch')
+      const userResults = document.getElementById('userResults')
+      const userCardContainer = document.getElementById('userCardContainer')
+
+      function esc(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;')
+      }
+
+      function safeUrl(value) {
+        const url = String(value || '').trim()
+        if (!/^https?:\/\//i.test(url) && !url.startsWith('/')) return ''
+        return url.replace(/["'()\\]/g, '')
+      }
+
+      function safeColor(value, fallback = '#423fff') {
+        const color = String(value || '').trim()
+        return /^#[0-9a-fA-F]{6}$/.test(color) ? color : fallback
+      }
+
+      function normalize(value) {
+        return String(value || '')
+          .toLowerCase()
+          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[أإآ]/g, 'ا')
+          .replace(/ة/g, 'ه')
+          .replace(/ى/g, 'ي')
+          .replace(/\s+/g, ' ')
+          .trim()
+      }
+
+      function formatNumber(n) {
+        return Number(n || 0).toLocaleString('de-DE')
+      }
+
+      function hexToRgb(hex) {
+        const clean = safeColor(hex).replace('#', '')
+        const v = parseInt(clean, 16)
+        return [(v >> 16) & 255, (v >> 8) & 255, v & 255]
+      }
+
+      function shade(hex, percent) {
+        const [r, g, b] = hexToRgb(hex)
+        const shift = Math.floor(2.55 * percent)
+        const fmt = (c) => ('0' + Math.max(0, Math.min(255, c + shift)).toString(16)).slice(-2)
+        return '#' + fmt(r) + fmt(g) + fmt(b)
+      }
+
+      function getBadgeMeta(name) {
+        const fallback = {
+          title: name,
+          category: 'special',
+          how: 'بادج خاص. طريقة الحصول عليه حسب نظام البث.',
+          rarity: 'خاص',
+          duration: 'حسب النظام',
+          difficulty: 'غير محدد',
         }
 
-        function hexToRgb(h) {
-          const v = parseInt(h.replace('#', ''), 16);
-          return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+        return BADGE_META[name] || fallback
+      }
+
+      function enrichBadge(badge, index) {
+        const name = String(badge?.name || '').trim()
+        const meta = getBadgeMeta(name)
+        const category = CATEGORY_META[meta.category] ? meta.category : 'special'
+
+        const searchText = normalize([
+          name,
+          meta.title,
+          meta.category,
+          meta.how,
+          meta.rarity,
+          meta.duration,
+          meta.difficulty,
+          CATEGORY_META[category]?.label,
+        ].join(' '))
+
+        return {
+          index,
+          name,
+          image: safeUrl(badge?.image),
+          title: meta.title,
+          category,
+          categoryLabel: CATEGORY_META[category]?.label || 'خاص',
+          categoryIcon: CATEGORY_META[category]?.icon || '⬟',
+          how: meta.how,
+          rarity: meta.rarity,
+          duration: meta.duration,
+          difficulty: meta.difficulty,
+          searchText,
+          isRare: ['نادر', 'نادر جدًا', 'جائزة', 'خاص'].some((word) => String(meta.rarity).includes(word)),
+        }
+      }
+
+      function updateStats() {
+        const categories = new Set(state.badges.map((b) => b.category))
+        const rare = state.badges.filter((b) => b.isRare).length
+
+        if (statTotalBadges) statTotalBadges.textContent = String(state.badges.length)
+        if (statCategories) statCategories.textContent = String(categories.size)
+        if (statRareBadges) statRareBadges.textContent = String(rare)
+
+        const counts = {
+          all: state.badges.length,
+          attendance: 0,
+          points: 0,
+          quiz: 0,
+          status: 0,
+          law: 0,
+          awards: 0,
+          special: 0,
         }
 
-        function shade(h, p) {
-          const [r, g, b] = hexToRgb(h);
-          const fmt = c => ('0' + Math.max(0, Math.min(255, c + Math.floor(2.55 * p))).toString(16)).slice(-2);
-          return '#' + fmt(r) + fmt(g) + fmt(b);
-        }
+        state.badges.forEach((badge) => {
+          counts[badge.category] = (counts[badge.category] || 0) + 1
+        })
 
-        function renderUserCard(details) {
-          cardContainer.innerHTML = '';
-          const bc = details.backgroundColor || '#423fff';
-          const dc = shade(bc, -20);
-          const dn = details.userName;
-          const ul = details.userLogin;
-          const username = dn.toLowerCase() !== ul.toLowerCase() ? `${dn} (${ul})` : dn;
+        Object.entries(counts).forEach(([key, value]) => {
+          const el = document.getElementById(`count-${key}`)
+          if (el) el.textContent = String(value)
+        })
+      }
 
-          const jobIcon = JOB_ICONS[details.jobId] || 'mdi:account';
+      function getFilteredBadges() {
+        return state.badges.filter((badge) => {
+          const filterMatch = state.filter === 'all' || badge.category === state.filter
+          const searchMatch = !state.search || badge.searchText.includes(normalize(state.search))
+          return filterMatch && searchMatch
+        })
+      }
 
-          const equippedBadges = (details.badges || []).filter(b => b.equipped).slice(0, 6);
-          const badgeHtml = equippedBadges.map(b =>
-            `<img src="${b.url}" alt="${b.name}" class="w-[70px] h-[70px] object-contain rounded-lg">`
-          ).join('');
+      function renderFilterButtons() {
+        filterButtons.forEach((button) => {
+          button.classList.toggle('is-active', button.dataset.badgeFilter === state.filter)
+        })
+      }
 
-          const html = `
-            <div class="user-card relative w-[800px] h-[360px] rounded-[15px] overflow-hidden border-[2px] border-black shadow-[0_6px_12px_rgba(0,0,0,0.3)] font-[Poppins] opacity-0 transition-opacity duration-500"
-                 style="background: linear-gradient(to bottom, ${bc} 70%, ${dc} 100%);">
-              <div class="banner w-full h-[180px] bg-center bg-cover"
-                   style="background-image: url('${details.bannerImage || ''}')"></div>
+      function renderBadges() {
+        const badges = getFilteredBadges()
 
-              <div class="profile-section absolute top-[100px] left-[20px] right-[20px] flex items-start z-10">
-                <div class="picture-points flex flex-col items-center w-[170px]">
-                  <div class="profile-picture w-[150px] h-[150px] rounded-full border-[7px]"
-                       style="border-color:${bc}; background-color:${bc}; background-image:url('${details.profileImageUrl || ''}'); background-size:cover; background-position:center;">
-                  </div>
+        if (!badgeGrid) return
 
-                  <div class="job-info flex items-center w-full mt-2 pl-[10px] text-[1.4em] font-[700] text-white drop-shadow-[1px_1px_1px_black]">
-                    <iconify-icon icon="${jobIcon}" class="mr-2"></iconify-icon>
-                    ${details.jobName || 'Citizen'}
-                  </div>
+        badgeEmpty?.classList.toggle('hidden', badges.length > 0)
 
-                  <div class="stats-row flex gap-[10px] mt-[4px] w-full pl-[10px]">
-                    <div class="points flex items-center text-white text-[1em] drop-shadow-[1px_1px_1px_black]">
-                      <iconify-icon icon="mdi:star-four-points-circle" class="mr-1"></iconify-icon>
-                      ${formatNumber(details.points)}
-                    </div>
-                    <div class="gold flex items-center text-[#FFD700] text-[1em] drop-shadow-[1px_1px_1px_black]">
-                      <iconify-icon icon="mdi:gold" class="mr-1"></iconify-icon>
-                      ${formatNumber(details.gold)}
-                    </div>
-                  </div>
-                </div>
+        badgeGrid.innerHTML = badges.map((badge) => {
+          const selected = badge.name === state.selectedBadgeName ? ' is-selected' : ''
+          const rare = badge.isRare ? ' is-rare' : ''
 
-                <div class="username-container absolute top-[85px] left-[170px] text-white text-[2.4em] font-[700] drop-shadow-[1px_2px_1px_black] whitespace-nowrap">
-                  ${username}
-                </div>
+          return `
+            <button type="button" class="tnx-badge-card${selected}${rare}" data-badge-name="${esc(badge.name)}">
+              <div class="tnx-badge-img-wrap">
+                <img src="${esc(badge.image)}" alt="${esc(badge.name)}" loading="lazy" />
+              </div>
 
-                <div class="badges-container-wrapper absolute top-[95px] right-[20px] grid grid-cols-3 grid-rows-2 gap-[10px]">
-                  ${badgeHtml}
-                </div>
+              <div class="tnx-badge-card-content">
+                <span class="tnx-badge-tag">${esc(badge.categoryLabel)}</span>
+                <strong>${esc(badge.title)}</strong>
+                <p>${esc(badge.rarity)} · ${esc(badge.difficulty)}</p>
+              </div>
+            </button>
+          `
+        }).join('')
+      }
+
+      function renderBadgeFocus(badge) {
+        if (!badgeFocusPanel || !badge) return
+
+        const copyText = `${badge.title}: ${badge.how}`
+
+        badgeFocusPanel.innerHTML = `
+          <div class="tnx-focus-card">
+            <div class="tnx-focus-image">
+              <img src="${esc(badge.image)}" alt="${esc(badge.name)}" loading="lazy" />
+            </div>
+
+            <div>
+              <span class="tnx-badge-tag">${esc(badge.categoryLabel)}</span>
+              <h3>${esc(badge.title)}</h3>
+            </div>
+
+            <p>${esc(badge.how)}</p>
+
+            <div class="tnx-focus-meta">
+              <div>
+                <span>الندرة</span>
+                <strong>${esc(badge.rarity)}</strong>
+              </div>
+
+              <div>
+                <span>الصعوبة</span>
+                <strong>${esc(badge.difficulty)}</strong>
+              </div>
+
+              <div>
+                <span>المدة</span>
+                <strong>${esc(badge.duration)}</strong>
+              </div>
+
+              <div>
+                <span>الاسم التقني</span>
+                <strong>${esc(badge.name)}</strong>
               </div>
             </div>
-          `;
 
-          cardContainer.innerHTML = html;
-          const card = cardContainer.querySelector('.user-card');
-          setTimeout(() => { card.style.opacity = 1; }, 50);
-        }
-      } catch (e) {
-        console.error('Failed to load user_badges.json', e);
+            <button type="button" class="tnx-focus-copy" data-copy-text="${esc(copyText)}">
+              نسخ طريقة الحصول عليه
+            </button>
+          </div>
+        `
       }
-    }
 
-    loadBadges();
-    loadUsers();
+      function selectBadge(name) {
+        const badge = state.badges.find((item) => item.name === name)
+        if (!badge) return
+
+        state.selectedBadgeName = badge.name
+        renderBadges()
+        renderBadgeFocus(badge)
+      }
+
+      async function copyText(text, button) {
+        const oldText = button.textContent
+
+        try {
+          await navigator.clipboard.writeText(text)
+          button.textContent = 'تم النسخ'
+          button.classList.add('is-copied')
+
+          addTimer(window.setTimeout(() => {
+            button.textContent = oldText
+            button.classList.remove('is-copied')
+          }, 1000))
+        } catch {
+          button.textContent = text
+
+          addTimer(window.setTimeout(() => {
+            button.textContent = oldText
+          }, 1300))
+        }
+      }
+
+      async function loadBadges() {
+        try {
+          const res = await fetch('/api/badges.json')
+          if (!res.ok) throw new Error(`Badges request failed: ${res.status}`)
+
+          const rawBadges = await res.json()
+          const list = Array.isArray(rawBadges) ? rawBadges : []
+
+          state.badges = list
+            .map(enrichBadge)
+            .filter((badge) => badge.name && badge.image)
+
+          updateStats()
+          renderFilterButtons()
+          renderBadges()
+
+          if (state.badges.length > 0) {
+            selectBadge(state.badges[0].name)
+          }
+        } catch (error) {
+          console.error('Failed to load badges.json', error)
+
+          if (badgeGrid) {
+            badgeGrid.innerHTML = `
+              <div class="tnx-empty">
+                <strong>تعذر تحميل البادجات</strong>
+                <span>تأكد من وجود الملف في public/api/badges.json</span>
+              </div>
+            `
+          }
+        }
+      }
+
+      function renderUserResults(query) {
+        if (!userResults) return
+
+        const q = normalize(query)
+
+        userResults.innerHTML = ''
+
+        if (!q) return
+
+        const matches = state.users
+          .map((user, index) => ({ user, index }))
+          .filter(({ user }) => {
+            return normalize(user.userName).includes(q) || normalize(user.userLogin).includes(q)
+          })
+          .slice(0, 10)
+
+        if (matches.length === 0) {
+          userResults.innerHTML = `
+            <div class="tnx-empty">
+              <strong>مافيه نتائج</strong>
+              <span>تأكد من كتابة اسم المستخدم بشكل صحيح.</span>
+            </div>
+          `
+          return
+        }
+
+        userResults.innerHTML = matches.map(({ user, index }) => {
+          const userName = String(user.userName || '')
+          const userLogin = String(user.userLogin || '')
+          const label = normalize(userName) !== normalize(userLogin)
+            ? `${userName} (${userLogin})`
+            : userName
+
+          return `
+            <button type="button" class="tnx-user-result" data-user-index="${index}">
+              ${esc(label)}
+            </button>
+          `
+        }).join('')
+      }
+
+      function renderUserCard(details) {
+        if (!userCardContainer || !details) return
+
+        const baseColor = safeColor(details.backgroundColor || '#423fff')
+        const darkColor = shade(baseColor, -20)
+
+        const displayName = String(details.userName || '')
+        const login = String(details.userLogin || '')
+        const username = normalize(displayName) !== normalize(login)
+          ? `${displayName} (${login})`
+          : displayName
+
+        const jobIcon = JOB_ICONS[details.jobId] || 'mdi:account'
+        const equippedBadges = Array.isArray(details.badges)
+          ? details.badges.filter((badge) => badge.equipped).slice(0, 6)
+          : []
+
+        const badgeHtml = equippedBadges.map((badge) => {
+          return `<img src="${esc(safeUrl(badge.url))}" alt="${esc(badge.name)}" loading="lazy" />`
+        }).join('')
+
+        userCardContainer.innerHTML = `
+          <div
+            class="tnx-user-card-preview"
+            style="background: linear-gradient(to bottom, ${baseColor} 70%, ${darkColor} 100%); --profile-border: ${baseColor};"
+          >
+            <div
+              class="tnx-card-banner"
+              style="background-image: url('${safeUrl(details.bannerImage || '')}')"
+            ></div>
+
+            <div class="tnx-card-profile-section">
+              <div class="tnx-card-picture-points">
+                <div
+                  class="tnx-card-profile-picture"
+                  style="background-image: url('${safeUrl(details.profileImageUrl || '')}')"
+                ></div>
+
+                <div class="tnx-card-job-info">
+                  <iconify-icon icon="${esc(jobIcon)}"></iconify-icon>
+                  ${esc(details.jobName || 'Citizen')}
+                </div>
+
+                <div class="tnx-card-stats-row">
+                  <div class="tnx-card-points">
+                    <iconify-icon icon="mdi:star-four-points-circle"></iconify-icon>
+                    ${formatNumber(details.points)}
+                  </div>
+
+                  <div class="tnx-card-gold">
+                    <iconify-icon icon="mdi:gold"></iconify-icon>
+                    ${formatNumber(details.gold)}
+                  </div>
+                </div>
+              </div>
+
+              <div class="tnx-card-username">${esc(username)}</div>
+
+              <div class="tnx-card-badges">
+                ${badgeHtml}
+              </div>
+            </div>
+          </div>
+        `
+      }
+
+      async function loadUsers() {
+        try {
+          const res = await fetch('/api/user_badges.json')
+          if (!res.ok) throw new Error(`Users request failed: ${res.status}`)
+
+          const users = await res.json()
+          state.users = Array.isArray(users) ? users : []
+        } catch (error) {
+          console.error('Failed to load user_badges.json', error)
+          state.users = []
+        }
+      }
+
+      addListener(badgeGrid, 'click', (event) => {
+        const card = event.target.closest('[data-badge-name]')
+        if (!card) return
+
+        selectBadge(card.dataset.badgeName)
+      })
+
+      addListener(document, 'click', (event) => {
+        const copyButton = event.target.closest('[data-copy-text]')
+        if (!copyButton) return
+
+        copyText(copyButton.dataset.copyText || '', copyButton)
+      })
+
+      addListener(badgeSearch, 'input', () => {
+        state.search = badgeSearch.value
+        renderBadges()
+      })
+
+      addListener(clearBadgeSearch, 'click', () => {
+        if (!badgeSearch) return
+
+        badgeSearch.value = ''
+        state.search = ''
+        badgeSearch.focus()
+        renderBadges()
+      })
+
+      filterButtons.forEach((button) => {
+        addListener(button, 'click', () => {
+          state.filter = button.dataset.badgeFilter || 'all'
+          renderFilterButtons()
+          renderBadges()
+        })
+      })
+
+      guideButtons.forEach((button) => {
+        addListener(button, 'click', () => {
+          state.filter = button.dataset.guideFilter || 'all'
+          state.search = ''
+
+          if (badgeSearch) badgeSearch.value = ''
+
+          renderFilterButtons()
+          renderBadges()
+
+          document.querySelector('.tnx-vault')?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          })
+        })
+      })
+
+      addListener(userSearch, 'input', () => {
+        renderUserResults(userSearch.value)
+      })
+
+      addListener(clearUserSearch, 'click', () => {
+        if (!userSearch) return
+
+        userSearch.value = ''
+        userResults.innerHTML = ''
+        userSearch.focus()
+      })
+
+      addListener(userResults, 'click', (event) => {
+        const button = event.target.closest('[data-user-index]')
+        if (!button) return
+
+        const index = Number(button.dataset.userIndex)
+        const user = state.users[index]
+
+        if (!user) return
+
+        if (userSearch) userSearch.value = ''
+        if (userResults) userResults.innerHTML = ''
+
+        renderUserCard(user)
+      })
+
+      loadBadges()
+      loadUsers()
+    })()
   </script>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
