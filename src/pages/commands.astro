@@ -931,7 +931,7 @@ const totalBeginnerCategories = beginnerCategories.length
           <div>
             <span>رحلة المشاهد الجديد</span>
             <h2>ثلاثة أنظمة فقط</h2>
-            <p>افتح البطاقات: النقاط، الحقيبة، البادج. مربع التقدم يطلع لك عائمًا في الشاشة وأنت تنزل.</p>
+            <p>افتح البطاقات: النقاط، الحقيبة، البادج. مربع التقدم يطلع عائمًا على الشاشة أثناء التصفح.</p>
           </div>
 
           <div class="tnx-progress-box">
@@ -1425,10 +1425,10 @@ const totalBeginnerCategories = beginnerCategories.length
     }
 
     .tnx-progress-float {
-      position: fixed;
-      top: 50%;
-      right: max(1rem, calc((100vw - 1240px) / 2 + 1rem));
-      z-index: 999;
+      position: fixed !important;
+      top: 50vh !important;
+      right: max(1rem, calc((100vw - 1240px) / 2 + 1rem)) !important;
+      z-index: 99999 !important;
       width: 240px;
       border-color: rgba(255, 218, 106, 0.24);
       background:
@@ -1437,7 +1437,7 @@ const totalBeginnerCategories = beginnerCategories.length
       box-shadow:
         0 18px 45px rgba(0, 0, 0, 0.5),
         inset 0 0 16px rgba(255, 218, 106, 0.03);
-      transform: translateY(-50%);
+      transform: translateY(-50%) !important;
       animation: tnxProgressFloatIn 160ms ease both;
     }
 
@@ -2001,12 +2001,12 @@ const totalBeginnerCategories = beginnerCategories.length
       }
 
       .tnx-progress-float {
-        top: auto;
-        right: 1rem;
-        left: 1rem;
-        bottom: 1rem;
+        top: auto !important;
+        right: 1rem !important;
+        left: 1rem !important;
+        bottom: 1rem !important;
         width: auto;
-        transform: none;
+        transform: none !important;
         animation: tnxProgressFloatInMobile 160ms ease both;
       }
 
@@ -2065,6 +2065,9 @@ const totalBeginnerCategories = beginnerCategories.length
       const listeners = []
       const timers = []
 
+      let floatingProgressBox = null
+      let floatingProgressWasMovedToBody = false
+
       function addListener(target, event, handler, options) {
         if (!target) return
         target.addEventListener(event, handler, options)
@@ -2076,6 +2079,10 @@ const totalBeginnerCategories = beginnerCategories.length
         return id
       }
 
+      function stopFloatingProgress() {
+        floatingProgressBox?.classList.add('hidden')
+      }
+
       window[cleanupKey] = () => {
         listeners.forEach((cleanup) => cleanup())
         listeners.length = 0
@@ -2084,6 +2091,10 @@ const totalBeginnerCategories = beginnerCategories.length
         timers.length = 0
 
         stopFloatingProgress()
+
+        if (floatingProgressWasMovedToBody && floatingProgressBox?.parentElement === document.body) {
+          floatingProgressBox.classList.add('hidden')
+        }
       }
 
       const entryChoice = document.getElementById('entryChoice')
@@ -2095,7 +2106,13 @@ const totalBeginnerCategories = beginnerCategories.length
       const progressBar = document.getElementById('progressBar')
       const progressBox = document.querySelector('.tnx-progress-box')
 
-      const floatingProgressBox = document.getElementById('floatingProgressBox')
+      floatingProgressBox = document.getElementById('floatingProgressBox')
+
+      if (floatingProgressBox && floatingProgressBox.parentElement !== document.body) {
+        document.body.appendChild(floatingProgressBox)
+        floatingProgressWasMovedToBody = true
+      }
+
       const floatingProgressCurrent = document.getElementById('floatingProgressCurrent')
       const floatingProgressTotal = document.getElementById('floatingProgressTotal')
       const floatingProgressBar = document.getElementById('floatingProgressBar')
@@ -2133,10 +2150,6 @@ const totalBeginnerCategories = beginnerCategories.length
 
       function getProgressStickyTop() {
         return window.innerWidth <= 980 ? 76 : 90
-      }
-
-      function stopFloatingProgress() {
-        floatingProgressBox?.classList.add('hidden')
       }
 
       function syncFloatingProgress(current, percent) {
