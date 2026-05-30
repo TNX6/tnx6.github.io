@@ -988,20 +988,6 @@ const metadata = {
       filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.35));
     }
 
-    .tnx-export-clone {
-      position: fixed !important;
-      left: -99999px !important;
-      top: 0 !important;
-      width: 800px !important;
-      min-width: 800px !important;
-      max-width: 800px !important;
-      height: 360px !important;
-      opacity: 1 !important;
-      animation: none !important;
-      transform: none !important;
-      pointer-events: none !important;
-    }
-
     @media (max-width: 1100px) {
       .tnx-vault-layout {
         grid-template-columns: 1fr;
@@ -1741,7 +1727,7 @@ const metadata = {
           : []
 
         const badgeHtml = equippedBadges.map((badge) => {
-          return `<img src="${esc(safeUrl(badge.url))}" alt="${esc(badge.name)}" loading="lazy" crossorigin="anonymous" />`
+          return `<img src="${esc(safeUrl(badge.url))}" alt="${esc(badge.name)}" loading="lazy" />`
         }).join('')
 
         const fileName = `tnx6-card-${String(details.userLogin || details.userName || 'user').replace(/[^a-zA-Z0-9_-]/g, '')}.png`
@@ -1760,8 +1746,6 @@ const metadata = {
               class="tnx-user-card-preview"
               dir="ltr"
               data-export-card
-              data-preload-banner="${esc(bannerUrl)}"
-              data-preload-profile="${esc(profileUrl)}"
               style="background: linear-gradient(to bottom, ${baseColor} 70%, ${darkColor} 100%); --profile-border: ${baseColor};"
             >
               <div
@@ -1805,62 +1789,174 @@ const metadata = {
         `
       }
 
-      function addImageToElementBackground(element, url, altText = '') {
-        if (!element || !url) return
+      async function imageToDataUrl(url) {
+        if (!url || typeof url !== 'string') return ''
+        if (url.startsWith('data:')) return url
 
-        element.style.backgroundImage = 'none'
+        try {
+          const response = await fetch(url, { mode: 'cors', credentials: 'omit' })
+          if (!response.ok) return ''
 
-        const img = document.createElement('img')
-        img.src = url
-        img.alt = altText
-        img.crossOrigin = 'anonymous'
-        img.referrerPolicy = 'no-referrer'
-        img.style.display = 'block'
-        img.style.width = '100%'
-        img.style.height = '100%'
-        img.style.objectFit = 'cover'
+          const blob = await response.blob()
 
-        element.innerHTML = ''
-        element.appendChild(img)
+          return await new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onload = () => resolve(String(reader.result || ''))
+            reader.onerror = () => reject(reader.error)
+            reader.readAsDataURL(blob)
+          })
+        } catch (error) {
+          console.warn('imageToDataUrl failed:', url, error)
+          return ''
+        }
       }
 
-      function createExportClone(card) {
-        const clone = card.cloneNode(true)
+      async function inlineCardImages(root) {
+        const imgs = Array.from(root.querySelectorAll('img'))
 
-        clone.classList.add('tnx-export-clone')
-        clone.style.position = 'fixed'
-        clone.style.left = '-99999px'
-        clone.style.top = '0'
-        clone.style.width = '800px'
-        clone.style.minWidth = '800px'
-        clone.style.maxWidth = '800px'
-        clone.style.height = '360px'
-        clone.style.opacity = '1'
-        clone.style.animation = 'none'
-        clone.style.transform = 'none'
+        await Promise.all(imgs.map(async (img) => {
+          const src = img.getAttribute('src') || ''
+          if (!src || src.startsWith('data:')) return
 
-        const bannerUrl = card.dataset.preloadBanner || ''
-        const profileUrl = card.dataset.preloadProfile || ''
+          const dataUrl = await imageToDataUrl(src)
 
-        const banner = clone.querySelector('.tnx-card-banner')
-        const profile = clone.querySelector('.tnx-card-profile-picture')
+          if (dataUrl) {
+            img.setAttribute('src', dataUrl)
+            img.removeAttribute('crossorigin')
+          }
+        }))
 
-        addImageToElementBackground(banner, bannerUrl, '')
-        addImageToElementBackground(profile, profileUrl, 'profile')
+        const bgElements = Array.from(root.querySelectorAll('[style*="background-image"]'))
 
-        document.body.appendChild(clone)
-        return clone
+        await Promise.all(bgElements.map(async (el) => {
+          const style = el.getAttribute('style') || ''
+          const match = style.match(/background-image\s*:\s*url\(\s*['"]?([^'")]+)['"]?\s*\)/i)
+
+          if (!match || !match[1]) return
+
+          const url = match[1].trim()
+          if (!url || url === 'none' || url.startsWith('data:')) return
+
+          const dataUrl = await imageToDataUrl(url)
+
+          if (dataUrl) {
+            const newStyle = style.replace(
+              /background-image\s*:\s*url\(\s*['"]?[^'")]+['"]?\s*\)/i,
+              `background-image: url('${dataUrl}')`
+            )
+
+            el.setAttribute('style', newStyle)
+          }
+        }))
       }
 
-      async function waitForCloneImages(root) {
+      async function fetchIconSvgText(iconName) {
+        try {
+          const parts = String(iconName || '').split(':')
+          if (parts.length !== 2) return ''
+
+          const prefix = parts[0].trim()
+          const name = parts[1].trim()
+
+          if (!prefix || !name) return ''
+
+          const url = `https://api.iconify.design/${prefix}/${name}.svg`
+          const res = await fetch(url, { mode: 'cors' })
+
+          if (!res.ok) return ''
+          return await res.text()
+        } catch (error) {
+          console.warn('fetchIconSvgText failed:', iconName, error)
+          return ''
+        }
+      }
+
+      function makeFallbackIcon(iconName, computed) {
+        const span = document.createElement('span')
+
+        if (String(iconName).includes('gold')) {
+          span.textContent = '▴'
+        } else if (String(iconName).includes('star')) {
+          span.textContent = '✦'
+        } else if (String(iconName).includes('account')) {
+          span.textContent = '●'
+        } else if (String(iconName).includes('store')) {
+          span.textContent = '■'
+        } else {
+          span.textContent = '●'
+        }
+
+        span.style.display = 'inline-flex'
+        span.style.alignItems = 'center'
+        span.style.justifyContent = 'center'
+        span.style.width = '1em'
+        span.style.height = '1em'
+        span.style.color = computed?.color || 'currentColor'
+        span.style.marginRight = computed?.marginRight || '0.35rem'
+        span.style.marginLeft = computed?.marginLeft || '0'
+        span.style.verticalAlign = 'middle'
+        span.style.flexShrink = '0'
+        span.style.lineHeight = '1'
+
+        return span
+      }
+
+      async function inlineIconifyIcons(root) {
+        const icons = Array.from(root.querySelectorAll('iconify-icon'))
+
+        await Promise.all(icons.map(async (icon) => {
+          const iconName = icon.getAttribute('icon') || ''
+          const computed = window.getComputedStyle(icon)
+
+          const svgText = await fetchIconSvgText(iconName)
+
+          if (!svgText) {
+            icon.replaceWith(makeFallbackIcon(iconName, computed))
+            return
+          }
+
+          const parser = new DOMParser()
+          const svgDoc = parser.parseFromString(svgText, 'image/svg+xml')
+          const svg = svgDoc.documentElement
+
+          if (!svg || svg.tagName.toLowerCase() !== 'svg') {
+            icon.replaceWith(makeFallbackIcon(iconName, computed))
+            return
+          }
+
+          const wrapper = document.createElement('span')
+          wrapper.style.display = 'inline-flex'
+          wrapper.style.alignItems = 'center'
+          wrapper.style.justifyContent = 'center'
+          wrapper.style.width = '1em'
+          wrapper.style.height = '1em'
+          wrapper.style.color = computed.color || 'currentColor'
+          wrapper.style.marginRight = computed.marginRight || '0'
+          wrapper.style.marginLeft = computed.marginLeft || '0'
+          wrapper.style.verticalAlign = 'middle'
+          wrapper.style.flexShrink = '0'
+
+          svg.setAttribute('fill', 'currentColor')
+          svg.style.width = '100%'
+          svg.style.height = '100%'
+          svg.style.display = 'block'
+
+          wrapper.appendChild(svg)
+          icon.replaceWith(wrapper)
+        }))
+      }
+
+      function waitForCloneImages(root) {
         const images = Array.from(root.querySelectorAll('img'))
 
-        await Promise.all(images.map((img) => {
+        return Promise.all(images.map((img) => {
           if (img.complete && img.naturalWidth > 0) return Promise.resolve()
 
           return new Promise((resolve) => {
-            img.onload = resolve
-            img.onerror = resolve
+            const done = () => resolve()
+            img.addEventListener('load', done, { once: true })
+            img.addEventListener('error', done, { once: true })
+            window.setTimeout(done, 8000)
           })
         }))
       }
@@ -1868,14 +1964,14 @@ const metadata = {
       async function downloadUserCard(button) {
         if (!button) return
 
-        const wrapper = button.closest('.tnx-card-download-wrap')
-        const card = wrapper?.querySelector('[data-export-card]')
+        const wrapperEl = button.closest('.tnx-card-download-wrap')
+        const originalCard = wrapperEl?.querySelector('[data-export-card]')
         const fileName = button.dataset.downloadUserCard || 'tnx6-card.png'
 
-        if (!card) return
+        if (!originalCard) return
 
         const oldText = button.textContent
-        let clone = null
+        let cloneHost = null
 
         try {
           button.disabled = true
@@ -1886,15 +1982,38 @@ const metadata = {
             throw new Error('html2canvas is not loaded')
           }
 
-          clone = createExportClone(card)
+          cloneHost = document.createElement('div')
+          cloneHost.setAttribute('aria-hidden', 'true')
+          cloneHost.style.position = 'fixed'
+          cloneHost.style.left = '-99999px'
+          cloneHost.style.top = '0'
+          cloneHost.style.width = '800px'
+          cloneHost.style.height = '360px'
+          cloneHost.style.pointerEvents = 'none'
+          cloneHost.style.zIndex = '-1'
+          cloneHost.style.background = 'transparent'
 
+          const clone = originalCard.cloneNode(true)
+          clone.style.opacity = '1'
+          clone.style.animation = 'none'
+          clone.style.transform = 'none'
+          clone.style.width = '800px'
+          clone.style.minWidth = '800px'
+          clone.style.maxWidth = '800px'
+          clone.style.height = '360px'
+
+          cloneHost.appendChild(clone)
+          document.body.appendChild(cloneHost)
+
+          await inlineCardImages(clone)
+          await inlineIconifyIcons(clone)
           await waitForCloneImages(clone)
 
           if (document.fonts?.ready) {
             await document.fonts.ready
           }
 
-          await new Promise((resolve) => setTimeout(resolve, 250))
+          await new Promise((resolve) => window.setTimeout(resolve, 250))
 
           const canvas = await window.html2canvas(clone, {
             backgroundColor: null,
@@ -1927,16 +2046,27 @@ const metadata = {
         } catch (error) {
           console.error('Failed to download user card', error)
 
-          button.textContent = 'تعذر تنزيل الصورة'
+          const msg = String((error && error.message) || '')
+          let failText = 'تعذر تنزيل الصورة'
+
+          if (msg.includes('Tainted') || msg.includes('SecurityError')) {
+            failText = 'الصور محمية'
+          } else if (msg.includes('html2canvas')) {
+            failText = 'مكتبة الصورة لم تُحمَّل'
+          }
+
+          button.textContent = failText
           button.classList.add('is-error')
           button.disabled = false
 
           addTimer(window.setTimeout(() => {
             button.textContent = oldText
             button.classList.remove('is-error')
-          }, 1800))
+          }, 2500))
         } finally {
-          if (clone) clone.remove()
+          if (cloneHost && cloneHost.parentElement) {
+            cloneHost.remove()
+          }
         }
       }
 
