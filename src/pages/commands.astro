@@ -6,85 +6,1745 @@ import path from 'path'
 const metadata = {
   title: 'Commands — TNX6',
   ignoreTitleTemplate: true,
+  description: 'كل أوامر مجتمع TNX6 في مكان واحد.',
 }
 
-let commands = []
-try {
-  const filePath = path.resolve('public/api/commands.json')
-  const data = fs.readFileSync(filePath, 'utf-8')
-  commands = JSON.parse(data)
-} catch (e) {
-  console.error('Fehler beim Laden der commands.json:', e)
+function readJsonFile(relativePath, fallback) {
+  try {
+    const filePath = path.resolve(relativePath)
+
+    if (!fs.existsSync(filePath)) {
+      return fallback
+    }
+
+    const data = fs.readFileSync(filePath, 'utf-8')
+    return JSON.parse(data)
+  } catch (error) {
+    console.error(`Failed to load ${relativePath}:`, error)
+    return fallback
+  }
 }
+
+const loadedCommands = readJsonFile('public/api/commands.json', [])
+const rawCommands = Array.isArray(loadedCommands) ? loadedCommands : []
+
+/*
+  إعدادات صفحة الأوامر.
+
+  القاعدة:
+  - أي أمر Enabled: false ما يظهر.
+  - أي أمر داخل قروبات المودز أو ردود البوت ما يظهر.
+  - أي أمر بدون ! ما يظهر غالبًا لأنه يكون رد تلقائي وليس أمر فعلي.
+  - أي أمر داخلي أو إداري ينحذف من الموقع حتى لو كان شغال في Streamer.bot.
+*/
+
+const DEFAULT_CONFIG = {
+  hideDisabled: true,
+  onlyBangCommands: true,
+
+  hiddenGroups: [
+    'MOD TOOLS',
+    'مودز',
+    'ردود البوت',
+    'Bot Responses',
+    'Admin',
+    'Admins',
+    'Moderator',
+    'Moderators',
+  ],
+
+  hiddenGroupKeywords: [
+    'mod tools',
+    'admin',
+    'moderator',
+    'مودز',
+    'ردود البوت',
+    'bot responses',
+  ],
+
+  hiddenNames: [
+    '[HLG] - High-Low Setup',
+
+    '[Hot Potato] Exclude User',
+
+    '[LOYALTY POINTS] Add Points To All Present Viewers',
+    '[LOYALTY POINTS] Add Points To All Users',
+    '[LOYALTY POINTS] Add Points To User',
+    '[LOYALTY POINTS] Remove Points From User',
+    "[LOYALTY POINTS] Multiply All User's Points",
+    '[LOYALTY POINTS] Collect Taxes',
+    '[LOYALTY POINTS] Enable Happy Hour',
+
+    '!mailbackup',
+    '!ارسل للكل',
+    '!حذف هدية النظام',
+    '!هدية للكل',
+    'مستخدمين البريد',
+    'مسح البريد',
+
+    'test mod',
+    'خصومات',
+    'انتهاء الخصومات',
+  ],
+
+  hiddenNameKeywords: [
+    'setup',
+    'backup',
+    'exclude user',
+
+    'add points',
+    'remove points',
+    'multiply all',
+    'collect taxes',
+    'happy hour',
+
+    'add blacklisted',
+    'remove blacklist',
+    'blacklist',
+    'whitelist',
+    'custom command',
+    'add custom',
+    'edit custom',
+    'remove custom',
+    'delete custom',
+
+    'change reward',
+    'reward cooldown',
+    'reward cost',
+    'reward max',
+    'reward prompt',
+    'reward title',
+    'disable reward',
+    'enable reward',
+    'pause reward',
+    'unpause reward',
+
+    'create poll',
+    'end poll',
+    'create prediction',
+    'cancel prediction',
+    'lock prediction',
+    'resolve prediction',
+
+    'change scene',
+    'browser sources',
+    'audio sources',
+    'obs scenes',
+
+    'ban user',
+    'timeout user',
+    'permit user',
+
+    'run ads',
+    'snooze ad',
+    'pre-roll',
+    'preroll',
+
+    'follow attack',
+    'botted followers',
+    'hate raid',
+
+    'start quiz',
+    'end quiz',
+    'terminate quiz',
+
+    'counter increase',
+    'counter decrease',
+    'counter set',
+    'game add',
+    'game remove',
+
+    'ارسل للكل',
+    'أرسل للكل',
+    'هدية للكل',
+    'حذف هدية النظام',
+    'مستخدمين البريد',
+    'اصحاب البريد',
+    'أصحاب البريد',
+    'مسح البريد',
+    'بدء المزاد',
+    'تغير اللعبة',
+    'تغيير اللعبة',
+    'انتهاء الخصومات',
+    'بدء الخصومات',
+  ],
+
+  hiddenAliases: [
+    '!highlowsetup',
+    '!hotpotato exclude',
+
+    '!addToAllPresent',
+    '!addPointsToAllPresent',
+    '!addPointsToPresent',
+    '!addToViewers',
+    '!addPointsToViewers',
+    '!addToAllUsers',
+    '!addPointsToAllUsers',
+    '!addPoints',
+    '!pointsAdd',
+    '!اضف نقاط',
+    '!removePoints',
+    '!pointsRemove',
+    '!multiplyAllUsersPoints',
+    '!collectTaxes',
+    '!taxesCollect',
+    '!taxCollection',
+    '!pointsHappyHour',
+
+    '!mailbackup',
+    '!mailbroadcast',
+    '!ارسل للكل',
+    '!ارسل بريد للكل',
+    '!systemgift',
+    '!هدية للكل',
+    '!systemgiftundo',
+    '!حذف هدية النظام',
+    '!mailusers',
+    '!مستخدمين البريد',
+    '!اصحاب البريد',
+    '!أصحاب البريد',
+    '!mailclear',
+    '!Mailclear',
+    '!مسح البريد',
+    '!مسح الرسائل',
+
+    '!banWord',
+    '!blacklistWord',
+    '!addCom',
+    '!addCommand',
+    '!commandAdd',
+    '!comAdd',
+    '!editCommand',
+    '!editCom',
+    '!comEdit',
+    '!commandEdit',
+    '!removeCommand',
+    '!removeCom',
+    '!comRemove',
+    '!commandRemove',
+    '!deleteCom',
+    '!delCom',
+    '!comDel',
+    '!deleteCommand',
+
+    '!addTag',
+    '!tagAdd',
+    '!removeTag',
+    '!tagRemove',
+    '!deleteTag',
+    '!tagDelete',
+
+    '!addUrl',
+    '!urlAdd',
+    '!addLink',
+    '!linkAdd',
+    '!whitelistUrl',
+    '!whitelistLink',
+    '!removeUrl',
+    '!removeLink',
+    '!deleteUrl',
+    '!deleteLink',
+    '!delUrl',
+    '!delLink',
+    '!urlAddUser',
+    '!urlRemoveUser',
+
+    '!ban',
+    '!timeout',
+    '!to',
+    '!permit',
+
+    '!rewardCooldown',
+    '!cooldownReward',
+    '!rewardCost',
+    '!changeRewardCost',
+    '!setRewardCost',
+    '!rewardPrice',
+    '!rewardMaxPerStream',
+    '!rewardMax',
+    '!rewardLimit',
+    '!limitReward',
+    '!rewardMaxPerUserPerStream',
+    '!rewardMaxUser',
+    '!rewardLimitUser',
+    '!maxUserReward',
+    '!rewardPrompt',
+    '!changeRewardPrompt',
+    '!setRewardPrompt',
+    '!rewardDescription',
+    '!setRewardDescription',
+    '!changeRewardDescription',
+    '!rewardTitle',
+    '!changeRewardTitle',
+    '!setRewardTitle',
+    '!rewardName',
+    '!changeRewardName',
+    '!setRewardName',
+    '!rewardDisable',
+    '!rewardsDisable',
+    '!disableReward',
+    '!disableRewards',
+    '!enableRewards',
+    '!enableReward',
+    '!rewardEnable',
+    '!rewardsEnable',
+    '!pauseRewards',
+    '!pauseReward',
+    '!rewardPause',
+    '!rewardsPause',
+    '!unpauseReward',
+    '!unpauseRewards',
+    '!rewardUnpause',
+    '!rewardsUnpause',
+
+    '!createPoll',
+    '!pollCreate',
+    '!poll',
+    '!endPoll',
+    '!pollEnd',
+    '!createPrediction',
+    '!prediction',
+    '!predictionCreate',
+    '!cancelPrediction',
+    '!predictionCancel',
+    '!lock',
+    '!lockPrediction',
+    '!predictionLock',
+    '!resolvePrediction',
+    '!predictionResolve',
+    '!resolve',
+
+    '!scene',
+    '!changeScene',
+    '!setScene',
+    '!scenes',
+    '!getScenes',
+    '!obsScenes',
+    '!refreshBrowserSources',
+    '!browserSourceRefresh',
+    '!refreshAudio',
+    '!audioRefresh',
+    '!refAudio',
+    '!redAud',
+    '!audioRef',
+    '!audRef',
+
+    '!runAds',
+    '!adsRun',
+    '!playAds',
+    '!snooze',
+    '!adSnooze',
+    '!snoozeAd',
+    '!prerolls',
+    '!prerollAds',
+    '!prerollTime',
+
+    '!enableFollowAttackProtection',
+    '!FollowAttackProtectionOn',
+    '!disableFollowAttackProtection',
+    '!FollowAttackProtectionOff',
+    '!removeBottedFollowers',
+    '!removeLatestFollowers',
+    '!hateRaid',
+    '!hateRaidProtection',
+
+    '!endStream',
+    '!streamEnd',
+
+    '!بدء المزاد',
+    '!تغير اللعبة',
+    '!بدء لعبة الورق',
+    '!mod',
+    '!انتهاء الخصومات',
+    '!بدء الخصومات',
+  ],
+
+  hiddenAliasKeywords: [
+    'addpoints',
+    'pointadd',
+    'pointsadd',
+    'removepoints',
+    'pointsremove',
+    'multiplyall',
+    'collecttax',
+    'happyhour',
+
+    'backup',
+    'setup',
+    'exclude',
+    'systemgift',
+    'mailbroadcast',
+    'mailusers',
+    'mailclear',
+
+    'banword',
+    'blacklist',
+    'whitelist',
+    'addcom',
+    'addcommand',
+    'editcommand',
+    'removecommand',
+    'deletecommand',
+
+    'reward',
+    'prediction',
+    'pollcreate',
+    'createpoll',
+    'pollend',
+    'endpoll',
+
+    'changescene',
+    'setscene',
+    'obsscenes',
+    'refreshbrowser',
+    'refreshaudio',
+
+    'runads',
+    'adsrun',
+    'snoozead',
+    'preroll',
+
+    'followattack',
+    'bottedfollowers',
+    'hateraid',
+
+    'اضف نقاط',
+    'حذف',
+    'مسح البريد',
+    'مستخدمين البريد',
+    'اصحاب البريد',
+    'ارسل للكل',
+    'هدية للكل',
+    'بدء المزاد',
+    'تغير اللعبة',
+    'تغيير اللعبة',
+    'انتهاء الخصومات',
+    'بدء الخصومات',
+  ],
+
+  forceVisibleAliases: [
+    '!points',
+    '!نقاط',
+    '!نقاطي',
+    '!leaderboardPoints',
+    '!pointsLeaderboard',
+    '!ليدربورد',
+
+    '!mail',
+    '!بريد',
+    '!البريد',
+    '!هدية',
+    '!gift',
+    '!قبول الهدية',
+    '!قبول الهديه',
+    '!رفض الهدية',
+    '!رفض الهديه',
+    '!اوامر البريد',
+    '!أوامر البريد',
+
+    '!clip',
+    '!lclip',
+    '!auction',
+    '!مزاد',
+
+    '!بطاطا',
+    '!الفاشلين',
+    '!pass',
+
+    '!ffa',
+    '!فاميلي فيود',
+
+    '!high',
+    '!low',
+    '!equal',
+    '!alltime',
+    '!personalstats',
+    '!session',
+
+    '!duel',
+    '!accept',
+    '!قبول',
+    '!gamble',
+    '!roulette',
+    '!scratchCard',
+    '!buyScratchCards',
+    '!givePoints',
+    '!pointsGive',
+    '!transferPoints',
+    '!pointsTransfer',
+    '!تحويل النقاط',
+
+    '!تحدي',
+  ],
+
+  groupLabels: {
+    'LOYALTY POINTS': 'النقاط',
+    Mailbox: 'البريد والهدايا',
+    'Hot Potato': 'البطاطا',
+    'Family Feud': 'فاميلي فيود',
+    cowboy: 'المبارزة',
+    Clip: 'الكلبات',
+    'Channel Reward Auction': 'المزاد',
+    '[HLG] - High-Low Game': 'High Low',
+    'MOVIE & TV SHOW QUIZ': 'اختبار الأفلام والمسلسلات',
+    Others: 'أوامر عامة',
+    'utilities & tools ': 'أدوات عامة',
+    'utilities & tools': 'أدوات عامة',
+    'Per Game DeathCounter (Single)': 'عداد الموتات',
+    'لعبة الحياة الواقعية': 'لعبة الحياة الواقعية',
+  },
+
+  groupOrder: [
+    'أوامر عامة',
+    'النقاط',
+    'البريد والهدايا',
+    'المزاد',
+    'الكلبات',
+    'High Low',
+    'فاميلي فيود',
+    'البطاطا',
+    'المبارزة',
+    'عداد الموتات',
+    'اختبار الأفلام والمسلسلات',
+    'لعبة الحياة الواقعية',
+  ],
+}
+
+/*
+  اختياري مستقبلًا:
+  تقدر تسوي ملف public/api/commands-page-config.json
+  وتحط فيه hiddenGroups / hiddenAliases / forceVisibleAliases بدون تعديل الصفحة.
+*/
+
+const externalConfig = readJsonFile('public/api/commands-page-config.json', {})
+
+function asArray(value) {
+  return Array.isArray(value) ? value : []
+}
+
+const siteConfig = {
+  ...DEFAULT_CONFIG,
+  ...externalConfig,
+  hiddenGroups: [...DEFAULT_CONFIG.hiddenGroups, ...asArray(externalConfig.hiddenGroups)],
+  hiddenGroupKeywords: [...DEFAULT_CONFIG.hiddenGroupKeywords, ...asArray(externalConfig.hiddenGroupKeywords)],
+  hiddenNames: [...DEFAULT_CONFIG.hiddenNames, ...asArray(externalConfig.hiddenNames)],
+  hiddenNameKeywords: [...DEFAULT_CONFIG.hiddenNameKeywords, ...asArray(externalConfig.hiddenNameKeywords)],
+  hiddenAliases: [...DEFAULT_CONFIG.hiddenAliases, ...asArray(externalConfig.hiddenAliases)],
+  hiddenAliasKeywords: [...DEFAULT_CONFIG.hiddenAliasKeywords, ...asArray(externalConfig.hiddenAliasKeywords)],
+  forceVisibleAliases: [...DEFAULT_CONFIG.forceVisibleAliases, ...asArray(externalConfig.forceVisibleAliases)],
+  groupLabels: {
+    ...DEFAULT_CONFIG.groupLabels,
+    ...(externalConfig.groupLabels || {}),
+  },
+  groupOrder: [...DEFAULT_CONFIG.groupOrder, ...asArray(externalConfig.groupOrder)],
+}
+
+function cleanText(value) {
+  return String(value ?? '').trim().replace(/\s+/g, ' ')
+}
+
+function normalizeText(value) {
+  return cleanText(value)
+    .toLowerCase()
+    .replace(/[ًٌٍَُِّْـ]/g, '')
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function makeNormalizedSet(items) {
+  return new Set(items.map((item) => normalizeText(item)).filter(Boolean))
+}
+
+const hiddenGroups = makeNormalizedSet(siteConfig.hiddenGroups)
+const hiddenGroupKeywords = siteConfig.hiddenGroupKeywords.map((item) => normalizeText(item)).filter(Boolean)
+const hiddenNames = makeNormalizedSet(siteConfig.hiddenNames)
+const hiddenNameKeywords = siteConfig.hiddenNameKeywords.map((item) => normalizeText(item)).filter(Boolean)
+const hiddenAliases = makeNormalizedSet(siteConfig.hiddenAliases)
+const hiddenAliasKeywords = siteConfig.hiddenAliasKeywords.map((item) => normalizeText(item)).filter(Boolean)
+const forceVisibleAliases = makeNormalizedSet(siteConfig.forceVisibleAliases)
+
+function isEnabled(command) {
+  if (!siteConfig.hideDisabled) return true
+
+  return (
+    command?.Enabled === true ||
+    command?.Enabled === 'true' ||
+    command?.enabled === true ||
+    command?.enabled === 'true'
+  )
+}
+
+function isWebsiteHidden(command) {
+  return (
+    command?.WebsiteHidden === true ||
+    command?.HiddenOnWebsite === true ||
+    command?.ShowOnWebsite === false ||
+    command?.Public === false ||
+    command?.public === false
+  )
+}
+
+function getRawGroup(command) {
+  return cleanText(command?.Group || command?.group || 'أوامر عامة')
+}
+
+function getDisplayGroup(command) {
+  const rawGroup = getRawGroup(command)
+  return siteConfig.groupLabels[rawGroup] || rawGroup || 'أوامر عامة'
+}
+
+function getRawName(command) {
+  return cleanText(command?.Name || command?.name || 'أمر بدون اسم')
+}
+
+function getDisplayName(command) {
+  return getRawName(command)
+    .replace(/^\[[^\]]+\]\s*-\s*/g, '')
+    .replace(/^\[[^\]]+\]\s*/g, '')
+    .replace(/^Game\s*-\s*/i, '')
+    .replace(/^Scoreboard\s*-\s*/i, '')
+    .trim()
+}
+
+function isGroupHidden(group) {
+  const normalizedGroup = normalizeText(group)
+
+  if (hiddenGroups.has(normalizedGroup)) return true
+
+  return hiddenGroupKeywords.some((keyword) => normalizedGroup.includes(keyword))
+}
+
+function isNameHidden(name) {
+  const normalizedName = normalizeText(name)
+
+  if (hiddenNames.has(normalizedName)) return true
+
+  return hiddenNameKeywords.some((keyword) => normalizedName.includes(keyword))
+}
+
+function getRawAliases(command) {
+  const aliases = Array.isArray(command?.Commands) ? command.Commands : []
+  const seen = new Set()
+  const result = []
+
+  for (const alias of aliases) {
+    const cleanAlias = cleanText(alias)
+    const normalizedAlias = normalizeText(cleanAlias)
+
+    if (!cleanAlias || seen.has(normalizedAlias)) continue
+
+    seen.add(normalizedAlias)
+    result.push(cleanAlias)
+  }
+
+  return result
+}
+
+function startsWithCommandPrefix(alias) {
+  return cleanText(alias).startsWith('!')
+}
+
+function isAliasHidden(alias) {
+  const normalizedAlias = normalizeText(alias)
+
+  if (!normalizedAlias) return true
+  if (forceVisibleAliases.has(normalizedAlias)) return false
+  if (hiddenAliases.has(normalizedAlias)) return true
+
+  if (siteConfig.onlyBangCommands && !startsWithCommandPrefix(alias)) {
+    return true
+  }
+
+  return hiddenAliasKeywords.some((keyword) => normalizedAlias.includes(keyword))
+}
+
+function getVisibleAliases(command) {
+  return getRawAliases(command).filter((alias) => !isAliasHidden(alias))
+}
+
+function classifyCommand(command) {
+  if (!command || typeof command !== 'object') {
+    return {
+      show: false,
+      reason: 'invalid',
+      visibleAliases: [],
+    }
+  }
+
+  if (!isEnabled(command)) {
+    return {
+      show: false,
+      reason: 'disabled',
+      visibleAliases: [],
+    }
+  }
+
+  if (isWebsiteHidden(command)) {
+    return {
+      show: false,
+      reason: 'website-hidden',
+      visibleAliases: [],
+    }
+  }
+
+  const rawGroup = getRawGroup(command)
+  const rawName = getRawName(command)
+
+  if (isGroupHidden(rawGroup)) {
+    return {
+      show: false,
+      reason: 'hidden-group',
+      visibleAliases: [],
+    }
+  }
+
+  if (isNameHidden(rawName)) {
+    return {
+      show: false,
+      reason: 'hidden-name',
+      visibleAliases: [],
+    }
+  }
+
+  const visibleAliases = getVisibleAliases(command)
+
+  if (visibleAliases.length === 0) {
+    return {
+      show: false,
+      reason: 'no-visible-aliases',
+      visibleAliases: [],
+    }
+  }
+
+  return {
+    show: true,
+    reason: 'visible',
+    visibleAliases,
+  }
+}
+
+const preparedCommands = rawCommands.map((command) => ({
+  command,
+  ...classifyCommand(command),
+}))
+
+const commands = preparedCommands
+  .filter((item) => item.show)
+  .map((item) => {
+    const command = item.command
+    const displayGroup = getDisplayGroup(command)
+    const displayName = getDisplayName(command)
+    const visibleAliases = item.visibleAliases
+    const primaryAlias = visibleAliases[0] || ''
+
+    return {
+      Id: cleanText(command.Id || command.id || `${displayGroup}-${displayName}-${primaryAlias}`),
+      RawName: getRawName(command),
+      DisplayName: displayName,
+      RawGroup: getRawGroup(command),
+      DisplayGroup: displayGroup,
+      VisibleAliases: visibleAliases,
+      PrimaryAlias: primaryAlias,
+      SearchText: normalizeText(`${displayName} ${getRawName(command)} ${displayGroup} ${getRawGroup(command)} ${visibleAliases.join(' ')}`),
+    }
+  })
 
 const groups = {}
-for (const cmd of commands) {
-  if (!groups[cmd.Group]) groups[cmd.Group] = []
-  groups[cmd.Group].push(cmd)
+
+for (const command of commands) {
+  if (!groups[command.DisplayGroup]) {
+    groups[command.DisplayGroup] = []
+  }
+
+  groups[command.DisplayGroup].push(command)
 }
+
+for (const groupName of Object.keys(groups)) {
+  groups[groupName].sort((a, b) => {
+    return a.DisplayName.localeCompare(b.DisplayName, 'ar')
+  })
+}
+
+function getGroupSortIndex(group) {
+  const index = siteConfig.groupOrder.indexOf(group)
+  return index === -1 ? 999 : index
+}
+
+const groupNames = Object.keys(groups).sort((a, b) => {
+  const indexA = getGroupSortIndex(a)
+  const indexB = getGroupSortIndex(b)
+
+  if (indexA !== indexB) return indexA - indexB
+
+  return a.localeCompare(b, 'ar')
+})
+
+const importantAliases = [
+  '!نقاط',
+  '!نقاطي',
+  '!points',
+  '!ليدربورد',
+  '!بريد',
+  '!mail',
+  '!هدية',
+  '!gift',
+  '!قبول الهدية',
+  '!رفض الهدية',
+  '!clip',
+  '!مزاد',
+  '!بطاطا',
+  '!فاميلي فيود',
+  '!تحدي',
+]
+
+const importantAliasSet = makeNormalizedSet(importantAliases)
+const featuredCommands = []
+const featuredSeen = new Set()
+
+for (const command of commands) {
+  const hasImportantAlias = command.VisibleAliases.some((alias) => importantAliasSet.has(normalizeText(alias)))
+
+  if (!hasImportantAlias) continue
+
+  const key = normalizeText(command.PrimaryAlias || command.DisplayName)
+  if (featuredSeen.has(key)) continue
+
+  featuredSeen.add(key)
+  featuredCommands.push(command)
+
+  if (featuredCommands.length >= 8) break
+}
+
+const totalRawCommands = rawCommands.length
+const totalVisibleCommands = commands.length
+const totalAliases = commands.reduce((sum, command) => sum + command.VisibleAliases.length, 0)
+const totalGroups = groupNames.length
+const totalDisabled = preparedCommands.filter((item) => item.reason === 'disabled').length
+const totalHidden = preparedCommands.filter((item) => item.reason !== 'visible' && item.reason !== 'disabled').length
 ---
 
 <Layout metadata={metadata}>
-  <section class="max-w-5xl mx-auto py-16 px-6 text-white">
-    <h1 class="text-5xl font-extrabold text-center mb-14 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(198,164,79,0.5)] tracking-wider">
-      COMMANDS
-    </h1>
+  <main class="tnx-commands-page" dir="rtl">
+    <div class="tnx-commands-bg"></div>
+    <div class="tnx-commands-grid"></div>
 
-    <div class="mb-10">
-      <input
-        id="commandSearch"
-        type="text"
-        placeholder="Search commands..."
-        class="w-full px-4 py-3 rounded-lg bg-black/40 border border-[#c6a44f]/40 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#c6a44f]"
-      />
-    </div>
-
-    <div id="commandList">
-      {Object.keys(groups).length === 0 ? (
-        <p class="text-gray-400 text-center">No commands found.</p>
-      ) : (
-        Object.keys(groups).map(group => (
-          <div class="mb-10 group-block bg-gradient-to-br from-[#0a0a0c]/80 to-[#1a1408]/80 rounded-2xl p-6 border border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.15)] backdrop-blur-md">
-            <h2 class="text-3xl font-bold text-center mb-6 text-[#f7e6ac] uppercase tracking-wide">{group}</h2>
-            <ul class="space-y-3 group-commands">
-              {groups[group].map(cmd => (
-                <li class="border border-[#c6a44f]/20 rounded-xl p-4 bg-black/30 backdrop-blur-sm command-item">
-                  <div class="font-bold mb-1 text-[#f7e6ac] text-lg command-name">{cmd.Name}</div>
-                  <div class="text-gray-300 text-sm flex flex-wrap gap-2 command-aliases">
-                    {cmd.Commands?.map(c => (
-                      <span class="bg-[#c6a44f]/15 text-[#f7e6ac] px-3 py-1 rounded-md border border-[#c6a44f]/30 text-xs font-mono">{c}</span>
-                    ))}
-                  </div>
-                </li>
-              ))}
-            </ul>
+    <section class="tnx-commands-wrap">
+      <header class="tnx-commands-hero">
+        <div class="tnx-commands-hero-copy">
+          <div class="tnx-commands-kicker">
+            <span></span>
+            TNX6 COMMANDS
           </div>
-        ))
+
+          <h1>أوامر البث</h1>
+
+          <p>
+            الأوامر الظاهرة هنا مخصصة للمشاهدين. أوامر المودز، الردود التلقائية، والأوامر المطفيّة داخل Streamer.bot مخفية من الموقع.
+          </p>
+        </div>
+
+        <div class="tnx-commands-stats" aria-label="إحصائيات الأوامر">
+          <div>
+            <strong>{totalVisibleCommands}</strong>
+            <span>أمر ظاهر</span>
+          </div>
+
+          <div>
+            <strong>{totalGroups}</strong>
+            <span>قسم</span>
+          </div>
+
+          <div>
+            <strong>{totalAliases}</strong>
+            <span>اختصار</span>
+          </div>
+
+          <div>
+            <strong>{totalDisabled + totalHidden}</strong>
+            <span>مخفي</span>
+          </div>
+        </div>
+      </header>
+
+      {featuredCommands.length > 0 && (
+        <section class="tnx-commands-featured" aria-label="أهم الأوامر">
+          <div class="tnx-commands-section-head">
+            <div>
+              <span>QUICK START</span>
+              <h2>أهم الأوامر</h2>
+            </div>
+          </div>
+
+          <div class="tnx-commands-featured-grid">
+            {featuredCommands.map((command) => (
+              <article class="tnx-command-featured-card" data-search={command.SearchText}>
+                <div>
+                  <strong>{command.DisplayName}</strong>
+                  <small>{command.DisplayGroup}</small>
+                </div>
+
+                <button type="button" class="tnx-copy-command" data-copy={command.PrimaryAlias}>
+                  {command.PrimaryAlias}
+                </button>
+              </article>
+            ))}
+          </div>
+        </section>
       )}
-    </div>
-  </section>
+
+      <section class="tnx-commands-toolbar">
+        <div class="tnx-command-search">
+          <span>⌕</span>
+          <input
+            id="commandSearch"
+            type="search"
+            placeholder="ابحث عن أمر، قسم، أو اختصار..."
+            autocomplete="off"
+          />
+          <button type="button" id="clearCommandSearch" aria-label="مسح البحث">×</button>
+        </div>
+
+        <div id="groupFilters" class="tnx-command-filters" aria-label="تصفية الأقسام">
+          <button type="button" class="tnx-filter-btn is-active" data-filter-group="all">
+            الكل
+          </button>
+
+          {groupNames.map((group) => (
+            <button type="button" class="tnx-filter-btn" data-filter-group={group}>
+              {group}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <div id="emptyState" class="tnx-command-empty hidden">
+        <div>🧭</div>
+        <strong>ما حصلت أمر مطابق</strong>
+        <span>جرّب كلمة ثانية أو اختر قسم مختلف.</span>
+      </div>
+
+      <section id="commandList" class="tnx-command-list">
+        {groupNames.length === 0 ? (
+          <div class="tnx-command-empty">
+            <div>⚠️</div>
+            <strong>ما فيه أوامر ظاهرة حاليًا</strong>
+            <span>تأكد من ملف commands.json أو قوائم الإخفاء داخل الصفحة.</span>
+          </div>
+        ) : (
+          groupNames.map((group) => (
+            <section class="tnx-command-group" data-group={group}>
+              <div class="tnx-command-group-head">
+                <div>
+                  <span>COMMAND GROUP</span>
+                  <h2>{group}</h2>
+                </div>
+
+                <strong>{groups[group].length} أمر</strong>
+              </div>
+
+              <div class="tnx-command-grid">
+                {groups[group].map((command) => (
+                  <article
+                    class="tnx-command-card"
+                    data-group={group}
+                    data-search={command.SearchText}
+                  >
+                    <div class="tnx-command-card-top">
+                      <div class="tnx-command-title">
+                        <h3 title={command.DisplayName}>{command.DisplayName}</h3>
+                        <span>{group}</span>
+                      </div>
+
+                      <span class="tnx-command-status">شغال</span>
+                    </div>
+
+                    <div class="tnx-command-primary">
+                      <code>{command.PrimaryAlias}</code>
+
+                      <button type="button" class="tnx-copy-command tnx-copy-main" data-copy={command.PrimaryAlias}>
+                        نسخ
+                      </button>
+                    </div>
+
+                    {command.VisibleAliases.length > 1 && (
+                      <div class="tnx-command-aliases">
+                        {command.VisibleAliases.slice(1).map((alias) => (
+                          <button type="button" class="tnx-copy-command tnx-alias-pill" data-copy={alias}>
+                            {alias}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </article>
+                ))}
+              </div>
+            </section>
+          ))
+        )}
+      </section>
+
+      <section class="tnx-commands-note">
+        <strong>معلومة مهمة</strong>
+        <p>
+          الصفحة تعرض فقط الأوامر المسموحة للموقع. لو أمر شغال في Streamer.bot وما تبيه يظهر، أضفه في
+          <code>hiddenNames</code>
+          أو
+          <code>hiddenAliases</code>
+          فوق داخل نفس الملف.
+        </p>
+
+        <div class="tnx-commands-note-stats">
+          <span>إجمالي أوامر الملف: {totalRawCommands}</span>
+          <span>مطفي ومخفي تلقائيًا: {totalDisabled}</span>
+          <span>مخفي بقواعد الموقع: {totalHidden}</span>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <style is:global>
+    .hidden {
+      display: none !important;
+    }
+
+    .tnx-commands-page {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      background: #08050d;
+      color: #fff;
+    }
+
+    .tnx-commands-bg {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 18% 10%, rgba(255, 218, 106, 0.18), transparent 30%),
+        radial-gradient(circle at 82% 15%, rgba(194, 146, 0, 0.12), transparent 32%),
+        radial-gradient(circle at 52% 88%, rgba(147, 51, 234, 0.1), transparent 34%),
+        linear-gradient(135deg, #08050d 0%, #050509 48%, #130d05 100%);
+    }
+
+    .tnx-commands-grid {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.08;
+      background-image:
+        linear-gradient(rgba(255, 218, 106, 0.42) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 218, 106, 0.42) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 74%);
+    }
+
+    .tnx-commands-wrap {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 1280px);
+      margin: 0 auto;
+      padding: 6rem 1rem 5rem;
+    }
+
+    .tnx-commands-hero,
+    .tnx-commands-featured,
+    .tnx-commands-toolbar,
+    .tnx-command-group,
+    .tnx-commands-note,
+    .tnx-command-empty {
+      border: 1px solid rgba(198, 164, 79, 0.24);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.09), transparent 42%),
+        rgba(5, 5, 5, 0.78);
+      box-shadow:
+        0 0 42px rgba(0, 0, 0, 0.44),
+        inset 0 0 18px rgba(255, 218, 106, 0.025);
+      backdrop-filter: blur(14px);
+    }
+
+    .tnx-commands-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1.5rem;
+      align-items: end;
+      border-radius: 2rem;
+      padding: 2rem;
+    }
+
+    .tnx-commands-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: fit-content;
+      border: 1px solid rgba(198, 164, 79, 0.36);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.42);
+      padding: 0.55rem 0.9rem;
+      color: #ffda6a;
+      font-size: 0.76rem;
+      font-weight: 950;
+      letter-spacing: 0.18em;
+    }
+
+    .tnx-commands-kicker span {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 999px;
+      background: #ffda6a;
+      box-shadow: 0 0 14px #ffda6a;
+    }
+
+    .tnx-commands-hero h1 {
+      margin: 1rem 0 0;
+      background: linear-gradient(90deg, #ffda6a, #c29200);
+      background-clip: text;
+      color: transparent;
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 950;
+      line-height: 1.05;
+      text-shadow: 0 0 18px rgba(198, 164, 79, 0.18);
+    }
+
+    .tnx-commands-hero p {
+      max-width: 48rem;
+      margin: 1rem 0 0;
+      color: rgb(209, 213, 219);
+      font-size: 1.02rem;
+      font-weight: 750;
+      line-height: 1.9;
+    }
+
+    .tnx-commands-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(120px, 1fr));
+      gap: 0.8rem;
+    }
+
+    .tnx-commands-stats div {
+      min-width: 8rem;
+      border: 1px solid rgba(198, 164, 79, 0.22);
+      border-radius: 1.25rem;
+      background: rgba(0, 0, 0, 0.34);
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .tnx-commands-stats strong {
+      display: block;
+      color: #ffda6a;
+      font-size: 1.75rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .tnx-commands-stats span {
+      display: block;
+      margin-top: 0.45rem;
+      color: rgb(148, 163, 184);
+      font-size: 0.75rem;
+      font-weight: 850;
+    }
+
+    .tnx-commands-featured {
+      margin-top: 1.25rem;
+      border-radius: 1.7rem;
+      padding: 1.25rem;
+    }
+
+    .tnx-commands-section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .tnx-commands-section-head span,
+    .tnx-command-group-head span {
+      color: #c29200;
+      font-size: 0.72rem;
+      font-weight: 950;
+      letter-spacing: 0.18em;
+    }
+
+    .tnx-commands-section-head h2,
+    .tnx-command-group-head h2 {
+      margin: 0.25rem 0 0;
+      color: #f7e6ac;
+      font-size: 1.8rem;
+      font-weight: 950;
+      line-height: 1.1;
+    }
+
+    .tnx-commands-featured-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .tnx-command-featured-card {
+      display: grid;
+      gap: 0.8rem;
+      border: 1px solid rgba(198, 164, 79, 0.18);
+      border-radius: 1.2rem;
+      background: rgba(0, 0, 0, 0.32);
+      padding: 1rem;
+    }
+
+    .tnx-command-featured-card strong {
+      display: block;
+      overflow: hidden;
+      color: white;
+      font-weight: 950;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tnx-command-featured-card small {
+      display: block;
+      margin-top: 0.25rem;
+      color: rgb(148, 163, 184);
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .tnx-commands-toolbar {
+      position: sticky;
+      top: 5rem;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1rem;
+      margin-top: 1.25rem;
+      border-radius: 1.5rem;
+      padding: 1rem;
+    }
+
+    .tnx-command-search {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 0.6rem;
+      border: 1px solid rgba(198, 164, 79, 0.28);
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.42);
+      padding: 0 0.9rem;
+    }
+
+    .tnx-command-search span {
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+    }
+
+    .tnx-command-search input {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #fff;
+      padding: 0.95rem 0;
+      font-size: 0.95rem;
+      font-weight: 850;
+      outline: none;
+    }
+
+    .tnx-command-search input::placeholder {
+      color: rgb(107, 114, 128);
+    }
+
+    .tnx-command-search button {
+      display: inline-flex;
+      width: 2rem;
+      height: 2rem;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(198, 164, 79, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.07);
+      color: #ffda6a;
+      font-size: 1.25rem;
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .tnx-command-filters {
+      display: flex;
+      max-width: 100%;
+      gap: 0.55rem;
+      overflow-x: auto;
+      padding-bottom: 0.15rem;
+    }
+
+    .tnx-filter-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      border: 1px solid rgba(198, 164, 79, 0.26);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.34);
+      color: rgb(209, 213, 219);
+      padding: 0.72rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease,
+        color 160ms ease;
+    }
+
+    .tnx-filter-btn:hover,
+    .tnx-filter-btn.is-active {
+      transform: translateY(-1px);
+      border-color: rgba(255, 218, 106, 0.58);
+      background: rgba(198, 164, 79, 0.14);
+      color: #ffda6a;
+    }
+
+    .tnx-command-list {
+      display: grid;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+
+    .tnx-command-group {
+      overflow: hidden;
+      border-radius: 1.7rem;
+      padding: 1.25rem;
+    }
+
+    .tnx-command-group-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(198, 164, 79, 0.14);
+      padding-bottom: 1rem;
+    }
+
+    .tnx-command-group-head strong {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(198, 164, 79, 0.24);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.07);
+      color: #ffda6a;
+      padding: 0.42rem 0.8rem;
+      font-size: 0.78rem;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .tnx-command-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .tnx-command-card {
+      display: grid;
+      gap: 0.9rem;
+      border: 1px solid rgba(198, 164, 79, 0.18);
+      border-radius: 1.25rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.06), transparent 42%),
+        rgba(0, 0, 0, 0.32);
+      padding: 1rem;
+      transition:
+        transform 170ms ease,
+        border-color 170ms ease,
+        background 170ms ease;
+    }
+
+    .tnx-command-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 218, 106, 0.42);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.09), transparent 42%),
+        rgba(0, 0, 0, 0.44);
+    }
+
+    .tnx-command-card-top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 0.85rem;
+    }
+
+    .tnx-command-title {
+      min-width: 0;
+    }
+
+    .tnx-command-title h3 {
+      margin: 0;
+      overflow: hidden;
+      color: #f7e6ac;
+      font-size: 1.05rem;
+      font-weight: 950;
+      line-height: 1.35;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tnx-command-title span {
+      display: block;
+      margin-top: 0.25rem;
+      color: rgb(148, 163, 184);
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .tnx-command-status {
+      flex: 0 0 auto;
+      border: 1px solid rgba(52, 211, 153, 0.25);
+      border-radius: 999px;
+      background: rgba(52, 211, 153, 0.1);
+      color: rgb(167, 243, 208);
+      padding: 0.35rem 0.7rem;
+      font-size: 0.72rem;
+      font-weight: 950;
+    }
+
+    .tnx-command-primary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 0.65rem;
+      border: 1px solid rgba(198, 164, 79, 0.18);
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.28);
+      padding: 0.65rem;
+    }
+
+    .tnx-command-primary code {
+      overflow: hidden;
+      color: #ffda6a;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9rem;
+      font-weight: 950;
+      direction: ltr;
+      text-align: left;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tnx-copy-command {
+      border: 1px solid rgba(198, 164, 79, 0.28);
+      border-radius: 0.8rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.58rem 0.85rem;
+      font-size: 0.8rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition:
+        border-color 160ms ease,
+        background 160ms ease,
+        color 160ms ease,
+        transform 160ms ease;
+    }
+
+    .tnx-copy-command:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 218, 106, 0.58);
+      background: rgba(255, 218, 106, 0.14);
+      color: #ffda6a;
+    }
+
+    .tnx-copy-command.is-copied {
+      border-color: rgba(52, 211, 153, 0.65) !important;
+      background: rgba(52, 211, 153, 0.14) !important;
+      color: rgb(167, 243, 208) !important;
+    }
+
+    .tnx-copy-main {
+      min-width: 4.2rem;
+    }
+
+    .tnx-command-aliases {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    .tnx-alias-pill {
+      max-width: 100%;
+      overflow: hidden;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.74rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      direction: ltr;
+    }
+
+    .tnx-command-empty {
+      display: grid;
+      place-items: center;
+      gap: 0.7rem;
+      margin-top: 1.25rem;
+      border-radius: 1.5rem;
+      padding: 2.5rem 1rem;
+      text-align: center;
+    }
+
+    .tnx-command-empty div {
+      font-size: 2.4rem;
+    }
+
+    .tnx-command-empty strong {
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+    }
+
+    .tnx-command-empty span {
+      color: rgb(156, 163, 175);
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .tnx-commands-note {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      border-radius: 1.5rem;
+      padding: 1.25rem;
+    }
+
+    .tnx-commands-note strong {
+      color: #ffda6a;
+      font-size: 1rem;
+      font-weight: 950;
+    }
+
+    .tnx-commands-note p {
+      margin: 0;
+      color: rgb(209, 213, 219);
+      font-size: 0.92rem;
+      font-weight: 800;
+      line-height: 1.9;
+    }
+
+    .tnx-commands-note code {
+      display: inline-flex;
+      margin: 0 0.25rem;
+      border: 1px solid rgba(198, 164, 79, 0.22);
+      border-radius: 0.5rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      padding: 0.15rem 0.4rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82rem;
+      font-weight: 950;
+    }
+
+    .tnx-commands-note-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tnx-commands-note-stats span {
+      display: inline-flex;
+      border: 1px solid rgba(198, 164, 79, 0.18);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.24);
+      color: rgb(156, 163, 175);
+      padding: 0.4rem 0.7rem;
+      font-size: 0.74rem;
+      font-weight: 850;
+    }
+
+    .tnx-command-card.is-hidden,
+    .tnx-command-group.is-hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 980px) {
+      .tnx-commands-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-commands-stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .tnx-commands-featured-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .tnx-commands-wrap {
+        padding-top: 5.5rem;
+      }
+
+      .tnx-commands-hero {
+        padding: 1.25rem;
+        border-radius: 1.5rem;
+      }
+
+      .tnx-commands-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .tnx-command-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-commands-featured-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-commands-toolbar {
+        top: 4.5rem;
+      }
+
+      .tnx-command-group-head {
+        align-items: start;
+        flex-direction: column;
+      }
+    }
+  </style>
 
   <script is:inline data-reinit>
-    const input = document.getElementById('commandSearch')
-    const blocks = document.querySelectorAll('.group-block')
+    ;(() => {
+      const cleanupKey = '__tnxCommandsCleanup'
 
-    input.addEventListener('input', () => {
-      const term = input.value.toLowerCase().trim()
+      if (window[cleanupKey]) {
+        window[cleanupKey]()
+      }
 
-      blocks.forEach(block => {
-        const commands = block.querySelectorAll('.command-item')
-        let visibleCount = 0
+      const listeners = []
+      const timers = []
 
-        commands.forEach(cmd => {
-          const name = cmd.querySelector('.command-name').textContent.toLowerCase()
-          const aliases = Array.from(cmd.querySelectorAll('.command-aliases span')).map(s => s.textContent.toLowerCase())
-          const match = name.includes(term) || aliases.some(a => a.includes(term))
-          cmd.style.display = match ? '' : 'none'
-          if (match) visibleCount++
+      function addListener(target, event, handler, options) {
+        if (!target) return
+        target.addEventListener(event, handler, options)
+        listeners.push(() => target.removeEventListener(event, handler, options))
+      }
+
+      function addTimer(id) {
+        timers.push(id)
+        return id
+      }
+
+      window[cleanupKey] = () => {
+        listeners.forEach((cleanup) => cleanup())
+        listeners.length = 0
+
+        timers.forEach((id) => window.clearTimeout(id))
+        timers.length = 0
+      }
+
+      const searchInput = document.getElementById('commandSearch')
+      const clearSearchButton = document.getElementById('clearCommandSearch')
+      const groupBlocks = Array.from(document.querySelectorAll('.tnx-command-group'))
+      const filterButtons = Array.from(document.querySelectorAll('.tnx-filter-btn'))
+      const copyButtons = Array.from(document.querySelectorAll('.tnx-copy-command'))
+      const emptyState = document.getElementById('emptyState')
+
+      let activeGroup = 'all'
+
+      function normalize(value) {
+        return String(value || '')
+          .toLowerCase()
+          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[أإآ]/g, 'ا')
+          .replace(/ة/g, 'ه')
+          .replace(/ى/g, 'ي')
+          .replace(/\s+/g, ' ')
+          .trim()
+      }
+
+      function applyFilters() {
+        const term = normalize(searchInput?.value || '')
+        let visibleTotal = 0
+
+        groupBlocks.forEach((block) => {
+          const group = block.dataset.group || ''
+          const cards = Array.from(block.querySelectorAll('.tnx-command-card'))
+          const groupMatches = activeGroup === 'all' || group === activeGroup
+          let visibleInGroup = 0
+
+          cards.forEach((card) => {
+            const searchText = normalize(card.dataset.search || card.textContent || '')
+            const searchMatches = !term || searchText.includes(term)
+            const shouldShow = groupMatches && searchMatches
+
+            card.classList.toggle('is-hidden', !shouldShow)
+
+            if (shouldShow) {
+              visibleInGroup++
+              visibleTotal++
+            }
+          })
+
+          block.classList.toggle('is-hidden', visibleInGroup === 0)
         })
 
-        block.style.display = visibleCount > 0 ? '' : 'none'
+        emptyState?.classList.toggle('hidden', visibleTotal > 0)
+      }
+
+      addListener(searchInput, 'input', applyFilters)
+
+      addListener(clearSearchButton, 'click', () => {
+        if (!searchInput) return
+
+        searchInput.value = ''
+        searchInput.focus()
+        applyFilters()
       })
-    })
+
+      filterButtons.forEach((button) => {
+        addListener(button, 'click', () => {
+          activeGroup = button.dataset.filterGroup || 'all'
+
+          filterButtons.forEach((item) => item.classList.remove('is-active'))
+          button.classList.add('is-active')
+
+          applyFilters()
+        })
+      })
+
+      copyButtons.forEach((button) => {
+        addListener(button, 'click', async () => {
+          const copyText = button.dataset.copy || button.textContent || ''
+          const originalText = button.textContent
+
+          try {
+            await navigator.clipboard.writeText(copyText)
+
+            button.textContent = 'تم النسخ'
+            button.classList.add('is-copied')
+
+            addTimer(
+              window.setTimeout(() => {
+                button.textContent = originalText
+                button.classList.remove('is-copied')
+              }, 900)
+            )
+          } catch {
+            button.textContent = copyText
+
+            addTimer(
+              window.setTimeout(() => {
+                button.textContent = originalText
+              }, 900)
+            )
+          }
+        })
+      })
+
+      applyFilters()
+    })()
   </script>
 </Layout>
