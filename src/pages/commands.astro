@@ -832,6 +832,7 @@ const visibleCommands = COMMAND_CATALOG
       categoryTitle: meta.title,
       categoryShort: meta.short,
       categoryIcon: meta.icon,
+      hashId: `cmd-${definition.id}`,
       searchText: normalizeText(
         [
           definition.title,
@@ -1098,7 +1099,15 @@ const totalBeginnerCategories = beginnerCategories.length
 
                 <div class="tnx-command-grid">
                   {commands.map((command) => (
-                    <article class="tnx-command-card" data-command-card data-category={command.category} data-search={command.searchText}>
+                    <article
+                      id={command.hashId}
+                      class="tnx-command-card"
+                      data-command-card
+                      data-command-id={command.id}
+                      data-command-hash={command.hashId}
+                      data-category={command.category}
+                      data-search={command.searchText}
+                    >
                       <div class="tnx-command-card-head">
                         <div>
                           <span>{command.badge}</span>
@@ -1129,6 +1138,10 @@ const totalBeginnerCategories = beginnerCategories.length
                           <button type="button" data-copy={command.example}>نسخ المثال</button>
                         </div>
                       )}
+
+                      <div class="tnx-link-row">
+                        <button type="button" data-command-link={command.hashId}>نسخ رابط الأمر</button>
+                      </div>
 
                       <details class="tnx-details">
                         <summary>تفاصيل أكثر</summary>
@@ -1493,7 +1506,8 @@ const totalBeginnerCategories = beginnerCategories.length
     .tnx-completion button,
     .tnx-copy-row button,
     .tnx-aliases button,
-    .tnx-filter-row button {
+    .tnx-filter-row button,
+    .tnx-link-row button {
       border: 1px solid rgba(255, 218, 106, 0.24);
       border-radius: 0.9rem;
       background: rgba(255, 218, 106, 0.08);
@@ -1512,7 +1526,8 @@ const totalBeginnerCategories = beginnerCategories.length
     .tnx-copy-row button:hover,
     .tnx-aliases button:hover,
     .tnx-filter-row button:hover,
-    .tnx-filter-row button.is-active {
+    .tnx-filter-row button.is-active,
+    .tnx-link-row button:hover {
       transform: translateY(-1px);
       border-color: rgba(255, 218, 106, 0.55);
       background: rgba(255, 218, 106, 0.14);
@@ -1759,10 +1774,21 @@ const totalBeginnerCategories = beginnerCategories.length
     }
 
     .tnx-copy-row button.is-copied,
-    .tnx-aliases button.is-copied {
+    .tnx-aliases button.is-copied,
+    .tnx-link-row button.is-copied {
       border-color: rgba(52, 211, 153, 0.65) !important;
       background: rgba(52, 211, 153, 0.14) !important;
       color: rgb(167, 243, 208) !important;
+    }
+
+    .tnx-link-row {
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .tnx-link-row button {
+      font-size: 0.78rem;
+      padding: 0.6rem 0.8rem;
     }
 
     .tnx-completion {
@@ -1858,10 +1884,21 @@ const totalBeginnerCategories = beginnerCategories.length
     }
 
     .tnx-filter-row {
+      position: sticky;
+      top: 5.25rem;
+      z-index: 35;
       display: flex;
       flex-wrap: wrap;
       gap: 0.55rem;
       margin: 1rem 0;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 1rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.07), transparent 40%),
+        rgba(7, 5, 11, 0.9);
+      padding: 0.7rem;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(14px);
     }
 
     .tnx-command-sections {
@@ -1890,6 +1927,7 @@ const totalBeginnerCategories = beginnerCategories.length
     }
 
     .tnx-command-card {
+      scroll-margin-top: 11rem;
       display: grid;
       gap: 0.85rem;
       border: 1px solid rgba(255, 218, 106, 0.14);
@@ -1898,6 +1936,21 @@ const totalBeginnerCategories = beginnerCategories.length
         radial-gradient(circle at top right, rgba(255, 218, 106, 0.055), transparent 40%),
         rgba(0, 0, 0, 0.28);
       padding: 1rem;
+      transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        background 180ms ease;
+    }
+
+    .tnx-command-card.is-linked {
+      border-color: rgba(255, 218, 106, 0.72);
+      box-shadow:
+        0 0 0 1px rgba(255, 218, 106, 0.24),
+        0 0 34px rgba(255, 218, 106, 0.18),
+        inset 0 0 18px rgba(255, 218, 106, 0.035);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 42%),
+        rgba(0, 0, 0, 0.34);
     }
 
     .tnx-command-card-head {
@@ -1996,6 +2049,14 @@ const totalBeginnerCategories = beginnerCategories.length
         flex-direction: column;
       }
 
+      .tnx-filter-row {
+        top: 4.75rem;
+      }
+
+      .tnx-command-card {
+        scroll-margin-top: 10.25rem;
+      }
+
       .tnx-progress-float {
         top: 4.75rem !important;
         right: auto !important;
@@ -2041,7 +2102,8 @@ const totalBeginnerCategories = beginnerCategories.length
         grid-template-columns: 1fr;
       }
 
-      .tnx-copy-row button {
+      .tnx-copy-row button,
+      .tnx-link-row button {
         width: 100%;
       }
 
@@ -2095,6 +2157,7 @@ const totalBeginnerCategories = beginnerCategories.length
       const openAllButtons = Array.from(document.querySelectorAll('[data-open-all]'))
       const startModeButtons = Array.from(document.querySelectorAll('[data-start-mode]'))
       const copyButtons = Array.from(document.querySelectorAll('[data-copy]'))
+      const commandLinkButtons = Array.from(document.querySelectorAll('[data-command-link]'))
 
       const commandSearch = document.getElementById('commandSearch')
       const clearCommandSearch = document.getElementById('clearCommandSearch')
@@ -2106,6 +2169,7 @@ const totalBeginnerCategories = beginnerCategories.length
       const seenSystems = new Set()
       const totalSystems = Number(progressTotal?.textContent || systemCards.length || 0)
       let activeFilter = 'all'
+      let hashOpenTimer = null
 
       function normalize(value) {
         return String(value || '')
@@ -2157,6 +2221,11 @@ const totalBeginnerCategories = beginnerCategories.length
 
         timers.forEach((id) => window.clearTimeout(id))
         timers.length = 0
+
+        if (hashOpenTimer) {
+          window.clearTimeout(hashOpenTimer)
+          hashOpenTimer = null
+        }
 
         stopFloatingProgress()
       }
@@ -2220,12 +2289,18 @@ const totalBeginnerCategories = beginnerCategories.length
         )
       }
 
-      function showAllCommands() {
+      function showAllCommands(options = {}) {
+        const shouldScroll = options.scroll !== false
+
         stopFloatingProgress()
         entryChoice?.classList.add('hidden')
         newUserFlow?.classList.add('hidden')
         allCommandsView?.classList.remove('hidden')
-        allCommandsView?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+        if (shouldScroll) {
+          allCommandsView?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+
         applyAllCommandsFilters()
       }
 
@@ -2319,6 +2394,82 @@ const totalBeginnerCategories = beginnerCategories.length
         emptyState?.classList.toggle('hidden', visibleTotal > 0)
       }
 
+      function copyButtonFeedback(button, text = 'تم النسخ') {
+        const oldText = button.textContent
+        button.textContent = text
+        button.classList.add('is-copied')
+
+        addTimer(
+          window.setTimeout(() => {
+            button.textContent = oldText
+            button.classList.remove('is-copied')
+          }, 1000)
+        )
+      }
+
+      async function copyTextToClipboard(text, button, successText = 'تم النسخ') {
+        try {
+          await navigator.clipboard.writeText(text)
+          copyButtonFeedback(button, successText)
+        } catch {
+          const oldText = button.textContent
+          button.textContent = text
+
+          addTimer(
+            window.setTimeout(() => {
+              button.textContent = oldText
+            }, 1200)
+          )
+        }
+      }
+
+      function clearLinkedHighlights() {
+        allCommandCards.forEach((card) => {
+          card.classList.remove('is-linked')
+        })
+      }
+
+      function getHashTarget() {
+        const rawHash = window.location.hash || ''
+        if (!rawHash.startsWith('#cmd-')) return null
+
+        return decodeURIComponent(rawHash.slice(1))
+      }
+
+      function openCommandFromHash() {
+        const targetHash = getHashTarget()
+        if (!targetHash) return
+
+        const targetCard = document.getElementById(targetHash)
+        if (!targetCard) return
+
+        const targetCategory = targetCard.dataset.category || 'all'
+
+        showAllCommands({ scroll: false })
+
+        activeFilter = targetCategory
+        if (commandSearch) commandSearch.value = ''
+
+        syncFilterButtons()
+        applyAllCommandsFilters()
+        clearLinkedHighlights()
+
+        const details = targetCard.querySelector('details')
+        if (details) {
+          details.open = true
+        }
+
+        targetCard.classList.add('is-linked')
+
+        if (hashOpenTimer) {
+          window.clearTimeout(hashOpenTimer)
+        }
+
+        hashOpenTimer = window.setTimeout(() => {
+          targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }, 120)
+      }
+
       startModeButtons.forEach((button) => {
         addListener(button, 'click', () => {
           const mode = button.dataset.startMode
@@ -2349,19 +2500,24 @@ const totalBeginnerCategories = beginnerCategories.length
         })
       })
 
-      addListener(commandSearch, 'input', applyAllCommandsFilters)
+      addListener(commandSearch, 'input', () => {
+        clearLinkedHighlights()
+        applyAllCommandsFilters()
+      })
 
       addListener(clearCommandSearch, 'click', () => {
         if (!commandSearch) return
 
         commandSearch.value = ''
         commandSearch.focus()
+        clearLinkedHighlights()
         applyAllCommandsFilters()
       })
 
       filterButtons.forEach((button) => {
         addListener(button, 'click', () => {
           activeFilter = button.dataset.categoryFilter || 'all'
+          clearLinkedHighlights()
           syncFilterButtons()
           applyAllCommandsFilters()
         })
@@ -2370,40 +2526,36 @@ const totalBeginnerCategories = beginnerCategories.length
       copyButtons.forEach((button) => {
         addListener(button, 'click', async () => {
           const copyText = button.dataset.copy || button.textContent || ''
-          const oldText = button.textContent
+          await copyTextToClipboard(copyText, button, 'تم النسخ')
+        })
+      })
 
-          try {
-            await navigator.clipboard.writeText(copyText)
+      commandLinkButtons.forEach((button) => {
+        addListener(button, 'click', async () => {
+          const hashId = button.dataset.commandLink
+          if (!hashId) return
 
-            button.textContent = 'تم النسخ'
-            button.classList.add('is-copied')
+          const url = `${window.location.origin}${window.location.pathname}#${hashId}`
+          await copyTextToClipboard(url, button, 'تم نسخ الرابط')
 
-            addTimer(
-              window.setTimeout(() => {
-                button.textContent = oldText
-                button.classList.remove('is-copied')
-              }, 900)
-            )
-          } catch {
-            button.textContent = copyText
-
-            addTimer(
-              window.setTimeout(() => {
-                button.textContent = oldText
-              }, 900)
-            )
-          }
+          history.replaceState(null, '', `#${hashId}`)
+          openCommandFromHash()
         })
       })
 
       addListener(window, 'scroll', updateFloatingProgress, { passive: true })
       addListener(window, 'resize', updateFloatingProgress)
+      addListener(window, 'hashchange', openCommandFromHash)
 
       ensureFloatingProgressBox()
       updateProgress()
       syncFilterButtons()
       applyAllCommandsFilters()
       updateFloatingProgress()
+
+      if (getHashTarget()) {
+        openCommandFromHash()
+      }
     })()
   </script>
 </Layout>
