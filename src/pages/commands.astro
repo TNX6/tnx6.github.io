@@ -941,6 +941,14 @@ const totalBeginnerCategories = beginnerCategories.length
               <div id="progressBar" class="tnx-progress-bar"></div>
             </div>
           </div>
+
+          <div id="floatingProgressBox" class="tnx-progress-float hidden" aria-hidden="true">
+            <strong><span id="floatingProgressCurrent">0</span> / <span id="floatingProgressTotal">{totalBeginnerCategories}</span></strong>
+            <small>أنظمة شوفتها</small>
+            <div class="tnx-progress-track">
+              <div id="floatingProgressBar" class="tnx-progress-bar"></div>
+            </div>
+          </div>
         </div>
 
         <div class="tnx-new-actions">
@@ -1366,6 +1374,7 @@ const totalBeginnerCategories = beginnerCategories.length
       align-items: center;
       border-radius: 1.8rem;
       padding: 1.25rem;
+      position: relative;
     }
 
     .tnx-flow-head span,
@@ -1400,7 +1409,8 @@ const totalBeginnerCategories = beginnerCategories.length
       line-height: 1.75;
     }
 
-    .tnx-progress-box {
+    .tnx-progress-box,
+    .tnx-progress-float {
       border: 1px solid rgba(255, 218, 106, 0.16);
       border-radius: 1.25rem;
       background:
@@ -1414,22 +1424,20 @@ const totalBeginnerCategories = beginnerCategories.length
       backdrop-filter: blur(16px);
     }
 
-    .tnx-progress-box.is-floating {
+    .tnx-progress-float {
       position: fixed;
       top: 5.6rem;
       right: max(1rem, calc((100vw - 1240px) / 2 + 1rem));
-      z-index: 80;
+      z-index: 999;
       width: 240px;
+      border-color: rgba(255, 218, 106, 0.24);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.1), transparent 44%),
+        rgba(0, 0, 0, 0.82);
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.5),
+        inset 0 0 16px rgba(255, 218, 106, 0.03);
       animation: tnxProgressFloatIn 160ms ease both;
-    }
-
-    .tnx-progress-placeholder {
-      display: none;
-      width: 100%;
-    }
-
-    .tnx-progress-placeholder.is-active {
-      display: block;
     }
 
     @keyframes tnxProgressFloatIn {
@@ -1444,13 +1452,15 @@ const totalBeginnerCategories = beginnerCategories.length
       }
     }
 
-    .tnx-progress-box strong {
+    .tnx-progress-box strong,
+    .tnx-progress-float strong {
       color: #ffda6a;
       font-size: 1.6rem;
       font-weight: 950;
     }
 
-    .tnx-progress-box small {
+    .tnx-progress-box small,
+    .tnx-progress-float small {
       display: block;
       margin-top: 0.2rem;
       color: rgb(148, 163, 184);
@@ -1989,7 +1999,7 @@ const totalBeginnerCategories = beginnerCategories.length
         flex-direction: column;
       }
 
-      .tnx-progress-box.is-floating {
+      .tnx-progress-float {
         top: 4.75rem;
         right: 1rem;
         left: 1rem;
@@ -2063,11 +2073,16 @@ const totalBeginnerCategories = beginnerCategories.length
       const entryChoice = document.getElementById('entryChoice')
       const newUserFlow = document.getElementById('newUserFlow')
       const allCommandsView = document.getElementById('allCommandsView')
+
       const progressCurrent = document.getElementById('progressCurrent')
       const progressTotal = document.getElementById('progressTotal')
       const progressBar = document.getElementById('progressBar')
       const progressBox = document.querySelector('.tnx-progress-box')
-      let progressPlaceholder = null
+
+      const floatingProgressBox = document.getElementById('floatingProgressBox')
+      const floatingProgressCurrent = document.getElementById('floatingProgressCurrent')
+      const floatingProgressTotal = document.getElementById('floatingProgressTotal')
+      const floatingProgressBar = document.getElementById('floatingProgressBar')
 
       const completionBox = document.getElementById('completionBox')
       const systemPanels = Array.from(document.querySelectorAll('[data-system-panel]'))
@@ -2104,58 +2119,43 @@ const totalBeginnerCategories = beginnerCategories.length
         return window.innerWidth <= 980 ? 76 : 90
       }
 
-      function ensureProgressPlaceholder() {
-        if (!progressBox) return null
-
-        if (!progressPlaceholder) {
-          progressPlaceholder = document.createElement('div')
-          progressPlaceholder.className = 'tnx-progress-placeholder'
-          progressBox.parentNode?.insertBefore(progressPlaceholder, progressBox)
-        }
-
-        progressPlaceholder.style.height = `${progressBox.offsetHeight}px`
-        return progressPlaceholder
+      function stopFloatingProgress() {
+        floatingProgressBox?.classList.add('hidden')
       }
 
-      function stopFloatingProgress() {
-        if (!progressBox) return
+      function syncFloatingProgress(current, percent) {
+        if (floatingProgressCurrent) {
+          floatingProgressCurrent.textContent = String(current)
+        }
 
-        progressBox.classList.remove('is-floating')
+        if (floatingProgressTotal && progressTotal) {
+          floatingProgressTotal.textContent = progressTotal.textContent
+        }
 
-        if (progressPlaceholder) {
-          progressPlaceholder.classList.remove('is-active')
-          progressPlaceholder.style.height = '0px'
+        if (floatingProgressBar) {
+          floatingProgressBar.style.width = `${percent}%`
         }
       }
 
       function updateFloatingProgress() {
-        if (!progressBox || !newUserFlow) return
+        if (!progressBox || !newUserFlow || !floatingProgressBox) return
 
-        const isNewFlowHidden = newUserFlow.classList.contains('hidden')
-
-        if (isNewFlowHidden) {
+        if (newUserFlow.classList.contains('hidden')) {
           stopFloatingProgress()
           return
         }
 
         const stickyTop = getProgressStickyTop()
+        const progressRect = progressBox.getBoundingClientRect()
         const flowRect = newUserFlow.getBoundingClientRect()
-        const placeholder = ensureProgressPlaceholder()
 
-        const referenceTop = progressBox.classList.contains('is-floating')
-          ? placeholder?.getBoundingClientRect().top ?? progressBox.getBoundingClientRect().top
-          : progressBox.getBoundingClientRect().top
+        const originalProgressPassed = progressRect.bottom < stickyTop
+        const stillInsideNewFlow = flowRect.bottom > stickyTop + 120
 
-        const shouldFloat =
-          flowRect.top < stickyTop &&
-          flowRect.bottom > stickyTop + progressBox.offsetHeight + 24 &&
-          referenceTop < stickyTop
-
-        if (shouldFloat) {
-          placeholder?.classList.add('is-active')
-          progressBox.classList.add('is-floating')
+        if (originalProgressPassed && stillInsideNewFlow) {
+          floatingProgressBox.classList.remove('hidden')
         } else {
-          stopFloatingProgress()
+          floatingProgressBox.classList.add('hidden')
         }
       }
 
@@ -2199,6 +2199,8 @@ const totalBeginnerCategories = beginnerCategories.length
         if (progressBar) {
           progressBar.style.width = `${percent}%`
         }
+
+        syncFloatingProgress(current, percent)
 
         if (completionBox) {
           completionBox.classList.toggle('hidden', current < totalSystems || totalSystems === 0)
