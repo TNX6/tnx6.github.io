@@ -1841,6 +1841,12 @@ const metadata = {
 
           await waitForImages(card)
 
+          if (document.fonts?.ready) {
+            await document.fonts.ready
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 350))
+
           if (!window.html2canvas) {
             throw new Error('html2canvas is not loaded')
           }
@@ -1849,9 +1855,15 @@ const metadata = {
             backgroundColor: null,
             scale: 1,
             useCORS: true,
-            allowTaint: true,
+            allowTaint: false,
             logging: false,
             imageTimeout: 15000,
+            width: 800,
+            height: 360,
+            windowWidth: 800,
+            windowHeight: 360,
+            scrollX: 0,
+            scrollY: 0,
           })
 
           const link = document.createElement('a')
