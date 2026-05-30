@@ -82,7 +82,7 @@ const metadata = {
           <div class="tnx-section-head">
             <span>كل البادجات</span>
             <h2>استعرض البادجات</h2>
-            <p>اضغط على أي بادج عشان تشوف طريقة الحصول عليه وتفاصيله.</p>
+            <p>اضغط على أي بادج عشان تشوف طريقة الحصول عليه وتفاصيله ورابطه المباشر.</p>
           </div>
 
           <div class="tnx-badge-search">
@@ -548,6 +548,7 @@ const metadata = {
         box-shadow 160ms ease,
         background 160ms ease;
       overflow: hidden;
+      scroll-margin-top: 11rem;
     }
 
     .tnx-badge-card:hover,
@@ -558,6 +559,13 @@ const metadata = {
       background:
         radial-gradient(circle at top right, rgba(255, 218, 106, 0.11), transparent 42%),
         rgba(0, 0, 0, 0.38);
+    }
+
+    .tnx-badge-card.is-linked {
+      border-color: rgba(255, 218, 106, 0.82);
+      box-shadow:
+        0 0 0 1px rgba(255, 218, 106, 0.28),
+        0 0 34px rgba(255, 218, 106, 0.18);
     }
 
     .tnx-badge-card.is-rare::before {
@@ -734,7 +742,8 @@ const metadata = {
       font-weight: 950;
     }
 
-    .tnx-focus-copy {
+    .tnx-focus-copy,
+    .tnx-download-card-btn {
       border: 1px solid rgba(255, 218, 106, 0.24);
       border-radius: 0.9rem;
       background: rgba(255, 218, 106, 0.08);
@@ -747,10 +756,18 @@ const metadata = {
     }
 
     .tnx-focus-copy:hover,
-    .tnx-focus-copy.is-copied {
+    .tnx-focus-copy.is-copied,
+    .tnx-download-card-btn:hover,
+    .tnx-download-card-btn.is-done {
       border-color: rgba(52, 211, 153, 0.55);
       background: rgba(52, 211, 153, 0.14);
       color: rgb(167, 243, 208);
+    }
+
+    .tnx-download-card-btn.is-error {
+      border-color: rgba(248, 113, 113, 0.55);
+      background: rgba(248, 113, 113, 0.14);
+      color: rgb(254, 202, 202);
     }
 
     .tnx-empty {
@@ -810,6 +827,13 @@ const metadata = {
       margin-top: 1rem;
       overflow-x: auto;
       padding-bottom: 0.5rem;
+    }
+
+    .tnx-card-download-wrap {
+      display: grid;
+      justify-items: center;
+      gap: 0.8rem;
+      min-width: 720px;
     }
 
     .tnx-user-card-preview {
@@ -983,6 +1007,10 @@ const metadata = {
 
       .tnx-badge-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .tnx-badge-card {
+        scroll-margin-top: 10rem;
       }
     }
 
@@ -1323,6 +1351,20 @@ const metadata = {
         return Number(n || 0).toLocaleString('de-DE')
       }
 
+      function badgeSlug(name) {
+        return `badge-${String(name || '')
+          .trim()
+          .toLowerCase()
+          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[أإآ]/g, 'ا')
+          .replace(/ة/g, 'ه')
+          .replace(/ى/g, 'ي')
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9\u0600-\u06ff-]/g, '')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '')}`
+      }
+
       function hexToRgb(hex) {
         const clean = safeColor(hex).replace('#', '')
         const v = parseInt(clean, 16)
@@ -1353,6 +1395,7 @@ const metadata = {
         const name = String(badge?.name || '').trim()
         const meta = getBadgeMeta(name)
         const category = CATEGORY_META[meta.category] ? meta.category : 'special'
+        const hashId = badgeSlug(name)
 
         const searchText = normalize([
           name,
@@ -1363,11 +1406,13 @@ const metadata = {
           meta.duration,
           meta.difficulty,
           CATEGORY_META[category]?.label,
+          hashId,
         ].join(' '))
 
         return {
           index,
           name,
+          hashId,
           image: safeUrl(badge?.image),
           title: meta.title,
           category,
@@ -1434,10 +1479,17 @@ const metadata = {
 
         badgeGrid.innerHTML = badges.map((badge) => {
           const selected = badge.name === state.selectedBadgeName ? ' is-selected' : ''
+          const linked = window.location.hash === `#${badge.hashId}` ? ' is-linked' : ''
           const rare = badge.isRare ? ' is-rare' : ''
 
           return `
-            <button type="button" class="tnx-badge-card${selected}${rare}" data-badge-name="${esc(badge.name)}">
+            <button
+              type="button"
+              id="${esc(badge.hashId)}"
+              class="tnx-badge-card${selected}${linked}${rare}"
+              data-badge-name="${esc(badge.name)}"
+              data-badge-hash="${esc(badge.hashId)}"
+            >
               <div class="tnx-badge-img-wrap">
                 <img src="${esc(badge.image)}" alt="${esc(badge.name)}" loading="lazy" />
               </div>
@@ -1454,8 +1506,6 @@ const metadata = {
 
       function renderBadgeFocus(badge) {
         if (!badgeFocusPanel || !badge) return
-
-        const copyText = `${badge.title}: ${badge.how}`
 
         badgeFocusPanel.innerHTML = `
           <div class="tnx-focus-card">
@@ -1492,28 +1542,67 @@ const metadata = {
               </div>
             </div>
 
-            <button type="button" class="tnx-focus-copy" data-copy-text="${esc(copyText)}">
-              نسخ طريقة الحصول عليه
+            <button type="button" class="tnx-focus-copy" data-copy-badge-link="${esc(badge.hashId)}">
+              نسخ رابط البادج
             </button>
           </div>
         `
       }
 
-      function selectBadge(name) {
+      function selectBadge(name, options = {}) {
         const badge = state.badges.find((item) => item.name === name)
         if (!badge) return
 
         state.selectedBadgeName = badge.name
+
+        if (options.updateHash !== false) {
+          history.replaceState(null, '', `#${badge.hashId}`)
+        }
+
         renderBadges()
         renderBadgeFocus(badge)
+
+        if (options.scrollToBadge) {
+          addTimer(window.setTimeout(() => {
+            const card = document.getElementById(badge.hashId)
+            card?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }, 80))
+        }
       }
 
-      async function copyText(text, button) {
+      function openBadgeFromHash(options = {}) {
+        const hash = decodeURIComponent((window.location.hash || '').replace('#', ''))
+        if (!hash || !hash.startsWith('badge-')) return false
+
+        const badge = state.badges.find((item) => item.hashId === hash)
+        if (!badge) return false
+
+        state.filter = 'all'
+        state.search = ''
+
+        if (badgeSearch) badgeSearch.value = ''
+
+        renderFilterButtons()
+        selectBadge(badge.name, { updateHash: false, scrollToBadge: options.scrollToBadge !== false })
+
+        document.querySelector('.tnx-vault')?.scrollIntoView({
+          behavior: options.instant ? 'auto' : 'smooth',
+          block: 'start',
+        })
+
+        return true
+      }
+
+      function getBadgeLink(hashId) {
+        return `${window.location.origin}${window.location.pathname}#${hashId}`
+      }
+
+      async function copyText(text, button, doneText = 'تم النسخ') {
         const oldText = button.textContent
 
         try {
           await navigator.clipboard.writeText(text)
-          button.textContent = 'تم النسخ'
+          button.textContent = doneText
           button.classList.add('is-copied')
 
           addTimer(window.setTimeout(() => {
@@ -1545,8 +1634,10 @@ const metadata = {
           renderFilterButtons()
           renderBadges()
 
-          if (state.badges.length > 0) {
-            selectBadge(state.badges[0].name)
+          const openedFromHash = openBadgeFromHash({ instant: true, scrollToBadge: true })
+
+          if (!openedFromHash && state.badges.length > 0) {
+            selectBadge(state.badges[0].name, { updateHash: false })
           }
         } catch (error) {
           console.error('Failed to load badges.json', error)
@@ -1621,53 +1712,132 @@ const metadata = {
           : []
 
         const badgeHtml = equippedBadges.map((badge) => {
-          return `<img src="${esc(safeUrl(badge.url))}" alt="${esc(badge.name)}" loading="lazy" />`
+          return `<img src="${esc(safeUrl(badge.url))}" alt="${esc(badge.name)}" loading="lazy" crossorigin="anonymous" />`
         }).join('')
 
+        const fileName = `tnx6-card-${String(details.userLogin || details.userName || 'user').replace(/[^a-zA-Z0-9_-]/g, '')}.png`
+
         userCardContainer.innerHTML = `
-          <div
-            class="tnx-user-card-preview"
-            dir="ltr"
-            style="background: linear-gradient(to bottom, ${baseColor} 70%, ${darkColor} 100%); --profile-border: ${baseColor};"
-          >
+          <div class="tnx-card-download-wrap">
+            <button type="button" class="tnx-download-card-btn" data-download-user-card="${esc(fileName)}">
+              تنزيل البطاقة كصورة
+            </button>
+
             <div
-              class="tnx-card-banner"
-              style="background-image: url('${safeUrl(details.bannerImage || '')}')"
-            ></div>
+              class="tnx-user-card-preview"
+              dir="ltr"
+              style="background: linear-gradient(to bottom, ${baseColor} 70%, ${darkColor} 100%); --profile-border: ${baseColor};"
+            >
+              <div
+                class="tnx-card-banner"
+                style="background-image: url('${safeUrl(details.bannerImage || '')}')"
+              ></div>
 
-            <div class="tnx-card-profile-section">
-              <div class="tnx-card-picture-points">
-                <div
-                  class="tnx-card-profile-picture"
-                  style="background-image: url('${safeUrl(details.profileImageUrl || '')}')"
-                ></div>
+              <div class="tnx-card-profile-section">
+                <div class="tnx-card-picture-points">
+                  <div
+                    class="tnx-card-profile-picture"
+                    style="background-image: url('${safeUrl(details.profileImageUrl || '')}')"
+                  ></div>
 
-                <div class="tnx-card-job-info">
-                  <iconify-icon icon="${esc(jobIcon)}"></iconify-icon>
-                  ${esc(details.jobName || 'Citizen')}
-                </div>
-
-                <div class="tnx-card-stats-row">
-                  <div class="tnx-card-points">
-                    <iconify-icon icon="mdi:star-four-points-circle"></iconify-icon>
-                    ${formatNumber(details.points)}
+                  <div class="tnx-card-job-info">
+                    <iconify-icon icon="${esc(jobIcon)}"></iconify-icon>
+                    ${esc(details.jobName || 'Citizen')}
                   </div>
 
-                  <div class="tnx-card-gold">
-                    <iconify-icon icon="mdi:gold"></iconify-icon>
-                    ${formatNumber(details.gold)}
+                  <div class="tnx-card-stats-row">
+                    <div class="tnx-card-points">
+                      <iconify-icon icon="mdi:star-four-points-circle"></iconify-icon>
+                      ${formatNumber(details.points)}
+                    </div>
+
+                    <div class="tnx-card-gold">
+                      <iconify-icon icon="mdi:gold"></iconify-icon>
+                      ${formatNumber(details.gold)}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="tnx-card-username">${esc(username)}</div>
+                <div class="tnx-card-username">${esc(username)}</div>
 
-              <div class="tnx-card-badges">
-                ${badgeHtml}
+                <div class="tnx-card-badges">
+                  ${badgeHtml}
+                </div>
               </div>
             </div>
           </div>
         `
+      }
+
+      async function waitForImages(root) {
+        const images = Array.from(root.querySelectorAll('img'))
+
+        await Promise.all(images.map((img) => {
+          if (img.complete) return Promise.resolve()
+
+          return new Promise((resolve) => {
+            img.onload = resolve
+            img.onerror = resolve
+          })
+        }))
+      }
+
+      async function downloadUserCard(button) {
+        if (!button) return
+
+        const wrapper = button.closest('.tnx-card-download-wrap')
+        const card = wrapper?.querySelector('.tnx-user-card-preview')
+        const fileName = button.dataset.downloadUserCard || 'tnx6-card.png'
+
+        if (!card) return
+
+        const oldText = button.textContent
+
+        try {
+          button.disabled = true
+          button.textContent = 'جاري تجهيز الصورة...'
+          button.classList.remove('is-error', 'is-done')
+
+          await waitForImages(card)
+
+          if (!window.html2canvas) {
+            throw new Error('html2canvas is not loaded')
+          }
+
+          const canvas = await window.html2canvas(card, {
+            backgroundColor: null,
+            scale: 2,
+            useCORS: true,
+            allowTaint: false,
+            logging: false,
+            imageTimeout: 15000,
+          })
+
+          const link = document.createElement('a')
+          link.download = fileName
+          link.href = canvas.toDataURL('image/png')
+          link.click()
+
+          button.textContent = 'تم تنزيل الصورة'
+          button.classList.add('is-done')
+
+          addTimer(window.setTimeout(() => {
+            button.textContent = oldText
+            button.classList.remove('is-done')
+            button.disabled = false
+          }, 1200))
+        } catch (error) {
+          console.error('Failed to download user card', error)
+
+          button.textContent = 'تعذر تنزيل الصورة'
+          button.classList.add('is-error')
+          button.disabled = false
+
+          addTimer(window.setTimeout(() => {
+            button.textContent = oldText
+            button.classList.remove('is-error')
+          }, 1800))
+        }
       }
 
       async function loadUsers() {
@@ -1691,10 +1861,21 @@ const metadata = {
       })
 
       addListener(document, 'click', (event) => {
-        const copyButton = event.target.closest('[data-copy-text]')
-        if (!copyButton) return
+        const linkButton = event.target.closest('[data-copy-badge-link]')
+        if (linkButton) {
+          const hashId = linkButton.dataset.copyBadgeLink || ''
+          copyText(getBadgeLink(hashId), linkButton, 'تم نسخ الرابط')
+          return
+        }
 
-        copyText(copyButton.dataset.copyText || '', copyButton)
+        const downloadButton = event.target.closest('[data-download-user-card]')
+        if (downloadButton) {
+          downloadUserCard(downloadButton)
+        }
+      })
+
+      addListener(window, 'hashchange', () => {
+        openBadgeFromHash({ scrollToBadge: true })
       })
 
       addListener(badgeSearch, 'input', () => {
@@ -1770,4 +1951,5 @@ const metadata = {
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </Layout>
