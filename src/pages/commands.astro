@@ -6,7 +6,7 @@ import path from 'path'
 const metadata = {
   title: 'Commands — TNX6',
   ignoreTitleTemplate: true,
-  description: 'دليل أوامر مجتمع TNX6 للمشاهدين.',
+  description: 'مركز أوامر مجتمع TNX6.',
 }
 
 function readJsonFile(relativePath, fallback) {
@@ -47,11 +47,19 @@ function normalizeAlias(value) {
   return normalizeText(value)
 }
 
+/*
+  فلترة المصدر:
+  الصفحة ما تثق في commands.json كامل.
+  أي أمر مطفي، أو مودز، أو إداري، أو داخلي، ما يدخل أصلًا في الخريطة.
+*/
+
 const HIDDEN_GROUP_KEYWORDS = [
   'mod tools',
   'مودز',
   'admin',
+  'admins',
   'moderator',
+  'moderators',
   'old',
   'setup',
   'bot responses',
@@ -60,14 +68,22 @@ const HIDDEN_GROUP_KEYWORDS = [
 
 const HIDDEN_NAME_KEYWORDS = [
   'setup',
+  'backup',
+  'exclude user',
+
   'add points',
   'remove points',
   'multiply',
   'collect taxes',
   'happy hour',
+
   'blacklist',
   'whitelist',
   'custom command',
+  'add custom',
+  'edit custom',
+  'remove custom',
+
   'reward',
   'prediction',
   'poll',
@@ -75,18 +91,26 @@ const HIDDEN_NAME_KEYWORDS = [
   'obs',
   'browser source',
   'audio source',
+
   'run ads',
   'snooze',
+  'pre-roll',
+  'preroll',
+
   'botted',
   'follow attack',
   'hate raid',
+
   'ban user',
   'timeout',
-  'exclude user',
-  'backup',
+  'permit user',
+
   'هدية للكل',
   'ارسل للكل',
+  'أرسل للكل',
   'مستخدمين البريد',
+  'اصحاب البريد',
+  'أصحاب البريد',
   'مسح البريد',
   'حذف هدية النظام',
 ]
@@ -99,9 +123,7 @@ function commandIsHiddenBySource(command) {
   const group = normalizeText(command?.Group)
   const name = normalizeText(command?.Name)
 
-  if (!commandIsEnabled(command)) {
-    return true
-  }
+  if (!commandIsEnabled(command)) return true
 
   if (HIDDEN_GROUP_KEYWORDS.some((keyword) => group.includes(normalizeText(keyword)))) {
     return true
@@ -115,22 +137,30 @@ function commandIsHiddenBySource(command) {
 }
 
 function getCommandAliases(command) {
-  if (!Array.isArray(command?.Commands)) {
-    return []
+  if (!Array.isArray(command?.Commands)) return []
+
+  const seen = new Set()
+  const aliases = []
+
+  for (const alias of command.Commands) {
+    const cleanAlias = cleanText(alias)
+    const normalized = normalizeAlias(cleanAlias)
+
+    if (!cleanAlias) continue
+    if (!cleanAlias.startsWith('!')) continue
+    if (seen.has(normalized)) continue
+
+    seen.add(normalized)
+    aliases.push(cleanAlias)
   }
 
-  return command.Commands
-    .map((alias) => cleanText(alias))
-    .filter(Boolean)
-    .filter((alias) => alias.startsWith('!'))
+  return aliases
 }
 
 const availableAliasMap = new Map()
 
 for (const command of rawCommands) {
-  if (commandIsHiddenBySource(command)) {
-    continue
-  }
+  if (commandIsHiddenBySource(command)) continue
 
   for (const alias of getCommandAliases(command)) {
     const key = normalizeAlias(alias)
@@ -146,86 +176,83 @@ for (const command of rawCommands) {
 }
 
 /*
-  هنا تتحكم بالأوامر اللي تظهر للمشاهد.
-
-  الصفحة ما تعرض كل commands.json.
-  تعرض فقط الأشياء الموجودة هنا.
-  إذا الأمر غير موجود في commands.json أو مطفي أو داخل قروب مخفي، ما يظهر.
+  هذا هو الكتالوج الحقيقي للصفحة.
+  أي أمر غير موجود هنا ما يظهر للمشاهد حتى لو موجود في Streamer.bot.
 */
 
 const COMMAND_CATALOG = [
   {
     id: 'points-balance',
-    category: 'basics',
+    category: 'start',
     title: 'اعرف نقاطك',
-    description: 'يعرض رصيد نقاطك في الشات.',
+    description: 'يعرض رصيد نقاطك الحالي في الشات.',
     aliases: ['!نقاط', '!نقاطي', '!points'],
     example: '!نقاط',
-    tip: 'هذا أول أمر يحتاجه أي مشاهد جديد.',
+    keywords: ['نقاط', 'رصيد', 'فلوس', 'points'],
   },
   {
-    id: 'points-leaderboard',
-    category: 'basics',
+    id: 'points-board',
+    category: 'start',
     title: 'شوف ترتيب النقاط',
     description: 'يعرض ترتيب أكثر الأعضاء نقاطًا.',
     aliases: ['!ليدربورد', '!pointsLeaderboard', '!leaderboardPoints'],
     example: '!ليدربورد',
-    tip: 'استخدمه إذا تبي تعرف المتصدرين.',
+    keywords: ['ترتيب', 'ليدربورد', 'نقاط', 'leaderboard'],
   },
   {
-    id: 'challenge',
-    category: 'basics',
-    title: 'تحدي المجتمع',
-    description: 'يفتح لك أمر التحدي أو نظام التحديات المتاح في البث.',
-    aliases: ['!تحدي'],
-    example: '!تحدي',
-    tip: 'مفيد للمشاهدين اللي يبون يدخلون أنظمة المجتمع بسرعة.',
+    id: 'mail-open',
+    category: 'start',
+    title: 'افتح بريدك',
+    description: 'يعرض رسائلك والهدايا اللي وصلت لك.',
+    aliases: ['!بريد', '!mail', '!البريد'],
+    example: '!بريد',
+    keywords: ['بريد', 'رسائل', 'mail'],
+  },
+  {
+    id: 'gift-send',
+    category: 'start',
+    title: 'أرسل هدية',
+    description: 'ترسل نقاط أو غرض لشخص ثاني حسب النظام المتاح.',
+    aliases: ['!هدية', '!gift'],
+    example: '!هدية TNX6 | 5000 | تستاهل',
+    keywords: ['هدية', 'هديه', 'gift', 'ارسل'],
   },
   {
     id: 'clip',
-    category: 'basics',
+    category: 'start',
     title: 'سو كليب',
-    description: 'ينشئ كليب من لحظة البث الحالية.',
+    description: 'ينشئ كليب من اللحظة الحالية في البث.',
     aliases: ['!clip'],
     example: '!clip',
-    tip: 'استخدمه وقت اللقطات القوية.',
+    keywords: ['كليب', 'clip', 'لقطة'],
+  },
+  {
+    id: 'challenge',
+    category: 'start',
+    title: 'تحدي المجتمع',
+    description: 'يدخلك في نظام التحديات المتاح في البث.',
+    aliases: ['!تحدي'],
+    example: '!تحدي',
+    keywords: ['تحدي', 'challenge'],
   },
 
   {
-    id: 'mail-open',
-    category: 'mail',
-    title: 'افتح بريدك',
-    description: 'يعرض الرسائل والهدايا اللي وصلت لك.',
-    aliases: ['!بريد', '!mail', '!البريد'],
-    example: '!بريد',
-    tip: 'البريد هو مكان رسائلك وهداياك داخل المجتمع.',
-  },
-  {
     id: 'mail-help',
     category: 'mail',
-    title: 'شرح أوامر البريد',
-    description: 'يعرض لك أوامر البريد داخل الشات.',
+    title: 'شرح البريد',
+    description: 'يعرض أوامر البريد داخل الشات.',
     aliases: ['!اوامر البريد', '!أوامر البريد', '!mailhelp'],
     example: '!اوامر البريد',
-    tip: 'ابدأ بهذا لو ما تعرف نظام البريد.',
+    keywords: ['بريد', 'شرح', 'mailhelp'],
   },
   {
     id: 'mail-send',
     category: 'mail',
     title: 'أرسل رسالة',
-    description: 'يرسل رسالة خاصة لعضو عنده بريد.',
+    description: 'ترسل رسالة خاصة لعضو عنده بريد.',
     aliases: ['!ارسل رسالة', '!أرسل رسالة', '!ارسل رساله', '!ارسال رسالة', '!ارسل بريد'],
     example: '!ارسل رسالة TNX6 | السلام عليكم',
-    tip: 'اكتب اسم الشخص ثم الرسالة.',
-  },
-  {
-    id: 'gift-send',
-    category: 'mail',
-    title: 'أرسل هدية',
-    description: 'يرسل نقاط أو غرض لشخص ثاني حسب النظام المتاح.',
-    aliases: ['!هدية', '!gift'],
-    example: '!هدية TNX6 | 5000 | تستاهل',
-    tip: 'تأكد أن عندك نقاط أو الغرض المطلوب قبل الإرسال.',
+    keywords: ['رسالة', 'رساله', 'ارسل', 'بريد'],
   },
   {
     id: 'gift-accept',
@@ -234,7 +261,7 @@ const COMMAND_CATALOG = [
     description: 'يقبل آخر هدية وصلت لك.',
     aliases: ['!قبول الهدية', '!قبول الهديه', '!giftaccept'],
     example: '!قبول الهدية',
-    tip: 'بعد القبول تدخل الهدية لحسابك.',
+    keywords: ['قبول', 'هدية', 'giftaccept'],
   },
   {
     id: 'gift-reject',
@@ -243,7 +270,7 @@ const COMMAND_CATALOG = [
     description: 'يرفض آخر هدية وصلت لك.',
     aliases: ['!رفض الهدية', '!رفض الهديه', '!giftreject'],
     example: '!رفض الهدية',
-    tip: 'استخدمه إذا ما تبي تستلم الهدية.',
+    keywords: ['رفض', 'هدية', 'giftreject'],
   },
   {
     id: 'mail-count',
@@ -252,44 +279,44 @@ const COMMAND_CATALOG = [
     description: 'يعرض عدد الرسائل الموجودة في بريدك.',
     aliases: ['!عدد الرسائل', '!عدد البريد', '!mailcount'],
     example: '!عدد الرسائل',
-    tip: 'مفيد إذا بريدك صار زحمة.',
+    keywords: ['عدد', 'رسائل', 'بريد'],
   },
 
   {
     id: 'points-transfer',
     category: 'points',
     title: 'حوّل نقاط',
-    description: 'يرسل نقاط من رصيدك لشخص ثاني.',
+    description: 'ترسل نقاط من رصيدك لشخص ثاني.',
     aliases: ['!تحويل النقاط', '!givePoints', '!pointsGive', '!transferPoints', '!pointsTransfer'],
     example: '!تحويل النقاط TNX6 5000',
-    tip: 'لازم يكون عندك رصيد كافي.',
+    keywords: ['تحويل', 'نقاط', 'ارسال', 'transfer'],
   },
   {
     id: 'gamble',
     category: 'points',
     title: 'قامبل',
-    description: 'تخاطر بجزء من نقاطك حسب نظام البث.',
+    description: 'تخاطر بجزء من نقاطك. ممكن تكسب وممكن تخسر.',
     aliases: ['!gamble', '!roulette'],
     example: '!gamble 5000',
-    tip: 'مخاطرة. ممكن تكسب أو تخسر.',
+    keywords: ['قامبل', 'قمار', 'حظ', 'gamble', 'roulette'],
   },
   {
     id: 'scratch',
     category: 'points',
     title: 'بطاقات الحظ',
-    description: 'يشتري أو يستخدم بطاقات حظ بالنقاط.',
+    description: 'تشتري أو تستخدم بطاقة حظ بالنقاط.',
     aliases: ['!scratchCard', '!buyScratchCards'],
     example: '!scratchCard',
-    tip: 'استخدمها لو تبي تجربة حظ سريعة.',
+    keywords: ['بطاقة', 'حظ', 'scratch'],
   },
   {
     id: 'duel',
     category: 'points',
-    title: 'تحدي شخص بالنقاط',
-    description: 'يفتح تحدي بينك وبين عضو ثاني.',
+    title: 'تحدي بالنقاط',
+    description: 'تتحدى عضو ثاني على مبلغ من النقاط.',
     aliases: ['!duel'],
     example: '!duel TNX6 5000',
-    tip: 'الشخص الثاني يحتاج يقبل التحدي.',
+    keywords: ['تحدي', 'duel', 'نقاط'],
   },
   {
     id: 'duel-accept',
@@ -298,7 +325,7 @@ const COMMAND_CATALOG = [
     description: 'يقبل تحدي النقاط المرسل لك.',
     aliases: ['!accept', '!قبول'],
     example: '!قبول',
-    tip: 'لا تقبل إلا إذا فاهم الرهان.',
+    keywords: ['قبول', 'تحدي', 'accept'],
   },
 
   {
@@ -308,34 +335,34 @@ const COMMAND_CATALOG = [
     description: 'يعرض معلومات المزاد الحالي إذا كان فيه مزاد شغال.',
     aliases: ['!مزاد', '!auction'],
     example: '!مزاد',
-    tip: 'استخدمه لمعرفة وضع المزاد.',
+    keywords: ['مزاد', 'auction'],
   },
   {
     id: 'family-feud',
     category: 'games',
     title: 'فاميلي فيود',
-    description: 'يعرض أو يدخل نظام فاميلي فيود حسب إعداد البث.',
+    description: 'يدخلك أو يعرض لك لعبة فاميلي فيود حسب وضع البث.',
     aliases: ['!فاميلي فيود', '!ffa'],
     example: '!فاميلي فيود',
-    tip: 'لعبة جماعية داخل الشات.',
+    keywords: ['فاميلي', 'فيود', 'family', 'ffa'],
   },
   {
     id: 'hot-potato',
     category: 'games',
     title: 'البطاطا',
-    description: 'يدخل أو يعرض لعبة البطاطا إذا كانت متاحة.',
+    description: 'يدخلك أو يعرض لك لعبة البطاطا إذا كانت متاحة.',
     aliases: ['!بطاطا'],
     example: '!بطاطا',
-    tip: 'لعبة سريعة بين المشاهدين.',
+    keywords: ['بطاطا', 'potato'],
   },
   {
     id: 'hot-potato-pass',
     category: 'games',
     title: 'مرر البطاطا',
-    description: 'يمرر البطاطا لشخص ثاني أثناء اللعبة.',
+    description: 'يمرر البطاطا لشخص ثاني وقت اللعبة.',
     aliases: ['!pass'],
     example: '!pass TNX6',
-    tip: 'يستخدم فقط وقت اللعبة.',
+    keywords: ['pass', 'مرر', 'بطاطا'],
   },
   {
     id: 'hot-potato-losers',
@@ -344,34 +371,34 @@ const COMMAND_CATALOG = [
     description: 'يعرض ترتيب الخاسرين في لعبة البطاطا.',
     aliases: ['!الفاشلين'],
     example: '!الفاشلين',
-    tip: 'للضحك والإحصائيات.',
+    keywords: ['فاشلين', 'بطاطا', 'ترتيب'],
   },
   {
     id: 'high-low-high',
     category: 'games',
     title: 'High Low — أعلى',
-    description: 'توقع أن الرقم القادم أعلى.',
+    description: 'تتوقع أن الرقم القادم أعلى.',
     aliases: ['!high'],
     example: '!high',
-    tip: 'جزء من لعبة High Low.',
+    keywords: ['high', 'اعلى', 'أعلى'],
   },
   {
     id: 'high-low-low',
     category: 'games',
     title: 'High Low — أقل',
-    description: 'توقع أن الرقم القادم أقل.',
+    description: 'تتوقع أن الرقم القادم أقل.',
     aliases: ['!low'],
     example: '!low',
-    tip: 'جزء من لعبة High Low.',
+    keywords: ['low', 'اقل', 'أقل'],
   },
   {
     id: 'high-low-equal',
     category: 'games',
     title: 'High Low — مساوي',
-    description: 'توقع أن الرقم القادم مساوي.',
+    description: 'تتوقع أن الرقم القادم مساوي.',
     aliases: ['!equal'],
     example: '!equal',
-    tip: 'توقع صعب لكنه موجود.',
+    keywords: ['equal', 'مساوي'],
   },
   {
     id: 'high-low-stats',
@@ -380,7 +407,7 @@ const COMMAND_CATALOG = [
     description: 'يعرض إحصائياتك أو ترتيب اللعبة.',
     aliases: ['!personalstats', '!alltime', '!session'],
     example: '!personalstats',
-    tip: 'مفيد إذا تلعب High Low كثير.',
+    keywords: ['stats', 'احصائيات', 'highlow'],
   },
 
   {
@@ -390,7 +417,7 @@ const COMMAND_CATALOG = [
     description: 'يعرض الأغراض اللي تملكها.',
     aliases: ['!حقيبة', '!inventory', '!bag'],
     example: '!حقيبة',
-    tip: 'إذا كان نظام الحقيبة مفعل، هذا أهم أمر فيه.',
+    keywords: ['حقيبة', 'شنطة', 'inventory', 'bag'],
   },
   {
     id: 'inventory-shop',
@@ -399,7 +426,7 @@ const COMMAND_CATALOG = [
     description: 'يعرض الأغراض المتاحة للشراء.',
     aliases: ['!متجر', '!shop', '!itemList'],
     example: '!متجر',
-    tip: 'من هنا تعرف وش تقدر تشتري.',
+    keywords: ['متجر', 'shop', 'شراء'],
   },
   {
     id: 'inventory-buy',
@@ -408,7 +435,7 @@ const COMMAND_CATALOG = [
     description: 'يشتري غرض من المتجر إذا عندك رصيد كافي.',
     aliases: ['!شراء', '!buy', '!buyItem'],
     example: '!شراء البريد',
-    tip: 'اكتب اسم الغرض بعد الأمر.',
+    keywords: ['شراء', 'buy'],
   },
   {
     id: 'inventory-sell',
@@ -417,7 +444,7 @@ const COMMAND_CATALOG = [
     description: 'يبيع غرض من حقيبتك إذا كان قابل للبيع.',
     aliases: ['!بيع', '!sell', '!sellItem', '!itemSell'],
     example: '!بيع البريد',
-    tip: 'انتبه، البيع قد يكون نهائي.',
+    keywords: ['بيع', 'sell'],
   },
   {
     id: 'inventory-use',
@@ -426,16 +453,16 @@ const COMMAND_CATALOG = [
     description: 'يستخدم غرض من حقيبتك.',
     aliases: ['!استخدام', '!use', '!useItem'],
     example: '!استخدام البريد',
-    tip: 'بعض الأغراض لها تأثير مباشر.',
+    keywords: ['استخدام', 'استخدم', 'use'],
   },
   {
     id: 'inventory-trade',
     category: 'inventory',
-    title: 'اعرض تبادل',
+    title: 'تبادل غرض',
     description: 'يرسل عرض تبادل غرض مع شخص ثاني.',
     aliases: ['!تريد', '!trade', '!offer', '!tradeItem'],
     example: '!تريد TNX6 | البريد',
-    tip: 'يحتاج الطرف الثاني يقبل أو يرفض.',
+    keywords: ['تبادل', 'تريد', 'trade'],
   },
 
   {
@@ -445,7 +472,7 @@ const COMMAND_CATALOG = [
     description: 'يسجل حضورك اليومي إذا كان النظام مفعل.',
     aliases: ['!تسجيل', '!حضور', '!checkin'],
     example: '!تسجيل',
-    tip: 'يساعدك تبني ستريك وحضور.',
+    keywords: ['تسجيل', 'حضور', 'checkin'],
   },
   {
     id: 'streak',
@@ -454,16 +481,7 @@ const COMMAND_CATALOG = [
     description: 'يعرض سلسلة حضورك أو تقدمك.',
     aliases: ['!ستريك', '!streak'],
     example: '!ستريك',
-    tip: 'مفيد لمتابعة حضورك.',
-  },
-  {
-    id: 'checkin-leaderboard',
-    category: 'community',
-    title: 'ترتيب الحضور',
-    description: 'يعرض ترتيب أكثر الناس تسجيلًا للحضور.',
-    aliases: ['!checkinlb'],
-    example: '!checkinlb',
-    tip: 'يعطي جو تنافسي للحضور.',
+    keywords: ['ستريك', 'streak'],
   },
   {
     id: 'badge',
@@ -472,7 +490,7 @@ const COMMAND_CATALOG = [
     description: 'يعرض بادجاتك أو طريقة عرض البادج.',
     aliases: ['!بادج', '!badges', '!badge'],
     example: '!بادج',
-    tip: 'للي يجمعون إنجازات المجتمع.',
+    keywords: ['بادج', 'بادجات', 'badge'],
   },
   {
     id: 'vip',
@@ -481,7 +499,7 @@ const COMMAND_CATALOG = [
     description: 'يعرض حالة VIP أو معلوماته إذا كان النظام مفعل.',
     aliases: ['!vip', '!في اي بي'],
     example: '!vip',
-    tip: 'مفيد لو عندك VIP مؤقت.',
+    keywords: ['vip', 'في اي بي'],
   },
 
   {
@@ -491,16 +509,16 @@ const COMMAND_CATALOG = [
     description: 'يعرض عمر حساب Twitch.',
     aliases: ['!accountage'],
     example: '!accountage TNX6',
-    tip: 'أداة بسيطة لمعرفة عمر الحساب.',
+    keywords: ['عمر', 'حساب', 'accountage'],
   },
   {
     id: 'lurk',
     category: 'tools',
     title: 'وضع lurk',
-    description: 'يقول إنك موجود لكن ساكت أو تتابع بدون تفاعل.',
+    description: 'يقول إنك موجود لكن تتابع بهدوء.',
     aliases: ['!lurk'],
     example: '!lurk',
-    tip: 'للي يتابعون بهدوء.',
+    keywords: ['lurk', 'متربص', 'هدوء'],
   },
   {
     id: 'coin-flip',
@@ -509,56 +527,63 @@ const COMMAND_CATALOG = [
     description: 'يرمي عملة عشوائيًا.',
     aliases: ['!رمي عملة', '!flipcoin'],
     example: '!رمي عملة',
-    tip: 'للقرارات العشوائية السريعة.',
+    keywords: ['عملة', 'رمي', 'flipcoin'],
   },
 ]
 
 const CATEGORY_META = {
-  basics: {
+  start: {
     title: 'ابدأ هنا',
+    short: 'البداية',
     subtitle: 'أهم أوامر يحتاجها أي مشاهد جديد.',
-    icon: '✨',
-    cta: 'أوامر البداية',
+    icon: '✦',
+    color: 'gold',
   },
   mail: {
     title: 'البريد والهدايا',
+    short: 'البريد',
     subtitle: 'رسائل، هدايا، قبول ورفض.',
-    icon: '📬',
-    cta: 'أوامر البريد',
+    icon: '✉',
+    color: 'amber',
   },
   points: {
     title: 'النقاط والتحديات',
-    subtitle: 'رصيدك، تحويل، تحديات، وحظ.',
-    icon: '🪙',
-    cta: 'أوامر النقاط',
+    short: 'النقاط',
+    subtitle: 'رصيد، تحويل، تحديات، وحظ.',
+    icon: '◆',
+    color: 'yellow',
   },
   games: {
     title: 'ألعاب الشات',
+    short: 'الألعاب',
     subtitle: 'ألعاب وتحديات داخل البث.',
-    icon: '🎮',
-    cta: 'أوامر الألعاب',
+    icon: '◈',
+    color: 'violet',
   },
   inventory: {
     title: 'الحقيبة والمتجر',
+    short: 'الحقيبة',
     subtitle: 'أغراض، شراء، بيع، واستخدام.',
-    icon: '🎒',
-    cta: 'أوامر الحقيبة',
+    icon: '▣',
+    color: 'green',
   },
   community: {
     title: 'المجتمع والبادجات',
+    short: 'المجتمع',
     subtitle: 'حضور، ستريك، VIP، وبادجات.',
-    icon: '🏅',
-    cta: 'أوامر المجتمع',
+    icon: '⬟',
+    color: 'blue',
   },
   tools: {
     title: 'أدوات سريعة',
+    short: 'أدوات',
     subtitle: 'أوامر صغيرة ومباشرة.',
-    icon: '🧰',
-    cta: 'أدوات',
+    icon: '⌁',
+    color: 'gray',
   },
 }
 
-const CATEGORY_ORDER = ['basics', 'mail', 'points', 'games', 'inventory', 'community', 'tools']
+const CATEGORY_ORDER = ['start', 'mail', 'points', 'games', 'inventory', 'community', 'tools']
 
 function getAvailableAliases(definition) {
   const result = []
@@ -568,16 +593,12 @@ function getAvailableAliases(definition) {
     const key = normalizeAlias(alias)
     const available = availableAliasMap.get(key)
 
-    if (!available) {
-      continue
-    }
+    if (!available) continue
 
     const cleanAlias = cleanText(available.alias)
     const normalized = normalizeAlias(cleanAlias)
 
-    if (seen.has(normalized)) {
-      continue
-    }
+    if (seen.has(normalized)) continue
 
     seen.add(normalized)
     result.push(cleanAlias)
@@ -590,28 +611,28 @@ const visibleCommands = COMMAND_CATALOG
   .map((definition) => {
     const aliases = getAvailableAliases(definition)
 
-    if (aliases.length === 0) {
-      return null
-    }
+    if (aliases.length === 0) return null
 
-    const primaryAlias = aliases[0]
     const category = definition.category
-    const meta = CATEGORY_META[category] || CATEGORY_META.basics
+    const meta = CATEGORY_META[category] || CATEGORY_META.start
+    const primaryAlias = aliases[0]
 
     return {
       ...definition,
       aliases,
       primaryAlias,
       categoryTitle: meta.title,
+      categoryShort: meta.short,
+      categoryIcon: meta.icon,
       searchText: normalizeText(
         [
           definition.title,
           definition.description,
           definition.example,
-          definition.tip,
-          category,
-          meta.title,
+          ...(definition.keywords || []),
           ...aliases,
+          meta.title,
+          meta.short,
         ].join(' ')
       ),
     }
@@ -635,7 +656,9 @@ for (const command of visibleCommands) {
 const visibleCategories = CATEGORY_ORDER.filter((category) => commandsByCategory[category]?.length > 0)
 
 const featuredCommands = visibleCommands
-  .filter((command) => ['points-balance', 'mail-open', 'gift-send', 'clip', 'points-leaderboard', 'challenge'].includes(command.id))
+  .filter((command) =>
+    ['points-balance', 'mail-open', 'gift-send', 'clip', 'points-board', 'challenge'].includes(command.id)
+  )
   .slice(0, 6)
 
 const totalCommands = visibleCommands.length
@@ -644,50 +667,99 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
 ---
 
 <Layout metadata={metadata}>
-  <main class="tnx-commands-page" dir="rtl">
-    <div class="tnx-commands-bg"></div>
+  <main class="tnx-command-center" dir="rtl">
+    <div class="tnx-bg-orbs"></div>
+    <div class="tnx-bg-grid"></div>
 
-    <section class="tnx-commands-shell">
-      <header class="tnx-commands-hero">
-        <div class="tnx-commands-hero-content">
-          <div class="tnx-commands-pill">
+    <section class="tnx-shell">
+      <header class="tnx-hero">
+        <div class="tnx-hero-main">
+          <div class="tnx-eyebrow">
             <span></span>
-            دليل المشاهد
+            TNX6 COMMAND CENTER
           </div>
 
-          <h1>وش تبي تسوي في الشات؟</h1>
+          <h1>كل أوامر الشات<br />بدون تعقيد</h1>
 
           <p>
-            هنا تلقى أوامر البث بشكل مبسط. اختر اللي تبيه، انسخ الأمر، واكتبه في شات Twitch.
+            ما تحتاج تحفظ شيء. اختر وش تبي تسوي، انسخ الأمر، واكتبه في شات Twitch.
           </p>
+
+          <div class="tnx-launcher">
+            <div class="tnx-launcher-icon">⌕</div>
+            <input
+              id="commandSearch"
+              type="search"
+              autocomplete="off"
+              placeholder="اكتب مثلًا: نقاط، بريد، هدية، لعبة، بادج..."
+            />
+            <button type="button" id="clearCommandSearch" aria-label="مسح البحث">×</button>
+          </div>
+
+          <div class="tnx-quick-tags">
+            <button type="button" data-search-chip="نقاط">نقاط</button>
+            <button type="button" data-search-chip="بريد">بريد</button>
+            <button type="button" data-search-chip="هدية">هدية</button>
+            <button type="button" data-search-chip="لعبة">لعبة</button>
+            <button type="button" data-search-chip="بادج">بادج</button>
+          </div>
         </div>
 
-        <div class="tnx-commands-hero-card">
-          <strong>{totalCommands}</strong>
-          <span>أمر جاهز للمشاهدين</span>
-          <small>{totalCategories} أقسام · {totalAliases} اختصار</small>
-        </div>
+        <aside class="tnx-hero-panel">
+          <div class="tnx-panel-ring">
+            <strong>{totalCommands}</strong>
+            <span>أمر متاح</span>
+          </div>
+
+          <div class="tnx-panel-stats">
+            <div>
+              <b>{totalCategories}</b>
+              <span>أقسام</span>
+            </div>
+
+            <div>
+              <b>{totalAliases}</b>
+              <span>اختصار</span>
+            </div>
+          </div>
+
+          <p>
+            الصفحة تعرض أوامر المشاهدين فقط. أوامر المودز، الأوامر المطفيّة، والأوامر الداخلية مخفية.
+          </p>
+        </aside>
       </header>
 
       {featuredCommands.length > 0 && (
-        <section class="tnx-start-section">
-          <div class="tnx-section-head">
-            <span>للمشاهد الجديد</span>
-            <h2>ابدأ بهذه الأوامر</h2>
+        <section class="tnx-featured">
+          <div class="tnx-section-title">
+            <span>الأكثر استخدامًا</span>
+            <h2>أوامر سريعة</h2>
           </div>
 
-          <div class="tnx-start-grid">
+          <div class="tnx-featured-grid">
             {featuredCommands.map((command) => (
-              <article class="tnx-start-card" data-command-card data-category={command.category} data-search={command.searchText}>
-                <div class="tnx-start-icon">{CATEGORY_META[command.category]?.icon || '✨'}</div>
+              <article
+                class="tnx-feature-card"
+                data-command-card
+                data-category={command.category}
+                data-search={command.searchText}
+              >
+                <div class="tnx-card-glow"></div>
 
-                <div class="tnx-start-copy">
-                  <strong>{command.title}</strong>
-                  <span>{command.description}</span>
+                <div class="tnx-feature-top">
+                  <div class="tnx-icon-badge">{command.categoryIcon}</div>
+
+                  <div>
+                    <strong>{command.title}</strong>
+                    <span>{command.categoryShort}</span>
+                  </div>
                 </div>
 
-                <button type="button" class="tnx-copy-btn" data-copy={command.primaryAlias}>
-                  {command.primaryAlias}
+                <p>{command.description}</p>
+
+                <button type="button" class="tnx-copy-primary" data-copy={command.primaryAlias}>
+                  <code>{command.primaryAlias}</code>
+                  <span>نسخ</span>
                 </button>
               </article>
             ))}
@@ -695,131 +767,125 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
         </section>
       )}
 
-      <section class="tnx-category-section">
-        <div class="tnx-section-head">
-          <span>اختصرها عليك</span>
-          <h2>اختر نوع الأمر</h2>
-        </div>
+      <section class="tnx-main-layout">
+        <aside class="tnx-side-nav">
+          <div class="tnx-side-title">
+            <span>وش تبي؟</span>
+            <strong>الأقسام</strong>
+          </div>
 
-        <div class="tnx-category-grid" id="categoryFilters">
-          <button type="button" class="tnx-category-card is-active" data-category-filter="all">
-            <div class="tnx-category-icon">🧭</div>
-            <strong>الكل</strong>
-            <span>كل الأوامر المهمة</span>
+          <button type="button" class="tnx-nav-item is-active" data-category-filter="all">
+            <span class="tnx-nav-icon">◎</span>
+            <span class="tnx-nav-copy">
+              <b>كل الأوامر</b>
+              <small>عرض شامل</small>
+            </span>
           </button>
 
           {visibleCategories.map((category) => (
-            <button type="button" class="tnx-category-card" data-category-filter={category}>
-              <div class="tnx-category-icon">{CATEGORY_META[category].icon}</div>
-              <strong>{CATEGORY_META[category].title}</strong>
-              <span>{CATEGORY_META[category].subtitle}</span>
+            <button type="button" class="tnx-nav-item" data-category-filter={category}>
+              <span class="tnx-nav-icon">{CATEGORY_META[category].icon}</span>
+              <span class="tnx-nav-copy">
+                <b>{CATEGORY_META[category].short}</b>
+                <small>{commandsByCategory[category].length} أوامر</small>
+              </span>
             </button>
           ))}
-        </div>
-      </section>
+        </aside>
 
-      <section class="tnx-search-section">
-        <div class="tnx-command-search">
-          <span>🔎</span>
-          <input
-            id="commandSearch"
-            type="search"
-            placeholder="ابحث بكلمة بسيطة: نقاط، بريد، هدية، لعبة..."
-            autocomplete="off"
-          />
-          <button type="button" id="clearCommandSearch" aria-label="مسح البحث">×</button>
-        </div>
-      </section>
-
-      <div id="emptyState" class="tnx-empty-state hidden">
-        <div>ما لقيت أمر مطابق</div>
-        <p>جرب كلمة أبسط مثل: نقاط، بريد، هدية، لعبة، ترتيب.</p>
-      </div>
-
-      <section class="tnx-command-sections" id="commandList">
-        {visibleCategories.length === 0 ? (
-          <div class="tnx-empty-state">
-            <div>ما فيه أوامر ظاهرة حاليًا</div>
-            <p>تأكد من ملف commands.json أو من أن الأوامر مفعلة في Streamer.bot.</p>
+        <div class="tnx-content">
+          <div id="emptyState" class="tnx-empty hidden">
+            <strong>ما لقيت أمر مطابق</strong>
+            <span>جرّب كلمة أبسط مثل: نقاط، بريد، هدية، لعبة، ترتيب.</span>
           </div>
-        ) : (
-          visibleCategories.map((category) => (
-            <section class="tnx-command-group" data-command-group={category}>
-              <div class="tnx-command-group-head">
-                <div>
-                  <span>{CATEGORY_META[category].cta}</span>
-                  <h2>
-                    <b>{CATEGORY_META[category].icon}</b>
-                    {CATEGORY_META[category].title}
-                  </h2>
-                  <p>{CATEGORY_META[category].subtitle}</p>
-                </div>
 
-                <strong>{commandsByCategory[category].length} أوامر</strong>
+          <section class="tnx-command-sections" id="commandList">
+            {visibleCategories.length === 0 ? (
+              <div class="tnx-empty">
+                <strong>ما فيه أوامر ظاهرة حاليًا</strong>
+                <span>تأكد من ملف commands.json أو من أن الأوامر مفعلة في Streamer.bot.</span>
               </div>
+            ) : (
+              visibleCategories.map((category) => (
+                <section class="tnx-command-group" data-command-group={category}>
+                  <div class="tnx-command-group-head">
+                    <div class="tnx-command-group-title">
+                      <div class="tnx-big-icon">{CATEGORY_META[category].icon}</div>
 
-              <div class="tnx-command-grid">
-                {commandsByCategory[category].map((command) => (
-                  <article
-                    class="tnx-command-card"
-                    data-command-card
-                    data-category={command.category}
-                    data-search={command.searchText}
-                  >
-                    <div class="tnx-command-card-top">
                       <div>
-                        <span class="tnx-command-category">{command.categoryTitle}</span>
-                        <h3>{command.title}</h3>
+                        <span>{CATEGORY_META[category].short}</span>
+                        <h2>{CATEGORY_META[category].title}</h2>
+                        <p>{CATEGORY_META[category].subtitle}</p>
                       </div>
-
-                      <div class="tnx-command-icon">{CATEGORY_META[command.category]?.icon || '✨'}</div>
                     </div>
 
-                    <p class="tnx-command-description">{command.description}</p>
-
-                    <div class="tnx-command-main">
-                      <div>
-                        <span>اكتب في الشات</span>
-                        <code>{command.primaryAlias}</code>
-                      </div>
-
-                      <button type="button" class="tnx-copy-btn" data-copy={command.primaryAlias}>
-                        نسخ
-                      </button>
+                    <div class="tnx-group-count">
+                      {commandsByCategory[category].length}
+                      <small>أمر</small>
                     </div>
+                  </div>
 
-                    {command.example && (
-                      <div class="tnx-command-example">
-                        <span>مثال</span>
-                        <code>{command.example}</code>
-                      </div>
-                    )}
+                  <div class="tnx-command-grid">
+                    {commandsByCategory[category].map((command) => (
+                      <article
+                        class="tnx-command-card"
+                        data-command-card
+                        data-category={command.category}
+                        data-search={command.searchText}
+                      >
+                        <div class="tnx-command-card-header">
+                          <div>
+                            <span>{command.categoryShort}</span>
+                            <h3>{command.title}</h3>
+                          </div>
 
-                    {command.tip && (
-                      <div class="tnx-command-tip">
-                        {command.tip}
-                      </div>
-                    )}
-
-                    {command.aliases.length > 1 && (
-                      <details class="tnx-command-aliases">
-                        <summary>اختصارات ثانية</summary>
-
-                        <div>
-                          {command.aliases.slice(1).map((alias) => (
-                            <button type="button" class="tnx-alias-btn" data-copy={alias}>
-                              {alias}
-                            </button>
-                          ))}
+                          <div class="tnx-mini-icon">{command.categoryIcon}</div>
                         </div>
-                      </details>
-                    )}
-                  </article>
-                ))}
-              </div>
-            </section>
-          ))
-        )}
+
+                        <p class="tnx-command-description">
+                          {command.description}
+                        </p>
+
+                        <div class="tnx-command-box">
+                          <span>الأمر</span>
+
+                          <div>
+                            <code>{command.primaryAlias}</code>
+
+                            <button type="button" data-copy={command.primaryAlias}>
+                              نسخ
+                            </button>
+                          </div>
+                        </div>
+
+                        {command.example && (
+                          <div class="tnx-example-box">
+                            <span>مثال</span>
+                            <code>{command.example}</code>
+                          </div>
+                        )}
+
+                        {command.aliases.length > 1 && (
+                          <details class="tnx-more-aliases">
+                            <summary>اختصارات ثانية</summary>
+
+                            <div>
+                              {command.aliases.slice(1).map((alias) => (
+                                <button type="button" data-copy={alias}>
+                                  {alias}
+                                </button>
+                              ))}
+                            </div>
+                          </details>
+                        )}
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              ))
+            )}
+          </section>
+        </div>
       </section>
     </section>
   </main>
@@ -829,158 +895,302 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       display: none !important;
     }
 
-    .tnx-commands-page {
+    .tnx-command-center {
       position: relative;
       min-height: 100vh;
       overflow: hidden;
-      background: #08050d;
+      background: #07050b;
       color: #fff;
     }
 
-    .tnx-commands-bg {
-      pointer-events: none;
+    .tnx-bg-orbs {
       position: fixed;
       inset: 0;
       z-index: 0;
+      pointer-events: none;
       background:
-        radial-gradient(circle at 18% 10%, rgba(255, 218, 106, 0.16), transparent 30%),
-        radial-gradient(circle at 82% 18%, rgba(194, 146, 0, 0.1), transparent 34%),
-        linear-gradient(135deg, #08050d 0%, #050507 48%, #130d05 100%);
+        radial-gradient(circle at 16% 8%, rgba(255, 218, 106, 0.18), transparent 28%),
+        radial-gradient(circle at 86% 16%, rgba(194, 146, 0, 0.16), transparent 32%),
+        radial-gradient(circle at 50% 95%, rgba(124, 58, 237, 0.12), transparent 38%),
+        linear-gradient(135deg, #07050b 0%, #050507 52%, #120c05 100%);
     }
 
-    .tnx-commands-bg::after {
-      content: '';
-      position: absolute;
+    .tnx-bg-grid {
+      position: fixed;
       inset: 0;
+      z-index: 0;
+      pointer-events: none;
       opacity: 0.07;
       background-image:
-        linear-gradient(rgba(255, 218, 106, 0.45) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 218, 106, 0.45) 1px, transparent 1px);
-      background-size: 54px 54px;
+        linear-gradient(rgba(255, 218, 106, 0.4) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 218, 106, 0.4) 1px, transparent 1px);
+      background-size: 58px 58px;
       mask-image: radial-gradient(circle at center, black 0%, transparent 74%);
     }
 
-    .tnx-commands-shell {
+    .tnx-shell {
       position: relative;
       z-index: 1;
-      width: min(100%, 1200px);
+      width: min(100%, 1280px);
       margin: 0 auto;
-      padding: 6rem 1rem 5rem;
+      padding: 6.5rem 1rem 5rem;
     }
 
-    .tnx-commands-hero {
+    .tnx-hero {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 280px;
+      grid-template-columns: minmax(0, 1fr) 340px;
       gap: 1rem;
       align-items: stretch;
-      margin-bottom: 1rem;
     }
 
-    .tnx-commands-hero-content,
-    .tnx-commands-hero-card,
-    .tnx-start-section,
-    .tnx-category-section,
-    .tnx-search-section,
+    .tnx-hero-main,
+    .tnx-hero-panel,
+    .tnx-featured,
+    .tnx-side-nav,
     .tnx-command-group,
-    .tnx-empty-state {
-      border: 1px solid rgba(198, 164, 79, 0.24);
+    .tnx-empty {
+      border: 1px solid rgba(255, 218, 106, 0.18);
       background:
-        radial-gradient(circle at top right, rgba(255, 218, 106, 0.09), transparent 42%),
-        rgba(5, 5, 5, 0.78);
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
+        rgba(6, 6, 8, 0.78);
       box-shadow:
-        0 0 42px rgba(0, 0, 0, 0.44),
-        inset 0 0 18px rgba(255, 218, 106, 0.025);
-      backdrop-filter: blur(14px);
+        0 24px 70px rgba(0, 0, 0, 0.44),
+        inset 0 0 22px rgba(255, 218, 106, 0.025);
+      backdrop-filter: blur(16px);
     }
 
-    .tnx-commands-hero-content {
-      border-radius: 2rem;
+    .tnx-hero-main {
+      position: relative;
+      overflow: hidden;
+      border-radius: 2.2rem;
       padding: 2rem;
     }
 
-    .tnx-commands-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      width: fit-content;
-      border: 1px solid rgba(198, 164, 79, 0.36);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.42);
-      padding: 0.55rem 0.9rem;
-      color: #ffda6a;
-      font-size: 0.82rem;
-      font-weight: 950;
+    .tnx-hero-main::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.18), transparent 36%),
+        radial-gradient(circle at bottom left, rgba(194, 146, 0, 0.12), transparent 38%);
+      opacity: 0.8;
     }
 
-    .tnx-commands-pill span {
-      width: 0.5rem;
-      height: 0.5rem;
+    .tnx-hero-main > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .tnx-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      width: fit-content;
+      border: 1px solid rgba(255, 218, 106, 0.28);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.36);
+      color: #ffda6a;
+      padding: 0.55rem 0.9rem;
+      font-size: 0.78rem;
+      font-weight: 950;
+      letter-spacing: 0.18em;
+    }
+
+    .tnx-eyebrow span {
+      width: 0.48rem;
+      height: 0.48rem;
       border-radius: 999px;
       background: #ffda6a;
       box-shadow: 0 0 14px #ffda6a;
     }
 
-    .tnx-commands-hero h1 {
-      max-width: 760px;
-      margin: 1rem 0 0;
-      background: linear-gradient(90deg, #ffda6a, #c29200);
+    .tnx-hero h1 {
+      margin: 1.25rem 0 0;
+      max-width: 820px;
+      background: linear-gradient(90deg, #fff1a8, #ffda6a 42%, #c29200);
       background-clip: text;
       color: transparent;
-      font-size: clamp(2.6rem, 6vw, 5.5rem);
+      font-size: clamp(3.2rem, 7vw, 6.6rem);
       font-weight: 950;
-      line-height: 1.05;
+      line-height: 0.98;
+      letter-spacing: -0.05em;
     }
 
-    .tnx-commands-hero p {
+    .tnx-hero p {
       max-width: 640px;
-      margin: 1rem 0 0;
+      margin: 1.25rem 0 0;
       color: rgb(209, 213, 219);
-      font-size: 1.05rem;
-      font-weight: 750;
+      font-size: 1.08rem;
+      font-weight: 760;
       line-height: 1.9;
     }
 
-    .tnx-commands-hero-card {
+    .tnx-launcher {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 0.8rem;
+      max-width: 760px;
+      margin-top: 1.5rem;
+      border: 1px solid rgba(255, 218, 106, 0.28);
+      border-radius: 1.25rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.1), transparent 42%),
+        rgba(0, 0, 0, 0.46);
+      padding: 0.8rem 0.9rem;
+      box-shadow:
+        0 0 0 1px rgba(255, 218, 106, 0.04),
+        0 0 28px rgba(255, 218, 106, 0.08);
+    }
+
+    .tnx-launcher-icon {
       display: grid;
       place-items: center;
+      width: 2.7rem;
+      height: 2.7rem;
+      border-radius: 0.9rem;
+      border: 1px solid rgba(255, 218, 106, 0.22);
+      background: rgba(255, 218, 106, 0.07);
+      color: #ffda6a;
+      font-size: 1.6rem;
+      font-weight: 950;
+    }
+
+    .tnx-launcher input {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: white;
+      font-size: 1rem;
+      font-weight: 850;
+      outline: none;
+    }
+
+    .tnx-launcher input::placeholder {
+      color: rgb(107, 114, 128);
+    }
+
+    .tnx-launcher button {
+      display: grid;
+      place-items: center;
+      width: 2.25rem;
+      height: 2.25rem;
+      border: 1px solid rgba(255, 218, 106, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      font-size: 1.25rem;
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .tnx-quick-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-top: 1rem;
+    }
+
+    .tnx-quick-tags button {
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.3);
+      color: rgb(229, 231, 235);
+      padding: 0.55rem 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .tnx-quick-tags button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 218, 106, 0.5);
+      color: #ffda6a;
+      background: rgba(255, 218, 106, 0.08);
+    }
+
+    .tnx-hero-panel {
+      display: grid;
       align-content: center;
-      border-radius: 2rem;
-      padding: 1.5rem;
+      gap: 1rem;
+      border-radius: 2.2rem;
+      padding: 1.25rem;
+    }
+
+    .tnx-panel-ring {
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1;
+      border: 1px solid rgba(255, 218, 106, 0.28);
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at center, rgba(255, 218, 106, 0.18), transparent 58%),
+        rgba(0, 0, 0, 0.34);
       text-align: center;
     }
 
-    .tnx-commands-hero-card strong {
+    .tnx-panel-ring strong {
+      display: block;
       color: #ffda6a;
-      font-size: 4rem;
+      font-size: 4.8rem;
       font-weight: 950;
-      line-height: 1;
+      line-height: 0.9;
+      text-shadow: 0 0 18px rgba(255, 218, 106, 0.24);
     }
 
-    .tnx-commands-hero-card span {
-      margin-top: 0.6rem;
-      color: #fff;
+    .tnx-panel-ring span {
+      display: block;
+      margin-top: 0.45rem;
+      color: white;
       font-size: 1rem;
       font-weight: 950;
     }
 
-    .tnx-commands-hero-card small {
-      margin-top: 0.4rem;
+    .tnx-panel-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.7rem;
+    }
+
+    .tnx-panel-stats div {
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 1.1rem;
+      background: rgba(0, 0, 0, 0.28);
+      padding: 0.85rem;
+      text-align: center;
+    }
+
+    .tnx-panel-stats b {
+      display: block;
+      color: #ffda6a;
+      font-size: 1.4rem;
+      font-weight: 950;
+    }
+
+    .tnx-panel-stats span {
       color: rgb(148, 163, 184);
-      font-size: 0.82rem;
+      font-size: 0.75rem;
+      font-weight: 850;
+    }
+
+    .tnx-hero-panel p {
+      margin: 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.86rem;
       font-weight: 800;
+      line-height: 1.8;
+      text-align: center;
     }
 
-    .tnx-start-section,
-    .tnx-category-section,
-    .tnx-search-section,
-    .tnx-command-group,
-    .tnx-empty-state {
-      border-radius: 1.65rem;
-      padding: 1.25rem;
+    .tnx-featured {
       margin-top: 1rem;
+      border-radius: 1.8rem;
+      padding: 1.25rem;
     }
 
-    .tnx-section-head {
+    .tnx-section-title {
       display: flex;
       align-items: end;
       justify-content: space-between;
@@ -988,309 +1198,136 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       margin-bottom: 1rem;
     }
 
-    .tnx-section-head span,
-    .tnx-command-group-head > div > span {
+    .tnx-section-title span {
       color: #c29200;
-      font-size: 0.76rem;
+      font-size: 0.78rem;
       font-weight: 950;
       letter-spacing: 0.12em;
     }
 
-    .tnx-section-head h2,
-    .tnx-command-group-head h2 {
+    .tnx-section-title h2 {
       margin: 0.25rem 0 0;
       color: #f7e6ac;
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: 950;
-      line-height: 1.15;
+      line-height: 1.1;
     }
 
-    .tnx-start-grid {
+    .tnx-featured-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.85rem;
     }
 
-    .tnx-start-card {
+    .tnx-feature-card {
+      position: relative;
+      overflow: hidden;
       display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
-      gap: 0.8rem;
-      align-items: start;
-      border: 1px solid rgba(198, 164, 79, 0.18);
-      border-radius: 1.2rem;
-      background: rgba(0, 0, 0, 0.3);
+      gap: 0.9rem;
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 1.35rem;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.01)),
+        rgba(0, 0, 0, 0.34);
       padding: 1rem;
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        background 180ms ease;
     }
 
-    .tnx-start-icon,
-    .tnx-command-icon,
-    .tnx-category-icon {
-      display: grid;
-      place-items: center;
-      width: 3rem;
-      height: 3rem;
-      border: 1px solid rgba(198, 164, 79, 0.22);
-      border-radius: 1rem;
-      background: rgba(255, 218, 106, 0.07);
-      font-size: 1.35rem;
+    .tnx-card-glow {
+      position: absolute;
+      inset: -1px;
+      pointer-events: none;
+      background: radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 48%);
+      opacity: 0.8;
     }
 
-    .tnx-start-copy {
+    .tnx-feature-card > *:not(.tnx-card-glow) {
+      position: relative;
+      z-index: 1;
+    }
+
+    .tnx-feature-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 218, 106, 0.42);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
+        rgba(0, 0, 0, 0.46);
+    }
+
+    .tnx-feature-top {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
       min-width: 0;
     }
 
-    .tnx-start-copy strong {
+    .tnx-icon-badge,
+    .tnx-big-icon,
+    .tnx-mini-icon,
+    .tnx-nav-icon {
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 218, 106, 0.22);
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255, 218, 106, 0.18), transparent 62%),
+        rgba(255, 218, 106, 0.06);
+      color: #ffda6a;
+      font-weight: 950;
+    }
+
+    .tnx-icon-badge {
+      width: 3.2rem;
+      height: 3.2rem;
+      flex: 0 0 3.2rem;
+      border-radius: 1rem;
+      font-size: 1.25rem;
+    }
+
+    .tnx-feature-top strong {
       display: block;
-      color: #fff;
-      font-size: 1rem;
+      color: white;
+      font-size: 1.05rem;
       font-weight: 950;
       line-height: 1.35;
     }
 
-    .tnx-start-copy span {
+    .tnx-feature-top span {
       display: block;
-      margin-top: 0.25rem;
-      color: rgb(156, 163, 175);
-      font-size: 0.84rem;
-      font-weight: 800;
-      line-height: 1.65;
-    }
-
-    .tnx-start-card .tnx-copy-btn {
-      grid-column: 1 / -1;
-      width: 100%;
-    }
-
-    .tnx-category-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 0.85rem;
-    }
-
-    .tnx-category-card {
-      display: grid;
-      justify-items: start;
-      gap: 0.5rem;
-      border: 1px solid rgba(198, 164, 79, 0.18);
-      border-radius: 1.25rem;
-      background: rgba(0, 0, 0, 0.3);
-      color: #fff;
-      padding: 1rem;
-      text-align: right;
-      cursor: pointer;
-      transition:
-        transform 160ms ease,
-        border-color 160ms ease,
-        background 160ms ease,
-        box-shadow 160ms ease;
-    }
-
-    .tnx-category-card:hover,
-    .tnx-category-card.is-active {
-      transform: translateY(-2px);
-      border-color: rgba(255, 218, 106, 0.5);
-      background: rgba(198, 164, 79, 0.12);
-      box-shadow: 0 0 24px rgba(255, 218, 106, 0.08);
-    }
-
-    .tnx-category-card strong {
-      color: #f7e6ac;
-      font-size: 1rem;
-      font-weight: 950;
-    }
-
-    .tnx-category-card span {
-      color: rgb(156, 163, 175);
-      font-size: 0.82rem;
-      font-weight: 800;
-      line-height: 1.6;
-    }
-
-    .tnx-search-section {
-      position: sticky;
-      top: 5rem;
-      z-index: 10;
-      padding: 0.9rem;
-      background: rgba(5, 5, 5, 0.82);
-    }
-
-    .tnx-command-search {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 0.7rem;
-      border: 1px solid rgba(198, 164, 79, 0.28);
-      border-radius: 1rem;
-      background: rgba(0, 0, 0, 0.42);
-      padding: 0 0.9rem;
-    }
-
-    .tnx-command-search span {
-      font-size: 1.15rem;
-    }
-
-    .tnx-command-search input {
-      width: 100%;
-      border: 0;
-      background: transparent;
-      color: #fff;
-      padding: 1rem 0;
-      font-size: 0.95rem;
+      margin-top: 0.15rem;
+      color: rgb(148, 163, 184);
+      font-size: 0.78rem;
       font-weight: 850;
-      outline: none;
     }
 
-    .tnx-command-search input::placeholder {
-      color: rgb(107, 114, 128);
-    }
-
-    .tnx-command-search button {
-      display: inline-flex;
-      width: 2rem;
-      height: 2rem;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(198, 164, 79, 0.22);
-      border-radius: 999px;
-      background: rgba(255, 218, 106, 0.07);
-      color: #ffda6a;
-      font-size: 1.25rem;
-      font-weight: 950;
-      cursor: pointer;
-    }
-
-    .tnx-command-sections {
-      display: grid;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .tnx-command-group-head {
-      display: flex;
-      align-items: start;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      border-bottom: 1px solid rgba(198, 164, 79, 0.14);
-      padding-bottom: 1rem;
-    }
-
-    .tnx-command-group-head h2 {
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
-    }
-
-    .tnx-command-group-head h2 b {
-      font-size: 1.35rem;
-    }
-
-    .tnx-command-group-head p {
-      margin: 0.45rem 0 0;
-      color: rgb(156, 163, 175);
-      font-size: 0.92rem;
-      font-weight: 800;
+    .tnx-feature-card p {
+      margin: 0;
+      color: rgb(209, 213, 219);
+      font-size: 0.9rem;
+      font-weight: 780;
       line-height: 1.7;
     }
 
-    .tnx-command-group-head strong {
-      display: inline-flex;
-      white-space: nowrap;
-      border: 1px solid rgba(198, 164, 79, 0.24);
-      border-radius: 999px;
-      background: rgba(255, 218, 106, 0.07);
-      color: #ffda6a;
-      padding: 0.45rem 0.85rem;
-      font-size: 0.78rem;
-      font-weight: 950;
-    }
-
-    .tnx-command-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.9rem;
-    }
-
-    .tnx-command-card {
-      display: grid;
-      gap: 0.9rem;
-      border: 1px solid rgba(198, 164, 79, 0.18);
-      border-radius: 1.3rem;
-      background:
-        radial-gradient(circle at top right, rgba(255, 218, 106, 0.06), transparent 42%),
-        rgba(0, 0, 0, 0.3);
-      padding: 1rem;
-      transition:
-        transform 170ms ease,
-        border-color 170ms ease,
-        background 170ms ease;
-    }
-
-    .tnx-command-card:hover {
-      transform: translateY(-2px);
-      border-color: rgba(255, 218, 106, 0.42);
-      background:
-        radial-gradient(circle at top right, rgba(255, 218, 106, 0.09), transparent 42%),
-        rgba(0, 0, 0, 0.42);
-    }
-
-    .tnx-command-card-top {
-      display: flex;
-      align-items: start;
-      justify-content: space-between;
-      gap: 0.85rem;
-    }
-
-    .tnx-command-category {
-      display: block;
-      color: #c29200;
-      font-size: 0.72rem;
-      font-weight: 950;
-    }
-
-    .tnx-command-card h3 {
-      margin: 0.25rem 0 0;
-      color: #f7e6ac;
-      font-size: 1.25rem;
-      font-weight: 950;
-      line-height: 1.35;
-    }
-
-    .tnx-command-description {
-      margin: 0;
-      color: rgb(209, 213, 219);
-      font-size: 0.95rem;
-      font-weight: 800;
-      line-height: 1.8;
-    }
-
-    .tnx-command-main {
+    .tnx-copy-primary {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
       gap: 0.8rem;
-      border: 1px solid rgba(198, 164, 79, 0.2);
+      border: 1px solid rgba(255, 218, 106, 0.24);
       border-radius: 1rem;
       background: rgba(0, 0, 0, 0.34);
-      padding: 0.8rem;
+      color: #ffda6a;
+      padding: 0.75rem;
+      cursor: pointer;
     }
 
-    .tnx-command-main span,
-    .tnx-command-example span {
-      display: block;
-      margin-bottom: 0.28rem;
-      color: rgb(148, 163, 184);
-      font-size: 0.75rem;
-      font-weight: 900;
-    }
-
-    .tnx-command-main code,
-    .tnx-command-example code {
-      display: block;
+    .tnx-copy-primary code {
       overflow: hidden;
       color: #ffda6a;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-weight: 950;
       direction: ltr;
       text-align: left;
@@ -1298,164 +1335,502 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       white-space: nowrap;
     }
 
-    .tnx-copy-btn,
-    .tnx-alias-btn {
-      border: 1px solid rgba(198, 164, 79, 0.28);
-      border-radius: 0.85rem;
-      background: rgba(255, 218, 106, 0.08);
+    .tnx-copy-primary span {
+      border-radius: 0.7rem;
+      background: rgba(255, 218, 106, 0.12);
       color: #f7e6ac;
-      padding: 0.65rem 0.95rem;
-      font-size: 0.82rem;
+      padding: 0.45rem 0.7rem;
+      font-size: 0.78rem;
       font-weight: 950;
-      cursor: pointer;
-      transition:
-        transform 160ms ease,
-        border-color 160ms ease,
-        background 160ms ease,
-        color 160ms ease;
     }
 
-    .tnx-copy-btn:hover,
-    .tnx-alias-btn:hover {
+    .tnx-main-layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+      align-items: start;
+    }
+
+    .tnx-side-nav {
+      position: sticky;
+      top: 5.5rem;
+      display: grid;
+      gap: 0.65rem;
+      border-radius: 1.8rem;
+      padding: 1rem;
+    }
+
+    .tnx-side-title {
+      margin-bottom: 0.4rem;
+      border-bottom: 1px solid rgba(255, 218, 106, 0.12);
+      padding-bottom: 0.85rem;
+    }
+
+    .tnx-side-title span {
+      display: block;
+      color: #c29200;
+      font-size: 0.74rem;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+    }
+
+    .tnx-side-title strong {
+      display: block;
+      margin-top: 0.2rem;
+      color: #f7e6ac;
+      font-size: 1.35rem;
+      font-weight: 950;
+    }
+
+    .tnx-nav-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+      border: 1px solid rgba(255, 218, 106, 0.12);
+      border-radius: 1.05rem;
+      background: rgba(0, 0, 0, 0.24);
+      color: white;
+      padding: 0.75rem;
+      text-align: right;
+      cursor: pointer;
+      transition:
+        transform 170ms ease,
+        border-color 170ms ease,
+        background 170ms ease;
+    }
+
+    .tnx-nav-item:hover,
+    .tnx-nav-item.is-active {
       transform: translateY(-1px);
-      border-color: rgba(255, 218, 106, 0.58);
+      border-color: rgba(255, 218, 106, 0.42);
+      background: rgba(255, 218, 106, 0.09);
+    }
+
+    .tnx-nav-icon {
+      width: 2.55rem;
+      height: 2.55rem;
+      border-radius: 0.85rem;
+      flex: 0 0 2.55rem;
+    }
+
+    .tnx-nav-copy {
+      min-width: 0;
+    }
+
+    .tnx-nav-copy b {
+      display: block;
+      overflow: hidden;
+      color: #fff;
+      font-size: 0.92rem;
+      font-weight: 950;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tnx-nav-copy small {
+      display: block;
+      margin-top: 0.1rem;
+      color: rgb(148, 163, 184);
+      font-size: 0.75rem;
+      font-weight: 850;
+    }
+
+    .tnx-content {
+      min-width: 0;
+    }
+
+    .tnx-command-sections {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .tnx-command-group {
+      border-radius: 1.8rem;
+      padding: 1.25rem;
+    }
+
+    .tnx-command-group-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 218, 106, 0.12);
+      padding-bottom: 1rem;
+    }
+
+    .tnx-command-group-title {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      min-width: 0;
+    }
+
+    .tnx-big-icon {
+      width: 4rem;
+      height: 4rem;
+      flex: 0 0 4rem;
+      border-radius: 1.25rem;
+      font-size: 1.4rem;
+    }
+
+    .tnx-command-group-title span {
+      display: block;
+      color: #c29200;
+      font-size: 0.76rem;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+    }
+
+    .tnx-command-group-title h2 {
+      margin: 0.2rem 0 0;
+      color: #f7e6ac;
+      font-size: 2rem;
+      font-weight: 950;
+      line-height: 1.1;
+    }
+
+    .tnx-command-group-title p {
+      margin: 0.35rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.9rem;
+      font-weight: 800;
+      line-height: 1.6;
+    }
+
+    .tnx-group-count {
+      display: grid;
+      place-items: center;
+      min-width: 4.2rem;
+      min-height: 4.2rem;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 1.2rem;
+      background: rgba(0, 0, 0, 0.28);
+      color: #ffda6a;
+      font-size: 1.5rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .tnx-group-count small {
+      margin-top: 0.25rem;
+      color: rgb(148, 163, 184);
+      font-size: 0.72rem;
+      font-weight: 850;
+    }
+
+    .tnx-command-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .tnx-command-card {
+      display: grid;
+      gap: 0.85rem;
+      border: 1px solid rgba(255, 218, 106, 0.14);
+      border-radius: 1.35rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.055), transparent 40%),
+        rgba(0, 0, 0, 0.28);
+      padding: 1rem;
+      transition:
+        transform 170ms ease,
+        border-color 170ms ease,
+        background 170ms ease,
+        box-shadow 170ms ease;
+    }
+
+    .tnx-command-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 218, 106, 0.38);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.09), transparent 40%),
+        rgba(0, 0, 0, 0.4);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+    }
+
+    .tnx-command-card-header {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 0.85rem;
+    }
+
+    .tnx-command-card-header span {
+      display: block;
+      color: #c29200;
+      font-size: 0.72rem;
+      font-weight: 950;
+    }
+
+    .tnx-command-card-header h3 {
+      margin: 0.25rem 0 0;
+      color: #fff;
+      font-size: 1.22rem;
+      font-weight: 950;
+      line-height: 1.3;
+    }
+
+    .tnx-mini-icon {
+      width: 2.8rem;
+      height: 2.8rem;
+      flex: 0 0 2.8rem;
+      border-radius: 0.95rem;
+    }
+
+    .tnx-command-description {
+      margin: 0;
+      color: rgb(209, 213, 219);
+      font-size: 0.92rem;
+      font-weight: 790;
+      line-height: 1.8;
+    }
+
+    .tnx-command-box {
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.32);
+      padding: 0.8rem;
+    }
+
+    .tnx-command-box > span,
+    .tnx-example-box > span {
+      display: block;
+      margin-bottom: 0.35rem;
+      color: rgb(148, 163, 184);
+      font-size: 0.74rem;
+      font-weight: 900;
+    }
+
+    .tnx-command-box > div {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .tnx-command-box code,
+    .tnx-example-box code {
+      display: block;
+      overflow: hidden;
+      color: #ffda6a;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.98rem;
+      font-weight: 950;
+      direction: ltr;
+      text-align: left;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tnx-command-box button,
+    .tnx-more-aliases button {
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 0.78rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.55rem 0.8rem;
+      font-size: 0.78rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 0.16s ease;
+    }
+
+    .tnx-command-box button:hover,
+    .tnx-more-aliases button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 218, 106, 0.55);
       background: rgba(255, 218, 106, 0.14);
       color: #ffda6a;
     }
 
-    .tnx-copy-btn.is-copied,
-    .tnx-alias-btn.is-copied {
+    .tnx-command-box button.is-copied,
+    .tnx-more-aliases button.is-copied,
+    .tnx-copy-primary.is-copied {
       border-color: rgba(52, 211, 153, 0.65) !important;
       background: rgba(52, 211, 153, 0.14) !important;
       color: rgb(167, 243, 208) !important;
     }
 
-    .tnx-command-example {
-      border: 1px dashed rgba(198, 164, 79, 0.18);
+    .tnx-copy-primary.is-copied span {
+      background: rgba(52, 211, 153, 0.16) !important;
+      color: rgb(167, 243, 208) !important;
+    }
+
+    .tnx-example-box {
+      border: 1px dashed rgba(255, 218, 106, 0.15);
       border-radius: 1rem;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 0.8rem;
+      background: rgba(255, 218, 106, 0.035);
+      padding: 0.75rem;
     }
 
-    .tnx-command-tip {
-      border-right: 3px solid rgba(255, 218, 106, 0.45);
-      border-radius: 0.9rem;
-      background: rgba(255, 218, 106, 0.06);
-      color: rgb(229, 231, 235);
-      padding: 0.75rem 0.9rem;
-      font-size: 0.85rem;
-      font-weight: 800;
-      line-height: 1.7;
+    .tnx-more-aliases {
+      border-top: 1px solid rgba(255, 218, 106, 0.12);
+      padding-top: 0.72rem;
     }
 
-    .tnx-command-aliases {
-      border-top: 1px solid rgba(198, 164, 79, 0.14);
-      padding-top: 0.75rem;
-    }
-
-    .tnx-command-aliases summary {
+    .tnx-more-aliases summary {
       color: rgb(156, 163, 175);
       font-size: 0.82rem;
       font-weight: 900;
       cursor: pointer;
     }
 
-    .tnx-command-aliases div {
+    .tnx-more-aliases div {
       display: flex;
       flex-wrap: wrap;
       gap: 0.45rem;
       margin-top: 0.7rem;
     }
 
-    .tnx-alias-btn {
+    .tnx-more-aliases button {
       max-width: 100%;
       overflow: hidden;
+      direction: ltr;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       text-overflow: ellipsis;
       white-space: nowrap;
-      direction: ltr;
     }
 
-    .tnx-empty-state {
+    .tnx-empty {
       display: grid;
       place-items: center;
-      gap: 0.45rem;
+      gap: 0.35rem;
+      border-radius: 1.5rem;
+      padding: 2rem;
       text-align: center;
     }
 
-    .tnx-empty-state div {
+    .tnx-empty strong {
       color: #ffda6a;
-      font-size: 1.35rem;
+      font-size: 1.4rem;
       font-weight: 950;
     }
 
-    .tnx-empty-state p {
-      margin: 0;
+    .tnx-empty span {
       color: rgb(156, 163, 175);
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 800;
     }
 
     .tnx-command-card.is-hidden,
-    .tnx-command-group.is-hidden {
+    .tnx-command-group.is-hidden,
+    .tnx-feature-card.is-hidden {
       display: none !important;
     }
 
-    @media (max-width: 980px) {
-      .tnx-commands-hero {
+    @media (max-width: 1100px) {
+      .tnx-hero {
         grid-template-columns: 1fr;
       }
 
-      .tnx-category-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .tnx-hero-panel {
+        grid-template-columns: 220px minmax(0, 1fr);
+        align-items: center;
       }
 
-      .tnx-start-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .tnx-panel-ring {
+        width: 220px;
+      }
+
+      .tnx-panel-stats {
+        align-self: stretch;
+      }
+
+      .tnx-main-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-side-nav {
+        position: relative;
+        top: auto;
+        display: flex;
+        overflow-x: auto;
+        border-radius: 1.4rem;
+      }
+
+      .tnx-side-title {
+        display: none;
+      }
+
+      .tnx-nav-item {
+        min-width: 180px;
       }
     }
 
-    @media (max-width: 720px) {
-      .tnx-commands-shell {
+    @media (max-width: 820px) {
+      .tnx-shell {
         padding-top: 5.5rem;
       }
 
-      .tnx-commands-hero-content,
-      .tnx-commands-hero-card,
-      .tnx-start-section,
-      .tnx-category-section,
-      .tnx-search-section,
+      .tnx-hero-main,
+      .tnx-hero-panel,
+      .tnx-featured,
+      .tnx-side-nav,
       .tnx-command-group {
-        border-radius: 1.35rem;
+        border-radius: 1.45rem;
       }
 
-      .tnx-commands-hero-content {
+      .tnx-hero-main {
         padding: 1.25rem;
       }
 
-      .tnx-commands-hero h1 {
-        font-size: 2.6rem;
+      .tnx-hero h1 {
+        font-size: 3.1rem;
       }
 
-      .tnx-category-grid,
-      .tnx-start-grid,
+      .tnx-hero-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-panel-ring {
+        width: 100%;
+        max-width: 260px;
+        margin: 0 auto;
+      }
+
+      .tnx-featured-grid,
       .tnx-command-grid {
         grid-template-columns: 1fr;
       }
 
       .tnx-command-group-head {
+        align-items: start;
         flex-direction: column;
       }
 
-      .tnx-search-section {
-        top: 4.5rem;
+      .tnx-group-count {
+        min-width: 100%;
+        min-height: auto;
+        display: flex;
+        justify-content: center;
+        gap: 0.4rem;
+        padding: 0.8rem;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .tnx-hero h1 {
+        font-size: 2.55rem;
       }
 
-      .tnx-command-main {
+      .tnx-launcher {
+        grid-template-columns: auto minmax(0, 1fr);
+      }
+
+      .tnx-launcher button {
+        display: none;
+      }
+
+      .tnx-command-box > div {
         grid-template-columns: 1fr;
       }
 
-      .tnx-copy-btn {
+      .tnx-command-box button {
         width: 100%;
       }
     }
@@ -1463,7 +1838,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
 
   <script is:inline data-reinit>
     ;(() => {
-      const cleanupKey = '__tnxSimpleCommandsCleanup'
+      const cleanupKey = '__tnxCommandCenterCleanup'
 
       if (window[cleanupKey]) {
         window[cleanupKey]()
@@ -1494,6 +1869,7 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
       const searchInput = document.getElementById('commandSearch')
       const clearSearchButton = document.getElementById('clearCommandSearch')
       const categoryButtons = Array.from(document.querySelectorAll('[data-category-filter]'))
+      const searchChips = Array.from(document.querySelectorAll('[data-search-chip]'))
       const commandCards = Array.from(document.querySelectorAll('[data-command-card]'))
       const commandGroups = Array.from(document.querySelectorAll('[data-command-group]'))
       const emptyState = document.getElementById('emptyState')
@@ -1534,9 +1910,9 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
         commandGroups.forEach((group) => {
           const groupCategory = group.dataset.commandGroup || ''
           const visibleCards = group.querySelectorAll('[data-command-card]:not(.is-hidden)').length
-          const shouldShowGroup = activeCategory === 'all' || groupCategory === activeCategory
+          const categoryMatches = activeCategory === 'all' || groupCategory === activeCategory
 
-          group.classList.toggle('is-hidden', !shouldShowGroup || visibleCards === 0)
+          group.classList.toggle('is-hidden', !categoryMatches || visibleCards === 0)
         })
 
         emptyState?.classList.toggle('hidden', visibleTotal > 0)
@@ -1552,6 +1928,16 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
         applyFilters()
       })
 
+      searchChips.forEach((chip) => {
+        addListener(chip, 'click', () => {
+          if (!searchInput) return
+
+          searchInput.value = chip.dataset.searchChip || ''
+          searchInput.focus()
+          applyFilters()
+        })
+      })
+
       categoryButtons.forEach((button) => {
         addListener(button, 'click', () => {
           activeCategory = button.dataset.categoryFilter || 'all'
@@ -1560,6 +1946,11 @@ const totalAliases = visibleCommands.reduce((sum, command) => sum + command.alia
           button.classList.add('is-active')
 
           applyFilters()
+
+          const layout = document.querySelector('.tnx-main-layout')
+          if (layout && window.innerWidth < 1100) {
+            layout.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
         })
       })
 
