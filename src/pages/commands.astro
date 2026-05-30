@@ -1146,30 +1146,28 @@ const quickActions = QUICK_ACTION_DEFINITIONS
                           <button type="button" data-copy={command.primaryAlias}>نسخ الأمر</button>
                         </div>
 
-                        {command.example && (
-                          <div class="tnx-example-block">
-                            <div class="tnx-copy-row tnx-copy-row--example">
-                              <div>
-                                <span>مثال</span>
-                                <code>{command.example}</code>
-                              </div>
-
-                              <button type="button" data-preview-toggle={command.id} aria-expanded="false">معاينة</button>
+                        <div class="tnx-example-block">
+                          <div class="tnx-copy-row tnx-copy-row--example">
+                            <div>
+                              <span>مثال</span>
+                              <code>{command.previewInput}</code>
                             </div>
 
-                            <div class="tnx-chat-preview hidden" data-preview-panel={command.id}>
-                              <div class="tnx-chat-line tnx-chat-line--user">
-                                <span>أنت</span>
-                                <p>{command.previewInput}</p>
-                              </div>
+                            <button type="button" data-preview-toggle aria-expanded="false">معاينة</button>
+                          </div>
 
-                              <div class="tnx-chat-line tnx-chat-line--bot">
-                                <span>TNX BOT</span>
-                                <p>{command.previewReply}</p>
-                              </div>
+                          <div class="tnx-chat-preview hidden" data-preview-panel>
+                            <div class="tnx-chat-line tnx-chat-line--user">
+                              <span>أنت</span>
+                              <p>{command.previewInput}</p>
+                            </div>
+
+                            <div class="tnx-chat-line tnx-chat-line--bot">
+                              <span>TNX BOT</span>
+                              <p>{command.previewReply}</p>
                             </div>
                           </div>
-                        )}
+                        </div>
                       </div>
                     </article>
                   ))}
@@ -1295,30 +1293,28 @@ const quickActions = QUICK_ACTION_DEFINITIONS
                         <button type="button" data-copy={command.primaryAlias}>نسخ</button>
                       </div>
 
-                      {command.example && (
-                        <div class="tnx-example-block">
-                          <div class="tnx-copy-row tnx-copy-row--example">
-                            <div>
-                              <span>مثال</span>
-                              <code>{command.example}</code>
-                            </div>
-
-                            <button type="button" data-preview-toggle={command.id} aria-expanded="false">معاينة</button>
+                      <div class="tnx-example-block">
+                        <div class="tnx-copy-row tnx-copy-row--example">
+                          <div>
+                            <span>مثال</span>
+                            <code>{command.previewInput}</code>
                           </div>
 
-                          <div class="tnx-chat-preview hidden" data-preview-panel={command.id}>
-                            <div class="tnx-chat-line tnx-chat-line--user">
-                              <span>أنت</span>
-                              <p>{command.previewInput}</p>
-                            </div>
+                          <button type="button" data-preview-toggle aria-expanded="false">معاينة</button>
+                        </div>
 
-                            <div class="tnx-chat-line tnx-chat-line--bot">
-                              <span>TNX BOT</span>
-                              <p>{command.previewReply}</p>
-                            </div>
+                        <div class="tnx-chat-preview hidden" data-preview-panel>
+                          <div class="tnx-chat-line tnx-chat-line--user">
+                            <span>أنت</span>
+                            <p>{command.previewInput}</p>
+                          </div>
+
+                          <div class="tnx-chat-line tnx-chat-line--bot">
+                            <span>TNX BOT</span>
+                            <p>{command.previewReply}</p>
                           </div>
                         </div>
-                      )}
+                      </div>
 
                       <div class="tnx-link-row">
                         <button type="button" data-command-link={command.hashId}>نسخ رابط الأمر</button>
@@ -2791,12 +2787,13 @@ const quickActions = QUICK_ACTION_DEFINITIONS
         })
       }
 
-      function closeOtherPreviewPanels(currentId) {
+      function closeOtherPreviewPanels(currentButton) {
         previewButtons.forEach((button) => {
-          const id = button.dataset.previewToggle
-          if (id === currentId) return
+          if (button === currentButton) return
 
-          const panel = document.querySelector(`[data-preview-panel="${CSS.escape(id)}"]`)
+          const block = button.closest('.tnx-example-block')
+          const panel = block?.querySelector('[data-preview-panel]')
+
           panel?.classList.add('hidden')
           button.textContent = 'معاينة'
           button.classList.remove('is-preview-open')
@@ -2804,15 +2801,16 @@ const quickActions = QUICK_ACTION_DEFINITIONS
         })
       }
 
-      function togglePreview(id, button) {
-        if (!id || !button) return
+      function togglePreview(button) {
+        if (!button) return
 
-        const panel = document.querySelector(`[data-preview-panel="${CSS.escape(id)}"]`)
+        const block = button.closest('.tnx-example-block')
+        const panel = block?.querySelector('[data-preview-panel]')
         if (!panel) return
 
         const willOpen = panel.classList.contains('hidden')
 
-        closeOtherPreviewPanels(id)
+        closeOtherPreviewPanels(button)
 
         panel.classList.toggle('hidden', !willOpen)
         button.textContent = willOpen ? 'إخفاء المعاينة' : 'معاينة'
@@ -2910,8 +2908,7 @@ const quickActions = QUICK_ACTION_DEFINITIONS
 
       previewButtons.forEach((button) => {
         addListener(button, 'click', () => {
-          const id = button.dataset.previewToggle
-          togglePreview(id, button)
+          togglePreview(button)
         })
       })
 
