@@ -1250,6 +1250,101 @@ const metadata = {
         grid-template-columns: 1fr;
       }
     }
+
+
+    /* ============ Featured Items overlap fix ============ */
+    .tnx-feature-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      align-items: stretch;
+    }
+
+    .tnx-feature-card {
+      min-height: 238px;
+      display: grid !important;
+      grid-template-rows: auto auto auto minmax(2.6rem, 1fr) auto;
+      align-content: stretch !important;
+      justify-items: center;
+      gap: 0.55rem;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .tnx-feature-icon {
+      position: relative !important;
+      top: auto !important;
+      right: auto !important;
+      left: auto !important;
+      inset: auto !important;
+      inset-inline-start: auto !important;
+      justify-self: center;
+      width: 4.4rem;
+      height: 4.4rem;
+      margin: 0 auto 0.1rem;
+      border-radius: 1.25rem;
+      font-size: 2.2rem;
+      line-height: 1;
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+
+    .tnx-feature-label {
+      justify-self: center;
+      max-width: 100%;
+      white-space: nowrap;
+    }
+
+    .tnx-feature-title {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      color: white;
+      font-size: 1.18rem;
+      font-weight: 950;
+      line-height: 1.25;
+      text-align: center;
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    .tnx-feature-desc {
+      width: 100%;
+      min-height: 2.55rem;
+      margin: 0;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+
+    .tnx-feature-foot {
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+      row-gap: 0.35rem;
+      padding-top: 0.6rem;
+      text-align: center;
+    }
+
+    .tnx-feature-foot span {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 1120px) {
+      .tnx-feature-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .tnx-feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-feature-card {
+        min-height: 220px;
+      }
+    }
+
   </style>
 
   <script is:inline data-reinit>
