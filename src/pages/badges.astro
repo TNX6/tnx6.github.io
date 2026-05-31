@@ -4,18 +4,18 @@ import Layout from '~/layouts/PageLayout.astro';
 const metadata = {
   title: 'Badges — TNX6',
   ignoreTitleTemplate: true,
-  description: 'صفحة بادجات مجتمع TNX6.',
+  description: 'صفحة بادجات مجتمع TNX6. دليلك الشامل لكل البادجات.',
 };
 ---
 
 <Layout metadata={metadata}>
   <main class="tnx-badges-page" dir="rtl">
-    <div class="tnx-bg"></div>
-    <div class="tnx-grid-bg"></div>
+    <div class="tnx-badges-bg"></div>
+    <div class="tnx-badges-grid-bg"></div>
 
-    <section class="tnx-shell">
-      <header class="tnx-hero">
-        <div class="tnx-eyebrow">
+    <section class="tnx-badges-shell">
+      <header class="tnx-badges-hero tnx-animate-fade-in">
+        <div class="tnx-badges-eyebrow">
           <span></span>
           TNX6 BADGE VAULT
         </div>
@@ -23,74 +23,102 @@ const metadata = {
         <h1>خزنة البادجات</h1>
 
         <p>
-          اعرف وش البادجات الموجودة، كيف تفتحها، وشف تقدم أي عضو في النقاط والحضور والكويز.
+          هلا بك في مجتمع TNX6! البادجات هي ببساطة "أوسمة" تكافئك على تفاعلك بالبث.
+          كل ما حضرت أكثر، أو جمعت نقاط أكثر، أو جاوبت بالكويزات.. تفتح بادجات أندر وتزين فيها بطاقتك عشان الكل يشوفها.
         </p>
 
-        <div class="tnx-hero-stats">
+        <div class="tnx-badges-hero-stats">
           <div>
             <strong id="statTotalBadges">0</strong>
-            <span>بادج</span>
+            <span>إجمالي البادجات</span>
           </div>
+
           <div>
             <strong id="statCategories">0</strong>
-            <span>تصنيف</span>
+            <span>تصنيف ومسار</span>
           </div>
+
           <div>
             <strong id="statRareBadges">0</strong>
-            <span>نادر / خاص</span>
+            <span>بادج نادر جداً</span>
           </div>
         </div>
       </header>
 
-      <section class="tnx-start">
-        <div class="tnx-section-head">
-          <span>للمشاهد الجديد</span>
-          <h2>وش أبدأ أفتح؟</h2>
-          <p>ابدأ بالمسارات الأساسية. حضور، نقاط، ثم كويز.</p>
+      <section class="tnx-how-it-works tnx-animate-slide-up" style="animation-delay: 0.1s;">
+        <div class="tnx-section-head tnx-section-head--center">
+          <span>خطوات بسيطة</span>
+          <h2>كيف تجمع البادجات؟</h2>
         </div>
 
-        <div class="tnx-start-grid">
-          <button type="button" class="tnx-start-card" data-guide-filter="attendance">
-            <b>15</b>
+        <div class="tnx-steps-grid">
+          <div class="tnx-step-card">
+            <div class="tnx-step-number">1</div>
+            <h3>تابع وتفاعل</h3>
+            <p>خليك متواجد بالبث، شارك بالشات، واجمع نقاط القناة (K).</p>
+          </div>
+          <div class="tnx-step-card">
+            <div class="tnx-step-number">2</div>
+            <h3>حقق الشروط</h3>
+            <p>كل بادج له شرط: حضور أيام معينة، أو وصول لرقم نقاط، أو الفوز بالكويز.</p>
+          </div>
+          <div class="tnx-step-card">
+            <div class="tnx-step-number">3</div>
+            <h3>تفاخر ببطاقتك</h3>
+            <p>ابحث عن اسمك تحت، وشوف بادجاتك اللي فتحتها، وركبها عشان تظهر للكل!</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="tnx-start-guide tnx-animate-slide-up" style="animation-delay: 0.2s;">
+        <div class="tnx-section-head">
+          <span>للمشاهد الجديد</span>
+          <h2>من وين أبدأ أفتح؟</h2>
+          <p>أسهل 3 طرق تضمن لك أول بادجاتك بدون تعقيد.</p>
+        </div>
+
+        <div class="tnx-guide-grid">
+          <button type="button" class="tnx-guide-card" data-guide-filter="attendance">
+            <div class="tnx-guide-icon">15</div>
             <div>
-              <strong>ابدأ بالحضور</strong>
-              <p>سجّل حضورك وابدأ من 15D ثم كمل للمراحل الأعلى.</p>
+              <strong>سجّل حضورك (أسهل شيء)</strong>
+              <p>سجّل حضورك بالبث وابدأ من بادج 15 يوم وكمل مشوارك.</p>
             </div>
           </button>
 
-          <button type="button" class="tnx-start-card" data-guide-filter="points">
-            <b>K</b>
+          <button type="button" class="tnx-guide-card" data-guide-filter="points">
+            <div class="tnx-guide-icon">K</div>
             <div>
-              <strong>اجمع نقاط</strong>
-              <p>كل ما زاد رصيدك تفتح بادجات 100K وما بعدها.</p>
+              <strong>اجمع نقاط البث</strong>
+              <p>استمتع بالبث وتلقائياً بتزيد نقاطك. أول بادج يفتح لك عند 100 ألف نقطة (100K).</p>
             </div>
           </button>
 
-          <button type="button" class="tnx-start-card" data-guide-filter="quiz">
-            <b>Q</b>
+          <button type="button" class="tnx-guide-card" data-guide-filter="quiz">
+            <div class="tnx-guide-icon">Q</div>
             <div>
-              <strong>جاوب بالكويز</strong>
-              <p>الإجابات الصحيحة تفتح بادجات 50Q إلى 1000Q.</p>
+              <strong>شارك بالكويزات</strong>
+              <p>جاوب صح في كويزات البث، وكل 50 إجابة صحيحة تفتح لك بادج جديد.</p>
             </div>
           </button>
         </div>
       </section>
 
-      <section class="tnx-vault">
+      <section class="tnx-vault tnx-animate-slide-up" style="animation-delay: 0.3s;">
         <div class="tnx-vault-top">
           <div class="tnx-section-head">
-            <span>كل البادجات</span>
-            <h2>استعرض البادجات</h2>
-            <p>اضغط على أي بادج عشان تشوف تفاصيله ورابطه المباشر.</p>
+            <span>دليل البادجات</span>
+            <h2>تصفح كل الأوسمة</h2>
+            <p>هنا كل البادجات الموجودة بالنظام. اضغط على أي واحد عشان تعرف كيف تجيبه بالضبط.</p>
           </div>
 
-          <div class="tnx-search">
+          <div class="tnx-badge-search">
             <span>⌕</span>
             <input
               id="badgeSearch"
               type="search"
               autocomplete="off"
-              placeholder="ابحث: VIP، 100K، حضور، كويز، LAW..."
+              placeholder="ابحث باسم البادج..."
             />
             <button type="button" id="clearBadgeSearch">×</button>
           </div>
@@ -101,37 +129,30 @@ const metadata = {
             <span>الكل</span>
             <small id="count-all">0</small>
           </button>
-
           <button type="button" data-badge-filter="attendance">
             <span>الحضور</span>
             <small id="count-attendance">0</small>
           </button>
-
           <button type="button" data-badge-filter="points">
             <span>النقاط</span>
             <small id="count-points">0</small>
           </button>
-
           <button type="button" data-badge-filter="quiz">
             <span>الكويز</span>
             <small id="count-quiz">0</small>
           </button>
-
           <button type="button" data-badge-filter="status">
             <span>المكانة</span>
             <small id="count-status">0</small>
           </button>
-
           <button type="button" data-badge-filter="law">
             <span>المحكمة</span>
             <small id="count-law">0</small>
           </button>
-
           <button type="button" data-badge-filter="awards">
             <span>الجوائز</span>
             <small id="count-awards">0</small>
           </button>
-
           <button type="button" data-badge-filter="special">
             <span>خاص</span>
             <small id="count-special">0</small>
@@ -144,31 +165,36 @@ const metadata = {
 
             <div id="badgeEmpty" class="tnx-empty hidden">
               <strong>ما لقيت بادج مطابق</strong>
-              <span>جرّب تبحث باسم أبسط مثل: 100K، VIP، حضور، كويز.</span>
+              <span>جرّب تبحث باسم أبسط.</span>
             </div>
           </div>
 
-          <aside id="badgeFocusPanel" class="tnx-focus-panel">
+          <aside id="badgeFocusPanel" class="tnx-badge-focus">
             <div class="tnx-focus-placeholder">
-              <div>⬟</div>
-              <h3>اختر بادج</h3>
-              <p>اضغط على أي بادج من القائمة عشان تظهر تفاصيله هنا.</p>
+              <div class="tnx-focus-icon">⬟</div>
+              <h3>اختر بادج للتفاصيل</h3>
+              <p>اضغط على أي بادج من القائمة وبتطلع لك كل المعلومات اللي تحتاجها عنه هنا.</p>
             </div>
           </aside>
         </div>
       </section>
 
-      <section class="tnx-users">
-        <div class="tnx-section-head tnx-center">
-          <span>بطاقات الأعضاء</span>
-          <h2>اعرض بطاقة مستخدم</h2>
-          <p>ابحث باسم العضو وشوف بطاقته، نقاطه، حضوره، إجابات الكويز، وأقرب بادج له.</p>
+      <section class="tnx-user-cards tnx-animate-slide-up" style="animation-delay: 0.4s;">
+        <div class="tnx-section-head tnx-section-head--center">
+          <span>شوف إنجازاتك</span>
+          <h2>ابحث عن بطاقتك</h2>
+          <p>اكتب اسمك وبتشوف بطاقتك، كم نقطة عندك، وش البادجات اللي فتحتها واللي باقي لك عليها.</p>
         </div>
 
         <div class="tnx-user-search">
-          <div class="tnx-search">
+          <div class="tnx-badge-search">
             <span>⌕</span>
-            <input id="userSearch" type="search" autocomplete="off" placeholder="ابحث عن مستخدم..." />
+            <input
+              id="userSearch"
+              type="search"
+              autocomplete="off"
+              placeholder="اكتب اسم المستخدم (اليوزر حقك)..."
+            />
             <button type="button" id="clearUserSearch">×</button>
           </div>
 
@@ -177,13 +203,41 @@ const metadata = {
 
         <div id="userCardContainer" class="tnx-user-card-container"></div>
       </section>
+
+      <section class="tnx-faq tnx-animate-slide-up" style="animation-delay: 0.5s;">
+        <div class="tnx-section-head tnx-section-head--center">
+          <span>أسئلة شائعة</span>
+          <h2>عندك استفسار؟</h2>
+        </div>
+        <div class="tnx-faq-grid">
+          <div class="tnx-faq-item">
+            <h4>وش يعني حرف الـ K بالنقاط؟</h4>
+            <p>الـ K اختصار لـ "ألف". يعني 100K تعادل 100,000 نقطة من نقاط القناة، وهذي تجمعها تلقائياً بمجرد مشاهدتك وتفاعلك بالبث.</p>
+          </div>
+          <div class="tnx-faq-item">
+            <h4>كيف أركب البادج على بطاقتي؟</h4>
+            <p>بمجرد ما تفتح البادج، تقدر تركبه عن طريق أوامر مخصصة في شات البث عشان يظهر ببطاقتك (اسأل المودز بالبث عن الأمر).</p>
+          </div>
+          <div class="tnx-faq-item">
+            <h4>ما لقيت اسمي في البحث؟</h4>
+            <p>تأكد إنك كاتب اليوزر نيم حقك (ID) بشكل صحيح ومطابق، مو شرط اسم العرض.</p>
+          </div>
+          <div class="tnx-faq-item">
+            <h4>كيف أصير VIP؟</h4>
+            <p>هذا بادج "مميز" يُمنح للأعضاء اللي لهم مكانة وتفاعل استثنائي ومستمر بالمجتمع، ماله شروط رقمية ثابتة.</p>
+          </div>
+        </div>
+      </section>
     </section>
   </main>
 
   <style is:global>
-    .hidden {
-      display: none !important;
-    }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #07050b; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 218, 106, 0.2); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 218, 106, 0.4); }
+
+    .hidden { display: none !important; }
 
     .tnx-badges-page {
       position: relative;
@@ -193,7 +247,7 @@ const metadata = {
       color: white;
     }
 
-    .tnx-bg {
+    .tnx-badges-bg {
       position: fixed;
       inset: 0;
       z-index: 0;
@@ -203,9 +257,15 @@ const metadata = {
         radial-gradient(circle at 86% 14%, rgba(194, 146, 0, 0.16), transparent 34%),
         radial-gradient(circle at 48% 92%, rgba(124, 58, 237, 0.12), transparent 38%),
         linear-gradient(135deg, #07050b 0%, #050507 55%, #130c05 100%);
+      animation: tnxBgBreathe 10s ease-in-out infinite alternate;
     }
 
-    .tnx-grid-bg {
+    @keyframes tnxBgBreathe {
+      0% { opacity: 0.8; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.05); }
+    }
+
+    .tnx-badges-grid-bg {
       position: fixed;
       inset: 0;
       z-index: 0;
@@ -218,7 +278,15 @@ const metadata = {
       mask-image: radial-gradient(circle at center, black 0%, transparent 74%);
     }
 
-    .tnx-shell {
+    .tnx-animate-fade-in { animation: tnxFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+    .tnx-animate-slide-up { animation: tnxFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+
+    @keyframes tnxFadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tnx-badges-shell {
       position: relative;
       z-index: 1;
       width: min(100%, 1240px);
@@ -226,13 +294,9 @@ const metadata = {
       padding: 6.5rem 1rem 5rem;
     }
 
-    .tnx-hero {
-      max-width: 920px;
-      margin: 0 auto 1.25rem;
-      text-align: center;
-    }
+    .tnx-badges-hero { max-width: 920px; margin: 0 auto 1.25rem; text-align: center; }
 
-    .tnx-eyebrow {
+    .tnx-badges-eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 0.55rem;
@@ -246,15 +310,21 @@ const metadata = {
       letter-spacing: 0.18em;
     }
 
-    .tnx-eyebrow span {
+    .tnx-badges-eyebrow span {
       width: 0.48rem;
       height: 0.48rem;
       border-radius: 999px;
       background: #ffda6a;
       box-shadow: 0 0 14px #ffda6a;
+      animation: tnxPulseDot 2s infinite;
     }
 
-    .tnx-hero h1 {
+    @keyframes tnxPulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .tnx-badges-hero h1 {
       margin: 1.15rem 0 0;
       background: linear-gradient(90deg, #fff1a8, #ffda6a 44%, #c29200);
       background-clip: text;
@@ -265,7 +335,7 @@ const metadata = {
       letter-spacing: -0.06em;
     }
 
-    .tnx-hero p {
+    .tnx-badges-hero p {
       max-width: 760px;
       margin: 1.15rem auto 0;
       color: rgb(209, 213, 219);
@@ -274,7 +344,7 @@ const metadata = {
       line-height: 1.9;
     }
 
-    .tnx-hero-stats {
+    .tnx-badges-hero-stats {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.85rem;
@@ -282,151 +352,130 @@ const metadata = {
       margin: 1.25rem auto 0;
     }
 
-    .tnx-hero-stats div,
-    .tnx-start,
-    .tnx-vault,
-    .tnx-users,
-    .tnx-focus-panel,
-    .tnx-progress-panel {
+    .tnx-badges-hero-stats div, .tnx-start-guide, .tnx-vault, .tnx-user-cards, .tnx-badge-focus {
       border: 1px solid rgba(255, 218, 106, 0.18);
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
-        rgba(6, 6, 8, 0.78);
-      box-shadow:
-        0 24px 70px rgba(0, 0, 0, 0.44),
-        inset 0 0 22px rgba(255, 218, 106, 0.025);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)), rgba(6, 6, 8, 0.78);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.44), inset 0 0 22px rgba(255, 218, 106, 0.025);
       backdrop-filter: blur(16px);
+      transition: transform 0.3s ease, border-color 0.3s ease;
     }
 
-    .tnx-hero-stats div {
-      border-radius: 1.25rem;
-      padding: 1rem;
-    }
+    .tnx-badges-hero-stats div { border-radius: 1.25rem; padding: 1rem; }
+    .tnx-badges-hero-stats div:hover { transform: translateY(-3px); border-color: rgba(255, 218, 106, 0.4); }
+    .tnx-badges-hero-stats strong { display: block; color: #ffda6a; font-size: 1.8rem; font-weight: 950; line-height: 1; }
+    .tnx-badges-hero-stats span { display: block; margin-top: 0.35rem; color: rgb(156, 163, 175); font-size: 0.8rem; font-weight: 850; }
 
-    .tnx-hero-stats strong {
-      display: block;
-      color: #ffda6a;
-      font-size: 1.8rem;
-      font-weight: 950;
-      line-height: 1;
-    }
-
-    .tnx-hero-stats span {
-      display: block;
-      margin-top: 0.35rem;
-      color: rgb(156, 163, 175);
-      font-size: 0.8rem;
-      font-weight: 850;
-    }
-
-    .tnx-start,
-    .tnx-vault,
-    .tnx-users {
+    /* تنسيقات الأقسام الجديدة */
+    .tnx-how-it-works, .tnx-faq {
       margin-top: 1rem;
-      border-radius: 1.8rem;
-      padding: 1.25rem;
     }
-
-    .tnx-section-head span {
-      color: #c29200;
-      font-size: 0.78rem;
-      font-weight: 950;
-      letter-spacing: 0.12em;
-    }
-
-    .tnx-section-head h2 {
-      margin: 0.3rem 0 0;
-      color: #f7e6ac;
-      font-size: 2rem;
-      font-weight: 950;
-      line-height: 1.15;
-    }
-
-    .tnx-section-head p {
-      margin: 0.5rem 0 0;
-      color: rgb(156, 163, 175);
-      font-size: 0.92rem;
-      font-weight: 800;
-      line-height: 1.75;
-    }
-
-    .tnx-center {
-      text-align: center;
-    }
-
-    .tnx-start-grid {
+    
+    .tnx-steps-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.85rem;
-      margin-top: 1rem;
+      gap: 1rem;
+      margin-top: 1.5rem;
     }
 
-    .tnx-start-card {
+    .tnx-step-card {
+      position: relative;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      text-align: center;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .tnx-step-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 218, 106, 0.5);
+    }
+
+    .tnx-step-number {
+      display: grid;
+      place-items: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: var(--primary-gold, #ffda6a);
+      color: #000;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      font-weight: 900;
+      margin: 0 auto 1rem;
+      box-shadow: 0 0 15px rgba(255, 218, 106, 0.3);
+    }
+
+    .tnx-step-card h3 { color: #fff; font-size: 1.2rem; margin: 0 0 0.5rem; font-weight: 800;}
+    .tnx-step-card p { color: #9ca3af; font-size: 0.85rem; margin: 0; line-height: 1.6;}
+
+    .tnx-faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .tnx-faq-item {
+      border: 1px solid rgba(255, 218, 106, 0.1);
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 1rem;
+      padding: 1.2rem;
+    }
+
+    .tnx-faq-item h4 { color: #f7e6ac; margin: 0 0 0.5rem; font-size: 1rem; font-weight: 800; }
+    .tnx-faq-item p { color: #9ca3af; margin: 0; font-size: 0.85rem; line-height: 1.6; }
+
+    .tnx-start-guide, .tnx-vault, .tnx-user-cards { margin-top: 1rem; border-radius: 1.8rem; padding: 1.25rem; }
+
+    .tnx-section-head span { color: #c29200; font-size: 0.78rem; font-weight: 950; letter-spacing: 0.12em; }
+    .tnx-section-head h2 { margin: 0.3rem 0 0; color: #f7e6ac; font-size: 2rem; font-weight: 950; line-height: 1.15; }
+    .tnx-section-head p { margin: 0.5rem 0 0; color: rgb(156, 163, 175); font-size: 0.92rem; font-weight: 800; line-height: 1.75; }
+    .tnx-section-head--center { text-align: center; }
+
+    .tnx-guide-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.85rem; margin-top: 1rem; }
+
+    .tnx-guide-card {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr);
       gap: 0.85rem;
       min-height: 138px;
       border: 1px solid rgba(255, 218, 106, 0.16);
       border-radius: 1.25rem;
-      background:
-        radial-gradient(circle at top right, rgba(255, 218, 106, 0.07), transparent 42%),
-        rgba(0, 0, 0, 0.3);
+      background: radial-gradient(circle at top right, rgba(255, 218, 106, 0.07), transparent 42%), rgba(0, 0, 0, 0.3);
       color: white;
       padding: 1rem;
       text-align: right;
       cursor: pointer;
-      transition: 160ms ease;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
     }
 
-    .tnx-start-card:hover {
-      transform: translateY(-2px);
-      border-color: rgba(255, 218, 106, 0.5);
-      background:
-        radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 42%),
-        rgba(0, 0, 0, 0.38);
+    .tnx-guide-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      border-color: rgba(255, 218, 106, 0.6);
+      box-shadow: 0 12px 24px rgba(255, 218, 106, 0.12);
+      background: radial-gradient(circle at top right, rgba(255, 218, 106, 0.15), transparent 42%), rgba(0, 0, 0, 0.4);
     }
 
-    .tnx-start-card b {
+    .tnx-guide-icon, .tnx-focus-icon {
       display: grid;
       place-items: center;
-      width: 3rem;
-      height: 3rem;
       border: 1px solid rgba(255, 218, 106, 0.24);
-      border-radius: 1rem;
-      background:
-        radial-gradient(circle at 35% 25%, rgba(255, 218, 106, 0.18), transparent 62%),
-        rgba(255, 218, 106, 0.06);
+      background: radial-gradient(circle at 35% 25%, rgba(255, 218, 106, 0.18), transparent 62%), rgba(255, 218, 106, 0.06);
       color: #ffda6a;
-      font-size: 1rem;
       font-weight: 950;
+      transition: transform 0.3s ease;
     }
 
-    .tnx-start-card strong {
-      display: block;
-      color: white;
-      font-size: 1.1rem;
-      font-weight: 950;
-      line-height: 1.35;
-    }
+    .tnx-guide-card:hover .tnx-guide-icon { transform: scale(1.1) rotate(5deg); }
+    .tnx-guide-icon { width: 3rem; height: 3rem; border-radius: 1rem; font-size: 1rem; }
 
-    .tnx-start-card p {
-      margin: 0.45rem 0 0;
-      color: rgb(209, 213, 219);
-      font-size: 0.86rem;
-      font-weight: 800;
-      line-height: 1.7;
-    }
+    .tnx-guide-card strong { display: block; color: white; font-size: 1.1rem; font-weight: 950; line-height: 1.35; }
+    .tnx-guide-card p { margin: 0.45rem 0 0; color: rgb(209, 213, 219); font-size: 0.86rem; font-weight: 800; line-height: 1.7; }
 
-    .tnx-vault-top {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
-      gap: 1rem;
-      align-items: end;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(255, 218, 106, 0.12);
-    }
+    .tnx-vault-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 420px); gap: 1rem; align-items: end; padding-bottom: 1rem; border-bottom: 1px solid rgba(255, 218, 106, 0.12); }
 
-    .tnx-search {
+    .tnx-badge-search {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr) auto;
       gap: 0.75rem;
@@ -435,1090 +484,191 @@ const metadata = {
       border-radius: 1.15rem;
       background: rgba(0, 0, 0, 0.32);
       padding: 0.85rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
 
-    .tnx-search span {
-      color: #ffda6a;
-      font-size: 1.4rem;
-      font-weight: 950;
+    .tnx-badge-search:focus-within { border-color: rgba(255, 218, 106, 0.6); box-shadow: 0 0 16px rgba(255, 218, 106, 0.1); }
+    .tnx-badge-search span { color: #ffda6a; font-size: 1.4rem; font-weight: 950; }
+    .tnx-badge-search input { width: 100%; border: 0; background: transparent; color: white; font-size: 0.95rem; font-weight: 850; outline: none; }
+    .tnx-badge-search button {
+      display: grid; place-items: center; width: 2.2rem; height: 2.2rem;
+      border: 1px solid rgba(255, 218, 106, 0.2); border-radius: 999px;
+      background: rgba(255, 218, 106, 0.08); color: #ffda6a; font-size: 1.2rem; font-weight: 950; cursor: pointer; transition: all 0.2s;
     }
-
-    .tnx-search input {
-      width: 100%;
-      border: 0;
-      background: transparent;
-      color: white;
-      font-size: 0.95rem;
-      font-weight: 850;
-      outline: none;
-    }
-
-    .tnx-search button {
-      display: grid;
-      place-items: center;
-      width: 2.2rem;
-      height: 2.2rem;
-      border: 1px solid rgba(255, 218, 106, 0.2);
-      border-radius: 999px;
-      background: rgba(255, 218, 106, 0.08);
-      color: #ffda6a;
-      font-size: 1.2rem;
-      font-weight: 950;
-      cursor: pointer;
-    }
+    .tnx-badge-search button:hover { background: rgba(255, 218, 106, 0.2); transform: scale(1.1); }
 
     .tnx-filter-row {
-      position: sticky;
-      top: 5.25rem;
-      z-index: 30;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.55rem;
-      margin: 1rem 0;
-      border: 1px solid rgba(255, 218, 106, 0.18);
-      border-radius: 1rem;
-      background:
-        radial-gradient(circle at top right, rgba(255, 218, 106, 0.07), transparent 40%),
-        rgba(7, 5, 11, 0.9);
-      padding: 0.7rem;
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
-      backdrop-filter: blur(14px);
+      position: sticky; top: 5.25rem; z-index: 30; display: flex; flex-wrap: wrap; gap: 0.55rem; margin: 1rem 0;
+      border: 1px solid rgba(255, 218, 106, 0.18); border-radius: 1rem;
+      background: radial-gradient(circle at top right, rgba(255, 218, 106, 0.07), transparent 40%), rgba(7, 5, 11, 0.9);
+      padding: 0.7rem; box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35); backdrop-filter: blur(14px);
     }
 
     .tnx-filter-row button {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      border: 1px solid rgba(255, 218, 106, 0.24);
-      border-radius: 0.9rem;
-      background: rgba(255, 218, 106, 0.08);
-      color: #f7e6ac;
-      padding: 0.62rem 0.8rem;
-      font-size: 0.82rem;
-      font-weight: 950;
-      cursor: pointer;
-      transition: 0.16s ease;
-      white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 0.45rem; border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 0.9rem; background: rgba(255, 218, 106, 0.08); color: #f7e6ac; padding: 0.62rem 0.8rem;
+      font-size: 0.82rem; font-weight: 950; cursor: pointer; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); white-space: nowrap;
     }
 
-    .tnx-filter-row button:hover,
-    .tnx-filter-row button.is-active {
-      transform: translateY(-1px);
-      border-color: rgba(255, 218, 106, 0.55);
-      background: rgba(255, 218, 106, 0.14);
-      color: #ffda6a;
-    }
+    .tnx-filter-row button:hover { transform: translateY(-2px); border-color: rgba(255, 218, 106, 0.55); background: rgba(255, 218, 106, 0.14); }
+    .tnx-filter-row button.is-active { transform: scale(1.05); border-color: rgba(255, 218, 106, 0.8); background: rgba(255, 218, 106, 0.2); color: #ffda6a; box-shadow: 0 4px 12px rgba(255, 218, 106, 0.2); }
+    .tnx-filter-row small { display: grid; place-items: center; min-width: 1.35rem; height: 1.35rem; border-radius: 999px; background: rgba(0, 0, 0, 0.34); color: rgb(229, 231, 235); font-size: 0.68rem; }
 
-    .tnx-filter-row small {
-      display: grid;
-      place-items: center;
-      min-width: 1.35rem;
-      height: 1.35rem;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.34);
-      color: rgb(229, 231, 235);
-      font-size: 0.68rem;
-    }
-
-    .tnx-vault-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 340px;
-      gap: 1rem;
-      align-items: start;
-    }
-
-    .tnx-badge-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 0.85rem;
-    }
+    .tnx-vault-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 1rem; align-items: start; }
+    .tnx-badge-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.85rem; }
 
     .tnx-badge-card {
-      position: relative;
-      display: grid;
-      gap: 0.8rem;
-      border: 1px solid rgba(255, 218, 106, 0.15);
-      border-radius: 1.35rem;
-      background:
-        radial-gradient(circle at top right, rgba(255, 218, 106, 0.055), transparent 42%),
-        rgba(0, 0, 0, 0.3);
-      color: white;
-      padding: 0.95rem;
-      text-align: right;
-      cursor: pointer;
-      transition: 160ms ease;
-      overflow: hidden;
-      scroll-margin-top: 11rem;
+      position: relative; display: grid; gap: 0.8rem; border: 1px solid rgba(255, 218, 106, 0.15); border-radius: 1.35rem;
+      background: radial-gradient(circle at top right, rgba(255, 218, 106, 0.055), transparent 42%), rgba(0, 0, 0, 0.3);
+      color: white; padding: 0.95rem; text-align: right; cursor: pointer; overflow: hidden; scroll-margin-top: 11rem;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+      animation: tnxScaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
     }
 
-    .tnx-badge-card:hover,
-    .tnx-badge-card.is-selected {
-      transform: translateY(-2px);
-      border-color: rgba(255, 218, 106, 0.56);
-      box-shadow: 0 0 28px rgba(255, 218, 106, 0.13);
+    @keyframes tnxScaleIn { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+    .tnx-badge-card:hover, .tnx-badge-card.is-selected {
+      transform: translateY(-4px) scale(1.02); border-color: rgba(255, 218, 106, 0.6); box-shadow: 0 8px 28px rgba(255, 218, 106, 0.18);
+      background: radial-gradient(circle at top right, rgba(255, 218, 106, 0.15), transparent 42%), rgba(0, 0, 0, 0.4);
     }
 
-    .tnx-badge-card.is-linked {
-      border-color: rgba(255, 218, 106, 0.82);
-      box-shadow:
-        0 0 0 1px rgba(255, 218, 106, 0.28),
-        0 0 34px rgba(255, 218, 106, 0.18);
-    }
-
+    .tnx-badge-card.is-linked { border-color: rgba(255, 218, 106, 0.9); box-shadow: 0 0 0 1px rgba(255, 218, 106, 0.4), 0 0 34px rgba(255, 218, 106, 0.25); }
     .tnx-badge-card.is-rare::before {
-      content: '';
-      position: absolute;
-      inset: -35%;
-      background: conic-gradient(from 180deg, transparent, rgba(255, 218, 106, 0.16), transparent 35%);
-      opacity: 0.7;
-      animation: tnxBadgeShine 5s linear infinite;
-      pointer-events: none;
+      content: ''; position: absolute; inset: -35%;
+      background: conic-gradient(from 180deg, transparent, rgba(255, 218, 106, 0.16), transparent 35%); opacity: 0.7;
+      animation: tnxBadgeShine 4s linear infinite; pointer-events: none;
     }
 
-    @keyframes tnxBadgeShine {
-      to {
-        transform: rotate(360deg);
-      }
-    }
+    @keyframes tnxBadgeShine { to { transform: rotate(360deg); } }
 
     .tnx-badge-img-wrap {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      place-items: center;
-      min-height: 112px;
-      border: 1px solid rgba(255, 218, 106, 0.11);
-      border-radius: 1.05rem;
-      background:
-        radial-gradient(circle at center, rgba(255, 218, 106, 0.1), transparent 58%),
-        rgba(255, 255, 255, 0.025);
-    }
-
-    .tnx-badge-img-wrap img {
-      width: 82px;
-      height: 82px;
-      object-fit: contain;
-      filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.45));
-    }
-
-    .tnx-badge-card-content {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      gap: 0.45rem;
-    }
-
-    .tnx-badge-tag {
-      width: fit-content;
-      border: 1px solid rgba(255, 218, 106, 0.18);
-      border-radius: 999px;
-      background: rgba(255, 218, 106, 0.07);
-      color: #f7e6ac;
-      padding: 0.32rem 0.55rem;
-      font-size: 0.68rem;
-      font-weight: 950;
-    }
-
-    .tnx-badge-card strong {
-      color: white;
-      font-size: 1rem;
-      font-weight: 950;
-      line-height: 1.35;
-    }
-
-    .tnx-badge-card p {
-      margin: 0;
-      color: rgb(156, 163, 175);
-      font-size: 0.76rem;
-      font-weight: 800;
-      line-height: 1.55;
-    }
-
-    .tnx-focus-panel {
-      position: sticky;
-      top: 11rem;
-      min-height: 420px;
-      border-radius: 1.5rem;
-      padding: 1rem;
-    }
-
-    .tnx-focus-placeholder {
-      display: grid;
-      place-items: center;
-      min-height: 360px;
-      text-align: center;
-    }
-
-    .tnx-focus-placeholder div {
-      display: grid;
-      place-items: center;
-      width: 4rem;
-      height: 4rem;
-      border-radius: 1.25rem;
-      border: 1px solid rgba(255, 218, 106, 0.24);
-      background: rgba(255, 218, 106, 0.06);
-      color: #ffda6a;
-      font-size: 1.6rem;
-      margin-bottom: 0.85rem;
-    }
-
-    .tnx-focus-placeholder h3 {
-      margin: 0;
-      color: #f7e6ac;
-      font-size: 1.45rem;
-      font-weight: 950;
-    }
-
-    .tnx-focus-placeholder p {
-      max-width: 240px;
-      margin: 0.55rem 0 0;
-      color: rgb(156, 163, 175);
-      font-size: 0.86rem;
-      font-weight: 800;
-      line-height: 1.75;
-    }
-
-    .tnx-focus-card {
-      display: grid;
-      gap: 0.9rem;
-    }
-
-    .tnx-focus-image {
-      display: grid;
-      place-items: center;
-      min-height: 180px;
-      border: 1px solid rgba(255, 218, 106, 0.14);
-      border-radius: 1.25rem;
-      background:
-        radial-gradient(circle at center, rgba(255, 218, 106, 0.14), transparent 56%),
-        rgba(0, 0, 0, 0.28);
-    }
-
-    .tnx-focus-image img {
-      width: 130px;
-      height: 130px;
-      object-fit: contain;
-      filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.55));
-    }
-
-    .tnx-focus-card h3 {
-      margin: 0;
-      color: white;
-      font-size: 1.7rem;
-      font-weight: 950;
-      line-height: 1.2;
-    }
-
-    .tnx-focus-card p {
-      margin: 0;
-      color: rgb(209, 213, 219);
-      font-size: 0.9rem;
-      font-weight: 800;
-      line-height: 1.75;
-    }
-
-    .tnx-focus-meta {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.6rem;
-    }
-
-    .tnx-focus-meta div {
-      border: 1px solid rgba(255, 218, 106, 0.12);
-      border-radius: 1rem;
-      background: rgba(0, 0, 0, 0.26);
-      padding: 0.75rem;
-    }
-
-    .tnx-focus-meta span {
-      display: block;
-      color: rgb(148, 163, 184);
-      font-size: 0.72rem;
-      font-weight: 900;
-      margin-bottom: 0.25rem;
-    }
-
-    .tnx-focus-meta strong {
-      color: #ffda6a;
-      font-size: 0.86rem;
-      font-weight: 950;
-    }
-
-    .tnx-focus-copy {
-      border: 1px solid rgba(255, 218, 106, 0.24);
-      border-radius: 0.9rem;
-      background: rgba(255, 218, 106, 0.08);
-      color: #f7e6ac;
-      padding: 0.78rem 1rem;
-      font-size: 0.86rem;
-      font-weight: 950;
-      cursor: pointer;
-      transition: 0.16s ease;
-    }
-
-    .tnx-focus-copy:hover,
-    .tnx-focus-copy.is-copied {
-      border-color: rgba(52, 211, 153, 0.55);
-      background: rgba(52, 211, 153, 0.14);
-      color: rgb(167, 243, 208);
-    }
-
-    .tnx-empty {
-      display: grid;
-      place-items: center;
-      gap: 0.35rem;
-      border-radius: 1.5rem;
-      padding: 2rem;
-      text-align: center;
-      min-height: 220px;
-    }
-
-    .tnx-empty strong {
-      color: #ffda6a;
-      font-size: 1.4rem;
-      font-weight: 950;
-    }
-
-    .tnx-empty span {
-      color: rgb(156, 163, 175);
-      font-size: 0.9rem;
-      font-weight: 800;
-    }
-
-    .tnx-user-search {
-      max-width: 620px;
-      margin: 1rem auto 0;
-    }
-
-    .tnx-user-results {
-      display: grid;
-      gap: 0.5rem;
-      margin-top: 0.7rem;
-    }
-
-    .tnx-user-result {
-      border: 1px solid rgba(255, 218, 106, 0.16);
-      border-radius: 0.9rem;
-      background: rgba(0, 0, 0, 0.32);
-      color: #f7e6ac;
-      padding: 0.75rem 0.9rem;
-      text-align: right;
-      font-weight: 900;
-      cursor: pointer;
-      transition: 0.16s ease;
-    }
-
-    .tnx-user-result:hover {
-      border-color: rgba(255, 218, 106, 0.45);
-      background: rgba(255, 218, 106, 0.09);
-      color: #ffda6a;
-    }
-
-    .tnx-user-card-container {
-      display: grid;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1rem;
-      overflow-x: auto;
-      padding-bottom: 0.5rem;
-    }
-
-    .tnx-card-wrap {
-      display: grid;
-      justify-items: center;
-      width: 800px;
-      min-width: 800px;
-      max-width: 800px;
-    }
-
-    .tnx-user-card-preview {
-      position: relative;
-      width: 800px;
-      min-width: 800px;
-      max-width: 800px;
-      height: 360px;
-      border: 2px solid rgba(0, 0, 0, 0.75);
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48);
-      font-family: Poppins, system-ui, sans-serif;
-      opacity: 0;
-      animation: tnxUserCardIn 220ms ease forwards;
-      direction: ltr;
-      flex: 0 0 800px;
-    }
-
-    @keyframes tnxUserCardIn {
-      to {
-        opacity: 1;
-      }
-    }
-
-    .tnx-card-banner {
-      width: 100%;
-      height: 180px;
-      background-position: center;
-      background-size: cover;
-      background-color: rgba(0, 0, 0, 0.25);
-    }
-
-    .tnx-card-profile-section {
-      position: absolute;
-      top: 100px;
-      left: 20px;
-      right: 20px;
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: flex-start;
-      direction: ltr;
-      z-index: 10;
-    }
-
-    .tnx-card-picture-points {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      width: 170px;
-      flex: 0 0 170px;
-    }
-
-    .tnx-card-profile-picture {
-      width: 150px;
-      height: 150px;
-      border: 7px solid var(--profile-border, #423fff);
-      border-radius: 999px;
-      background-color: var(--profile-border, #423fff);
-      background-position: center;
-      background-size: cover;
-    }
-
-    .tnx-card-job-info {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      width: 100%;
-      margin-top: 0.5rem;
-      padding-left: 10px;
-      color: white;
-      font-size: 1.35rem;
-      font-weight: 800;
-      text-shadow: 1px 1px 1px black;
-      text-align: left;
-      direction: ltr;
-    }
-
-    .tnx-card-job-info iconify-icon {
-      margin-right: 0.45rem;
-    }
-
-    .tnx-card-stats-row {
-      display: flex;
-      justify-content: flex-start;
-      gap: 10px;
-      width: 100%;
-      margin-top: 4px;
-      padding-left: 10px;
-      direction: ltr;
-    }
-
-    .tnx-card-points,
-    .tnx-card-gold {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      color: white;
-      font-size: 1rem;
-      text-shadow: 1px 1px 1px black;
-      direction: ltr;
-    }
-
-    .tnx-card-gold {
-      color: #ffd700;
-    }
-
-    .tnx-card-points iconify-icon,
-    .tnx-card-gold iconify-icon {
-      margin-right: 0.3rem;
-    }
-
-    .tnx-card-username {
-      position: absolute;
-      top: 92px;
-      left: 215px;
-      width: 300px;
-      max-width: 300px;
-      color: white;
-      font-size: 2.35rem;
-      font-weight: 800;
-      text-shadow: 1px 2px 1px black;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-align: left;
-      direction: ltr;
-      z-index: 11;
-    }
-
-    .tnx-card-badges {
-      position: absolute;
-      top: 95px;
-      right: 36px;
-      left: auto;
-      display: grid;
-      grid-template-columns: repeat(3, 68px);
-      grid-template-rows: repeat(2, 68px);
-      gap: 10px;
-      direction: ltr;
-      z-index: 12;
-    }
-
-    .tnx-card-badges img {
-      width: 68px;
-      height: 68px;
-      object-fit: contain;
-      border-radius: 0.5rem;
-      filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.35));
-    }
-
-    .tnx-progress-panel {
-      width: min(100%, 1000px);
-      display: grid;
-      gap: 1rem;
-      border-radius: 1.5rem;
-      padding: 1rem;
-    }
-
-    .tnx-overall {
-      border: 1px solid rgba(255, 218, 106, 0.2);
-      border-radius: 1.3rem;
-      background:
-        linear-gradient(135deg, rgba(255, 218, 106, 0.06), transparent 70%),
-        rgba(0, 0, 0, 0.42);
-      padding: 1.1rem 1.25rem;
-      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-    }
-
-    .tnx-overall-text {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 0.7rem;
-    }
-
-    .tnx-overall-text strong {
-      color: #f7e6ac;
-      font-size: 1.1rem;
-      font-weight: 950;
-    }
-
-    .tnx-overall-text span {
-      color: #ffda6a;
-      font-size: 0.92rem;
-      font-weight: 950;
-    }
-
-    .tnx-overall-track {
-      height: 0.7rem;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.06);
-      overflow: hidden;
-    }
-
-    .tnx-overall-fill {
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, #c29200, #ffda6a, #fff1a8);
-      box-shadow: 0 0 18px rgba(255, 218, 106, 0.5);
-      transition: width 600ms cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .tnx-next-hero {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
-      gap: 1.2rem;
-      align-items: center;
-      width: 100%;
-      border: 1px solid rgba(255, 218, 106, 0.32);
-      border-radius: 1.5rem;
-      background:
-        radial-gradient(circle at 15% 50%, rgba(255, 218, 106, 0.18), transparent 55%),
-        linear-gradient(135deg, rgba(255, 218, 106, 0.08), rgba(0, 0, 0, 0.4) 70%);
-      padding: 1.25rem 1.4rem;
-      color: white;
-      text-align: right;
-      cursor: pointer;
-      transition: 200ms ease;
-      box-shadow:
-        0 24px 60px rgba(0, 0, 0, 0.4),
-        0 0 30px rgba(255, 218, 106, 0.1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .tnx-next-hero::before {
-      content: '';
-      position: absolute;
-      inset: -50%;
-      background: conic-gradient(from 0deg, transparent, rgba(255, 218, 106, 0.12), transparent 30%);
-      animation: tnxNextShine 6s linear infinite;
-      pointer-events: none;
-    }
-
-    @keyframes tnxNextShine {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .tnx-next-hero:hover {
-      transform: translateY(-2px);
-      border-color: rgba(255, 218, 106, 0.65);
-      box-shadow:
-        0 28px 65px rgba(0, 0, 0, 0.45),
-        0 0 40px rgba(255, 218, 106, 0.2);
-    }
-
-    .tnx-next-hero--done {
-      cursor: default;
-    }
-
-    .tnx-next-hero--done::before {
-      display: none;
-    }
-
-    .tnx-next-icon-done {
-      display: grid;
-      place-items: center;
-      width: 4rem;
-      height: 4rem;
-      border-radius: 999px;
-      background: rgba(52, 211, 153, 0.18);
-      border: 2px solid rgba(52, 211, 153, 0.55);
-      color: rgb(167, 243, 208);
-      font-size: 1.8rem;
-      font-weight: 950;
-      position: relative;
-      z-index: 1;
-    }
-
-    .tnx-next-hero--done strong {
-      display: block;
-      color: rgb(167, 243, 208);
-      font-size: 1.15rem;
-      font-weight: 950;
-      position: relative;
-      z-index: 1;
-    }
-
-    .tnx-next-hero--done p {
-      margin: 0.4rem 0 0;
-      color: rgb(209, 213, 219);
-      font-size: 0.86rem;
-      font-weight: 800;
-      position: relative;
-      z-index: 1;
-    }
-
-    .tnx-next-img-wrap {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      place-items: center;
-      width: 6.5rem;
-      height: 6.5rem;
-      flex-shrink: 0;
-      border: 1px solid rgba(255, 218, 106, 0.3);
-      border-radius: 1.5rem;
-      background:
-        radial-gradient(circle at center, rgba(255, 218, 106, 0.18), transparent 65%),
-        rgba(0, 0, 0, 0.3);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-    }
-
-    .tnx-next-img-wrap img {
-      width: 5rem;
-      height: 5rem;
-      object-fit: contain;
-      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
-    }
-
-    .tnx-next-content {
-      position: relative;
-      z-index: 1;
-      min-width: 0;
-    }
-
-    .tnx-next-label {
-      color: #ffda6a;
-      font-size: 0.78rem;
-      font-weight: 950;
-      letter-spacing: 0.04em;
-      margin-bottom: 0.35rem;
-    }
-
-    .tnx-next-title {
-      display: block;
-      color: white;
-      font-size: 1.55rem;
-      font-weight: 950;
-      line-height: 1.2;
-      margin-bottom: 0.5rem;
-    }
-
-    .tnx-next-desc {
-      margin: 0 0 0.7rem;
-      color: rgb(209, 213, 219);
-      font-size: 0.92rem;
-      font-weight: 800;
-      line-height: 1.55;
-    }
-
-    .tnx-next-desc b {
-      color: #ffda6a;
-      font-weight: 950;
-      font-size: 1rem;
-    }
-
-    .tnx-next-hint {
-      display: block;
-      color: rgb(156, 163, 175);
-      font-size: 0.85rem;
-      font-weight: 800;
-      line-height: 1.6;
-    }
-
-    .tnx-next-progress-wrap {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 0.7rem;
-      align-items: center;
-    }
-
-    .tnx-next-progress {
-      height: 0.55rem;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.08);
-      overflow: hidden;
-    }
-
-    .tnx-next-fill {
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, #c29200, #ffda6a);
-      box-shadow: 0 0 12px rgba(255, 218, 106, 0.5);
-      transition: width 600ms cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .tnx-next-percent {
-      color: #ffda6a;
-      font-size: 0.95rem;
-      font-weight: 950;
-      min-width: 3rem;
-      text-align: left;
-      direction: ltr;
-    }
-
-    .tnx-vault-section {
-      border: 1px solid rgba(255, 218, 106, 0.18);
-      border-radius: 1.3rem;
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent),
-        rgba(0, 0, 0, 0.32);
-      padding: 1.1rem;
-    }
-
-    .tnx-vault-section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 1rem;
-      margin-bottom: 0.95rem;
-      padding-bottom: 0.85rem;
-      border-bottom: 1px solid rgba(255, 218, 106, 0.1);
-    }
-
-    .tnx-vault-section-head strong {
-      color: #f7e6ac;
-      font-size: 1.1rem;
-      font-weight: 950;
-    }
-
-    .tnx-vault-section-head span {
-      color: rgb(156, 163, 175);
-      font-size: 0.84rem;
-      font-weight: 850;
-    }
-
-    .tnx-vault-section-head b {
-      color: rgb(167, 243, 208);
-      font-size: 1rem;
-      font-weight: 950;
-    }
-
-    .tnx-vault-section-head em {
-      color: rgb(248, 113, 113);
-      font-style: normal;
-      font-weight: 950;
-    }
-
-    .tnx-vault-section-head i {
-      color: #ffda6a;
-      font-style: normal;
-      font-weight: 950;
-    }
-
-    .tnx-vault-grid {
-      display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 0.65rem;
-    }
-
-    .tnx-vault-badge {
-      position: relative;
-      display: grid;
-      gap: 0.45rem;
-      justify-items: center;
-      border: 1px solid rgba(255, 218, 106, 0.12);
-      border-radius: 1rem;
-      background: rgba(0, 0, 0, 0.32);
-      color: white;
-      padding: 0.7rem 0.5rem;
-      cursor: pointer;
-      transition: 200ms ease;
-      text-align: center;
-      min-height: 130px;
-      overflow: hidden;
-    }
-
-    .tnx-vault-badge:hover {
-      transform: translateY(-3px);
-    }
-
-    .tnx-vault-badge.is-owned {
-      border-color: rgba(52, 211, 153, 0.32);
-      background: linear-gradient(135deg, rgba(52, 211, 153, 0.08), rgba(0, 0, 0, 0.28));
-    }
-
-    .tnx-vault-badge.is-owned:hover {
-      border-color: rgba(52, 211, 153, 0.65);
-      background: linear-gradient(135deg, rgba(52, 211, 153, 0.16), rgba(0, 0, 0, 0.35));
-      box-shadow: 0 12px 30px rgba(52, 211, 153, 0.15);
-    }
-
-    .tnx-vault-badge.is-eligible {
-      border-color: rgba(255, 218, 106, 0.45);
-      background:
-        radial-gradient(circle at top, rgba(255, 218, 106, 0.12), transparent 55%),
-        rgba(255, 218, 106, 0.055);
-      box-shadow: 0 0 24px rgba(255, 218, 106, 0.08);
-    }
-
-    .tnx-vault-badge.is-eligible:hover {
-      border-color: rgba(255, 218, 106, 0.75);
-      box-shadow: 0 12px 34px rgba(255, 218, 106, 0.16);
-    }
-
-    .tnx-vault-badge.is-locked {
-      border-color: rgba(255, 255, 255, 0.05);
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .tnx-vault-badge.is-locked:hover {
-      border-color: rgba(255, 218, 106, 0.35);
-      background: rgba(255, 218, 106, 0.04);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-    }
-
-    .tnx-vault-badge-img {
-      position: relative;
-      display: grid;
-      place-items: center;
-      width: 100%;
-      aspect-ratio: 1;
-      max-width: 4rem;
-    }
-
-    .tnx-vault-badge-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      transition: filter 200ms ease;
-    }
-
-    .tnx-vault-badge.is-locked .tnx-vault-badge-img img {
-      filter: grayscale(0.95) brightness(0.5) opacity(0.55);
-    }
-
-    .tnx-vault-badge.is-locked:hover .tnx-vault-badge-img img {
-      filter: grayscale(0.5) brightness(0.75) opacity(0.85);
-    }
-
-    .tnx-vault-check,
-    .tnx-vault-lock,
-    .tnx-vault-ready {
-      position: absolute;
-      bottom: -4px;
-      right: -4px;
-      display: grid;
-      place-items: center;
-      width: 1.4rem;
-      height: 1.4rem;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      font-weight: 950;
-      line-height: 1;
-      border: 2px solid rgba(0, 0, 0, 0.6);
-    }
-
-    .tnx-vault-check {
-      background: rgb(52, 211, 153);
-      color: #052e1a;
-    }
-
-    .tnx-vault-ready {
-      background: #ffda6a;
-      color: #2d1c00;
-    }
-
-    .tnx-vault-lock {
-      background: rgba(50, 50, 60, 0.95);
-      color: rgb(180, 180, 195);
-      font-size: 0.65rem;
-    }
-
-    .tnx-vault-name {
-      color: rgb(229, 231, 235);
-      font-size: 0.72rem;
-      font-weight: 900;
-      line-height: 1.3;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      min-height: 1.9rem;
-    }
-
-    .tnx-vault-badge.is-locked .tnx-vault-name {
-      color: rgb(148, 163, 184);
-    }
-
-    .tnx-vault-hint {
-      display: none;
-      color: rgb(255, 218, 106);
-      font-size: 0.66rem;
-      font-weight: 800;
-      line-height: 1.4;
-      margin-top: 0.15rem;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 200ms ease;
-    }
-
-    .tnx-vault-badge.is-locked:hover .tnx-vault-hint,
-    .tnx-vault-badge.is-eligible:hover .tnx-vault-hint {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      max-height: 2.5rem;
-    }
+      position: relative; z-index: 1; display: grid; place-items: center; min-height: 112px;
+      border: 1px solid rgba(255, 218, 106, 0.11); border-radius: 1.05rem;
+      background: radial-gradient(circle at center, rgba(255, 218, 106, 0.1), transparent 58%), rgba(255, 255, 255, 0.025); transition: transform 0.4s ease;
+    }
+
+    .tnx-badge-card:hover .tnx-badge-img-wrap img { transform: scale(1.1) rotate(3deg); }
+    .tnx-badge-img-wrap img { width: 82px; height: 82px; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.45)); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+
+    .tnx-badge-card-content { position: relative; z-index: 1; display: grid; gap: 0.45rem; }
+    .tnx-badge-tag { width: fit-content; border: 1px solid rgba(255, 218, 106, 0.18); border-radius: 999px; background: rgba(255, 218, 106, 0.07); color: #f7e6ac; padding: 0.32rem 0.55rem; font-size: 0.68rem; font-weight: 950; }
+    .tnx-badge-card strong { color: white; font-size: 1rem; font-weight: 950; line-height: 1.35; }
+    .tnx-badge-card p { margin: 0; color: rgb(156, 163, 175); font-size: 0.76rem; font-weight: 800; line-height: 1.55; }
+
+    .tnx-badge-focus { position: sticky; top: 11rem; min-height: 420px; border-radius: 1.5rem; padding: 1rem; transition: opacity 0.3s ease; }
+    .tnx-focus-placeholder { display: grid; place-items: center; min-height: 360px; text-align: center; }
+    .tnx-focus-icon { width: 4rem; height: 4rem; border-radius: 1.25rem; font-size: 1.6rem; margin-bottom: 0.85rem; }
+    .tnx-focus-placeholder h3 { margin: 0; color: #f7e6ac; font-size: 1.45rem; font-weight: 950; }
+    .tnx-focus-placeholder p { max-width: 240px; margin: 0.55rem 0 0; color: rgb(156, 163, 175); font-size: 0.86rem; font-weight: 800; line-height: 1.75; }
+
+    .tnx-focus-card { display: grid; gap: 0.9rem; animation: tnxFadeInUp 0.4s ease-out; }
+    .tnx-focus-image { display: grid; place-items: center; min-height: 180px; border: 1px solid rgba(255, 218, 106, 0.14); border-radius: 1.25rem; background: radial-gradient(circle at center, rgba(255, 218, 106, 0.14), transparent 56%), rgba(0, 0, 0, 0.28); }
+    .tnx-focus-image img { width: 130px; height: 130px; object-fit: contain; filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.55)); animation: tnxFloat 3s ease-in-out infinite; }
+    
+    @keyframes tnxFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+    .tnx-focus-card h3 { margin: 0; color: white; font-size: 1.7rem; font-weight: 950; line-height: 1.2; }
+    .tnx-focus-card p { margin: 0; color: rgb(209, 213, 219); font-size: 0.9rem; font-weight: 800; line-height: 1.75; }
+    .tnx-focus-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+    .tnx-focus-meta div { border: 1px solid rgba(255, 218, 106, 0.12); border-radius: 1rem; background: rgba(0, 0, 0, 0.26); padding: 0.75rem; transition: background 0.3s; }
+    .tnx-focus-meta div:hover { background: rgba(255, 218, 106, 0.05); }
+    .tnx-focus-meta span { display: block; color: rgb(148, 163, 184); font-size: 0.72rem; font-weight: 900; margin-bottom: 0.25rem; }
+    .tnx-focus-meta strong { color: #ffda6a; font-size: 0.86rem; font-weight: 950; }
+
+    .tnx-focus-copy { border: 1px solid rgba(255, 218, 106, 0.24); border-radius: 0.9rem; background: rgba(255, 218, 106, 0.08); color: #f7e6ac; padding: 0.78rem 1rem; font-size: 0.86rem; font-weight: 950; cursor: pointer; transition: 0.2s ease; }
+    .tnx-focus-copy:hover { background: rgba(255, 218, 106, 0.18); transform: scale(1.02); }
+    .tnx-focus-copy.is-copied { border-color: rgba(52, 211, 153, 0.55); background: rgba(52, 211, 153, 0.14); color: rgb(167, 243, 208); transform: scale(0.98); }
+
+    .tnx-empty { display: grid; place-items: center; gap: 0.35rem; border-radius: 1.5rem; padding: 2rem; text-align: center; min-height: 220px; }
+    .tnx-empty strong { color: #ffda6a; font-size: 1.4rem; font-weight: 950; }
+    .tnx-empty span { color: rgb(156, 163, 175); font-size: 0.9rem; font-weight: 800; }
+
+    .tnx-user-search { max-width: 620px; margin: 1rem auto 0; }
+    .tnx-user-results { display: grid; gap: 0.5rem; margin-top: 0.7rem; }
+    .tnx-user-result { border: 1px solid rgba(255, 218, 106, 0.16); border-radius: 0.9rem; background: rgba(0, 0, 0, 0.32); color: #f7e6ac; padding: 0.75rem 0.9rem; text-align: right; font-weight: 900; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .tnx-user-result:hover { transform: translateX(-6px); border-color: rgba(255, 218, 106, 0.45); background: rgba(255, 218, 106, 0.09); color: #ffda6a; }
+    .tnx-user-card-container { display: grid; justify-content: center; gap: 1rem; margin-top: 1rem; overflow-x: auto; padding-bottom: 0.5rem; }
+
+    /* ---- الكود الأصلي لبطاقة المستخدم (بدون أي مساس بالتوزيع) ---- */
+    .tnx-card-wrap { display: grid; justify-items: center; width: 800px; min-width: 800px; max-width: 800px; }
+    .tnx-user-card-preview { position: relative; width: 800px; min-width: 800px; max-width: 800px; height: 360px; border: 2px solid rgba(0, 0, 0, 0.75); border-radius: 18px; overflow: hidden; box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48); font-family: Poppins, system-ui, sans-serif; opacity: 0; animation: tnxUserCardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; direction: ltr; flex: 0 0 800px; }
+    @keyframes tnxUserCardIn { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .tnx-card-banner { width: 100%; height: 180px; background-position: center; background-size: cover; background-color: rgba(0, 0, 0, 0.25); }
+    .tnx-card-profile-section { position: absolute; top: 100px; left: 20px; right: 20px; display: flex; flex-direction: row; justify-content: flex-start; align-items: flex-start; direction: ltr; z-index: 10; }
+    .tnx-card-picture-points { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 170px; flex: 0 0 170px; }
+    .tnx-card-profile-picture { width: 150px; height: 150px; border: 7px solid var(--profile-border, #423fff); border-radius: 999px; background-color: var(--profile-border, #423fff); background-position: center; background-size: cover; }
+    .tnx-card-job-info { display: flex; align-items: center; justify-content: flex-start; width: 100%; margin-top: 0.5rem; padding-left: 10px; color: white; font-size: 1.35rem; font-weight: 800; text-shadow: 1px 1px 1px black; text-align: left; direction: ltr; }
+    .tnx-card-job-info iconify-icon { margin-right: 0.45rem; }
+    .tnx-card-stats-row { display: flex; justify-content: flex-start; gap: 10px; width: 100%; margin-top: 4px; padding-left: 10px; direction: ltr; }
+    .tnx-card-points, .tnx-card-gold { display: flex; align-items: center; justify-content: flex-start; color: white; font-size: 1rem; text-shadow: 1px 1px 1px black; direction: ltr; }
+    .tnx-card-gold { color: #ffd700; }
+    .tnx-card-points iconify-icon, .tnx-card-gold iconify-icon { margin-right: 0.3rem; }
+    .tnx-card-username { position: absolute; top: 92px; left: 215px; width: 300px; max-width: 300px; color: white; font-size: 2.35rem; font-weight: 800; text-shadow: 1px 2px 1px black; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; direction: ltr; z-index: 11; }
+    .tnx-card-badges { position: absolute; top: 95px; right: 36px; left: auto; display: grid; grid-template-columns: repeat(3, 68px); grid-template-rows: repeat(2, 68px); gap: 10px; direction: ltr; z-index: 12; }
+    .tnx-card-badges img { width: 68px; height: 68px; object-fit: contain; border-radius: 0.5rem; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.35)); transition: transform 0.2s ease; }
+    .tnx-card-badges img:hover { transform: scale(1.1) rotate(5deg); }
+
+    .tnx-progress-panel { width: min(100%, 1000px); border: 1px solid rgba(255, 218, 106, 0.18); border-radius: 1.5rem; background: radial-gradient(circle at top right, rgba(255, 218, 106, 0.07), transparent 35%), rgba(0, 0, 0, 0.34); padding: 1rem; box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35); animation: tnxFadeInUp 0.6s ease-out 0.2s backwards; }
+    .tnx-progress-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; border-bottom: 1px solid rgba(255, 218, 106, 0.12); padding-bottom: 0.9rem; margin-bottom: 1rem; }
+    .tnx-progress-head span { color: #c29200; font-size: 0.75rem; font-weight: 950; letter-spacing: 0.1em; }
+    .tnx-progress-head h3 { margin: 0.25rem 0 0; color: #f7e6ac; font-size: 1.55rem; font-weight: 950; line-height: 1.25; }
+    .tnx-progress-head p { margin: 0.4rem 0 0; color: rgb(156, 163, 175); font-size: 0.85rem; font-weight: 800; line-height: 1.7; }
+    .tnx-progress-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.7rem; margin-bottom: 1rem; }
+    .tnx-progress-stat { border: 1px solid rgba(255, 218, 106, 0.14); border-radius: 1rem; background: rgba(255, 255, 255, 0.025); padding: 0.85rem; transition: background 0.3s, transform 0.3s; }
+    .tnx-progress-stat:hover { background: rgba(255, 218, 106, 0.06); transform: translateY(-2px); }
+    .tnx-progress-stat span { display: block; color: rgb(148, 163, 184); font-size: 0.73rem; font-weight: 900; margin-bottom: 0.35rem; }
+    .tnx-progress-stat strong { display: block; color: white; font-size: 1rem; font-weight: 950; line-height: 1.4; }
+    .tnx-progress-stat small { display: block; color: #ffda6a; font-size: 0.72rem; font-weight: 900; margin-top: 0.3rem; line-height: 1.5; }
+
+    .tnx-paths-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.85rem; }
+    .tnx-path-card { border: 1px solid rgba(255, 218, 106, 0.14); border-radius: 1.1rem; background: rgba(0, 0, 0, 0.25); padding: 0.9rem; transition: border-color 0.3s; }
+    .tnx-path-card:hover { border-color: rgba(255, 218, 106, 0.3); }
+    .tnx-path-card h4 { margin: 0; color: #f7e6ac; font-size: 1rem; font-weight: 950; }
+    .tnx-path-card p { margin: 0.35rem 0 0.85rem; color: rgb(156, 163, 175); font-size: 0.78rem; font-weight: 800; line-height: 1.6; }
+    .tnx-path-steps { display: grid; gap: 0.55rem; }
+    .tnx-path-step { border: 1px solid rgba(255, 218, 106, 0.1); border-radius: 0.85rem; background: rgba(255, 255, 255, 0.025); padding: 0.65rem; transition: transform 0.2s ease; }
+    .tnx-path-step:hover { transform: translateX(4px); }
+    .tnx-path-step.is-open { border-color: rgba(52, 211, 153, 0.32); background: rgba(52, 211, 153, 0.08); }
+    .tnx-path-step.is-next { border-color: rgba(255, 218, 106, 0.45); background: rgba(255, 218, 106, 0.09); }
+    .tnx-step-top { display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; }
+    .tnx-step-top strong { color: white; font-size: 0.85rem; font-weight: 950; }
+    .tnx-step-top span { color: rgb(209, 213, 219); font-size: 0.72rem; font-weight: 900; white-space: nowrap; }
+    .tnx-step-bar { height: 0.42rem; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; margin-top: 0.5rem; }
+    .tnx-step-bar i { display: block; height: 100%; width: var(--progress, 0%); border-radius: inherit; background: linear-gradient(90deg, #c29200, #ffda6a); transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); }
+    .tnx-step-note { display: block; color: rgb(148, 163, 184); font-size: 0.7rem; font-weight: 800; margin-top: 0.35rem; line-height: 1.45; }
+
+    .tnx-owned-section { margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+    .tnx-owned-box { border: 1px solid rgba(255, 218, 106, 0.12); border-radius: 1.1rem; background: rgba(0, 0, 0, 0.2); padding: 0.9rem; }
+    .tnx-owned-box h4 { margin: 0 0 0.75rem; color: #f7e6ac; font-size: 1rem; font-weight: 950; }
+    .tnx-mini-badge-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.5rem; }
+    .tnx-mini-badge { display: grid; place-items: center; gap: 0.35rem; border: 1px solid rgba(255, 218, 106, 0.11); border-radius: 0.85rem; background: rgba(255, 255, 255, 0.025); padding: 0.55rem; text-align: center; min-height: 92px; transition: transform 0.2s ease, border-color 0.2s ease; }
+    .tnx-mini-badge:hover { transform: translateY(-2px); border-color: rgba(255, 218, 106, 0.3); }
+    .tnx-mini-badge.is-locked { opacity: 0.45; filter: grayscale(0.8); }
+    .tnx-mini-badge img { width: 42px; height: 42px; object-fit: contain; }
+    .tnx-mini-badge span { color: rgb(229, 231, 235); font-size: 0.66rem; font-weight: 900; line-height: 1.3; }
 
     @media (max-width: 1100px) {
-      .tnx-vault-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .tnx-focus-panel {
-        position: static;
-        min-height: auto;
-      }
-
-      .tnx-badge-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .tnx-vault-grid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-      }
-
-      .tnx-next-hero {
-        grid-template-columns: 1fr;
-        text-align: center;
-        justify-items: center;
-      }
-
-      .tnx-next-img-wrap {
-        margin: 0 auto;
-      }
+      .tnx-vault-layout { grid-template-columns: 1fr; }
+      .tnx-badge-focus { position: static; min-height: auto; }
+      .tnx-badge-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .tnx-paths-grid, .tnx-progress-summary, .tnx-steps-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .tnx-owned-section { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 860px) {
-      .tnx-vault-top,
-      .tnx-start-grid,
-      .tnx-hero-stats {
-        grid-template-columns: 1fr;
-      }
-
-      .tnx-filter-row {
-        top: 4.75rem;
-      }
-
-      .tnx-badge-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .tnx-badge-card {
-        scroll-margin-top: 10rem;
-      }
-
-      .tnx-vault-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-
-      .tnx-overall-text,
-      .tnx-vault-section-head {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.3rem;
-      }
+      .tnx-vault-top, .tnx-guide-grid, .tnx-badges-hero-stats, .tnx-paths-grid, .tnx-progress-summary, .tnx-steps-grid, .tnx-faq-grid { grid-template-columns: 1fr; }
+      .tnx-filter-row { top: 4.75rem; }
+      .tnx-badge-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .tnx-badge-card { scroll-margin-top: 10rem; }
+      .tnx-progress-head { display: grid; }
     }
 
     @media (max-width: 560px) {
-      .tnx-shell {
-        padding-top: 5.5rem;
-      }
-
-      .tnx-hero h1 {
-        font-size: 3rem;
-      }
-
-      .tnx-badge-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .tnx-focus-meta {
-        grid-template-columns: 1fr;
-      }
-
-      .tnx-vault-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .tnx-next-title {
-        font-size: 1.3rem;
-      }
-
-      .tnx-next-img-wrap {
-        width: 5.5rem;
-        height: 5.5rem;
-      }
-
-      .tnx-next-img-wrap img {
-        width: 4rem;
-        height: 4rem;
-      }
+      .tnx-badges-shell { padding-top: 5.5rem; }
+      .tnx-badges-hero h1 { font-size: 3rem; }
+      .tnx-badge-grid { grid-template-columns: 1fr; }
+      .tnx-focus-meta { grid-template-columns: 1fr; }
+      .tnx-mini-badge-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
   </style>
 
@@ -1547,6 +697,7 @@ const metadata = {
       window[cleanupKey] = () => {
         listeners.forEach((cleanup) => cleanup())
         listeners.length = 0
+
         timers.forEach((id) => window.clearTimeout(id))
         timers.length = 0
       }
@@ -1562,256 +713,38 @@ const metadata = {
       }
 
       const BADGE_META = {
-        king: {
-          title: 'ملك القناة',
-          category: 'status',
-          how: 'يفتح من نظام King of Channel Points.',
-          rarity: 'نادر جدًا',
-          duration: 'دائم',
-          difficulty: 'صعب',
-        },
-        king2: {
-          title: 'ملك القناة',
-          category: 'status',
-          how: 'يفتح من نظام King of Channel Points.',
-          rarity: 'نادر جدًا',
-          duration: 'دائم',
-          difficulty: 'صعب جدًا',
-        },
-        Vip: {
-          title: 'VIP',
-          category: 'status',
-          how: 'منحة خاصة حسب تفاعل العضو ومكانته.',
-          rarity: 'مميز',
-          duration: 'قد يكون مؤقت أو دائم',
-          difficulty: 'متوسط',
-        },
-        '15D': {
-          title: 'حضور 15 يوم',
-          category: 'attendance',
-          how: 'سجّل حضورك اليومي حتى توصل 15 يوم.',
-          rarity: 'أساسي',
-          duration: 'دائم',
-          difficulty: 'سهل',
-        },
-        '30D': {
-          title: 'حضور 30 يوم',
-          category: 'attendance',
-          how: 'كمل تسجيل الحضور اليومي حتى توصل 30 يوم.',
-          rarity: 'أساسي',
-          duration: 'دائم',
-          difficulty: 'سهل',
-        },
-        '60D': {
-          title: 'حضور 60 يوم',
-          category: 'attendance',
-          how: 'استمر بالحضور حتى توصل 60 يوم.',
-          rarity: 'متقدم',
-          duration: 'دائم',
-          difficulty: 'متوسط',
-        },
-        '100D': {
-          title: 'حضور 100 يوم',
-          category: 'attendance',
-          how: 'استمر في تسجيل الحضور حتى توصل 100 يوم.',
-          rarity: 'متقدم',
-          duration: 'دائم',
-          difficulty: 'متوسط',
-        },
-        '150D': {
-          title: 'حضور 150 يوم',
-          category: 'attendance',
-          how: 'استمر في تسجيل الحضور حتى توصل 150 يوم.',
-          rarity: 'نادر',
-          duration: 'دائم',
-          difficulty: 'صعب',
-        },
-        LAW: {
-          title: 'رخصة محامي',
-          category: 'law',
-          how: 'تحصل عليه عند تفعيل دور المحامي.',
-          rarity: 'مميز',
-          duration: 'دائم',
-          difficulty: 'صعب',
-        },
-        LAW2: {
-          title: 'رخصة محامي',
-          category: 'law',
-          how: 'تحصل عليه عند تفعيل دور المحامي.',
-          rarity: 'مميز',
-          duration: 'دائم',
-          difficulty: 'صعب',
-        },
-        '50Q': {
-          title: '50 إجابة صحيحة',
-          category: 'quiz',
-          how: 'جاوب 50 سؤال كويز بشكل صحيح.',
-          rarity: 'أساسي',
-          duration: 'دائم',
-          difficulty: 'سهل',
-        },
-        '150Q': {
-          title: '150 إجابة صحيحة',
-          category: 'quiz',
-          how: 'جاوب 150 سؤال كويز بشكل صحيح.',
-          rarity: 'أساسي',
-          duration: 'دائم',
-          difficulty: 'سهل',
-        },
-        '300Q': {
-          title: '300 إجابة صحيحة',
-          category: 'quiz',
-          how: 'جاوب 300 سؤال كويز بشكل صحيح.',
-          rarity: 'متقدم',
-          duration: 'دائم',
-          difficulty: 'سهل',
-        },
-        '600Q': {
-          title: '600 إجابة صحيحة',
-          category: 'quiz',
-          how: 'جاوب 600 سؤال كويز بشكل صحيح.',
-          rarity: 'مميز',
-          duration: 'دائم',
-          difficulty: 'صعب',
-        },
-        '1000Q': {
-          title: '1000 إجابة صحيحة',
-          category: 'quiz',
-          how: 'جاوب 1000 سؤال كويز بشكل صحيح.',
-          rarity: 'نادر جدًا',
-          duration: 'دائم',
-          difficulty: 'صعب',
-        },
-        '100K': {
-          title: 'رصيد 100K',
-          category: 'points',
-          how: 'اجمع 100,000 نقطة من التفاعل في البث.',
-          rarity: 'أساسي',
-          duration: 'دائم',
-          difficulty: 'سهل',
-        },
-        '250K': {
-          title: 'رصيد 250K',
-          category: 'points',
-          how: 'اجمع 250,000 نقطة من التفاعل في البث.',
-          rarity: 'متقدم',
-          duration: 'دائم',
-          difficulty: 'متوسط',
-        },
-        '500K': {
-          title: 'رصيد 500K',
-          category: 'points',
-          how: 'اجمع 500,000 نقطة من التفاعل في البث.',
-          rarity: 'متقدم',
-          duration: 'دائم',
-          difficulty: 'صعب',
-        },
-        '1M': {
-          title: 'رصيد مليون',
-          category: 'points',
-          how: 'اجمع 1,000,000 نقطة من التفاعل في البث.',
-          rarity: 'نادر',
-          duration: 'دائم',
-          difficulty: 'صعب جدًا',
-        },
-        '3M': {
-          title: 'رصيد 3 مليون',
-          category: 'points',
-          how: 'اجمع 3,000,000 نقطة من التفاعل في البث.',
-          rarity: 'نادر جدًا',
-          duration: 'دائم',
-          difficulty: 'مستحيل',
-        },
-        'BEST VIP': {
-          title: 'أفضل VIP',
-          category: 'awards',
-          how: 'بادج تكريمي يُمنح ضمن جوائز المجتمع.',
-          rarity: 'جائزة',
-          duration: 'دائم',
-          difficulty: 'خاص',
-        },
-        'BEST MOD': {
-          title: 'أفضل مود',
-          category: 'awards',
-          how: 'بادج تكريمي لأفضل مود في جوائز المجتمع.',
-          rarity: 'جائزة',
-          duration: 'دائم',
-          difficulty: 'خاص',
-        },
-        'BEST CHATER': {
-          title: 'أفضل متفاعل',
-          category: 'awards',
-          how: 'بادج تكريمي لأفضل شخص متفاعل في الشات.',
-          rarity: 'جائزة',
-          duration: 'دائم',
-          difficulty: 'خاص',
-        },
-        'BEST FOLLOWER': {
-          title: 'أفضل متابع',
-          category: 'awards',
-          how: 'بادج تكريمي لأفضل متابع في المجتمع.',
-          rarity: 'جائزة',
-          duration: 'دائم',
-          difficulty: 'خاص',
-        },
-        'BEST SUP': {
-          title: 'أفضل داعم',
-          category: 'awards',
-          how: 'بادج تكريمي لأفضل داعم في المجتمع.',
-          rarity: 'جائزة',
-          duration: 'دائم',
-          difficulty: 'خاص',
-        },
-        'Best Dessert': {
-          title: 'أفضل Dessert',
-          category: 'awards',
-          how: 'بادج تكريمي لأفضل حلا.',
-          rarity: 'جائزة',
-          duration: 'دائم',
-          difficulty: 'خاص',
-        },
+        king: { title: 'ملك القناة', category: 'status', how: 'يفتح من نظام King of Channel Points.', rarity: 'نادر جدًا', duration: 'دائم', difficulty: 'صعب', },
+        king2: { title: 'ملك القناة', category: 'status', how: 'يفتح من نظام King of Channel Points.', rarity: 'نادر جدًا', duration: 'دائم', difficulty: 'صعب جدًا', },
+        Vip: { title: 'VIP', category: 'status', how: 'منحة خاصة حسب تفاعل العضو ومكانته.', rarity: 'مميز', duration: 'قد يكون مؤقت أو دائم', difficulty: 'متوسط', },
+        '15D': { title: 'حضور 15 يوم', category: 'attendance', how: 'سجّل حضورك اليومي حتى توصل 15 يوم.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل', },
+        '30D': { title: 'حضور 30 يوم', category: 'attendance', how: 'كمل تسجيل الحضور اليومي حتى توصل 30 يوم.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل', },
+        '60D': { title: 'حضور 60 يوم', category: 'attendance', how: 'استمر بالحضور حتى توصل 60 يوم.', rarity: 'متقدم', duration: 'دائم', difficulty: 'متوسط', },
+        '100D': { title: 'حضور 100 يوم', category: 'attendance', how: 'استمر في تسجيل الحضور حتى توصل 100 يوم.', rarity: 'متقدم', duration: 'دائم', difficulty: 'متوسط', },
+        '150D': { title: 'حضور 150 يوم', category: 'attendance', how: 'استمر في تسجيل الحضور حتى توصل 150 يوم.', rarity: 'نادر', duration: 'دائم', difficulty: 'صعب', },
+        LAW: { title: 'رخصة محامي', category: 'law', how: 'تحصل عليه عند تفعيل دور المحامي.', rarity: 'مميز', duration: 'دائم', difficulty: 'صعب', },
+        LAW2: { title: 'رخصة محامي', category: 'law', how: 'تحصل عليه عند تفعيل دور المحامي.', rarity: 'مميز', duration: 'دائم', difficulty: 'صعب', },
+        '50Q': { title: '50 إجابة صحيحة', category: 'quiz', how: 'جاوب 50 سؤال كويز بشكل صحيح.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل', },
+        '150Q': { title: '150 إجابة صحيحة', category: 'quiz', how: 'جاوب 150 سؤال كويز بشكل صحيح.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل', },
+        '300Q': { title: '300 إجابة صحيحة', category: 'quiz', how: 'جاوب 300 سؤال كويز بشكل صحيح.', rarity: 'متقدم', duration: 'دائم', difficulty: 'سهل', },
+        '600Q': { title: '600 إجابة صحيحة', category: 'quiz', how: 'جاوب 600 سؤال كويز بشكل صحيح.', rarity: 'مميز', duration: 'دائم', difficulty: 'صعب', },
+        '1000Q': { title: '1000 إجابة صحيحة', category: 'quiz', how: 'جاوب 1000 سؤال كويز بشكل صحيح.', rarity: 'نادر جدًا', duration: 'دائم', difficulty: 'صعب', },
+        '100K': { title: 'رصيد 100K', category: 'points', how: 'اجمع 100,000 نقطة من التفاعل في البث.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل', },
+        '250K': { title: 'رصيد 250K', category: 'points', how: 'اجمع 250,000 نقطة من التفاعل في البث.', rarity: 'متقدم', duration: 'دائم', difficulty: 'متوسط', },
+        '500K': { title: 'رصيد 500K', category: 'points', how: 'اجمع 500,000 نقطة من التفاعل في البث.', rarity: 'متقدم', duration: 'دائم', difficulty: 'صعب', },
+        '1M': { title: 'رصيد مليون', category: 'points', how: 'اجمع 1,000,000 نقطة من التفاعل في البث.', rarity: 'نادر', duration: 'دائم', difficulty: 'صعب جدًا', },
+        '3M': { title: 'رصيد 3 مليون', category: 'points', how: 'اجمع 3,000,000 نقطة من التفاعل في البث.', rarity: 'نادر جدًا', duration: 'دائم', difficulty: 'مستحيل', },
+        'BEST VIP': { title: 'أفضل VIP', category: 'awards', how: 'بادج تكريمي يُمنح ضمن جوائز المجتمع.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص', },
+        'BEST MOD': { title: 'أفضل مود', category: 'awards', how: 'بادج تكريمي لأفضل مود في جوائز المجتمع.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص', },
+        'BEST CHATER': { title: 'أفضل متفاعل', category: 'awards', how: 'بادج تكريمي لأفضل شخص متفاعل في الشات.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص', },
+        'BEST FOLLOWER': { title: 'أفضل متابع', category: 'awards', how: 'بادج تكريمي لأفضل متابع في المجتمع.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص', },
+        'BEST SUP': { title: 'أفضل داعم', category: 'awards', how: 'بادج تكريمي لأفضل داعم في المجتمع.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص', },
+        'Best Dessert': { title: 'أفضل Dessert', category: 'awards', how: 'بادج تكريمي لأفضل حلا.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص', },
       }
 
       const BADGE_PATHS = [
-        {
-          key: 'points',
-          title: 'مسار النقاط',
-          unit: 'نقطة',
-          metricKeys: ['points', 'totalPoints', 'score'],
-          steps: [
-            { name: '100K', value: 100000 },
-            { name: '250K', value: 250000 },
-            { name: '500K', value: 500000 },
-            { name: '1M', value: 1000000 },
-            { name: '3M', value: 3000000 },
-          ],
-        },
-        {
-          key: 'attendance',
-          title: 'مسار الحضور',
-          unit: 'يوم',
-          metricKeys: ['checkins', 'checkIns', 'dailyCheckIns', 'attendanceDays', 'totalCheckins', 'totalCheckIns', 'streak'],
-          steps: [
-            { name: '15D', value: 15 },
-            { name: '30D', value: 30 },
-            { name: '60D', value: 60 },
-            { name: '100D', value: 100 },
-            { name: '150D', value: 150 },
-          ],
-        },
-        {
-          key: 'quiz',
-          title: 'مسار الكويز',
-          unit: 'إجابة',
-          metricKeys: ['quizCorrect', 'quiz_correct', 'correctAnswers', 'quizCorrectAnswers', 'correctQuizAnswers', 'quizWins', 'answersCorrect'],
-          steps: [
-            { name: '50Q', value: 50 },
-            { name: '150Q', value: 150 },
-            { name: '300Q', value: 300 },
-            { name: '600Q', value: 600 },
-            { name: '1000Q', value: 1000 },
-          ],
-        },
+        { key: 'points', title: 'مسار النقاط', description: 'يعتمد على رصيد نقاطك الحالي.', unit: 'نقطة', metricKeys: ['points', 'totalPoints', 'score'], steps: [ { name: '100K', value: 100000 }, { name: '250K', value: 250000 }, { name: '500K', value: 500000 }, { name: '1M', value: 1000000 }, { name: '3M', value: 3000000 }, ], },
+        { key: 'attendance', title: 'مسار الحضور', description: 'يعتمد على عدد أيام الحضور المسجلة.', unit: 'يوم', metricKeys: ['checkins', 'checkIns', 'dailyCheckIns', 'attendanceDays', 'totalCheckins', 'totalCheckIns', 'streak'], steps: [ { name: '15D', value: 15 }, { name: '30D', value: 30 }, { name: '60D', value: 60 }, { name: '100D', value: 100 }, { name: '150D', value: 150 }, ], },
+        { key: 'quiz', title: 'مسار الكويز', description: 'يعتمد على عدد الإجابات الصحيحة.', unit: 'إجابة', metricKeys: ['quizCorrect', 'correctAnswers', 'quizCorrectAnswers', 'correctQuizAnswers', 'quizWins', 'answersCorrect'], steps: [ { name: '50Q', value: 50 }, { name: '150Q', value: 150 }, { name: '300Q', value: 300 }, { name: '600Q', value: 600 }, { name: '1000Q', value: 1000 }, ], },
       ]
 
       const JOB_ICONS = window.JOB_ICONS || {
@@ -1822,11 +755,7 @@ const metadata = {
       window.JOB_ICONS = JOB_ICONS
 
       const state = {
-        badges: [],
-        users: [],
-        filter: 'all',
-        search: '',
-        selectedBadgeName: '',
+        badges: [], users: [], filter: 'all', search: '', selectedBadgeName: '',
       }
 
       const badgeGrid = document.getElementById('badgeGrid')
@@ -1846,216 +775,25 @@ const metadata = {
       const userResults = document.getElementById('userResults')
       const userCardContainer = document.getElementById('userCardContainer')
 
-      function esc(value) {
-        return String(value ?? '')
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#039;')
-      }
-
-      function safeUrl(value) {
-        const url = String(value || '').trim()
-        if (!/^https?:\/\//i.test(url) && !url.startsWith('/')) return ''
-        return url.replace(/["'()\\]/g, '')
-      }
-
-      function cssUrl(value) {
-        const url = safeUrl(value)
-        if (!url) return 'none'
-        return `url('${url}')`
-      }
-
-      function safeColor(value, fallback = '#423fff') {
-        const color = String(value || '').trim()
-        return /^#[0-9a-fA-F]{6}$/.test(color) ? color : fallback
-      }
-
-      function normalize(value) {
-        return String(value || '')
-          .toLowerCase()
-          .replace(/[ًٌٍَُِّْـ]/g, '')
-          .replace(/[أإآ]/g, 'ا')
-          .replace(/ة/g, 'ه')
-          .replace(/ى/g, 'ي')
-          .replace(/\s+/g, ' ')
-          .trim()
-      }
-
-      function badgeKey(value) {
-        return normalize(value).replace(/\s+/g, '')
-      }
-
-      function formatNumber(n) {
-        return Number(n || 0).toLocaleString('de-DE')
-      }
-
-      function parseNumber(value) {
-        if (value === null || value === undefined) return null
-        if (typeof value === 'number' && Number.isFinite(value)) return value
-
-        const cleaned = String(value).replace(/[^\d.-]/g, '')
-        if (!cleaned) return null
-
-        const n = Number(cleaned)
-        return Number.isFinite(n) ? n : null
-      }
-
-      function getMetric(user, keys) {
-        for (const key of keys) {
-          const value = parseNumber(user?.[key])
-          if (value !== null) return value
-        }
-
-        return null
-      }
-
-      function getUserBadgeName(badge) {
-        return String(
-          badge?.name ||
-          badge?.badgeName ||
-          badge?.id ||
-          badge?.code ||
-          badge?.title ||
-          ''
-        ).trim()
-      }
-
-      function getUserBadgeSet(user) {
-        const set = new Set()
-
-        if (!Array.isArray(user?.badges)) return set
-
-        user.badges.forEach((badge) => {
-          const name = getUserBadgeName(badge)
-          if (name) set.add(badgeKey(name))
-        })
-
-        return set
-      }
-
-      function badgeSlug(name) {
-        return `badge-${String(name || '')
-          .trim()
-          .toLowerCase()
-          .replace(/[ًٌٍَُِّْـ]/g, '')
-          .replace(/[أإآ]/g, 'ا')
-          .replace(/ة/g, 'ه')
-          .replace(/ى/g, 'ي')
-          .replace(/\s+/g, '-')
-          .replace(/[^a-z0-9\u0600-\u06ff-]/g, '')
-          .replace(/-+/g, '-')
-          .replace(/^-|-$/g, '')}`
-      }
-
-      function hexToRgb(hex) {
-        const clean = safeColor(hex).replace('#', '')
-        const v = parseInt(clean, 16)
-        return [(v >> 16) & 255, (v >> 8) & 255, v & 255]
-      }
-
-      function shade(hex, percent) {
-        const [r, g, b] = hexToRgb(hex)
-        const shift = Math.floor(2.55 * percent)
-        const fmt = (c) => ('0' + Math.max(0, Math.min(255, c + shift)).toString(16)).slice(-2)
-        return '#' + fmt(r) + fmt(g) + fmt(b)
-      }
+      function esc(value) { return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;') }
+      function safeUrl(value) { const url = String(value || '').trim(); if (!/^https?:\/\//i.test(url) && !url.startsWith('/')) return ''; return url.replace(/["'()\\]/g, '') }
+      function cssUrl(value) { const url = safeUrl(value); if (!url) return 'none'; return `url('${url}')` }
+      function safeColor(value, fallback = '#423fff') { const color = String(value || '').trim(); return /^#[0-9a-fA-F]{6}$/.test(color) ? color : fallback }
+      function normalize(value) { return String(value || '').toLowerCase().replace(/[ًٌٍَُِّْـ]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+/g, ' ').trim() }
+      function badgeKey(value) { return normalize(value).replace(/\s+/g, '') }
+      function formatNumber(n) { return Number(n || 0).toLocaleString('de-DE') }
+      function parseNumber(value) { if (value === null || value === undefined) return null; if (typeof value === 'number' && Number.isFinite(value)) return value; const cleaned = String(value).replace(/[^\d.-]/g, ''); if (!cleaned) return null; const n = Number(cleaned); return Number.isFinite(n) ? n : null }
+      function getMetric(user, keys) { for (const key of keys) { const value = parseNumber(user?.[key]); if (value !== null) return value } return null }
+      function getUserBadgeName(badge) { return String( badge?.name || badge?.badgeName || badge?.id || badge?.code || badge?.title || '' ).trim() }
+      function getUserBadgeSet(user) { const set = new Set(); if (!Array.isArray(user?.badges)) return set; user.badges.forEach((badge) => { const name = getUserBadgeName(badge); if (name) set.add(badgeKey(name)) }); return set }
+      function getBadgeByName(name) { const key = badgeKey(name); return state.badges.find((badge) => badgeKey(badge.name) === key) }
+      function badgeSlug(name) { return `badge-${String(name || '').trim().toLowerCase().replace(/[ًٌٍَُِّْـ]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+/g, '-').replace(/[^a-z0-9\u0600-\u06ff-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '')}` }
+      function hexToRgb(hex) { const clean = safeColor(hex).replace('#', ''); const v = parseInt(clean, 16); return [(v >> 16) & 255, (v >> 8) & 255, v & 255] }
+      function shade(hex, percent) { const [r, g, b] = hexToRgb(hex); const shift = Math.floor(2.55 * percent); const fmt = (c) => ('0' + Math.max(0, Math.min(255, c + shift)).toString(16)).slice(-2); return '#' + fmt(r) + fmt(g) + fmt(b) }
 
       function getBadgeMeta(name) {
-        const fallback = {
-          title: name,
-          category: 'special',
-          how: 'بادج خاص. طريقة الحصول عليه حسب نظام البث.',
-          rarity: 'خاص',
-          duration: 'حسب النظام',
-          difficulty: 'غير محدد',
-        }
-
+        const fallback = { title: name, category: 'special', how: 'بادج خاص. طريقة الحصول عليه حسب نظام البث.', rarity: 'خاص', duration: 'حسب النظام', difficulty: 'غير محدد', }
         return BADGE_META[name] || fallback
-      }
-
-      function getBadgeByName(name) {
-        const key = badgeKey(name)
-        return state.badges.find((badge) => badgeKey(badge.name) === key) || null
-      }
-
-      function getPathStepForBadge(name) {
-        const key = badgeKey(name)
-
-        for (const path of BADGE_PATHS) {
-          for (const step of path.steps) {
-            if (badgeKey(step.name) === key) {
-              return { path, step }
-            }
-          }
-        }
-
-        return null
-      }
-
-      function getBadgeProgressInfo(user, badge, unlockedSet) {
-        const isOwned = unlockedSet.has(badgeKey(badge.name))
-
-        if (isOwned) {
-          return {
-            status: 'owned',
-            progress: 100,
-            remaining: 0,
-            unit: '',
-            label: 'مفتوح',
-            hint: 'هذا البادج مفتوح عند المستخدم.',
-          }
-        }
-
-        const pathStep = getPathStepForBadge(badge.name)
-
-        if (!pathStep) {
-          return {
-            status: 'locked',
-            progress: null,
-            remaining: null,
-            unit: '',
-            label: 'مقفل',
-            hint: badge.how,
-          }
-        }
-
-        const metric = getMetric(user, pathStep.path.metricKeys)
-
-        if (metric === null) {
-          return {
-            status: 'locked',
-            progress: null,
-            remaining: null,
-            unit: pathStep.path.unit,
-            label: 'مقفل',
-            hint: badge.how,
-          }
-        }
-
-        const progress = Math.max(0, Math.min(100, (metric / pathStep.step.value) * 100))
-        const remaining = Math.max(0, pathStep.step.value - metric)
-
-        if (metric >= pathStep.step.value) {
-          return {
-            status: 'eligible',
-            progress: 100,
-            remaining: 0,
-            unit: pathStep.path.unit,
-            label: 'مؤهل',
-            hint: 'حققت الشرط الرقمي. يحتاج ينضاف لك البادج من النظام.',
-          }
-        }
-
-        return {
-          status: 'locked',
-          progress,
-          remaining,
-          unit: pathStep.path.unit,
-          label: 'مقفل',
-          hint: `باقي ${formatNumber(remaining)} ${pathStep.path.unit}`,
-        }
       }
 
       function enrichBadge(badge, index) {
@@ -2064,34 +802,9 @@ const metadata = {
         const category = CATEGORY_META[meta.category] ? meta.category : 'special'
         const hashId = badgeSlug(name)
 
-        const searchText = normalize([
-          name,
-          meta.title,
-          meta.category,
-          meta.how,
-          meta.rarity,
-          meta.duration,
-          meta.difficulty,
-          CATEGORY_META[category]?.label,
-          hashId,
-        ].join(' '))
+        const searchText = normalize([ name, meta.title, meta.category, meta.how, meta.rarity, meta.duration, meta.difficulty, CATEGORY_META[category]?.label, hashId, ].join(' '))
 
-        return {
-          index,
-          name,
-          hashId,
-          image: safeUrl(badge?.image),
-          title: meta.title,
-          category,
-          categoryLabel: CATEGORY_META[category]?.label || 'خاص',
-          categoryIcon: CATEGORY_META[category]?.icon || '⬟',
-          how: meta.how,
-          rarity: meta.rarity,
-          duration: meta.duration,
-          difficulty: meta.difficulty,
-          searchText,
-          isRare: ['نادر', 'نادر جدًا', 'جائزة', 'خاص'].some((word) => String(meta.rarity).includes(word)),
-        }
+        return { index, name, hashId, image: safeUrl(badge?.image), title: meta.title, category, categoryLabel: CATEGORY_META[category]?.label || 'خاص', categoryIcon: CATEGORY_META[category]?.icon || '⬟', how: meta.how, rarity: meta.rarity, duration: meta.duration, difficulty: meta.difficulty, searchText, isRare: ['نادر', 'نادر جدًا', 'جائزة', 'خاص'].some((word) => String(meta.rarity).includes(word)), }
       }
 
       function updateStats() {
@@ -2102,20 +815,9 @@ const metadata = {
         if (statCategories) statCategories.textContent = String(categories.size)
         if (statRareBadges) statRareBadges.textContent = String(rare)
 
-        const counts = {
-          all: state.badges.length,
-          attendance: 0,
-          points: 0,
-          quiz: 0,
-          status: 0,
-          law: 0,
-          awards: 0,
-          special: 0,
-        }
+        const counts = { all: state.badges.length, attendance: 0, points: 0, quiz: 0, status: 0, law: 0, awards: 0, special: 0, }
 
-        state.badges.forEach((badge) => {
-          counts[badge.category] = (counts[badge.category] || 0) + 1
-        })
+        state.badges.forEach((badge) => { counts[badge.category] = (counts[badge.category] || 0) + 1 })
 
         Object.entries(counts).forEach(([key, value]) => {
           const el = document.getElementById(`count-${key}`)
@@ -2139,15 +841,14 @@ const metadata = {
 
       function renderBadges() {
         const badges = getFilteredBadges()
-
         if (!badgeGrid) return
-
         badgeEmpty?.classList.toggle('hidden', badges.length > 0)
 
-        badgeGrid.innerHTML = badges.map((badge) => {
+        badgeGrid.innerHTML = badges.map((badge, i) => {
           const selected = badge.name === state.selectedBadgeName ? ' is-selected' : ''
           const linked = window.location.hash === `#${badge.hashId}` ? ' is-linked' : ''
           const rare = badge.isRare ? ' is-rare' : ''
+          const delay = i * 0.03;
 
           return `
             <button
@@ -2156,6 +857,7 @@ const metadata = {
               class="tnx-badge-card${selected}${linked}${rare}"
               data-badge-name="${esc(badge.name)}"
               data-badge-hash="${esc(badge.hashId)}"
+              style="animation-delay: ${delay}s"
             >
               <div class="tnx-badge-img-wrap">
                 <img src="${esc(badge.image)}" alt="${esc(badge.name)}" loading="lazy" />
@@ -2188,30 +890,13 @@ const metadata = {
             <p>${esc(badge.how)}</p>
 
             <div class="tnx-focus-meta">
-              <div>
-                <span>الندرة</span>
-                <strong>${esc(badge.rarity)}</strong>
-              </div>
-
-              <div>
-                <span>الصعوبة</span>
-                <strong>${esc(badge.difficulty)}</strong>
-              </div>
-
-              <div>
-                <span>المدة</span>
-                <strong>${esc(badge.duration)}</strong>
-              </div>
-
-              <div>
-                <span>الاسم التقني</span>
-                <strong>${esc(badge.name)}</strong>
-              </div>
+              <div><span>الندرة</span><strong>${esc(badge.rarity)}</strong></div>
+              <div><span>الصعوبة</span><strong>${esc(badge.difficulty)}</strong></div>
+              <div><span>المدة</span><strong>${esc(badge.duration)}</strong></div>
+              <div><span>الاسم التقني</span><strong>${esc(badge.name)}</strong></div>
             </div>
 
-            <button type="button" class="tnx-focus-copy" data-copy-badge-link="${esc(badge.hashId)}">
-              نسخ رابط البادج
-            </button>
+            <button type="button" class="tnx-focus-copy" data-copy-badge-link="${esc(badge.hashId)}">نسخ رابط البادج</button>
           </div>
         `
       }
@@ -2222,9 +907,7 @@ const metadata = {
 
         state.selectedBadgeName = badge.name
 
-        if (options.updateHash !== false) {
-          history.replaceState(null, '', `#${badge.hashId}`)
-        }
+        if (options.updateHash !== false) { history.replaceState(null, '', `#${badge.hashId}`) }
 
         renderBadges()
         renderBadgeFocus(badge)
@@ -2252,36 +935,23 @@ const metadata = {
         renderFilterButtons()
         selectBadge(badge.name, { updateHash: false, scrollToBadge: options.scrollToBadge !== false })
 
-        document.querySelector('.tnx-vault')?.scrollIntoView({
-          behavior: options.instant ? 'auto' : 'smooth',
-          block: 'start',
-        })
+        document.querySelector('.tnx-vault')?.scrollIntoView({ behavior: options.instant ? 'auto' : 'smooth', block: 'start', })
 
         return true
       }
 
-      function getBadgeLink(hashId) {
-        return `${window.location.origin}${window.location.pathname}#${hashId}`
-      }
+      function getBadgeLink(hashId) { return `${window.location.origin}${window.location.pathname}#${hashId}` }
 
       async function copyText(text, button, doneText = 'تم النسخ') {
         const oldText = button.textContent
-
         try {
           await navigator.clipboard.writeText(text)
           button.textContent = doneText
           button.classList.add('is-copied')
-
-          addTimer(window.setTimeout(() => {
-            button.textContent = oldText
-            button.classList.remove('is-copied')
-          }, 1000))
+          addTimer(window.setTimeout(() => { button.textContent = oldText; button.classList.remove('is-copied') }, 1000))
         } catch {
           button.textContent = text
-
-          addTimer(window.setTimeout(() => {
-            button.textContent = oldText
-          }, 1300))
+          addTimer(window.setTimeout(() => { button.textContent = oldText }, 1300))
         }
       }
 
@@ -2293,9 +963,7 @@ const metadata = {
           const rawBadges = await res.json()
           const list = Array.isArray(rawBadges) ? rawBadges : []
 
-          state.badges = list
-            .map(enrichBadge)
-            .filter((badge) => badge.name && badge.image)
+          state.badges = list.map(enrichBadge).filter((badge) => badge.name && badge.image)
 
           updateStats()
           renderFilterButtons()
@@ -2308,7 +976,6 @@ const metadata = {
           }
         } catch (error) {
           console.error('Failed to load badges.json', error)
-
           if (badgeGrid) {
             badgeGrid.innerHTML = `
               <div class="tnx-empty">
@@ -2322,46 +989,29 @@ const metadata = {
 
       function renderUserResults(query) {
         if (!userResults) return
-
         const q = normalize(query)
-
         userResults.innerHTML = ''
-
         if (!q) return
 
         const matches = state.users
           .map((user, index) => ({ user, index }))
-          .filter(({ user }) => {
-            return normalize(user.userName).includes(q) || normalize(user.userLogin).includes(q)
-          })
+          .filter(({ user }) => { return normalize(user.userName).includes(q) || normalize(user.userLogin).includes(q) })
           .slice(0, 10)
 
         if (matches.length === 0) {
-          userResults.innerHTML = `
-            <div class="tnx-empty">
-              <strong>مافيه نتائج</strong>
-              <span>تأكد من كتابة اسم المستخدم بشكل صحيح.</span>
-            </div>
-          `
+          userResults.innerHTML = `<div class="tnx-empty"><strong>مافيه نتائج</strong><span>تأكد من كتابة اسم المستخدم بشكل صحيح.</span></div>`
           return
         }
 
         userResults.innerHTML = matches.map(({ user, index }) => {
           const userName = String(user.userName || '')
           const userLogin = String(user.userLogin || '')
-          const label = normalize(userName) !== normalize(userLogin)
-            ? `${userName} (${userLogin})`
-            : userName
-
-          return `
-            <button type="button" class="tnx-user-result" data-user-index="${index}">
-              ${esc(label)}
-            </button>
-          `
+          const label = normalize(userName) !== normalize(userLogin) ? `${userName} (${userLogin})` : userName
+          return `<button type="button" class="tnx-user-result" data-user-index="${index}">${esc(label)}</button>`
         }).join('')
       }
 
-      function getNextBadgeForUser(user, unlockedSet) {
+      function getClosestBadge(user, unlockedSet) {
         const candidates = []
 
         BADGE_PATHS.forEach((path) => {
@@ -2369,124 +1019,78 @@ const metadata = {
           if (metric === null) return
 
           path.steps.forEach((step) => {
-            if (unlockedSet.has(badgeKey(step.name))) return
-            if (metric >= step.value) return
-
-            const badge = getBadgeByName(step.name)
-            if (!badge) return
+            const isUnlocked = unlockedSet.has(badgeKey(step.name)) || metric >= step.value
+            if (isUnlocked) return
 
             const remaining = Math.max(0, step.value - metric)
             const progress = Math.max(0, Math.min(100, (metric / step.value) * 100))
 
-            candidates.push({
-              badge,
-              remaining,
-              progress,
-              unit: path.unit,
-              hasMetric: true,
-            })
+            candidates.push({ name: step.name, title: getBadgeMeta(step.name).title, pathTitle: path.title, remaining, unit: path.unit, progress, })
           })
         })
 
-        if (candidates.length === 0) return null
+        if (candidates.length === 0) {
+          const locked = state.badges.find((badge) => !unlockedSet.has(badgeKey(badge.name)))
+          if (!locked) return null
+          return { name: locked.name, title: locked.title, pathTitle: locked.categoryLabel, remaining: null, unit: '', progress: null, }
+        }
 
-        candidates.sort((a, b) => {
-          return (b.progress || 0) - (a.progress || 0)
-        })
-
+        candidates.sort((a, b) => b.progress - a.progress)
         return candidates[0]
       }
 
-      function renderNextBadgeBlock(nextBadge) {
-        if (!nextBadge) {
-          return `
-            <div class="tnx-next-hero tnx-next-hero--done">
-              <div class="tnx-next-icon-done">✓</div>
-              <div>
-                <strong>أحسنت! كل البادجات الرقمية مفتوحة.</strong>
-                <p>الباقي تكريمي أو خاص ويعطى من إدارة المجتمع.</p>
-              </div>
-            </div>
-          `
-        }
+      function renderPathCard(path, user, unlockedSet) {
+        const metric = getMetric(user, path.metricKeys)
+        let nextFound = false
 
-        const badge = nextBadge.badge
-        const progress = nextBadge.progress !== null ? Math.round(nextBadge.progress) : null
+        const stepsHtml = path.steps.map((step) => {
+          const meta = getBadgeMeta(step.name)
+          const fromMetric = metric !== null && metric >= step.value
+          const fromBadge = unlockedSet.has(badgeKey(step.name))
+          const isOpen = fromMetric || fromBadge
+          const isNext = !isOpen && !nextFound
 
-        const remainingHtml = nextBadge.remaining !== null
-          ? `باقي عليك <b>${formatNumber(nextBadge.remaining)} ${esc(nextBadge.unit)}</b> فقط.`
-          : esc(badge.how)
+          if (isNext) nextFound = true
 
-        const progressHtml = progress !== null
-          ? `
-            <div class="tnx-next-progress-wrap">
-              <div class="tnx-next-progress">
-                <div class="tnx-next-fill" style="width: ${progress}%;"></div>
-              </div>
-              <span class="tnx-next-percent">${progress}%</span>
-            </div>
-          `
-          : `<span class="tnx-next-hint">${esc(badge.how)}</span>`
+          const progress = metric === null ? (isOpen ? 100 : 0) : Math.max(0, Math.min(100, (metric / step.value) * 100))
+          const remaining = metric === null ? null : Math.max(0, step.value - metric)
 
-        return `
-          <button type="button" class="tnx-next-hero" data-badge-jump="${esc(badge.hashId)}">
-            <div class="tnx-next-img-wrap">
-              <img src="${esc(badge.image)}" alt="${esc(badge.title)}" loading="lazy" />
-            </div>
+          let status = 'مقفل'
+          let note = 'لا توجد بيانات تقدم رقمية لهذا المسار'
 
-            <div class="tnx-next-content">
-              <div class="tnx-next-label">🎯 خطوتك الجاية</div>
-              <strong class="tnx-next-title">${esc(badge.title)}</strong>
-              <p class="tnx-next-desc">${remainingHtml}</p>
-              ${progressHtml}
-            </div>
-          </button>
-        `
-      }
-
-      function renderVaultGrid(user, unlockedSet) {
-        const items = state.badges.map((badge) => {
-          const info = getBadgeProgressInfo(user, badge, unlockedSet)
-
-          const iconHtml =
-            info.status === 'owned'
-              ? `<span class="tnx-vault-check">✓</span>`
-              : info.status === 'eligible'
-                ? `<span class="tnx-vault-ready">!</span>`
-                : `<span class="tnx-vault-lock">🔒</span>`
-
-          const statusClass =
-            info.status === 'owned'
-              ? 'is-owned'
-              : info.status === 'eligible'
-                ? 'is-eligible'
-                : 'is-locked'
-
-          const hint = info.status === 'eligible'
-            ? 'أنت مؤهل لهذا البادج، يحتاج ينضاف لك من النظام.'
-            : info.hint
+          if (isOpen) { status = 'مفتوح'; note = 'تم فتح هذا البادج' } 
+          else if (remaining !== null) { status = isNext ? 'الأقرب' : 'باقي'; note = `باقي ${formatNumber(remaining)} ${path.unit}` }
 
           return `
-            <button
-              type="button"
-              class="tnx-vault-badge ${statusClass}"
-              data-badge-jump="${esc(badge.hashId)}"
-              title="${esc(hint)}"
-            >
-              <div class="tnx-vault-badge-img">
-                <img src="${esc(badge.image)}" alt="${esc(badge.title)}" loading="lazy" />
-                ${iconHtml}
-              </div>
-
-              <span class="tnx-vault-name">${esc(badge.title)}</span>
-              <span class="tnx-vault-hint">${esc(hint)}</span>
-            </button>
+            <div class="tnx-path-step ${isOpen ? 'is-open' : ''} ${isNext ? 'is-next' : ''}">
+              <div class="tnx-step-top"><strong>${esc(meta.title)}</strong><span>${esc(status)}</span></div>
+              <div class="tnx-step-bar" style="--progress:${progress}%"><i></i></div>
+              <small class="tnx-step-note">${esc(note)}</small>
+            </div>
           `
         }).join('')
 
+        const metricText = metric === null ? 'الرقم غير متوفر' : `${formatNumber(metric)} ${path.unit}`
+
         return `
-          <div class="tnx-vault-grid">
-            ${items}
+          <div class="tnx-path-card">
+            <h4>${esc(path.title)}</h4>
+            <p>${esc(path.description)} — الحالي: ${esc(metricText)}</p>
+            <div class="tnx-path-steps">${stepsHtml}</div>
+          </div>
+        `
+      }
+
+      function renderMiniBadgeList(badges, locked = false) {
+        if (!badges.length) { return `<div class="tnx-empty"><strong>لا يوجد</strong><span>ما فيه بادجات في هذا القسم.</span></div>` }
+        return `
+          <div class="tnx-mini-badge-grid">
+            ${badges.map((badge) => `
+              <div class="tnx-mini-badge ${locked ? 'is-locked' : ''}">
+                <img src="${esc(badge.image)}" alt="${esc(badge.name)}" loading="lazy" />
+                <span>${esc(badge.title || badge.name)}</span>
+              </div>
+            `).join('')}
           </div>
         `
       }
@@ -2494,49 +1098,48 @@ const metadata = {
       function renderUserProgress(user, equippedBadges) {
         const unlockedSet = getUserBadgeSet(user)
 
-        const unlockedBadges = state.badges.filter((b) => unlockedSet.has(badgeKey(b.name)))
-        const eligibleBadges = state.badges.filter((b) => {
-          const info = getBadgeProgressInfo(user, b, unlockedSet)
-          return info.status === 'eligible'
-        })
-        const lockedBadges = state.badges.filter((b) => {
-          const info = getBadgeProgressInfo(user, b, unlockedSet)
-          return info.status === 'locked'
-        })
+        const unlockedBadges = state.badges.filter((badge) => unlockedSet.has(badgeKey(badge.name)))
+        const lockedBadges = state.badges.filter((badge) => !unlockedSet.has(badgeKey(badge.name)))
 
+        const closest = getClosestBadge(user, unlockedSet)
         const unlockedCount = unlockedBadges.length
-        const eligibleCount = eligibleBadges.length
-        const lockedCount = lockedBadges.length
         const totalCount = state.badges.length
-        const percent = totalCount > 0 ? Math.round((unlockedCount / totalCount) * 100) : 0
-        const nextBadge = getNextBadgeForUser(user, unlockedSet)
+        const equippedCount = equippedBadges.length
+        const points = parseNumber(user.points) ?? 0
+
+        const closestText = closest ? `${closest.title}` : 'كل شيء مفتوح'
+        const closestNote = closest ? closest.remaining === null ? 'افتح شروطه من نظام البث' : `باقي ${formatNumber(closest.remaining)} ${closest.unit}` : 'ما بقي شيء واضح حاليًا'
 
         return `
           <section class="tnx-progress-panel">
-            <div class="tnx-overall">
-              <div class="tnx-overall-text">
-                <strong>${formatNumber(unlockedCount)} من ${formatNumber(totalCount)} بادج</strong>
-                <span>${percent}% مكتمل</span>
-              </div>
-
-              <div class="tnx-overall-track">
-                <div class="tnx-overall-fill" style="width: ${percent}%;"></div>
+            <div class="tnx-progress-head">
+              <div>
+                <span>BADGE PROGRESS</span>
+                <h3>تقدم البادجات</h3>
+                <p>هنا تشوف وش فتح المستخدم، وش البادجات اللي باقي عليها، وأقرب هدف يقدر يوصله.</p>
               </div>
             </div>
 
-            ${renderNextBadgeBlock(nextBadge)}
+            <div class="tnx-progress-summary">
+              <div class="tnx-progress-stat"><span>البادجات المفتوحة</span><strong>${formatNumber(unlockedCount)} من ${formatNumber(totalCount)}</strong><small>${totalCount > 0 ? Math.round((unlockedCount / totalCount) * 100) : 0}% مكتمل</small></div>
+              <div class="tnx-progress-stat"><span>البادجات المركبة</span><strong>${formatNumber(equippedCount)}</strong><small>اللي تظهر في البطاقة</small></div>
+              <div class="tnx-progress-stat"><span>أقرب بادج</span><strong>${esc(closestText)}</strong><small>${esc(closestNote)}</small></div>
+              <div class="tnx-progress-stat"><span>النقاط الحالية</span><strong>${formatNumber(points)}</strong><small>حسب بيانات الموقع الحالية</small></div>
+            </div>
 
-            <div class="tnx-vault-section">
-              <div class="tnx-vault-section-head">
-                <strong>خزينتك</strong>
-                <span>
-                  <b>${formatNumber(unlockedCount)}</b> مفتوحة ·
-                  <i>${formatNumber(eligibleCount)}</i> مؤهل ·
-                  <em>${formatNumber(lockedCount)}</em> باقية
-                </span>
+            <div class="tnx-paths-grid">
+              ${BADGE_PATHS.map((path) => renderPathCard(path, user, unlockedSet)).join('')}
+            </div>
+
+            <div class="tnx-owned-section">
+              <div class="tnx-owned-box">
+                <h4>البادجات المفتوحة</h4>
+                ${renderMiniBadgeList(unlockedBadges.slice(0, 20), false)}
               </div>
-
-              ${renderVaultGrid(user, unlockedSet)}
+              <div class="tnx-owned-box">
+                <h4>البادجات الباقية</h4>
+                ${renderMiniBadgeList(lockedBadges.slice(0, 20), true)}
+              </div>
             </div>
           </section>
         `
@@ -2550,18 +1153,12 @@ const metadata = {
 
         const displayName = String(details.userName || '')
         const login = String(details.userLogin || '')
-        const username = normalize(displayName) !== normalize(login)
-          ? `${displayName} (${login})`
-          : displayName
+        const username = normalize(displayName) !== normalize(login) ? `${displayName} (${login})` : displayName
 
         const jobIcon = JOB_ICONS[details.jobId] || 'mdi:account'
-        const equippedBadges = Array.isArray(details.badges)
-          ? details.badges.filter((badge) => badge.equipped).slice(0, 6)
-          : []
+        const equippedBadges = Array.isArray(details.badges) ? details.badges.filter((badge) => badge.equipped).slice(0, 6) : []
 
-        const badgeHtml = equippedBadges.map((badge) => {
-          return `<img src="${esc(safeUrl(badge.url))}" alt="${esc(badge.name)}" loading="lazy" />`
-        }).join('')
+        const badgeHtml = equippedBadges.map((badge) => { return `<img src="${esc(safeUrl(badge.url))}" alt="${esc(badge.name)}" loading="lazy" />` }).join('')
 
         const bannerUrl = safeUrl(details.bannerImage || '')
         const profileUrl = safeUrl(details.profileImageUrl || '')
@@ -2570,50 +1167,22 @@ const metadata = {
 
         userCardContainer.innerHTML = `
           <div class="tnx-card-wrap">
-            <div
-              class="tnx-user-card-preview"
-              dir="ltr"
-              style="background: linear-gradient(to bottom, ${baseColor} 70%, ${darkColor} 100%); --profile-border: ${baseColor};"
-            >
-              <div
-                class="tnx-card-banner"
-                style="background-image: ${bannerImage};"
-              ></div>
-
+            <div class="tnx-user-card-preview" dir="ltr" style="background: linear-gradient(to bottom, ${baseColor} 70%, ${darkColor} 100%); --profile-border: ${baseColor};">
+              <div class="tnx-card-banner" style="background-image: ${bannerImage};"></div>
               <div class="tnx-card-profile-section">
                 <div class="tnx-card-picture-points">
-                  <div
-                    class="tnx-card-profile-picture"
-                    style="background-image: ${profileImage};"
-                  ></div>
-
-                  <div class="tnx-card-job-info">
-                    <iconify-icon icon="${esc(jobIcon)}"></iconify-icon>
-                    ${esc(details.jobName || 'Citizen')}
-                  </div>
-
+                  <div class="tnx-card-profile-picture" style="background-image: ${profileImage};"></div>
+                  <div class="tnx-card-job-info"><iconify-icon icon="${esc(jobIcon)}"></iconify-icon>${esc(details.jobName || 'Citizen')}</div>
                   <div class="tnx-card-stats-row">
-                    <div class="tnx-card-points">
-                      <iconify-icon icon="mdi:star-four-points-circle"></iconify-icon>
-                      ${formatNumber(details.points)}
-                    </div>
-
-                    <div class="tnx-card-gold">
-                      <iconify-icon icon="mdi:gold"></iconify-icon>
-                      ${formatNumber(details.gold)}
-                    </div>
+                    <div class="tnx-card-points"><iconify-icon icon="mdi:star-four-points-circle"></iconify-icon>${formatNumber(details.points)}</div>
+                    <div class="tnx-card-gold"><iconify-icon icon="mdi:gold"></iconify-icon>${formatNumber(details.gold)}</div>
                   </div>
                 </div>
-
                 <div class="tnx-card-username">${esc(username)}</div>
-
-                <div class="tnx-card-badges">
-                  ${badgeHtml}
-                </div>
+                <div class="tnx-card-badges">${badgeHtml}</div>
               </div>
             </div>
           </div>
-
           ${renderUserProgress(details, equippedBadges)}
         `
       }
@@ -2622,7 +1191,6 @@ const metadata = {
         try {
           const res = await fetch('/api/user_badges.json')
           if (!res.ok) throw new Error(`Users request failed: ${res.status}`)
-
           const users = await res.json()
           state.users = Array.isArray(users) ? users : []
         } catch (error) {
@@ -2631,114 +1199,18 @@ const metadata = {
         }
       }
 
-      addListener(badgeGrid, 'click', (event) => {
-        const card = event.target.closest('[data-badge-name]')
-        if (!card) return
-
-        selectBadge(card.dataset.badgeName)
-      })
-
-      addListener(document, 'click', (event) => {
-        const linkButton = event.target.closest('[data-copy-badge-link]')
-
-        if (linkButton) {
-          const hashId = linkButton.dataset.copyBadgeLink || ''
-          copyText(getBadgeLink(hashId), linkButton, 'تم نسخ الرابط')
-          return
-        }
-
-        const jumpButton = event.target.closest('[data-badge-jump]')
-
-        if (jumpButton) {
-          const hashId = jumpButton.dataset.badgeJump || ''
-          const badge = state.badges.find((b) => b.hashId === hashId)
-
-          if (badge) {
-            state.filter = 'all'
-            state.search = ''
-
-            if (badgeSearch) badgeSearch.value = ''
-
-            renderFilterButtons()
-            selectBadge(badge.name, { updateHash: true, scrollToBadge: true })
-
-            document.querySelector('.tnx-vault')?.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start',
-            })
-          }
-        }
-      })
-
-      addListener(window, 'hashchange', () => {
-        openBadgeFromHash({ scrollToBadge: true })
-      })
-
-      addListener(badgeSearch, 'input', () => {
-        state.search = badgeSearch.value
-        renderBadges()
-      })
-
-      addListener(clearBadgeSearch, 'click', () => {
-        if (!badgeSearch) return
-
-        badgeSearch.value = ''
-        state.search = ''
-        badgeSearch.focus()
-        renderBadges()
-      })
-
-      filterButtons.forEach((button) => {
-        addListener(button, 'click', () => {
-          state.filter = button.dataset.badgeFilter || 'all'
-          renderFilterButtons()
-          renderBadges()
-        })
-      })
-
-      guideButtons.forEach((button) => {
-        addListener(button, 'click', () => {
-          state.filter = button.dataset.guideFilter || 'all'
-          state.search = ''
-
-          if (badgeSearch) badgeSearch.value = ''
-
-          renderFilterButtons()
-          renderBadges()
-
-          document.querySelector('.tnx-vault')?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-          })
-        })
-      })
-
-      addListener(userSearch, 'input', () => {
-        renderUserResults(userSearch.value)
-      })
-
-      addListener(clearUserSearch, 'click', () => {
-        if (!userSearch) return
-
-        userSearch.value = ''
-        userResults.innerHTML = ''
-        userSearch.focus()
-      })
-
-      addListener(userResults, 'click', (event) => {
-        const button = event.target.closest('[data-user-index]')
-        if (!button) return
-
-        const index = Number(button.dataset.userIndex)
-        const user = state.users[index]
-
-        if (!user) return
-
-        if (userSearch) userSearch.value = ''
-        if (userResults) userResults.innerHTML = ''
-
-        renderUserCard(user)
-      })
+      addListener(badgeGrid, 'click', (event) => { const card = event.target.closest('[data-badge-name]'); if (!card) return; selectBadge(card.dataset.badgeName) })
+      addListener(document, 'click', (event) => { const linkButton = event.target.closest('[data-copy-badge-link]'); if (linkButton) { const hashId = linkButton.dataset.copyBadgeLink || ''; copyText(getBadgeLink(hashId), linkButton, 'تم نسخ الرابط') } })
+      addListener(window, 'hashchange', () => { openBadgeFromHash({ scrollToBadge: true }) })
+      addListener(badgeSearch, 'input', () => { state.search = badgeSearch.value; renderBadges() })
+      addListener(clearBadgeSearch, 'click', () => { if (!badgeSearch) return; badgeSearch.value = ''; state.search = ''; badgeSearch.focus(); renderBadges() })
+      
+      filterButtons.forEach((button) => { addListener(button, 'click', () => { state.filter = button.dataset.badgeFilter || 'all'; renderFilterButtons(); renderBadges() }) })
+      guideButtons.forEach((button) => { addListener(button, 'click', () => { state.filter = button.dataset.guideFilter || 'all'; state.search = ''; if (badgeSearch) badgeSearch.value = ''; renderFilterButtons(); renderBadges(); document.querySelector('.tnx-vault')?.scrollIntoView({ behavior: 'smooth', block: 'start', }) }) })
+      
+      addListener(userSearch, 'input', () => { renderUserResults(userSearch.value) })
+      addListener(clearUserSearch, 'click', () => { if (!userSearch) return; userSearch.value = ''; userResults.innerHTML = ''; userSearch.focus() })
+      addListener(userResults, 'click', (event) => { const button = event.target.closest('[data-user-index]'); if (!button) return; const index = Number(button.dataset.userIndex); const user = state.users[index]; if (!user) return; if (userSearch) userSearch.value = ''; if (userResults) userResults.innerHTML = ''; renderUserCard(user) })
 
       loadBadges()
       loadUsers()
