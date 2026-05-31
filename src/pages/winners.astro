@@ -6,85 +6,6 @@ const metadata = {
   ignoreTitleTemplate: true,
   description: 'قاعة فائزين مجتمع TNX6 — مسابقات، جوائز، تكريمات، وأسماء محفورة في المجلس.',
 }
-
-const winners = [
-  {
-    name: 'anyang_chii',
-    avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/bb394a1e-0961-43e8-a840-aeabd0fffe0d-profile_image-300x300.png',
-    reason: 'فازت في مسابقة الطبخ 👨‍🍳',
-    year: '2025',
-    category: 'contest',
-    title: 'بطلة الطبخ',
-    icon: '👨‍🍳',
-    featured: false,
-  },
-  {
-    name: 'MLFY_933',
-    avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/19732ee7-f7e5-4375-9793-bc59b236e90d-profile_image-300x300.png',
-    reason: 'أفضل VIP 🏆',
-    year: '2025',
-    category: 'award',
-    title: 'أفضل VIP',
-    icon: '🏆',
-    featured: true,
-  },
-  {
-    name: '21AMOLY',
-    avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/6223e1bc-10b4-4be7-95c9-49d836da533b-profile_image-300x300.png',
-    reason: 'أفضل داعم 💛',
-    year: '2025',
-    category: 'support',
-    title: 'أفضل داعم',
-    icon: '💛',
-    featured: true,
-  },
-  {
-    name: 'MOON0Q1',
-    avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/3006ee76-cb82-46b9-b9af-fc008f847c2a-profile_image-300x300.png',
-    reason: 'أفضل شاتر 🗣️',
-    year: '2025',
-    category: 'chat',
-    title: 'أفضل شاتر',
-    icon: '🗣️',
-    featured: true,
-  },
-  {
-    name: 'RAZONF15',
-    avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/1a5bf49f-01a4-4914-8830-12b0b55c6a55-profile_image-300x300.jpeg',
-    reason: 'أفضل مود 🔨',
-    year: '2025',
-    category: 'mod',
-    title: 'أفضل مود',
-    icon: '🔨',
-    featured: true,
-  },
-  {
-    name: 'HANEEN48',
-    avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/95bf22da-d041-4f17-811f-c5ec817b7be4-profile_image-300x300.png',
-    reason: 'الحضور المستمر ⭐',
-    year: '2025',
-    category: 'attendance',
-    title: 'الحضور المستمر',
-    icon: '⭐',
-    featured: false,
-  },
-  {
-    name: '21AMOLY',
-    avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/6223e1bc-10b4-4be7-95c9-49d836da533b-profile_image-300x300.png',
-    reason: 'فائزة بمسابقة الدنجن (الموسم الأول) 🏰',
-    year: '2025',
-    category: 'contest',
-    title: 'بطلة الدنجن',
-    icon: '🏰',
-    featured: false,
-  },
-]
-
-const totalWinners = winners.length
-const yearsCount = new Set(winners.map((winner) => winner.year).filter(Boolean)).size
-const featuredCount = winners.filter((winner) => winner.featured).length
-const contestsCount = winners.filter((winner) => winner.category === 'contest').length
-const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
 ---
 
 <Layout metadata={metadata}>
@@ -109,19 +30,19 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
 
         <div class="tnx-hero-stats">
           <div>
-            <strong>{totalWinners}</strong>
+            <strong id="statTotalWinners">0</strong>
             <span>فائز</span>
           </div>
           <div>
-            <strong>{yearsCount}</strong>
+            <strong id="statYearsCount">0</strong>
             <span>سنة</span>
           </div>
           <div>
-            <strong>{featuredCount}</strong>
+            <strong id="statFeaturedCount">0</strong>
             <span>تكريم بارز</span>
           </div>
           <div>
-            <strong>{contestsCount}</strong>
+            <strong id="statContestsCount">0</strong>
             <span>مسابقة</span>
           </div>
         </div>
@@ -131,7 +52,7 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
         <div class="tnx-section-head">
           <span>FEATURED</span>
           <h2>أبرز الفائزين</h2>
-          <p>الفائزون البارزون يتغيرون عشوائيًا مع كل تحديث للصفحة.</p>
+          <p>الفائزون البارزون يتغيرون عشوائيًا مع كل تحديث للصفحة، والاسم والصورة تُسحب من Twitch عبر ملف البيانات.</p>
         </div>
 
         <div id="featuredGrid" class="tnx-featured-grid"></div>
@@ -147,6 +68,7 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
         <div id="winnerFilters" class="tnx-filter-row">
           <button type="button" class="is-active" data-filter="all"><span>الكل</span><small id="count-all">0</small></button>
           <button type="button" data-filter="award"><span>🏆 جوائز</span><small id="count-award">0</small></button>
+          <button type="button" data-filter="vip"><span>👑 VIP</span><small id="count-vip">0</small></button>
           <button type="button" data-filter="contest"><span>🎮 مسابقات</span><small id="count-contest">0</small></button>
           <button type="button" data-filter="support"><span>💛 دعم</span><small id="count-support">0</small></button>
           <button type="button" data-filter="chat"><span>🗣️ شات</span><small id="count-chat">0</small></button>
@@ -202,7 +124,6 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
       </section>
     </div>
 
-    <script id="winnersData" type="application/json" set:html={winnersJson}></script>
   </main>
 
   <style is:global>
@@ -945,7 +866,7 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
   </style>
 
   <script is:inline data-reinit>
-    ;(() => {
+    ;(async () => {
       const cleanupKey = '__tnxWinnersPageCleanup'
 
       if (window[cleanupKey]) {
@@ -954,6 +875,7 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
 
       const listeners = []
       let revealObserver = null
+      let allWinners = []
 
       function addListener(target, event, handler, options) {
         if (!target) return
@@ -965,10 +887,12 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
         listeners.forEach((cleanup) => cleanup())
         listeners.length = 0
         if (revealObserver) revealObserver.disconnect()
+        document.body.style.overflow = ''
       }
 
       const CATEGORY_LABELS = {
         award: '🏆 جوائز',
+        vip: '👑 VIP',
         contest: '🎮 مسابقات',
         support: '💛 دعم',
         chat: '🗣️ شات',
@@ -976,8 +900,25 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
         attendance: '⭐ حضور',
       }
 
-      const dataElement = document.getElementById('winnersData')
-      const allWinners = dataElement ? JSON.parse(dataElement.textContent || '[]') : []
+      const CATEGORY_ICONS = {
+        award: '🏆',
+        vip: '👑',
+        contest: '🎮',
+        support: '💛',
+        chat: '🗣️',
+        mod: '🔨',
+        attendance: '⭐',
+      }
+
+      const CATEGORY_TITLES = {
+        award: 'فائز مميز',
+        vip: 'تكريم VIP',
+        contest: 'بطل مسابقة',
+        support: 'داعم مميز',
+        chat: 'متفاعل مميز',
+        mod: 'مود مميز',
+        attendance: 'حضور مستمر',
+      }
 
       const state = {
         filter: 'all',
@@ -1001,6 +942,11 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
       const modalCategory = document.getElementById('winnerModalCategory')
       const modalBadge = document.getElementById('winnerModalBadge')
 
+      const statTotalWinners = document.getElementById('statTotalWinners')
+      const statYearsCount = document.getElementById('statYearsCount')
+      const statFeaturedCount = document.getElementById('statFeaturedCount')
+      const statContestsCount = document.getElementById('statContestsCount')
+
       function esc(value) {
         return String(value ?? '')
           .replace(/&/g, '&amp;')
@@ -1021,9 +967,73 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
           .trim()
       }
 
+      function cleanCategory(category, awardText = '') {
+        const raw = normalize(category)
+        if (CATEGORY_LABELS[raw]) return raw
+
+        const text = normalize(awardText)
+        if (text.includes('vip')) return 'vip'
+        if (text.includes('مود')) return 'mod'
+        if (text.includes('شات') || text.includes('شاتر')) return 'chat'
+        if (text.includes('داعم') || text.includes('دعم')) return 'support'
+        if (text.includes('حضور')) return 'attendance'
+        if (text.includes('مسابق') || text.includes('فاز') || text.includes('فائزة')) return 'contest'
+        return 'award'
+      }
+
+      function makeTitle(winner) {
+        const text = winner.reason || winner.award || ''
+        if (winner.title) return winner.title
+        if (text.includes('أفضل VIP')) return 'أفضل VIP'
+        if (text.includes('أفضل داعم')) return 'أفضل داعم'
+        if (text.includes('أفضل شاتر')) return 'أفضل شاتر'
+        if (text.includes('أفضل مود')) return 'أفضل مود'
+        if (text.includes('الحضور')) return 'الحضور المستمر'
+        if (text.includes('الدنجن')) return 'بطل الدنجن'
+        if (text.includes('الطبخ')) return 'بطل الطبخ'
+        return CATEGORY_TITLES[winner.category] || 'فائز'
+      }
+
+      function normalizeWinner(raw, index) {
+        const reason = String(raw.reason || raw.award || raw.title || 'تكريم من مجتمع TNX6').trim()
+        const category = cleanCategory(raw.category, reason)
+        const name = String(raw.userName || raw.name || raw.userLogin || raw.login || 'Unknown').trim()
+        const login = String(raw.userLogin || raw.login || raw.name || '').trim()
+        const avatar = String(raw.avatar || raw.profileImageUrl || raw.profileImage || '').trim()
+        const year = String(raw.year || '').trim()
+        const icon = raw.icon || CATEGORY_ICONS[category] || '🏆'
+
+        return {
+          ...raw,
+          index,
+          name,
+          login,
+          avatar,
+          reason,
+          year,
+          category,
+          icon,
+          title: makeTitle({ ...raw, reason, category }),
+          featured: Boolean(raw.featured),
+          searchText: normalize([name, login, reason, year, category, CATEGORY_LABELS[category]].join(' ')),
+        }
+      }
+
+      function updateStats() {
+        const yearsCount = new Set(allWinners.map((winner) => winner.year).filter(Boolean)).size
+        const featuredCount = allWinners.filter((winner) => winner.featured).length
+        const contestsCount = allWinners.filter((winner) => winner.category === 'contest').length
+
+        if (statTotalWinners) statTotalWinners.textContent = String(allWinners.length)
+        if (statYearsCount) statYearsCount.textContent = String(yearsCount)
+        if (statFeaturedCount) statFeaturedCount.textContent = String(featuredCount || Math.min(4, allWinners.length))
+        if (statContestsCount) statContestsCount.textContent = String(contestsCount)
+      }
+
       function getSearchText(winner) {
-        return normalize([
+        return winner.searchText || normalize([
           winner.name,
+          winner.login,
           winner.reason,
           winner.title,
           winner.year,
@@ -1036,6 +1046,7 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
         const counts = {
           all: allWinners.length,
           award: 0,
+          vip: 0,
           contest: 0,
           support: 0,
           chat: 0,
@@ -1045,6 +1056,7 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
 
         allWinners.forEach((winner) => {
           if (counts[winner.category] !== undefined) counts[winner.category] += 1
+          else counts.award += 1
         })
 
         Object.entries(counts).forEach(([key, value]) => {
@@ -1064,7 +1076,8 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
       }
 
       function getRandomFeaturedWinners() {
-        const pool = allWinners.length > 0 ? [...allWinners] : []
+        const preferred = allWinners.filter((winner) => winner.featured)
+        const pool = preferred.length >= 4 ? [...preferred] : [...allWinners]
 
         for (let i = pool.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1))
@@ -1081,8 +1094,18 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
 
         const featured = getRandomFeaturedWinners()
 
+        if (!featured.length) {
+          featuredGrid.innerHTML = `
+            <div class="tnx-empty" style="grid-column: 1 / -1;">
+              <strong>ما فيه بيانات فائزين</strong>
+              <span>شغّل أكشن Streamer.bot عشان ينشئ /api/winners.json.</span>
+            </div>
+          `
+          return
+        }
+
         featuredGrid.innerHTML = featured.map((winner, index) => `
-          <button type="button" class="tnx-feature-card" data-winner-index="${allWinners.indexOf(winner)}" style="--stagger:${index}">
+          <button type="button" class="tnx-feature-card" data-winner-index="${winner.index}" style="--stagger:${index}">
             <img class="tnx-feature-avatar" src="${esc(winner.avatar)}" alt="${esc(winner.name)}" loading="lazy" referrerpolicy="no-referrer" />
             <strong>${esc(winner.name)}</strong>
             <span>${esc(winner.icon)} ${esc(winner.title)}</span>
@@ -1105,11 +1128,10 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
         winnersEmpty?.classList.toggle('hidden', winners.length > 0)
 
         winnersGrid.innerHTML = winners.map((winner, index) => {
-          const originalIndex = allWinners.indexOf(winner)
           const label = CATEGORY_LABELS[winner.category] || 'فائز'
 
           return `
-            <button type="button" class="tnx-winner-card" data-winner-index="${originalIndex}" style="--stagger:${index}">
+            <button type="button" class="tnx-winner-card" data-winner-index="${winner.index}" style="--stagger:${index}">
               <img class="tnx-winner-card-avatar" src="${esc(winner.avatar)}" alt="${esc(winner.name)}" loading="lazy" referrerpolicy="no-referrer" />
               <div class="tnx-winner-card-content">
                 <span class="tnx-winner-card-tag">${esc(label)} · ${esc(winner.year || '—')}</span>
@@ -1165,6 +1187,43 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
         elements.forEach((element) => revealObserver.observe(element))
       }
 
+      async function loadWinners() {
+        try {
+          const response = await fetch('/api/winners.json', { cache: 'no-store' })
+          if (!response.ok) throw new Error(`winners.json request failed: ${response.status}`)
+
+          const json = await response.json()
+          const list = Array.isArray(json) ? json : []
+
+          allWinners = list
+            .map(normalizeWinner)
+            .filter((winner) => winner.name && winner.avatar)
+
+          updateStats()
+          updateCounts()
+          renderFeatured()
+          renderFilterButtons()
+          renderWinners()
+        } catch (error) {
+          console.error('Failed to load /api/winners.json', error)
+
+          allWinners = []
+          updateStats()
+          updateCounts()
+          renderFeatured()
+          renderWinners()
+
+          if (winnersGrid) {
+            winnersGrid.innerHTML = `
+              <div class="tnx-empty" style="grid-column: 1 / -1;">
+                <strong>تعذر تحميل الفائزين</strong>
+                <span>تأكد أن أكشن Streamer.bot أنشأ الملف public/api/winners.json.</span>
+              </div>
+            `
+          }
+        }
+      }
+
       addListener(featuredGrid, 'click', (event) => {
         const card = event.target.closest('[data-winner-index]')
         if (!card) return
@@ -1210,10 +1269,7 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
 
       addListener(window, 'scroll', handleBackToTop, { passive: true })
 
-      updateCounts()
-      renderFeatured()
-      renderFilterButtons()
-      renderWinners()
+      await loadWinners()
       setupReveal()
       handleBackToTop()
     })()
