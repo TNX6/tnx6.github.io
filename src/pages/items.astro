@@ -4,7 +4,7 @@ import Layout from '~/layouts/PageLayout.astro';
 const metadata = {
   title: 'Items — TNX6',
   ignoreTitleTemplate: true,
-  description: 'سوق أغراض مجتمع TNX6 — تصنيفات، تركيب، صناديق وأكثر.',
+  description: 'خزنة أغراض مجتمع TNX6 — تصنيفات، تركيب، صناديق، لووت، وأغراض مميزة.',
 };
 ---
 
@@ -19,13 +19,13 @@ const metadata = {
       <header class="tnx-hero tnx-reveal">
         <div class="tnx-eyebrow">
           <span></span>
-          TNX6 ITEMS MARKET
+          TNX6 ITEMS VAULT
         </div>
 
-        <h1>سوق الأغراض</h1>
+        <h1>خزنة الأغراض</h1>
 
         <p>
-          كل الأغراض المتاحة في الستريم. تتجمع، تتشترى، تتركّب، تنفجر، أو تنطبخ.
+          كل أغراض الستريم في مكان واحد: أغراض مميزة، هجمات، صناديق، موارد، رخص، وصفات تركيب، وجداول لووت.
         </p>
 
         <div class="tnx-hero-stats">
@@ -82,6 +82,21 @@ const metadata = {
         </div>
       </section>
 
+      <section class="tnx-featured tnx-reveal">
+        <div class="tnx-section-head">
+          <span>FEATURED</span>
+          <h2>الأغراض الثقيلة</h2>
+          <p>أقوى وأندر الأغراض في السوق تظهر هنا بشكل واضح بدل ما تضيع وسط القائمة.</p>
+        </div>
+
+        <div id="featuredGrid" class="tnx-feature-grid"></div>
+
+        <div id="featuredEmpty" class="tnx-empty hidden">
+          <strong>ما فيه أغراض مميزة</strong>
+          <span>إذا أضفت Crown أو نيوك أو مطرقة ذهبية بتظهر هنا.</span>
+        </div>
+      </section>
+
       <section class="tnx-toolbar tnx-reveal">
         <div class="tnx-search">
           <span>⌕</span>
@@ -126,6 +141,21 @@ const metadata = {
         </div>
       </section>
 
+      <section class="tnx-loots tnx-reveal">
+        <div class="tnx-section-head">
+          <span>LOOT TABLES</span>
+          <h2>جداول الصناديق</h2>
+          <p>يعرض محتويات الصناديق أو احتمالات الغنائم إذا كانت موجودة في ملف البيانات.</p>
+        </div>
+
+        <div id="lootsGrid" class="tnx-loots-grid"></div>
+
+        <div id="lootsEmpty" class="tnx-empty hidden">
+          <strong>ما فيه Loot Tables</strong>
+          <span>أضف lootTables في items.json بتظهر هنا.</span>
+        </div>
+      </section>
+
       <section class="tnx-crafting tnx-reveal">
         <div class="tnx-section-head">
           <span>CRAFTING</span>
@@ -167,6 +197,31 @@ const metadata = {
         radial-gradient(circle at 86% 14%, rgba(194, 146, 0, 0.12), transparent 34%),
         radial-gradient(circle at 48% 92%, rgba(124, 58, 237, 0.09), transparent 38%),
         linear-gradient(135deg, #07050b 0%, #050507 55%, #130c05 100%);
+      animation: tnxBgBreathe 12s ease-in-out infinite;
+    }
+
+    @keyframes tnxBgBreathe {
+      0%, 100% { transform: scale(1); filter: saturate(1); }
+      50% { transform: scale(1.025); filter: saturate(1.12); }
+    }
+
+    .tnx-items-page ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    .tnx-items-page ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.35);
+    }
+
+    .tnx-items-page ::-webkit-scrollbar-thumb {
+      border: 2px solid rgba(0, 0, 0, 0.35);
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffda6a, #c29200);
+    }
+
+    .tnx-items-page ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #fff1a8, #ffda6a);
     }
 
     .tnx-grid-bg {
@@ -300,8 +355,10 @@ const metadata = {
 
     .tnx-hero-stats div,
     .tnx-howto,
+    .tnx-featured,
     .tnx-toolbar,
     .tnx-focus-panel,
+    .tnx-loots,
     .tnx-crafting {
       border: 1px solid rgba(255, 218, 106, 0.18);
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)), rgba(6, 6, 8, 0.78);
@@ -331,7 +388,9 @@ const metadata = {
     }
 
     .tnx-howto,
+    .tnx-featured,
     .tnx-toolbar,
+    .tnx-loots,
     .tnx-crafting {
       margin-top: 1rem;
       border-radius: 1.8rem;
@@ -676,6 +735,198 @@ const metadata = {
       background: rgba(180, 180, 195, 0.06);
     }
 
+
+    /* ============ Shared category tokens ============ */
+    .cat-status { --tnx-cat: #c084fc; --tnx-cat-soft: rgba(192, 132, 252, 0.1); --tnx-cat-border: rgba(192, 132, 252, 0.32); --tnx-cat-glow: rgba(192, 132, 252, 0.15); }
+    .cat-attacks { --tnx-cat: #f87171; --tnx-cat-soft: rgba(248, 113, 113, 0.1); --tnx-cat-border: rgba(248, 113, 113, 0.32); --tnx-cat-glow: rgba(248, 113, 113, 0.15); }
+    .cat-pvp { --tnx-cat: #fb923c; --tnx-cat-soft: rgba(251, 146, 60, 0.1); --tnx-cat-border: rgba(251, 146, 60, 0.32); --tnx-cat-glow: rgba(251, 146, 60, 0.15); }
+    .cat-luck { --tnx-cat: #fbbf24; --tnx-cat-soft: rgba(251, 191, 36, 0.1); --tnx-cat-border: rgba(251, 191, 36, 0.32); --tnx-cat-glow: rgba(251, 191, 36, 0.15); }
+    .cat-boxes { --tnx-cat: #34d399; --tnx-cat-soft: rgba(52, 211, 153, 0.1); --tnx-cat-border: rgba(52, 211, 153, 0.32); --tnx-cat-glow: rgba(52, 211, 153, 0.15); }
+    .cat-permits { --tnx-cat: #60a5fa; --tnx-cat-soft: rgba(96, 165, 250, 0.1); --tnx-cat-border: rgba(96, 165, 250, 0.32); --tnx-cat-glow: rgba(96, 165, 250, 0.15); }
+    .cat-resources { --tnx-cat: #a3a3a3; --tnx-cat-soft: rgba(163, 163, 163, 0.08); --tnx-cat-border: rgba(163, 163, 163, 0.28); --tnx-cat-glow: rgba(163, 163, 163, 0.12); }
+    .cat-fishing { --tnx-cat: #38bdf8; --tnx-cat-soft: rgba(56, 189, 248, 0.1); --tnx-cat-border: rgba(56, 189, 248, 0.32); --tnx-cat-glow: rgba(56, 189, 248, 0.15); }
+    .cat-cooking { --tnx-cat: #fb7185; --tnx-cat-soft: rgba(251, 113, 133, 0.1); --tnx-cat-border: rgba(251, 113, 133, 0.32); --tnx-cat-glow: rgba(251, 113, 133, 0.15); }
+    .cat-rare { --tnx-cat: #ffda6a; --tnx-cat-soft: rgba(255, 218, 106, 0.12); --tnx-cat-border: rgba(255, 218, 106, 0.5); --tnx-cat-glow: rgba(255, 218, 106, 0.22); }
+    .cat-economy { --tnx-cat: #f7e6ac; --tnx-cat-soft: rgba(247, 230, 172, 0.1); --tnx-cat-border: rgba(247, 230, 172, 0.32); --tnx-cat-glow: rgba(247, 230, 172, 0.15); }
+
+    /* ============ Featured Items ============ */
+    .tnx-feature-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    .tnx-feature-card {
+      position: relative;
+      min-height: 210px;
+      display: grid;
+      align-content: end;
+      gap: 0.55rem;
+      border: 1px solid var(--tnx-cat-border);
+      border-radius: 1.45rem;
+      background:
+        radial-gradient(circle at 50% 12%, var(--tnx-cat-glow), transparent 55%),
+        linear-gradient(145deg, var(--tnx-cat-soft), rgba(0, 0, 0, 0.42) 70%);
+      color: white;
+      padding: 1rem;
+      text-align: right;
+      cursor: pointer;
+      overflow: hidden;
+      transition: 240ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .tnx-feature-card:hover {
+      transform: translateY(-5px) scale(1.01);
+      border-color: var(--tnx-cat);
+      box-shadow: 0 24px 55px rgba(0, 0, 0, 0.45), 0 0 34px var(--tnx-cat-glow);
+    }
+
+    .tnx-feature-card::before {
+      content: '';
+      position: absolute;
+      inset: -50%;
+      background: conic-gradient(from 0deg, transparent, color-mix(in srgb, var(--tnx-cat) 18%, transparent), transparent 30%);
+      animation: tnxFeatureShine 8s linear infinite;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    @keyframes tnxFeatureShine {
+      to { transform: rotate(360deg); }
+    }
+
+    .tnx-feature-card > * { position: relative; z-index: 1; }
+
+    .tnx-feature-icon {
+      position: absolute;
+      top: 1rem;
+      inset-inline-start: 1rem;
+      display: grid;
+      place-items: center;
+      width: 4.6rem;
+      height: 4.6rem;
+      border-radius: 1.25rem;
+      background: rgba(0, 0, 0, 0.34);
+      border: 1px solid var(--tnx-cat-border);
+      color: var(--tnx-cat);
+      font-size: 2.5rem;
+      box-shadow: 0 0 24px var(--tnx-cat-glow);
+    }
+
+    .tnx-feature-label {
+      width: fit-content;
+      border: 1px solid var(--tnx-cat-border);
+      border-radius: 999px;
+      background: var(--tnx-cat-soft);
+      color: var(--tnx-cat);
+      padding: 0.25rem 0.55rem;
+      font-size: 0.68rem;
+      font-weight: 950;
+    }
+
+    .tnx-feature-title {
+      color: white;
+      font-size: 1.25rem;
+      font-weight: 950;
+      line-height: 1.2;
+    }
+
+    .tnx-feature-desc {
+      margin: 0;
+      color: rgb(209, 213, 219);
+      font-size: 0.78rem;
+      font-weight: 800;
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .tnx-feature-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.65rem;
+      padding-top: 0.65rem;
+      border-top: 1px solid var(--tnx-cat-border);
+      color: var(--tnx-cat);
+      font-size: 0.82rem;
+      font-weight: 950;
+    }
+
+    /* ============ Loot Tables ============ */
+    .tnx-loots-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    .tnx-loot-card {
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 1.2rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.07), transparent 45%),
+        rgba(0, 0, 0, 0.3);
+      padding: 1rem;
+      transition: 220ms ease;
+    }
+
+    .tnx-loot-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 218, 106, 0.45);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.11), transparent 45%),
+        rgba(0, 0, 0, 0.4);
+    }
+
+    .tnx-loot-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.85rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(255, 218, 106, 0.12);
+      margin-bottom: 0.75rem;
+    }
+
+    .tnx-loot-head strong {
+      color: #f7e6ac;
+      font-size: 1rem;
+      font-weight: 950;
+    }
+
+    .tnx-loot-head span {
+      color: #ffda6a;
+      font-size: 1.5rem;
+    }
+
+    .tnx-loot-list {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .tnx-loot-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.7rem;
+      align-items: center;
+      border: 1px solid rgba(255, 218, 106, 0.1);
+      border-radius: 0.8rem;
+      background: rgba(255, 255, 255, 0.025);
+      padding: 0.6rem 0.7rem;
+      color: rgb(209, 213, 219);
+      font-size: 0.82rem;
+      font-weight: 850;
+    }
+
+    .tnx-loot-row b {
+      color: #ffda6a;
+      font-weight: 950;
+    }
+
     /* ============ Focus Panel ============ */
 
     .tnx-focus-panel {
@@ -726,6 +977,11 @@ const metadata = {
     .tnx-focus-card {
       display: grid;
       gap: 0.9rem;
+      border: 1px solid var(--tnx-cat-border, rgba(255, 218, 106, 0.18));
+      border-radius: 1.25rem;
+      background: linear-gradient(145deg, var(--tnx-cat-soft, rgba(255, 218, 106, 0.08)), rgba(0, 0, 0, 0.22) 70%);
+      padding: 0.9rem;
+      box-shadow: 0 0 26px var(--tnx-cat-glow, rgba(255, 218, 106, 0.12));
     }
 
     .tnx-focus-icon {
@@ -950,6 +1206,10 @@ const metadata = {
       .tnx-items-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
+
+      .tnx-feature-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 860px) {
@@ -958,6 +1218,8 @@ const metadata = {
       }
 
       .tnx-howto-grid,
+      .tnx-feature-grid,
+      .tnx-loots-grid,
       .tnx-crafting-grid {
         grid-template-columns: 1fr;
       }
@@ -1117,6 +1379,10 @@ const metadata = {
       const filterButtons = Array.from(document.querySelectorAll('[data-filter]'))
       const howtoButtons = Array.from(document.querySelectorAll('[data-filter-mode]'))
       const backToTop = document.getElementById('backToTop')
+      const featuredGrid = document.getElementById('featuredGrid')
+      const featuredEmpty = document.getElementById('featuredEmpty')
+      const lootsGrid = document.getElementById('lootsGrid')
+      const lootsEmpty = document.getElementById('lootsEmpty')
       const craftingGrid = document.getElementById('craftingGrid')
       const craftingEmpty = document.getElementById('craftingEmpty')
 
@@ -1231,6 +1497,8 @@ const metadata = {
 
       function matchesFilter(item, filter) {
         if (filter === 'all') return true
+        if (filter === 'purchase') return !item.excludePurchase
+        if (filter === 'craft') return getCraftableNames().has(item.name)
         if (filter === 'rare') return item.isRare
         return item.category === filter
       }
@@ -1356,8 +1624,8 @@ const metadata = {
           : ''
 
         itemFocusPanel.innerHTML = `
-          <div class="tnx-focus-card cat-${esc(item.category)}" style="--tnx-cat: var(--tnx-cat); --tnx-cat-soft: var(--tnx-cat-soft); --tnx-cat-border: var(--tnx-cat-border);">
-            <div class="tnx-focus-icon cat-${esc(item.category)}" style="background: radial-gradient(circle, var(--tnx-cat-glow, rgba(255,218,106,0.18)), transparent 65%);">${item.icon}</div>
+          <div class="tnx-focus-card cat-${esc(item.category)}">
+            <div class="tnx-focus-icon cat-${esc(item.category)}" style="background: radial-gradient(circle, var(--tnx-cat-glow, rgba(255,218,106,0.18)), transparent 65%); color: var(--tnx-cat);">${item.icon}</div>
 
             <div>
               <span class="tnx-focus-tag" style="border-color: var(--tnx-cat-border); background: var(--tnx-cat-soft); color: var(--tnx-cat);">${esc(CATEGORY_LABELS[item.category] || 'عام')}</span>
@@ -1404,11 +1672,6 @@ const metadata = {
           </div>
         `
 
-        // Apply category vars to focus card root (since it inherits from .tnx-focus-panel parent)
-        const focusCard = itemFocusPanel.querySelector('.tnx-focus-card')
-        if (focusCard) {
-          focusCard.style.setProperty('--tnx-cat', `var(--tnx-cat, #ffda6a)`)
-        }
       }
 
       function selectItem(name, options = {}) {
@@ -1458,6 +1721,94 @@ const metadata = {
       function getItemIconByName(name) {
         const meta = getItemMeta(name)
         return meta.icon || '📦'
+      }
+
+
+      function getFeaturedItems() {
+        const priority = [
+          'Crown',
+          'نيوك',
+          'مطرقة ذهبية',
+          'محامي',
+          'Vip+',
+          'اقول لا يكثر',
+          'رخصة مصرفي',
+          'رخصة التجارة',
+        ]
+
+        const picked = []
+        priority.forEach((name) => {
+          const item = state.items.find((entry) => normalize(entry.name) === normalize(name))
+          if (item && !picked.some((entry) => entry.name === item.name)) picked.push(item)
+        })
+
+        state.items
+          .filter((item) => item.isRare || item.value >= 100000 || item.itemLimitEnabled)
+          .sort((a, b) => b.value - a.value)
+          .forEach((item) => {
+            if (picked.length >= 4) return
+            if (!picked.some((entry) => entry.name === item.name)) picked.push(item)
+          })
+
+        return picked.slice(0, 4)
+      }
+
+      function renderFeatured() {
+        if (!featuredGrid) return
+
+        const featured = getFeaturedItems()
+        featuredEmpty?.classList.toggle('hidden', featured.length > 0)
+
+        featuredGrid.innerHTML = featured.map((item) => {
+          return `
+            <button type="button" class="tnx-feature-card cat-${esc(item.category)}" data-feature-item="${esc(item.name)}">
+              <div class="tnx-feature-icon">${item.icon}</div>
+              <span class="tnx-feature-label">${esc(CATEGORY_LABELS[item.category] || 'عام')}</span>
+              <strong class="tnx-feature-title">${esc(item.name)}</strong>
+              <p class="tnx-feature-desc">${esc(item.description)}</p>
+              <div class="tnx-feature-foot">
+                <span>${item.value > 0 ? `🪙 ${formatNumber(item.value)}` : 'حصري'}</span>
+                <span>${item.source.icon} ${esc(item.source.label)}</span>
+              </div>
+            </button>
+          `
+        }).join('')
+      }
+
+      function renderLootTables() {
+        const lootTables = (state.data.lootTables || []).filter((table) => table && Array.isArray(table.items))
+        if (!lootsGrid) return
+
+        lootsEmpty?.classList.toggle('hidden', lootTables.length > 0)
+
+        lootsGrid.innerHTML = lootTables.map((table, index) => {
+          const name = String(table.name || '').trim() || `Loot Table ${index + 1}`
+          const rows = table.items.map((entry) => {
+            const option = String(entry.option || entry.item || 'Unknown').trim()
+            const icon = getItemIconByName(option)
+            const amount = entry.amount !== undefined && entry.amount !== null ? `×${entry.amount}` : ''
+            const value = entry.value !== undefined && entry.value !== null ? `${entry.value}%` : ''
+
+            return `
+              <div class="tnx-loot-row">
+                <span>${icon} ${esc(option)} ${amount ? `<b>${esc(amount)}</b>` : ''}</span>
+                <b>${esc(value)}</b>
+              </div>
+            `
+          }).join('')
+
+          return `
+            <div class="tnx-loot-card">
+              <div class="tnx-loot-head">
+                <strong>${esc(name)}</strong>
+                <span>🎁</span>
+              </div>
+              <div class="tnx-loot-list">
+                ${rows || `<div class="tnx-loot-row"><span>لا توجد عناصر</span><b>—</b></div>`}
+              </div>
+            </div>
+          `
+        }).join('')
       }
 
       function renderCrafting() {
@@ -1529,6 +1880,8 @@ const metadata = {
           updateStats()
           renderFilterButtons()
           renderItems()
+          renderFeatured()
+          renderLootTables()
           renderCrafting()
 
           const opened = openItemFromHash({ scrollToItem: true })
@@ -1577,6 +1930,13 @@ const metadata = {
       })
 
       addListener(document, 'click', (event) => {
+        const featureBtn = event.target.closest('[data-feature-item]')
+        if (featureBtn) {
+          selectItem(featureBtn.dataset.featureItem, { updateHash: true, scrollToItem: true })
+          document.querySelector('.tnx-vault')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          return
+        }
+
         const linkBtn = event.target.closest('[data-copy-link]')
         if (linkBtn) {
           copyText(getItemLink(linkBtn.dataset.copyLink || ''), linkBtn, '✓ تم نسخ الرابط')
@@ -1629,10 +1989,10 @@ const metadata = {
         addListener(button, 'click', () => {
           const mode = button.dataset.filterMode
           if (mode === 'box') state.filter = 'boxes'
+          else if (mode === 'purchase') state.filter = 'purchase'
           else if (mode === 'craft') {
-            state.filter = 'all'
-            document.querySelector('.tnx-crafting')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            return
+            state.filter = 'craft'
+            document.querySelector('.tnx-vault')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
           }
           else state.filter = 'all'
 
