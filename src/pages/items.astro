@@ -6,169 +6,1548 @@ const metadata = {
   ignoreTitleTemplate: true,
   description: 'قائمة الأغراض والصياغة في مجتمع TNX6.',
 };
-
-// تم نقل البيانات إلى الـ Frontmatter لكي يتم معالجتها برمجياً وبناء الصفحة بشكل تلقائي
-const data = {
-  items: [
-    { text: "Vip", value: 10000, description: "تاخذ Vip لمدة 7أيام", option: "vip 7d", excludeSale: false, excludePurchase: false, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "Vip+", value: 25000, description: "تاخذ Vip لمدة 30يوم", option: "vip 30d", excludeSale: false, excludePurchase: true, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "سمعة", value: 1, description: "عملة من اجل التطوير", option: "", excludeSale: true, excludePurchase: true, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "نيوك", value: 500000, description: "تقفل البث ومانبث الا بكرا", option: "نيوك", excludeSale: false, excludePurchase: true, excludeUsage: false, itemLimitEnabled: true, itemLimitAmount: 1 },
-    { text: "تغير العنوان", value: 1500, description: "تخرب العنوان لمدة خمس دقايق", option: "تخريب العنوان", excludeSale: false, excludePurchase: false, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "تغير العنوان مطور", value: 50000, description: "تخرب العنوان وتحط العنوان اللي تبيه", option: "تخريب العنوان مطور واحد", excludeSale: false, excludePurchase: true, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "اقول لا يكثر", value: 250000, description: "تكنسل اي رهان قائم", option: "بطاقة اقول لا يكثر", excludeSale: false, excludePurchase: true, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "يد الحرامي", value: 15000, description: "تسرق من احد نقاط", option: "يد الحرامي", excludeSale: false, excludePurchase: true, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "محامي", value: 180000, description: "تاخذ رتبة محامي", option: "محامي", excludeSale: false, excludePurchase: true, excludeUsage: false, itemLimitEnabled: true, itemLimitAmount: 1 },
-    { text: "عملة الجرأة", value: 1000, description: "تحدى حظك ياتفوز بنقاط او تاكل تايم اوت", option: "عملة الجرأة", excludeSale: false, excludePurchase: false, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "تجميد الشاشة", value: 500, description: "تجمد الشاشة", option: "تجميد الشاشة", excludeSale: false, excludePurchase: true, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "رمي النرد", value: 1000, description: "جرب حظك", option: "رمي النرد", excludeSale: false, excludePurchase: false, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "قنبلة دخانية", value: 500, description: "تحذف الشات", option: "قنبلة دخانية", excludeSale: false, excludePurchase: true, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "عريف الفصل", value: 30000, description: "تكون مود لمدة", option: "عريف الفصل", excludeSale: false, excludePurchase: true, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "صندوق", value: 0, description: "يجيك غرض عادي عشوائي", option: "صندوق", excludeSale: true, excludePurchase: true, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "صندوق نادر", value: 0, description: "يجيك غرض نادر", option: "صندوق نادر", excludeSale: true, excludePurchase: true, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "صندوق النقاط", value: 0, description: "يجيك مبلغ عشوائي", option: "صندوق نقاط", excludeSale: true, excludePurchase: true, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "صندوق السمعة", value: 0, description: "يجيك نقاط سمعة عشوائي", option: "صندوق سمعة", excludeSale: true, excludePurchase: true, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "علف", value: 60, description: "علف حيوانات أساسي.", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "خشب", value: 60, description: "مادة تصنيع مفيدة.", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "صنارة صيد", value: 2000, description: "Allows fishing.", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "طعم صيد", value: 60, description: "تُستخدم للصيد.", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "سمكة", value: 125, description: "سمك طازج مُصاد.", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "طماط", value: 60, description: "محصول مزرعة طازج.", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "يقطين", value: 60, description: "خضار موسمية كبيرة.", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "بصل", value: 60, description: "خضار ذو رائحة قوية.", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "حليب", value: 125, description: "حليب بقري طازج.", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "مرق خضار", value: 350, description: "مرق خضار لذيذة.", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "مرق سمك", value: 500, description: "ممم… ريحته سمك!", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "بقرة", value: 5000, description: "تنتج الحليب.", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "فأس", value: 4500, description: "يُستخدم لقطع الحطب.", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "رخصة الطبخ", value: 25000, description: "Let him cook!", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: true, itemLimitAmount: 1 },
-    { text: "Lawyer's Exam", value: 100000, description: "Proof of legal qualification.", option: "", excludeSale: true, excludePurchase: true, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "رخصة مصرفي", value: 200000, description: "يمنح صلاحيات مصرفية.", option: "", excludeSale: true, excludePurchase: true, excludeUsage: true, itemLimitEnabled: true, itemLimitAmount: 1 },
-    { text: "مطرقة ذهبية", value: 150000, description: "أداة أسطورية نادرة.", option: "", excludeSale: true, excludePurchase: true, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "Crown", value: 1000000, description: "Symbol of ultimate authority.", option: "", excludeSale: true, excludePurchase: true, excludeUsage: true, itemLimitEnabled: false, itemLimitAmount: 1 },
-    { text: "رخصة التجارة", value: 200000, description: "تصريح بالمشاركة في المبيعات الاحترافية.", option: "", excludeSale: false, excludePurchase: false, excludeUsage: true, itemLimitEnabled: true, itemLimitAmount: 1 },
-    { text: "البريد", value: 10000, description: "بريد خاص فيك لأستقبال الرسائل من اشخاص اخرين", option: "Mailbox - Activate", excludeSale: false, excludePurchase: false, excludeUsage: false, itemLimitEnabled: true, itemLimitAmount: 1 },
-    { text: "البطاطا الحارة", value: 1500, description: "لعبة بسيطة لازم تعطي شخص ثاني البطاطا الحارة قبل تنفجر فيك", option: "البطاطا الحارة", excludeSale: false, excludePurchase: false, excludeUsage: false, itemLimitEnabled: false, itemLimitAmount: 1 }
-  ],
-  crafting: [
-    { ingredients: [{ item: "Vip", amount: 1 }, { item: "سمعة", amount: 50 }], result: "Vip+" },
-    { ingredients: [{ item: "سمعة", amount: 1500 }], result: "نيوك" },
-    { ingredients: [{ item: "تغير العنوان", amount: 1 }, { item: "سمعة", amount: 100 }], result: "تغير العنوان مطور" },
-    { ingredients: [{ item: "Vip+", amount: 1 }, { item: "سمعة", amount: 250 }], result: "عريف الفصل" },
-    { ingredients: [{ item: "صندوق", amount: 1 }, { item: "سمعة", amount: 30 }], result: "صندوق نادر" },
-    { ingredients: [{ item: "سمعة", amount: 1000 }], result: "اقول لا يكثر" }
-  ]
-};
 ---
 
 <Layout metadata={metadata}>
-  <main class="relative min-h-screen bg-[#07050b] overflow-hidden" dir="rtl">
-    <!-- خلفيات الصفحة -->
-    <div class="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_12%_9%,rgba(255,218,106,0.12),transparent_28%),radial-gradient(circle_at_86%_14%,rgba(194,146,0,0.1),transparent_34%),linear-gradient(135deg,#07050b_0%,#050507_55%,#130c05_100%)]"></div>
-    <div class="fixed inset-0 pointer-events-none z-0 opacity-[0.05] bg-[linear-gradient(rgba(255,218,106,0.4)_1px,transparent_1px),linear-gradient(90deg,rgba(255,218,106,0.4)_1px,transparent_1px)] bg-[size:58px_58px] [mask-image:radial-gradient(circle_at_center,black_0%,transparent_74%)]"></div>
+  <main class="tnx-items-page" dir="rtl">
+    <div class="tnx-bg"></div>
+    <div class="tnx-grid-bg"></div>
 
-    <section class="relative z-10 max-w-7xl mx-auto py-20 px-4 sm:px-6 font-[Poppins] text-white">
+    <button id="backToTop" class="tnx-back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
 
-      <!-- HEADER -->
-      <header class="text-center mb-20">
-        <div class="inline-flex items-center gap-2 border border-[#ffda6a]/30 rounded-full bg-black/40 text-[#ffda6a] px-4 py-2 text-sm font-bold tracking-[0.15em] uppercase mb-6 shadow-[0_0_15px_rgba(255,218,106,0.1)]">
-          <span class="w-2 h-2 rounded-full bg-[#ffda6a] shadow-[0_0_10px_#ffda6a] animate-pulse"></span>
+    <section class="tnx-shell">
+      <header class="tnx-hero tnx-reveal">
+        <div class="tnx-eyebrow">
+          <span></span>
           TNX ITEMS VAULT
         </div>
-        <h1 class="text-5xl md:text-7xl font-black bg-gradient-to-r from-[#fff1a8] via-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-sm tracking-tight mb-6">
-          خزنة الأغراض
-        </h1>
-        <p class="max-w-2xl mx-auto text-gray-400 text-lg font-medium">
+
+        <h1>خزنة الأغراض</h1>
+
+        <p>
           استكشف جميع الأغراض المتاحة في النظام، أسعارها، استخداماتها، وكيفية دمجها وصناعتها للحصول على أدوات أندر.
         </p>
+
+        <div class="tnx-hero-stats">
+          <div>
+            <strong id="statItems">0</strong>
+            <span>غرض</span>
+          </div>
+          <div>
+            <strong id="statCrafting">0</strong>
+            <span>وصفة دمج</span>
+          </div>
+          <div>
+            <strong id="statLimited">0</strong>
+            <span>غرض محدود</span>
+          </div>
+        </div>
       </header>
 
-      <!-- SECTION: ITEMS -->
-      <div class="mb-32">
-        <div class="flex items-center justify-center gap-4 mb-12">
-          <div class="h-[1px] flex-grow bg-gradient-to-r from-transparent to-[#ffda6a]/30 max-w-[200px]"></div>
-          <h2 class="text-3xl font-black text-[#f7e6ac] tracking-wide">قائمة الأغراض المتاحة</h2>
-          <div class="h-[1px] flex-grow bg-gradient-to-l from-transparent to-[#ffda6a]/30 max-w-[200px]"></div>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data.items.map((item) => (
-            <div class="group relative flex flex-col h-full bg-[#0d0a14]/80 backdrop-blur-xl border border-[#ffda6a]/10 rounded-2xl p-6 transition-all duration-300 hover:border-[#ffda6a]/40 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(0,0,0,0.4),0_0_20px_rgba(255,218,106,0.05)]">
-              
-              <div class="flex justify-between items-start mb-4 gap-4">
-                <h3 class="text-xl font-bold text-white group-hover:text-[#ffda6a] transition-colors">{item.text}</h3>
-                <div class="shrink-0 bg-[#c29200]/10 text-[#ffda6a] text-sm font-black px-3 py-1.5 rounded-lg border border-[#c29200]/30 shadow-inner flex items-center gap-1.5">
-                  {item.value.toLocaleString()} <span class="text-lg">🪙</span>
-                </div>
-              </div>
-              
-              <p class="text-gray-400 text-sm font-medium leading-relaxed flex-grow mb-6">
-                {item.description}
-              </p>
-
-              <div class="mt-auto space-y-4">
-                {item.option && item.option !== "Type to filter options..." && (
-                  <div class="bg-black/40 border border-white/5 rounded-lg p-3">
-                    <span class="block text-[11px] text-gray-500 font-bold mb-1">الأمر البرمجي:</span>
-                    <code class="text-[#ffda6a] text-sm font-mono">{item.option}</code>
-                  </div>
-                )}
-                
-                <div class="flex flex-wrap gap-2">
-                  {item.excludeSale && <span class="text-[11px] font-bold px-2.5 py-1 rounded bg-red-500/10 text-red-400 border border-red-500/20">لا يباع</span>}
-                  {item.excludePurchase && <span class="text-[11px] font-bold px-2.5 py-1 rounded bg-orange-500/10 text-orange-400 border border-orange-500/20">لا يشترى</span>}
-                  {item.excludeUsage && <span class="text-[11px] font-bold px-2.5 py-1 rounded bg-gray-500/10 text-gray-400 border border-gray-500/20">لا يستخدم مباشرة</span>}
-                  {item.itemLimitEnabled && <span class="text-[11px] font-bold px-2.5 py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">الحد الأقصى: {item.itemLimitAmount}</span>}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <!-- SECTION: CRAFTING -->
-      <div class="mb-20">
-        <div class="flex items-center justify-center gap-4 mb-12">
-          <div class="h-[1px] flex-grow bg-gradient-to-r from-transparent to-[#ffda6a]/30 max-w-[200px]"></div>
-          <h2 class="text-3xl font-black text-[#f7e6ac] tracking-wide">وصفات الدمج (Crafting)</h2>
-          <div class="h-[1px] flex-grow bg-gradient-to-l from-transparent to-[#ffda6a]/30 max-w-[200px]"></div>
+      <section class="tnx-toolbar tnx-reveal">
+        <div class="tnx-search">
+          <span>⌕</span>
+          <input id="itemSearch" type="search" autocomplete="off" placeholder="ابحث: Vip، صندوق، محامي، رخصة، سمعة..." />
+          <button type="button" id="clearItemSearch">×</button>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {data.crafting.map((recipe) => (
-            <div class="flex flex-col sm:flex-row items-center gap-4 bg-[#0d0a14]/80 backdrop-blur-xl border border-[#ffda6a]/15 rounded-2xl p-6 transition-all hover:border-[#ffda6a]/40 hover:bg-[#130f1c]/90">
-              
-              <!-- المكونات -->
-              <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3 flex-grow">
-                {recipe.ingredients.map((ing, idx) => (
-                  <div class="flex items-center gap-3">
-                    <div class="flex items-center gap-2 bg-black/40 border border-white/10 px-3 py-2 rounded-lg">
-                      <span class="text-white font-bold text-sm">{ing.item}</span>
-                      <span class="bg-[#ffda6a]/20 text-[#ffda6a] text-xs font-black px-1.5 py-0.5 rounded">x{ing.amount}</span>
-                    </div>
-                    {idx < recipe.ingredients.length - 1 && (
-                      <span class="text-gray-500 font-bold text-lg">+</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <!-- السهم -->
-              <div class="text-[#ffda6a] opacity-50 rotate-90 sm:rotate-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              </div>
-
-              <!-- النتيجة -->
-              <div class="bg-[linear-gradient(135deg,rgba(255,218,106,0.15),rgba(194,146,0,0.05))] border border-[#ffda6a]/40 px-5 py-3 rounded-xl min-w-[140px] text-center shadow-[0_0_15px_rgba(255,218,106,0.1)]">
-                <span class="block text-xs text-[#ffda6a] font-bold mb-1 opacity-80">النتيجة</span>
-                <strong class="text-white text-lg">{recipe.result}</strong>
-              </div>
-
-            </div>
-          ))}
+        <div class="tnx-filter-row" id="itemFilters">
+          <button type="button" class="is-active" data-filter="all"><span>الكل</span><small id="count-all">0</small></button>
+          <button type="button" data-filter="purchase"><span>قابل للشراء</span><small id="count-purchase">0</small></button>
+          <button type="button" data-filter="use"><span>قابل للاستخدام</span><small id="count-use">0</small></button>
+          <button type="button" data-filter="sale"><span>قابل للبيع</span><small id="count-sale">0</small></button>
+          <button type="button" data-filter="limited"><span>محدود</span><small id="count-limited">0</small></button>
+          <button type="button" data-filter="boxes"><span>صناديق</span><small id="count-boxes">0</small></button>
+          <button type="button" data-filter="effects"><span>تأثيرات</span><small id="count-effects">0</small></button>
+          <button type="button" data-filter="materials"><span>مواد</span><small id="count-materials">0</small></button>
+          <button type="button" data-filter="permits"><span>رخص / رتب</span><small id="count-permits">0</small></button>
         </div>
-      </div>
+      </section>
 
+      <section class="tnx-items-layout tnx-reveal">
+        <div>
+          <div class="tnx-section-head">
+            <span>AVAILABLE ITEMS</span>
+            <h2>قائمة الأغراض المتاحة</h2>
+            <p>اضغط على أي غرض عشان تشوف تفاصيله ورابطه المباشر.</p>
+          </div>
+
+          <div id="itemsGrid" class="tnx-items-grid"></div>
+
+          <div id="itemsEmpty" class="tnx-empty hidden">
+            <strong>ما لقيت غرض مطابق</strong>
+            <span>جرّب تبحث باسم أبسط مثل: صندوق، Vip، رخصة، سمعة.</span>
+          </div>
+        </div>
+
+        <aside id="itemFocusPanel" class="tnx-focus-panel">
+          <div class="tnx-focus-placeholder">
+            <div>⬟</div>
+            <h3>اختر غرض</h3>
+            <p>اضغط على أي غرض من القائمة عشان تظهر تفاصيله هنا.</p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="tnx-crafting-section tnx-reveal">
+        <div class="tnx-section-line-head">
+          <div></div>
+          <h2>وصفات الدمج</h2>
+          <div></div>
+        </div>
+
+        <div id="craftingGrid" class="tnx-crafting-grid"></div>
+
+        <div id="craftingEmpty" class="tnx-empty hidden">
+          <strong>ما فيه وصفات دمج حاليًا</strong>
+          <span>إذا أضفت crafting في items.json بتظهر هنا تلقائيًا.</span>
+        </div>
+      </section>
+
+      <section class="tnx-loot-section tnx-reveal">
+        <div class="tnx-section-line-head">
+          <div></div>
+          <h2>Loot Tables</h2>
+          <div></div>
+        </div>
+
+        <div id="lootGrid" class="tnx-loot-grid"></div>
+
+        <div id="lootEmpty" class="tnx-empty hidden">
+          <strong>ما فيه Loot Tables واضحة</strong>
+          <span>إذا أضفت جداول احتمالات في items.json بتظهر هنا.</span>
+        </div>
+      </section>
     </section>
   </main>
+
+  <style is:global>
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 218, 106, 0.55) rgba(7, 5, 11, 0.95);
+    }
+
+    html::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    html::-webkit-scrollbar-track {
+      background: rgba(7, 5, 11, 0.96);
+    }
+
+    html::-webkit-scrollbar-thumb {
+      border: 2px solid rgba(7, 5, 11, 0.96);
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffda6a, #c29200);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .tnx-items-page {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      background: #07050b;
+      color: white;
+      font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .tnx-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 12% 9%, rgba(255, 218, 106, 0.13), transparent 28%),
+        radial-gradient(circle at 86% 14%, rgba(194, 146, 0, 0.12), transparent 34%),
+        radial-gradient(circle at 48% 92%, rgba(124, 58, 237, 0.09), transparent 38%),
+        linear-gradient(135deg, #07050b 0%, #050507 55%, #130c05 100%);
+      animation: tnxBgBreathe 12s ease-in-out infinite;
+    }
+
+    @keyframes tnxBgBreathe {
+      0%, 100% { filter: brightness(1); transform: scale(1); }
+      50% { filter: brightness(1.09); transform: scale(1.015); }
+    }
+
+    .tnx-grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.055;
+      background-image:
+        linear-gradient(rgba(255, 218, 106, 0.42) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 218, 106, 0.42) 1px, transparent 1px);
+      background-size: 58px 58px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 74%);
+    }
+
+    .tnx-shell {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 1240px);
+      margin: 0 auto;
+      padding: 6.5rem 1rem 5rem;
+    }
+
+    .tnx-back-top {
+      position: fixed;
+      left: 1.25rem;
+      bottom: 1.25rem;
+      z-index: 90;
+      display: grid;
+      place-items: center;
+      width: 3.1rem;
+      height: 3.1rem;
+      border: 1px solid rgba(255, 218, 106, 0.42);
+      border-radius: 999px;
+      background: rgba(7, 5, 11, 0.9);
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 0 22px rgba(255, 218, 106, 0.12);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      transform: translateY(16px) scale(0.92);
+      pointer-events: none;
+      transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .tnx-back-top.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .tnx-back-top:hover {
+      transform: translateY(-3px) scale(1.04);
+      border-color: rgba(255, 218, 106, 0.78);
+    }
+
+    .tnx-reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 650ms ease, transform 650ms ease;
+    }
+
+    .tnx-reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tnx-hero {
+      max-width: 940px;
+      margin: 0 auto 1.25rem;
+      text-align: center;
+    }
+
+    .tnx-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      border: 1px solid rgba(255, 218, 106, 0.3);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.4);
+      color: #ffda6a;
+      padding: 0.55rem 0.95rem;
+      font-size: 0.78rem;
+      font-weight: 950;
+      letter-spacing: 0.16em;
+    }
+
+    .tnx-eyebrow span {
+      width: 0.48rem;
+      height: 0.48rem;
+      border-radius: 999px;
+      background: #ffda6a;
+      box-shadow: 0 0 14px #ffda6a;
+      animation: tnxPulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes tnxPulse {
+      0%, 100% { opacity: 0.75; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.25); }
+    }
+
+    .tnx-hero h1 {
+      margin: 1.1rem 0 0;
+      background: linear-gradient(90deg, #fff1a8, #ffda6a 44%, #c29200);
+      background-clip: text;
+      color: transparent;
+      font-size: clamp(3.1rem, 7vw, 6.6rem);
+      font-weight: 950;
+      line-height: 0.95;
+      letter-spacing: -0.055em;
+    }
+
+    .tnx-hero p {
+      max-width: 760px;
+      margin: 1.15rem auto 0;
+      color: rgb(209, 213, 219);
+      font-size: 1.04rem;
+      font-weight: 760;
+      line-height: 1.9;
+    }
+
+    .tnx-hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+      max-width: 760px;
+      margin: 1.35rem auto 0;
+    }
+
+    .tnx-hero-stats div,
+    .tnx-toolbar,
+    .tnx-focus-panel,
+    .tnx-crafting-section,
+    .tnx-loot-section {
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)), rgba(6, 6, 8, 0.78);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.44), inset 0 0 22px rgba(255, 218, 106, 0.025);
+      backdrop-filter: blur(16px);
+    }
+
+    .tnx-hero-stats div {
+      border-radius: 1.25rem;
+      padding: 1rem;
+    }
+
+    .tnx-hero-stats strong {
+      display: block;
+      color: #ffda6a;
+      font-size: 1.85rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .tnx-hero-stats span {
+      display: block;
+      margin-top: 0.35rem;
+      color: rgb(156, 163, 175);
+      font-size: 0.8rem;
+      font-weight: 850;
+    }
+
+    .tnx-toolbar,
+    .tnx-crafting-section,
+    .tnx-loot-section {
+      margin-top: 1rem;
+      border-radius: 1.8rem;
+      padding: 1.25rem;
+    }
+
+    .tnx-search {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 0.75rem;
+      align-items: center;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 1.15rem;
+      background: rgba(0, 0, 0, 0.32);
+      padding: 0.85rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .tnx-search span {
+      color: #ffda6a;
+      font-size: 1.4rem;
+      font-weight: 950;
+    }
+
+    .tnx-search input {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 850;
+      outline: none;
+    }
+
+    .tnx-search button {
+      display: grid;
+      place-items: center;
+      width: 2.2rem;
+      height: 2.2rem;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      font-size: 1.2rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .tnx-search button:hover {
+      transform: translateY(-2px) scale(1.04);
+      border-color: rgba(255, 218, 106, 0.55);
+    }
+
+    .tnx-filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.55rem;
+      margin: 1rem auto 0;
+      max-width: 1040px;
+    }
+
+    .tnx-filter-row button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 0.9rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.62rem 0.8rem;
+      font-size: 0.82rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+      white-space: nowrap;
+    }
+
+    .tnx-filter-row button:hover,
+    .tnx-filter-row button.is-active {
+      transform: translateY(-2px) scale(1.025);
+      border-color: rgba(255, 218, 106, 0.58);
+      background: rgba(255, 218, 106, 0.14);
+      color: #ffda6a;
+    }
+
+    .tnx-filter-row small {
+      display: grid;
+      place-items: center;
+      min-width: 1.35rem;
+      height: 1.35rem;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.34);
+      color: rgb(229, 231, 235);
+      font-size: 0.68rem;
+    }
+
+    .tnx-items-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 1rem;
+      align-items: start;
+      margin-top: 1rem;
+    }
+
+    .tnx-section-head {
+      margin: 0 0 1rem;
+      text-align: center;
+    }
+
+    .tnx-section-head span {
+      color: #c29200;
+      font-size: 0.78rem;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+    }
+
+    .tnx-section-head h2 {
+      margin: 0.35rem 0 0;
+      color: #f7e6ac;
+      font-size: 2rem;
+      font-weight: 950;
+      line-height: 1.15;
+    }
+
+    .tnx-section-head p {
+      margin: 0.45rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.92rem;
+      font-weight: 800;
+      line-height: 1.75;
+    }
+
+    .tnx-items-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    .tnx-item-card {
+      position: relative;
+      min-height: 238px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(255, 218, 106, 0.12);
+      border-radius: 1.35rem;
+      background: linear-gradient(145deg, rgba(13, 10, 20, 0.86), rgba(26, 20, 8, 0.55));
+      color: white;
+      padding: 1rem;
+      text-align: right;
+      cursor: pointer;
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+      opacity: 0;
+      transform: translateY(14px) scale(0.985);
+      animation: tnxCardIn 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: calc(var(--stagger, 0) * 55ms);
+      transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
+    }
+
+    @keyframes tnxCardIn {
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .tnx-item-card::before {
+      content: '';
+      position: absolute;
+      inset: -45%;
+      background: conic-gradient(from 180deg, transparent, rgba(255, 218, 106, 0.08), transparent 32%);
+      opacity: 0;
+      transition: opacity 220ms ease;
+      pointer-events: none;
+    }
+
+    .tnx-item-card:hover,
+    .tnx-item-card.is-selected {
+      transform: translateY(-5px) scale(1.012);
+      border-color: rgba(255, 218, 106, 0.45);
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.38), 0 0 22px rgba(255, 218, 106, 0.08);
+      background: linear-gradient(145deg, rgba(18, 14, 28, 0.92), rgba(35, 26, 10, 0.66));
+    }
+
+    .tnx-item-card:hover::before,
+    .tnx-item-card.is-selected::before {
+      opacity: 1;
+      animation: tnxItemShine 5s linear infinite;
+    }
+
+    @keyframes tnxItemShine {
+      to { transform: rotate(360deg); }
+    }
+
+    .tnx-item-top,
+    .tnx-item-desc,
+    .tnx-item-command,
+    .tnx-item-flags {
+      position: relative;
+      z-index: 1;
+    }
+
+    .tnx-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.85rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .tnx-item-name {
+      color: white;
+      font-size: 1.08rem;
+      font-weight: 950;
+      line-height: 1.45;
+    }
+
+    .tnx-item-card:hover .tnx-item-name,
+    .tnx-item-card.is-selected .tnx-item-name {
+      color: #ffda6a;
+    }
+
+    .tnx-item-price {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      border: 1px solid rgba(194, 146, 0, 0.32);
+      border-radius: 0.8rem;
+      background: rgba(194, 146, 0, 0.11);
+      color: #ffda6a;
+      padding: 0.44rem 0.6rem;
+      font-size: 0.83rem;
+      font-weight: 950;
+      box-shadow: inset 0 0 12px rgba(255, 218, 106, 0.04);
+    }
+
+    .tnx-item-desc {
+      color: rgb(156, 163, 175);
+      font-size: 0.84rem;
+      font-weight: 760;
+      line-height: 1.72;
+      margin: 0 0 1rem;
+      flex: 1;
+    }
+
+    .tnx-item-command {
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.85rem;
+      background: rgba(0, 0, 0, 0.36);
+      padding: 0.7rem;
+      margin-top: auto;
+    }
+
+    .tnx-item-command span {
+      display: block;
+      color: rgb(107, 114, 128);
+      font-size: 0.67rem;
+      font-weight: 950;
+      margin-bottom: 0.25rem;
+    }
+
+    .tnx-item-command code {
+      display: block;
+      color: #ffda6a;
+      font-size: 0.77rem;
+      font-weight: 850;
+      direction: ltr;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tnx-item-flags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.75rem;
+    }
+
+    .tnx-flag {
+      border: 1px solid rgba(255, 218, 106, 0.12);
+      border-radius: 0.55rem;
+      background: rgba(255, 255, 255, 0.035);
+      color: rgb(209, 213, 219);
+      padding: 0.28rem 0.48rem;
+      font-size: 0.65rem;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .tnx-flag.good { color: rgb(167, 243, 208); border-color: rgba(52, 211, 153, 0.22); background: rgba(52, 211, 153, 0.08); }
+    .tnx-flag.bad { color: rgb(252, 165, 165); border-color: rgba(239, 68, 68, 0.22); background: rgba(239, 68, 68, 0.08); }
+    .tnx-flag.warn { color: #ffda6a; border-color: rgba(255, 218, 106, 0.22); background: rgba(255, 218, 106, 0.08); }
+
+    .tnx-focus-panel {
+      position: sticky;
+      top: 6rem;
+      min-height: 520px;
+      border-radius: 1.5rem;
+      padding: 1rem;
+    }
+
+    .tnx-focus-placeholder {
+      display: grid;
+      place-items: center;
+      align-content: center;
+      min-height: 460px;
+      text-align: center;
+    }
+
+    .tnx-focus-placeholder div {
+      display: grid;
+      place-items: center;
+      width: 4rem;
+      height: 4rem;
+      border-radius: 1.25rem;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      background: rgba(255, 218, 106, 0.06);
+      color: #ffda6a;
+      font-size: 1.6rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .tnx-focus-placeholder h3 {
+      margin: 0;
+      color: #f7e6ac;
+      font-size: 1.45rem;
+      font-weight: 950;
+    }
+
+    .tnx-focus-placeholder p {
+      max-width: 260px;
+      margin: 0.55rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.86rem;
+      font-weight: 800;
+      line-height: 1.75;
+    }
+
+    .tnx-focus-card {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .tnx-focus-icon {
+      display: grid;
+      place-items: center;
+      min-height: 130px;
+      border: 1px solid rgba(255, 218, 106, 0.14);
+      border-radius: 1.25rem;
+      background: radial-gradient(circle at center, rgba(255, 218, 106, 0.14), transparent 56%), rgba(0, 0, 0, 0.28);
+      color: #ffda6a;
+      font-size: 3rem;
+    }
+
+    .tnx-focus-card h3 {
+      margin: 0;
+      color: white;
+      font-size: 1.7rem;
+      font-weight: 950;
+      line-height: 1.25;
+    }
+
+    .tnx-focus-card p {
+      margin: 0;
+      color: rgb(209, 213, 219);
+      font-size: 0.9rem;
+      font-weight: 800;
+      line-height: 1.75;
+    }
+
+    .tnx-focus-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.6rem;
+    }
+
+    .tnx-focus-meta div {
+      border: 1px solid rgba(255, 218, 106, 0.12);
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.26);
+      padding: 0.75rem;
+    }
+
+    .tnx-focus-meta span {
+      display: block;
+      color: rgb(148, 163, 184);
+      font-size: 0.72rem;
+      font-weight: 900;
+      margin-bottom: 0.25rem;
+    }
+
+    .tnx-focus-meta strong,
+    .tnx-focus-meta code {
+      color: #ffda6a;
+      font-size: 0.86rem;
+      font-weight: 950;
+      word-break: break-word;
+    }
+
+    .tnx-focus-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55rem;
+    }
+
+    .tnx-focus-copy {
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 0.9rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.78rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .tnx-focus-copy:hover,
+    .tnx-focus-copy.is-copied {
+      transform: translateY(-2px) scale(1.02);
+      border-color: rgba(52, 211, 153, 0.55);
+      background: rgba(52, 211, 153, 0.14);
+      color: rgb(167, 243, 208);
+    }
+
+    .tnx-section-line-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      text-align: center;
+    }
+
+    .tnx-section-line-head div {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 218, 106, 0.32), transparent);
+    }
+
+    .tnx-section-line-head h2 {
+      margin: 0;
+      color: #f7e6ac;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 950;
+      line-height: 1.2;
+    }
+
+    .tnx-crafting-grid,
+    .tnx-loot-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .tnx-craft-card,
+    .tnx-loot-card {
+      border: 1px solid rgba(255, 218, 106, 0.14);
+      border-radius: 1.25rem;
+      background: rgba(13, 10, 20, 0.74);
+      padding: 1rem;
+      transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .tnx-craft-card:hover,
+    .tnx-loot-card:hover {
+      transform: translateY(-3px) scale(1.008);
+      border-color: rgba(255, 218, 106, 0.42);
+      background: rgba(19, 15, 28, 0.86);
+    }
+
+    .tnx-craft-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(150px, auto);
+      gap: 0.85rem;
+      align-items: center;
+    }
+
+    .tnx-ingredients {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      align-items: center;
+    }
+
+    .tnx-ingredient {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.75rem;
+      background: rgba(0, 0, 0, 0.34);
+      padding: 0.55rem 0.65rem;
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 900;
+    }
+
+    .tnx-ingredient b {
+      display: inline-flex;
+      border-radius: 0.5rem;
+      background: rgba(255, 218, 106, 0.13);
+      color: #ffda6a;
+      padding: 0.16rem 0.35rem;
+      font-size: 0.68rem;
+      font-weight: 950;
+    }
+
+    .tnx-craft-arrow {
+      color: rgba(255, 218, 106, 0.55);
+      font-size: 1.35rem;
+      font-weight: 950;
+    }
+
+    .tnx-craft-result {
+      border: 1px solid rgba(255, 218, 106, 0.36);
+      border-radius: 1rem;
+      background: linear-gradient(135deg, rgba(255, 218, 106, 0.14), rgba(194, 146, 0, 0.04));
+      padding: 0.75rem 0.9rem;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(255, 218, 106, 0.08);
+    }
+
+    .tnx-craft-result span {
+      display: block;
+      color: rgba(255, 218, 106, 0.8);
+      font-size: 0.67rem;
+      font-weight: 950;
+      margin-bottom: 0.25rem;
+    }
+
+    .tnx-craft-result strong {
+      color: white;
+      font-size: 1rem;
+      font-weight: 950;
+    }
+
+    .tnx-loot-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+      color: #f7e6ac;
+      font-size: 1.05rem;
+      font-weight: 950;
+    }
+
+    .tnx-loot-list {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .tnx-loot-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.75rem;
+      background: rgba(0, 0, 0, 0.28);
+      padding: 0.55rem 0.65rem;
+      color: rgb(209, 213, 219);
+      font-size: 0.82rem;
+      font-weight: 850;
+    }
+
+    .tnx-loot-line b {
+      color: #ffda6a;
+      font-weight: 950;
+    }
+
+    .tnx-empty {
+      display: grid;
+      place-items: center;
+      gap: 0.35rem;
+      border: 1px solid rgba(255, 218, 106, 0.13);
+      border-radius: 1.5rem;
+      background: rgba(0, 0, 0, 0.24);
+      padding: 2rem;
+      text-align: center;
+      min-height: 220px;
+    }
+
+    .tnx-empty strong {
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+    }
+
+    .tnx-empty span {
+      color: rgb(156, 163, 175);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    @media (max-width: 1120px) {
+      .tnx-items-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-focus-panel {
+        position: static;
+        min-height: auto;
+      }
+
+      .tnx-items-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .tnx-hero-stats,
+      .tnx-crafting-grid,
+      .tnx-loot-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-craft-row {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .tnx-craft-arrow {
+        transform: rotate(90deg);
+      }
+
+      .tnx-ingredients {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .tnx-shell {
+        padding-top: 5.5rem;
+      }
+
+      .tnx-hero h1 {
+        font-size: 3rem;
+      }
+
+      .tnx-items-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-focus-meta,
+      .tnx-focus-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-section-line-head {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-section-line-head div {
+        display: none;
+      }
+    }
+  </style>
+
+  <script is:inline data-reinit>
+    ;(async () => {
+      const cleanupKey = '__tnxItemsPageCleanup';
+
+      if (window[cleanupKey]) {
+        window[cleanupKey]();
+      }
+
+      const listeners = [];
+      const timers = [];
+      let revealObserver = null;
+
+      function addListener(target, event, handler, options) {
+        if (!target) return;
+        target.addEventListener(event, handler, options);
+        listeners.push(() => target.removeEventListener(event, handler, options));
+      }
+
+      function addTimer(id) {
+        timers.push(id);
+        return id;
+      }
+
+      window[cleanupKey] = () => {
+        listeners.forEach((cleanup) => cleanup());
+        listeners.length = 0;
+        timers.forEach((id) => window.clearTimeout(id));
+        timers.length = 0;
+        if (revealObserver) revealObserver.disconnect();
+      };
+
+      const state = {
+        data: { items: [], crafting: [], lootTables: [] },
+        items: [],
+        filter: 'all',
+        search: '',
+        selectedItemName: '',
+      };
+
+      const itemsGrid = document.getElementById('itemsGrid');
+      const itemsEmpty = document.getElementById('itemsEmpty');
+      const itemFocusPanel = document.getElementById('itemFocusPanel');
+      const itemSearch = document.getElementById('itemSearch');
+      const clearItemSearch = document.getElementById('clearItemSearch');
+      const filterButtons = Array.from(document.querySelectorAll('[data-filter]'));
+      const backToTop = document.getElementById('backToTop');
+      const craftingGrid = document.getElementById('craftingGrid');
+      const craftingEmpty = document.getElementById('craftingEmpty');
+      const lootGrid = document.getElementById('lootGrid');
+      const lootEmpty = document.getElementById('lootEmpty');
+
+      const statItems = document.getElementById('statItems');
+      const statCrafting = document.getElementById('statCrafting');
+      const statLimited = document.getElementById('statLimited');
+
+      function esc(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function normalize(value) {
+        return String(value || '')
+          .toLowerCase()
+          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[أإآ]/g, 'ا')
+          .replace(/ة/g, 'ه')
+          .replace(/ى/g, 'ي')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      function itemKey(value) {
+        return normalize(value).replace(/\s+/g, '');
+      }
+
+      function itemSlug(name) {
+        return `item-${String(name || '')
+          .trim()
+          .toLowerCase()
+          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[أإآ]/g, 'ا')
+          .replace(/ة/g, 'ه')
+          .replace(/ى/g, 'ي')
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9\u0600-\u06ff-]/g, '')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '')}`;
+      }
+
+      function formatNumber(n) {
+        return Number(n || 0).toLocaleString('de-DE');
+      }
+
+      function isRealCommand(option) {
+        const text = String(option || '').trim();
+        if (!text) return false;
+        if (normalize(text) === normalize('Type to filter options...')) return false;
+        return true;
+      }
+
+      function getItemCategory(item) {
+        const text = normalize(`${item.text} ${item.description} ${item.option}`);
+
+        if (text.includes('صندوق')) return 'boxes';
+        if (text.includes('رخصه') || text.includes('رخصة') || text.includes('محامي') || text.includes('vip') || text.includes('crown') || text.includes('exam')) return 'permits';
+        if (text.includes('نيوك') || text.includes('عنوان') || text.includes('تجمد') || text.includes('تجميد') || text.includes('قنبله') || text.includes('قنبلة') || text.includes('بطاطا') || text.includes('جرأه') || text.includes('جرأة') || text.includes('نرد') || text.includes('حرامي')) return 'effects';
+        if (!isRealCommand(item.option) || item.excludeUsage) return 'materials';
+
+        return 'effects';
+      }
+
+      function enrichItem(item, index) {
+        const name = String(item?.text || '').trim();
+        const option = String(item?.option || '').trim();
+        const description = String(item?.description || '').trim() || 'No description available.';
+        const category = getItemCategory(item);
+        const hashId = itemSlug(name);
+
+        const searchText = normalize([
+          name,
+          option,
+          description,
+          category,
+          item.excludeSale ? 'لا يباع not sale' : 'يباع sale',
+          item.excludePurchase ? 'لا يشترى not purchase' : 'يشترى purchase',
+          item.excludeUsage ? 'لا يستخدم not use' : 'يستخدم use',
+          item.itemLimitEnabled ? 'محدود limit' : '',
+        ].join(' '));
+
+        return {
+          ...item,
+          index,
+          name,
+          option,
+          description,
+          category,
+          hashId,
+          value: Number(item?.value || 0),
+          searchText,
+        };
+      }
+
+      function matchesFilter(item, filter) {
+        if (filter === 'all') return true;
+        if (filter === 'purchase') return !item.excludePurchase;
+        if (filter === 'use') return !item.excludeUsage;
+        if (filter === 'sale') return !item.excludeSale;
+        if (filter === 'limited') return !!item.itemLimitEnabled;
+        return item.category === filter;
+      }
+
+      function updateStats() {
+        const items = state.items;
+        const counts = {
+          all: items.length,
+          purchase: items.filter((i) => !i.excludePurchase).length,
+          use: items.filter((i) => !i.excludeUsage).length,
+          sale: items.filter((i) => !i.excludeSale).length,
+          limited: items.filter((i) => i.itemLimitEnabled).length,
+          boxes: items.filter((i) => i.category === 'boxes').length,
+          effects: items.filter((i) => i.category === 'effects').length,
+          materials: items.filter((i) => i.category === 'materials').length,
+          permits: items.filter((i) => i.category === 'permits').length,
+        };
+
+        if (statItems) statItems.textContent = String(items.length);
+        if (statCrafting) statCrafting.textContent = String(state.data.crafting.length);
+        if (statLimited) statLimited.textContent = String(counts.limited);
+
+        Object.entries(counts).forEach(([key, value]) => {
+          const el = document.getElementById(`count-${key}`);
+          if (el) el.textContent = String(value);
+        });
+      }
+
+      function renderFilterButtons() {
+        filterButtons.forEach((button) => {
+          button.classList.toggle('is-active', button.dataset.filter === state.filter);
+        });
+      }
+
+      function getFilteredItems() {
+        return state.items.filter((item) => {
+          const filterMatch = matchesFilter(item, state.filter);
+          const searchMatch = !state.search || item.searchText.includes(normalize(state.search));
+          return filterMatch && searchMatch;
+        });
+      }
+
+      function getFlagsHtml(item) {
+        const flags = [];
+
+        flags.push(item.excludePurchase
+          ? '<span class="tnx-flag bad">لا يشترى</span>'
+          : '<span class="tnx-flag good">قابل للشراء</span>');
+
+        flags.push(item.excludeSale
+          ? '<span class="tnx-flag bad">لا يباع</span>'
+          : '<span class="tnx-flag good">قابل للبيع</span>');
+
+        flags.push(item.excludeUsage
+          ? '<span class="tnx-flag bad">لا يستخدم مباشرة</span>'
+          : '<span class="tnx-flag good">قابل للاستخدام</span>');
+
+        if (item.itemLimitEnabled) {
+          flags.push(`<span class="tnx-flag warn">الحد: ${esc(item.itemLimitAmount || 1)}</span>`);
+        }
+
+        return flags.join('');
+      }
+
+      function renderItems() {
+        const items = getFilteredItems();
+
+        if (!itemsGrid) return;
+
+        itemsEmpty?.classList.toggle('hidden', items.length > 0);
+
+        itemsGrid.innerHTML = items.map((item, visualIndex) => {
+          const selected = item.name === state.selectedItemName ? ' is-selected' : '';
+          const commandHtml = isRealCommand(item.option)
+            ? `<div class="tnx-item-command"><span>الأمر البرمجي</span><code>${esc(item.option)}</code></div>`
+            : '';
+
+          return `
+            <button
+              type="button"
+              id="${esc(item.hashId)}"
+              class="tnx-item-card${selected}"
+              data-item-name="${esc(item.name)}"
+              style="--stagger:${visualIndex % 12}"
+            >
+              <div class="tnx-item-top">
+                <strong class="tnx-item-name">${esc(item.name)}</strong>
+                <span class="tnx-item-price">${formatNumber(item.value)} <span>🪙</span></span>
+              </div>
+
+              <p class="tnx-item-desc">${esc(item.description)}</p>
+
+              ${commandHtml}
+
+              <div class="tnx-item-flags">
+                ${getFlagsHtml(item)}
+              </div>
+            </button>
+          `;
+        }).join('');
+      }
+
+      function getItemLink(hashId) {
+        return `${window.location.origin}${window.location.pathname}#${hashId}`;
+      }
+
+      async function copyText(text, button, doneText = 'تم النسخ') {
+        const oldText = button.textContent;
+
+        try {
+          await navigator.clipboard.writeText(text);
+          button.textContent = doneText;
+          button.classList.add('is-copied');
+
+          addTimer(window.setTimeout(() => {
+            button.textContent = oldText;
+            button.classList.remove('is-copied');
+          }, 1000));
+        } catch {
+          button.textContent = text;
+
+          addTimer(window.setTimeout(() => {
+            button.textContent = oldText;
+          }, 1300));
+        }
+      }
+
+      function renderFocus(item) {
+        if (!itemFocusPanel || !item) return;
+
+        const command = isRealCommand(item.option) ? item.option : 'لا يوجد أمر مباشر';
+        const categoryLabel = {
+          boxes: 'صناديق',
+          permits: 'رخص / رتب',
+          effects: 'تأثيرات',
+          materials: 'مواد',
+        }[item.category] || 'عام';
+
+        itemFocusPanel.innerHTML = `
+          <div class="tnx-focus-card">
+            <div class="tnx-focus-icon">${item.category === 'boxes' ? '🎁' : item.category === 'permits' ? '📜' : item.category === 'materials' ? '🧱' : '⚡'}</div>
+
+            <div>
+              <span class="tnx-flag warn">${esc(categoryLabel)}</span>
+              <h3>${esc(item.name)}</h3>
+            </div>
+
+            <p>${esc(item.description)}</p>
+
+            <div class="tnx-focus-meta">
+              <div>
+                <span>القيمة</span>
+                <strong>${formatNumber(item.value)} 🪙</strong>
+              </div>
+
+              <div>
+                <span>الحد</span>
+                <strong>${item.itemLimitEnabled ? `${esc(item.itemLimitAmount || 1)} فقط` : 'بدون حد'}</strong>
+              </div>
+
+              <div>
+                <span>الشراء</span>
+                <strong>${item.excludePurchase ? 'غير متاح' : 'متاح'}</strong>
+              </div>
+
+              <div>
+                <span>البيع</span>
+                <strong>${item.excludeSale ? 'غير متاح' : 'متاح'}</strong>
+              </div>
+
+              <div>
+                <span>الاستخدام</span>
+                <strong>${item.excludeUsage ? 'غير مباشر' : 'متاح'}</strong>
+              </div>
+
+              <div>
+                <span>الأمر</span>
+                <code>${esc(command)}</code>
+              </div>
+            </div>
+
+            <div class="tnx-focus-actions">
+              <button type="button" class="tnx-focus-copy" data-copy-item-link="${esc(item.hashId)}">نسخ رابط الغرض</button>
+              <button type="button" class="tnx-focus-copy" data-copy-item-command="${esc(command)}">نسخ الأمر</button>
+            </div>
+          </div>
+        `;
+      }
+
+      function selectItem(name, options = {}) {
+        const item = state.items.find((entry) => entry.name === name);
+        if (!item) return;
+
+        state.selectedItemName = item.name;
+
+        if (options.updateHash !== false) {
+          history.replaceState(null, '', `#${item.hashId}`);
+        }
+
+        renderItems();
+        renderFocus(item);
+
+        if (options.scrollToItem) {
+          addTimer(window.setTimeout(() => {
+            document.getElementById(item.hashId)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 80));
+        }
+      }
+
+      function openItemFromHash(options = {}) {
+        const hash = decodeURIComponent((window.location.hash || '').replace('#', ''));
+        if (!hash || !hash.startsWith('item-')) return false;
+
+        const item = state.items.find((entry) => entry.hashId === hash);
+        if (!item) return false;
+
+        state.filter = 'all';
+        state.search = '';
+        if (itemSearch) itemSearch.value = '';
+
+        renderFilterButtons();
+        selectItem(item.name, { updateHash: false, scrollToItem: options.scrollToItem !== false });
+        return true;
+      }
+
+      function renderCrafting() {
+        const crafting = Array.isArray(state.data.crafting) ? state.data.crafting : [];
+
+        if (!craftingGrid) return;
+
+        craftingEmpty?.classList.toggle('hidden', crafting.length > 0);
+
+        craftingGrid.innerHTML = crafting.map((recipe) => {
+          const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+
+          return `
+            <div class="tnx-craft-card">
+              <div class="tnx-craft-row">
+                <div class="tnx-ingredients">
+                  ${ingredients.map((ing) => `
+                    <span class="tnx-ingredient">${esc(ing.item)} <b>x${esc(ing.amount)}</b></span>
+                  `).join('')}
+                </div>
+
+                <div class="tnx-craft-arrow">→</div>
+
+                <div class="tnx-craft-result">
+                  <span>النتيجة</span>
+                  <strong>${esc(recipe.result)}</strong>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderLootTables() {
+        const tables = Array.isArray(state.data.lootTables)
+          ? state.data.lootTables.filter((table) => Array.isArray(table.items) && table.items.length > 0)
+          : [];
+
+        if (!lootGrid) return;
+
+        lootEmpty?.classList.toggle('hidden', tables.length > 0);
+
+        lootGrid.innerHTML = tables.map((table, index) => {
+          const title = String(table.name || '').trim() || `Loot Table ${index + 1}`;
+
+          return `
+            <div class="tnx-loot-card">
+              <div class="tnx-loot-title">
+                <span>🎁 ${esc(title)}</span>
+                <small>${table.items.length} عناصر</small>
+              </div>
+
+              <div class="tnx-loot-list">
+                ${table.items.map((it) => `
+                  <div class="tnx-loot-line">
+                    <span>${esc(it.option)}</span>
+                    <b>${esc(it.value)}%</b>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function handleBackToTopVisibility() {
+        if (!backToTop) return;
+        backToTop.classList.toggle('is-visible', window.scrollY > 520);
+      }
+
+      async function loadData() {
+        try {
+          const res = await fetch('/api/items.json');
+          if (!res.ok) throw new Error(`items.json request failed: ${res.status}`);
+
+          const data = await res.json();
+          state.data = {
+            items: Array.isArray(data.items) ? data.items : [],
+            crafting: Array.isArray(data.crafting) ? data.crafting : [],
+            lootTables: Array.isArray(data.lootTables) ? data.lootTables : [],
+          };
+
+          state.items = state.data.items.map(enrichItem).filter((item) => item.name);
+
+          updateStats();
+          renderFilterButtons();
+          renderItems();
+          renderCrafting();
+          renderLootTables();
+
+          const opened = openItemFromHash({ scrollToItem: true });
+          if (!opened && state.items.length > 0) {
+            selectItem(state.items[0].name, { updateHash: false });
+          }
+        } catch (error) {
+          console.error('Failed to load /api/items.json', error);
+          if (itemsGrid) {
+            itemsGrid.innerHTML = `
+              <div class="tnx-empty">
+                <strong>تعذر تحميل الأغراض</strong>
+                <span>تأكد من وجود الملف public/api/items.json</span>
+              </div>
+            `;
+          }
+        }
+      }
+
+      function setupReveal() {
+        const elements = Array.from(document.querySelectorAll('.tnx-reveal'));
+        if (!elements.length) return;
+
+        revealObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+
+        elements.forEach((element) => revealObserver.observe(element));
+      }
+
+      addListener(backToTop, 'click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      addListener(window, 'scroll', handleBackToTopVisibility, { passive: true });
+
+      addListener(itemsGrid, 'click', (event) => {
+        const card = event.target.closest('[data-item-name]');
+        if (!card) return;
+        selectItem(card.dataset.itemName);
+      });
+
+      addListener(document, 'click', (event) => {
+        const linkButton = event.target.closest('[data-copy-item-link]');
+        if (linkButton) {
+          copyText(getItemLink(linkButton.dataset.copyItemLink || ''), linkButton, 'تم نسخ الرابط');
+          return;
+        }
+
+        const commandButton = event.target.closest('[data-copy-item-command]');
+        if (commandButton) {
+          copyText(commandButton.dataset.copyItemCommand || '', commandButton, 'تم نسخ الأمر');
+        }
+      });
+
+      addListener(window, 'hashchange', () => {
+        openItemFromHash({ scrollToItem: true });
+      });
+
+      addListener(itemSearch, 'input', () => {
+        state.search = itemSearch.value;
+        renderItems();
+      });
+
+      addListener(clearItemSearch, 'click', () => {
+        if (!itemSearch) return;
+        itemSearch.value = '';
+        state.search = '';
+        itemSearch.focus();
+        renderItems();
+      });
+
+      filterButtons.forEach((button) => {
+        addListener(button, 'click', () => {
+          state.filter = button.dataset.filter || 'all';
+          renderFilterButtons();
+          renderItems();
+        });
+      });
+
+      await loadData();
+      setupReveal();
+      handleBackToTopVisibility();
+    })();
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </Layout>
