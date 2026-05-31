@@ -38,8 +38,17 @@ const artworkItems = artworks.map((art, index) => ({
   index,
 }))
 
-const artists = Array.from(new Set(artworkItems.map((art) => art.artist)))
-const twitchCount = artworkItems.filter((art) => art.twitch).length
+const artistStats = Array.from(
+  artworkItems.reduce((map, art) => {
+    const key = art.artist
+    map.set(key, (map.get(key) || 0) + 1)
+    return map
+  }, new Map())
+)
+  .map(([artist, count]) => ({ artist, count }))
+  .sort((a, b) => b.count - a.count || a.artist.localeCompare(b.artist, 'ar'))
+
+const artists = artistStats.map((entry) => entry.artist)
 ---
 
 <Layout metadata={{ title: 'معرض الرسمات — TNX6', ignoreTitleTemplate: true }}>
@@ -73,10 +82,6 @@ const twitchCount = artworkItems.filter((art) => art.twitch).length
             <span>فنان</span>
           </div>
 
-          <div>
-            <strong>{twitchCount}</strong>
-            <span>حساب Twitch</span>
-          </div>
         </div>
       </header>
 
@@ -103,10 +108,10 @@ const twitchCount = artworkItems.filter((art) => art.twitch).length
             <small>{artworkItems.length}</small>
           </button>
 
-          {artists.map((artist) => (
+          {artistStats.map(({ artist, count }) => (
             <button type="button" data-artist-filter={artist}>
               <span>{artist}</span>
-              <small>{artworkItems.filter((art) => art.artist === artist).length}</small>
+              <small>{count}</small>
             </button>
           ))}
         </div>
@@ -379,9 +384,9 @@ const twitchCount = artworkItems.filter((art) => art.twitch).length
 
     .tnx-hero-stats {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 0.85rem;
-      max-width: 720px;
+      max-width: 520px;
       margin: 1.35rem auto 0;
     }
 
@@ -1524,21 +1529,6 @@ const twitchCount = artworkItems.filter((art) => art.twitch).length
         if (event.key === 'ArrowRight') next(-1)
       })
 
-      addListener(zoomStage, 'click', (event) => {
-        if (!popup || popup.classList.contains('hidden')) return
-        if (event.target !== popupImg && scale === 1) return
-
-        if (scale === 1) {
-          setOriginFromEvent(event)
-          scale = 2.6
-          tx = 0
-          ty = 0
-          applyTransform()
-        } else {
-          resetZoom()
-        }
-      })
-
       addListener(zoomStage, 'pointerdown', (event) => {
         if (scale <= 1) return
         if (event.target !== popupImg) return
@@ -1581,10 +1571,11 @@ const twitchCount = artworkItems.filter((art) => art.twitch).length
         setOriginFromEvent(event)
 
         const delta = Math.sign(event.deltaY)
-        const step = 0.25
+        const step = 0.22
+        const maxScale = 3.2
 
         scale += delta > 0 ? -step : step
-        scale = clamp(scale, 1, 6)
+        scale = clamp(scale, 1, maxScale)
 
         if (scale === 1) {
           tx = 0
