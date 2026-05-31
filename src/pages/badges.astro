@@ -1925,6 +1925,218 @@ const metadata = {
         height: 4rem;
       }
     }
+
+
+    /* ===== TNX FIX: Rebuilt nearest-badge card. This block is intentionally last so it overrides older styles. ===== */
+    .tnx-next-hero {
+      width: min(100%, 860px) !important;
+      min-height: 172px !important;
+      display: grid !important;
+      grid-template-columns: 150px minmax(0, 1fr) !important;
+      align-items: stretch !important;
+      gap: 0 !important;
+      margin-inline: auto !important;
+      padding: 0 !important;
+      border-radius: 1.45rem !important;
+      border: 1px solid rgba(255, 218, 106, 0.22) !important;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
+        radial-gradient(circle at 100% 0%, rgba(255, 218, 106, 0.095), transparent 34%),
+        rgba(7, 7, 9, 0.92) !important;
+      box-shadow:
+        0 22px 55px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.055) !important;
+      overflow: hidden !important;
+      isolation: isolate !important;
+      transform: translateZ(0) !important;
+    }
+
+    .tnx-next-hero::before {
+      content: '' !important;
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 0 !important;
+      pointer-events: none !important;
+      background:
+        linear-gradient(90deg, rgba(255, 218, 106, 0.07), transparent 34%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 45%) !important;
+      opacity: 1 !important;
+    }
+
+    .tnx-next-hero::after {
+      display: none !important;
+      content: none !important;
+    }
+
+    .tnx-next-hero:hover {
+      transform: translateY(-3px) scale(1.004) !important;
+      border-color: rgba(255, 218, 106, 0.45) !important;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.014)),
+        radial-gradient(circle at 100% 0%, rgba(255, 218, 106, 0.13), transparent 36%),
+        rgba(8, 8, 10, 0.96) !important;
+      box-shadow:
+        0 26px 65px rgba(0, 0, 0, 0.48),
+        0 0 28px rgba(255, 218, 106, 0.11),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+    }
+
+    .tnx-next-img-wrap {
+      position: relative !important;
+      z-index: 1 !important;
+      width: 118px !important;
+      height: 118px !important;
+      align-self: center !important;
+      justify-self: center !important;
+      border-radius: 1.2rem !important;
+      border: 1px solid rgba(255, 218, 106, 0.24) !important;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(255, 218, 106, 0.13), transparent 62%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.24)),
+        rgba(0, 0, 0, 0.22) !important;
+      box-shadow:
+        0 16px 34px rgba(0, 0, 0, 0.38),
+        inset 0 0 18px rgba(255, 218, 106, 0.04) !important;
+    }
+
+    .tnx-next-img-wrap::after {
+      inset: 0.42rem !important;
+      border-radius: 0.9rem !important;
+      border-color: rgba(255, 218, 106, 0.09) !important;
+    }
+
+    .tnx-next-img-wrap img {
+      width: 86px !important;
+      height: 86px !important;
+      object-fit: contain !important;
+      filter: drop-shadow(0 10px 17px rgba(0, 0, 0, 0.48)) !important;
+    }
+
+    .tnx-next-content {
+      position: relative !important;
+      z-index: 1 !important;
+      display: grid !important;
+      align-content: center !important;
+      justify-items: start !important;
+      gap: 0.45rem !important;
+      min-width: 0 !important;
+      padding: 1.15rem 1.05rem 1.15rem 1.25rem !important;
+      text-align: right !important;
+    }
+
+    .tnx-next-label {
+      margin: 0 !important;
+      border-color: rgba(255, 218, 106, 0.2) !important;
+      background: rgba(255, 218, 106, 0.075) !important;
+      color: #ffda6a !important;
+      padding: 0.32rem 0.64rem !important;
+      font-size: 0.72rem !important;
+      box-shadow: none !important;
+    }
+
+    .tnx-next-title {
+      margin: 0 !important;
+      color: #fff1b8 !important;
+      font-size: clamp(1.45rem, 2.45vw, 2.05rem) !important;
+      line-height: 1.12 !important;
+      letter-spacing: -0.02em !important;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.42) !important;
+    }
+
+    .tnx-next-desc {
+      max-width: 520px !important;
+      margin: 0 !important;
+      color: rgb(209, 213, 219) !important;
+      font-size: 0.9rem !important;
+      font-weight: 820 !important;
+      line-height: 1.55 !important;
+    }
+
+    .tnx-next-desc b {
+      color: #ffda6a !important;
+      font-size: 0.98rem !important;
+    }
+
+    .tnx-next-chip-row {
+      display: flex !important;
+      justify-content: flex-start !important;
+      flex-wrap: wrap !important;
+      gap: 0.45rem !important;
+      margin-top: 0.05rem !important;
+    }
+
+    .tnx-next-chip {
+      min-height: 1.75rem !important;
+      padding: 0.32rem 0.62rem !important;
+      border-color: rgba(255, 218, 106, 0.14) !important;
+      background: rgba(0, 0, 0, 0.22) !important;
+      color: rgb(215, 219, 226) !important;
+      font-size: 0.68rem !important;
+      box-shadow: none !important;
+    }
+
+    .tnx-next-progress-wrap {
+      width: min(100%, 560px) !important;
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      gap: 0.65rem !important;
+      margin-top: 0.1rem !important;
+      align-items: center !important;
+    }
+
+    .tnx-next-progress {
+      height: 0.52rem !important;
+      border: 0 !important;
+      background: rgba(255, 255, 255, 0.075) !important;
+      box-shadow: inset 0 1px 7px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .tnx-next-fill {
+      background: linear-gradient(90deg, #b48900, #ffda6a) !important;
+      box-shadow: 0 0 12px rgba(255, 218, 106, 0.32) !important;
+    }
+
+    .tnx-next-percent {
+      min-width: 3rem !important;
+      height: 1.75rem !important;
+      border-color: rgba(255, 218, 106, 0.16) !important;
+      background: rgba(0, 0, 0, 0.23) !important;
+      font-size: 0.82rem !important;
+    }
+
+    .tnx-next-hero--done {
+      grid-template-columns: auto minmax(0, 1fr) !important;
+      padding: 1.15rem 1.25rem !important;
+      min-height: 130px !important;
+    }
+
+    @media (max-width: 760px) {
+      .tnx-next-hero {
+        grid-template-columns: 1fr !important;
+        justify-items: center !important;
+        padding: 1rem !important;
+      }
+
+      .tnx-next-img-wrap {
+        width: 104px !important;
+        height: 104px !important;
+      }
+
+      .tnx-next-img-wrap img {
+        width: 76px !important;
+        height: 76px !important;
+      }
+
+      .tnx-next-content {
+        padding: 0 !important;
+        justify-items: center !important;
+        text-align: center !important;
+      }
+
+      .tnx-next-chip-row {
+        justify-content: center !important;
+      }
+    }
+
   </style>
 
   <script is:inline data-reinit>
