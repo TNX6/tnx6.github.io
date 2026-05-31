@@ -13,10 +13,6 @@ const metadata = {
     <div class="tnx-bg"></div>
     <div class="tnx-grid-bg"></div>
 
-    <button id="backToTop" class="tnx-back-top" type="button" aria-label="الرجوع للأعلى">
-      ↑
-    </button>
-
     <section class="tnx-shell">
       <header class="tnx-hero">
         <div class="tnx-eyebrow">
@@ -228,49 +224,6 @@ const metadata = {
       width: min(100%, 1240px);
       margin: 0 auto;
       padding: 6.5rem 1rem 5rem;
-    }
-
-
-    .tnx-back-top {
-      position: fixed;
-      left: 1.25rem;
-      bottom: 1.25rem;
-      z-index: 90;
-      display: grid;
-      place-items: center;
-      width: 3.1rem;
-      height: 3.1rem;
-      border: 1px solid rgba(255, 218, 106, 0.42);
-      border-radius: 999px;
-      background:
-        radial-gradient(circle at 35% 25%, rgba(255, 218, 106, 0.22), transparent 60%),
-        rgba(7, 5, 11, 0.88);
-      color: #ffda6a;
-      font-size: 1.35rem;
-      font-weight: 950;
-      cursor: pointer;
-      box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.45),
-        0 0 22px rgba(255, 218, 106, 0.12);
-      backdrop-filter: blur(14px);
-      opacity: 0;
-      transform: translateY(16px) scale(0.92);
-      pointer-events: none;
-      transition: 180ms ease;
-    }
-
-    .tnx-back-top.is-visible {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      pointer-events: auto;
-    }
-
-    .tnx-back-top:hover {
-      transform: translateY(-3px) scale(1.03);
-      border-color: rgba(255, 218, 106, 0.75);
-      box-shadow:
-        0 22px 46px rgba(0, 0, 0, 0.5),
-        0 0 30px rgba(255, 218, 106, 0.2);
     }
 
     .tnx-hero {
@@ -1035,9 +988,13 @@ const metadata = {
       gap: 1rem;
       border-radius: 1.5rem;
       padding: 1rem;
+      margin-inline: auto;
+      justify-items: center;
     }
 
     .tnx-overall {
+      width: min(100%, 900px);
+      margin-inline: auto;
       border: 1px solid rgba(255, 218, 106, 0.2);
       border-radius: 1.3rem;
       background:
@@ -1049,43 +1006,27 @@ const metadata = {
 
     .tnx-overall-text {
       display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 1rem;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0.55rem;
       margin-bottom: 0.7rem;
+      text-align: center;
     }
 
     .tnx-overall-text strong {
+      display: block;
       color: #f7e6ac;
       font-size: 1.1rem;
       font-weight: 950;
     }
 
     .tnx-overall-text span {
+      display: block;
       color: #ffda6a;
       font-size: 0.92rem;
       font-weight: 950;
-    }
-
-
-    .tnx-copy-user-link {
-      flex: 0 0 auto;
-      border: 1px solid rgba(255, 218, 106, 0.22);
-      border-radius: 0.85rem;
-      background: rgba(255, 218, 106, 0.08);
-      color: #f7e6ac;
-      padding: 0.55rem 0.75rem;
-      font-size: 0.76rem;
-      font-weight: 950;
-      cursor: pointer;
-      transition: 160ms ease;
-    }
-
-    .tnx-copy-user-link:hover,
-    .tnx-copy-user-link.is-copied {
-      border-color: rgba(52, 211, 153, 0.5);
-      background: rgba(52, 211, 153, 0.13);
-      color: rgb(167, 243, 208);
+      margin-top: 0.2rem;
     }
 
     .tnx-overall-track {
@@ -1108,7 +1049,8 @@ const metadata = {
       grid-template-columns: auto minmax(0, 1fr);
       gap: 1.2rem;
       align-items: center;
-      width: 100%;
+      width: min(100%, 900px);
+      margin-inline: auto;
       border: 1px solid rgba(255, 218, 106, 0.32);
       border-radius: 1.5rem;
       background:
@@ -1217,6 +1159,10 @@ const metadata = {
       position: relative;
       z-index: 1;
       min-width: 0;
+      display: grid;
+      gap: 0.3rem;
+      justify-items: center;
+      text-align: center;
     }
 
     .tnx-next-label {
@@ -1290,6 +1236,8 @@ const metadata = {
     }
 
     .tnx-vault-section {
+      width: min(100%, 900px);
+      margin-inline: auto;
       border: 1px solid rgba(255, 218, 106, 0.18);
       border-radius: 1.3rem;
       background:
@@ -1300,12 +1248,14 @@ const metadata = {
 
     .tnx-vault-section-head {
       display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 1rem;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0.35rem;
       margin-bottom: 0.95rem;
       padding-bottom: 0.85rem;
       border-bottom: 1px solid rgba(255, 218, 106, 0.1);
+      text-align: center;
     }
 
     .tnx-vault-section-head strong {
@@ -1340,7 +1290,8 @@ const metadata = {
 
     .tnx-vault-grid {
       display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(120px, 120px));
+      justify-content: center;
       gap: 0.65rem;
     }
 
@@ -1509,7 +1460,8 @@ const metadata = {
       }
 
       .tnx-vault-grid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(120px, 120px));
+        justify-content: center;
       }
 
       .tnx-next-hero {
@@ -1543,14 +1495,16 @@ const metadata = {
       }
 
       .tnx-vault-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(110px, 110px));
+        justify-content: center;
       }
 
       .tnx-overall-text,
       .tnx-vault-section-head {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
         gap: 0.3rem;
+        text-align: center;
       }
     }
 
@@ -1572,7 +1526,8 @@ const metadata = {
       }
 
       .tnx-vault-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(96px, 96px));
+        justify-content: center;
       }
 
       .tnx-next-title {
@@ -1589,26 +1544,10 @@ const metadata = {
         height: 4rem;
       }
     }
-
-    @media (max-width: 860px) {
-      .tnx-copy-user-link {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .tnx-back-top {
-        left: 0.9rem;
-        bottom: 0.9rem;
-        width: 2.8rem;
-        height: 2.8rem;
-      }
-    }
-
   </style>
 
   <script is:inline data-reinit>
-    ;(async () => {
+    ;(() => {
       const cleanupKey = '__tnxBadgesPageCleanup'
 
       if (window[cleanupKey]) {
@@ -1921,7 +1860,6 @@ const metadata = {
       const badgeFocusPanel = document.getElementById('badgeFocusPanel')
       const filterButtons = Array.from(document.querySelectorAll('[data-badge-filter]'))
       const guideButtons = Array.from(document.querySelectorAll('[data-guide-filter]'))
-      const backToTop = document.getElementById('backToTop')
 
       const statTotalBadges = document.getElementById('statTotalBadges')
       const statCategories = document.getElementById('statCategories')
@@ -2347,51 +2285,7 @@ const metadata = {
       }
 
       function getBadgeLink(hashId) {
-        return `${window.location.origin}${window.location.pathname}${window.location.search}#${hashId}`
-      }
-
-      function getUserLink(user) {
-        const username = String(user?.userLogin || user?.userName || '').trim()
-        const url = new URL(window.location.href)
-        url.searchParams.set('user', username)
-        url.hash = ''
-        return url.toString()
-      }
-
-      function setUserQuery(user) {
-        const username = String(user?.userLogin || user?.userName || '').trim()
-        if (!username) return
-
-        const url = new URL(window.location.href)
-        url.searchParams.set('user', username)
-        url.hash = ''
-        history.replaceState(null, '', `${url.pathname}${url.search}`)
-      }
-
-      function openUserFromQuery() {
-        const params = new URLSearchParams(window.location.search)
-        const rawUser = params.get('user')
-
-        if (!rawUser) return false
-
-        const key = normalize(rawUser)
-
-        let user = state.users.find((item) => normalize(item.userLogin) === key)
-        if (!user) user = state.users.find((item) => normalize(item.userName) === key)
-        if (!user) user = state.users.find((item) => normalize(item.userLogin).includes(key) || normalize(item.userName).includes(key))
-
-        if (!user) return false
-
-        renderUserCard(user)
-
-        addTimer(window.setTimeout(() => {
-          document.querySelector('.tnx-users')?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-          })
-        }, 180))
-
-        return true
+        return `${window.location.origin}${window.location.pathname}#${hashId}`
       }
 
       async function copyText(text, button, doneText = 'تم النسخ') {
@@ -2496,71 +2390,35 @@ const metadata = {
 
         BADGE_PATHS.forEach((path) => {
           const metric = getMetric(user, path.metricKeys)
-
           if (metric === null) return
 
           path.steps.forEach((step) => {
             if (unlockedSet.has(badgeKey(step.name))) return
+            if (metric >= step.value) return
 
             const badge = getBadgeByName(step.name)
             if (!badge) return
 
             const remaining = Math.max(0, step.value - metric)
             const progress = Math.max(0, Math.min(100, (metric / step.value) * 100))
-            const eligible = metric >= step.value
 
             candidates.push({
               badge,
               remaining,
-              progress: eligible ? 100 : progress,
+              progress,
               unit: path.unit,
-              eligible,
-              fallback: false,
+              hasMetric: true,
             })
           })
         })
 
-        if (candidates.length > 0) {
-          candidates.sort((a, b) => {
-            if (a.eligible && !b.eligible) return -1
-            if (!a.eligible && b.eligible) return 1
-            return (b.progress || 0) - (a.progress || 0)
-          })
+        if (candidates.length === 0) return null
 
-          return candidates[0]
-        }
+        candidates.sort((a, b) => {
+          return (b.progress || 0) - (a.progress || 0)
+        })
 
-        const fallbackNames = ['15D', '100K', '50Q']
-
-        for (const name of fallbackNames) {
-          const badge = getBadgeByName(name)
-
-          if (badge && !unlockedSet.has(badgeKey(badge.name))) {
-            return {
-              badge,
-              remaining: null,
-              progress: null,
-              unit: '',
-              eligible: false,
-              fallback: true,
-            }
-          }
-        }
-
-        const firstLocked = state.badges.find((badge) => !unlockedSet.has(badgeKey(badge.name)))
-
-        if (firstLocked) {
-          return {
-            badge: firstLocked,
-            remaining: null,
-            progress: null,
-            unit: '',
-            eligible: false,
-            fallback: true,
-          }
-        }
-
-        return null
+        return candidates[0]
       }
 
       function renderNextBadgeBlock(nextBadge) {
@@ -2579,13 +2437,9 @@ const metadata = {
         const badge = nextBadge.badge
         const progress = nextBadge.progress !== null ? Math.round(nextBadge.progress) : null
 
-        const remainingHtml = nextBadge.eligible
-          ? 'أنت مؤهل لهذا البادج، يحتاج ينضاف لك من النظام.'
-          : nextBadge.remaining !== null
-            ? `باقي عليك <b>${formatNumber(nextBadge.remaining)} ${esc(nextBadge.unit)}</b> فقط.`
-            : esc(badge.how)
-
-        const label = nextBadge.eligible ? '⚠️ جاهز للاستلام' : '🎯 خطوتك الجاية'
+        const remainingHtml = nextBadge.remaining !== null
+          ? `باقي عليك <b>${formatNumber(nextBadge.remaining)} ${esc(nextBadge.unit)}</b> فقط.`
+          : esc(badge.how)
 
         const progressHtml = progress !== null
           ? `
@@ -2605,7 +2459,7 @@ const metadata = {
             </div>
 
             <div class="tnx-next-content">
-              <div class="tnx-next-label">${label}</div>
+              <div class="tnx-next-label">🎯 خطوتك الجاية</div>
               <strong class="tnx-next-title">${esc(badge.title)}</strong>
               <p class="tnx-next-desc">${remainingHtml}</p>
               ${progressHtml}
@@ -2615,58 +2469,44 @@ const metadata = {
       }
 
       function renderVaultGrid(user, unlockedSet) {
-        const order = {
-          owned: 0,
-          eligible: 1,
-          locked: 2,
-        }
+        const items = state.badges.map((badge) => {
+          const info = getBadgeProgressInfo(user, badge, unlockedSet)
 
-        const items = state.badges
-          .map((badge) => {
-            const info = getBadgeProgressInfo(user, badge, unlockedSet)
-            return { badge, info }
-          })
-          .sort((a, b) => {
-            const statusDiff = order[a.info.status] - order[b.info.status]
-            if (statusDiff !== 0) return statusDiff
-            return a.badge.index - b.badge.index
-          })
-          .map(({ badge, info }) => {
-            const iconHtml =
-              info.status === 'owned'
-                ? `<span class="tnx-vault-check">✓</span>`
-                : info.status === 'eligible'
-                  ? `<span class="tnx-vault-ready">!</span>`
-                  : `<span class="tnx-vault-lock">🔒</span>`
+          const iconHtml =
+            info.status === 'owned'
+              ? `<span class="tnx-vault-check">✓</span>`
+              : info.status === 'eligible'
+                ? `<span class="tnx-vault-ready">!</span>`
+                : `<span class="tnx-vault-lock">🔒</span>`
 
-            const statusClass =
-              info.status === 'owned'
-                ? 'is-owned'
-                : info.status === 'eligible'
-                  ? 'is-eligible'
-                  : 'is-locked'
+          const statusClass =
+            info.status === 'owned'
+              ? 'is-owned'
+              : info.status === 'eligible'
+                ? 'is-eligible'
+                : 'is-locked'
 
-            const hint = info.status === 'eligible'
-              ? 'أنت مؤهل لهذا البادج، يحتاج ينضاف لك من النظام.'
-              : info.hint
+          const hint = info.status === 'eligible'
+            ? 'أنت مؤهل لهذا البادج، يحتاج ينضاف لك من النظام.'
+            : info.hint
 
-            return `
-              <button
-                type="button"
-                class="tnx-vault-badge ${statusClass}"
-                data-badge-jump="${esc(badge.hashId)}"
-                title="${esc(hint)}"
-              >
-                <div class="tnx-vault-badge-img">
-                  <img src="${esc(badge.image)}" alt="${esc(badge.title)}" loading="lazy" />
-                  ${iconHtml}
-                </div>
+          return `
+            <button
+              type="button"
+              class="tnx-vault-badge ${statusClass}"
+              data-badge-jump="${esc(badge.hashId)}"
+              title="${esc(hint)}"
+            >
+              <div class="tnx-vault-badge-img">
+                <img src="${esc(badge.image)}" alt="${esc(badge.title)}" loading="lazy" />
+                ${iconHtml}
+              </div>
 
-                <span class="tnx-vault-name">${esc(badge.title)}</span>
-                <span class="tnx-vault-hint">${esc(hint)}</span>
-              </button>
-            `
-          }).join('')
+              <span class="tnx-vault-name">${esc(badge.title)}</span>
+              <span class="tnx-vault-hint">${esc(hint)}</span>
+            </button>
+          `
+        }).join('')
 
         return `
           <div class="tnx-vault-grid">
@@ -2699,14 +2539,8 @@ const metadata = {
           <section class="tnx-progress-panel">
             <div class="tnx-overall">
               <div class="tnx-overall-text">
-                <div>
-                  <strong>${formatNumber(unlockedCount)} من ${formatNumber(totalCount)} بادج</strong>
-                  <span>${percent}% مكتمل</span>
-                </div>
-
-                <button type="button" class="tnx-copy-user-link" data-copy-user-link="${esc(user.userLogin || user.userName || '')}">
-                  نسخ رابط البطاقة
-                </button>
+                <strong>${formatNumber(unlockedCount)} من ${formatNumber(totalCount)} بادج</strong>
+                <span>${percent}% مكتمل</span>
               </div>
 
               <div class="tnx-overall-track">
@@ -2821,20 +2655,6 @@ const metadata = {
         }
       }
 
-      function handleBackToTopVisibility() {
-        if (!backToTop) return
-        backToTop.classList.toggle('is-visible', window.scrollY > 520)
-      }
-
-      addListener(backToTop, 'click', () => {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth',
-        })
-      })
-
-      addListener(window, 'scroll', handleBackToTopVisibility, { passive: true })
-
       addListener(badgeGrid, 'click', (event) => {
         const card = event.target.closest('[data-badge-name]')
         if (!card) return
@@ -2843,19 +2663,6 @@ const metadata = {
       })
 
       addListener(document, 'click', (event) => {
-        const userLinkButton = event.target.closest('[data-copy-user-link]')
-
-        if (userLinkButton) {
-          const username = userLinkButton.dataset.copyUserLink || ''
-          const user = state.users.find((item) => normalize(item.userLogin) === normalize(username) || normalize(item.userName) === normalize(username))
-
-          if (user) {
-            copyText(getUserLink(user), userLinkButton, 'تم نسخ الرابط')
-          }
-
-          return
-        }
-
         const linkButton = event.target.closest('[data-copy-badge-link]')
 
         if (linkButton) {
@@ -2954,14 +2761,11 @@ const metadata = {
         if (userSearch) userSearch.value = ''
         if (userResults) userResults.innerHTML = ''
 
-        setUserQuery(user)
         renderUserCard(user)
       })
 
-      await loadBadges()
-      await loadUsers()
-      openUserFromQuery()
-      handleBackToTopVisibility()
+      loadBadges()
+      loadUsers()
     })()
   </script>
 
