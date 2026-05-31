@@ -1230,6 +1230,13 @@ const artists = artistStats.map((entry) => entry.artist)
       let lastY = 0
       let pinchStartDistance = 0
       let pinchStartScale = 1
+      let swipeStartX = 0
+      let swipeStartY = 0
+      let swipeLastX = 0
+      let swipeLastY = 0
+      let swipeStartTime = 0
+      let isPotentialSwipe = false
+      let didPinchInGesture = false
       const activePointers = new Map()
 
       function normalize(value) {
@@ -1452,6 +1459,16 @@ const artists = artistStats.map((entry) => entry.artist)
         updateZoomBadge()
       }
 
+      function resetSwipeState() {
+        swipeStartX = 0
+        swipeStartY = 0
+        swipeLastX = 0
+        swipeLastY = 0
+        swipeStartTime = 0
+        isPotentialSwipe = false
+        didPinchInGesture = false
+      }
+
       function resetZoom() {
         scale = 1
         tx = 0
@@ -1461,6 +1478,7 @@ const artists = artistStats.map((entry) => entry.artist)
         pinchStartDistance = 0
         pinchStartScale = 1
         activePointers.clear()
+        resetSwipeState()
         zoomStage?.classList.remove('is-zoomed', 'is-dragging')
         applyTransform()
       }
@@ -1686,9 +1704,21 @@ const artists = artistStats.map((entry) => entry.artist)
 
         try { zoomStage.setPointerCapture(event.pointerId) } catch {}
 
+        if (activePointers.size === 1 && event.pointerType === 'touch' && scale === 1) {
+          swipeStartX = event.clientX
+          swipeStartY = event.clientY
+          swipeLastX = event.clientX
+          swipeLastY = event.clientY
+          swipeStartTime = Date.now()
+          isPotentialSwipe = true
+          didPinchInGesture = false
+        }
+
         if (activePointers.size >= 2) {
           event.preventDefault()
           event.stopPropagation()
+          didPinchInGesture = true
+          isPotentialSwipe = false
           startPinchZoom()
           return
         }
@@ -1696,6 +1726,7 @@ const artists = artistStats.map((entry) => entry.artist)
         if (scale > 1 && event.target === popupImg) {
           event.preventDefault()
           isDragging = true
+          isPotentialSwipe = false
           zoomStage.classList.add('is-dragging')
           lastX = event.clientX
           lastY = event.clientY
@@ -1710,6 +1741,23 @@ const artists = artistStats.map((entry) => entry.artist)
             x: event.clientX,
             y: event.clientY,
           })
+        }
+
+        if (isPotentialSwipe && activePointers.size === 1 && event.pointerType === 'touch' && scale === 1) {
+          swipeLastX = event.clientX
+          swipeLastY = event.clientY
+
+          const dx = swipeLastX - swipeStartX
+          const dy = swipeLastY - swipeStartY
+
+          if (Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.15) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+
+          if (Math.abs(dy) > 34 && Math.abs(dy) > Math.abs(dx) * 1.35) {
+            isPotentialSwipe = false
+          }
         }
 
         if (isPinching && activePointers.size >= 2) {
@@ -1733,17 +1781,43 @@ const artists = artistStats.map((entry) => entry.artist)
       })
 
       addListener(zoomStage, 'pointerup', (event) => {
+        if (isPotentialSwipe && !didPinchInGesture && !isPinching && scale === 1 && event.pointerType === 'touch') {
+          const endX = event.clientX || swipeLastX
+          const endY = event.clientY || swipeLastY
+          const dx = endX - swipeStartX
+          const dy = endY - swipeStartY
+          const elapsed = Date.now() - swipeStartTime
+          const minDistance = 58
+          const maxTime = 900
+
+          if (
+            Math.abs(dx) >= minDistance &&
+            Math.abs(dx) > Math.abs(dy) * 1.45 &&
+            elapsed <= maxTime
+          ) {
+            event.preventDefault()
+            event.stopPropagation()
+
+            // RTL: سحب يمين = الصورة اللي يمينها، سحب يسار = الصورة اللي يسارها
+            if (dx > 0) next(-1)
+            else next(1)
+          }
+        }
+
         stopPointerTracking(event.pointerId)
+        resetSwipeState()
         try { zoomStage.releasePointerCapture(event.pointerId) } catch {}
       })
 
       addListener(zoomStage, 'pointercancel', (event) => {
         stopPointerTracking(event.pointerId)
+        resetSwipeState()
         try { zoomStage.releasePointerCapture(event.pointerId) } catch {}
       })
 
       addListener(zoomStage, 'lostpointercapture', (event) => {
         stopPointerTracking(event.pointerId)
+        if (activePointers.size === 0) resetSwipeState()
       })
 
       addListener(zoomStage, 'wheel', (event) => {
