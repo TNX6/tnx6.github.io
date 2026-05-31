@@ -131,7 +131,7 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
         <div class="tnx-section-head">
           <span>FEATURED</span>
           <h2>أبرز الفائزين</h2>
-          <p>الفائزون البارزون يظهرون هنا بشكل أوضح قبل القائمة الكاملة.</p>
+          <p>الفائزون البارزون يتغيرون عشوائيًا مع كل تحديث للصفحة.</p>
         </div>
 
         <div id="featuredGrid" class="tnx-featured-grid"></div>
@@ -1063,10 +1063,23 @@ const winnersJson = JSON.stringify(winners).replace(/</g, '\\u003c')
         })
       }
 
+      function getRandomFeaturedWinners() {
+        const pool = allWinners.length > 0 ? [...allWinners] : []
+
+        for (let i = pool.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1))
+          const temp = pool[i]
+          pool[i] = pool[j]
+          pool[j] = temp
+        }
+
+        return pool.slice(0, 4)
+      }
+
       function renderFeatured() {
         if (!featuredGrid) return
 
-        const featured = allWinners.filter((winner) => winner.featured).slice(0, 4)
+        const featured = getRandomFeaturedWinners()
 
         featuredGrid.innerHTML = featured.map((winner, index) => `
           <button type="button" class="tnx-feature-card" data-winner-index="${allWinners.indexOf(winner)}" style="--stagger:${index}">
