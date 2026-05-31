@@ -13,6 +13,10 @@ const metadata = {
     <div class="tnx-bg"></div>
     <div class="tnx-grid-bg"></div>
 
+    <button id="backToTop" class="tnx-back-top" type="button" aria-label="الرجوع للأعلى">
+      ↑
+    </button>
+
     <section class="tnx-shell">
       <header class="tnx-hero">
         <div class="tnx-eyebrow">
@@ -224,6 +228,49 @@ const metadata = {
       width: min(100%, 1240px);
       margin: 0 auto;
       padding: 6.5rem 1rem 5rem;
+    }
+
+
+    .tnx-back-top {
+      position: fixed;
+      left: 1.25rem;
+      bottom: 1.25rem;
+      z-index: 90;
+      display: grid;
+      place-items: center;
+      width: 3.1rem;
+      height: 3.1rem;
+      border: 1px solid rgba(255, 218, 106, 0.42);
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255, 218, 106, 0.22), transparent 60%),
+        rgba(7, 5, 11, 0.88);
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.45),
+        0 0 22px rgba(255, 218, 106, 0.12);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      transform: translateY(16px) scale(0.92);
+      pointer-events: none;
+      transition: 180ms ease;
+    }
+
+    .tnx-back-top.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .tnx-back-top:hover {
+      transform: translateY(-3px) scale(1.03);
+      border-color: rgba(255, 218, 106, 0.75);
+      box-shadow:
+        0 22px 46px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(255, 218, 106, 0.2);
     }
 
     .tnx-hero {
@@ -826,7 +873,6 @@ const metadata = {
     .tnx-card-wrap {
       display: grid;
       justify-items: center;
-      gap: 0.85rem;
       width: 800px;
       min-width: 800px;
       max-width: 800px;
@@ -983,34 +1029,6 @@ const metadata = {
       filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.35));
     }
 
-    .tnx-card-share {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-    }
-
-    .tnx-card-share-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      border: 1px solid rgba(255, 218, 106, 0.24);
-      border-radius: 0.9rem;
-      background: rgba(255, 218, 106, 0.08);
-      color: #f7e6ac;
-      padding: 0.7rem 1.2rem;
-      font-size: 0.86rem;
-      font-weight: 950;
-      cursor: pointer;
-      transition: 0.16s ease;
-    }
-
-    .tnx-card-share-btn:hover,
-    .tnx-card-share-btn.is-copied {
-      border-color: rgba(52, 211, 153, 0.55);
-      background: rgba(52, 211, 153, 0.14);
-      color: rgb(167, 243, 208);
-    }
-
     .tnx-progress-panel {
       width: min(100%, 1000px);
       display: grid;
@@ -1033,6 +1051,7 @@ const metadata = {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
+      gap: 1rem;
       margin-bottom: 0.7rem;
     }
 
@@ -1046,6 +1065,27 @@ const metadata = {
       color: #ffda6a;
       font-size: 0.92rem;
       font-weight: 950;
+    }
+
+
+    .tnx-copy-user-link {
+      flex: 0 0 auto;
+      border: 1px solid rgba(255, 218, 106, 0.22);
+      border-radius: 0.85rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.76rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 160ms ease;
+    }
+
+    .tnx-copy-user-link:hover,
+    .tnx-copy-user-link.is-copied {
+      border-color: rgba(52, 211, 153, 0.5);
+      background: rgba(52, 211, 153, 0.13);
+      color: rgb(167, 243, 208);
     }
 
     .tnx-overall-track {
@@ -1549,10 +1589,26 @@ const metadata = {
         height: 4rem;
       }
     }
+
+    @media (max-width: 860px) {
+      .tnx-copy-user-link {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .tnx-back-top {
+        left: 0.9rem;
+        bottom: 0.9rem;
+        width: 2.8rem;
+        height: 2.8rem;
+      }
+    }
+
   </style>
 
   <script is:inline data-reinit>
-    ;(() => {
+    ;(async () => {
       const cleanupKey = '__tnxBadgesPageCleanup'
 
       if (window[cleanupKey]) {
@@ -1843,8 +1899,6 @@ const metadata = {
         },
       ]
 
-      const FALLBACK_NEXT_BADGES = ['15D', '100K', '50Q']
-
       const JOB_ICONS = window.JOB_ICONS || {
         tier1_Citizen: 'mdi:account',
         tier3_Merchant: 'mdi:store',
@@ -1858,7 +1912,6 @@ const metadata = {
         filter: 'all',
         search: '',
         selectedBadgeName: '',
-        selectedUserLogin: '',
       }
 
       const badgeGrid = document.getElementById('badgeGrid')
@@ -1868,6 +1921,7 @@ const metadata = {
       const badgeFocusPanel = document.getElementById('badgeFocusPanel')
       const filterButtons = Array.from(document.querySelectorAll('[data-badge-filter]'))
       const guideButtons = Array.from(document.querySelectorAll('[data-guide-filter]'))
+      const backToTop = document.getElementById('backToTop')
 
       const statTotalBadges = document.getElementById('statTotalBadges')
       const statCategories = document.getElementById('statCategories')
@@ -1907,7 +1961,7 @@ const metadata = {
       function normalize(value) {
         return String(value || '')
           .toLowerCase()
-          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[ًٌٍَُِّْـ]/g, '')
           .replace(/[أإآ]/g, 'ا')
           .replace(/ة/g, 'ه')
           .replace(/ى/g, 'ي')
@@ -1971,7 +2025,7 @@ const metadata = {
         return `badge-${String(name || '')
           .trim()
           .toLowerCase()
-          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[ًٌٍَُِّْـ]/g, '')
           .replace(/[أإآ]/g, 'ا')
           .replace(/ة/g, 'ه')
           .replace(/ى/g, 'ي')
@@ -2293,21 +2347,51 @@ const metadata = {
       }
 
       function getBadgeLink(hashId) {
-        return `${window.location.origin}${window.location.pathname}#${hashId}`
+        return `${window.location.origin}${window.location.pathname}${window.location.search}#${hashId}`
       }
 
-      function getUserLink(login) {
-        const cleanLogin = String(login || '').trim().replace(/[^a-zA-Z0-9_-]/g, '')
-        if (!cleanLogin) return ''
-        return `${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(cleanLogin)}`
+      function getUserLink(user) {
+        const username = String(user?.userLogin || user?.userName || '').trim()
+        const url = new URL(window.location.href)
+        url.searchParams.set('user', username)
+        url.hash = ''
+        return url.toString()
       }
 
-      function findUserByLogin(login) {
-        if (!login) return null
-        const target = normalize(login)
-        return state.users.find((u) => {
-          return normalize(u.userLogin) === target || normalize(u.userName) === target
-        }) || null
+      function setUserQuery(user) {
+        const username = String(user?.userLogin || user?.userName || '').trim()
+        if (!username) return
+
+        const url = new URL(window.location.href)
+        url.searchParams.set('user', username)
+        url.hash = ''
+        history.replaceState(null, '', `${url.pathname}${url.search}`)
+      }
+
+      function openUserFromQuery() {
+        const params = new URLSearchParams(window.location.search)
+        const rawUser = params.get('user')
+
+        if (!rawUser) return false
+
+        const key = normalize(rawUser)
+
+        let user = state.users.find((item) => normalize(item.userLogin) === key)
+        if (!user) user = state.users.find((item) => normalize(item.userName) === key)
+        if (!user) user = state.users.find((item) => normalize(item.userLogin).includes(key) || normalize(item.userName).includes(key))
+
+        if (!user) return false
+
+        renderUserCard(user)
+
+        addTimer(window.setTimeout(() => {
+          document.querySelector('.tnx-users')?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          })
+        }, 180))
+
+        return true
       }
 
       async function copyText(text, button, doneText = 'تم النسخ') {
@@ -2321,13 +2405,13 @@ const metadata = {
           addTimer(window.setTimeout(() => {
             button.textContent = oldText
             button.classList.remove('is-copied')
-          }, 1200))
+          }, 1000))
         } catch {
           button.textContent = text
 
           addTimer(window.setTimeout(() => {
             button.textContent = oldText
-          }, 1500))
+          }, 1300))
         }
       }
 
@@ -2412,56 +2496,67 @@ const metadata = {
 
         BADGE_PATHS.forEach((path) => {
           const metric = getMetric(user, path.metricKeys)
+
           if (metric === null) return
 
           path.steps.forEach((step) => {
             if (unlockedSet.has(badgeKey(step.name))) return
-            if (metric >= step.value) return
 
             const badge = getBadgeByName(step.name)
             if (!badge) return
 
             const remaining = Math.max(0, step.value - metric)
             const progress = Math.max(0, Math.min(100, (metric / step.value) * 100))
+            const eligible = metric >= step.value
 
             candidates.push({
               badge,
               remaining,
-              progress,
+              progress: eligible ? 100 : progress,
               unit: path.unit,
-              hasMetric: true,
+              eligible,
+              fallback: false,
             })
           })
         })
 
         if (candidates.length > 0) {
-          candidates.sort((a, b) => (b.progress || 0) - (a.progress || 0))
+          candidates.sort((a, b) => {
+            if (a.eligible && !b.eligible) return -1
+            if (!a.eligible && b.eligible) return 1
+            return (b.progress || 0) - (a.progress || 0)
+          })
+
           return candidates[0]
         }
 
-        for (const fallbackName of FALLBACK_NEXT_BADGES) {
-          if (unlockedSet.has(badgeKey(fallbackName))) continue
+        const fallbackNames = ['15D', '100K', '50Q']
 
-          const badge = getBadgeByName(fallbackName)
-          if (badge) {
+        for (const name of fallbackNames) {
+          const badge = getBadgeByName(name)
+
+          if (badge && !unlockedSet.has(badgeKey(badge.name))) {
             return {
               badge,
               remaining: null,
               progress: null,
               unit: '',
-              hasMetric: false,
+              eligible: false,
+              fallback: true,
             }
           }
         }
 
-        const anyLocked = state.badges.find((b) => !unlockedSet.has(badgeKey(b.name)))
-        if (anyLocked) {
+        const firstLocked = state.badges.find((badge) => !unlockedSet.has(badgeKey(badge.name)))
+
+        if (firstLocked) {
           return {
-            badge: anyLocked,
+            badge: firstLocked,
             remaining: null,
             progress: null,
             unit: '',
-            hasMetric: false,
+            eligible: false,
+            fallback: true,
           }
         }
 
@@ -2484,9 +2579,13 @@ const metadata = {
         const badge = nextBadge.badge
         const progress = nextBadge.progress !== null ? Math.round(nextBadge.progress) : null
 
-        const remainingHtml = nextBadge.remaining !== null
-          ? `باقي عليك <b>${formatNumber(nextBadge.remaining)} ${esc(nextBadge.unit)}</b> فقط.`
-          : esc(badge.how)
+        const remainingHtml = nextBadge.eligible
+          ? 'أنت مؤهل لهذا البادج، يحتاج ينضاف لك من النظام.'
+          : nextBadge.remaining !== null
+            ? `باقي عليك <b>${formatNumber(nextBadge.remaining)} ${esc(nextBadge.unit)}</b> فقط.`
+            : esc(badge.how)
+
+        const label = nextBadge.eligible ? '⚠️ جاهز للاستلام' : '🎯 خطوتك الجاية'
 
         const progressHtml = progress !== null
           ? `
@@ -2506,7 +2605,7 @@ const metadata = {
             </div>
 
             <div class="tnx-next-content">
-              <div class="tnx-next-label">🎯 خطوتك الجاية</div>
+              <div class="tnx-next-label">${label}</div>
               <strong class="tnx-next-title">${esc(badge.title)}</strong>
               <p class="tnx-next-desc">${remainingHtml}</p>
               ${progressHtml}
@@ -2516,16 +2615,20 @@ const metadata = {
       }
 
       function renderVaultGrid(user, unlockedSet) {
-        const statusOrder = { owned: 0, eligible: 1, locked: 2 }
+        const order = {
+          owned: 0,
+          eligible: 1,
+          locked: 2,
+        }
 
         const items = state.badges
-          .map((badge) => ({
-            badge,
-            info: getBadgeProgressInfo(user, badge, unlockedSet),
-          }))
+          .map((badge) => {
+            const info = getBadgeProgressInfo(user, badge, unlockedSet)
+            return { badge, info }
+          })
           .sort((a, b) => {
-            const orderDiff = statusOrder[a.info.status] - statusOrder[b.info.status]
-            if (orderDiff !== 0) return orderDiff
+            const statusDiff = order[a.info.status] - order[b.info.status]
+            if (statusDiff !== 0) return statusDiff
             return a.badge.index - b.badge.index
           })
           .map(({ badge, info }) => {
@@ -2563,8 +2666,7 @@ const metadata = {
                 <span class="tnx-vault-hint">${esc(hint)}</span>
               </button>
             `
-          })
-          .join('')
+          }).join('')
 
         return `
           <div class="tnx-vault-grid">
@@ -2597,8 +2699,14 @@ const metadata = {
           <section class="tnx-progress-panel">
             <div class="tnx-overall">
               <div class="tnx-overall-text">
-                <strong>${formatNumber(unlockedCount)} من ${formatNumber(totalCount)} بادج</strong>
-                <span>${percent}% مكتمل</span>
+                <div>
+                  <strong>${formatNumber(unlockedCount)} من ${formatNumber(totalCount)} بادج</strong>
+                  <span>${percent}% مكتمل</span>
+                </div>
+
+                <button type="button" class="tnx-copy-user-link" data-copy-user-link="${esc(user.userLogin || user.userName || '')}">
+                  نسخ رابط البطاقة
+                </button>
               </div>
 
               <div class="tnx-overall-track">
@@ -2624,16 +2732,8 @@ const metadata = {
         `
       }
 
-      function renderUserCard(details, options = {}) {
+      function renderUserCard(details) {
         if (!userCardContainer || !details) return
-
-        state.selectedUserLogin = String(details.userLogin || '').trim()
-
-        if (options.updateUrl !== false && state.selectedUserLogin) {
-          const url = new URL(window.location.href)
-          url.searchParams.set('user', state.selectedUserLogin)
-          history.replaceState(null, '', url.toString())
-        }
 
         const baseColor = safeColor(details.backgroundColor || '#423fff')
         const darkColor = shade(baseColor, -20)
@@ -2657,17 +2757,6 @@ const metadata = {
         const profileUrl = safeUrl(details.profileImageUrl || '')
         const bannerImage = cssUrl(bannerUrl)
         const profileImage = cssUrl(profileUrl)
-
-        const shareLink = getUserLink(login)
-        const shareHtml = shareLink
-          ? `
-            <div class="tnx-card-share">
-              <button type="button" class="tnx-card-share-btn" data-copy-user-link="${esc(shareLink)}">
-                🔗 نسخ رابط البطاقة
-              </button>
-            </div>
-          `
-          : ''
 
         userCardContainer.innerHTML = `
           <div class="tnx-card-wrap">
@@ -2713,29 +2802,10 @@ const metadata = {
                 </div>
               </div>
             </div>
-
-            ${shareHtml}
           </div>
 
           ${renderUserProgress(details, equippedBadges)}
         `
-      }
-
-      function openUserFromQuery() {
-        try {
-          const params = new URLSearchParams(window.location.search)
-          const userParam = params.get('user')
-          if (!userParam) return false
-
-          const user = findUserByLogin(userParam)
-          if (!user) return false
-
-          renderUserCard(user, { updateUrl: false })
-          return true
-        } catch (error) {
-          console.error('Failed to open user from query', error)
-          return false
-        }
       }
 
       async function loadUsers() {
@@ -2745,13 +2815,25 @@ const metadata = {
 
           const users = await res.json()
           state.users = Array.isArray(users) ? users : []
-
-          openUserFromQuery()
         } catch (error) {
           console.error('Failed to load user_badges.json', error)
           state.users = []
         }
       }
+
+      function handleBackToTopVisibility() {
+        if (!backToTop) return
+        backToTop.classList.toggle('is-visible', window.scrollY > 520)
+      }
+
+      addListener(backToTop, 'click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        })
+      })
+
+      addListener(window, 'scroll', handleBackToTopVisibility, { passive: true })
 
       addListener(badgeGrid, 'click', (event) => {
         const card = event.target.closest('[data-badge-name]')
@@ -2761,19 +2843,24 @@ const metadata = {
       })
 
       addListener(document, 'click', (event) => {
+        const userLinkButton = event.target.closest('[data-copy-user-link]')
+
+        if (userLinkButton) {
+          const username = userLinkButton.dataset.copyUserLink || ''
+          const user = state.users.find((item) => normalize(item.userLogin) === normalize(username) || normalize(item.userName) === normalize(username))
+
+          if (user) {
+            copyText(getUserLink(user), userLinkButton, 'تم نسخ الرابط')
+          }
+
+          return
+        }
+
         const linkButton = event.target.closest('[data-copy-badge-link]')
 
         if (linkButton) {
           const hashId = linkButton.dataset.copyBadgeLink || ''
           copyText(getBadgeLink(hashId), linkButton, 'تم نسخ الرابط')
-          return
-        }
-
-        const userLinkButton = event.target.closest('[data-copy-user-link]')
-
-        if (userLinkButton) {
-          const link = userLinkButton.dataset.copyUserLink || ''
-          if (link) copyText(link, userLinkButton, 'تم نسخ الرابط')
           return
         }
 
@@ -2867,11 +2954,14 @@ const metadata = {
         if (userSearch) userSearch.value = ''
         if (userResults) userResults.innerHTML = ''
 
+        setUserQuery(user)
         renderUserCard(user)
       })
 
-      loadBadges()
-      loadUsers()
+      await loadBadges()
+      await loadUsers()
+      openUserFromQuery()
+      handleBackToTopVisibility()
     })()
   </script>
 
