@@ -1029,6 +1029,34 @@ const metadata = {
       margin-top: 0.2rem;
     }
 
+
+    .tnx-share-card-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      min-width: 9.5rem;
+      border: 1px solid rgba(255, 218, 106, 0.26);
+      border-radius: 0.95rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.13), transparent 60%),
+        rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.68rem 0.9rem;
+      font-size: 0.78rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 160ms ease;
+    }
+
+    .tnx-share-card-link:hover,
+    .tnx-share-card-link.is-copied {
+      transform: translateY(-1px);
+      border-color: rgba(52, 211, 153, 0.55);
+      background: rgba(52, 211, 153, 0.14);
+      color: rgb(167, 243, 208);
+    }
+
     .tnx-overall-track {
       height: 0.7rem;
       border-radius: 999px;
@@ -1046,24 +1074,26 @@ const metadata = {
 
     .tnx-next-hero {
       display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
-      gap: 1.2rem;
+      grid-template-columns: 148px minmax(0, 1fr);
+      gap: 1.35rem;
       align-items: center;
       width: min(100%, 900px);
       margin-inline: auto;
-      border: 1px solid rgba(255, 218, 106, 0.32);
-      border-radius: 1.5rem;
+      border: 1px solid rgba(255, 218, 106, 0.38);
+      border-radius: 1.65rem;
       background:
-        radial-gradient(circle at 15% 50%, rgba(255, 218, 106, 0.18), transparent 55%),
-        linear-gradient(135deg, rgba(255, 218, 106, 0.08), rgba(0, 0, 0, 0.4) 70%);
-      padding: 1.25rem 1.4rem;
+        radial-gradient(circle at 10% 50%, rgba(255, 218, 106, 0.25), transparent 48%),
+        radial-gradient(circle at 88% 14%, rgba(255, 218, 106, 0.13), transparent 36%),
+        linear-gradient(135deg, rgba(255, 218, 106, 0.11), rgba(0, 0, 0, 0.48) 66%);
+      padding: 1.35rem 1.45rem;
       color: white;
       text-align: right;
       cursor: pointer;
       transition: 200ms ease;
       box-shadow:
-        0 24px 60px rgba(0, 0, 0, 0.4),
-        0 0 30px rgba(255, 218, 106, 0.1);
+        0 26px 70px rgba(0, 0, 0, 0.46),
+        0 0 38px rgba(255, 218, 106, 0.13),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.03);
       position: relative;
       overflow: hidden;
     }
@@ -1076,6 +1106,17 @@ const metadata = {
       animation: tnxNextShine 6s linear infinite;
       pointer-events: none;
     }
+
+    .tnx-next-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(255, 218, 106, 0.08), transparent 32%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 44%);
+    }
+
 
     @keyframes tnxNextShine {
       to {
@@ -1137,22 +1178,24 @@ const metadata = {
       z-index: 1;
       display: grid;
       place-items: center;
-      width: 6.5rem;
-      height: 6.5rem;
+      width: 8.25rem;
+      height: 8.25rem;
       flex-shrink: 0;
-      border: 1px solid rgba(255, 218, 106, 0.3);
-      border-radius: 1.5rem;
+      border: 1px solid rgba(255, 218, 106, 0.34);
+      border-radius: 1.7rem;
       background:
-        radial-gradient(circle at center, rgba(255, 218, 106, 0.18), transparent 65%),
-        rgba(0, 0, 0, 0.3);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        radial-gradient(circle at center, rgba(255, 218, 106, 0.22), transparent 64%),
+        rgba(0, 0, 0, 0.34);
+      box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.45),
+        inset 0 0 18px rgba(255, 218, 106, 0.08);
     }
 
     .tnx-next-img-wrap img {
-      width: 5rem;
-      height: 5rem;
+      width: 6.35rem;
+      height: 6.35rem;
       object-fit: contain;
-      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+      filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.55));
     }
 
     .tnx-next-content {
@@ -1160,26 +1203,32 @@ const metadata = {
       z-index: 1;
       min-width: 0;
       display: grid;
-      gap: 0.3rem;
-      justify-items: center;
-      text-align: center;
+      gap: 0.5rem;
+      justify-items: stretch;
+      text-align: right;
     }
 
     .tnx-next-label {
+      width: fit-content;
+      border: 1px solid rgba(255, 218, 106, 0.25);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.1);
       color: #ffda6a;
+      padding: 0.34rem 0.62rem;
       font-size: 0.78rem;
       font-weight: 950;
       letter-spacing: 0.04em;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.1rem;
     }
 
     .tnx-next-title {
       display: block;
       color: white;
-      font-size: 1.55rem;
+      font-size: clamp(1.65rem, 3vw, 2.25rem);
       font-weight: 950;
-      line-height: 1.2;
-      margin-bottom: 0.5rem;
+      line-height: 1.1;
+      margin-bottom: 0.1rem;
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
     }
 
     .tnx-next-desc {
@@ -1209,6 +1258,7 @@ const metadata = {
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 0.7rem;
       align-items: center;
+      margin-top: 0.15rem;
     }
 
     .tnx-next-progress {
@@ -1233,6 +1283,33 @@ const metadata = {
       min-width: 3rem;
       text-align: left;
       direction: ltr;
+    }
+
+
+    .tnx-next-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.15rem;
+    }
+
+    .tnx-next-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 218, 106, 0.17);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.24);
+      color: rgb(229, 231, 235);
+      padding: 0.32rem 0.62rem;
+      font-size: 0.72rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .tnx-next-chip strong {
+      color: #ffda6a;
+      font-weight: 950;
     }
 
     .tnx-vault-section {
@@ -1290,9 +1367,52 @@ const metadata = {
 
     .tnx-vault-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 120px));
+      grid-template-columns: repeat(5, 120px);
       justify-content: center;
       gap: 0.65rem;
+    }
+
+
+    .tnx-vault-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 218, 106, 0.1);
+    }
+
+    .tnx-vault-page-btn {
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 0.9rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.62rem 0.9rem;
+      font-size: 0.78rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 160ms ease;
+    }
+
+    .tnx-vault-page-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: rgba(255, 218, 106, 0.55);
+      background: rgba(255, 218, 106, 0.14);
+      color: #ffda6a;
+    }
+
+    .tnx-vault-page-btn:disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
+
+    .tnx-vault-page-label {
+      min-width: 7rem;
+      color: rgb(209, 213, 219);
+      font-size: 0.8rem;
+      font-weight: 900;
+      text-align: center;
     }
 
     .tnx-vault-badge {
@@ -1460,12 +1580,17 @@ const metadata = {
       }
 
       .tnx-vault-grid {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 120px));
+        grid-template-columns: repeat(5, 112px);
         justify-content: center;
       }
 
       .tnx-next-hero {
         grid-template-columns: 1fr;
+        text-align: center;
+        justify-items: center;
+      }
+
+      .tnx-next-content {
         text-align: center;
         justify-items: center;
       }
@@ -1495,7 +1620,7 @@ const metadata = {
       }
 
       .tnx-vault-grid {
-        grid-template-columns: repeat(auto-fit, minmax(110px, 110px));
+        grid-template-columns: repeat(4, 110px);
         justify-content: center;
       }
 
@@ -1526,7 +1651,7 @@ const metadata = {
       }
 
       .tnx-vault-grid {
-        grid-template-columns: repeat(auto-fit, minmax(96px, 96px));
+        grid-template-columns: repeat(3, 96px);
         justify-content: center;
       }
 
@@ -1547,7 +1672,7 @@ const metadata = {
   </style>
 
   <script is:inline data-reinit>
-    ;(() => {
+    ;(async () => {
       const cleanupKey = '__tnxBadgesPageCleanup'
 
       if (window[cleanupKey]) {
@@ -1851,6 +1976,8 @@ const metadata = {
         filter: 'all',
         search: '',
         selectedBadgeName: '',
+        currentUser: null,
+        vaultPage: 1,
       }
 
       const badgeGrid = document.getElementById('badgeGrid')
@@ -2285,7 +2412,45 @@ const metadata = {
       }
 
       function getBadgeLink(hashId) {
-        return `${window.location.origin}${window.location.pathname}#${hashId}`
+        return `${window.location.origin}${window.location.pathname}${window.location.search}#${hashId}`
+      }
+
+      function getUserLink(user) {
+        const username = String(user?.userLogin || user?.userName || '').trim()
+        const url = new URL(window.location.href)
+        url.searchParams.set('user', username)
+        url.hash = ''
+        return url.toString()
+      }
+
+      function setUserQuery(user) {
+        const username = String(user?.userLogin || user?.userName || '').trim()
+        if (!username) return
+
+        const url = new URL(window.location.href)
+        url.searchParams.set('user', username)
+        url.hash = ''
+        history.replaceState(null, '', `${url.pathname}${url.search}`)
+      }
+
+      function openUserFromQuery() {
+        const params = new URLSearchParams(window.location.search)
+        const rawUser = params.get('user')
+        if (!rawUser) return false
+
+        const key = normalize(rawUser)
+        let user = state.users.find((item) => normalize(item.userLogin) === key)
+        if (!user) user = state.users.find((item) => normalize(item.userName) === key)
+        if (!user) user = state.users.find((item) => normalize(item.userLogin).includes(key) || normalize(item.userName).includes(key))
+        if (!user) return false
+
+        renderUserCard(user, { resetVaultPage: true })
+
+        addTimer(window.setTimeout(() => {
+          document.querySelector('.tnx-users')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }, 180))
+
+        return true
       }
 
       async function copyText(text, button, doneText = 'تم النسخ') {
@@ -2394,31 +2559,49 @@ const metadata = {
 
           path.steps.forEach((step) => {
             if (unlockedSet.has(badgeKey(step.name))) return
-            if (metric >= step.value) return
 
             const badge = getBadgeByName(step.name)
             if (!badge) return
 
             const remaining = Math.max(0, step.value - metric)
             const progress = Math.max(0, Math.min(100, (metric / step.value) * 100))
+            const eligible = metric >= step.value
 
             candidates.push({
               badge,
               remaining,
-              progress,
+              progress: eligible ? 100 : progress,
               unit: path.unit,
-              hasMetric: true,
+              eligible,
+              fallback: false,
             })
           })
         })
 
-        if (candidates.length === 0) return null
+        if (candidates.length > 0) {
+          candidates.sort((a, b) => {
+            if (a.eligible && !b.eligible) return -1
+            if (!a.eligible && b.eligible) return 1
+            return (b.progress || 0) - (a.progress || 0)
+          })
 
-        candidates.sort((a, b) => {
-          return (b.progress || 0) - (a.progress || 0)
-        })
+          return candidates[0]
+        }
 
-        return candidates[0]
+        const fallbackNames = ['15D', '100K', '50Q']
+        for (const name of fallbackNames) {
+          const badge = getBadgeByName(name)
+          if (badge && !unlockedSet.has(badgeKey(badge.name))) {
+            return { badge, remaining: null, progress: null, unit: '', eligible: false, fallback: true }
+          }
+        }
+
+        const firstLocked = state.badges.find((badge) => !unlockedSet.has(badgeKey(badge.name)))
+        if (firstLocked) {
+          return { badge: firstLocked, remaining: null, progress: null, unit: '', eligible: false, fallback: true }
+        }
+
+        return null
       }
 
       function renderNextBadgeBlock(nextBadge) {
@@ -2436,10 +2619,17 @@ const metadata = {
 
         const badge = nextBadge.badge
         const progress = nextBadge.progress !== null ? Math.round(nextBadge.progress) : null
+        const pathInfo = getPathStepForBadge(badge.name)
 
-        const remainingHtml = nextBadge.remaining !== null
-          ? `باقي عليك <b>${formatNumber(nextBadge.remaining)} ${esc(nextBadge.unit)}</b> فقط.`
-          : esc(badge.how)
+        const remainingHtml = nextBadge.eligible
+          ? 'أنت مؤهل لهذا البادج. باقي فقط ينضاف لك من النظام.'
+          : nextBadge.remaining !== null
+            ? `باقي عليك <b>${formatNumber(nextBadge.remaining)} ${esc(nextBadge.unit)}</b> فقط.`
+            : esc(badge.how)
+
+        const label = nextBadge.eligible ? '⚠️ جاهز للاستلام' : '🎯 أقرب بادج لك'
+        const chipPath = pathInfo ? pathInfo.path.title : badge.categoryLabel
+        const chipTarget = pathInfo ? `${formatNumber(pathInfo.step.value)} ${pathInfo.path.unit}` : badge.rarity
 
         const progressHtml = progress !== null
           ? `
@@ -2459,9 +2649,16 @@ const metadata = {
             </div>
 
             <div class="tnx-next-content">
-              <div class="tnx-next-label">🎯 خطوتك الجاية</div>
+              <div class="tnx-next-label">${label}</div>
               <strong class="tnx-next-title">${esc(badge.title)}</strong>
               <p class="tnx-next-desc">${remainingHtml}</p>
+
+              <div class="tnx-next-chip-row">
+                <span class="tnx-next-chip">المسار: <strong>${esc(chipPath)}</strong></span>
+                <span class="tnx-next-chip">الهدف: <strong>${esc(chipTarget)}</strong></span>
+                <span class="tnx-next-chip">اضغط لعرض التفاصيل</span>
+              </div>
+
               ${progressHtml}
             </div>
           </button>
@@ -2469,9 +2666,27 @@ const metadata = {
       }
 
       function renderVaultGrid(user, unlockedSet) {
-        const items = state.badges.map((badge) => {
-          const info = getBadgeProgressInfo(user, badge, unlockedSet)
+        const order = { owned: 0, eligible: 1, locked: 2 }
+        const perPage = 20
 
+        const sortedItems = state.badges
+          .map((badge) => {
+            const info = getBadgeProgressInfo(user, badge, unlockedSet)
+            return { badge, info }
+          })
+          .sort((a, b) => {
+            const statusDiff = order[a.info.status] - order[b.info.status]
+            if (statusDiff !== 0) return statusDiff
+            return a.badge.index - b.badge.index
+          })
+
+        const totalPages = Math.max(1, Math.ceil(sortedItems.length / perPage))
+        state.vaultPage = Math.min(Math.max(1, state.vaultPage || 1), totalPages)
+
+        const start = (state.vaultPage - 1) * perPage
+        const pageItems = sortedItems.slice(start, start + perPage)
+
+        const items = pageItems.map(({ badge, info }) => {
           const iconHtml =
             info.status === 'owned'
               ? `<span class="tnx-vault-check">✓</span>`
@@ -2508,10 +2723,27 @@ const metadata = {
           `
         }).join('')
 
+        const pagination = totalPages > 1
+          ? `
+            <div class="tnx-vault-pagination">
+              <button type="button" class="tnx-vault-page-btn" data-vault-page="prev" ${state.vaultPage <= 1 ? 'disabled' : ''}>
+                السابق
+              </button>
+
+              <span class="tnx-vault-page-label">صفحة ${formatNumber(state.vaultPage)} / ${formatNumber(totalPages)}</span>
+
+              <button type="button" class="tnx-vault-page-btn" data-vault-page="next" ${state.vaultPage >= totalPages ? 'disabled' : ''}>
+                التالية
+              </button>
+            </div>
+          `
+          : ''
+
         return `
           <div class="tnx-vault-grid">
             ${items}
           </div>
+          ${pagination}
         `
       }
 
@@ -2539,8 +2771,14 @@ const metadata = {
           <section class="tnx-progress-panel">
             <div class="tnx-overall">
               <div class="tnx-overall-text">
-                <strong>${formatNumber(unlockedCount)} من ${formatNumber(totalCount)} بادج</strong>
-                <span>${percent}% مكتمل</span>
+                <div>
+                  <strong>${formatNumber(unlockedCount)} من ${formatNumber(totalCount)} بادج</strong>
+                  <span>${percent}% مكتمل</span>
+                </div>
+
+                <button type="button" class="tnx-share-card-link" data-copy-user-link="${esc(user.userLogin || user.userName || '')}">
+                  مشاركة البطاقة
+                </button>
               </div>
 
               <div class="tnx-overall-track">
@@ -2566,8 +2804,11 @@ const metadata = {
         `
       }
 
-      function renderUserCard(details) {
+      function renderUserCard(details, options = {}) {
         if (!userCardContainer || !details) return
+
+        state.currentUser = details
+        if (options.resetVaultPage !== false) state.vaultPage = 1
 
         const baseColor = safeColor(details.backgroundColor || '#423fff')
         const darkColor = shade(baseColor, -20)
@@ -2663,6 +2904,29 @@ const metadata = {
       })
 
       addListener(document, 'click', (event) => {
+        const userLinkButton = event.target.closest('[data-copy-user-link]')
+
+        if (userLinkButton) {
+          const username = userLinkButton.dataset.copyUserLink || ''
+          const user = state.users.find((item) => normalize(item.userLogin) === normalize(username) || normalize(item.userName) === normalize(username))
+
+          if (user) {
+            copyText(getUserLink(user), userLinkButton, 'تم نسخ الرابط')
+          }
+
+          return
+        }
+
+        const vaultPageButton = event.target.closest('[data-vault-page]')
+
+        if (vaultPageButton && state.currentUser) {
+          const dir = vaultPageButton.dataset.vaultPage
+          if (dir === 'next') state.vaultPage += 1
+          if (dir === 'prev') state.vaultPage -= 1
+          renderUserCard(state.currentUser, { resetVaultPage: false })
+          return
+        }
+
         const linkButton = event.target.closest('[data-copy-badge-link]')
 
         if (linkButton) {
@@ -2761,11 +3025,13 @@ const metadata = {
         if (userSearch) userSearch.value = ''
         if (userResults) userResults.innerHTML = ''
 
-        renderUserCard(user)
+        setUserQuery(user)
+        renderUserCard(user, { resetVaultPage: true })
       })
 
-      loadBadges()
-      loadUsers()
+      await loadBadges()
+      await loadUsers()
+      openUserFromQuery()
     })()
   </script>
 
