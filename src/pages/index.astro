@@ -1943,20 +1943,20 @@ const socialLinks = [
         if (!winnersTotalEl) return
 
         try {
-          const response = await fetch('/winners', {
+          const response = await fetch(`/api/winners.json?site=${Date.now()}`, {
             cache: 'no-store',
           })
 
           if (!response.ok) {
-            throw new Error('Failed to load winners page')
+            throw new Error('Failed to load winners.json')
           }
 
-          const html = await response.text()
-          const doc = new DOMParser().parseFromString(html, 'text/html')
-          const count = doc.querySelectorAll('.user-card[data-name]').length
+          const winners = await response.json()
+          const count = Array.isArray(winners) ? winners.length : 0
 
           winnersTotalEl.textContent = count > 0 ? formatNumber(count) : '--'
-        } catch {
+        } catch (error) {
+          console.error('Failed to load winners count:', error)
           winnersTotalEl.textContent = '--'
         }
       }
