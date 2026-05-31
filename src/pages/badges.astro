@@ -24,7 +24,7 @@ const metadata = {
 
         <p>
           البادجات إنجازات تفتحها من الحضور، النقاط، الكويز، التفاعل، أو أحداث المجتمع.
-          هنا تعرف وش كل بادج، كيف تحصل عليه، وتشوف بطاقة أي عضو.
+          هنا تعرف وش كل بادج، كيف تحصل عليه، وتشوف بطاقة أي عضو وتقدمه.
         </p>
 
         <div class="tnx-badges-hero-stats">
@@ -165,7 +165,7 @@ const metadata = {
         <div class="tnx-section-head tnx-section-head--center">
           <span>بطاقات الأعضاء</span>
           <h2>اعرض بطاقة مستخدم</h2>
-          <p>ابحث باسم العضو وشوف بطاقته، وظيفته، نقاطه، الذهب، والبـادجات اللي مركبها.</p>
+          <p>ابحث باسم العضو وشوف بطاقته، وظيفته، نقاطه، الذهب، والبـادجات اللي فاتحها واللي باقي له عليها.</p>
         </div>
 
         <div class="tnx-user-search">
@@ -831,8 +831,9 @@ const metadata = {
     }
 
     .tnx-user-card-container {
-      display: flex;
+      display: grid;
       justify-content: center;
+      gap: 1rem;
       margin-top: 1rem;
       overflow-x: auto;
       padding-bottom: 0.5rem;
@@ -997,6 +998,241 @@ const metadata = {
       filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.35));
     }
 
+    .tnx-progress-panel {
+      width: min(100%, 1000px);
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 1.5rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.07), transparent 35%),
+        rgba(0, 0, 0, 0.34);
+      padding: 1rem;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+    }
+
+    .tnx-progress-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      border-bottom: 1px solid rgba(255, 218, 106, 0.12);
+      padding-bottom: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .tnx-progress-head span {
+      color: #c29200;
+      font-size: 0.75rem;
+      font-weight: 950;
+      letter-spacing: 0.1em;
+    }
+
+    .tnx-progress-head h3 {
+      margin: 0.25rem 0 0;
+      color: #f7e6ac;
+      font-size: 1.55rem;
+      font-weight: 950;
+      line-height: 1.25;
+    }
+
+    .tnx-progress-head p {
+      margin: 0.4rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.85rem;
+      font-weight: 800;
+      line-height: 1.7;
+    }
+
+    .tnx-progress-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.7rem;
+      margin-bottom: 1rem;
+    }
+
+    .tnx-progress-stat {
+      border: 1px solid rgba(255, 218, 106, 0.14);
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.025);
+      padding: 0.85rem;
+    }
+
+    .tnx-progress-stat span {
+      display: block;
+      color: rgb(148, 163, 184);
+      font-size: 0.73rem;
+      font-weight: 900;
+      margin-bottom: 0.35rem;
+    }
+
+    .tnx-progress-stat strong {
+      display: block;
+      color: white;
+      font-size: 1rem;
+      font-weight: 950;
+      line-height: 1.4;
+    }
+
+    .tnx-progress-stat small {
+      display: block;
+      color: #ffda6a;
+      font-size: 0.72rem;
+      font-weight: 900;
+      margin-top: 0.3rem;
+      line-height: 1.5;
+    }
+
+    .tnx-paths-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .tnx-path-card {
+      border: 1px solid rgba(255, 218, 106, 0.14);
+      border-radius: 1.1rem;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.9rem;
+    }
+
+    .tnx-path-card h4 {
+      margin: 0;
+      color: #f7e6ac;
+      font-size: 1rem;
+      font-weight: 950;
+    }
+
+    .tnx-path-card p {
+      margin: 0.35rem 0 0.85rem;
+      color: rgb(156, 163, 175);
+      font-size: 0.78rem;
+      font-weight: 800;
+      line-height: 1.6;
+    }
+
+    .tnx-path-steps {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .tnx-path-step {
+      border: 1px solid rgba(255, 218, 106, 0.1);
+      border-radius: 0.85rem;
+      background: rgba(255, 255, 255, 0.025);
+      padding: 0.65rem;
+    }
+
+    .tnx-path-step.is-open {
+      border-color: rgba(52, 211, 153, 0.32);
+      background: rgba(52, 211, 153, 0.08);
+    }
+
+    .tnx-path-step.is-next {
+      border-color: rgba(255, 218, 106, 0.45);
+      background: rgba(255, 218, 106, 0.09);
+    }
+
+    .tnx-step-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .tnx-step-top strong {
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 950;
+    }
+
+    .tnx-step-top span {
+      color: rgb(209, 213, 219);
+      font-size: 0.72rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .tnx-step-bar {
+      height: 0.42rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .tnx-step-bar i {
+      display: block;
+      height: 100%;
+      width: var(--progress, 0%);
+      border-radius: inherit;
+      background: linear-gradient(90deg, #c29200, #ffda6a);
+    }
+
+    .tnx-step-note {
+      display: block;
+      color: rgb(148, 163, 184);
+      font-size: 0.7rem;
+      font-weight: 800;
+      margin-top: 0.35rem;
+      line-height: 1.45;
+    }
+
+    .tnx-owned-section {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+    }
+
+    .tnx-owned-box {
+      border: 1px solid rgba(255, 218, 106, 0.12);
+      border-radius: 1.1rem;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 0.9rem;
+    }
+
+    .tnx-owned-box h4 {
+      margin: 0 0 0.75rem;
+      color: #f7e6ac;
+      font-size: 1rem;
+      font-weight: 950;
+    }
+
+    .tnx-mini-badge-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+
+    .tnx-mini-badge {
+      display: grid;
+      place-items: center;
+      gap: 0.35rem;
+      border: 1px solid rgba(255, 218, 106, 0.11);
+      border-radius: 0.85rem;
+      background: rgba(255, 255, 255, 0.025);
+      padding: 0.55rem;
+      text-align: center;
+      min-height: 92px;
+    }
+
+    .tnx-mini-badge.is-locked {
+      opacity: 0.45;
+      filter: grayscale(0.8);
+    }
+
+    .tnx-mini-badge img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .tnx-mini-badge span {
+      color: rgb(229, 231, 235);
+      font-size: 0.66rem;
+      font-weight: 900;
+      line-height: 1.3;
+    }
+
     @media (max-width: 1100px) {
       .tnx-vault-layout {
         grid-template-columns: 1fr;
@@ -1010,12 +1246,23 @@ const metadata = {
       .tnx-badge-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
+
+      .tnx-paths-grid,
+      .tnx-progress-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .tnx-owned-section {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 860px) {
       .tnx-vault-top,
       .tnx-guide-grid,
-      .tnx-badges-hero-stats {
+      .tnx-badges-hero-stats,
+      .tnx-paths-grid,
+      .tnx-progress-summary {
         grid-template-columns: 1fr;
       }
 
@@ -1029,6 +1276,10 @@ const metadata = {
 
       .tnx-badge-card {
         scroll-margin-top: 10rem;
+      }
+
+      .tnx-progress-head {
+        display: grid;
       }
     }
 
@@ -1047,6 +1298,10 @@ const metadata = {
 
       .tnx-focus-meta {
         grid-template-columns: 1fr;
+      }
+
+      .tnx-mini-badge-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
   </style>
@@ -1215,7 +1470,7 @@ const metadata = {
         '100K': {
           title: 'رصيد 100K',
           category: 'points',
-          how: 'وصل رصيدك إلى 100,000 نقطة.',
+          how: 'اجمع 100,000 نقطة من التفاعل في البث.',
           rarity: 'أساسي',
           duration: 'دائم',
           difficulty: 'سهل',
@@ -1223,7 +1478,7 @@ const metadata = {
         '250K': {
           title: 'رصيد 250K',
           category: 'points',
-          how: 'وصل رصيدك إلى 250,000 نقطة.',
+          how: 'اجمع 250,000 نقطة من التفاعل في البث.',
           rarity: 'متقدم',
           duration: 'دائم',
           difficulty: 'متوسط',
@@ -1231,7 +1486,7 @@ const metadata = {
         '500K': {
           title: 'رصيد 500K',
           category: 'points',
-          how: 'وصل رصيدك إلى 500,000 نقطة.',
+          how: 'اجمع 500,000 نقطة من التفاعل في البث.',
           rarity: 'متقدم',
           duration: 'دائم',
           difficulty: 'صعب',
@@ -1239,7 +1494,7 @@ const metadata = {
         '1M': {
           title: 'رصيد مليون',
           category: 'points',
-          how: 'وصل رصيدك إلى 1,000,000 نقطة.',
+          how: 'اجمع 1,000,000 نقطة من التفاعل في البث.',
           rarity: 'نادر',
           duration: 'دائم',
           difficulty: 'صعب جدًا',
@@ -1247,7 +1502,7 @@ const metadata = {
         '3M': {
           title: 'رصيد 3 مليون',
           category: 'points',
-          how: 'وصل رصيدك إلى 3,000,000 نقطة.',
+          how: 'اجمع 3,000,000 نقطة من التفاعل في البث.',
           rarity: 'نادر جدًا',
           duration: 'دائم',
           difficulty: 'مستحيل',
@@ -1301,6 +1556,51 @@ const metadata = {
           difficulty: 'خاص',
         },
       }
+
+      const BADGE_PATHS = [
+        {
+          key: 'points',
+          title: 'مسار النقاط',
+          description: 'يعتمد على رصيد نقاطك الحالي.',
+          unit: 'نقطة',
+          metricKeys: ['points', 'totalPoints', 'score'],
+          steps: [
+            { name: '100K', value: 100000 },
+            { name: '250K', value: 250000 },
+            { name: '500K', value: 500000 },
+            { name: '1M', value: 1000000 },
+            { name: '3M', value: 3000000 },
+          ],
+        },
+        {
+          key: 'attendance',
+          title: 'مسار الحضور',
+          description: 'يعتمد على عدد أيام الحضور المسجلة.',
+          unit: 'يوم',
+          metricKeys: ['checkins', 'checkIns', 'dailyCheckIns', 'attendanceDays', 'totalCheckins', 'totalCheckIns', 'streak'],
+          steps: [
+            { name: '15D', value: 15 },
+            { name: '30D', value: 30 },
+            { name: '60D', value: 60 },
+            { name: '100D', value: 100 },
+            { name: '150D', value: 150 },
+          ],
+        },
+        {
+          key: 'quiz',
+          title: 'مسار الكويز',
+          description: 'يعتمد على عدد الإجابات الصحيحة.',
+          unit: 'إجابة',
+          metricKeys: ['quizCorrect', 'correctAnswers', 'quizCorrectAnswers', 'correctQuizAnswers', 'quizWins', 'answersCorrect'],
+          steps: [
+            { name: '50Q', value: 50 },
+            { name: '150Q', value: 150 },
+            { name: '300Q', value: 300 },
+            { name: '600Q', value: 600 },
+            { name: '1000Q', value: 1000 },
+          ],
+        },
+      ]
 
       const JOB_ICONS = window.JOB_ICONS || {
         tier1_Citizen: 'mdi:account',
@@ -1371,8 +1671,61 @@ const metadata = {
           .trim()
       }
 
+      function badgeKey(value) {
+        return normalize(value).replace(/\s+/g, '')
+      }
+
       function formatNumber(n) {
         return Number(n || 0).toLocaleString('de-DE')
+      }
+
+      function parseNumber(value) {
+        if (value === null || value === undefined) return null
+        if (typeof value === 'number' && Number.isFinite(value)) return value
+
+        const cleaned = String(value).replace(/[^\d.-]/g, '')
+        if (!cleaned) return null
+
+        const n = Number(cleaned)
+        return Number.isFinite(n) ? n : null
+      }
+
+      function getMetric(user, keys) {
+        for (const key of keys) {
+          const value = parseNumber(user?.[key])
+          if (value !== null) return value
+        }
+
+        return null
+      }
+
+      function getUserBadgeName(badge) {
+        return String(
+          badge?.name ||
+          badge?.badgeName ||
+          badge?.id ||
+          badge?.code ||
+          badge?.title ||
+          ''
+        ).trim()
+      }
+
+      function getUserBadgeSet(user) {
+        const set = new Set()
+
+        if (!Array.isArray(user?.badges)) return set
+
+        user.badges.forEach((badge) => {
+          const name = getUserBadgeName(badge)
+          if (name) set.add(badgeKey(name))
+        })
+
+        return set
+      }
+
+      function getBadgeByName(name) {
+        const key = badgeKey(name)
+        return state.badges.find((badge) => badgeKey(badge.name) === key)
       }
 
       function badgeSlug(name) {
@@ -1718,6 +2071,210 @@ const metadata = {
         }).join('')
       }
 
+      function getClosestBadge(user, unlockedSet) {
+        const candidates = []
+
+        BADGE_PATHS.forEach((path) => {
+          const metric = getMetric(user, path.metricKeys)
+          if (metric === null) return
+
+          path.steps.forEach((step) => {
+            const isUnlocked = unlockedSet.has(badgeKey(step.name)) || metric >= step.value
+
+            if (isUnlocked) return
+
+            const remaining = Math.max(0, step.value - metric)
+            const progress = Math.max(0, Math.min(100, (metric / step.value) * 100))
+
+            candidates.push({
+              name: step.name,
+              title: getBadgeMeta(step.name).title,
+              pathTitle: path.title,
+              remaining,
+              unit: path.unit,
+              progress,
+            })
+          })
+        })
+
+        if (candidates.length === 0) {
+          const locked = state.badges.find((badge) => !unlockedSet.has(badgeKey(badge.name)))
+          if (!locked) return null
+
+          return {
+            name: locked.name,
+            title: locked.title,
+            pathTitle: locked.categoryLabel,
+            remaining: null,
+            unit: '',
+            progress: null,
+          }
+        }
+
+        candidates.sort((a, b) => b.progress - a.progress)
+        return candidates[0]
+      }
+
+      function renderPathCard(path, user, unlockedSet) {
+        const metric = getMetric(user, path.metricKeys)
+
+        let nextFound = false
+
+        const stepsHtml = path.steps.map((step) => {
+          const meta = getBadgeMeta(step.name)
+          const fromMetric = metric !== null && metric >= step.value
+          const fromBadge = unlockedSet.has(badgeKey(step.name))
+          const isOpen = fromMetric || fromBadge
+          const isNext = !isOpen && !nextFound
+
+          if (isNext) nextFound = true
+
+          const progress = metric === null
+            ? (isOpen ? 100 : 0)
+            : Math.max(0, Math.min(100, (metric / step.value) * 100))
+
+          const remaining = metric === null
+            ? null
+            : Math.max(0, step.value - metric)
+
+          let status = 'مقفل'
+          let note = 'لا توجد بيانات تقدم رقمية لهذا المسار'
+
+          if (isOpen) {
+            status = 'مفتوح'
+            note = 'تم فتح هذا البادج'
+          } else if (remaining !== null) {
+            status = isNext ? 'الأقرب' : 'باقي'
+            note = `باقي ${formatNumber(remaining)} ${path.unit}`
+          }
+
+          return `
+            <div class="tnx-path-step ${isOpen ? 'is-open' : ''} ${isNext ? 'is-next' : ''}">
+              <div class="tnx-step-top">
+                <strong>${esc(meta.title)}</strong>
+                <span>${esc(status)}</span>
+              </div>
+
+              <div class="tnx-step-bar" style="--progress:${progress}%">
+                <i></i>
+              </div>
+
+              <small class="tnx-step-note">${esc(note)}</small>
+            </div>
+          `
+        }).join('')
+
+        const metricText = metric === null
+          ? 'الرقم غير متوفر'
+          : `${formatNumber(metric)} ${path.unit}`
+
+        return `
+          <div class="tnx-path-card">
+            <h4>${esc(path.title)}</h4>
+            <p>${esc(path.description)} — الحالي: ${esc(metricText)}</p>
+            <div class="tnx-path-steps">
+              ${stepsHtml}
+            </div>
+          </div>
+        `
+      }
+
+      function renderMiniBadgeList(badges, locked = false) {
+        if (!badges.length) {
+          return `<div class="tnx-empty"><strong>لا يوجد</strong><span>ما فيه بادجات في هذا القسم.</span></div>`
+        }
+
+        return `
+          <div class="tnx-mini-badge-grid">
+            ${badges.map((badge) => `
+              <div class="tnx-mini-badge ${locked ? 'is-locked' : ''}">
+                <img src="${esc(badge.image)}" alt="${esc(badge.name)}" loading="lazy" />
+                <span>${esc(badge.title || badge.name)}</span>
+              </div>
+            `).join('')}
+          </div>
+        `
+      }
+
+      function renderUserProgress(user, equippedBadges) {
+        const unlockedSet = getUserBadgeSet(user)
+
+        const unlockedBadges = state.badges.filter((badge) => unlockedSet.has(badgeKey(badge.name)))
+        const lockedBadges = state.badges.filter((badge) => !unlockedSet.has(badgeKey(badge.name)))
+
+        const closest = getClosestBadge(user, unlockedSet)
+        const unlockedCount = unlockedBadges.length
+        const totalCount = state.badges.length
+        const equippedCount = equippedBadges.length
+        const points = parseNumber(user.points) ?? 0
+
+        const closestText = closest
+          ? `${closest.title}`
+          : 'كل شيء مفتوح'
+
+        const closestNote = closest
+          ? closest.remaining === null
+            ? 'افتح شروطه من نظام البث'
+            : `باقي ${formatNumber(closest.remaining)} ${closest.unit}`
+          : 'ما بقي شيء واضح حاليًا'
+
+        return `
+          <section class="tnx-progress-panel">
+            <div class="tnx-progress-head">
+              <div>
+                <span>BADGE PROGRESS</span>
+                <h3>تقدم البادجات</h3>
+                <p>
+                  هنا تشوف وش فتح المستخدم، وش البادجات اللي باقي عليها، وأقرب هدف يقدر يوصله.
+                </p>
+              </div>
+            </div>
+
+            <div class="tnx-progress-summary">
+              <div class="tnx-progress-stat">
+                <span>البادجات المفتوحة</span>
+                <strong>${formatNumber(unlockedCount)} من ${formatNumber(totalCount)}</strong>
+                <small>${totalCount > 0 ? Math.round((unlockedCount / totalCount) * 100) : 0}% مكتمل</small>
+              </div>
+
+              <div class="tnx-progress-stat">
+                <span>البادجات المركبة</span>
+                <strong>${formatNumber(equippedCount)}</strong>
+                <small>اللي تظهر في البطاقة</small>
+              </div>
+
+              <div class="tnx-progress-stat">
+                <span>أقرب بادج</span>
+                <strong>${esc(closestText)}</strong>
+                <small>${esc(closestNote)}</small>
+              </div>
+
+              <div class="tnx-progress-stat">
+                <span>النقاط الحالية</span>
+                <strong>${formatNumber(points)}</strong>
+                <small>حسب بيانات الموقع الحالية</small>
+              </div>
+            </div>
+
+            <div class="tnx-paths-grid">
+              ${BADGE_PATHS.map((path) => renderPathCard(path, user, unlockedSet)).join('')}
+            </div>
+
+            <div class="tnx-owned-section">
+              <div class="tnx-owned-box">
+                <h4>البادجات المفتوحة</h4>
+                ${renderMiniBadgeList(unlockedBadges.slice(0, 20), false)}
+              </div>
+
+              <div class="tnx-owned-box">
+                <h4>البادجات الباقية</h4>
+                ${renderMiniBadgeList(lockedBadges.slice(0, 20), true)}
+              </div>
+            </div>
+          </section>
+        `
+      }
+
       function renderUserCard(details) {
         if (!userCardContainer || !details) return
 
@@ -1789,6 +2346,8 @@ const metadata = {
               </div>
             </div>
           </div>
+
+          ${renderUserProgress(details, equippedBadges)}
         `
       }
 
