@@ -4,7 +4,7 @@ import Layout from '~/layouts/PageLayout.astro';
 const metadata = {
   title: 'Items — TNX6',
   ignoreTitleTemplate: true,
-  description: 'خزنة الأغراض والصناعة في مجتمع TNX6.',
+  description: 'سوق أغراض مجتمع TNX6 — تصنيفات، تركيب، صناديق وأكثر.',
 };
 ---
 
@@ -12,8 +12,6 @@ const metadata = {
   <main class="tnx-items-page" dir="rtl">
     <div class="tnx-bg"></div>
     <div class="tnx-grid-bg"></div>
-    <div class="tnx-glow-orb tnx-glow-orb-1"></div>
-    <div class="tnx-glow-orb tnx-glow-orb-2"></div>
 
     <button id="backToTop" class="tnx-back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
 
@@ -21,13 +19,13 @@ const metadata = {
       <header class="tnx-hero tnx-reveal">
         <div class="tnx-eyebrow">
           <span></span>
-          TNX ITEM VAULT
+          TNX6 ITEMS MARKET
         </div>
 
-        <h1>خزنة الأغراض</h1>
+        <h1>سوق الأغراض</h1>
 
         <p>
-          أغراض البث، الصناديق، الرخص، المواد، ووصفات الدمج في مكان واحد. اضغط على أي غرض عشان تعرف قيمته، استخدامه، وطريقة الحصول عليه.
+          كل الأغراض المتاحة في الستريم. تتجمع، تتشترى، تتركّب، تنفجر، أو تنطبخ.
         </p>
 
         <div class="tnx-hero-stats">
@@ -36,66 +34,91 @@ const metadata = {
             <span>غرض</span>
           </div>
           <div>
-            <strong id="statCrafting">0</strong>
-            <span>وصفة دمج</span>
+            <strong id="statCategories">0</strong>
+            <span>تصنيف</span>
           </div>
           <div>
-            <strong id="statTopValue">0</strong>
-            <span>أغلى قيمة</span>
+            <strong id="statCrafting">0</strong>
+            <span>وصفة تركيب</span>
+          </div>
+          <div>
+            <strong id="statRare">0</strong>
+            <span>نادر / خاص</span>
           </div>
         </div>
       </header>
 
-      <section class="tnx-featured tnx-reveal">
-        <div class="tnx-section-head tnx-center">
-          <span>HIGH VALUE ITEMS</span>
-          <h2>الأغراض الثقيلة</h2>
-          <p>هنا تظهر الأغراض اللي لها تأثير قوي أو قيمة عالية في النظام.</p>
+      <section class="tnx-howto tnx-reveal">
+        <div class="tnx-section-head">
+          <span>طرق الحصول</span>
+          <h2>كيف تحصل الأغراض؟</h2>
+          <p>كل غرض تحصله بطريقة من ثلاث.</p>
         </div>
 
-        <div id="featuredGrid" class="tnx-featured-grid"></div>
+        <div class="tnx-howto-grid">
+          <button type="button" class="tnx-howto-card" data-filter-mode="purchase">
+            <div class="tnx-howto-icon" style="--tnx-c: #ffda6a;">🪙</div>
+            <div>
+              <strong>الشراء بالنقاط</strong>
+              <p>أغراض متاحة في المتجر مباشرة برصيد النقاط.</p>
+            </div>
+          </button>
+
+          <button type="button" class="tnx-howto-card" data-filter-mode="craft">
+            <div class="tnx-howto-icon" style="--tnx-c: #34d399;">⚒️</div>
+            <div>
+              <strong>التركيب من السمعة</strong>
+              <p>أغراض حصرية تركّبها من مكونات بعملة السمعة.</p>
+            </div>
+          </button>
+
+          <button type="button" class="tnx-howto-card" data-filter-mode="box">
+            <div class="tnx-howto-icon" style="--tnx-c: #c084fc;">🎁</div>
+            <div>
+              <strong>الصناديق</strong>
+              <p>افتح صندوق وخذ غرض عشوائي حسب نوع الصندوق.</p>
+            </div>
+          </button>
+        </div>
+      </section>
+
+      <section class="tnx-toolbar tnx-reveal">
+        <div class="tnx-search">
+          <span>⌕</span>
+          <input id="itemSearch" type="search" autocomplete="off" placeholder="ابحث: نيوك، Vip، صندوق، خشب، سمعة..." />
+          <button type="button" id="clearItemSearch">×</button>
+        </div>
+
+        <div class="tnx-filter-row" id="itemFilters">
+          <button type="button" class="is-active" data-filter="all"><span>الكل</span><small id="count-all">0</small></button>
+          <button type="button" data-filter="status"><span>👑 مكانة</span><small id="count-status">0</small></button>
+          <button type="button" data-filter="attacks"><span>💥 هجمات</span><small id="count-attacks">0</small></button>
+          <button type="button" data-filter="pvp"><span>⚔️ PvP</span><small id="count-pvp">0</small></button>
+          <button type="button" data-filter="luck"><span>🎲 حظ</span><small id="count-luck">0</small></button>
+          <button type="button" data-filter="boxes"><span>🎁 صناديق</span><small id="count-boxes">0</small></button>
+          <button type="button" data-filter="permits"><span>📜 رخص</span><small id="count-permits">0</small></button>
+          <button type="button" data-filter="resources"><span>🌾 موارد</span><small id="count-resources">0</small></button>
+          <button type="button" data-filter="fishing"><span>🎣 صيد</span><small id="count-fishing">0</small></button>
+          <button type="button" data-filter="cooking"><span>🍳 طبخ</span><small id="count-cooking">0</small></button>
+          <button type="button" data-filter="rare"><span>✨ نادر</span><small id="count-rare">0</small></button>
+          <button type="button" data-filter="economy"><span>💎 اقتصاد</span><small id="count-economy">0</small></button>
+        </div>
       </section>
 
       <section class="tnx-vault tnx-reveal">
-        <div class="tnx-vault-top">
-          <div class="tnx-section-head">
-            <span>ITEM DATABASE</span>
-            <h2>كل الأغراض</h2>
-            <p>ابحث، فلتر، واضغط على الغرض عشان تظهر تفاصيله.</p>
-          </div>
-
-          <div class="tnx-search">
-            <span>⌕</span>
-            <input id="itemSearch" type="search" autocomplete="off" placeholder="ابحث: نيوك، Vip، صندوق، خشب، رخصة..." />
-            <button type="button" id="clearItemSearch">×</button>
-          </div>
-        </div>
-
-        <div id="itemFilters" class="tnx-filter-row">
-          <button type="button" class="is-active" data-filter="all"><span>الكل</span><small id="count-all">0</small></button>
-          <button type="button" data-filter="legendary"><span>أسطوري</span><small id="count-legendary">0</small></button>
-          <button type="button" data-filter="interactive"><span>تفاعلي</span><small id="count-interactive">0</small></button>
-          <button type="button" data-filter="loot"><span>صناديق</span><small id="count-loot">0</small></button>
-          <button type="button" data-filter="material"><span>مواد</span><small id="count-material">0</small></button>
-          <button type="button" data-filter="license"><span>رخص / رتب</span><small id="count-license">0</small></button>
-          <button type="button" data-filter="purchasable"><span>قابل للشراء</span><small id="count-purchasable">0</small></button>
-          <button type="button" data-filter="usable"><span>قابل للاستخدام</span><small id="count-usable">0</small></button>
-          <button type="button" data-filter="limited"><span>محدود</span><small id="count-limited">0</small></button>
-        </div>
-
         <div class="tnx-vault-layout">
           <div>
             <div id="itemsGrid" class="tnx-items-grid"></div>
 
             <div id="itemsEmpty" class="tnx-empty hidden">
               <strong>ما لقيت غرض مطابق</strong>
-              <span>جرّب تبحث باسم أبسط أو غيّر الفلتر.</span>
+              <span>جرّب تبحث باسم أبسط مثل: نيوك، Vip، صندوق، خشب.</span>
             </div>
           </div>
 
           <aside id="itemFocusPanel" class="tnx-focus-panel">
             <div class="tnx-focus-placeholder">
-              <div>🎒</div>
+              <div>⬟</div>
               <h3>اختر غرض</h3>
               <p>اضغط على أي غرض من القائمة عشان تظهر تفاصيله هنا.</p>
             </div>
@@ -104,62 +127,32 @@ const metadata = {
       </section>
 
       <section class="tnx-crafting tnx-reveal">
-        <div class="tnx-section-head tnx-center">
-          <span>CRAFTING RECIPES</span>
-          <h2>وصفات الدمج</h2>
-          <p>المكونات المطلوبة والنتيجة النهائية لكل وصفة.</p>
+        <div class="tnx-section-head">
+          <span>CRAFTING</span>
+          <h2>وصفات التركيب</h2>
+          <p>ركّب أغراض حصرية بمكونات معينة وعملة السمعة.</p>
         </div>
 
         <div id="craftingGrid" class="tnx-crafting-grid"></div>
-      </section>
 
-      <section class="tnx-loot tnx-reveal">
-        <div class="tnx-section-head tnx-center">
-          <span>LOOT TABLES</span>
-          <h2>جداول الصناديق</h2>
-          <p>إذا عندك صناديق أو احتمالات، تظهر هنا من ملف البيانات.</p>
+        <div id="craftingEmpty" class="tnx-empty hidden">
+          <strong>ما فيه وصفات تركيب</strong>
+          <span>أضف crafting في items.json بتظهر هنا.</span>
         </div>
-
-        <div id="lootGrid" class="tnx-loot-grid"></div>
       </section>
     </section>
   </main>
 
   <style is:global>
-    :root {
-      --tnx-gold: #ffda6a;
-      --tnx-gold-2: #c29200;
-      --tnx-cream: #f7e6ac;
-      --tnx-bg: #07050b;
-      --tnx-panel: rgba(6, 6, 8, 0.78);
+    .hidden {
+      display: none !important;
     }
-
-    html {
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255, 218, 106, 0.65) rgba(7, 5, 11, 0.95);
-    }
-
-    html::-webkit-scrollbar {
-      width: 10px;
-    }
-
-    html::-webkit-scrollbar-track {
-      background: rgba(7, 5, 11, 0.96);
-    }
-
-    html::-webkit-scrollbar-thumb {
-      border: 2px solid rgba(7, 5, 11, 0.96);
-      border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255, 218, 106, 0.9), rgba(194, 146, 0, 0.7));
-    }
-
-    .hidden { display: none !important; }
 
     .tnx-items-page {
       position: relative;
       min-height: 100vh;
       overflow: hidden;
-      background: var(--tnx-bg);
+      background: #07050b;
       color: white;
       font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
@@ -170,16 +163,10 @@ const metadata = {
       z-index: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 12% 9%, rgba(255, 218, 106, 0.16), transparent 28%),
-        radial-gradient(circle at 86% 14%, rgba(194, 146, 0, 0.14), transparent 34%),
-        radial-gradient(circle at 48% 92%, rgba(124, 58, 237, 0.10), transparent 38%),
+        radial-gradient(circle at 12% 9%, rgba(255, 218, 106, 0.13), transparent 28%),
+        radial-gradient(circle at 86% 14%, rgba(194, 146, 0, 0.12), transparent 34%),
+        radial-gradient(circle at 48% 92%, rgba(124, 58, 237, 0.09), transparent 38%),
         linear-gradient(135deg, #07050b 0%, #050507 55%, #130c05 100%);
-      animation: tnxBgBreathe 13s ease-in-out infinite;
-    }
-
-    @keyframes tnxBgBreathe {
-      0%, 100% { filter: brightness(1) saturate(1); transform: scale(1); }
-      50% { filter: brightness(1.13) saturate(1.12); transform: scale(1.015); }
     }
 
     .tnx-grid-bg {
@@ -187,42 +174,12 @@ const metadata = {
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      opacity: 0.07;
+      opacity: 0.055;
       background-image:
-        linear-gradient(rgba(255, 218, 106, 0.4) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 218, 106, 0.4) 1px, transparent 1px);
+        linear-gradient(rgba(255, 218, 106, 0.42) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 218, 106, 0.42) 1px, transparent 1px);
       background-size: 58px 58px;
       mask-image: radial-gradient(circle at center, black 0%, transparent 74%);
-    }
-
-    .tnx-glow-orb {
-      position: fixed;
-      z-index: 0;
-      pointer-events: none;
-      width: 26rem;
-      height: 26rem;
-      border-radius: 999px;
-      filter: blur(74px);
-      opacity: 0.16;
-      animation: tnxOrbFloat 18s ease-in-out infinite;
-    }
-
-    .tnx-glow-orb-1 {
-      top: 12%;
-      right: -10rem;
-      background: rgba(255, 218, 106, 0.42);
-    }
-
-    .tnx-glow-orb-2 {
-      bottom: 8%;
-      left: -10rem;
-      background: rgba(124, 58, 237, 0.4);
-      animation-delay: -5s;
-    }
-
-    @keyframes tnxOrbFloat {
-      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-      50% { transform: translate3d(2rem, -1rem, 0) scale(1.08); }
     }
 
     .tnx-shell {
@@ -244,17 +201,17 @@ const metadata = {
       height: 3.1rem;
       border: 1px solid rgba(255, 218, 106, 0.42);
       border-radius: 999px;
-      background: rgba(7, 5, 11, 0.88);
-      color: var(--tnx-gold);
+      background: rgba(7, 5, 11, 0.9);
+      color: #ffda6a;
       font-size: 1.35rem;
       font-weight: 950;
       cursor: pointer;
-      box-shadow: 0 18px 40px rgba(0,0,0,.45), 0 0 22px rgba(255,218,106,.12);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 0 22px rgba(255, 218, 106, 0.12);
       backdrop-filter: blur(14px);
       opacity: 0;
       transform: translateY(16px) scale(0.92);
       pointer-events: none;
-      transition: 180ms ease;
+      transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .tnx-back-top.is-visible {
@@ -265,13 +222,13 @@ const metadata = {
 
     .tnx-back-top:hover {
       transform: translateY(-3px) scale(1.04);
-      border-color: rgba(255, 218, 106, 0.75);
+      border-color: rgba(255, 218, 106, 0.78);
     }
 
     .tnx-reveal {
       opacity: 0;
-      transform: translateY(22px);
-      transition: opacity 600ms ease, transform 600ms ease;
+      transform: translateY(20px);
+      transition: opacity 650ms ease, transform 650ms ease;
     }
 
     .tnx-reveal.is-visible {
@@ -280,7 +237,7 @@ const metadata = {
     }
 
     .tnx-hero {
-      max-width: 920px;
+      max-width: 940px;
       margin: 0 auto 1.25rem;
       text-align: center;
     }
@@ -288,241 +245,199 @@ const metadata = {
     .tnx-eyebrow {
       display: inline-flex;
       align-items: center;
-      gap: .55rem;
-      border: 1px solid rgba(255,218,106,.28);
+      gap: 0.55rem;
+      border: 1px solid rgba(255, 218, 106, 0.3);
       border-radius: 999px;
-      background: rgba(0,0,0,.36);
-      color: var(--tnx-gold);
-      padding: .55rem .9rem;
-      font-size: .78rem;
+      background: rgba(0, 0, 0, 0.4);
+      color: #ffda6a;
+      padding: 0.55rem 0.95rem;
+      font-size: 0.78rem;
       font-weight: 950;
-      letter-spacing: .18em;
+      letter-spacing: 0.16em;
     }
 
     .tnx-eyebrow span {
-      width: .48rem;
-      height: .48rem;
+      width: 0.48rem;
+      height: 0.48rem;
       border-radius: 999px;
-      background: var(--tnx-gold);
-      box-shadow: 0 0 14px var(--tnx-gold);
+      background: #ffda6a;
+      box-shadow: 0 0 14px #ffda6a;
       animation: tnxPulse 1.8s ease-in-out infinite;
     }
 
     @keyframes tnxPulse {
-      0%, 100% { transform: scale(1); opacity: .95; }
-      50% { transform: scale(1.35); opacity: .55; }
+      0%, 100% { opacity: 0.75; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.25); }
     }
 
     .tnx-hero h1 {
-      margin: 1.15rem 0 0;
+      margin: 1.1rem 0 0;
       background: linear-gradient(90deg, #fff1a8, #ffda6a 44%, #c29200);
       background-clip: text;
       color: transparent;
-      font-size: clamp(3.2rem, 8vw, 6.8rem);
+      font-size: clamp(3.1rem, 7vw, 6.6rem);
       font-weight: 950;
-      line-height: .95;
-      letter-spacing: -.06em;
+      line-height: 0.95;
+      letter-spacing: -0.055em;
     }
 
     .tnx-hero p {
       max-width: 760px;
       margin: 1.15rem auto 0;
       color: rgb(209, 213, 219);
-      font-size: 1.03rem;
+      font-size: 1.04rem;
       font-weight: 760;
       line-height: 1.9;
     }
 
     .tnx-hero-stats {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: .85rem;
-      max-width: 760px;
-      margin: 1.25rem auto 0;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.85rem;
+      max-width: 860px;
+      margin: 1.35rem auto 0;
     }
 
     .tnx-hero-stats div,
-    .tnx-featured,
-    .tnx-vault,
-    .tnx-crafting,
-    .tnx-loot,
-    .tnx-focus-panel {
-      border: 1px solid rgba(255,218,106,.18);
-      background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012)), rgba(6,6,8,.78);
-      box-shadow: 0 24px 70px rgba(0,0,0,.44), inset 0 0 22px rgba(255,218,106,.025);
+    .tnx-howto,
+    .tnx-toolbar,
+    .tnx-focus-panel,
+    .tnx-crafting {
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)), rgba(6, 6, 8, 0.78);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.44), inset 0 0 22px rgba(255, 218, 106, 0.025);
       backdrop-filter: blur(16px);
     }
 
     .tnx-hero-stats div {
       border-radius: 1.25rem;
-      padding: 1rem;
+      padding: 0.9rem;
     }
 
     .tnx-hero-stats strong {
       display: block;
-      color: var(--tnx-gold);
-      font-size: 1.8rem;
+      color: #ffda6a;
+      font-size: 1.7rem;
       font-weight: 950;
       line-height: 1;
-      direction: ltr;
     }
 
     .tnx-hero-stats span {
       display: block;
-      margin-top: .35rem;
+      margin-top: 0.35rem;
       color: rgb(156, 163, 175);
-      font-size: .8rem;
+      font-size: 0.78rem;
       font-weight: 850;
     }
 
-    .tnx-featured,
-    .tnx-vault,
-    .tnx-crafting,
-    .tnx-loot {
+    .tnx-howto,
+    .tnx-toolbar,
+    .tnx-crafting {
       margin-top: 1rem;
       border-radius: 1.8rem;
       padding: 1.25rem;
     }
 
+    .tnx-section-head {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
     .tnx-section-head span {
-      color: var(--tnx-gold-2);
-      font-size: .78rem;
+      color: #c29200;
+      font-size: 0.78rem;
       font-weight: 950;
-      letter-spacing: .12em;
+      letter-spacing: 0.12em;
     }
 
     .tnx-section-head h2 {
-      margin: .3rem 0 0;
-      color: var(--tnx-cream);
+      margin: 0.35rem 0 0;
+      color: #f7e6ac;
       font-size: 2rem;
       font-weight: 950;
       line-height: 1.15;
     }
 
     .tnx-section-head p {
-      margin: .5rem 0 0;
+      margin: 0.45rem auto 0;
       color: rgb(156, 163, 175);
-      font-size: .92rem;
+      font-size: 0.92rem;
       font-weight: 800;
       line-height: 1.75;
+      max-width: 560px;
     }
 
-    .tnx-center { text-align: center; }
-
-    .tnx-featured-grid {
+    .tnx-howto-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: .9rem;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
       margin-top: 1rem;
     }
 
-    .tnx-boss-card {
-      position: relative;
-      overflow: hidden;
-      min-height: 210px;
-      border: 1px solid rgba(255,218,106,.18);
-      border-radius: 1.45rem;
-      background: radial-gradient(circle at 30% 0%, rgba(255,218,106,.14), transparent 48%), rgba(0,0,0,.32);
+    .tnx-howto-card {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.85rem;
+      min-height: 130px;
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 1.25rem;
+      background: radial-gradient(circle at top right, rgba(255, 218, 106, 0.07), transparent 42%), rgba(0, 0, 0, 0.3);
       color: white;
       padding: 1rem;
       text-align: right;
       cursor: pointer;
-      transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+      transition: 200ms ease;
+      align-items: center;
     }
 
-    .tnx-boss-card::before {
-      content: '';
-      position: absolute;
-      inset: -45%;
-      background: conic-gradient(from 180deg, transparent, rgba(255,218,106,.13), transparent 32%);
-      animation: tnxCardShine 7s linear infinite;
-      opacity: .8;
-      pointer-events: none;
+    .tnx-howto-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 218, 106, 0.5);
+      background: radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 42%), rgba(0, 0, 0, 0.38);
     }
 
-    @keyframes tnxCardShine { to { transform: rotate(360deg); } }
-
-    .tnx-boss-card:hover {
-      transform: translateY(-4px) scale(1.012);
-      border-color: rgba(255,218,106,.54);
-      box-shadow: 0 18px 44px rgba(0,0,0,.44), 0 0 28px rgba(255,218,106,.12);
-    }
-
-    .tnx-boss-content {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      gap: .75rem;
-      height: 100%;
-    }
-
-    .tnx-boss-icon {
+    .tnx-howto-icon {
       display: grid;
       place-items: center;
-      width: 4.2rem;
-      height: 4.2rem;
-      border: 1px solid rgba(255,218,106,.25);
-      border-radius: 1.25rem;
-      background: rgba(255,218,106,.08);
-      font-size: 2.1rem;
-      box-shadow: inset 0 0 24px rgba(255,218,106,.035);
+      width: 3.2rem;
+      height: 3.2rem;
+      border-radius: 1rem;
+      border: 1px solid color-mix(in srgb, var(--tnx-c, #ffda6a) 40%, transparent);
+      background: color-mix(in srgb, var(--tnx-c, #ffda6a) 12%, transparent);
+      font-size: 1.6rem;
     }
 
-    .tnx-boss-card h3 {
-      margin: 0;
+    .tnx-howto-card strong {
+      display: block;
       color: white;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 950;
-      line-height: 1.3;
+      line-height: 1.35;
     }
 
-    .tnx-boss-card p {
-      margin: 0;
-      color: rgb(209,213,219);
-      font-size: .82rem;
+    .tnx-howto-card p {
+      margin: 0.35rem 0 0;
+      color: rgb(209, 213, 219);
+      font-size: 0.84rem;
       font-weight: 800;
       line-height: 1.65;
-    }
-
-    .tnx-boss-price {
-      margin-top: auto;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: fit-content;
-      gap: .35rem;
-      border: 1px solid rgba(255,218,106,.26);
-      border-radius: .85rem;
-      background: rgba(255,218,106,.08);
-      color: var(--tnx-gold);
-      padding: .45rem .7rem;
-      font-size: .82rem;
-      font-weight: 950;
-      direction: ltr;
-    }
-
-    .tnx-vault-top {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(280px, 430px);
-      gap: 1rem;
-      align-items: end;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(255,218,106,.12);
     }
 
     .tnx-search {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr) auto;
-      gap: .75rem;
+      gap: 0.75rem;
       align-items: center;
-      border: 1px solid rgba(255,218,106,.2);
+      border: 1px solid rgba(255, 218, 106, 0.2);
       border-radius: 1.15rem;
-      background: rgba(0,0,0,.32);
-      padding: .85rem;
+      background: rgba(0, 0, 0, 0.32);
+      padding: 0.85rem;
+      max-width: 700px;
+      margin: 0 auto;
     }
 
     .tnx-search span {
-      color: var(--tnx-gold);
+      color: #ffda6a;
       font-size: 1.4rem;
       font-weight: 950;
     }
@@ -532,7 +447,7 @@ const metadata = {
       border: 0;
       background: transparent;
       color: white;
-      font-size: .95rem;
+      font-size: 0.95rem;
       font-weight: 850;
       outline: none;
     }
@@ -542,17 +457,14 @@ const metadata = {
       place-items: center;
       width: 2.2rem;
       height: 2.2rem;
-      border: 1px solid rgba(255,218,106,.2);
+      border: 1px solid rgba(255, 218, 106, 0.2);
       border-radius: 999px;
-      background: rgba(255,218,106,.08);
-      color: var(--tnx-gold);
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
       font-size: 1.2rem;
       font-weight: 950;
       cursor: pointer;
-      transition: 180ms ease;
     }
-
-    .tnx-search button:hover { transform: scale(1.06); border-color: rgba(255,218,106,.5); }
 
     .tnx-filter-row {
       position: sticky;
@@ -560,39 +472,34 @@ const metadata = {
       z-index: 30;
       display: flex;
       flex-wrap: wrap;
+      gap: 0.55rem;
+      margin: 1rem auto 0;
       justify-content: center;
-      gap: .55rem;
-      margin: 1rem 0;
-      border: 1px solid rgba(255,218,106,.18);
-      border-radius: 1rem;
-      background: rgba(7,5,11,.9);
-      padding: .7rem;
-      box-shadow: 0 14px 40px rgba(0,0,0,.35);
-      backdrop-filter: blur(14px);
+      max-width: 1060px;
     }
 
     .tnx-filter-row button {
       display: inline-flex;
       align-items: center;
-      gap: .45rem;
-      border: 1px solid rgba(255,218,106,.24);
-      border-radius: .9rem;
-      background: rgba(255,218,106,.08);
-      color: var(--tnx-cream);
-      padding: .62rem .8rem;
-      font-size: .82rem;
+      gap: 0.45rem;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 0.9rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.8rem;
       font-weight: 950;
       cursor: pointer;
-      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+      transition: 200ms ease;
       white-space: nowrap;
     }
 
     .tnx-filter-row button:hover,
     .tnx-filter-row button.is-active {
-      transform: translateY(-2px) scale(1.015);
-      border-color: rgba(255,218,106,.55);
-      background: rgba(255,218,106,.14);
-      color: var(--tnx-gold);
+      transform: translateY(-1px);
+      border-color: rgba(255, 218, 106, 0.55);
+      background: rgba(255, 218, 106, 0.14);
+      color: #ffda6a;
     }
 
     .tnx-filter-row small {
@@ -601,14 +508,18 @@ const metadata = {
       min-width: 1.35rem;
       height: 1.35rem;
       border-radius: 999px;
-      background: rgba(0,0,0,.34);
-      color: rgb(229,231,235);
-      font-size: .68rem;
+      background: rgba(0, 0, 0, 0.34);
+      color: rgb(229, 231, 235);
+      font-size: 0.66rem;
+    }
+
+    .tnx-vault {
+      margin-top: 1rem;
     }
 
     .tnx-vault-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 350px;
+      grid-template-columns: minmax(0, 1fr) 340px;
       gap: 1rem;
       align-items: start;
     }
@@ -616,133 +527,160 @@ const metadata = {
     .tnx-items-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: .85rem;
+      gap: 0.85rem;
     }
 
+    /* ============ Category color tokens ============ */
     .tnx-item-card {
-      --stagger: 0ms;
+      --tnx-cat: #ffda6a;
+      --tnx-cat-soft: rgba(255, 218, 106, 0.08);
+      --tnx-cat-border: rgba(255, 218, 106, 0.18);
+      --tnx-cat-glow: rgba(255, 218, 106, 0.12);
+    }
+    .tnx-item-card.cat-status { --tnx-cat: #c084fc; --tnx-cat-soft: rgba(192, 132, 252, 0.1); --tnx-cat-border: rgba(192, 132, 252, 0.32); --tnx-cat-glow: rgba(192, 132, 252, 0.15); }
+    .tnx-item-card.cat-attacks { --tnx-cat: #f87171; --tnx-cat-soft: rgba(248, 113, 113, 0.1); --tnx-cat-border: rgba(248, 113, 113, 0.32); --tnx-cat-glow: rgba(248, 113, 113, 0.15); }
+    .tnx-item-card.cat-pvp { --tnx-cat: #fb923c; --tnx-cat-soft: rgba(251, 146, 60, 0.1); --tnx-cat-border: rgba(251, 146, 60, 0.32); --tnx-cat-glow: rgba(251, 146, 60, 0.15); }
+    .tnx-item-card.cat-luck { --tnx-cat: #fbbf24; --tnx-cat-soft: rgba(251, 191, 36, 0.1); --tnx-cat-border: rgba(251, 191, 36, 0.32); --tnx-cat-glow: rgba(251, 191, 36, 0.15); }
+    .tnx-item-card.cat-boxes { --tnx-cat: #34d399; --tnx-cat-soft: rgba(52, 211, 153, 0.1); --tnx-cat-border: rgba(52, 211, 153, 0.32); --tnx-cat-glow: rgba(52, 211, 153, 0.15); }
+    .tnx-item-card.cat-permits { --tnx-cat: #60a5fa; --tnx-cat-soft: rgba(96, 165, 250, 0.1); --tnx-cat-border: rgba(96, 165, 250, 0.32); --tnx-cat-glow: rgba(96, 165, 250, 0.15); }
+    .tnx-item-card.cat-resources { --tnx-cat: #a3a3a3; --tnx-cat-soft: rgba(163, 163, 163, 0.08); --tnx-cat-border: rgba(163, 163, 163, 0.28); --tnx-cat-glow: rgba(163, 163, 163, 0.12); }
+    .tnx-item-card.cat-fishing { --tnx-cat: #38bdf8; --tnx-cat-soft: rgba(56, 189, 248, 0.1); --tnx-cat-border: rgba(56, 189, 248, 0.32); --tnx-cat-glow: rgba(56, 189, 248, 0.15); }
+    .tnx-item-card.cat-cooking { --tnx-cat: #fb7185; --tnx-cat-soft: rgba(251, 113, 133, 0.1); --tnx-cat-border: rgba(251, 113, 133, 0.32); --tnx-cat-glow: rgba(251, 113, 133, 0.15); }
+    .tnx-item-card.cat-rare { --tnx-cat: #ffda6a; --tnx-cat-soft: rgba(255, 218, 106, 0.12); --tnx-cat-border: rgba(255, 218, 106, 0.5); --tnx-cat-glow: rgba(255, 218, 106, 0.22); }
+    .tnx-item-card.cat-economy { --tnx-cat: #f7e6ac; --tnx-cat-soft: rgba(247, 230, 172, 0.1); --tnx-cat-border: rgba(247, 230, 172, 0.32); --tnx-cat-glow: rgba(247, 230, 172, 0.15); }
+
+    .tnx-item-card {
       position: relative;
       display: grid;
-      gap: .85rem;
-      min-height: 235px;
-      border: 1px solid rgba(255,218,106,.13);
-      border-radius: 1.35rem;
-      background: radial-gradient(circle at top right, rgba(255,218,106,.055), transparent 44%), rgba(0,0,0,.30);
+      gap: 0.7rem;
+      border: 1px solid var(--tnx-cat-border);
+      border-radius: 1.25rem;
+      background: linear-gradient(145deg, var(--tnx-cat-soft), rgba(0, 0, 0, 0.3) 70%);
       color: white;
-      padding: .95rem;
+      padding: 0.9rem;
       text-align: right;
       cursor: pointer;
       overflow: hidden;
-      opacity: 0;
-      animation: tnxCardIn 520ms ease forwards;
-      animation-delay: var(--stagger);
-      transition: transform 210ms ease, border-color 210ms ease, box-shadow 210ms ease, background 210ms ease;
-      scroll-margin-top: 11rem;
-    }
-
-    @keyframes tnxCardIn {
-      from { opacity: 0; transform: translateY(16px) scale(.985); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+      transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+      scroll-margin-top: 9rem;
     }
 
     .tnx-item-card:hover,
     .tnx-item-card.is-selected {
-      transform: translateY(-4px) scale(1.012);
-      border-color: rgba(255,218,106,.54);
-      box-shadow: 0 16px 38px rgba(0,0,0,.38), 0 0 26px rgba(255,218,106,.12);
-      background: radial-gradient(circle at top right, rgba(255,218,106,.09), transparent 46%), rgba(0,0,0,.34);
+      transform: translateY(-4px);
+      border-color: var(--tnx-cat);
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.35), 0 0 28px var(--tnx-cat-glow);
     }
 
-    .tnx-item-card.is-linked {
-      border-color: rgba(255,218,106,.82);
-      box-shadow: 0 0 0 1px rgba(255,218,106,.28), 0 0 34px rgba(255,218,106,.18);
+    .tnx-item-card.cat-rare::before {
+      content: '';
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(from 0deg, transparent, rgba(255, 218, 106, 0.18), transparent 32%);
+      animation: tnxShine 5s linear infinite;
+      pointer-events: none;
     }
 
-    .tnx-item-top {
+    @keyframes tnxShine {
+      to { transform: rotate(360deg); }
+    }
+
+    .tnx-item-card > * { position: relative; z-index: 1; }
+
+    .tnx-item-flags {
+      position: absolute;
+      top: 0.55rem;
+      right: 0.55rem;
       display: flex;
-      align-items: start;
-      justify-content: space-between;
-      gap: .75rem;
+      gap: 0.3rem;
+      z-index: 2;
+    }
+
+    .tnx-item-flag {
+      display: grid;
+      place-items: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 0.45rem;
+      background: rgba(0, 0, 0, 0.5);
+      color: var(--tnx-cat);
+      font-size: 0.78rem;
+      border: 1px solid color-mix(in srgb, var(--tnx-cat) 40%, transparent);
     }
 
     .tnx-item-icon {
       display: grid;
       place-items: center;
-      width: 3.35rem;
-      height: 3.35rem;
-      border: 1px solid rgba(255,218,106,.22);
-      border-radius: 1rem;
-      background: rgba(255,218,106,.065);
-      font-size: 1.65rem;
-      box-shadow: inset 0 0 20px rgba(255,218,106,.025);
-      flex: 0 0 auto;
+      height: 78px;
+      border-radius: 0.95rem;
+      background: radial-gradient(circle, var(--tnx-cat-soft), transparent 70%);
+      font-size: 2.4rem;
+      color: var(--tnx-cat);
     }
 
-    .tnx-item-card:hover .tnx-item-icon {
-      transform: rotate(-2deg) scale(1.04);
-      transition: 210ms ease;
+    .tnx-item-name {
+      display: block;
+      color: white;
+      font-size: 1rem;
+      font-weight: 950;
+      line-height: 1.3;
+    }
+
+    .tnx-item-desc {
+      margin: 0;
+      color: rgb(180, 180, 195);
+      font-size: 0.76rem;
+      font-weight: 800;
+      line-height: 1.55;
+      min-height: 2.3em;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .tnx-item-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      padding-top: 0.55rem;
+      border-top: 1px solid color-mix(in srgb, var(--tnx-cat) 18%, transparent);
     }
 
     .tnx-item-price {
       display: inline-flex;
       align-items: center;
-      gap: .35rem;
-      border: 1px solid rgba(255,218,106,.25);
-      border-radius: .82rem;
-      background: rgba(255,218,106,.08);
-      color: var(--tnx-gold);
-      padding: .42rem .62rem;
-      font-size: .75rem;
+      gap: 0.3rem;
+      color: var(--tnx-cat);
+      font-size: 0.86rem;
       font-weight: 950;
-      direction: ltr;
-      white-space: nowrap;
     }
 
-    .tnx-item-card h3 {
-      margin: 0;
-      color: white;
-      font-size: 1.05rem;
-      font-weight: 950;
-      line-height: 1.35;
-    }
-
-    .tnx-item-card p {
-      margin: 0;
-      color: rgb(156, 163, 175);
-      font-size: .78rem;
-      font-weight: 800;
-      line-height: 1.65;
-    }
-
-    .tnx-item-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .4rem;
-      margin-top: auto;
-    }
-
-    .tnx-tag {
+    .tnx-item-source {
       display: inline-flex;
       align-items: center;
-      gap: .25rem;
-      border: 1px solid rgba(255,218,106,.12);
+      gap: 0.3rem;
+      padding: 0.22rem 0.5rem;
       border-radius: 999px;
-      background: rgba(255,255,255,.035);
-      color: rgb(209,213,219);
-      padding: .3rem .5rem;
-      font-size: .64rem;
-      font-weight: 900;
-      white-space: nowrap;
+      border: 1px solid color-mix(in srgb, var(--tnx-cat) 35%, transparent);
+      background: var(--tnx-cat-soft);
+      color: var(--tnx-cat);
+      font-size: 0.62rem;
+      font-weight: 950;
     }
 
-    .tnx-tag-gold { color: var(--tnx-gold); border-color: rgba(255,218,106,.22); background: rgba(255,218,106,.07); }
-    .tnx-tag-green { color: rgb(167,243,208); border-color: rgba(52,211,153,.25); background: rgba(52,211,153,.08); }
-    .tnx-tag-red { color: rgb(252,165,165); border-color: rgba(239,68,68,.25); background: rgba(239,68,68,.08); }
-    .tnx-tag-blue { color: rgb(147,197,253); border-color: rgba(59,130,246,.25); background: rgba(59,130,246,.08); }
+    .tnx-item-source.locked {
+      color: rgb(180, 180, 195);
+      border-color: rgba(180, 180, 195, 0.3);
+      background: rgba(180, 180, 195, 0.06);
+    }
+
+    /* ============ Focus Panel ============ */
 
     .tnx-focus-panel {
       position: sticky;
-      top: 11rem;
+      top: 12rem;
       min-height: 480px;
       border-radius: 1.5rem;
       padding: 1rem;
@@ -751,302 +689,304 @@ const metadata = {
     .tnx-focus-placeholder {
       display: grid;
       place-items: center;
-      min-height: 420px;
+      align-content: center;
+      min-height: 440px;
       text-align: center;
     }
 
-    .tnx-focus-placeholder div {
+    .tnx-focus-placeholder > div {
       display: grid;
       place-items: center;
-      width: 4.4rem;
-      height: 4.4rem;
+      width: 4rem;
+      height: 4rem;
       border-radius: 1.25rem;
-      border: 1px solid rgba(255,218,106,.24);
-      background: rgba(255,218,106,.06);
-      font-size: 2rem;
-      margin-bottom: .85rem;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      background: rgba(255, 218, 106, 0.06);
+      color: #ffda6a;
+      font-size: 1.6rem;
+      margin-bottom: 0.85rem;
     }
 
     .tnx-focus-placeholder h3 {
       margin: 0;
-      color: var(--tnx-cream);
+      color: #f7e6ac;
       font-size: 1.45rem;
       font-weight: 950;
     }
 
     .tnx-focus-placeholder p {
-      max-width: 250px;
-      margin: .55rem 0 0;
-      color: rgb(156,163,175);
-      font-size: .86rem;
+      max-width: 240px;
+      margin: 0.55rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.86rem;
       font-weight: 800;
       line-height: 1.75;
     }
 
     .tnx-focus-card {
       display: grid;
-      gap: .9rem;
-    }
-
-    .tnx-focus-hero {
-      position: relative;
-      overflow: hidden;
-      display: grid;
-      justify-items: center;
-      gap: .75rem;
-      min-height: 170px;
-      border: 1px solid rgba(255,218,106,.16);
-      border-radius: 1.3rem;
-      background: radial-gradient(circle at center, rgba(255,218,106,.13), transparent 58%), rgba(0,0,0,.28);
-      padding: 1.1rem;
-      text-align: center;
+      gap: 0.9rem;
     }
 
     .tnx-focus-icon {
       display: grid;
       place-items: center;
-      width: 5.2rem;
-      height: 5.2rem;
-      border-radius: 1.4rem;
-      border: 1px solid rgba(255,218,106,.26);
-      background: rgba(255,218,106,.08);
-      font-size: 2.65rem;
-      box-shadow: inset 0 0 28px rgba(255,218,106,.035);
+      min-height: 130px;
+      border-radius: 1.25rem;
+      font-size: 4rem;
     }
 
     .tnx-focus-card h3 {
       margin: 0;
       color: white;
-      font-size: 1.65rem;
+      font-size: 1.55rem;
       font-weight: 950;
       line-height: 1.2;
     }
 
-    .tnx-focus-card p {
+    .tnx-focus-tag {
+      display: inline-block;
+      border: 1px solid var(--tnx-cat-border, rgba(255, 218, 106, 0.32));
+      border-radius: 999px;
+      background: var(--tnx-cat-soft, rgba(255, 218, 106, 0.08));
+      color: var(--tnx-cat, #ffda6a);
+      padding: 0.25rem 0.65rem;
+      font-size: 0.72rem;
+      font-weight: 950;
+      margin-bottom: 0.4rem;
+    }
+
+    .tnx-focus-desc {
       margin: 0;
-      color: rgb(209,213,219);
-      font-size: .9rem;
+      color: rgb(209, 213, 219);
+      font-size: 0.9rem;
       font-weight: 800;
       line-height: 1.75;
-      text-align: center;
     }
 
     .tnx-focus-meta {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: .6rem;
+      gap: 0.55rem;
     }
 
     .tnx-focus-meta div {
-      border: 1px solid rgba(255,218,106,.12);
-      border-radius: 1rem;
-      background: rgba(0,0,0,.26);
-      padding: .75rem;
+      border: 1px solid rgba(255, 218, 106, 0.12);
+      border-radius: 0.95rem;
+      background: rgba(0, 0, 0, 0.28);
+      padding: 0.7rem;
     }
 
     .tnx-focus-meta span {
       display: block;
-      color: rgb(148,163,184);
-      font-size: .72rem;
+      color: rgb(148, 163, 184);
+      font-size: 0.7rem;
       font-weight: 900;
-      margin-bottom: .25rem;
+      margin-bottom: 0.25rem;
     }
 
-    .tnx-focus-meta strong {
-      display: block;
-      color: var(--tnx-gold);
-      font-size: .86rem;
+    .tnx-focus-meta strong,
+    .tnx-focus-meta code {
+      color: #ffda6a;
+      font-size: 0.82rem;
       font-weight: 950;
       word-break: break-word;
     }
 
+    .tnx-focus-meta strong.bad { color: rgb(252, 165, 165); }
+    .tnx-focus-meta strong.good { color: rgb(167, 243, 208); }
+
     .tnx-focus-actions {
       display: grid;
-      gap: .55rem;
+      gap: 0.5rem;
     }
 
-    .tnx-focus-copy {
-      border: 1px solid rgba(255,218,106,.24);
-      border-radius: .9rem;
-      background: rgba(255,218,106,.08);
-      color: var(--tnx-cream);
-      padding: .78rem 1rem;
-      font-size: .86rem;
+    .tnx-focus-btn {
+      width: 100%;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 0.85rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.72rem 0.9rem;
+      font-size: 0.82rem;
       font-weight: 950;
       cursor: pointer;
-      transition: 180ms ease;
+      transition: 0.16s ease;
     }
 
-    .tnx-focus-copy:hover,
-    .tnx-focus-copy.is-copied {
-      border-color: rgba(52,211,153,.55);
-      background: rgba(52,211,153,.14);
-      color: rgb(167,243,208);
+    .tnx-focus-btn:hover,
+    .tnx-focus-btn.is-copied {
+      border-color: rgba(52, 211, 153, 0.55);
+      background: rgba(52, 211, 153, 0.14);
+      color: rgb(167, 243, 208);
+    }
+
+    /* ============ Crafting ============ */
+
+    .tnx-crafting-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    .tnx-craft-card {
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 1.2rem;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 1rem;
+      transition: 220ms ease;
+    }
+
+    .tnx-craft-card:hover {
+      border-color: rgba(255, 218, 106, 0.45);
+      background: rgba(0, 0, 0, 0.4);
       transform: translateY(-2px);
+    }
+
+    .tnx-craft-flow {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .tnx-craft-chip {
+      display: grid;
+      place-items: center;
+      gap: 0.3rem;
+      padding: 0.55rem 0.5rem;
+      border: 1px solid rgba(255, 218, 106, 0.22);
+      border-radius: 0.85rem;
+      background: rgba(255, 218, 106, 0.05);
+      min-width: 78px;
+      max-width: 110px;
+      cursor: pointer;
+      transition: 200ms ease;
+    }
+
+    .tnx-craft-chip:hover {
+      border-color: rgba(255, 218, 106, 0.55);
+      background: rgba(255, 218, 106, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .tnx-craft-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .tnx-craft-chip-name {
+      color: white;
+      font-size: 0.74rem;
+      font-weight: 950;
+      line-height: 1.2;
+      text-align: center;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+    }
+
+    .tnx-craft-amount {
+      color: #ffda6a;
+      font-size: 0.7rem;
+      font-weight: 950;
+    }
+
+    .tnx-craft-plus,
+    .tnx-craft-arrow {
+      color: rgba(255, 218, 106, 0.7);
+      font-size: 1.3rem;
+      font-weight: 950;
+    }
+
+    .tnx-craft-result {
+      border-color: rgba(255, 218, 106, 0.55) !important;
+      background: linear-gradient(135deg, rgba(255, 218, 106, 0.14), rgba(194, 146, 0, 0.05)) !important;
+      box-shadow: 0 0 22px rgba(255, 218, 106, 0.12);
+    }
+
+    .tnx-craft-result .tnx-craft-chip-name {
+      color: #ffda6a;
     }
 
     .tnx-empty {
       display: grid;
       place-items: center;
-      gap: .35rem;
+      gap: 0.35rem;
+      border: 1px solid rgba(255, 218, 106, 0.13);
       border-radius: 1.5rem;
+      background: rgba(0, 0, 0, 0.24);
       padding: 2rem;
       text-align: center;
-      min-height: 220px;
+      min-height: 200px;
     }
 
     .tnx-empty strong {
-      color: var(--tnx-gold);
-      font-size: 1.4rem;
+      color: #ffda6a;
+      font-size: 1.3rem;
       font-weight: 950;
     }
 
     .tnx-empty span {
-      color: rgb(156,163,175);
-      font-size: .9rem;
+      color: rgb(156, 163, 175);
+      font-size: 0.9rem;
       font-weight: 800;
     }
 
-    .tnx-crafting-grid,
-    .tnx-loot-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: .85rem;
-      margin-top: 1rem;
-    }
-
-    .tnx-recipe-card,
-    .tnx-loot-card {
-      border: 1px solid rgba(255,218,106,.15);
-      border-radius: 1.35rem;
-      background: rgba(0,0,0,.30);
-      padding: 1rem;
-      transition: 200ms ease;
-    }
-
-    .tnx-recipe-card:hover,
-    .tnx-loot-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(255,218,106,.48);
-      box-shadow: 0 14px 34px rgba(0,0,0,.36), 0 0 24px rgba(255,218,106,.08);
-    }
-
-    .tnx-recipe-flow {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto minmax(150px, 190px);
-      gap: .85rem;
-      align-items: center;
-    }
-
-    .tnx-ingredients {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .5rem;
-    }
-
-    .tnx-ingredient {
-      display: inline-flex;
-      align-items: center;
-      gap: .45rem;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: .85rem;
-      background: rgba(0,0,0,.34);
-      color: rgb(229,231,235);
-      padding: .55rem .7rem;
-      font-size: .8rem;
-      font-weight: 900;
-    }
-
-    .tnx-ingredient b {
-      color: var(--tnx-gold);
-      font-weight: 950;
-      direction: ltr;
-    }
-
-    .tnx-arrow {
-      color: var(--tnx-gold);
-      font-size: 1.6rem;
-      opacity: .65;
-    }
-
-    .tnx-result {
-      border: 1px solid rgba(255,218,106,.35);
-      border-radius: 1rem;
-      background: linear-gradient(135deg, rgba(255,218,106,.13), rgba(194,146,0,.04));
-      padding: .85rem;
-      text-align: center;
-    }
-
-    .tnx-result span {
-      display: block;
-      color: rgba(255,218,106,.8);
-      font-size: .72rem;
-      font-weight: 950;
-      margin-bottom: .25rem;
-    }
-
-    .tnx-result strong {
-      display: block;
-      color: white;
-      font-size: 1rem;
-      font-weight: 950;
-    }
-
-    .tnx-loot-card h3 {
-      margin: 0 0 .8rem;
-      color: var(--tnx-cream);
-      font-size: 1.15rem;
-      font-weight: 950;
-    }
-
-    .tnx-loot-list {
-      display: grid;
-      gap: .45rem;
-    }
-
-    .tnx-loot-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      border: 1px solid rgba(255,255,255,.07);
-      border-radius: .8rem;
-      background: rgba(0,0,0,.26);
-      color: rgb(209,213,219);
-      padding: .6rem .7rem;
-      font-size: .82rem;
-      font-weight: 850;
-    }
-
-    .tnx-loot-row b {
-      color: var(--tnx-gold);
-      direction: ltr;
-    }
-
     @media (max-width: 1120px) {
-      .tnx-featured-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .tnx-vault-layout { grid-template-columns: 1fr; }
-      .tnx-focus-panel { position: static; min-height: auto; }
-      .tnx-items-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .tnx-vault-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-focus-panel {
+        position: static;
+        min-height: auto;
+      }
+
+      .tnx-items-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 860px) {
-      .tnx-shell { padding-top: 5.5rem; }
-      .tnx-vault-top,
-      .tnx-hero-stats,
-      .tnx-crafting-grid,
-      .tnx-loot-grid { grid-template-columns: 1fr; }
-      .tnx-filter-row { top: 4.75rem; }
-      .tnx-recipe-flow { grid-template-columns: 1fr; text-align: center; }
-      .tnx-arrow { transform: rotate(90deg); }
-      .tnx-ingredients { justify-content: center; }
+      .tnx-hero-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .tnx-howto-grid,
+      .tnx-crafting-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-items-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .tnx-filter-row {
+        top: 4.75rem;
+      }
     }
 
     @media (max-width: 560px) {
-      .tnx-hero h1 { font-size: 3rem; }
-      .tnx-featured-grid,
-      .tnx-items-grid { grid-template-columns: 1fr; }
-      .tnx-focus-meta { grid-template-columns: 1fr; }
-      .tnx-back-top { left: .9rem; bottom: .9rem; width: 2.8rem; height: 2.8rem; }
+      .tnx-shell {
+        padding-top: 5.5rem;
+      }
+
+      .tnx-hero h1 {
+        font-size: 3rem;
+      }
+
+      .tnx-items-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-focus-meta {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 
@@ -1054,11 +994,13 @@ const metadata = {
     ;(async () => {
       const cleanupKey = '__tnxItemsPageCleanup'
 
-      if (window[cleanupKey]) window[cleanupKey]()
+      if (window[cleanupKey]) {
+        window[cleanupKey]()
+      }
 
       const listeners = []
       const timers = []
-      const observers = []
+      let revealObserver = null
 
       function addListener(target, event, handler, options) {
         if (!target) return
@@ -1076,51 +1018,112 @@ const metadata = {
         listeners.length = 0
         timers.forEach((id) => window.clearTimeout(id))
         timers.length = 0
-        observers.forEach((observer) => observer.disconnect())
-        observers.length = 0
+        if (revealObserver) revealObserver.disconnect()
       }
 
-      const CATEGORY_META = {
-        interactive: { label: 'تفاعلي', icon: '⚡' },
-        loot: { label: 'صندوق', icon: '🎁' },
-        material: { label: 'مادة', icon: '🧩' },
-        license: { label: 'رخصة / رتبة', icon: '📜' },
-        vip: { label: 'مكانة', icon: '💎' },
-        economy: { label: 'اقتصاد', icon: '🪙' },
-        general: { label: 'عام', icon: '🎒' },
+      // ============ Item Catalog Metadata ============
+      // Maps item names to: category, icon, special flag
+      const ITEM_META = {
+        // Status / Royalty (purple)
+        'Vip':                 { cat: 'status', icon: '👑' },
+        'Vip+':                { cat: 'status', icon: '👑', rare: true },
+        'محامي':               { cat: 'status', icon: '⚖️' },
+        'عريف الفصل':          { cat: 'status', icon: '🎖️' },
+        'Crown':               { cat: 'rare',   icon: '👑', rare: true },
+
+        // Attacks on stream (red)
+        'نيوك':                { cat: 'attacks', icon: '☢️', rare: true },
+        'تغير العنوان':        { cat: 'attacks', icon: '📝' },
+        'تغير العنوان مطور':   { cat: 'attacks', icon: '✍️' },
+        'تجميد الشاشة':        { cat: 'attacks', icon: '❄️' },
+        'قنبلة دخانية':        { cat: 'attacks', icon: '💣' },
+
+        // PvP (orange)
+        'يد الحرامي':          { cat: 'pvp', icon: '🥷' },
+        'اقول لا يكثر':        { cat: 'pvp', icon: '🚫' },
+
+        // Luck / gambling (yellow)
+        'عملة الجرأة':         { cat: 'luck', icon: '🎯' },
+        'رمي النرد':           { cat: 'luck', icon: '🎲' },
+        'البطاطا الحارة':      { cat: 'luck', icon: '🥔' },
+
+        // Boxes (green)
+        'صندوق':               { cat: 'boxes', icon: '📦' },
+        'صندوق نادر':          { cat: 'boxes', icon: '🎁', rare: true },
+        'صندوق النقاط':        { cat: 'boxes', icon: '💰' },
+        'صندوق السمعة':        { cat: 'boxes', icon: '💎' },
+
+        // Permits / licenses (blue)
+        'رخصة الطبخ':          { cat: 'permits', icon: '📜' },
+        "Lawyer's Exam":       { cat: 'permits', icon: '📜' },
+        'رخصة مصرفي':          { cat: 'permits', icon: '📜' },
+        'رخصة التجارة':        { cat: 'permits', icon: '📜' },
+
+        // Resources (gray/neutral)
+        'علف':                 { cat: 'resources', icon: '🌾' },
+        'خشب':                 { cat: 'resources', icon: '🪵' },
+        'طماط':                { cat: 'resources', icon: '🍅' },
+        'يقطين':               { cat: 'resources', icon: '🎃' },
+        'بصل':                 { cat: 'resources', icon: '🧅' },
+        'حليب':                { cat: 'resources', icon: '🥛' },
+        'بقرة':                { cat: 'resources', icon: '🐄' },
+        'فأس':                 { cat: 'resources', icon: '🪓' },
+
+        // Fishing (cyan)
+        'صنارة صيد':           { cat: 'fishing', icon: '🎣' },
+        'طعم صيد':             { cat: 'fishing', icon: '🪱' },
+        'سمكة':                { cat: 'fishing', icon: '🐟' },
+
+        // Cooking (pink)
+        'مرق خضار':            { cat: 'cooking', icon: '🥣' },
+        'مرق سمك':             { cat: 'cooking', icon: '🍲' },
+
+        // Rare / legendary (gold with shine)
+        'مطرقة ذهبية':         { cat: 'rare', icon: '🔨', rare: true },
+
+        // Economy (cream)
+        'سمعة':                { cat: 'economy', icon: '💎' },
+        'البريد':              { cat: 'economy', icon: '📬' },
       }
 
-      const RARITY_META = {
-        mythic: { label: 'Mythic', icon: '👑' },
-        legendary: { label: 'Legendary', icon: '🔥' },
-        epic: { label: 'Epic', icon: '🟣' },
-        rare: { label: 'Rare', icon: '🔵' },
-        common: { label: 'Common', icon: '⚪' },
-        special: { label: 'Special', icon: '✨' },
+      const CATEGORY_LABELS = {
+        all: 'الكل',
+        status: '👑 مكانة',
+        attacks: '💥 هجمات',
+        pvp: '⚔️ PvP',
+        luck: '🎲 حظ',
+        boxes: '🎁 صناديق',
+        permits: '📜 رخص',
+        resources: '🌾 موارد',
+        fishing: '🎣 صيد',
+        cooking: '🍳 طبخ',
+        rare: '✨ نادر',
+        economy: '💎 اقتصاد',
       }
 
       const state = {
+        data: { items: [], crafting: [], lootTables: [] },
         items: [],
-        crafting: [],
-        lootTables: [],
         filter: 'all',
         search: '',
-        selectedSlug: '',
+        selectedItemName: '',
       }
 
-      const itemSearch = document.getElementById('itemSearch')
-      const clearItemSearch = document.getElementById('clearItemSearch')
-      const filterButtons = Array.from(document.querySelectorAll('[data-filter]'))
-      const featuredGrid = document.getElementById('featuredGrid')
       const itemsGrid = document.getElementById('itemsGrid')
       const itemsEmpty = document.getElementById('itemsEmpty')
       const itemFocusPanel = document.getElementById('itemFocusPanel')
-      const craftingGrid = document.getElementById('craftingGrid')
-      const lootGrid = document.getElementById('lootGrid')
+      const itemSearch = document.getElementById('itemSearch')
+      const clearItemSearch = document.getElementById('clearItemSearch')
+      const filterButtons = Array.from(document.querySelectorAll('[data-filter]'))
+      const howtoButtons = Array.from(document.querySelectorAll('[data-filter-mode]'))
       const backToTop = document.getElementById('backToTop')
+      const craftingGrid = document.getElementById('craftingGrid')
+      const craftingEmpty = document.getElementById('craftingEmpty')
+
       const statItems = document.getElementById('statItems')
+      const statCategories = document.getElementById('statCategories')
       const statCrafting = document.getElementById('statCrafting')
-      const statTopValue = document.getElementById('statTopValue')
+      const statRare = document.getElementById('statRare')
 
       function esc(value) {
         return String(value ?? '')
@@ -1134,7 +1137,7 @@ const metadata = {
       function normalize(value) {
         return String(value || '')
           .toLowerCase()
-          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[ًٌٍَُِّْـ]/g, '')
           .replace(/[أإآ]/g, 'ا')
           .replace(/ة/g, 'ه')
           .replace(/ى/g, 'ي')
@@ -1142,174 +1145,115 @@ const metadata = {
           .trim()
       }
 
-      function slugify(value) {
-        const cleaned = String(value || '')
+      function itemSlug(name) {
+        return `item-${String(name || '')
           .trim()
           .toLowerCase()
-          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[ًٌٍَُِّْـ]/g, '')
           .replace(/[أإآ]/g, 'ا')
           .replace(/ة/g, 'ه')
           .replace(/ى/g, 'ي')
           .replace(/\s+/g, '-')
           .replace(/[^a-z0-9\u0600-\u06ff-]/g, '')
           .replace(/-+/g, '-')
-          .replace(/^-|-$/g, '')
-
-        return `item-${cleaned || 'unknown'}`
+          .replace(/^-|-$/g, '')}`
       }
 
-      function formatNumber(value) {
-        return Number(value || 0).toLocaleString('de-DE')
+      function formatNumber(n) {
+        return Number(n || 0).toLocaleString('de-DE')
       }
 
-      function getCategory(item) {
-        const text = normalize([item.text, item.description, item.option].join(' '))
-
-        if (text.includes('vip')) return 'vip'
-        if (text.includes('صندوق')) return 'loot'
-        if (text.includes('رخصه') || text.includes('محامي') || text.includes('lawyer') || text.includes('مصرفي') || text.includes('تجاره') || text.includes('crown') || text.includes('عريف')) return 'license'
-        if (['سمعه', 'علف', 'خشب', 'صناره', 'طعم', 'سمكه', 'طماط', 'يقطين', 'بصل', 'حليب', 'مرق', 'بقره', 'فاس'].some((word) => text.includes(word))) return 'material'
-        if (['نيوك', 'عنوان', 'الحرامي', 'جرأه', 'جرأة', 'تجميد', 'نرد', 'قنبله', 'بطاطا', 'لا يكثر', 'البريد'].some((word) => text.includes(word))) return 'interactive'
-        if (text.includes('نقاط') || text.includes('عملة') || text.includes('عمله')) return 'economy'
-        return 'general'
+      function isRealCommand(option) {
+        const text = String(option || '').trim()
+        if (!text) return false
+        if (normalize(text) === normalize('Type to filter options...')) return false
+        return true
       }
 
-      function getRarity(item, category) {
-        const value = Number(item.value || 0)
-        const text = normalize([item.text, item.description].join(' '))
-
-        if (text.includes('crown') || value >= 1000000) return 'mythic'
-        if (value >= 150000 || text.includes('ذهبيه') || text.includes('اسطوري')) return 'legendary'
-        if (value >= 50000) return 'epic'
-        if (value >= 10000 || category === 'loot' || category === 'vip') return 'rare'
-        if (value <= 0) return 'special'
-        return 'common'
+      function getItemMeta(name) {
+        return ITEM_META[name] || { cat: 'economy', icon: '📦' }
       }
 
-      function getIcon(item, category, rarity) {
-        const text = normalize(item.text)
-
-        if (text.includes('crown')) return '👑'
-        if (text.includes('نيوك')) return '💣'
-        if (text.includes('محامي') || text.includes('lawyer')) return '⚖️'
-        if (text.includes('vip')) return '💎'
-        if (text.includes('صندوق')) return '🎁'
-        if (text.includes('سمعه')) return '⭐'
-        if (text.includes('عنوان')) return '📝'
-        if (text.includes('الحرامي')) return '🖐️'
-        if (text.includes('جرأه') || text.includes('جرأة')) return '🪙'
-        if (text.includes('تجميد')) return '🧊'
-        if (text.includes('نرد')) return '🎲'
-        if (text.includes('قنبله')) return '💨'
-        if (text.includes('بطاطا')) return '🥔'
-        if (text.includes('بريد')) return '📬'
-        if (text.includes('خشب')) return '🪵'
-        if (text.includes('فاس')) return '🪓'
-        if (text.includes('صناره')) return '🎣'
-        if (text.includes('سمكه')) return '🐟'
-        if (text.includes('بقره')) return '🐄'
-        if (text.includes('حليب')) return '🥛'
-        if (text.includes('طماط')) return '🍅'
-        if (text.includes('بصل')) return '🧅'
-        if (text.includes('يقطين')) return '🎃'
-        if (text.includes('مرق')) return '🍲'
-        if (text.includes('رخصه')) return '📜'
-        if (rarity === 'mythic') return '👑'
-        if (rarity === 'legendary') return '🔥'
-        return CATEGORY_META[category]?.icon || '🎒'
+      function getCraftableNames() {
+        const set = new Set()
+        const crafting = state.data.crafting || []
+        crafting.forEach((recipe) => {
+          if (recipe && recipe.result) {
+            set.add(String(recipe.result).trim())
+          }
+        })
+        return set
       }
 
-      function enrichItem(item, index) {
-        const category = getCategory(item)
-        const rarity = getRarity(item, category)
-        const icon = getIcon(item, category, rarity)
-        const slug = slugify(item.text)
+      function getSource(item, craftableSet) {
+        if (craftableSet.has(item.name)) return { type: 'craft', label: 'تركيب', icon: '⚒️' }
+        if (item.excludePurchase && item.excludeSale && item.excludeUsage === true) {
+          return { type: 'locked', label: 'حصري', icon: '🔒' }
+        }
+        if (item.excludePurchase) return { type: 'locked', label: 'غير متاح', icon: '🔒' }
+        return { type: 'shop', label: 'متاح للشراء', icon: '🪙' }
+      }
 
-        const canSell = !item.excludeSale
-        const canBuy = !item.excludePurchase
-        const canUse = !item.excludeUsage
-        const limited = !!item.itemLimitEnabled
+      function enrichItem(item, index, craftableSet) {
+        const name = String(item?.text || '').trim()
+        const meta = getItemMeta(name)
+        const option = String(item?.option || '').trim()
+        const description = String(item?.description || '').trim() || 'بدون وصف.'
+        const hashId = itemSlug(name)
+        const source = getSource(item, craftableSet)
 
         const searchText = normalize([
-          item.text,
-          item.description,
-          item.option,
-          category,
-          CATEGORY_META[category]?.label,
-          rarity,
-          RARITY_META[rarity]?.label,
-          canSell ? 'sell sale بيع' : '',
-          canBuy ? 'purchase buy شراء' : '',
-          canUse ? 'use usage استخدام' : '',
-          limited ? 'limited limit محدود' : '',
+          name,
+          option,
+          description,
+          meta.cat,
+          CATEGORY_LABELS[meta.cat] || '',
+          item.excludePurchase ? 'لا يشترى' : 'يشترى',
+          item.itemLimitEnabled ? 'محدود' : '',
+          meta.rare ? 'نادر' : '',
         ].join(' '))
 
         return {
           ...item,
           index,
-          slug,
-          category,
-          categoryLabel: CATEGORY_META[category]?.label || 'عام',
-          rarity,
-          rarityLabel: RARITY_META[rarity]?.label || 'Common',
-          icon,
-          canSell,
-          canBuy,
-          canUse,
-          limited,
+          name,
+          option,
+          description,
+          category: meta.cat,
+          icon: meta.icon,
+          isRare: !!meta.rare || meta.cat === 'rare',
+          hashId,
+          value: Number(item?.value || 0),
+          source,
           searchText,
         }
       }
 
+      function matchesFilter(item, filter) {
+        if (filter === 'all') return true
+        if (filter === 'rare') return item.isRare
+        return item.category === filter
+      }
+
       function updateStats() {
-        const topValue = Math.max(0, ...state.items.map((item) => Number(item.value || 0)))
-        statItems.textContent = formatNumber(state.items.length)
-        statCrafting.textContent = formatNumber(state.crafting.length)
-        statTopValue.textContent = formatNumber(topValue)
+        const items = state.items
+        const categories = new Set(items.map((i) => i.category))
+        const rare = items.filter((i) => i.isRare).length
 
-        const counts = {
-          all: state.items.length,
-          legendary: 0,
-          interactive: 0,
-          loot: 0,
-          material: 0,
-          license: 0,
-          purchasable: 0,
-          usable: 0,
-          limited: 0,
-        }
+        if (statItems) statItems.textContent = String(items.length)
+        if (statCategories) statCategories.textContent = String(categories.size)
+        if (statCrafting) statCrafting.textContent = String(state.data.crafting.length)
+        if (statRare) statRare.textContent = String(rare)
 
-        state.items.forEach((item) => {
-          if (item.rarity === 'legendary' || item.rarity === 'mythic') counts.legendary++
-          if (item.category === 'interactive') counts.interactive++
-          if (item.category === 'loot') counts.loot++
-          if (item.category === 'material') counts.material++
-          if (item.category === 'license' || item.category === 'vip') counts.license++
-          if (item.canBuy) counts.purchasable++
-          if (item.canUse) counts.usable++
-          if (item.limited) counts.limited++
+        const counts = { all: items.length, rare }
+
+        Object.keys(CATEGORY_LABELS).forEach((cat) => {
+          if (cat !== 'all') counts[cat] = items.filter((i) => i.category === cat).length
         })
 
         Object.entries(counts).forEach(([key, value]) => {
           const el = document.getElementById(`count-${key}`)
           if (el) el.textContent = String(value)
-        })
-      }
-
-      function matchesFilter(item) {
-        if (state.filter === 'all') return true
-        if (state.filter === 'legendary') return item.rarity === 'legendary' || item.rarity === 'mythic'
-        if (state.filter === 'purchasable') return item.canBuy
-        if (state.filter === 'usable') return item.canUse
-        if (state.filter === 'limited') return item.limited
-        if (state.filter === 'license') return item.category === 'license' || item.category === 'vip'
-        return item.category === state.filter
-      }
-
-      function getFilteredItems() {
-        const q = normalize(state.search)
-        return state.items.filter((item) => {
-          return matchesFilter(item) && (!q || item.searchText.includes(q))
         })
       }
 
@@ -1319,173 +1263,56 @@ const metadata = {
         })
       }
 
-      function renderTags(item) {
-        const tags = []
-        tags.push(`<span class="tnx-tag tnx-tag-gold">${esc(item.rarityLabel)}</span>`)
-        tags.push(`<span class="tnx-tag">${esc(item.categoryLabel)}</span>`)
-        if (item.canBuy) tags.push(`<span class="tnx-tag tnx-tag-green">شراء</span>`)
-        if (item.canUse) tags.push(`<span class="tnx-tag tnx-tag-blue">استخدام</span>`)
-        if (!item.canSell) tags.push(`<span class="tnx-tag tnx-tag-red">لا يباع</span>`)
-        if (item.limited) tags.push(`<span class="tnx-tag tnx-tag-blue">حد ${esc(item.itemLimitAmount || 1)}</span>`)
-        return tags.join('')
-      }
-
-      function renderFeatured() {
-        const preferred = ['Crown', 'نيوك', 'محامي', 'مطرقة ذهبية']
-        const picked = []
-
-        preferred.forEach((name) => {
-          const item = state.items.find((i) => normalize(i.text) === normalize(name))
-          if (item && !picked.includes(item)) picked.push(item)
+      function getFilteredItems() {
+        return state.items.filter((item) => {
+          const filterMatch = matchesFilter(item, state.filter)
+          const searchMatch = !state.search || item.searchText.includes(normalize(state.search))
+          return filterMatch && searchMatch
         })
-
-        state.items
-          .slice()
-          .sort((a, b) => Number(b.value || 0) - Number(a.value || 0))
-          .forEach((item) => {
-            if (picked.length < 4 && !picked.includes(item)) picked.push(item)
-          })
-
-        featuredGrid.innerHTML = picked.slice(0, 4).map((item) => `
-          <button type="button" class="tnx-boss-card" data-item-slug="${esc(item.slug)}">
-            <div class="tnx-boss-content">
-              <div class="tnx-boss-icon">${esc(item.icon)}</div>
-              <div>
-                <h3>${esc(item.text)}</h3>
-                <p>${esc(item.description || 'بدون وصف.')}</p>
-              </div>
-              <span class="tnx-boss-price">${formatNumber(item.value)} 🪙</span>
-            </div>
-          </button>
-        `).join('')
       }
 
       function renderItems() {
         const items = getFilteredItems()
-        itemsEmpty.classList.toggle('hidden', items.length > 0)
+        if (!itemsGrid) return
 
-        itemsGrid.innerHTML = items.map((item, index) => {
-          const selected = item.slug === state.selectedSlug ? ' is-selected' : ''
-          const linked = window.location.hash === `#${item.slug}` ? ' is-linked' : ''
+        itemsEmpty?.classList.toggle('hidden', items.length > 0)
+
+        itemsGrid.innerHTML = items.map((item) => {
+          const selected = item.name === state.selectedItemName ? ' is-selected' : ''
+          const flags = []
+          if (item.itemLimitEnabled) flags.push(`<span class="tnx-item-flag" title="حد ${item.itemLimitAmount || 1}">📦</span>`)
+          if (item.isRare) flags.push(`<span class="tnx-item-flag" title="نادر">✨</span>`)
+
+          const priceHtml = item.value > 0
+            ? `<span class="tnx-item-price">🪙 ${formatNumber(item.value)}</span>`
+            : `<span class="tnx-item-price" style="color: rgb(156, 163, 175);">—</span>`
 
           return `
             <button
               type="button"
-              id="${esc(item.slug)}"
-              class="tnx-item-card${selected}${linked}"
-              data-item-slug="${esc(item.slug)}"
-              style="--stagger:${Math.min(index, 24) * 35}ms"
+              id="${esc(item.hashId)}"
+              class="tnx-item-card cat-${esc(item.category)}${selected}"
+              data-item-name="${esc(item.name)}"
             >
-              <div class="tnx-item-top">
-                <div class="tnx-item-icon">${esc(item.icon)}</div>
-                <span class="tnx-item-price">${formatNumber(item.value)} 🪙</span>
-              </div>
+              ${flags.length ? `<div class="tnx-item-flags">${flags.join('')}</div>` : ''}
 
-              <div>
-                <h3>${esc(item.text)}</h3>
-                <p>${esc(item.description || 'No description available.')}</p>
-              </div>
+              <div class="tnx-item-icon">${item.icon}</div>
 
-              <div class="tnx-item-tags">
-                ${renderTags(item)}
+              <strong class="tnx-item-name">${esc(item.name)}</strong>
+
+              <p class="tnx-item-desc">${esc(item.description)}</p>
+
+              <div class="tnx-item-foot">
+                ${priceHtml}
+                <span class="tnx-item-source ${item.source.type === 'locked' ? 'locked' : ''}">${item.source.icon} ${esc(item.source.label)}</span>
               </div>
             </button>
           `
         }).join('')
       }
 
-      function renderFocus(item) {
-        if (!item) return
-
-        const command = String(item.option || '').trim()
-        const commandText = command && command !== 'Type to filter options...' ? command : 'غير محدد'
-
-        itemFocusPanel.innerHTML = `
-          <div class="tnx-focus-card">
-            <div class="tnx-focus-hero">
-              <div class="tnx-focus-icon">${esc(item.icon)}</div>
-              <div>
-                <span class="tnx-tag tnx-tag-gold">${esc(item.rarityLabel)}</span>
-                <h3>${esc(item.text)}</h3>
-              </div>
-            </div>
-
-            <p>${esc(item.description || 'بدون وصف.')}</p>
-
-            <div class="tnx-focus-meta">
-              <div>
-                <span>القيمة</span>
-                <strong>${formatNumber(item.value)} 🪙</strong>
-              </div>
-              <div>
-                <span>التصنيف</span>
-                <strong>${esc(item.categoryLabel)}</strong>
-              </div>
-              <div>
-                <span>الأمر</span>
-                <strong>${esc(commandText)}</strong>
-              </div>
-              <div>
-                <span>الحد</span>
-                <strong>${item.limited ? esc(item.itemLimitAmount || 1) : 'غير محدود'}</strong>
-              </div>
-            </div>
-
-            <div class="tnx-item-tags">
-              ${renderTags(item)}
-            </div>
-
-            <div class="tnx-focus-actions">
-              <button type="button" class="tnx-focus-copy" data-copy-item-link="${esc(item.slug)}">نسخ رابط الغرض</button>
-              ${command && commandText !== 'غير محدد' ? `<button type="button" class="tnx-focus-copy" data-copy-command="${esc(commandText)}">نسخ الأمر</button>` : ''}
-            </div>
-          </div>
-        `
-      }
-
-      function selectItem(slug, options = {}) {
-        const item = state.items.find((i) => i.slug === slug)
-        if (!item) return
-
-        state.selectedSlug = slug
-
-        if (options.updateHash !== false) {
-          history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${item.slug}`)
-        }
-
-        renderItems()
-        renderFocus(item)
-
-        if (options.scrollToItem) {
-          addTimer(window.setTimeout(() => {
-            document.getElementById(item.slug)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-          }, 80))
-        }
-      }
-
-      function openItemFromHash(options = {}) {
-        const hash = decodeURIComponent((window.location.hash || '').replace('#', ''))
-        if (!hash || !hash.startsWith('item-')) return false
-
-        const item = state.items.find((i) => i.slug === hash)
-        if (!item) return false
-
-        state.filter = 'all'
-        state.search = ''
-        if (itemSearch) itemSearch.value = ''
-        renderFilterButtons()
-        selectItem(item.slug, { updateHash: false, scrollToItem: options.scrollToItem !== false })
-
-        document.querySelector('.tnx-vault')?.scrollIntoView({
-          behavior: options.instant ? 'auto' : 'smooth',
-          block: 'start',
-        })
-
-        return true
-      }
-
-      function getItemLink(slug) {
-        return `${window.location.origin}${window.location.pathname}${window.location.search}#${slug}`
+      function getItemLink(hashId) {
+        return `${window.location.origin}${window.location.pathname}#${hashId}`
       }
 
       async function copyText(text, button, doneText = 'تم النسخ') {
@@ -1494,37 +1321,182 @@ const metadata = {
           await navigator.clipboard.writeText(text)
           button.textContent = doneText
           button.classList.add('is-copied')
+
           addTimer(window.setTimeout(() => {
             button.textContent = oldText
             button.classList.remove('is-copied')
-          }, 1000))
+          }, 1100))
         } catch {
           button.textContent = text
-          addTimer(window.setTimeout(() => { button.textContent = oldText }, 1300))
+          addTimer(window.setTimeout(() => {
+            button.textContent = oldText
+          }, 1300))
         }
       }
 
-      function renderCrafting() {
-        if (!state.crafting.length) {
-          craftingGrid.innerHTML = `<div class="tnx-empty"><strong>ما فيه وصفات</strong><span>أضف crafting في items.json عشان تظهر هنا.</span></div>`
-          return
+      function renderFocus(item) {
+        if (!itemFocusPanel || !item) return
+
+        const command = isRealCommand(item.option) ? item.option : null
+        const recipe = (state.data.crafting || []).find((r) => String(r.result).trim() === item.name)
+
+        const recipeHtml = recipe
+          ? `
+            <div style="border: 1px solid rgba(52, 211, 153, 0.32); border-radius: 1rem; background: rgba(52, 211, 153, 0.06); padding: 0.8rem;">
+              <div style="color: rgb(167, 243, 208); font-size: 0.7rem; font-weight: 950; letter-spacing: 0.08em; margin-bottom: 0.5rem;">⚒️ طريقة التركيب</div>
+              <div style="color: white; font-size: 0.85rem; line-height: 1.8;">
+                ${recipe.ingredients.map((ing) => `${esc(ing.item)} <b style="color: #ffda6a;">×${esc(ing.amount)}</b>`).join(' + ')}
+              </div>
+            </div>
+          `
+          : ''
+
+        const cmdBtn = command
+          ? `<button type="button" class="tnx-focus-btn" data-copy-command="${esc(command)}">📋 نسخ الأمر</button>`
+          : ''
+
+        itemFocusPanel.innerHTML = `
+          <div class="tnx-focus-card cat-${esc(item.category)}" style="--tnx-cat: var(--tnx-cat); --tnx-cat-soft: var(--tnx-cat-soft); --tnx-cat-border: var(--tnx-cat-border);">
+            <div class="tnx-focus-icon cat-${esc(item.category)}" style="background: radial-gradient(circle, var(--tnx-cat-glow, rgba(255,218,106,0.18)), transparent 65%);">${item.icon}</div>
+
+            <div>
+              <span class="tnx-focus-tag" style="border-color: var(--tnx-cat-border); background: var(--tnx-cat-soft); color: var(--tnx-cat);">${esc(CATEGORY_LABELS[item.category] || 'عام')}</span>
+              <h3>${esc(item.name)}</h3>
+            </div>
+
+            <p class="tnx-focus-desc">${esc(item.description)}</p>
+
+            <div class="tnx-focus-meta">
+              <div>
+                <span>السعر</span>
+                <strong>${item.value > 0 ? `🪙 ${formatNumber(item.value)}` : '—'}</strong>
+              </div>
+
+              <div>
+                <span>الحد الأقصى</span>
+                <strong>${item.itemLimitEnabled ? `${esc(item.itemLimitAmount || 1)} فقط` : 'بدون'}</strong>
+              </div>
+
+              <div>
+                <span>الشراء</span>
+                <strong class="${item.excludePurchase ? 'bad' : 'good'}">${item.excludePurchase ? '🔒 غير متاح' : '✓ متاح'}</strong>
+              </div>
+
+              <div>
+                <span>التركيب</span>
+                <strong class="${recipe ? 'good' : 'bad'}">${recipe ? '⚒️ متاح' : '— غير متاح'}</strong>
+              </div>
+
+              ${command ? `
+                <div style="grid-column: 1 / -1;">
+                  <span>الأمر البرمجي</span>
+                  <code style="direction: ltr; text-align: left; display: block;">${esc(command)}</code>
+                </div>
+              ` : ''}
+            </div>
+
+            ${recipeHtml}
+
+            <div class="tnx-focus-actions">
+              <button type="button" class="tnx-focus-btn" data-copy-link="${esc(item.hashId)}">🔗 نسخ رابط الغرض</button>
+              ${cmdBtn}
+            </div>
+          </div>
+        `
+
+        // Apply category vars to focus card root (since it inherits from .tnx-focus-panel parent)
+        const focusCard = itemFocusPanel.querySelector('.tnx-focus-card')
+        if (focusCard) {
+          focusCard.style.setProperty('--tnx-cat', `var(--tnx-cat, #ffda6a)`)
+        }
+      }
+
+      function selectItem(name, options = {}) {
+        const item = state.items.find((entry) => entry.name === name)
+        if (!item) return
+
+        state.selectedItemName = item.name
+
+        if (options.updateHash !== false) {
+          history.replaceState(null, '', `#${item.hashId}`)
         }
 
-        craftingGrid.innerHTML = state.crafting.map((recipe) => {
-          const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : []
+        renderItems()
+        renderFocus(item)
+
+        // Apply category color tokens to focus panel by adding category class
+        const focusPanel = itemFocusPanel
+        if (focusPanel) {
+          // Strip existing cat-* classes
+          focusPanel.className = focusPanel.className.replace(/\bcat-\S+/g, '').trim()
+          focusPanel.classList.add(`cat-${item.category}`)
+        }
+
+        if (options.scrollToItem) {
+          addTimer(window.setTimeout(() => {
+            document.getElementById(item.hashId)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }, 80))
+        }
+      }
+
+      function openItemFromHash(options = {}) {
+        const hash = decodeURIComponent((window.location.hash || '').replace('#', ''))
+        if (!hash || !hash.startsWith('item-')) return false
+
+        const item = state.items.find((entry) => entry.hashId === hash)
+        if (!item) return false
+
+        state.filter = 'all'
+        state.search = ''
+        if (itemSearch) itemSearch.value = ''
+
+        renderFilterButtons()
+        selectItem(item.name, { updateHash: false, scrollToItem: options.scrollToItem !== false })
+        return true
+      }
+
+      function getItemIconByName(name) {
+        const meta = getItemMeta(name)
+        return meta.icon || '📦'
+      }
+
+      function renderCrafting() {
+        const crafting = (state.data.crafting || []).filter((r) => r && Array.isArray(r.ingredients) && r.result)
+        if (!craftingGrid) return
+
+        craftingEmpty?.classList.toggle('hidden', crafting.length > 0)
+
+        craftingGrid.innerHTML = crafting.map((recipe) => {
+          const ingredientsHtml = recipe.ingredients.map((ing, idx) => {
+            const ingName = String(ing.item || '').trim()
+            const ingIcon = getItemIconByName(ingName)
+            const ingItem = state.items.find((i) => i.name === ingName)
+            const ingHash = ingItem ? ingItem.hashId : ''
+            const sep = idx > 0 ? `<span class="tnx-craft-plus">+</span>` : ''
+
+            return `
+              ${sep}
+              <button type="button" class="tnx-craft-chip" data-jump-item="${esc(ingHash)}">
+                <span class="tnx-craft-icon">${ingIcon}</span>
+                <span class="tnx-craft-chip-name">${esc(ingName)}</span>
+                <span class="tnx-craft-amount">×${esc(ing.amount)}</span>
+              </button>
+            `
+          }).join('')
+
+          const resultName = String(recipe.result).trim()
+          const resultIcon = getItemIconByName(resultName)
+          const resultItem = state.items.find((i) => i.name === resultName)
+          const resultHash = resultItem ? resultItem.hashId : ''
+
           return `
-            <div class="tnx-recipe-card">
-              <div class="tnx-recipe-flow">
-                <div class="tnx-ingredients">
-                  ${ingredients.map((ing) => {
-                    const item = state.items.find((i) => normalize(i.text) === normalize(ing.item))
-                    return `<span class="tnx-ingredient"><span>${esc(item?.icon || '🧩')}</span>${esc(ing.item)} <b>x${formatNumber(ing.amount)}</b></span>`
-                  }).join('')}
-                </div>
-                <div class="tnx-arrow">←</div>
-                <button type="button" class="tnx-result" data-result-item="${esc(slugify(recipe.result))}">
-                  <span>النتيجة</span>
-                  <strong>${esc(recipe.result)}</strong>
+            <div class="tnx-craft-card">
+              <div class="tnx-craft-flow">
+                ${ingredientsHtml}
+                <span class="tnx-craft-arrow">←</span>
+                <button type="button" class="tnx-craft-chip tnx-craft-result" data-jump-item="${esc(resultHash)}">
+                  <span class="tnx-craft-icon">${resultIcon}</span>
+                  <span class="tnx-craft-chip-name">${esc(resultName)}</span>
                 </button>
               </div>
             </div>
@@ -1532,121 +1504,97 @@ const metadata = {
         }).join('')
       }
 
-      function renderLootTables() {
-        const validTables = state.lootTables.filter((table) => Array.isArray(table.items) && table.items.length)
-
-        if (!validTables.length) {
-          lootGrid.innerHTML = `<div class="tnx-empty"><strong>ما فيه جداول صناديق</strong><span>إذا أضفت lootTables في items.json بتظهر هنا.</span></div>`
-          return
-        }
-
-        lootGrid.innerHTML = validTables.map((table, index) => {
-          const name = String(table.name || '').trim() || `جدول صندوق ${index + 1}`
-          return `
-            <div class="tnx-loot-card">
-              <h3>🎁 ${esc(name)}</h3>
-              <div class="tnx-loot-list">
-                ${table.items.map((row) => `
-                  <div class="tnx-loot-row">
-                    <span>${esc(row.option || 'Unknown')}</span>
-                    <b>${formatNumber(row.value)}%</b>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          `
-        }).join('')
+      function handleBackToTop() {
+        if (!backToTop) return
+        backToTop.classList.toggle('is-visible', window.scrollY > 520)
       }
 
       async function loadData() {
-        const res = await fetch('/api/items.json?v=' + Date.now())
-        if (!res.ok) throw new Error(`items.json request failed: ${res.status}`)
+        try {
+          const res = await fetch('/api/items.json')
+          if (!res.ok) throw new Error(`items.json request failed: ${res.status}`)
 
-        const data = await res.json()
-        state.items = Array.isArray(data.items) ? data.items.map(enrichItem) : []
-        state.crafting = Array.isArray(data.crafting) ? data.crafting : []
-        state.lootTables = Array.isArray(data.lootTables) ? data.lootTables : []
-      }
+          const data = await res.json()
+          state.data = {
+            items: Array.isArray(data.items) ? data.items : [],
+            crafting: Array.isArray(data.crafting) ? data.crafting : [],
+            lootTables: Array.isArray(data.lootTables) ? data.lootTables : [],
+          }
 
-      function renderAll() {
-        updateStats()
-        renderFilterButtons()
-        renderFeatured()
-        renderItems()
-        renderCrafting()
-        renderLootTables()
+          const craftableSet = getCraftableNames()
+          state.items = state.data.items
+            .map((item, idx) => enrichItem(item, idx, craftableSet))
+            .filter((item) => item.name)
 
-        const opened = openItemFromHash({ instant: true, scrollToItem: true })
-        if (!opened && state.items.length) {
-          selectItem(state.items[0].slug, { updateHash: false })
+          updateStats()
+          renderFilterButtons()
+          renderItems()
+          renderCrafting()
+
+          const opened = openItemFromHash({ scrollToItem: true })
+          if (!opened && state.items.length > 0) {
+            selectItem(state.items[0].name, { updateHash: false })
+          }
+        } catch (error) {
+          console.error('Failed to load /api/items.json', error)
+          if (itemsGrid) {
+            itemsGrid.innerHTML = `
+              <div class="tnx-empty">
+                <strong>تعذر تحميل الأغراض</strong>
+                <span>تأكد من وجود الملف public/api/items.json</span>
+              </div>
+            `
+          }
         }
       }
 
       function setupReveal() {
-        if (!('IntersectionObserver' in window)) {
-          document.querySelectorAll('.tnx-reveal').forEach((el) => el.classList.add('is-visible'))
-          return
-        }
+        const elements = Array.from(document.querySelectorAll('.tnx-reveal'))
+        if (!elements.length) return
 
-        const observer = new IntersectionObserver((entries) => {
+        revealObserver = new IntersectionObserver((entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               entry.target.classList.add('is-visible')
-              observer.unobserve(entry.target)
+              revealObserver.unobserve(entry.target)
             }
           })
         }, { threshold: 0.12 })
 
-        document.querySelectorAll('.tnx-reveal').forEach((el) => observer.observe(el))
-        observers.push(observer)
-      }
-
-      function handleBackToTopVisibility() {
-        if (!backToTop) return
-        backToTop.classList.toggle('is-visible', window.scrollY > 520)
+        elements.forEach((element) => revealObserver.observe(element))
       }
 
       addListener(backToTop, 'click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
       })
 
-      addListener(window, 'scroll', handleBackToTopVisibility, { passive: true })
-
-      addListener(featuredGrid, 'click', (event) => {
-        const button = event.target.closest('[data-item-slug]')
-        if (!button) return
-        selectItem(button.dataset.itemSlug, { updateHash: true, scrollToItem: true })
-        document.querySelector('.tnx-vault')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      })
+      addListener(window, 'scroll', handleBackToTop, { passive: true })
 
       addListener(itemsGrid, 'click', (event) => {
-        const button = event.target.closest('[data-item-slug]')
-        if (!button) return
-        selectItem(button.dataset.itemSlug, { updateHash: true })
+        const card = event.target.closest('[data-item-name]')
+        if (!card) return
+        selectItem(card.dataset.itemName)
       })
 
       addListener(document, 'click', (event) => {
-        const copyLinkButton = event.target.closest('[data-copy-item-link]')
-        if (copyLinkButton) {
-          copyText(getItemLink(copyLinkButton.dataset.copyItemLink), copyLinkButton, 'تم نسخ الرابط')
+        const linkBtn = event.target.closest('[data-copy-link]')
+        if (linkBtn) {
+          copyText(getItemLink(linkBtn.dataset.copyLink || ''), linkBtn, '✓ تم نسخ الرابط')
           return
         }
 
-        const copyCommandButton = event.target.closest('[data-copy-command]')
-        if (copyCommandButton) {
-          copyText(copyCommandButton.dataset.copyCommand || '', copyCommandButton, 'تم نسخ الأمر')
+        const cmdBtn = event.target.closest('[data-copy-command]')
+        if (cmdBtn) {
+          copyText(cmdBtn.dataset.copyCommand || '', cmdBtn, '✓ تم نسخ الأمر')
           return
         }
 
-        const resultButton = event.target.closest('[data-result-item]')
-        if (resultButton) {
-          const item = state.items.find((i) => i.slug === resultButton.dataset.resultItem)
+        const jumpBtn = event.target.closest('[data-jump-item]')
+        if (jumpBtn) {
+          const hash = jumpBtn.dataset.jumpItem || ''
+          const item = state.items.find((i) => i.hashId === hash)
           if (item) {
-            state.filter = 'all'
-            state.search = ''
-            if (itemSearch) itemSearch.value = ''
-            renderFilterButtons()
-            selectItem(item.slug, { updateHash: true, scrollToItem: true })
+            selectItem(item.name, { updateHash: true, scrollToItem: true })
             document.querySelector('.tnx-vault')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
           }
         }
@@ -1677,15 +1625,30 @@ const metadata = {
         })
       })
 
-      try {
-        setupReveal()
-        await loadData()
-        renderAll()
-        handleBackToTopVisibility()
-      } catch (error) {
-        console.error(error)
-        itemsGrid.innerHTML = `<div class="tnx-empty"><strong>تعذر تحميل الأغراض</strong><span>تأكد من وجود public/api/items.json</span></div>`
-      }
+      howtoButtons.forEach((button) => {
+        addListener(button, 'click', () => {
+          const mode = button.dataset.filterMode
+          if (mode === 'box') state.filter = 'boxes'
+          else if (mode === 'craft') {
+            state.filter = 'all'
+            document.querySelector('.tnx-crafting')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            return
+          }
+          else state.filter = 'all'
+
+          state.search = ''
+          if (itemSearch) itemSearch.value = ''
+
+          renderFilterButtons()
+          renderItems()
+
+          document.querySelector('.tnx-vault')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        })
+      })
+
+      await loadData()
+      setupReveal()
+      handleBackToTop()
     })()
   </script>
 
