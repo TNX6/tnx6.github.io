@@ -4,120 +4,1702 @@ import Layout from '~/layouts/PageLayout.astro';
 const metadata = {
   title: 'Items — TNX6',
   ignoreTitleTemplate: true,
+  description: 'صفحة أغراض مجتمع TNX6.',
 };
 ---
 
 <Layout metadata={metadata}>
-  <section class="max-w-6xl mx-auto py-20 px-6 text-white font-[Poppins]">
+  <main class="tnx-items-page" dir="rtl">
+    <div class="tnx-bg"></div>
+    <div class="tnx-grid-bg"></div>
 
-    <!-- HEADER -->
-    <h1 class="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(198,164,79,0.5)] tracking-wider">
-      TNX ITEMS
-    </h1>
+    <button id="itemsBackToTop" class="tnx-back-top" type="button" aria-label="الرجوع للأعلى">
+      ↑
+    </button>
 
-    <!-- SECTION: ITEMS -->
-    <div class="relative mb-28">
-      <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#c6a44f]/70 to-transparent"></div>
-      <h2 class="text-3xl font-bold text-center mb-10 text-[#f7e6ac] uppercase tracking-wide">Available Items</h2>
-      <div id="items-section" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
-    </div>
-
-    <!-- SECTION: LOOT TABLES -->
-    <div class="relative mb-28">
-      <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#c6a44f]/70 to-transparent"></div>
-      <h2 class="text-3xl font-bold text-center mb-10 text-[#f7e6ac] uppercase tracking-wide">Loot Tables</h2>
-      <div id="loots-section" class="grid sm:grid-cols-2 gap-8"></div>
-    </div>
-
-    <!-- SECTION: CRAFTING -->
-    <div class="relative">
-      <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#c6a44f]/70 to-transparent"></div>
-      <h2 class="text-3xl font-bold text-center mb-10 text-[#f7e6ac] uppercase tracking-wide">Crafting Recipes</h2>
-      <div id="crafting-section" class="grid sm:grid-cols-2 gap-8"></div>
-    </div>
-
-  </section>
-
-  <script is:inline data-reinit>
-    async function loadData() {
-      const res = await fetch('/api/items.json');
-      const data = await res.json();
-
-      const itemsSection = document.getElementById('items-section');
-      const lootsSection = document.getElementById('loots-section');
-      const craftSection = document.getElementById('crafting-section');
-
-      // ITEMS
-      const itemIcon = (i) => {
-        const icons = [];
-        if (i.excludeSale) icons.push(`<div class="tooltip" data-tip="Not for sale"><iconify-icon icon="tabler:shopping-cart-off"></iconify-icon></div>`);
-        if (i.excludePurchase) icons.push(`<div class="tooltip" data-tip="Not purchasable"><iconify-icon icon="tabler:circle-x"></iconify-icon></div>`);
-        if (i.excludeUsage) icons.push(`<div class="tooltip" data-tip="Cannot be used"><iconify-icon icon="tabler:ban"></iconify-icon></div>`);
-        if (i.itemLimitEnabled) icons.push(`<div class="tooltip" data-tip="Limit: ${i.itemLimitAmount}"><iconify-icon icon="tabler:package"></iconify-icon></div>`);
-        return icons.join('');
-      };
-
-      itemsSection.innerHTML = data.items.map(i => `
-        <div class="relative p-6 rounded-2xl bg-gradient-to-br from-[#0a0a0c]/80 to-[#1a1408]/80 border border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.15)] backdrop-blur-md hover:border-[#f7e6ac]/60 transition-all group">
-          <div class="flex justify-between items-start mb-2">
-            <div class="text-2xl font-bold text-[#f7e6ac] group-hover:text-[#fff1b0]">${i.text}</div>
-            <div class="flex gap-3 text-[#c6a44f] text-lg">${itemIcon(i)}</div>
-          </div>
-          <p class="text-sm text-gray-300 mb-2 leading-snug">${i.description || "No description available."}</p>
-          <div class="flex justify-between text-sm mt-2 text-gray-400 border-t border-[#c6a44f]/20 pt-2">
-            <span>Value:</span><span>${i.value ?? 0}</span>
-          </div>
-          <div class="absolute inset-x-0 bottom-0 h-[3px] bg-gradient-to-r from-transparent via-[#c6a44f]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+    <section class="tnx-shell">
+      <header class="tnx-hero tnx-reveal">
+        <div class="tnx-eyebrow">
+          <span></span>
+          TNX6 ITEM VAULT
         </div>
-      `).join('');
 
-      // LOOT TABLES
-      lootsSection.innerHTML = data.lootTables.map(t => `
-        <div class="p-6 rounded-2xl bg-gradient-to-b from-[#0f0f10]/90 to-[#1c1505]/80 border border-[#c6a44f]/30 shadow-[0_0_12px_rgba(198,164,79,0.15)] hover:border-[#f7e6ac]/60 transition-all">
-          <h3 class="text-2xl font-semibold text-[#f7e6ac] mb-4 flex items-center gap-2">
-            <iconify-icon icon="tabler:treasure-chest" class="text-[#c6a44f]"></iconify-icon> ${t.name}
-          </h3>
-          <ul class="divide-y divide-[#c6a44f]/15">
-            ${t.items.map(it => `
-              <li class="flex justify-between py-2 text-gray-300 text-sm hover:text-[#f7e6ac]/90 transition-all">
-                <span class="flex items-center gap-2"><iconify-icon icon="tabler:coin" class="text-[#c6a44f]/80"></iconify-icon>${it.option}</span>
-                <span>${it.value}%</span>
-              </li>`).join('')}
-          </ul>
-        </div>
-      `).join('');
+        <h1>خزنة الأغراض</h1>
 
-      // CRAFTING
-      craftSection.innerHTML = data.crafting.map(c => `
-        <div class="p-6 rounded-2xl bg-gradient-to-t from-[#0f0f10]/90 to-[#221a08]/80 border border-[#c6a44f]/30 shadow-[0_0_12px_rgba(198,164,79,0.15)] hover:border-[#f7e6ac]/60 transition-all">
-          <h3 class="text-2xl font-semibold text-[#f7e6ac] mb-3 flex items-center gap-2">
-            <iconify-icon icon="tabler:hammer" class="text-[#c6a44f]"></iconify-icon> ${c.result}
-          </h3>
-          <div class="flex flex-col gap-2 text-gray-300 text-sm">
-            ${c.ingredients.map(i => `
-              <div class="flex justify-between items-center bg-black/30 px-3 py-1 rounded-md border border-[#c6a44f]/20">
-                <span class="flex items-center gap-2"><iconify-icon icon="tabler:tool" class="text-[#c6a44f]/70"></iconify-icon>${i.item}</span>
-                <span class="text-[#f7e6ac]/80">${i.amount}x</span>
-              </div>`).join('')}
+        <p>
+          اعرف كل غرض وش يسوي، هل تقدر تشتريه أو تستخدمه أو تبيعه، وش وصفته في التصنيع.
+        </p>
+
+        <div class="tnx-hero-stats">
+          <div>
+            <strong id="statTotalItems">0</strong>
+            <span>غرض</span>
+          </div>
+
+          <div>
+            <strong id="statPurchasableItems">0</strong>
+            <span>قابل للشراء</span>
+          </div>
+
+          <div>
+            <strong id="statCraftingRecipes">0</strong>
+            <span>وصفة تصنيع</span>
           </div>
         </div>
-      `).join('');
+      </header>
 
-      // Tooltip behavior
-      document.querySelectorAll('.tooltip').forEach(el => {
-        const tip = document.createElement('div');
-        tip.className = 'tooltip-box hidden absolute -top-8 left-1/2 -translate-x-1/2 bg-black/90 text-[#f7e6ac] text-xs px-2 py-1 rounded-md whitespace-nowrap border border-[#c6a44f]/40';
-        tip.textContent = el.dataset.tip;
-        el.style.position = 'relative';
-        el.appendChild(tip);
-        el.addEventListener('mouseenter', () => (tip.style.display = 'block'));
-        el.addEventListener('mouseleave', () => (tip.style.display = 'none'));
-      });
+      <section class="tnx-guide tnx-reveal">
+        <div class="tnx-section-head">
+          <span>ابدأ من هنا</span>
+          <h2>كيف تقرأ الأغراض؟</h2>
+          <p>الأغراض مقسمة حسب استخدامها. اضغط على أي غرض عشان تشوف التفاصيل والرابط المباشر.</p>
+        </div>
+
+        <div class="tnx-guide-grid">
+          <button type="button" class="tnx-guide-card" data-guide-filter="purchasable">
+            <b>₪</b>
+            <div>
+              <strong>أغراض الشراء</strong>
+              <p>الأشياء اللي تقدر تشتريها مباشرة من النظام.</p>
+            </div>
+          </button>
+
+          <button type="button" class="tnx-guide-card" data-guide-filter="usable">
+            <b>⚡</b>
+            <div>
+              <strong>أغراض الاستخدام</strong>
+              <p>الأشياء اللي لها تأثير مباشر داخل البث أو الشات.</p>
+            </div>
+          </button>
+
+          <button type="button" class="tnx-guide-card" data-guide-filter="limited">
+            <b>1</b>
+            <div>
+              <strong>أغراض محدودة</strong>
+              <p>أغراض لها حد امتلاك أو شرط خاص.</p>
+            </div>
+          </button>
+        </div>
+      </section>
+
+      <section class="tnx-vault tnx-reveal">
+        <div class="tnx-vault-top">
+          <div class="tnx-section-head">
+            <span>كل الأغراض</span>
+            <h2>استعرض الأغراض</h2>
+            <p>فلتر، ابحث، واضغط على الغرض عشان تعرف قيمته وطريقة استخدامه.</p>
+          </div>
+
+          <div class="tnx-search">
+            <span>⌕</span>
+            <input
+              id="itemSearch"
+              type="search"
+              autocomplete="off"
+              placeholder="ابحث: Vip، نيوك، صندوق، سمعة، محامي..."
+            />
+            <button type="button" id="clearItemSearch">×</button>
+          </div>
+        </div>
+
+        <div class="tnx-filter-row" id="itemFilters">
+          <button type="button" class="is-active" data-item-filter="all"><span>الكل</span><small id="count-all">0</small></button>
+          <button type="button" data-item-filter="purchasable"><span>قابل للشراء</span><small id="count-purchasable">0</small></button>
+          <button type="button" data-item-filter="usable"><span>قابل للاستخدام</span><small id="count-usable">0</small></button>
+          <button type="button" data-item-filter="sellable"><span>قابل للبيع</span><small id="count-sellable">0</small></button>
+          <button type="button" data-item-filter="limited"><span>محدود</span><small id="count-limited">0</small></button>
+          <button type="button" data-item-filter="chests"><span>صناديق</span><small id="count-chests">0</small></button>
+          <button type="button" data-item-filter="effects"><span>تأثيرات</span><small id="count-effects">0</small></button>
+          <button type="button" data-item-filter="materials"><span>مواد</span><small id="count-materials">0</small></button>
+          <button type="button" data-item-filter="licenses"><span>رخص / رتب</span><small id="count-licenses">0</small></button>
+        </div>
+
+        <div class="tnx-vault-layout">
+          <div>
+            <div id="itemsGrid" class="tnx-item-grid"></div>
+
+            <div id="itemsEmpty" class="tnx-empty hidden">
+              <strong>ما لقيت غرض مطابق</strong>
+              <span>جرّب تبحث باسم أبسط مثل: صندوق، Vip، نيوك، سمعة.</span>
+            </div>
+          </div>
+
+          <aside id="itemFocusPanel" class="tnx-focus-panel">
+            <div class="tnx-focus-placeholder">
+              <div>◆</div>
+              <h3>اختر غرض</h3>
+              <p>اضغط على أي غرض من القائمة عشان تظهر تفاصيله هنا.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="tnx-bottom-grid">
+        <section class="tnx-panel tnx-reveal">
+          <div class="tnx-section-head tnx-center">
+            <span>الصناديق</span>
+            <h2>Loot Tables</h2>
+            <p>هنا تظهر احتمالات الصناديق أو الجداول العشوائية إذا كانت مضافة في ملف البيانات.</p>
+          </div>
+
+          <div id="lootTablesGrid" class="tnx-loot-grid"></div>
+        </section>
+
+        <section class="tnx-panel tnx-reveal">
+          <div class="tnx-section-head tnx-center">
+            <span>التصنيع</span>
+            <h2>Crafting Recipes</h2>
+            <p>الوصفات اللي تحول أغراضك إلى أغراض أقوى.</p>
+          </div>
+
+          <div id="craftingGrid" class="tnx-crafting-grid"></div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <style is:global>
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 218, 106, 0.75) rgba(7, 5, 11, 0.9);
     }
 
-    loadData();
+    html::-webkit-scrollbar,
+    .tnx-user-card-container::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    html::-webkit-scrollbar-track,
+    .tnx-user-card-container::-webkit-scrollbar-track {
+      background: rgba(7, 5, 11, 0.9);
+    }
+
+    html::-webkit-scrollbar-thumb,
+    .tnx-user-card-container::-webkit-scrollbar-thumb {
+      border: 2px solid rgba(7, 5, 11, 0.9);
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffda6a, #c29200);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .tnx-items-page {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      background: #07050b;
+      color: white;
+      font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .tnx-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 12% 9%, rgba(255, 218, 106, 0.18), transparent 28%),
+        radial-gradient(circle at 86% 14%, rgba(194, 146, 0, 0.16), transparent 34%),
+        radial-gradient(circle at 48% 92%, rgba(124, 58, 237, 0.12), transparent 38%),
+        linear-gradient(135deg, #07050b 0%, #050507 55%, #130c05 100%);
+      animation: tnxBgBreathe 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes tnxBgBreathe {
+      from {
+        transform: scale(1);
+        filter: saturate(1) brightness(1);
+      }
+
+      to {
+        transform: scale(1.025);
+        filter: saturate(1.08) brightness(1.05);
+      }
+    }
+
+    .tnx-grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.07;
+      background-image:
+        linear-gradient(rgba(255, 218, 106, 0.4) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 218, 106, 0.4) 1px, transparent 1px);
+      background-size: 58px 58px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 74%);
+    }
+
+    .tnx-shell {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 1240px);
+      margin: 0 auto;
+      padding: 6.5rem 1rem 5rem;
+    }
+
+    .tnx-back-top {
+      position: fixed;
+      left: 1.25rem;
+      bottom: 1.25rem;
+      z-index: 90;
+      display: grid;
+      place-items: center;
+      width: 3.1rem;
+      height: 3.1rem;
+      border: 1px solid rgba(255, 218, 106, 0.42);
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255, 218, 106, 0.22), transparent 60%),
+        rgba(7, 5, 11, 0.88);
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.45),
+        0 0 22px rgba(255, 218, 106, 0.12);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      transform: translateY(16px) scale(0.92);
+      pointer-events: none;
+      transition: 220ms ease;
+    }
+
+    .tnx-back-top.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .tnx-back-top:hover {
+      transform: translateY(-3px) scale(1.04);
+      border-color: rgba(255, 218, 106, 0.75);
+      box-shadow:
+        0 22px 46px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(255, 218, 106, 0.2);
+    }
+
+    .tnx-reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition:
+        opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .tnx-reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tnx-hero {
+      max-width: 920px;
+      margin: 0 auto 1.25rem;
+      text-align: center;
+    }
+
+    .tnx-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      border: 1px solid rgba(255, 218, 106, 0.28);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.36);
+      color: #ffda6a;
+      padding: 0.55rem 0.9rem;
+      font-size: 0.78rem;
+      font-weight: 950;
+      letter-spacing: 0.18em;
+    }
+
+    .tnx-eyebrow span {
+      width: 0.48rem;
+      height: 0.48rem;
+      border-radius: 999px;
+      background: #ffda6a;
+      box-shadow: 0 0 14px #ffda6a;
+    }
+
+    .tnx-hero h1 {
+      margin: 1.15rem 0 0;
+      background: linear-gradient(90deg, #fff1a8, #ffda6a 44%, #c29200);
+      background-clip: text;
+      color: transparent;
+      font-size: clamp(3.2rem, 8vw, 6.8rem);
+      font-weight: 950;
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+    }
+
+    .tnx-hero p {
+      max-width: 760px;
+      margin: 1.15rem auto 0;
+      color: rgb(209, 213, 219);
+      font-size: 1.03rem;
+      font-weight: 760;
+      line-height: 1.9;
+    }
+
+    .tnx-hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+      max-width: 720px;
+      margin: 1.25rem auto 0;
+    }
+
+    .tnx-hero-stats div,
+    .tnx-guide,
+    .tnx-vault,
+    .tnx-panel,
+    .tnx-focus-panel {
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
+        rgba(6, 6, 8, 0.78);
+      box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.44),
+        inset 0 0 22px rgba(255, 218, 106, 0.025);
+      backdrop-filter: blur(16px);
+    }
+
+    .tnx-hero-stats div {
+      border-radius: 1.25rem;
+      padding: 1rem;
+    }
+
+    .tnx-hero-stats strong {
+      display: block;
+      color: #ffda6a;
+      font-size: 1.8rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .tnx-hero-stats span {
+      display: block;
+      margin-top: 0.35rem;
+      color: rgb(156, 163, 175);
+      font-size: 0.8rem;
+      font-weight: 850;
+    }
+
+    .tnx-guide,
+    .tnx-vault,
+    .tnx-panel {
+      margin-top: 1rem;
+      border-radius: 1.8rem;
+      padding: 1.25rem;
+    }
+
+    .tnx-section-head span {
+      color: #c29200;
+      font-size: 0.78rem;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+    }
+
+    .tnx-section-head h2 {
+      margin: 0.3rem 0 0;
+      color: #f7e6ac;
+      font-size: 2rem;
+      font-weight: 950;
+      line-height: 1.15;
+    }
+
+    .tnx-section-head p {
+      margin: 0.5rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.92rem;
+      font-weight: 800;
+      line-height: 1.75;
+    }
+
+    .tnx-center {
+      text-align: center;
+    }
+
+    .tnx-guide-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    .tnx-guide-card {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.85rem;
+      min-height: 138px;
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 1.25rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.07), transparent 42%),
+        rgba(0, 0, 0, 0.3);
+      color: white;
+      padding: 1rem;
+      text-align: right;
+      cursor: pointer;
+      transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .tnx-guide-card:hover {
+      transform: translateY(-4px) scale(1.01);
+      border-color: rgba(255, 218, 106, 0.5);
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 42%),
+        rgba(0, 0, 0, 0.38);
+    }
+
+    .tnx-guide-card b {
+      display: grid;
+      place-items: center;
+      width: 3rem;
+      height: 3rem;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 1rem;
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255, 218, 106, 0.18), transparent 62%),
+        rgba(255, 218, 106, 0.06);
+      color: #ffda6a;
+      font-size: 1rem;
+      font-weight: 950;
+      transition: 220ms ease;
+    }
+
+    .tnx-guide-card:hover b {
+      transform: rotate(-3deg) scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 218, 106, 0.14);
+    }
+
+    .tnx-guide-card strong {
+      display: block;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 950;
+      line-height: 1.35;
+    }
+
+    .tnx-guide-card p {
+      margin: 0.45rem 0 0;
+      color: rgb(209, 213, 219);
+      font-size: 0.86rem;
+      font-weight: 800;
+      line-height: 1.7;
+    }
+
+    .tnx-vault-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+      gap: 1rem;
+      align-items: end;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 218, 106, 0.12);
+    }
+
+    .tnx-search {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 0.75rem;
+      align-items: center;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 1.15rem;
+      background: rgba(0, 0, 0, 0.32);
+      padding: 0.85rem;
+      transition: 220ms ease;
+    }
+
+    .tnx-search:focus-within {
+      border-color: rgba(255, 218, 106, 0.58);
+      box-shadow: 0 0 0 3px rgba(255, 218, 106, 0.08);
+    }
+
+    .tnx-search span {
+      color: #ffda6a;
+      font-size: 1.4rem;
+      font-weight: 950;
+    }
+
+    .tnx-search input {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 850;
+      outline: none;
+    }
+
+    .tnx-search button {
+      display: grid;
+      place-items: center;
+      width: 2.2rem;
+      height: 2.2rem;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      font-size: 1.2rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 200ms ease;
+    }
+
+    .tnx-search button:hover {
+      transform: scale(1.06);
+      border-color: rgba(255, 218, 106, 0.5);
+      background: rgba(255, 218, 106, 0.14);
+    }
+
+    .tnx-filter-row {
+      position: sticky;
+      top: 5.25rem;
+      z-index: 30;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin: 1rem 0;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 1rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.07), transparent 40%),
+        rgba(7, 5, 11, 0.9);
+      padding: 0.7rem;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(14px);
+    }
+
+    .tnx-filter-row button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 0.9rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.62rem 0.8rem;
+      font-size: 0.82rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+      white-space: nowrap;
+    }
+
+    .tnx-filter-row button:hover,
+    .tnx-filter-row button.is-active {
+      transform: translateY(-2px) scale(1.02);
+      border-color: rgba(255, 218, 106, 0.55);
+      background: rgba(255, 218, 106, 0.14);
+      color: #ffda6a;
+    }
+
+    .tnx-filter-row small {
+      display: grid;
+      place-items: center;
+      min-width: 1.35rem;
+      height: 1.35rem;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.34);
+      color: rgb(229, 231, 235);
+      font-size: 0.68rem;
+    }
+
+    .tnx-vault-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 350px;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .tnx-item-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .tnx-item-card {
+      position: relative;
+      display: grid;
+      gap: 0.85rem;
+      min-height: 230px;
+      border: 1px solid rgba(255, 218, 106, 0.15);
+      border-radius: 1.35rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.06), transparent 42%),
+        rgba(0, 0, 0, 0.3);
+      color: white;
+      padding: 1rem;
+      text-align: right;
+      cursor: pointer;
+      overflow: hidden;
+      transition: 240ms cubic-bezier(0.22, 1, 0.36, 1);
+      animation: tnxItemCascade 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-delay: calc(var(--stagger, 0) * 48ms);
+      scroll-margin-top: 11rem;
+    }
+
+    @keyframes tnxItemCascade {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.985);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .tnx-item-card:hover,
+    .tnx-item-card.is-selected {
+      transform: translateY(-5px) scale(1.015);
+      border-color: rgba(255, 218, 106, 0.56);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.32), 0 0 28px rgba(255, 218, 106, 0.12);
+    }
+
+    .tnx-item-card.is-linked {
+      border-color: rgba(255, 218, 106, 0.82);
+      box-shadow:
+        0 0 0 1px rgba(255, 218, 106, 0.28),
+        0 0 34px rgba(255, 218, 106, 0.18);
+    }
+
+    .tnx-item-card::before {
+      content: '';
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(from 180deg, transparent, rgba(255, 218, 106, 0.12), transparent 34%);
+      opacity: 0;
+      transition: opacity 240ms ease;
+      pointer-events: none;
+    }
+
+    .tnx-item-card:hover::before,
+    .tnx-item-card.is-selected::before {
+      opacity: 1;
+      animation: tnxItemShine 4.5s linear infinite;
+    }
+
+    @keyframes tnxItemShine {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .tnx-item-card-top {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .tnx-item-icon {
+      display: grid;
+      place-items: center;
+      width: 3.6rem;
+      height: 3.6rem;
+      border: 1px solid rgba(255, 218, 106, 0.22);
+      border-radius: 1.1rem;
+      background:
+        radial-gradient(circle at center, rgba(255, 218, 106, 0.16), transparent 64%),
+        rgba(255, 218, 106, 0.055);
+      color: #ffda6a;
+      font-size: 1.7rem;
+      flex: 0 0 auto;
+      transition: 240ms ease;
+    }
+
+    .tnx-item-card:hover .tnx-item-icon {
+      transform: rotate(-3deg) scale(1.06);
+    }
+
+    .tnx-item-info {
+      min-width: 0;
+    }
+
+    .tnx-item-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+    }
+
+    .tnx-item-card strong {
+      color: white;
+      font-size: 1.15rem;
+      font-weight: 950;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .tnx-item-value {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      border: 1px solid rgba(255, 218, 106, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      padding: 0.32rem 0.55rem;
+      font-size: 0.74rem;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .tnx-item-card p {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      color: rgb(180, 186, 196);
+      font-size: 0.82rem;
+      font-weight: 800;
+      line-height: 1.7;
+      min-height: 2.8rem;
+    }
+
+    .tnx-item-badges {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.42rem;
+      margin-top: auto;
+    }
+
+    .tnx-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.035);
+      color: rgb(209, 213, 219);
+      padding: 0.34rem 0.55rem;
+      font-size: 0.68rem;
+      font-weight: 900;
+    }
+
+    .tnx-status-pill.is-good {
+      border-color: rgba(52, 211, 153, 0.28);
+      background: rgba(52, 211, 153, 0.08);
+      color: rgb(167, 243, 208);
+    }
+
+    .tnx-status-pill.is-bad {
+      border-color: rgba(248, 113, 113, 0.24);
+      background: rgba(248, 113, 113, 0.08);
+      color: rgb(254, 202, 202);
+    }
+
+    .tnx-status-pill.is-warn {
+      border-color: rgba(255, 218, 106, 0.28);
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+    }
+
+    .tnx-focus-panel {
+      position: sticky;
+      top: 11rem;
+      min-height: 430px;
+      border-radius: 1.5rem;
+      padding: 1rem;
+    }
+
+    .tnx-focus-placeholder {
+      display: grid;
+      place-items: center;
+      min-height: 360px;
+      text-align: center;
+    }
+
+    .tnx-focus-placeholder div {
+      display: grid;
+      place-items: center;
+      width: 4rem;
+      height: 4rem;
+      border-radius: 1.25rem;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      background: rgba(255, 218, 106, 0.06);
+      color: #ffda6a;
+      font-size: 1.6rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .tnx-focus-placeholder h3 {
+      margin: 0;
+      color: #f7e6ac;
+      font-size: 1.45rem;
+      font-weight: 950;
+    }
+
+    .tnx-focus-placeholder p {
+      max-width: 240px;
+      margin: 0.55rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.86rem;
+      font-weight: 800;
+      line-height: 1.75;
+    }
+
+    .tnx-focus-card {
+      display: grid;
+      gap: 0.95rem;
+    }
+
+    .tnx-focus-main-icon {
+      display: grid;
+      place-items: center;
+      min-height: 150px;
+      border: 1px solid rgba(255, 218, 106, 0.14);
+      border-radius: 1.25rem;
+      background:
+        radial-gradient(circle at center, rgba(255, 218, 106, 0.14), transparent 56%),
+        rgba(0, 0, 0, 0.28);
+      color: #ffda6a;
+      font-size: 4.3rem;
+    }
+
+    .tnx-focus-card h3 {
+      margin: 0;
+      color: white;
+      font-size: 1.65rem;
+      font-weight: 950;
+      line-height: 1.25;
+    }
+
+    .tnx-focus-card p {
+      margin: 0;
+      color: rgb(209, 213, 219);
+      font-size: 0.9rem;
+      font-weight: 800;
+      line-height: 1.75;
+    }
+
+    .tnx-focus-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.6rem;
+    }
+
+    .tnx-focus-meta div {
+      border: 1px solid rgba(255, 218, 106, 0.12);
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.26);
+      padding: 0.75rem;
+    }
+
+    .tnx-focus-meta span {
+      display: block;
+      color: rgb(148, 163, 184);
+      font-size: 0.72rem;
+      font-weight: 900;
+      margin-bottom: 0.25rem;
+    }
+
+    .tnx-focus-meta strong {
+      color: #ffda6a;
+      font-size: 0.86rem;
+      font-weight: 950;
+      word-break: break-word;
+    }
+
+    .tnx-focus-copy {
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 0.9rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.78rem 1rem;
+      font-size: 0.86rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .tnx-focus-copy:hover,
+    .tnx-focus-copy.is-copied {
+      transform: translateY(-2px);
+      border-color: rgba(52, 211, 153, 0.55);
+      background: rgba(52, 211, 153, 0.14);
+      color: rgb(167, 243, 208);
+    }
+
+    .tnx-empty {
+      display: grid;
+      place-items: center;
+      gap: 0.35rem;
+      border-radius: 1.5rem;
+      padding: 2rem;
+      text-align: center;
+      min-height: 220px;
+    }
+
+    .tnx-empty strong {
+      color: #ffda6a;
+      font-size: 1.4rem;
+      font-weight: 950;
+    }
+
+    .tnx-empty span {
+      color: rgb(156, 163, 175);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .tnx-bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+      align-items: start;
+    }
+
+    .tnx-loot-grid,
+    .tnx-crafting-grid {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .tnx-loot-card,
+    .tnx-craft-card {
+      border: 1px solid rgba(255, 218, 106, 0.14);
+      border-radius: 1.15rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.06), transparent 40%),
+        rgba(0, 0, 0, 0.26);
+      padding: 1rem;
+      transition: 220ms ease;
+    }
+
+    .tnx-loot-card:hover,
+    .tnx-craft-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 218, 106, 0.42);
+    }
+
+    .tnx-loot-card h3,
+    .tnx-craft-card h3 {
+      margin: 0 0 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      color: #f7e6ac;
+      font-size: 1.05rem;
+      font-weight: 950;
+    }
+
+    .tnx-loot-list,
+    .tnx-ingredient-list {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .tnx-loot-row,
+    .tnx-ingredient-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      border: 1px solid rgba(255, 218, 106, 0.1);
+      border-radius: 0.75rem;
+      background: rgba(255, 255, 255, 0.025);
+      padding: 0.55rem 0.65rem;
+      color: rgb(209, 213, 219);
+      font-size: 0.82rem;
+      font-weight: 850;
+    }
+
+    .tnx-loot-row b,
+    .tnx-ingredient-row b {
+      color: #ffda6a;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 1120px) {
+      .tnx-vault-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-focus-panel {
+        position: static;
+        min-height: auto;
+      }
+
+      .tnx-item-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .tnx-vault-top,
+      .tnx-guide-grid,
+      .tnx-hero-stats,
+      .tnx-bottom-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-filter-row {
+        top: 4.75rem;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .tnx-shell {
+        padding-top: 5.5rem;
+      }
+
+      .tnx-hero h1 {
+        font-size: 3rem;
+      }
+
+      .tnx-item-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-focus-meta {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-back-top {
+        left: 0.9rem;
+        bottom: 0.9rem;
+        width: 2.8rem;
+        height: 2.8rem;
+      }
+    }
+  </style>
+
+  <script is:inline data-reinit>
+    ;(async () => {
+      const cleanupKey = '__tnxItemsPageCleanup'
+
+      if (window[cleanupKey]) {
+        window[cleanupKey]()
+      }
+
+      const listeners = []
+      const timers = []
+      const observers = []
+
+      function addListener(target, event, handler, options) {
+        if (!target) return
+        target.addEventListener(event, handler, options)
+        listeners.push(() => target.removeEventListener(event, handler, options))
+      }
+
+      function addTimer(id) {
+        timers.push(id)
+        return id
+      }
+
+      function addObserver(observer) {
+        observers.push(observer)
+        return observer
+      }
+
+      window[cleanupKey] = () => {
+        listeners.forEach((cleanup) => cleanup())
+        listeners.length = 0
+        timers.forEach((id) => window.clearTimeout(id))
+        timers.length = 0
+        observers.forEach((observer) => observer.disconnect())
+        observers.length = 0
+      }
+
+      const CATEGORY_META = {
+        purchasable: { label: 'قابل للشراء', icon: '₪' },
+        usable: { label: 'قابل للاستخدام', icon: '⚡' },
+        sellable: { label: 'قابل للبيع', icon: '↗' },
+        limited: { label: 'محدود', icon: '1' },
+        chests: { label: 'صناديق', icon: '▣' },
+        effects: { label: 'تأثيرات', icon: '✦' },
+        materials: { label: 'مواد', icon: '◆' },
+        licenses: { label: 'رخص / رتب', icon: '★' },
+        special: { label: 'خاص', icon: '⬟' },
+      }
+
+      const state = {
+        items: [],
+        lootTables: [],
+        crafting: [],
+        filter: 'all',
+        search: '',
+        selectedItemName: '',
+      }
+
+      const itemsGrid = document.getElementById('itemsGrid')
+      const itemsEmpty = document.getElementById('itemsEmpty')
+      const itemSearch = document.getElementById('itemSearch')
+      const clearItemSearch = document.getElementById('clearItemSearch')
+      const filterButtons = Array.from(document.querySelectorAll('[data-item-filter]'))
+      const guideButtons = Array.from(document.querySelectorAll('[data-guide-filter]'))
+      const itemFocusPanel = document.getElementById('itemFocusPanel')
+      const lootTablesGrid = document.getElementById('lootTablesGrid')
+      const craftingGrid = document.getElementById('craftingGrid')
+      const backToTop = document.getElementById('itemsBackToTop')
+
+      const statTotalItems = document.getElementById('statTotalItems')
+      const statPurchasableItems = document.getElementById('statPurchasableItems')
+      const statCraftingRecipes = document.getElementById('statCraftingRecipes')
+
+      function esc(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;')
+      }
+
+      function normalize(value) {
+        return String(value || '')
+          .toLowerCase()
+          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[أإآ]/g, 'ا')
+          .replace(/ة/g, 'ه')
+          .replace(/ى/g, 'ي')
+          .replace(/\s+/g, ' ')
+          .trim()
+      }
+
+      function slugify(name) {
+        return `item-${String(name || '')
+          .trim()
+          .toLowerCase()
+          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[أإآ]/g, 'ا')
+          .replace(/ة/g, 'ه')
+          .replace(/ى/g, 'ي')
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9\u0600-\u06ff-]/g, '')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '')}`
+      }
+
+      function formatNumber(n) {
+        return Number(n || 0).toLocaleString('de-DE')
+      }
+
+      function getItemCategory(rawItem) {
+        const text = normalize(rawItem.text)
+        const description = normalize(rawItem.description)
+        const option = normalize(rawItem.option)
+        const full = `${text} ${description} ${option}`
+
+        if (full.includes('صندوق')) return 'chests'
+        if (full.includes('رخص') || full.includes('محامي') || full.includes('vip') || full.includes('عريف') || full.includes('crown') || full.includes('exam')) return 'licenses'
+        if (full.includes('نيوك') || full.includes('عنوان') || full.includes('قنبله') || full.includes('تجميد') || full.includes('بطاطا') || full.includes('نرد') || full.includes('جرأه') || full.includes('الحرامي') || full.includes('لا يكثر')) return 'effects'
+        if (rawItem.excludeUsage && !rawItem.excludePurchase) return 'materials'
+        if (rawItem.excludePurchase && rawItem.excludeUsage) return 'materials'
+        return 'special'
+      }
+
+      function getItemIcon(item) {
+        const text = normalize(item.text)
+        const category = item.category
+
+        if (text.includes('vip')) return '♛'
+        if (text.includes('نيوك')) return '☢'
+        if (text.includes('عنوان')) return '✎'
+        if (text.includes('سمعه')) return '◆'
+        if (text.includes('صندوق')) return '▣'
+        if (text.includes('محامي') || text.includes('lawyer')) return '⚖'
+        if (text.includes('حرامي')) return '🖐'
+        if (text.includes('نرد')) return '⚂'
+        if (text.includes('قنبله')) return '☁'
+        if (text.includes('بطاطا')) return '●'
+        if (text.includes('رخص')) return '★'
+        if (category === 'materials') return '◇'
+        if (category === 'effects') return '✦'
+        if (category === 'licenses') return '★'
+        return '⬟'
+      }
+
+      function enrichItem(item, index) {
+        const name = String(item.text || '').trim()
+        const category = getItemCategory(item)
+        const hashId = slugify(name)
+        const command = String(item.option || '').trim()
+        const description = String(item.description || '').trim() || 'لا يوجد وصف متاح.'
+        const value = Number(item.value || 0)
+
+        const tags = []
+
+        if (!item.excludePurchase) tags.push('purchasable')
+        if (!item.excludeUsage) tags.push('usable')
+        if (!item.excludeSale) tags.push('sellable')
+        if (item.itemLimitEnabled) tags.push('limited')
+        tags.push(category)
+
+        const searchText = normalize([
+          name,
+          description,
+          command,
+          category,
+          CATEGORY_META[category]?.label,
+          value,
+          item.excludePurchase ? 'not purchasable ممنوع شراء' : 'شراء',
+          item.excludeUsage ? 'not usable ممنوع استخدام' : 'استخدام',
+          item.excludeSale ? 'not sale ممنوع بيع' : 'بيع',
+        ].join(' '))
+
+        return {
+          ...item,
+          index,
+          name,
+          hashId,
+          category,
+          categoryLabel: CATEGORY_META[category]?.label || 'خاص',
+          icon: getItemIcon({ ...item, category }),
+          description,
+          command,
+          value,
+          tags,
+          searchText,
+        }
+      }
+
+      function getStatusPills(item) {
+        const pills = []
+
+        pills.push({ label: item.excludePurchase ? 'غير قابل للشراء' : 'قابل للشراء', type: item.excludePurchase ? 'bad' : 'good' })
+        pills.push({ label: item.excludeUsage ? 'غير قابل للاستخدام' : 'قابل للاستخدام', type: item.excludeUsage ? 'bad' : 'good' })
+        pills.push({ label: item.excludeSale ? 'غير قابل للبيع' : 'قابل للبيع', type: item.excludeSale ? 'bad' : 'good' })
+
+        if (item.itemLimitEnabled) {
+          pills.push({ label: `حد: ${formatNumber(item.itemLimitAmount || 1)}`, type: 'warn' })
+        }
+
+        return pills
+      }
+
+      function updateStats() {
+        const purchasable = state.items.filter((item) => !item.excludePurchase).length
+
+        if (statTotalItems) statTotalItems.textContent = String(state.items.length)
+        if (statPurchasableItems) statPurchasableItems.textContent = String(purchasable)
+        if (statCraftingRecipes) statCraftingRecipes.textContent = String(state.crafting.length)
+
+        const counts = {
+          all: state.items.length,
+          purchasable: 0,
+          usable: 0,
+          sellable: 0,
+          limited: 0,
+          chests: 0,
+          effects: 0,
+          materials: 0,
+          licenses: 0,
+        }
+
+        state.items.forEach((item) => {
+          if (!item.excludePurchase) counts.purchasable++
+          if (!item.excludeUsage) counts.usable++
+          if (!item.excludeSale) counts.sellable++
+          if (item.itemLimitEnabled) counts.limited++
+          if (counts[item.category] !== undefined) counts[item.category]++
+        })
+
+        Object.entries(counts).forEach(([key, value]) => {
+          const el = document.getElementById(`count-${key}`)
+          if (el) el.textContent = String(value)
+        })
+      }
+
+      function renderFilterButtons() {
+        filterButtons.forEach((button) => {
+          button.classList.toggle('is-active', button.dataset.itemFilter === state.filter)
+        })
+      }
+
+      function getFilteredItems() {
+        const query = normalize(state.search)
+
+        return state.items.filter((item) => {
+          const filterMatch = state.filter === 'all' || item.tags.includes(state.filter)
+          const searchMatch = !query || item.searchText.includes(query)
+          return filterMatch && searchMatch
+        })
+      }
+
+      function renderItems() {
+        if (!itemsGrid) return
+
+        const items = getFilteredItems()
+        itemsEmpty?.classList.toggle('hidden', items.length > 0)
+
+        itemsGrid.innerHTML = items.map((item, renderIndex) => {
+          const selected = item.name === state.selectedItemName ? ' is-selected' : ''
+          const linked = window.location.hash === `#${item.hashId}` ? ' is-linked' : ''
+          const pills = getStatusPills(item).slice(0, 4).map((pill) => `
+            <span class="tnx-status-pill is-${esc(pill.type)}">${esc(pill.label)}</span>
+          `).join('')
+
+          return `
+            <button
+              type="button"
+              id="${esc(item.hashId)}"
+              class="tnx-item-card${selected}${linked}"
+              style="--stagger:${renderIndex}"
+              data-item-name="${esc(item.name)}"
+            >
+              <div class="tnx-item-card-top">
+                <div class="tnx-item-info">
+                  <div class="tnx-item-title-row">
+                    <strong>${esc(item.name)}</strong>
+                  </div>
+                </div>
+
+                <div class="tnx-item-icon">${esc(item.icon)}</div>
+              </div>
+
+              <span class="tnx-item-value">القيمة: ${formatNumber(item.value)}</span>
+
+              <p>${esc(item.description)}</p>
+
+              <div class="tnx-item-badges">
+                <span class="tnx-status-pill is-warn">${esc(item.categoryLabel)}</span>
+                ${pills}
+              </div>
+            </button>
+          `
+        }).join('')
+      }
+
+      function renderItemFocus(item) {
+        if (!itemFocusPanel || !item) return
+
+        const pills = getStatusPills(item).map((pill) => `
+          <span class="tnx-status-pill is-${esc(pill.type)}">${esc(pill.label)}</span>
+        `).join('')
+
+        const commandText = item.command || 'لا يوجد أمر مباشر'
+
+        itemFocusPanel.innerHTML = `
+          <div class="tnx-focus-card">
+            <div class="tnx-focus-main-icon">${esc(item.icon)}</div>
+
+            <div>
+              <span class="tnx-status-pill is-warn">${esc(item.categoryLabel)}</span>
+              <h3>${esc(item.name)}</h3>
+            </div>
+
+            <p>${esc(item.description)}</p>
+
+            <div class="tnx-item-badges">
+              ${pills}
+            </div>
+
+            <div class="tnx-focus-meta">
+              <div>
+                <span>القيمة</span>
+                <strong>${formatNumber(item.value)}</strong>
+              </div>
+
+              <div>
+                <span>النوع</span>
+                <strong>${esc(item.categoryLabel)}</strong>
+              </div>
+
+              <div>
+                <span>الأمر / الخيار</span>
+                <strong>${esc(commandText)}</strong>
+              </div>
+
+              <div>
+                <span>الحد</span>
+                <strong>${item.itemLimitEnabled ? formatNumber(item.itemLimitAmount || 1) : 'لا يوجد'}</strong>
+              </div>
+            </div>
+
+            <button type="button" class="tnx-focus-copy" data-copy-item-link="${esc(item.hashId)}">
+              نسخ رابط الغرض
+            </button>
+          </div>
+        `
+      }
+
+      function selectItem(name, options = {}) {
+        const item = state.items.find((entry) => entry.name === name)
+        if (!item) return
+
+        state.selectedItemName = item.name
+
+        if (options.updateHash !== false) {
+          history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${item.hashId}`)
+        }
+
+        renderItems()
+        renderItemFocus(item)
+
+        if (options.scrollToItem) {
+          addTimer(window.setTimeout(() => {
+            document.getElementById(item.hashId)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }, 80))
+        }
+      }
+
+      function openItemFromHash(options = {}) {
+        const hash = decodeURIComponent((window.location.hash || '').replace('#', ''))
+        if (!hash || !hash.startsWith('item-')) return false
+
+        const item = state.items.find((entry) => entry.hashId === hash)
+        if (!item) return false
+
+        state.filter = 'all'
+        state.search = ''
+        if (itemSearch) itemSearch.value = ''
+
+        renderFilterButtons()
+        selectItem(item.name, { updateHash: false, scrollToItem: options.scrollToItem !== false })
+
+        document.querySelector('.tnx-vault')?.scrollIntoView({
+          behavior: options.instant ? 'auto' : 'smooth',
+          block: 'start',
+        })
+
+        return true
+      }
+
+      function getItemLink(hashId) {
+        return `${window.location.origin}${window.location.pathname}${window.location.search}#${hashId}`
+      }
+
+      async function copyText(text, button, doneText = 'تم النسخ') {
+        const oldText = button.textContent
+
+        try {
+          await navigator.clipboard.writeText(text)
+          button.textContent = doneText
+          button.classList.add('is-copied')
+
+          addTimer(window.setTimeout(() => {
+            button.textContent = oldText
+            button.classList.remove('is-copied')
+          }, 1100))
+        } catch {
+          button.textContent = text
+
+          addTimer(window.setTimeout(() => {
+            button.textContent = oldText
+          }, 1400))
+        }
+      }
+
+      function renderLootTables() {
+        if (!lootTablesGrid) return
+
+        const tables = Array.isArray(state.lootTables) ? state.lootTables : []
+
+        if (tables.length === 0) {
+          lootTablesGrid.innerHTML = `
+            <div class="tnx-empty">
+              <strong>ما فيه Loot Tables</strong>
+              <span>إذا أضفتها في items.json بتظهر هنا.</span>
+            </div>
+          `
+          return
+        }
+
+        lootTablesGrid.innerHTML = tables.map((table, index) => {
+          const name = String(table.name || '').trim() || `Loot Table ${index + 1}`
+          const rows = Array.isArray(table.items) ? table.items : []
+
+          return `
+            <div class="tnx-loot-card">
+              <h3>
+                <span>${esc(name)}</span>
+                <b>▣</b>
+              </h3>
+
+              <div class="tnx-loot-list">
+                ${rows.map((row) => `
+                  <div class="tnx-loot-row">
+                    <span>${esc(row.option || 'غير محدد')}</span>
+                    <b>${formatNumber(row.value)}%</b>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `
+        }).join('')
+      }
+
+      function renderCrafting() {
+        if (!craftingGrid) return
+
+        const recipes = Array.isArray(state.crafting) ? state.crafting : []
+
+        if (recipes.length === 0) {
+          craftingGrid.innerHTML = `
+            <div class="tnx-empty">
+              <strong>ما فيه وصفات تصنيع</strong>
+              <span>إذا أضفت crafting في items.json بتظهر هنا.</span>
+            </div>
+          `
+          return
+        }
+
+        craftingGrid.innerHTML = recipes.map((recipe) => {
+          const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : []
+
+          return `
+            <div class="tnx-craft-card">
+              <h3>
+                <span>${esc(recipe.result || 'نتيجة غير محددة')}</span>
+                <b>⚒</b>
+              </h3>
+
+              <div class="tnx-ingredient-list">
+                ${ingredients.map((ingredient) => `
+                  <div class="tnx-ingredient-row">
+                    <span>${esc(ingredient.item || 'غير محدد')}</span>
+                    <b>${formatNumber(ingredient.amount)}x</b>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `
+        }).join('')
+      }
+
+      async function loadData() {
+        try {
+          const res = await fetch('/api/items.json')
+          if (!res.ok) throw new Error(`Items request failed: ${res.status}`)
+
+          const data = await res.json()
+
+          state.items = Array.isArray(data.items)
+            ? data.items.map(enrichItem).filter((item) => item.name)
+            : []
+
+          state.lootTables = Array.isArray(data.lootTables) ? data.lootTables : []
+          state.crafting = Array.isArray(data.crafting) ? data.crafting : []
+
+          updateStats()
+          renderFilterButtons()
+          renderItems()
+          renderLootTables()
+          renderCrafting()
+
+          const opened = openItemFromHash({ instant: true, scrollToItem: true })
+          if (!opened && state.items.length > 0) {
+            selectItem(state.items[0].name, { updateHash: false })
+          }
+        } catch (error) {
+          console.error('Failed to load items.json', error)
+
+          if (itemsGrid) {
+            itemsGrid.innerHTML = `
+              <div class="tnx-empty">
+                <strong>تعذر تحميل الأغراض</strong>
+                <span>تأكد من وجود الملف في public/api/items.json</span>
+              </div>
+            `
+          }
+        }
+      }
+
+      function handleBackToTopVisibility() {
+        if (!backToTop) return
+        backToTop.classList.toggle('is-visible', window.scrollY > 520)
+      }
+
+      function setupRevealObserver() {
+        const revealEls = Array.from(document.querySelectorAll('.tnx-reveal'))
+
+        if (!('IntersectionObserver' in window)) {
+          revealEls.forEach((el) => el.classList.add('is-visible'))
+          return
+        }
+
+        const observer = addObserver(new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible')
+              observer.unobserve(entry.target)
+            }
+          })
+        }, { threshold: 0.14 }))
+
+        revealEls.forEach((el) => observer.observe(el))
+      }
+
+      addListener(backToTop, 'click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      })
+
+      addListener(window, 'scroll', handleBackToTopVisibility, { passive: true })
+
+      addListener(itemsGrid, 'click', (event) => {
+        const card = event.target.closest('[data-item-name]')
+        if (!card) return
+        selectItem(card.dataset.itemName)
+      })
+
+      addListener(document, 'click', (event) => {
+        const copyButton = event.target.closest('[data-copy-item-link]')
+
+        if (copyButton) {
+          const hashId = copyButton.dataset.copyItemLink || ''
+          copyText(getItemLink(hashId), copyButton, 'تم نسخ الرابط')
+          return
+        }
+      })
+
+      addListener(window, 'hashchange', () => {
+        openItemFromHash({ scrollToItem: true })
+      })
+
+      addListener(itemSearch, 'input', () => {
+        state.search = itemSearch.value
+        renderItems()
+      })
+
+      addListener(clearItemSearch, 'click', () => {
+        if (!itemSearch) return
+        itemSearch.value = ''
+        state.search = ''
+        itemSearch.focus()
+        renderItems()
+      })
+
+      filterButtons.forEach((button) => {
+        addListener(button, 'click', () => {
+          state.filter = button.dataset.itemFilter || 'all'
+          renderFilterButtons()
+          renderItems()
+        })
+      })
+
+      guideButtons.forEach((button) => {
+        addListener(button, 'click', () => {
+          state.filter = button.dataset.guideFilter || 'all'
+          state.search = ''
+          if (itemSearch) itemSearch.value = ''
+
+          renderFilterButtons()
+          renderItems()
+
+          document.querySelector('.tnx-vault')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        })
+      })
+
+      setupRevealObserver()
+      await loadData()
+      handleBackToTopVisibility()
+    })()
   </script>
 
-  <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
 </Layout>
