@@ -251,7 +251,6 @@ const metadata = {
       }
     }
 
-    /* كلاس الظهور عند النزول (Scroll Reveal) */
     .tnx-reveal {
       opacity: 0;
       transform: translateY(30px);
@@ -273,29 +272,9 @@ const metadata = {
       }
     }
 
-    /* دخول سلس وتفاعلي للمحتوى الجانبي */
     @keyframes tnxFocusIn {
       from { opacity: 0; transform: translateX(-15px); }
       to { opacity: 1; transform: translateX(0); }
-    }
-
-
-    @keyframes tnxBadgeShine {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes tnxNextShine {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
     }
 
     .tnx-grid-bg {
@@ -354,7 +333,7 @@ const metadata = {
     }
 
     .tnx-back-top:hover {
-      transform: translateY(-3px) scale(1.06);
+      transform: translateY(-4px) scale(1.1);
       border-color: rgba(255, 218, 106, 0.75);
       box-shadow:
         0 22px 46px rgba(0, 0, 0, 0.5),
@@ -521,7 +500,7 @@ const metadata = {
     }
 
     .tnx-start-card:hover {
-      transform: translateY(-4px) scale(1.015);
+      transform: translateY(-5px) scale(1.02);
       border-color: rgba(255, 218, 106, 0.5);
       background:
         radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 42%),
@@ -721,7 +700,7 @@ const metadata = {
 
     .tnx-badge-card:hover,
     .tnx-badge-card.is-selected {
-      transform: translateY(-5px) scale(1.015);
+      transform: translateY(-6px) scale(1.02);
       border-color: rgba(255, 218, 106, 0.6);
       box-shadow: 0 8px 28px rgba(255, 218, 106, 0.18);
     }
@@ -758,7 +737,7 @@ const metadata = {
     }
 
     .tnx-badge-card:hover .tnx-badge-img-wrap img {
-      transform: scale(1.07) rotate(3deg);
+      transform: scale(1.1) rotate(4deg);
     }
 
     .tnx-badge-img-wrap img {
@@ -1247,7 +1226,6 @@ const metadata = {
       color: rgb(167, 243, 208);
     }
 
-    /* أنيميشن أشرطة التقدم الحقيقي */
     @keyframes fillProgress {
       from { width: 0%; }
       to { width: var(--target-width); }
@@ -1266,65 +1244,48 @@ const metadata = {
       background: linear-gradient(90deg, #c29200, #ffda6a, #fff1a8);
       box-shadow: 0 0 18px rgba(255, 218, 106, 0.5);
       animation: fillProgress 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      width: 0; /* يبدأ من صفر */
+      width: 0;
     }
 
+    /* --- تنسيق بطاقة أقرب بادج (المحدث) --- */
     .tnx-next-hero {
-      display: grid;
-      grid-template-columns: 148px minmax(0, 1fr);
-      gap: 1.35rem;
+      display: flex;
+      flex-direction: row;
       align-items: center;
+      gap: 2rem;
       width: min(100%, 900px);
       margin-inline: auto;
-      border: 1px solid rgba(255, 218, 106, 0.38);
-      border-radius: 1.65rem;
-      background:
-        radial-gradient(circle at 10% 50%, rgba(255, 218, 106, 0.25), transparent 48%),
-        radial-gradient(circle at 88% 14%, rgba(255, 218, 106, 0.13), transparent 36%),
-        linear-gradient(135deg, rgba(255, 218, 106, 0.11), rgba(0, 0, 0, 0.48) 66%);
-      padding: 1.35rem 1.45rem;
+      border: 1px solid rgba(255, 218, 106, 0.15);
+      border-radius: 1.5rem;
+      background: linear-gradient(145deg, rgba(20, 15, 10, 0.8), rgba(5, 5, 5, 0.95));
+      padding: 2rem;
       color: white;
       text-align: right;
       cursor: pointer;
-      transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 220ms ease, box-shadow 220ms ease;
-      will-change: transform;
-      box-shadow:
-        0 26px 70px rgba(0, 0, 0, 0.46),
-        0 0 38px rgba(255, 218, 106, 0.13),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
       position: relative;
       overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .tnx-next-hero::before {
       content: '';
       position: absolute;
-      inset: -50%;
-      background: conic-gradient(from 0deg, transparent, rgba(255, 218, 106, 0.12), transparent 30%);
-      animation: tnxNextShine 6s linear infinite;
-      pointer-events: none;
-    }
-
-    .tnx-next-hero::after {
-      content: '';
-      position: absolute;
       inset: 0;
+      background: radial-gradient(circle at 80% 50%, rgba(255, 218, 106, 0.05) 0%, transparent 60%);
       pointer-events: none;
-      background:
-        linear-gradient(90deg, rgba(255, 218, 106, 0.08), transparent 32%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 44%);
     }
 
     .tnx-next-hero:hover {
-      transform: translateY(-4px) scale(1.01);
-      border-color: rgba(255, 218, 106, 0.65);
-      box-shadow:
-        0 28px 65px rgba(0, 0, 0, 0.45),
-        0 0 40px rgba(255, 218, 106, 0.2);
+      border-color: rgba(255, 218, 106, 0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 218, 106, 0.08);
     }
 
     .tnx-next-hero--done {
       cursor: default;
+      justify-content: center;
+      text-align: center;
     }
 
     .tnx-next-hero--done::before {
@@ -1365,75 +1326,67 @@ const metadata = {
     }
 
     .tnx-next-img-wrap {
-      position: relative;
-      z-index: 1;
+      flex-shrink: 0;
+      width: 140px;
+      height: 140px;
       display: grid;
       place-items: center;
-      width: 8.25rem;
-      height: 8.25rem;
-      flex-shrink: 0;
-      border: 1px solid rgba(255, 218, 106, 0.34);
-      border-radius: 1.7rem;
-      background:
-        radial-gradient(circle at center, rgba(255, 218, 106, 0.22), transparent 64%),
-        rgba(0, 0, 0, 0.34);
-      box-shadow:
-        0 18px 42px rgba(0, 0, 0, 0.45),
-        inset 0 0 18px rgba(255, 218, 106, 0.08);
+      background: radial-gradient(circle, rgba(255, 218, 106, 0.1) 0%, transparent 65%);
+      border-radius: 50%;
     }
 
     .tnx-next-img-wrap img {
-      width: 6.35rem;
-      height: 6.35rem;
+      width: 110px;
+      height: 110px;
       object-fit: contain;
-      filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.55));
+      filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.4));
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .tnx-next-hero:hover .tnx-next-img-wrap img {
+      transform: scale(1.08) rotate(3deg);
     }
 
     .tnx-next-content {
-      position: relative;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       z-index: 1;
-      min-width: 0;
-      display: grid;
-      gap: 0.5rem;
-      justify-items: stretch;
-      text-align: right;
     }
 
     .tnx-next-label {
-      width: fit-content;
-      border: 1px solid rgba(255, 218, 106, 0.25);
-      border-radius: 999px;
-      background: rgba(255, 218, 106, 0.1);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255, 218, 106, 0.08);
       color: #ffda6a;
-      padding: 0.34rem 0.62rem;
-      font-size: 0.78rem;
-      font-weight: 950;
-      letter-spacing: 0.04em;
-      margin-bottom: 0.1rem;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+      width: fit-content;
+      margin-bottom: 0.8rem;
     }
 
     .tnx-next-title {
-      display: block;
-      color: white;
-      font-size: clamp(1.65rem, 3vw, 2.25rem);
-      font-weight: 950;
-      line-height: 1.1;
-      margin-bottom: 0.1rem;
-      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 900;
+      color: #fff;
+      margin: 0 0 0.4rem 0;
+      line-height: 1.2;
     }
 
     .tnx-next-desc {
-      margin: 0 0 0.7rem;
-      color: rgb(209, 213, 219);
-      font-size: 0.92rem;
-      font-weight: 800;
-      line-height: 1.55;
+      font-size: 0.95rem;
+      color: #9ca3af;
+      margin: 0 0 1.2rem 0;
     }
 
     .tnx-next-desc b {
       color: #ffda6a;
-      font-weight: 950;
-      font-size: 1rem;
+      font-size: 1.05rem;
     }
 
     .tnx-next-hint {
@@ -1444,63 +1397,63 @@ const metadata = {
       line-height: 1.6;
     }
 
+    .tnx-next-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .tnx-next-chip {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #d1d5db;
+    }
+
+    .tnx-next-chip strong {
+      color: #f7e6ac;
+      font-weight: 800;
+      margin-right: 0.2rem;
+    }
+
     .tnx-next-progress-wrap {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 0.7rem;
+      display: flex;
       align-items: center;
-      margin-top: 0.15rem;
+      gap: 1rem;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.8rem 1rem;
+      border-radius: 0.8rem;
+      border: 1px solid rgba(255, 218, 106, 0.05);
     }
 
     .tnx-next-progress {
-      height: 0.55rem;
-      border-radius: 999px;
+      flex-grow: 1;
+      height: 6px;
       background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
       overflow: hidden;
     }
 
     .tnx-next-fill {
       height: 100%;
-      border-radius: inherit;
       background: linear-gradient(90deg, #c29200, #ffda6a);
-      box-shadow: 0 0 12px rgba(255, 218, 106, 0.5);
-      animation: fillProgress 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      border-radius: 999px;
+      box-shadow: 0 0 10px rgba(255, 218, 106, 0.4);
       width: 0;
+      animation: fillProgress 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     .tnx-next-percent {
+      font-size: 1rem;
+      font-weight: 800;
       color: #ffda6a;
-      font-size: 0.95rem;
-      font-weight: 950;
       min-width: 3rem;
       text-align: left;
       direction: ltr;
-    }
-
-    .tnx-next-chip-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-      margin-top: 0.15rem;
-    }
-
-    .tnx-next-chip {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(255, 218, 106, 0.17);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.24);
-      color: rgb(229, 231, 235);
-      padding: 0.32rem 0.62rem;
-      font-size: 0.72rem;
-      font-weight: 900;
-      line-height: 1;
-    }
-
-    .tnx-next-chip strong {
-      color: #ffda6a;
-      font-weight: 950;
     }
 
     .tnx-vault-section {
@@ -1626,7 +1579,7 @@ const metadata = {
     }
 
     .tnx-vault-badge:hover {
-      transform: translateY(-4px) scale(1.02);
+      transform: translateY(-6px) scale(1.035);
     }
 
     .tnx-vault-badge.is-owned {
@@ -1758,19 +1711,6 @@ const metadata = {
       max-height: 2.5rem;
     }
 
-
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        animation-duration: 0.001ms !important;
-        animation-iteration-count: 1 !important;
-        scroll-behavior: auto !important;
-        transition-duration: 0.001ms !important;
-      }
-    }
-
     @media (max-width: 1100px) {
       .tnx-vault-layout {
         grid-template-columns: 1fr;
@@ -1788,21 +1728,6 @@ const metadata = {
       .tnx-vault-grid {
         grid-template-columns: repeat(5, 112px);
         justify-content: center;
-      }
-
-      .tnx-next-hero {
-        grid-template-columns: 1fr;
-        text-align: center;
-        justify-items: center;
-      }
-
-      .tnx-next-content {
-        text-align: center;
-        justify-items: center;
-      }
-
-      .tnx-next-img-wrap {
-        margin: 0 auto;
       }
     }
 
@@ -1836,6 +1761,24 @@ const metadata = {
         align-items: center;
         gap: 0.3rem;
         text-align: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .tnx-next-hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+        gap: 1.5rem;
+      }
+      .tnx-next-label {
+        margin: 0 auto 0.8rem auto;
+      }
+      .tnx-next-chip-row {
+        justify-content: center;
+      }
+      .tnx-next-progress-wrap {
+        width: 100%;
       }
     }
 
@@ -2029,25 +1972,18 @@ const metadata = {
       const userResults = document.getElementById('userResults')
       const userCardContainer = document.getElementById('userCardContainer')
 
-      // تعريف تقنية الكشف عن النزول (Intersection Observer) مع تنظيفه عند التنقل بين الصفحات
-      const revealTargets = Array.from(document.querySelectorAll('.tnx-reveal'))
-      let revealObserver = null
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible')
+            revealObserver.unobserve(entry.target)
+          }
+        })
+      }, { threshold: 0.1 })
 
-      if ('IntersectionObserver' in window) {
-        revealObserver = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('is-visible')
-              revealObserver?.unobserve(entry.target)
-            }
-          })
-        }, { threshold: 0.1 })
-
-        revealTargets.forEach((el) => revealObserver.observe(el))
-        listeners.push(() => revealObserver?.disconnect())
-      } else {
-        revealTargets.forEach((el) => el.classList.add('is-visible'))
-      }
+      document.querySelectorAll('.tnx-reveal').forEach((el) => {
+        revealObserver.observe(el)
+      })
 
       function esc(value) {
         return String(value ?? '')
@@ -2949,7 +2885,6 @@ const metadata = {
           state.users = []
         }
       }
-
 
       function handleBackToTopVisibility() {
         if (!backToTop) return
