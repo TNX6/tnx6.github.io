@@ -1225,8 +1225,12 @@ const artists = artistStats.map((entry) => entry.artist)
       let tx = 0
       let ty = 0
       let isDragging = false
+      let isPinching = false
       let lastX = 0
       let lastY = 0
+      let pinchStartDistance = 0
+      let pinchStartScale = 1
+      const activePointers = new Map()
 
       function normalize(value) {
         return String(value || '')
@@ -1241,6 +1245,82 @@ const artists = artistStats.map((entry) => entry.artist)
 
       function clamp(value, min, max) {
         return Math.max(min, Math.min(max, value))
+      }
+
+      function getActivePointerList() {
+        return Array.from(activePointers.values())
+      }
+
+      function getPointerDistance(a, b) {
+        return Math.hypot(a.x - b.x, a.y - b.y)
+      }
+
+      function getPointerCenter(a, b) {
+        return {
+          x: (a.x + b.x) / 2,
+          y: (a.y + b.y) / 2,
+        }
+      }
+
+      function startPinchZoom() {
+        const points = getActivePointerList()
+
+        if (points.length < 2) return
+
+        pinchStartDistance = Math.max(1, getPointerDistance(points[0], points[1]))
+        pinchStartScale = scale
+        isPinching = true
+        isDragging = false
+        zoomStage?.classList.remove('is-dragging')
+      }
+
+      function updatePinchZoom() {
+        if (!isPinching || !zoomStage || !popupImg) return
+
+        const points = getActivePointerList()
+
+        if (points.length < 2 || pinchStartDistance <= 0) return
+
+        const oldScale = scale
+        const maxScale = 5
+        const minScale = 1
+        const distance = Math.max(1, getPointerDistance(points[0], points[1]))
+        const center = getPointerCenter(points[0], points[1])
+        const stageRect = zoomStage.getBoundingClientRect()
+        const nextScale = clamp(pinchStartScale * (distance / pinchStartDistance), minScale, maxScale)
+
+        if (Math.abs(nextScale - oldScale) < 0.001) return
+
+        const pointerX = center.x - stageRect.left - stageRect.width / 2
+        const pointerY = center.y - stageRect.top - stageRect.height / 2
+        const ratio = nextScale / oldScale
+
+        tx = pointerX - ((pointerX - tx) * ratio)
+        ty = pointerY - ((pointerY - ty) * ratio)
+        scale = nextScale
+
+        if (scale <= 1.02) {
+          scale = 1
+          tx = 0
+          ty = 0
+        }
+
+        applyTransform()
+      }
+
+      function stopPointerTracking(pointerId) {
+        activePointers.delete(pointerId)
+
+        if (activePointers.size < 2) {
+          isPinching = false
+          pinchStartDistance = 0
+          pinchStartScale = scale
+        }
+
+        if (activePointers.size === 0) {
+          isDragging = false
+          zoomStage?.classList.remove('is-dragging')
+        }
       }
 
       function shuffle(array) {
@@ -1376,6 +1456,11 @@ const artists = artistStats.map((entry) => entry.artist)
         scale = 1
         tx = 0
         ty = 0
+        isDragging = false
+        isPinching = false
+        pinchStartDistance = 0
+        pinchStartScale = 1
+        activePointers.clear()
         zoomStage?.classList.remove('is-zoomed', 'is-dragging')
         applyTransform()
       }
@@ -1590,18 +1675,53 @@ const artists = artistStats.map((entry) => entry.artist)
       })
 
       addListener(zoomStage, 'pointerdown', (event) => {
-        if (scale <= 1) return
-        if (event.target !== popupImg) return
+        if (!popup || popup.classList.contains('hidden')) return
+        if (!zoomStage || !popupImg) return
+        if (event.target !== popupImg && event.target !== zoomStage) return
 
-        isDragging = true
-        zoomStage.classList.add('is-dragging')
-        lastX = event.clientX
-        lastY = event.clientY
-        zoomStage.setPointerCapture(event.pointerId)
+        activePointers.set(event.pointerId, {
+          x: event.clientX,
+          y: event.clientY,
+        })
+
+        try { zoomStage.setPointerCapture(event.pointerId) } catch {}
+
+        if (activePointers.size >= 2) {
+          event.preventDefault()
+          event.stopPropagation()
+          startPinchZoom()
+          return
+        }
+
+        if (scale > 1 && event.target === popupImg) {
+          event.preventDefault()
+          isDragging = true
+          zoomStage.classList.add('is-dragging')
+          lastX = event.clientX
+          lastY = event.clientY
+        }
       })
 
       addListener(zoomStage, 'pointermove', (event) => {
+        if (!zoomStage || !popupImg) return
+
+        if (activePointers.has(event.pointerId)) {
+          activePointers.set(event.pointerId, {
+            x: event.clientX,
+            y: event.clientY,
+          })
+        }
+
+        if (isPinching && activePointers.size >= 2) {
+          event.preventDefault()
+          event.stopPropagation()
+          updatePinchZoom()
+          return
+        }
+
         if (!isDragging) return
+
+        event.preventDefault()
 
         const dx = event.clientX - lastX
         const dy = event.clientY - lastY
@@ -1613,15 +1733,17 @@ const artists = artistStats.map((entry) => entry.artist)
       })
 
       addListener(zoomStage, 'pointerup', (event) => {
-        if (!isDragging) return
-        isDragging = false
-        zoomStage.classList.remove('is-dragging')
+        stopPointerTracking(event.pointerId)
         try { zoomStage.releasePointerCapture(event.pointerId) } catch {}
       })
 
-      addListener(zoomStage, 'pointercancel', () => {
-        isDragging = false
-        zoomStage.classList.remove('is-dragging')
+      addListener(zoomStage, 'pointercancel', (event) => {
+        stopPointerTracking(event.pointerId)
+        try { zoomStage.releasePointerCapture(event.pointerId) } catch {}
+      })
+
+      addListener(zoomStage, 'lostpointercapture', (event) => {
+        stopPointerTracking(event.pointerId)
       })
 
       addListener(zoomStage, 'wheel', (event) => {
