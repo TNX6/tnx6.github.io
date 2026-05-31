@@ -13,6 +13,10 @@ const metadata = {
     <div class="tnx-bg"></div>
     <div class="tnx-grid-bg"></div>
 
+    <button id="backToTop" class="tnx-back-top" type="button" aria-label="الرجوع للأعلى">
+      ↑
+    </button>
+
     <section class="tnx-shell">
       <header class="tnx-hero">
         <div class="tnx-eyebrow">
@@ -185,6 +189,32 @@ const metadata = {
       display: none !important;
     }
 
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 218, 106, 0.58) rgba(7, 5, 11, 0.92);
+    }
+
+    html::-webkit-scrollbar {
+      width: 11px;
+      height: 11px;
+    }
+
+    html::-webkit-scrollbar-track {
+      background: rgba(7, 5, 11, 0.95);
+      border-inline-start: 1px solid rgba(255, 218, 106, 0.08);
+    }
+
+    html::-webkit-scrollbar-thumb {
+      border: 3px solid rgba(7, 5, 11, 0.95);
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255, 218, 106, 0.86), rgba(194, 146, 0, 0.72));
+    }
+
+    html::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #fff1a8, #ffda6a);
+    }
+
     .tnx-badges-page {
       position: relative;
       min-height: 100vh;
@@ -195,7 +225,7 @@ const metadata = {
 
     .tnx-bg {
       position: fixed;
-      inset: 0;
+      inset: -2vmax;
       z-index: 0;
       pointer-events: none;
       background:
@@ -203,6 +233,37 @@ const metadata = {
         radial-gradient(circle at 86% 14%, rgba(194, 146, 0, 0.16), transparent 34%),
         radial-gradient(circle at 48% 92%, rgba(124, 58, 237, 0.12), transparent 38%),
         linear-gradient(135deg, #07050b 0%, #050507 55%, #130c05 100%);
+      animation: tnxBgBreathe 18s ease-in-out infinite;
+      transform-origin: center;
+      will-change: transform, filter, opacity;
+    }
+
+    @keyframes tnxBgBreathe {
+      0%, 100% {
+        transform: scale(1);
+        filter: saturate(1) brightness(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.025);
+        filter: saturate(1.08) brightness(1.05);
+        opacity: 0.96;
+      }
+    }
+
+    @keyframes tnxBadgeCascade {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.965);
+        filter: blur(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
     }
 
     .tnx-grid-bg {
@@ -224,6 +285,48 @@ const metadata = {
       width: min(100%, 1240px);
       margin: 0 auto;
       padding: 6.5rem 1rem 5rem;
+    }
+
+    .tnx-back-top {
+      position: fixed;
+      left: 1.25rem;
+      bottom: 1.25rem;
+      z-index: 90;
+      display: grid;
+      place-items: center;
+      width: 3.1rem;
+      height: 3.1rem;
+      border: 1px solid rgba(255, 218, 106, 0.42);
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255, 218, 106, 0.22), transparent 60%),
+        rgba(7, 5, 11, 0.88);
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.45),
+        0 0 22px rgba(255, 218, 106, 0.12);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      transform: translateY(16px) scale(0.92);
+      pointer-events: none;
+      transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+    }
+
+    .tnx-back-top.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .tnx-back-top:hover {
+      transform: translateY(-4px) scale(1.055);
+      border-color: rgba(255, 218, 106, 0.75);
+      box-shadow:
+        0 22px 46px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(255, 218, 106, 0.2);
     }
 
     .tnx-hero {
@@ -375,11 +478,12 @@ const metadata = {
       padding: 1rem;
       text-align: right;
       cursor: pointer;
-      transition: 160ms ease;
+      transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
+      will-change: transform;
     }
 
     .tnx-start-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-4px) scale(1.012);
       border-color: rgba(255, 218, 106, 0.5);
       background:
         radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 42%),
@@ -497,13 +601,14 @@ const metadata = {
       font-size: 0.82rem;
       font-weight: 950;
       cursor: pointer;
-      transition: 0.16s ease;
+      transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, background 220ms ease, color 220ms ease;
       white-space: nowrap;
+      will-change: transform;
     }
 
     .tnx-filter-row button:hover,
     .tnx-filter-row button.is-active {
-      transform: translateY(-1px);
+      transform: translateY(-2px) scale(1.025);
       border-color: rgba(255, 218, 106, 0.55);
       background: rgba(255, 218, 106, 0.14);
       color: #ffda6a;
@@ -546,14 +651,17 @@ const metadata = {
       padding: 0.95rem;
       text-align: right;
       cursor: pointer;
-      transition: 160ms ease;
+      transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
       overflow: hidden;
       scroll-margin-top: 11rem;
+      animation: tnxBadgeCascade 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-delay: calc(var(--stagger, 0) * 45ms);
+      will-change: transform, opacity, filter;
     }
 
     .tnx-badge-card:hover,
     .tnx-badge-card.is-selected {
-      transform: translateY(-2px);
+      transform: translateY(-5px) scale(1.018);
       border-color: rgba(255, 218, 106, 0.56);
       box-shadow: 0 0 28px rgba(255, 218, 106, 0.13);
     }
@@ -820,7 +928,24 @@ const metadata = {
       gap: 1rem;
       margin-top: 1rem;
       overflow-x: auto;
-      padding-bottom: 0.5rem;
+      padding-bottom: 0.8rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 218, 106, 0.58) rgba(255, 255, 255, 0.05);
+    }
+
+    .tnx-user-card-container::-webkit-scrollbar {
+      height: 10px;
+    }
+
+    .tnx-user-card-container::-webkit-scrollbar-track {
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .tnx-user-card-container::-webkit-scrollbar-thumb {
+      border: 3px solid rgba(7, 5, 11, 0.78);
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(194, 146, 0, 0.72), rgba(255, 218, 106, 0.86));
     }
 
     .tnx-card-wrap {
@@ -1089,7 +1214,8 @@ const metadata = {
       color: white;
       text-align: right;
       cursor: pointer;
-      transition: 200ms ease;
+      transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
+      will-change: transform;
       box-shadow:
         0 26px 70px rgba(0, 0, 0, 0.46),
         0 0 38px rgba(255, 218, 106, 0.13),
@@ -1125,7 +1251,7 @@ const metadata = {
     }
 
     .tnx-next-hero:hover {
-      transform: translateY(-2px);
+      transform: translateY(-5px) scale(1.01);
       border-color: rgba(255, 218, 106, 0.65);
       box-shadow:
         0 28px 65px rgba(0, 0, 0, 0.45),
@@ -1392,11 +1518,12 @@ const metadata = {
       font-size: 0.78rem;
       font-weight: 950;
       cursor: pointer;
-      transition: 160ms ease;
+      transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, background 220ms ease, color 220ms ease;
+      will-change: transform;
     }
 
     .tnx-vault-page-btn:hover:not(:disabled) {
-      transform: translateY(-1px);
+      transform: translateY(-2px) scale(1.025);
       border-color: rgba(255, 218, 106, 0.55);
       background: rgba(255, 218, 106, 0.14);
       color: #ffda6a;
@@ -1426,14 +1553,17 @@ const metadata = {
       color: white;
       padding: 0.7rem 0.5rem;
       cursor: pointer;
-      transition: 200ms ease;
+      transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, background 220ms ease, box-shadow 220ms ease, filter 220ms ease;
       text-align: center;
       min-height: 130px;
       overflow: hidden;
+      animation: tnxBadgeCascade 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-delay: calc(var(--stagger, 0) * 42ms);
+      will-change: transform, opacity, filter;
     }
 
     .tnx-vault-badge:hover {
-      transform: translateY(-3px);
+      transform: translateY(-6px) scale(1.035);
     }
 
     .tnx-vault-badge.is-owned {
@@ -1634,6 +1764,13 @@ const metadata = {
     }
 
     @media (max-width: 560px) {
+      .tnx-back-top {
+        left: 0.9rem;
+        bottom: 0.9rem;
+        width: 2.8rem;
+        height: 2.8rem;
+      }
+
       .tnx-shell {
         padding-top: 5.5rem;
       }
@@ -1987,6 +2124,7 @@ const metadata = {
       const badgeFocusPanel = document.getElementById('badgeFocusPanel')
       const filterButtons = Array.from(document.querySelectorAll('[data-badge-filter]'))
       const guideButtons = Array.from(document.querySelectorAll('[data-guide-filter]'))
+      const backToTop = document.getElementById('backToTop')
 
       const statTotalBadges = document.getElementById('statTotalBadges')
       const statCategories = document.getElementById('statCategories')
@@ -2295,7 +2433,7 @@ const metadata = {
 
         badgeEmpty?.classList.toggle('hidden', badges.length > 0)
 
-        badgeGrid.innerHTML = badges.map((badge) => {
+        badgeGrid.innerHTML = badges.map((badge, index) => {
           const selected = badge.name === state.selectedBadgeName ? ' is-selected' : ''
           const linked = window.location.hash === `#${badge.hashId}` ? ' is-linked' : ''
           const rare = badge.isRare ? ' is-rare' : ''
@@ -2305,6 +2443,7 @@ const metadata = {
               type="button"
               id="${esc(badge.hashId)}"
               class="tnx-badge-card${selected}${linked}${rare}"
+              style="--stagger:${index}"
               data-badge-name="${esc(badge.name)}"
               data-badge-hash="${esc(badge.hashId)}"
             >
@@ -2686,7 +2825,7 @@ const metadata = {
         const start = (state.vaultPage - 1) * perPage
         const pageItems = sortedItems.slice(start, start + perPage)
 
-        const items = pageItems.map(({ badge, info }) => {
+        const items = pageItems.map(({ badge, info }, index) => {
           const iconHtml =
             info.status === 'owned'
               ? `<span class="tnx-vault-check">✓</span>`
@@ -2896,6 +3035,21 @@ const metadata = {
         }
       }
 
+
+      function handleBackToTopVisibility() {
+        if (!backToTop) return
+        backToTop.classList.toggle('is-visible', window.scrollY > 520)
+      }
+
+      addListener(backToTop, 'click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        })
+      })
+
+      addListener(window, 'scroll', handleBackToTopVisibility, { passive: true })
+
       addListener(badgeGrid, 'click', (event) => {
         const card = event.target.closest('[data-badge-name]')
         if (!card) return
@@ -3032,6 +3186,7 @@ const metadata = {
       await loadBadges()
       await loadUsers()
       openUserFromQuery()
+      handleBackToTopVisibility()
     })()
   </script>
 
