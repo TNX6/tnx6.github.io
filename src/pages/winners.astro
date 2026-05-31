@@ -52,7 +52,7 @@ const metadata = {
         <div class="tnx-section-head">
           <span>FEATURED</span>
           <h2>أبرز الفائزين</h2>
-          <p>الفائزون البارزون يتغيرون عشوائيًا مع كل تحديث للصفحة، والاسم والصورة تُسحب من Twitch عبر ملف البيانات.</p>
+          <p>الفائزون البارزون يتغيرون عشوائيًا مع كل تحديث للصفحة.</p>
         </div>
 
         <div id="featuredGrid" class="tnx-featured-grid"></div>
@@ -776,26 +776,36 @@ const metadata = {
       margin-top: 1rem;
     }
 
-    .tnx-modal-meta div {
-      border: 1px solid rgba(255, 218, 106, 0.12);
-      border-radius: 1rem;
-      background: rgba(0, 0, 0, 0.26);
-      padding: 0.85rem;
-    }
+.tnx-modal-meta div {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  min-height: 5.3rem;
+  border: 1px solid rgba(255, 218, 106, 0.12);
+  border-radius: 1rem;
+  background: rgba(0, 0, 0, 0.26);
+  padding: 0.85rem;
+  text-align: center;
+}
 
-    .tnx-modal-meta span {
-      display: block;
-      color: rgb(148, 163, 184);
-      font-size: 0.72rem;
-      font-weight: 900;
-      margin-bottom: 0.25rem;
-    }
+.tnx-modal-meta span {
+  display: block;
+  width: 100%;
+  color: rgb(148, 163, 184);
+  font-size: 0.72rem;
+  font-weight: 900;
+  margin-bottom: 0.25rem;
+  text-align: center;
+}
 
-    .tnx-modal-meta strong {
-      color: #ffda6a;
-      font-size: 0.9rem;
-      font-weight: 950;
-    }
+.tnx-modal-meta strong {
+  display: block;
+  width: 100%;
+  color: #ffda6a;
+  font-size: 0.9rem;
+  font-weight: 950;
+  text-align: center;
+}
 
     @media (max-width: 1100px) {
       .tnx-featured-grid {
