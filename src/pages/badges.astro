@@ -2930,7 +2930,7 @@ const metadata = {
         const pathInfo = getPathStepForBadge(badge.name)
 
         const remainingHtml = nextBadge.eligible
-          ? 'أنت مؤهل لهذا البادج. باقي فقط ينضاف لك من النظام.'
+          ? 'أنت مؤهل لهذا البادج. أكتب بالشات !تحدي.'
           : nextBadge.remaining !== null
             ? `باقي عليك <b>${formatNumber(nextBadge.remaining)} ${esc(nextBadge.unit)}</b> فقط.`
             : esc(badge.how)
@@ -3010,7 +3010,7 @@ const metadata = {
                 : 'is-locked'
 
           const hint = info.status === 'eligible'
-            ? 'أنت مؤهل لهذا البادج، يحتاج ينضاف لك من النظام.'
+            ? 'أنت مؤهل لهذا البادج، أكتب بالشات !تحدي.'
             : info.hint
 
           return `
