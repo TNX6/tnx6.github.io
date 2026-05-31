@@ -18,7 +18,7 @@ const metadata = {
     </button>
 
     <section class="tnx-shell">
-      <header class="tnx-hero">
+      <header class="tnx-hero tnx-reveal">
         <div class="tnx-eyebrow">
           <span></span>
           TNX6 BADGE VAULT
@@ -46,7 +46,7 @@ const metadata = {
         </div>
       </header>
 
-      <section class="tnx-start">
+      <section class="tnx-start tnx-reveal">
         <div class="tnx-section-head">
           <span>للمشاهد الجديد</span>
           <h2>وش أبدأ أفتح؟</h2>
@@ -80,7 +80,7 @@ const metadata = {
         </div>
       </section>
 
-      <section class="tnx-vault">
+      <section class="tnx-vault tnx-reveal">
         <div class="tnx-vault-top">
           <div class="tnx-section-head">
             <span>كل البادجات</span>
@@ -162,7 +162,7 @@ const metadata = {
         </div>
       </section>
 
-      <section class="tnx-users">
+      <section class="tnx-users tnx-reveal">
         <div class="tnx-section-head tnx-center">
           <span>بطاقات الأعضاء</span>
           <h2>اعرض بطاقة مستخدم</h2>
@@ -244,7 +244,6 @@ const metadata = {
         filter: saturate(1) brightness(1);
         opacity: 1;
       }
-
       50% {
         transform: scale(1.025);
         filter: saturate(1.08) brightness(1.05);
@@ -252,18 +251,32 @@ const metadata = {
       }
     }
 
+    /* كلاس الظهور عند النزول (Scroll Reveal) */
+    .tnx-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .tnx-reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     @keyframes tnxBadgeCascade {
       from {
         opacity: 0;
-        transform: translateY(14px) scale(0.965);
-        filter: blur(4px);
+        transform: translateY(16px) scale(0.92);
       }
-
       to {
         opacity: 1;
         transform: translateY(0) scale(1);
-        filter: blur(0);
       }
+    }
+
+    /* دخول سلس وتفاعلي للمحتوى الجانبي */
+    @keyframes tnxFocusIn {
+      from { opacity: 0; transform: translateX(-15px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
     .tnx-grid-bg {
@@ -312,7 +325,7 @@ const metadata = {
       opacity: 0;
       transform: translateY(16px) scale(0.92);
       pointer-events: none;
-      transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+      transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
     }
 
     .tnx-back-top.is-visible {
@@ -322,7 +335,7 @@ const metadata = {
     }
 
     .tnx-back-top:hover {
-      transform: translateY(-4px) scale(1.055);
+      transform: translateY(-4px) scale(1.1);
       border-color: rgba(255, 218, 106, 0.75);
       box-shadow:
         0 22px 46px rgba(0, 0, 0, 0.5),
@@ -399,11 +412,17 @@ const metadata = {
         0 24px 70px rgba(0, 0, 0, 0.44),
         inset 0 0 22px rgba(255, 218, 106, 0.025);
       backdrop-filter: blur(16px);
+      transition: transform 0.3s ease, border-color 0.3s ease;
     }
 
     .tnx-hero-stats div {
       border-radius: 1.25rem;
       padding: 1rem;
+    }
+
+    .tnx-hero-stats div:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 218, 106, 0.4);
     }
 
     .tnx-hero-stats strong {
@@ -478,16 +497,17 @@ const metadata = {
       padding: 1rem;
       text-align: right;
       cursor: pointer;
-      transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
+      transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
       will-change: transform;
     }
 
     .tnx-start-card:hover {
-      transform: translateY(-4px) scale(1.012);
+      transform: translateY(-5px) scale(1.02);
       border-color: rgba(255, 218, 106, 0.5);
       background:
         radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 42%),
         rgba(0, 0, 0, 0.38);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
 
     .tnx-start-card b {
@@ -503,6 +523,11 @@ const metadata = {
       color: #ffda6a;
       font-size: 1rem;
       font-weight: 950;
+      transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .tnx-start-card:hover b {
+      transform: scale(1.1) rotate(5deg);
     }
 
     .tnx-start-card strong {
@@ -539,6 +564,12 @@ const metadata = {
       border-radius: 1.15rem;
       background: rgba(0, 0, 0, 0.32);
       padding: 0.85rem;
+      transition: border-color 200ms ease, box-shadow 200ms ease;
+    }
+
+    .tnx-search:focus-within {
+      border-color: rgba(255, 218, 106, 0.6);
+      box-shadow: 0 0 16px rgba(255, 218, 106, 0.1);
     }
 
     .tnx-search span {
@@ -569,6 +600,11 @@ const metadata = {
       font-size: 1.2rem;
       font-weight: 950;
       cursor: pointer;
+      transition: transform 200ms ease, background 200ms ease;
+    }
+    .tnx-search button:hover {
+      background: rgba(255, 218, 106, 0.2);
+      transform: scale(1.1);
     }
 
     .tnx-filter-row {
@@ -601,16 +637,21 @@ const metadata = {
       font-size: 0.82rem;
       font-weight: 950;
       cursor: pointer;
-      transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, background 220ms ease, color 220ms ease;
+      transition: transform 240ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 220ms ease, background 220ms ease, color 220ms ease;
       white-space: nowrap;
       will-change: transform;
     }
 
-    .tnx-filter-row button:hover,
-    .tnx-filter-row button.is-active {
-      transform: translateY(-2px) scale(1.025);
+    .tnx-filter-row button:hover {
+      transform: translateY(-2px);
       border-color: rgba(255, 218, 106, 0.55);
       background: rgba(255, 218, 106, 0.14);
+    }
+
+    .tnx-filter-row button.is-active {
+      transform: scale(1.05);
+      border-color: rgba(255, 218, 106, 0.8);
+      background: rgba(255, 218, 106, 0.2);
       color: #ffda6a;
     }
 
@@ -651,19 +692,19 @@ const metadata = {
       padding: 0.95rem;
       text-align: right;
       cursor: pointer;
-      transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
+      transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
       overflow: hidden;
       scroll-margin-top: 11rem;
-      animation: tnxBadgeCascade 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: tnxBadgeCascade 600ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
       animation-delay: calc(var(--stagger, 0) * 45ms);
-      will-change: transform, opacity, filter;
+      will-change: transform, opacity;
     }
 
     .tnx-badge-card:hover,
     .tnx-badge-card.is-selected {
-      transform: translateY(-5px) scale(1.018);
-      border-color: rgba(255, 218, 106, 0.56);
-      box-shadow: 0 0 28px rgba(255, 218, 106, 0.13);
+      transform: translateY(-6px) scale(1.02);
+      border-color: rgba(255, 218, 106, 0.6);
+      box-shadow: 0 8px 28px rgba(255, 218, 106, 0.18);
     }
 
     .tnx-badge-card.is-linked {
@@ -683,12 +724,6 @@ const metadata = {
       pointer-events: none;
     }
 
-    @keyframes tnxBadgeShine {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
     .tnx-badge-img-wrap {
       position: relative;
       z-index: 1;
@@ -700,6 +735,11 @@ const metadata = {
       background:
         radial-gradient(circle at center, rgba(255, 218, 106, 0.1), transparent 58%),
         rgba(255, 255, 255, 0.025);
+      transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .tnx-badge-card:hover .tnx-badge-img-wrap img {
+      transform: scale(1.1) rotate(4deg);
     }
 
     .tnx-badge-img-wrap img {
@@ -707,6 +747,7 @@ const metadata = {
       height: 82px;
       object-fit: contain;
       filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.45));
+      transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .tnx-badge-card-content {
@@ -789,6 +830,7 @@ const metadata = {
     .tnx-focus-card {
       display: grid;
       gap: 0.9rem;
+      animation: tnxFocusIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     .tnx-focus-image {
@@ -861,14 +903,18 @@ const metadata = {
       font-size: 0.86rem;
       font-weight: 950;
       cursor: pointer;
-      transition: 0.16s ease;
+      transition: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .tnx-focus-copy:hover,
+    .tnx-focus-copy:hover {
+      background: rgba(255, 218, 106, 0.18);
+      transform: scale(1.02);
+    }
     .tnx-focus-copy.is-copied {
       border-color: rgba(52, 211, 153, 0.55);
       background: rgba(52, 211, 153, 0.14);
       color: rgb(167, 243, 208);
+      transform: scale(0.98);
     }
 
     .tnx-empty {
@@ -913,10 +959,12 @@ const metadata = {
       text-align: right;
       font-weight: 900;
       cursor: pointer;
-      transition: 0.16s ease;
+      transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+      animation: tnxBadgeCascade 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
     .tnx-user-result:hover {
+      transform: translateX(-8px);
       border-color: rgba(255, 218, 106, 0.45);
       background: rgba(255, 218, 106, 0.09);
       color: #ffda6a;
@@ -968,15 +1016,14 @@ const metadata = {
       box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48);
       font-family: Poppins, system-ui, sans-serif;
       opacity: 0;
-      animation: tnxUserCardIn 220ms ease forwards;
+      animation: tnxUserCardIn 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
       direction: ltr;
       flex: 0 0 800px;
     }
 
     @keyframes tnxUserCardIn {
-      to {
-        opacity: 1;
-      }
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .tnx-card-banner {
@@ -1154,7 +1201,6 @@ const metadata = {
       margin-top: 0.2rem;
     }
 
-
     .tnx-share-card-link {
       display: inline-flex;
       align-items: center;
@@ -1176,10 +1222,16 @@ const metadata = {
 
     .tnx-share-card-link:hover,
     .tnx-share-card-link.is-copied {
-      transform: translateY(-1px);
+      transform: translateY(-2px);
       border-color: rgba(52, 211, 153, 0.55);
       background: rgba(52, 211, 153, 0.14);
       color: rgb(167, 243, 208);
+    }
+
+    /* أنيميشن أشرطة التقدم الحقيقي */
+    @keyframes fillProgress {
+      from { width: 0%; }
+      to { width: var(--target-width); }
     }
 
     .tnx-overall-track {
@@ -1194,7 +1246,8 @@ const metadata = {
       border-radius: inherit;
       background: linear-gradient(90deg, #c29200, #ffda6a, #fff1a8);
       box-shadow: 0 0 18px rgba(255, 218, 106, 0.5);
-      transition: width 600ms cubic-bezier(0.22, 1, 0.36, 1);
+      animation: fillProgress 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      width: 0; /* يبدأ من صفر */
     }
 
     .tnx-next-hero {
@@ -1214,7 +1267,7 @@ const metadata = {
       color: white;
       text-align: right;
       cursor: pointer;
-      transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
+      transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 220ms ease, box-shadow 220ms ease;
       will-change: transform;
       box-shadow:
         0 26px 70px rgba(0, 0, 0, 0.46),
@@ -1243,15 +1296,8 @@ const metadata = {
         linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 44%);
     }
 
-
-    @keyframes tnxNextShine {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
     .tnx-next-hero:hover {
-      transform: translateY(-5px) scale(1.01);
+      transform: translateY(-6px) scale(1.015);
       border-color: rgba(255, 218, 106, 0.65);
       box-shadow:
         0 28px 65px rgba(0, 0, 0, 0.45),
@@ -1399,7 +1445,8 @@ const metadata = {
       border-radius: inherit;
       background: linear-gradient(90deg, #c29200, #ffda6a);
       box-shadow: 0 0 12px rgba(255, 218, 106, 0.5);
-      transition: width 600ms cubic-bezier(0.22, 1, 0.36, 1);
+      animation: fillProgress 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      width: 0;
     }
 
     .tnx-next-percent {
@@ -1410,7 +1457,6 @@ const metadata = {
       text-align: left;
       direction: ltr;
     }
-
 
     .tnx-next-chip-row {
       display: flex;
@@ -1498,7 +1544,6 @@ const metadata = {
       gap: 0.65rem;
     }
 
-
     .tnx-vault-pagination {
       display: flex;
       align-items: center;
@@ -1518,12 +1563,11 @@ const metadata = {
       font-size: 0.78rem;
       font-weight: 950;
       cursor: pointer;
-      transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, background 220ms ease, color 220ms ease;
-      will-change: transform;
+      transition: transform 240ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 220ms ease, background 220ms ease, color 220ms ease;
     }
 
     .tnx-vault-page-btn:hover:not(:disabled) {
-      transform: translateY(-2px) scale(1.025);
+      transform: translateY(-2px) scale(1.05);
       border-color: rgba(255, 218, 106, 0.55);
       background: rgba(255, 218, 106, 0.14);
       color: #ffda6a;
@@ -1553,11 +1597,11 @@ const metadata = {
       color: white;
       padding: 0.7rem 0.5rem;
       cursor: pointer;
-      transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, background 220ms ease, box-shadow 220ms ease, filter 220ms ease;
+      transition: transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 220ms ease, background 220ms ease, box-shadow 220ms ease, filter 220ms ease;
       text-align: center;
       min-height: 130px;
       overflow: hidden;
-      animation: tnxBadgeCascade 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: tnxBadgeCascade 520ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
       animation-delay: calc(var(--stagger, 0) * 42ms);
       will-change: transform, opacity, filter;
     }
@@ -1848,214 +1892,32 @@ const metadata = {
       }
 
       const BADGE_META = {
-        king: {
-          title: 'ملك القناة',
-          category: 'status',
-          how: 'يفتح من نظام King of Channel Points.',
-          rarity: 'نادر جدًا',
-          duration: 'دائم',
-          difficulty: 'صعب',
-        },
-        king2: {
-          title: 'ملك القناة',
-          category: 'status',
-          how: 'يفتح من نظام King of Channel Points.',
-          rarity: 'نادر جدًا',
-          duration: 'دائم',
-          difficulty: 'صعب جدًا',
-        },
-        Vip: {
-          title: 'VIP',
-          category: 'status',
-          how: 'منحة خاصة حسب تفاعل العضو ومكانته.',
-          rarity: 'مميز',
-          duration: 'قد يكون مؤقت أو دائم',
-          difficulty: 'متوسط',
-        },
-        '15D': {
-          title: 'حضور 15 يوم',
-          category: 'attendance',
-          how: 'سجّل حضورك اليومي حتى توصل 15 يوم.',
-          rarity: 'أساسي',
-          duration: 'دائم',
-          difficulty: 'سهل',
-        },
-        '30D': {
-          title: 'حضور 30 يوم',
-          category: 'attendance',
-          how: 'كمل تسجيل الحضور اليومي حتى توصل 30 يوم.',
-          rarity: 'أساسي',
-          duration: 'دائم',
-          difficulty: 'سهل',
-        },
-        '60D': {
-          title: 'حضور 60 يوم',
-          category: 'attendance',
-          how: 'استمر بالحضور حتى توصل 60 يوم.',
-          rarity: 'متقدم',
-          duration: 'دائم',
-          difficulty: 'متوسط',
-        },
-        '100D': {
-          title: 'حضور 100 يوم',
-          category: 'attendance',
-          how: 'استمر في تسجيل الحضور حتى توصل 100 يوم.',
-          rarity: 'متقدم',
-          duration: 'دائم',
-          difficulty: 'متوسط',
-        },
-        '150D': {
-          title: 'حضور 150 يوم',
-          category: 'attendance',
-          how: 'استمر في تسجيل الحضور حتى توصل 150 يوم.',
-          rarity: 'نادر',
-          duration: 'دائم',
-          difficulty: 'صعب',
-        },
-        LAW: {
-          title: 'رخصة محامي',
-          category: 'law',
-          how: 'تحصل عليه عند تفعيل دور المحامي.',
-          rarity: 'مميز',
-          duration: 'دائم',
-          difficulty: 'صعب',
-        },
-        LAW2: {
-          title: 'رخصة محامي',
-          category: 'law',
-          how: 'تحصل عليه عند تفعيل دور المحامي.',
-          rarity: 'مميز',
-          duration: 'دائم',
-          difficulty: 'صعب',
-        },
-        '50Q': {
-          title: '50 إجابة صحيحة',
-          category: 'quiz',
-          how: 'جاوب 50 سؤال كويز بشكل صحيح.',
-          rarity: 'أساسي',
-          duration: 'دائم',
-          difficulty: 'سهل',
-        },
-        '150Q': {
-          title: '150 إجابة صحيحة',
-          category: 'quiz',
-          how: 'جاوب 150 سؤال كويز بشكل صحيح.',
-          rarity: 'أساسي',
-          duration: 'دائم',
-          difficulty: 'سهل',
-        },
-        '300Q': {
-          title: '300 إجابة صحيحة',
-          category: 'quiz',
-          how: 'جاوب 300 سؤال كويز بشكل صحيح.',
-          rarity: 'متقدم',
-          duration: 'دائم',
-          difficulty: 'سهل',
-        },
-        '600Q': {
-          title: '600 إجابة صحيحة',
-          category: 'quiz',
-          how: 'جاوب 600 سؤال كويز بشكل صحيح.',
-          rarity: 'مميز',
-          duration: 'دائم',
-          difficulty: 'صعب',
-        },
-        '1000Q': {
-          title: '1000 إجابة صحيحة',
-          category: 'quiz',
-          how: 'جاوب 1000 سؤال كويز بشكل صحيح.',
-          rarity: 'نادر جدًا',
-          duration: 'دائم',
-          difficulty: 'صعب',
-        },
-        '100K': {
-          title: 'رصيد 100K',
-          category: 'points',
-          how: 'اجمع 100,000 نقطة من التفاعل في البث.',
-          rarity: 'أساسي',
-          duration: 'دائم',
-          difficulty: 'سهل',
-        },
-        '250K': {
-          title: 'رصيد 250K',
-          category: 'points',
-          how: 'اجمع 250,000 نقطة من التفاعل في البث.',
-          rarity: 'متقدم',
-          duration: 'دائم',
-          difficulty: 'متوسط',
-        },
-        '500K': {
-          title: 'رصيد 500K',
-          category: 'points',
-          how: 'اجمع 500,000 نقطة من التفاعل في البث.',
-          rarity: 'متقدم',
-          duration: 'دائم',
-          difficulty: 'صعب',
-        },
-        '1M': {
-          title: 'رصيد مليون',
-          category: 'points',
-          how: 'اجمع 1,000,000 نقطة من التفاعل في البث.',
-          rarity: 'نادر',
-          duration: 'دائم',
-          difficulty: 'صعب جدًا',
-        },
-        '3M': {
-          title: 'رصيد 3 مليون',
-          category: 'points',
-          how: 'اجمع 3,000,000 نقطة من التفاعل في البث.',
-          rarity: 'نادر جدًا',
-          duration: 'دائم',
-          difficulty: 'مستحيل',
-        },
-        'BEST VIP': {
-          title: 'أفضل VIP',
-          category: 'awards',
-          how: 'بادج تكريمي يُمنح ضمن جوائز المجتمع.',
-          rarity: 'جائزة',
-          duration: 'دائم',
-          difficulty: 'خاص',
-        },
-        'BEST MOD': {
-          title: 'أفضل مود',
-          category: 'awards',
-          how: 'بادج تكريمي لأفضل مود في جوائز المجتمع.',
-          rarity: 'جائزة',
-          duration: 'دائم',
-          difficulty: 'خاص',
-        },
-        'BEST CHATER': {
-          title: 'أفضل متفاعل',
-          category: 'awards',
-          how: 'بادج تكريمي لأفضل شخص متفاعل في الشات.',
-          rarity: 'جائزة',
-          duration: 'دائم',
-          difficulty: 'خاص',
-        },
-        'BEST FOLLOWER': {
-          title: 'أفضل متابع',
-          category: 'awards',
-          how: 'بادج تكريمي لأفضل متابع في المجتمع.',
-          rarity: 'جائزة',
-          duration: 'دائم',
-          difficulty: 'خاص',
-        },
-        'BEST SUP': {
-          title: 'أفضل داعم',
-          category: 'awards',
-          how: 'بادج تكريمي لأفضل داعم في المجتمع.',
-          rarity: 'جائزة',
-          duration: 'دائم',
-          difficulty: 'خاص',
-        },
-        'Best Dessert': {
-          title: 'أفضل Dessert',
-          category: 'awards',
-          how: 'بادج تكريمي لأفضل حلا.',
-          rarity: 'جائزة',
-          duration: 'دائم',
-          difficulty: 'خاص',
-        },
+        king: { title: 'ملك القناة', category: 'status', how: 'يفتح من نظام King of Channel Points.', rarity: 'نادر جدًا', duration: 'دائم', difficulty: 'صعب' },
+        king2: { title: 'ملك القناة', category: 'status', how: 'يفتح من نظام King of Channel Points.', rarity: 'نادر جدًا', duration: 'دائم', difficulty: 'صعب جدًا' },
+        Vip: { title: 'VIP', category: 'status', how: 'منحة خاصة حسب تفاعل العضو ومكانته.', rarity: 'مميز', duration: 'قد يكون مؤقت أو دائم', difficulty: 'متوسط' },
+        '15D': { title: 'حضور 15 يوم', category: 'attendance', how: 'سجّل حضورك اليومي حتى توصل 15 يوم.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل' },
+        '30D': { title: 'حضور 30 يوم', category: 'attendance', how: 'كمل تسجيل الحضور اليومي حتى توصل 30 يوم.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل' },
+        '60D': { title: 'حضور 60 يوم', category: 'attendance', how: 'استمر بالحضور حتى توصل 60 يوم.', rarity: 'متقدم', duration: 'دائم', difficulty: 'متوسط' },
+        '100D': { title: 'حضور 100 يوم', category: 'attendance', how: 'استمر في تسجيل الحضور حتى توصل 100 يوم.', rarity: 'متقدم', duration: 'دائم', difficulty: 'متوسط' },
+        '150D': { title: 'حضور 150 يوم', category: 'attendance', how: 'استمر في تسجيل الحضور حتى توصل 150 يوم.', rarity: 'نادر', duration: 'دائم', difficulty: 'صعب' },
+        LAW: { title: 'رخصة محامي', category: 'law', how: 'تحصل عليه عند تفعيل دور المحامي.', rarity: 'مميز', duration: 'دائم', difficulty: 'صعب' },
+        LAW2: { title: 'رخصة محامي', category: 'law', how: 'تحصل عليه عند تفعيل دور المحامي.', rarity: 'مميز', duration: 'دائم', difficulty: 'صعب' },
+        '50Q': { title: '50 إجابة صحيحة', category: 'quiz', how: 'جاوب 50 سؤال كويز بشكل صحيح.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل' },
+        '150Q': { title: '150 إجابة صحيحة', category: 'quiz', how: 'جاوب 150 سؤال كويز بشكل صحيح.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل' },
+        '300Q': { title: '300 إجابة صحيحة', category: 'quiz', how: 'جاوب 300 سؤال كويز بشكل صحيح.', rarity: 'متقدم', duration: 'دائم', difficulty: 'سهل' },
+        '600Q': { title: '600 إجابة صحيحة', category: 'quiz', how: 'جاوب 600 سؤال كويز بشكل صحيح.', rarity: 'مميز', duration: 'دائم', difficulty: 'صعب' },
+        '1000Q': { title: '1000 إجابة صحيحة', category: 'quiz', how: 'جاوب 1000 سؤال كويز بشكل صحيح.', rarity: 'نادر جدًا', duration: 'دائم', difficulty: 'صعب' },
+        '100K': { title: 'رصيد 100K', category: 'points', how: 'اجمع 100,000 نقطة من التفاعل في البث.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل' },
+        '250K': { title: 'رصيد 250K', category: 'points', how: 'اجمع 250,000 نقطة من التفاعل في البث.', rarity: 'متقدم', duration: 'دائم', difficulty: 'متوسط' },
+        '500K': { title: 'رصيد 500K', category: 'points', how: 'اجمع 500,000 نقطة من التفاعل في البث.', rarity: 'متقدم', duration: 'دائم', difficulty: 'صعب' },
+        '1M': { title: 'رصيد مليون', category: 'points', how: 'اجمع 1,000,000 نقطة من التفاعل في البث.', rarity: 'نادر', duration: 'دائم', difficulty: 'صعب جدًا' },
+        '3M': { title: 'رصيد 3 مليون', category: 'points', how: 'اجمع 3,000,000 نقطة من التفاعل في البث.', rarity: 'نادر جدًا', duration: 'دائم', difficulty: 'مستحيل' },
+        'BEST VIP': { title: 'أفضل VIP', category: 'awards', how: 'بادج تكريمي يُمنح ضمن جوائز المجتمع.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص' },
+        'BEST MOD': { title: 'أفضل مود', category: 'awards', how: 'بادج تكريمي لأفضل مود في جوائز المجتمع.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص' },
+        'BEST CHATER': { title: 'أفضل متفاعل', category: 'awards', how: 'بادج تكريمي لأفضل شخص متفاعل في الشات.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص' },
+        'BEST FOLLOWER': { title: 'أفضل متابع', category: 'awards', how: 'بادج تكريمي لأفضل متابع في المجتمع.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص' },
+        'BEST SUP': { title: 'أفضل داعم', category: 'awards', how: 'بادج تكريمي لأفضل داعم في المجتمع.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص' },
+        'Best Dessert': { title: 'أفضل Dessert', category: 'awards', how: 'بادج تكريمي لأفضل حلا.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص' },
       }
 
       const BADGE_PATHS = [
@@ -2135,6 +1997,20 @@ const metadata = {
       const userResults = document.getElementById('userResults')
       const userCardContainer = document.getElementById('userCardContainer')
 
+      // تعريف تقنية الكشف عن النزول (Intersection Observer)
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible')
+            revealObserver.unobserve(entry.target)
+          }
+        })
+      }, { threshold: 0.1 })
+
+      document.querySelectorAll('.tnx-reveal').forEach((el) => {
+        revealObserver.observe(el)
+      })
+
       function esc(value) {
         return String(value ?? '')
           .replace(/&/g, '&amp;')
@@ -2164,7 +2040,7 @@ const metadata = {
       function normalize(value) {
         return String(value || '')
           .toLowerCase()
-          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[ًٌٍَُِّْـ]/g, '')
           .replace(/[أإآ]/g, 'ا')
           .replace(/ة/g, 'ه')
           .replace(/ى/g, 'ي')
@@ -2228,7 +2104,7 @@ const metadata = {
         return `badge-${String(name || '')
           .trim()
           .toLowerCase()
-          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[ًٌٍَُِّْـ]/g, '')
           .replace(/[أإآ]/g, 'ا')
           .replace(/ة/g, 'ه')
           .replace(/ى/g, 'ي')
@@ -2774,7 +2650,7 @@ const metadata = {
           ? `
             <div class="tnx-next-progress-wrap">
               <div class="tnx-next-progress">
-                <div class="tnx-next-fill" style="width: ${progress}%;"></div>
+                <div class="tnx-next-fill" style="--target-width: ${progress}%;"></div>
               </div>
               <span class="tnx-next-percent">${progress}%</span>
             </div>
@@ -2848,6 +2724,7 @@ const metadata = {
             <button
               type="button"
               class="tnx-vault-badge ${statusClass}"
+              style="--stagger:${index}"
               data-badge-jump="${esc(badge.hashId)}"
               title="${esc(hint)}"
             >
@@ -2921,7 +2798,7 @@ const metadata = {
               </div>
 
               <div class="tnx-overall-track">
-                <div class="tnx-overall-fill" style="width: ${percent}%;"></div>
+                <div class="tnx-overall-fill" style="--target-width: ${percent}%;"></div>
               </div>
             </div>
 
