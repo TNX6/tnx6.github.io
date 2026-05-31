@@ -1092,6 +1092,12 @@ const artists = artistStats.map((entry) => entry.artist)
     }
 
     @media (max-width: 760px) {
+      .tnx-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+
       .tnx-hero-stats,
       .tnx-featured-grid,
       .fanart-grid {
@@ -1798,9 +1804,9 @@ const artists = artistStats.map((entry) => entry.artist)
             event.preventDefault()
             event.stopPropagation()
 
-            // RTL: سحب يمين = الصورة اللي يمينها، سحب يسار = الصورة اللي يسارها
-            if (dx > 0) next(-1)
-            else next(1)
+            // سحب يمين = الصورة التالية يمينًا، سحب يسار = الصورة التالية يسارًا
+            if (dx > 0) next(1)
+            else next(-1)
           }
         }
 
@@ -1867,6 +1873,17 @@ const artists = artistStats.map((entry) => entry.artist)
       renderFeatured()
       filterGallery()
       setupReveal()
+
+      if (window.matchMedia('(max-width: 760px)').matches) {
+        addTimer(window.setTimeout(() => {
+          document.querySelectorAll('.tnx-reveal').forEach((element) => {
+            element.classList.add('is-visible')
+          })
+
+          filterGallery()
+        }, 80))
+      }
+
       handleBackToTop()
       openFromHash({ instant: true, openModal: false })
     })()
