@@ -2,21 +2,28 @@
 import Layout from '~/layouts/PageLayout.astro'
 
 const artworks = [
-  { artist: 'ليان', discord: '@anyang_chii', image: '/FANART/Anyang.webp', twitch: 'anyang_chii' },
+  { artist: 'ليان', discord: '@lk21_n', image: '/FANART/Anyang.webp', twitch: 'lk21_n' },
   { artist: 'ماريو', discord: '@mariyo2468', image: '/FANART/Mariyo.webp', twitch: 'mariyo2468' },
   { artist: 'ماريو', discord: '@mariyo2468', image: '/FANART/Mariyo.png', twitch: 'mariyo2468' },
   { artist: 'نورة', discord: '@norhv17', image: '/FANART/NORH.webp', twitch: 'norhv17' },
   { artist: 'كاناي', discord: '@xkanaix', image: '/FANART/kanai.webp', twitch: 'xkanaix' },
   { artist: 'معاذ', discord: '@pekz0_', image: '/FANART/pekz0.webp', twitch: 'pekz0_' },
   { artist: 'مازن', discord: '@ker_a9', image: '/FANART/Mazen.png', twitch: 'ker_a9' },
-  { artist: 'بعير', discord: '@ba3eerwut', image: '/FANART/ba3eerwut.png', twitch: 'ba3eerwut' },
+  { artist: 'بعير', discord: '@ba3eerwut', image: '/FANART/ba3eerwut.png', twitch: 'itsbabaefr' },
   { artist: 'بيلو', discord: '@bello_787', image: '/FANART/Bello.webp', twitch: 'bello_787' },
   { artist: 'بيلو', discord: '@bello_787', image: '/FANART/Bello1.webp', twitch: 'bello_787' },
   { artist: 'فلوريي', discord: '@flory_vt', image: '/FANART/flory.webp', twitch: 'flory_vt' },
   { artist: 'فلوريي', discord: '@flory_vt', image: '/FANART/Flory3.png', twitch: 'flory_vt' },
-  { artist: 'ليان', discord: '@anyang_chii', image: '/FANART/anyang_chii.webp', twitch: 'anyang_chii' },
+  { artist: 'ليان', discord: '@lk21_n', image: '/FANART/anyang_chii.webp', twitch: 'lk21_n' },
   { artist: 'ايكو', discord: '@αιƙσღ', image: '/FANART/αιƙσღ.webp', twitch: 'a1kotsuki' },
   { artist: 'فلوريي', discord: '@flory_vt', image: '/FANART/Flory2.webp', twitch: 'flory_vt' },
+  { artist: 'فلوريي', discord: '@flory_vt', image: '/FANART/Flory4.webp', twitch: 'flory_vt' },
+  { artist: 'فلوريي', discord: '@flory_vt', image: '/FANART/Flory5.webp', twitch: 'flory_vt' },
+  { artist: 'فلوريي', discord: '@flory_vt', image: '/FANART/Flory6.webp', twitch: 'flory_vt' },
+  { artist: 'فلوريي', discord: '@flory_vt', image: '/FANART/Flory7.webp', twitch: 'flory_vt' },
+  { artist: 'فلوريي', discord: '@flory_vt', image: '/FANART/Flory8.webp', twitch: 'flory_vt' },
+  { artist: 'عبود', discord: '@ardux74', image: '/FANART/agx74o.webp', twitch: 'agx74o' },
+  { artist: 'ستار', discord: '@❥liliostar3ミ★', image: '/FANART/liliostar3.webp', twitch: 'liliostar3' },
 ]
 
 const slugify = (value) =>
@@ -89,7 +96,7 @@ const artists = artistStats.map((entry) => entry.artist)
         <div class="tnx-section-head">
           <span>FEATURED</span>
           <h2>من رسم المجتمع</h2>
-          <p>تتغير كل مرة تحدث فيها الصفحة، عشان المعرض ما يظل ثابت.</p>
+          <p>تتغير كل مرة تحدث فيها الصفحة.</p>
         </div>
 
         <div id="featuredGrid" class="tnx-featured-grid" aria-live="polite"></div>
@@ -98,7 +105,7 @@ const artists = artistStats.map((entry) => entry.artist)
       <section class="tnx-toolbar tnx-reveal">
         <div class="tnx-search">
           <span>⌕</span>
-          <input id="artSearch" type="search" autocomplete="off" placeholder="ابحث باسم الفنان، الديسكورد، أو Twitch..." />
+          <input id="artSearch" type="search" autocomplete="off" placeholder="ابحث باسم الفنان، أو Twitch..." />
           <button id="clearArtSearch" type="button" aria-label="مسح البحث">×</button>
         </div>
 
@@ -164,7 +171,7 @@ const artists = artistStats.map((entry) => entry.artist)
 
         <div id="fanartEmpty" class="tnx-empty hidden">
           <strong>ما فيه نتائج</strong>
-          <span>جرّب اسم فنان أو حساب ديسكورد أبسط.</span>
+          <span>جرّب اسم فنان.</span>
         </div>
       </section>
     </section>
