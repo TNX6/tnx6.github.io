@@ -2,262 +2,958 @@
 import Layout from '~/layouts/PageLayout.astro'
 
 const artworks = [
-  { artist: "ليان",  discord: "@anyang_chii", image: "/FANART/Anyang.webp", twitch: "anyang_chii" },
-
-  // رسمتين من ماريو
-  { artist: "ماريو", discord: "@mariyo2468", image: "/FANART/Mariyo.webp", twitch: "mariyo2468" },
-  { artist: "ماريو", discord: "@mariyo2468", image: "/FANART/Mariyo.png",  twitch: "mariyo2468" },
-
-  { artist: "نورة",  discord: "@norhv17",    image: "/FANART/NORH.webp",  twitch: "norhv17" },
-  { artist: "كاناي", discord: "@xkanaix",    image: "/FANART/kanai.webp", twitch: "xkanaix" },
-  { artist: "معاذ",  discord: "@pekz0_",     image: "/FANART/pekz0.webp", twitch: "pekz0_" },
-
-  { artist: "مازن",  discord: "@ker_a9", image: "/FANART/Mazen.png", twitch: "ker_a9" },
-  { artist: "بعير",  discord: "@ba3eerwut", image: "/FANART/ba3eerwut.png", twitch: "ba3eerwut" },
-{ artist: "بيلو",  discord: "@bello_787", image: "/FANART/Bello.webp", twitch: "bello_787" },
-{ artist: "بيلو",  discord: "@bello_787", image: "/FANART/Bello1.webp", twitch: "bello_787" },
-{ artist: "فلوريي",  discord: "@flory_vt",    image: "/FANART/flory.webp",  twitch: "flory_vt" },
-{ artist: "فلوريي",  discord: "@flory_vt",    image: "/FANART/Flory3.png",  twitch: "flory_vt" },
-{ artist: "ليان",  discord: "@anyang_chii",    image: "/FANART/anyang_chii.webp",  twitch: "anyang_chii" },
-{ artist: "ايكو",  discord: "@αιƙσღ",    image: "/FANART/αιƙσღ.webp",  twitch: "a1kotsuki" },
-{ artist: "فلوريي",  discord: "@flory_vt",    image: "/FANART/Flory2.webp",  twitch: "flory_vt" },
+  { artist: 'ليان', discord: '@anyang_chii', image: '/FANART/Anyang.webp', twitch: 'anyang_chii' },
+  { artist: 'ماريو', discord: '@mariyo2468', image: '/FANART/Mariyo.webp', twitch: 'mariyo2468' },
+  { artist: 'ماريو', discord: '@mariyo2468', image: '/FANART/Mariyo.png', twitch: 'mariyo2468' },
+  { artist: 'نورة', discord: '@norhv17', image: '/FANART/NORH.webp', twitch: 'norhv17' },
+  { artist: 'كاناي', discord: '@xkanaix', image: '/FANART/kanai.webp', twitch: 'xkanaix' },
+  { artist: 'معاذ', discord: '@pekz0_', image: '/FANART/pekz0.webp', twitch: 'pekz0_' },
+  { artist: 'مازن', discord: '@ker_a9', image: '/FANART/Mazen.png', twitch: 'ker_a9' },
+  { artist: 'بعير', discord: '@ba3eerwut', image: '/FANART/ba3eerwut.png', twitch: 'ba3eerwut' },
+  { artist: 'بيلو', discord: '@bello_787', image: '/FANART/Bello.webp', twitch: 'bello_787' },
+  { artist: 'بيلو', discord: '@bello_787', image: '/FANART/Bello1.webp', twitch: 'bello_787' },
+  { artist: 'فلوريي', discord: '@flory_vt', image: '/FANART/flory.webp', twitch: 'flory_vt' },
+  { artist: 'فلوريي', discord: '@flory_vt', image: '/FANART/Flory3.png', twitch: 'flory_vt' },
+  { artist: 'ليان', discord: '@anyang_chii', image: '/FANART/anyang_chii.webp', twitch: 'anyang_chii' },
+  { artist: 'ايكو', discord: '@αιƙσღ', image: '/FANART/αιƙσღ.webp', twitch: 'a1kotsuki' },
+  { artist: 'فلوريي', discord: '@flory_vt', image: '/FANART/Flory2.webp', twitch: 'flory_vt' },
 ]
+
+const slugify = (value) =>
+  String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[ًٌٍَُِّْـ]/g, '')
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9\u0600-\u06ff-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+
+const artworkItems = artworks.map((art, index) => ({
+  ...art,
+  id: `art-${slugify(art.artist)}-${index + 1}`,
+  index,
+}))
+
+const artists = Array.from(new Set(artworkItems.map((art) => art.artist)))
+const twitchCount = artworkItems.filter((art) => art.twitch).length
 ---
 
-<Layout metadata={{ title: "معرض الرسمات — TNX6", ignoreTitleTemplate: true }}>
-  <section class="py-24 px-6 text-white">
-    <h1
-      class="text-5xl font-extrabold text-center mb-12 bg-gradient-to-r from-[#ffda6a] to-[#c29200] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(198,164,79,0.5)]"
-    >
-      معرض الرسمات
-    </h1>
+<Layout metadata={{ title: 'معرض الرسمات — TNX6', ignoreTitleTemplate: true }}>
+  <main class="tnx-fanart-page" dir="rtl">
+    <div class="tnx-bg"></div>
+    <div class="tnx-grid-bg"></div>
 
-    <!-- Fixed Grid مثل قبل -->
-    <div class="fanart-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-      {artworks.map((a, index) => (
-        <div
-          class="fanart-card group relative overflow-hidden rounded-3xl bg-black/30 border border-transparent
-                 shadow-lg backdrop-blur-sm cursor-pointer transition-transform will-change-transform hover:scale-[1.02]"
-          role="button"
-          tabindex="0"
-          data-index={index}
-          data-src={a.image}
-          data-artist={a.artist}
-          data-discord={a.discord}
-          data-twitch={a.twitch}
-          aria-label={`Open fan art by ${a.artist}`}
-        >
-          <img
-            src={a.image}
-            alt={`Fan art by ${a.artist}`}
-            loading="lazy"
-            class="fanart-img w-full h-[240px] sm:h-[260px] object-cover transition-transform duration-200"
-          />
+    <button id="backToTop" class="tnx-back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
 
-          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none"></div>
-
-          <div
-            class="absolute left-3 bottom-3 z-10 bg-black/60 backdrop-blur-md rounded-xl px-3 py-2 border border-white/10"
-          >
-            <div class="text-sm font-extrabold text-[#f7e6ac] leading-none">
-              {a.artist}
-            </div>
-
-{a.discord && (
-  <div class="text-xs text-[#f7e6ac]/75 mt-1 leading-none">
-    {a.discord}
-  </div>
-)}
-          </div>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <!-- Popup -->
-  <div
-    id="popup"
-    class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 p-4"
-    aria-hidden="true"
-  >
-    <div
-      id="popupInner"
-      class="popup-inner relative bg-black/55 border border-[#c6a44f]/40 rounded-2xl p-4
-             shadow-[0_0_30px_rgba(198,164,79,0.35)] backdrop-blur-md"
-    >
-      <div class="flex items-start justify-between gap-3 mb-3">
-        <div>
-          <h2 id="popupName" class="text-2xl font-extrabold text-[#ffda6a] leading-tight"></h2>
-
-          <div id="popupMeta" class="mt-1 flex items-center gap-2 text-sm text-[#f7e6ac]/75">
-            <span id="popupHandle"></span>
-            <span id="popupDivider" class="opacity-40 hidden">|</span>
-
-            <a
-              id="popupTwitchLink"
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="hidden items-center text-[#a970ff] hover:text-[#c6a44f] transition"
-              aria-label="Open Twitch profile"
-              title="Open Twitch profile"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                class="w-5 h-5"
-                aria-hidden="true"
-              >
-                <path d="M4 3 2 8v11h4v3h3l3-3h4l6-6V3H4zm16 9-3 3h-4l-3 3v-3H6V5h14v7z"></path>
-                <path d="M15 8h2v5h-2zM10 8h2v5h-2z"></path>
-              </svg>
-            </a>
-          </div>
+    <section class="tnx-shell">
+      <header class="tnx-hero tnx-reveal">
+        <div class="tnx-eyebrow">
+          <span></span>
+          TNX6 FAN ART GALLERY
         </div>
 
-        <button
-          id="closePopup"
-          class="w-9 h-9 rounded-lg bg-[#c29200]/30 hover:bg-[#ffda6a]/70 text-black text-xl leading-none font-black transition shrink-0"
-          type="button"
-          aria-label="Close"
-          title="Close"
-        >
-          ×
-        </button>
-      </div>
+        <h1>معرض الرسمات</h1>
 
-      <!-- Zoom stage -->
-      <div
-        id="zoomStage"
-        class="relative w-full max-h-[78vh] rounded-xl bg-black/20 border border-white/10 overflow-hidden select-none"
-      >
-        <img
-          id="popupImg"
-          class="block max-w-full w-auto h-auto max-h-[78vh] object-contain"
-          alt=""
-          draggable="false"
-        />
-      </div>
+        <p>
+          مساحة لرسمات المجتمع. كل عمل هنا له صاحبه، وتقدر تفتح الرسمة، تكبرها، وتشوف حساب الرسام.
+        </p>
 
-      <!-- Thumbnails -->
-      <div id="thumbStrip" class="mt-4 flex gap-3 overflow-x-auto pb-2">
-        {artworks.map((a, index) => (
-          <button
-            type="button"
-            class="thumb-btn"
-            data-index={index}
-            aria-label={`Open art by ${a.artist}`}
-            title={a.artist}
-          >
-            <img src={a.image} alt={a.artist} loading="lazy" />
+        <div class="tnx-hero-stats">
+          <div>
+            <strong>{artworkItems.length}</strong>
+            <span>رسمة</span>
+          </div>
+
+          <div>
+            <strong>{artists.length}</strong>
+            <span>فنان</span>
+          </div>
+
+          <div>
+            <strong>{twitchCount}</strong>
+            <span>حساب Twitch</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="tnx-featured tnx-reveal">
+        <div class="tnx-section-head">
+          <span>FEATURED</span>
+          <h2>من رسم المجتمع</h2>
+          <p>تتغير كل مرة تحدث فيها الصفحة، عشان المعرض ما يظل ثابت.</p>
+        </div>
+
+        <div id="featuredGrid" class="tnx-featured-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="tnx-toolbar tnx-reveal">
+        <div class="tnx-search">
+          <span>⌕</span>
+          <input id="artSearch" type="search" autocomplete="off" placeholder="ابحث باسم الفنان، الديسكورد، أو Twitch..." />
+          <button id="clearArtSearch" type="button" aria-label="مسح البحث">×</button>
+        </div>
+
+        <div id="artistFilters" class="tnx-filter-row">
+          <button type="button" class="is-active" data-artist-filter="all">
+            <span>الكل</span>
+            <small>{artworkItems.length}</small>
           </button>
-        ))}
+
+          {artists.map((artist) => (
+            <button type="button" data-artist-filter={artist}>
+              <span>{artist}</span>
+              <small>{artworkItems.filter((art) => art.artist === artist).length}</small>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section class="tnx-gallery tnx-reveal">
+        <div class="tnx-gallery-top">
+          <div class="tnx-section-head tnx-section-head-inline">
+            <span>GALLERY</span>
+            <h2>كل الرسمات</h2>
+            <p>اضغط على أي رسمة للعرض الكامل مع التكبير والتنقل بين الأعمال.</p>
+          </div>
+
+          <div class="tnx-gallery-count">
+            <strong id="visibleCount">{artworkItems.length}</strong>
+            <span>نتيجة</span>
+          </div>
+        </div>
+
+        <div class="fanart-grid" id="fanartGrid">
+          {artworkItems.map((art) => (
+            <button
+              type="button"
+              id={art.id}
+              class="fanart-card"
+              data-index={art.index}
+              data-id={art.id}
+              data-src={art.image}
+              data-artist={art.artist}
+              data-discord={art.discord}
+              data-twitch={art.twitch}
+              data-search={`${art.artist} ${art.discord} ${art.twitch}`}
+              aria-label={`فتح رسمة ${art.artist}`}
+            >
+              <div class="fanart-image-wrap">
+                <img src={art.image} alt={`Fan art by ${art.artist}`} loading="lazy" class="fanart-img" />
+              </div>
+
+              <div class="fanart-overlay"></div>
+
+              <div class="fanart-info">
+                <strong>{art.artist}</strong>
+                {art.discord && <span>{art.discord}</span>}
+              </div>
+
+              {art.twitch && <div class="fanart-twitch">Twitch</div>}
+            </button>
+          ))}
+        </div>
+
+        <div id="fanartEmpty" class="tnx-empty hidden">
+          <strong>ما فيه نتائج</strong>
+          <span>جرّب اسم فنان أو حساب ديسكورد أبسط.</span>
+        </div>
+      </section>
+    </section>
+
+    <div id="popup" class="tnx-modal hidden" aria-hidden="true">
+      <div id="popupInner" class="tnx-modal-inner" role="dialog" aria-modal="true" aria-label="عرض الرسمة">
+        <div class="tnx-modal-head">
+          <div>
+            <span class="tnx-modal-kicker">FAN ART</span>
+            <h2 id="popupName"></h2>
+
+            <div id="popupMeta" class="tnx-modal-meta">
+              <span id="popupHandle"></span>
+              <span id="popupDivider" class="hidden">•</span>
+              <a id="popupTwitchLink" href="#" target="_blank" rel="noopener noreferrer" class="hidden">فتح Twitch</a>
+            </div>
+          </div>
+
+          <div class="tnx-modal-actions">
+            <button id="copyArtLink" class="tnx-modal-btn" type="button">نسخ الرابط</button>
+            <button id="closePopup" class="tnx-modal-close" type="button" aria-label="إغلاق">×</button>
+          </div>
+        </div>
+
+        <div class="tnx-modal-body">
+          <button id="prevArt" class="tnx-nav-btn tnx-nav-prev" type="button" aria-label="السابق">‹</button>
+
+          <div id="zoomStage" class="tnx-zoom-stage">
+            <img id="popupImg" alt="" draggable="false" />
+          </div>
+
+          <button id="nextArt" class="tnx-nav-btn tnx-nav-next" type="button" aria-label="التالي">›</button>
+        </div>
+
+        <div id="thumbStrip" class="tnx-thumb-strip">
+          {artworkItems.map((art) => (
+            <button type="button" class="thumb-btn" data-index={art.index} aria-label={`فتح رسمة ${art.artist}`} title={art.artist}>
+              <img src={art.image} alt={art.artist} loading="lazy" />
+            </button>
+          ))}
+        </div>
       </div>
     </div>
-  </div>
+  </main>
 
   <style is:global>
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 218, 106, 0.38) rgba(0, 0, 0, 0.3);
+    }
+
+    html::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    html::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.35);
+    }
+
+    html::-webkit-scrollbar-thumb {
+      border: 2px solid rgba(0, 0, 0, 0.35);
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255, 218, 106, 0.78), rgba(194, 146, 0, 0.5));
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .tnx-fanart-page {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      background: #07050b;
+      color: white;
+      font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .tnx-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 12% 9%, rgba(255, 218, 106, 0.14), transparent 28%),
+        radial-gradient(circle at 86% 14%, rgba(194, 146, 0, 0.12), transparent 34%),
+        radial-gradient(circle at 48% 92%, rgba(124, 58, 237, 0.1), transparent 38%),
+        linear-gradient(135deg, #07050b 0%, #050507 55%, #130c05 100%);
+      animation: tnxBgBreathe 9s ease-in-out infinite;
+    }
+
+    @keyframes tnxBgBreathe {
+      0%, 100% { filter: saturate(1) brightness(1); transform: scale(1); }
+      50% { filter: saturate(1.12) brightness(1.06); transform: scale(1.018); }
+    }
+
+    .tnx-grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.06;
+      background-image:
+        linear-gradient(rgba(255, 218, 106, 0.42) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 218, 106, 0.42) 1px, transparent 1px);
+      background-size: 58px 58px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 74%);
+    }
+
+    .tnx-shell {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 1240px);
+      margin: 0 auto;
+      padding: 6.5rem 1rem 5rem;
+    }
+
+    .tnx-back-top {
+      position: fixed;
+      left: 1.25rem;
+      bottom: 1.25rem;
+      z-index: 90;
+      display: grid;
+      place-items: center;
+      width: 3.1rem;
+      height: 3.1rem;
+      border: 1px solid rgba(255, 218, 106, 0.42);
+      border-radius: 999px;
+      background: rgba(7, 5, 11, 0.9);
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 0 22px rgba(255, 218, 106, 0.12);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      transform: translateY(16px) scale(0.92);
+      pointer-events: none;
+      transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .tnx-back-top.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .tnx-back-top:hover {
+      transform: translateY(-3px) scale(1.04);
+      border-color: rgba(255, 218, 106, 0.78);
+    }
+
+    .tnx-reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 650ms ease, transform 650ms ease;
+    }
+
+    .tnx-reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tnx-hero {
+      max-width: 940px;
+      margin: 0 auto 1.25rem;
+      text-align: center;
+    }
+
+    .tnx-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      border: 1px solid rgba(255, 218, 106, 0.3);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.4);
+      color: #ffda6a;
+      padding: 0.55rem 0.95rem;
+      font-size: 0.78rem;
+      font-weight: 950;
+      letter-spacing: 0.16em;
+    }
+
+    .tnx-eyebrow span {
+      width: 0.48rem;
+      height: 0.48rem;
+      border-radius: 999px;
+      background: #ffda6a;
+      box-shadow: 0 0 14px #ffda6a;
+      animation: tnxPulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes tnxPulse {
+      0%, 100% { opacity: 0.75; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.25); }
+    }
+
+    .tnx-hero h1 {
+      margin: 1.1rem 0 0;
+      background: linear-gradient(90deg, #fff1a8, #ffda6a 44%, #c29200);
+      background-clip: text;
+      color: transparent;
+      font-size: clamp(3.1rem, 7vw, 6.6rem);
+      font-weight: 950;
+      line-height: 0.95;
+      letter-spacing: -0.055em;
+    }
+
+    .tnx-hero p {
+      max-width: 760px;
+      margin: 1.15rem auto 0;
+      color: rgb(209, 213, 219);
+      font-size: 1.04rem;
+      font-weight: 760;
+      line-height: 1.9;
+    }
+
+    .tnx-hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+      max-width: 720px;
+      margin: 1.35rem auto 0;
+    }
+
+    .tnx-hero-stats div,
+    .tnx-featured,
+    .tnx-toolbar,
+    .tnx-gallery {
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)), rgba(6, 6, 8, 0.78);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.44), inset 0 0 22px rgba(255, 218, 106, 0.025);
+      backdrop-filter: blur(16px);
+    }
+
+    .tnx-hero-stats div {
+      border-radius: 1.25rem;
+      padding: 0.9rem;
+    }
+
+    .tnx-hero-stats strong {
+      display: block;
+      color: #ffda6a;
+      font-size: 1.8rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .tnx-hero-stats span {
+      display: block;
+      margin-top: 0.35rem;
+      color: rgb(156, 163, 175);
+      font-size: 0.78rem;
+      font-weight: 850;
+    }
+
+    .tnx-featured,
+    .tnx-toolbar,
+    .tnx-gallery {
+      margin-top: 1rem;
+      border-radius: 1.8rem;
+      padding: 1.25rem;
+    }
+
+    .tnx-section-head {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .tnx-section-head span {
+      color: #c29200;
+      font-size: 0.78rem;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+    }
+
+    .tnx-section-head h2 {
+      margin: 0.35rem 0 0;
+      color: #f7e6ac;
+      font-size: 2rem;
+      font-weight: 950;
+      line-height: 1.15;
+    }
+
+    .tnx-section-head p {
+      margin: 0.45rem auto 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.92rem;
+      font-weight: 800;
+      line-height: 1.75;
+      max-width: 620px;
+    }
+
+    .tnx-section-head-inline {
+      text-align: right;
+      margin: 0;
+    }
+
+    .tnx-section-head-inline p {
+      margin-inline: 0;
+    }
+
+    .tnx-featured-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .tnx-featured-card {
+      position: relative;
+      min-height: 270px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 1.35rem;
+      background: rgba(0, 0, 0, 0.32);
+      cursor: pointer;
+      transition: 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .tnx-featured-card:hover {
+      transform: translateY(-5px) scale(1.012);
+      border-color: rgba(255, 218, 106, 0.5);
+      box-shadow: 0 22px 44px rgba(0, 0, 0, 0.42), 0 0 28px rgba(255, 218, 106, 0.12);
+    }
+
+    .tnx-featured-card img {
+      width: 100%;
+      height: 100%;
+      min-height: 270px;
+      object-fit: cover;
+      display: block;
+      filter: saturate(1.04) contrast(1.04);
+      transition: 260ms ease;
+    }
+
+    .tnx-featured-card:hover img {
+      transform: scale(1.06);
+      filter: saturate(1.16) contrast(1.08);
+    }
+
+    .tnx-featured-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.16));
+      pointer-events: none;
+    }
+
+    .tnx-featured-info {
+      position: absolute;
+      right: 0.85rem;
+      left: 0.85rem;
+      bottom: 0.85rem;
+      z-index: 1;
+      display: grid;
+      gap: 0.25rem;
+      text-align: right;
+    }
+
+    .tnx-featured-info strong {
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: 950;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+    }
+
+    .tnx-featured-info span {
+      color: #ffda6a;
+      font-size: 0.82rem;
+      font-weight: 850;
+    }
+
+    .tnx-search {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 0.75rem;
+      align-items: center;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 1.15rem;
+      background: rgba(0, 0, 0, 0.32);
+      padding: 0.85rem;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .tnx-search span {
+      color: #ffda6a;
+      font-size: 1.4rem;
+      font-weight: 950;
+    }
+
+    .tnx-search input {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 850;
+      outline: none;
+    }
+
+    .tnx-search button {
+      display: grid;
+      place-items: center;
+      width: 2.2rem;
+      height: 2.2rem;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      font-size: 1.2rem;
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .tnx-filter-row {
+      position: sticky;
+      top: 5.25rem;
+      z-index: 30;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin: 1rem auto 0;
+      justify-content: center;
+      max-width: 1060px;
+    }
+
+    .tnx-filter-row button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 0.9rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.8rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 200ms ease;
+      white-space: nowrap;
+    }
+
+    .tnx-filter-row button:hover,
+    .tnx-filter-row button.is-active {
+      transform: translateY(-1px);
+      border-color: rgba(255, 218, 106, 0.55);
+      background: rgba(255, 218, 106, 0.14);
+      color: #ffda6a;
+    }
+
+    .tnx-filter-row small {
+      display: grid;
+      place-items: center;
+      min-width: 1.35rem;
+      height: 1.35rem;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.34);
+      color: rgb(229, 231, 235);
+      font-size: 0.66rem;
+    }
+
+    .tnx-gallery-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 218, 106, 0.1);
+    }
+
+    .tnx-gallery-count {
+      display: grid;
+      place-items: center;
+      min-width: 92px;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 1rem;
+      background: rgba(255, 218, 106, 0.06);
+      padding: 0.75rem;
+    }
+
+    .tnx-gallery-count strong {
+      color: #ffda6a;
+      font-size: 1.45rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .tnx-gallery-count span {
+      margin-top: 0.25rem;
+      color: rgb(156, 163, 175);
+      font-size: 0.72rem;
+      font-weight: 850;
+    }
+
+    .fanart-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
     .fanart-card {
+      --delay: 0ms;
       position: relative;
       isolation: isolate;
-      animation: fadeScale 400ms ease both;
+      min-height: 280px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 218, 106, 0.14);
+      border-radius: 1.4rem;
+      background: rgba(0, 0, 0, 0.32);
+      cursor: pointer;
+      padding: 0;
+      opacity: 0;
+      transform: translateY(14px) scale(0.98);
+      animation: fanartCascade 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: var(--delay);
+      transition: 260ms cubic-bezier(0.22, 1, 0.36, 1);
+      scroll-margin-top: 9rem;
     }
 
-    .fanart-card::before {
-      content: "";
+    @keyframes fanartCascade {
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .fanart-card:hover,
+    .fanart-card.is-selected {
+      transform: translateY(-5px) scale(1.014);
+      border-color: rgba(255, 218, 106, 0.52);
+      box-shadow: 0 22px 42px rgba(0, 0, 0, 0.38), 0 0 28px rgba(255, 218, 106, 0.12);
+    }
+
+    .fanart-image-wrap {
+      width: 100%;
+      height: 100%;
+      min-height: 280px;
+      overflow: hidden;
+    }
+
+    .fanart-img {
+      width: 100%;
+      height: 100%;
+      min-height: 280px;
+      object-fit: cover;
+      display: block;
+      transition: filter 260ms ease, transform 260ms ease;
+    }
+
+    .fanart-card:hover .fanart-img {
+      filter: saturate(1.14) contrast(1.05);
+      transform: scale(1.06);
+    }
+
+    .fanart-overlay {
       position: absolute;
-      inset: -2px;
-      padding: 2px;
-      border-radius: 1.5rem;
-      background: conic-gradient(
-        from 0deg,
-        #ffda6a,
-        #c29200,
-        #c6a44f,
-        #ffda6a,
-        #c29200
-      );
-
-      -webkit-mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-              mask-composite: exclude;
-
-      opacity: 0.75;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.78), transparent 58%);
       pointer-events: none;
-      z-index: -1;
-      transform: none;
     }
 
-    .fanart-card:hover {
-      box-shadow:
-        0 0 22px rgba(198, 164, 79, 0.55),
-        0 0 44px rgba(198, 164, 79, 0.35);
+    .fanart-info {
+      position: absolute;
+      right: 0.8rem;
+      bottom: 0.8rem;
+      left: 0.8rem;
+      z-index: 1;
+      display: grid;
+      gap: 0.3rem;
+      width: fit-content;
+      max-width: calc(100% - 1.6rem);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.95rem;
+      background: rgba(0, 0, 0, 0.58);
+      padding: 0.65rem 0.75rem;
+      text-align: right;
+      backdrop-filter: blur(12px);
     }
 
-    @media (hover: hover) and (pointer: fine) {
-      .fanart-grid:hover > .fanart-card:not(:hover) .fanart-img {
-        filter: brightness(0.38) saturate(0.25) blur(6px) contrast(1.1);
-        transform: scale(1.02);
-      }
-
-      .fanart-grid:hover > .fanart-card:hover .fanart-img {
-        filter: saturate(1.15) contrast(1.05);
-        transform: scale(1.06);
-      }
+    .fanart-info strong {
+      color: #f7e6ac;
+      font-size: 0.98rem;
+      font-weight: 950;
+      line-height: 1;
     }
 
-    .popup-inner {
-      width: min(1080px, 95vw);
-      transition: width 220ms ease, max-width 220ms ease, transform 220ms ease;
+    .fanart-info span {
+      color: rgba(247, 230, 172, 0.76);
+      font-size: 0.74rem;
+      font-weight: 800;
+      direction: ltr;
+      text-align: left;
     }
 
-    .popup-inner.is-portrait {
-      width: min(760px, 92vw);
+    .fanart-twitch {
+      position: absolute;
+      left: 0.75rem;
+      top: 0.75rem;
+      z-index: 1;
+      border: 1px solid rgba(169, 112, 255, 0.35);
+      border-radius: 999px;
+      background: rgba(169, 112, 255, 0.13);
+      color: #c7a7ff;
+      padding: 0.35rem 0.55rem;
+      font-size: 0.65rem;
+      font-weight: 950;
+      letter-spacing: 0.05em;
     }
 
-    .popup-inner.is-landscape {
-      width: min(1280px, 96vw);
+    .tnx-empty {
+      display: grid;
+      place-items: center;
+      gap: 0.35rem;
+      border: 1px solid rgba(255, 218, 106, 0.13);
+      border-radius: 1.5rem;
+      background: rgba(0, 0, 0, 0.24);
+      padding: 2rem;
+      text-align: center;
+      min-height: 200px;
     }
 
-    .popup-inner.is-square {
-      width: min(940px, 93vw);
+    .tnx-empty strong {
+      color: #ffda6a;
+      font-size: 1.3rem;
+      font-weight: 950;
     }
 
-    .popup-inner.animate-in {
-      animation: fadeScale 260ms ease both;
+    .tnx-empty span {
+      color: rgb(156, 163, 175);
+      font-size: 0.9rem;
+      font-weight: 800;
     }
 
-    @keyframes fadeScale {
-      from { opacity: 0; transform: scale(.97); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes imageIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px) scale(.985);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    #zoomStage {
-      cursor: zoom-in;
+    .tnx-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 320px;
+      background: rgba(0, 0, 0, 0.82);
+      padding: 1rem;
+      backdrop-filter: blur(8px);
     }
 
-    #zoomStage.is-zoomed { cursor: grab; }
-    #zoomStage.is-dragging { cursor: grabbing; }
+    .tnx-modal-inner {
+      width: min(1180px, 96vw);
+      max-height: 94vh;
+      overflow: hidden;
+      border: 1px solid rgba(255, 218, 106, 0.28);
+      border-radius: 1.45rem;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.012)), rgba(5, 5, 8, 0.92);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.58), 0 0 34px rgba(255, 218, 106, 0.12);
+      padding: 1rem;
+      animation: modalIn 220ms ease both;
+    }
+
+    .tnx-modal-inner.is-portrait { width: min(760px, 94vw); }
+    .tnx-modal-inner.is-landscape { width: min(1280px, 96vw); }
+    .tnx-modal-inner.is-square { width: min(960px, 94vw); }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .tnx-modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 1rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .tnx-modal-kicker {
+      display: inline-block;
+      color: #c29200;
+      font-size: 0.72rem;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.25rem;
+    }
+
+    .tnx-modal-head h2 {
+      margin: 0;
+      color: #ffda6a;
+      font-size: 1.85rem;
+      font-weight: 950;
+      line-height: 1.1;
+    }
+
+    .tnx-modal-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.35rem;
+      color: rgba(247, 230, 172, 0.74);
+      font-size: 0.88rem;
+      font-weight: 850;
+      direction: ltr;
+      justify-content: flex-end;
+    }
+
+    .tnx-modal-meta a {
+      color: #c7a7ff;
+      text-decoration: none;
+      transition: 160ms ease;
+    }
+
+    .tnx-modal-meta a:hover {
+      color: #ffda6a;
+    }
+
+    .tnx-modal-actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .tnx-modal-btn,
+    .tnx-modal-close,
+    .tnx-nav-btn {
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      cursor: pointer;
+      transition: 170ms ease;
+    }
+
+    .tnx-modal-btn {
+      border-radius: 0.85rem;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.8rem;
+      font-weight: 950;
+    }
+
+    .tnx-modal-btn:hover,
+    .tnx-modal-btn.is-copied {
+      border-color: rgba(52, 211, 153, 0.55);
+      background: rgba(52, 211, 153, 0.14);
+      color: rgb(167, 243, 208);
+    }
+
+    .tnx-modal-close {
+      display: grid;
+      place-items: center;
+      width: 2.6rem;
+      height: 2.6rem;
+      border-radius: 0.85rem;
+      color: #ffda6a;
+      font-size: 1.5rem;
+      font-weight: 950;
+    }
+
+    .tnx-modal-close:hover,
+    .tnx-nav-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 218, 106, 0.56);
+      background: rgba(255, 218, 106, 0.14);
+    }
+
+    .tnx-modal-body {
+      position: relative;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .tnx-zoom-stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 320px;
+      max-height: 72vh;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.22);
+      cursor: zoom-in;
+      user-select: none;
+    }
+
+    .tnx-zoom-stage.is-zoomed { cursor: grab; }
+    .tnx-zoom-stage.is-dragging { cursor: grabbing; }
 
     #popupImg {
+      display: block;
+      max-width: 100%;
+      width: auto;
+      height: auto;
+      max-height: 72vh;
+      object-fit: contain;
       transform-origin: var(--ox, 50%) var(--oy, 50%);
       transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--s, 1));
       transition: transform 140ms ease;
@@ -269,51 +965,64 @@ const artworks = [
       animation: imageIn 260ms ease both;
     }
 
-    #zoomStage.is-dragging #popupImg {
+    @keyframes imageIn {
+      from { opacity: 0; transform: translateY(8px) scale(0.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .tnx-zoom-stage.is-dragging #popupImg {
       transition: none;
     }
 
-    #thumbStrip {
+    .tnx-nav-btn {
+      display: grid;
+      place-items: center;
+      width: 2.75rem;
+      height: 4rem;
+      border-radius: 1rem;
+      color: #ffda6a;
+      font-size: 2rem;
+      font-weight: 950;
+    }
+
+    .tnx-thumb-strip {
+      display: flex;
+      gap: 0.65rem;
+      margin-top: 0.9rem;
+      overflow-x: auto;
+      padding-bottom: 0.35rem;
       scrollbar-width: thin;
       scrollbar-color: rgba(255, 218, 106, 0.35) transparent;
     }
 
-    #thumbStrip::-webkit-scrollbar {
+    .tnx-thumb-strip::-webkit-scrollbar {
       height: 8px;
     }
 
-    #thumbStrip::-webkit-scrollbar-thumb {
-      background: rgba(255, 218, 106, 0.25);
+    .tnx-thumb-strip::-webkit-scrollbar-thumb {
       border-radius: 999px;
+      background: rgba(255, 218, 106, 0.25);
     }
 
     .thumb-btn {
       flex: 0 0 auto;
       width: 74px;
       height: 74px;
-      border-radius: 14px;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
       opacity: 0.55;
-      transform: translateY(0);
-      transition:
-        opacity 180ms ease,
-        transform 180ms ease,
-        border-color 180ms ease,
-        box-shadow 180ms ease;
+      cursor: pointer;
+      transition: 180ms ease;
     }
 
-    .thumb-btn:hover {
-      opacity: 0.9;
-      transform: translateY(-2px);
-    }
-
+    .thumb-btn:hover,
     .thumb-btn.is-active {
       opacity: 1;
+      transform: translateY(-2px);
       border-color: rgba(255, 218, 106, 0.65);
       box-shadow: 0 0 18px rgba(198, 164, 79, 0.28);
-      transform: translateY(-2px);
     }
 
     .thumb-btn img {
@@ -322,287 +1031,576 @@ const artworks = [
       object-fit: cover;
       display: block;
     }
+
+    @media (hover: hover) and (pointer: fine) {
+      .fanart-grid:hover > .fanart-card:not(:hover) .fanart-img {
+        filter: brightness(0.42) saturate(0.45) blur(4px) contrast(1.08);
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .tnx-featured-grid,
+      .fanart-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .tnx-hero-stats,
+      .tnx-featured-grid,
+      .fanart-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-gallery-top,
+      .tnx-modal-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .tnx-gallery-count {
+        width: 100%;
+      }
+
+      .tnx-modal-body {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-nav-btn {
+        display: none;
+      }
+
+      .tnx-modal-actions {
+        width: 100%;
+      }
+
+      .tnx-modal-btn {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .tnx-shell {
+        padding-top: 5.5rem;
+      }
+
+      .tnx-hero h1 {
+        font-size: 3rem;
+      }
+
+      .tnx-featured,
+      .tnx-toolbar,
+      .tnx-gallery {
+        border-radius: 1.3rem;
+        padding: 0.9rem;
+      }
+
+      .tnx-modal-inner {
+        border-radius: 1.1rem;
+        padding: 0.75rem;
+      }
+
+      .tnx-modal-head h2 {
+        font-size: 1.45rem;
+      }
+    }
   </style>
 
-  <script is:inline>
-    const cards = document.querySelectorAll('.fanart-card');
-    const popup = document.getElementById('popup');
-    const popupInner = document.getElementById('popupInner');
-    const popupImg = document.getElementById('popupImg');
-    const popupName = document.getElementById('popupName');
-    const popupMeta = document.getElementById('popupMeta');
-    const popupHandle = document.getElementById('popupHandle');
-    const popupDivider = document.getElementById('popupDivider');
-    const popupTwitchLink = document.getElementById('popupTwitchLink');
-    const closePopup = document.getElementById('closePopup');
-    const zoomStage = document.getElementById('zoomStage');
-    const thumbButtons = document.querySelectorAll('.thumb-btn');
+  <script is:inline data-reinit>
+    ;(() => {
+      const cleanupKey = '__tnxFanartPageCleanup'
 
-    const items = [...cards].map((card) => ({
-      src: card.dataset.src,
-      artist: card.dataset.artist,
-      discord: card.dataset.discord || '',
-      twitch: card.dataset.twitch || ''
-    }));
-
-    let currentIndex = 0;
-    let scale = 1;
-    let tx = 0, ty = 0;
-    let isDragging = false;
-    let lastX = 0, lastY = 0;
-
-    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-
-    const applyTransform = () => {
-      popupImg.style.setProperty('--s', scale);
-      popupImg.style.setProperty('--tx', `${tx}px`);
-      popupImg.style.setProperty('--ty', `${ty}px`);
-      zoomStage.classList.toggle('is-zoomed', scale > 1);
-    };
-
-    const setOriginFromEvent = (e) => {
-      const r = zoomStage.getBoundingClientRect();
-      const ox = ((e.clientX - r.left) / r.width) * 100;
-      const oy = ((e.clientY - r.top) / r.height) * 100;
-      popupImg.style.setProperty('--ox', `${clamp(ox, 0, 100)}%`);
-      popupImg.style.setProperty('--oy', `${clamp(oy, 0, 100)}%`);
-    };
-
-    const resetZoom = () => {
-      scale = 1;
-      tx = 0;
-      ty = 0;
-      popupImg.style.setProperty('--ox', '50%');
-      popupImg.style.setProperty('--oy', '50%');
-      zoomStage.classList.remove('is-zoomed', 'is-dragging');
-      applyTransform();
-    };
-
-    const animatePopupImage = () => {
-      popupImg.classList.remove('animate-in');
-      void popupImg.offsetWidth;
-      popupImg.classList.add('animate-in');
-    };
-
-    const setPopupLayout = () => {
-      popupInner.classList.remove('is-portrait', 'is-landscape', 'is-square');
-
-      const w = popupImg.naturalWidth || 1;
-      const h = popupImg.naturalHeight || 1;
-      const ratio = w / h;
-
-      if (ratio < 0.85) {
-        popupInner.classList.add('is-portrait');
-      } else if (ratio > 1.15) {
-        popupInner.classList.add('is-landscape');
-      } else {
-        popupInner.classList.add('is-square');
+      if (window[cleanupKey]) {
+        window[cleanupKey]()
       }
-    };
 
-    const setActiveThumb = (index) => {
-      thumbButtons.forEach((btn) => {
-        const active = Number(btn.dataset.index) === index;
-        btn.classList.toggle('is-active', active);
+      const listeners = []
+      const timers = []
+      let revealObserver = null
 
-        if (active) {
-          btn.scrollIntoView({
-            behavior: 'smooth',
-            inline: 'center',
-            block: 'nearest'
-          });
+      function addListener(target, event, handler, options) {
+        if (!target) return
+        target.addEventListener(event, handler, options)
+        listeners.push(() => target.removeEventListener(event, handler, options))
+      }
+
+      function addTimer(id) {
+        timers.push(id)
+        return id
+      }
+
+      window[cleanupKey] = () => {
+        listeners.forEach((cleanup) => cleanup())
+        listeners.length = 0
+        timers.forEach((id) => window.clearTimeout(id))
+        timers.length = 0
+        if (revealObserver) revealObserver.disconnect()
+      }
+
+      const cards = Array.from(document.querySelectorAll('.fanart-card'))
+      const featuredGrid = document.getElementById('featuredGrid')
+      const fanartGrid = document.getElementById('fanartGrid')
+      const fanartEmpty = document.getElementById('fanartEmpty')
+      const artSearch = document.getElementById('artSearch')
+      const clearArtSearch = document.getElementById('clearArtSearch')
+      const artistFilterButtons = Array.from(document.querySelectorAll('[data-artist-filter]'))
+      const visibleCount = document.getElementById('visibleCount')
+      const backToTop = document.getElementById('backToTop')
+
+      const popup = document.getElementById('popup')
+      const popupInner = document.getElementById('popupInner')
+      const popupImg = document.getElementById('popupImg')
+      const popupName = document.getElementById('popupName')
+      const popupMeta = document.getElementById('popupMeta')
+      const popupHandle = document.getElementById('popupHandle')
+      const popupDivider = document.getElementById('popupDivider')
+      const popupTwitchLink = document.getElementById('popupTwitchLink')
+      const closePopup = document.getElementById('closePopup')
+      const zoomStage = document.getElementById('zoomStage')
+      const thumbButtons = Array.from(document.querySelectorAll('.thumb-btn'))
+      const copyArtLink = document.getElementById('copyArtLink')
+      const prevArt = document.getElementById('prevArt')
+      const nextArt = document.getElementById('nextArt')
+
+      const items = cards.map((card) => ({
+        index: Number(card.dataset.index),
+        id: card.dataset.id || '',
+        src: card.dataset.src || '',
+        artist: card.dataset.artist || '',
+        discord: card.dataset.discord || '',
+        twitch: card.dataset.twitch || '',
+        search: normalize(card.dataset.search || ''),
+      }))
+
+      let currentIndex = 0
+      let currentArtistFilter = 'all'
+      let scale = 1
+      let tx = 0
+      let ty = 0
+      let isDragging = false
+      let lastX = 0
+      let lastY = 0
+
+      function normalize(value) {
+        return String(value || '')
+          .toLowerCase()
+          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[أإآ]/g, 'ا')
+          .replace(/ة/g, 'ه')
+          .replace(/ى/g, 'ي')
+          .replace(/\s+/g, ' ')
+          .trim()
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value))
+      }
+
+      function shuffle(array) {
+        const copy = [...array]
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1))
+          ;[copy[i], copy[j]] = [copy[j], copy[i]]
         }
-      });
-    };
-
-    const renderPopup = (index) => {
-      const item = items[index];
-      if (!item) return;
-
-      currentIndex = index;
-      popupImg.src = item.src;
-      popupImg.alt = `Fan art by ${item.artist}`;
-      popupName.textContent = item.artist;
-
-      if (item.discord) {
-        popupHandle.textContent = item.discord;
-        popupHandle.classList.remove('hidden');
-      } else {
-        popupHandle.textContent = '';
-        popupHandle.classList.add('hidden');
+        return copy
       }
 
-      if (item.twitch) {
-        popupTwitchLink.href = `https://www.twitch.tv/${item.twitch}`;
-        popupTwitchLink.title = `twitch.tv/${item.twitch}`;
-        popupTwitchLink.setAttribute('aria-label', `Open ${item.artist} Twitch`);
-        popupTwitchLink.classList.remove('hidden');
-        popupTwitchLink.classList.add('inline-flex');
-      } else {
-        popupTwitchLink.href = '#';
-        popupTwitchLink.title = 'Open Twitch profile';
-        popupTwitchLink.setAttribute('aria-label', 'Open Twitch profile');
-        popupTwitchLink.classList.add('hidden');
-        popupTwitchLink.classList.remove('inline-flex');
+      function esc(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;')
       }
 
-      if (item.discord && item.twitch) {
-        popupDivider.classList.remove('hidden');
-      } else {
-        popupDivider.classList.add('hidden');
+      function getArtLink(item) {
+        return `${window.location.origin}${window.location.pathname}#${item.id}`
       }
 
-      if (item.discord || item.twitch) {
-        popupMeta.classList.remove('hidden');
-      } else {
-        popupMeta.classList.add('hidden');
+      async function copyText(text, button, doneText = 'تم النسخ') {
+        if (!button) return
+        const oldText = button.textContent
+
+        try {
+          await navigator.clipboard.writeText(text)
+          button.textContent = doneText
+          button.classList.add('is-copied')
+          addTimer(window.setTimeout(() => {
+            button.textContent = oldText
+            button.classList.remove('is-copied')
+          }, 1100))
+        } catch {
+          button.textContent = text
+          addTimer(window.setTimeout(() => {
+            button.textContent = oldText
+          }, 1300))
+        }
       }
 
-      setActiveThumb(index);
-      resetZoom();
-    };
+      function renderFeatured() {
+        if (!featuredGrid) return
+        const featured = shuffle(items).slice(0, Math.min(4, items.length))
 
-    const openPopup = (index) => {
-      popup.classList.remove('hidden');
-      popup.classList.add('flex');
-      popup.setAttribute('aria-hidden', 'false');
-
-      popupInner.classList.remove('animate-in');
-      void popupInner.offsetWidth;
-      popupInner.classList.add('animate-in');
-
-      renderPopup(index);
-    };
-
-    const close = () => {
-      popup.classList.remove('flex');
-      popup.classList.add('hidden');
-      popup.setAttribute('aria-hidden', 'true');
-      popupInner.classList.remove('animate-in');
-      popupInner.classList.remove('is-portrait', 'is-landscape', 'is-square');
-      popupImg.src = '';
-      popupImg.alt = '';
-
-      popupHandle.textContent = '';
-      popupHandle.classList.remove('hidden');
-      popupDivider.classList.add('hidden');
-      popupMeta.classList.remove('hidden');
-
-      popupTwitchLink.href = '#';
-      popupTwitchLink.title = 'Open Twitch profile';
-      popupTwitchLink.setAttribute('aria-label', 'Open Twitch profile');
-      popupTwitchLink.classList.add('hidden');
-      popupTwitchLink.classList.remove('inline-flex');
-
-      resetZoom();
-    };
-
-    popupImg.addEventListener('load', () => {
-      setPopupLayout();
-      animatePopupImage();
-    });
-
-    cards.forEach((card) => {
-      const index = Number(card.dataset.index);
-
-      card.addEventListener('click', () => openPopup(index));
-      card.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') openPopup(index);
-      });
-    });
-
-    thumbButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const index = Number(btn.dataset.index);
-        renderPopup(index);
-      });
-    });
-
-    closePopup.addEventListener('click', close);
-
-    popup.addEventListener('click', (e) => {
-      if (e.target === popup) close();
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') close();
-    });
-
-    // Click to zoom in/out
-    zoomStage.addEventListener('click', (e) => {
-      if (popup.classList.contains('hidden')) return;
-      if (e.target !== popupImg && scale === 1) return;
-
-      if (scale === 1) {
-        setOriginFromEvent(e);
-        scale = 2.6;
-        tx = 0;
-        ty = 0;
-        applyTransform();
-      } else {
-        resetZoom();
-      }
-    });
-
-    // Drag to pan when zoomed
-    zoomStage.addEventListener('pointerdown', (e) => {
-      if (scale <= 1) return;
-      if (e.target !== popupImg) return;
-
-      isDragging = true;
-      zoomStage.classList.add('is-dragging');
-      lastX = e.clientX;
-      lastY = e.clientY;
-      zoomStage.setPointerCapture(e.pointerId);
-    });
-
-    zoomStage.addEventListener('pointermove', (e) => {
-      if (!isDragging) return;
-
-      const dx = e.clientX - lastX;
-      const dy = e.clientY - lastY;
-
-      lastX = e.clientX;
-      lastY = e.clientY;
-
-      tx += dx;
-      ty += dy;
-      applyTransform();
-    });
-
-    zoomStage.addEventListener('pointerup', (e) => {
-      if (!isDragging) return;
-      isDragging = false;
-      zoomStage.classList.remove('is-dragging');
-      try { zoomStage.releasePointerCapture(e.pointerId); } catch {}
-    });
-
-    zoomStage.addEventListener('pointercancel', () => {
-      isDragging = false;
-      zoomStage.classList.remove('is-dragging');
-    });
-
-    // Wheel zoom
-    zoomStage.addEventListener('wheel', (e) => {
-      if (popup.classList.contains('hidden')) return;
-      e.preventDefault();
-
-      setOriginFromEvent(e);
-
-      const delta = Math.sign(e.deltaY);
-      const step = 0.25;
-
-      if (delta > 0) scale -= step;
-      else scale += step;
-
-      scale = clamp(scale, 1, 6);
-
-      if (scale === 1) {
-        tx = 0;
-        ty = 0;
+        featuredGrid.innerHTML = featured.map((item) => `
+          <button type="button" class="tnx-featured-card" data-featured-index="${item.index}">
+            <img src="${esc(item.src)}" alt="${esc(item.artist)}" loading="lazy" />
+            <div class="tnx-featured-info">
+              <strong>${esc(item.artist)}</strong>
+              <span>${esc(item.discord || item.twitch || 'Fan Art')}</span>
+            </div>
+          </button>
+        `).join('')
       }
 
-      applyTransform();
-    }, { passive: false });
+      function applyCardStagger() {
+        const visible = cards.filter((card) => !card.classList.contains('hidden'))
+        visible.forEach((card, index) => {
+          card.style.setProperty('--delay', `${Math.min(index * 45, 420)}ms`)
+          card.style.animation = 'none'
+          void card.offsetWidth
+          card.style.animation = ''
+        })
+      }
+
+      function renderFilters() {
+        artistFilterButtons.forEach((button) => {
+          button.classList.toggle('is-active', button.dataset.artistFilter === currentArtistFilter)
+        })
+      }
+
+      function filterGallery() {
+        const query = normalize(artSearch?.value || '')
+        let count = 0
+
+        cards.forEach((card) => {
+          const item = items[Number(card.dataset.index)]
+          const artistMatch = currentArtistFilter === 'all' || item.artist === currentArtistFilter
+          const searchMatch = !query || item.search.includes(query)
+          const show = artistMatch && searchMatch
+
+          card.classList.toggle('hidden', !show)
+          if (show) count++
+        })
+
+        if (visibleCount) visibleCount.textContent = String(count)
+        fanartEmpty?.classList.toggle('hidden', count > 0)
+        fanartGrid?.classList.toggle('hidden', count === 0)
+        renderFilters()
+        applyCardStagger()
+      }
+
+      function applyTransform() {
+        popupImg?.style.setProperty('--s', scale)
+        popupImg?.style.setProperty('--tx', `${tx}px`)
+        popupImg?.style.setProperty('--ty', `${ty}px`)
+        zoomStage?.classList.toggle('is-zoomed', scale > 1)
+      }
+
+      function setOriginFromEvent(event) {
+        if (!zoomStage) return
+        const rect = zoomStage.getBoundingClientRect()
+        const ox = ((event.clientX - rect.left) / rect.width) * 100
+        const oy = ((event.clientY - rect.top) / rect.height) * 100
+        popupImg?.style.setProperty('--ox', `${clamp(ox, 0, 100)}%`)
+        popupImg?.style.setProperty('--oy', `${clamp(oy, 0, 100)}%`)
+      }
+
+      function resetZoom() {
+        scale = 1
+        tx = 0
+        ty = 0
+        popupImg?.style.setProperty('--ox', '50%')
+        popupImg?.style.setProperty('--oy', '50%')
+        zoomStage?.classList.remove('is-zoomed', 'is-dragging')
+        applyTransform()
+      }
+
+      function setPopupLayout() {
+        if (!popupInner || !popupImg) return
+        popupInner.classList.remove('is-portrait', 'is-landscape', 'is-square')
+
+        const width = popupImg.naturalWidth || 1
+        const height = popupImg.naturalHeight || 1
+        const ratio = width / height
+
+        if (ratio < 0.85) popupInner.classList.add('is-portrait')
+        else if (ratio > 1.15) popupInner.classList.add('is-landscape')
+        else popupInner.classList.add('is-square')
+      }
+
+      function animatePopupImage() {
+        if (!popupImg) return
+        popupImg.classList.remove('animate-in')
+        void popupImg.offsetWidth
+        popupImg.classList.add('animate-in')
+      }
+
+      function setActiveThumb(index) {
+        thumbButtons.forEach((button) => {
+          const active = Number(button.dataset.index) === index
+          button.classList.toggle('is-active', active)
+          if (active) {
+            button.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+          }
+        })
+      }
+
+      function setSelectedCard(index) {
+        cards.forEach((card) => {
+          card.classList.toggle('is-selected', Number(card.dataset.index) === index)
+        })
+      }
+
+      function renderPopup(index) {
+        const item = items[index]
+        if (!item) return
+
+        currentIndex = index
+
+        if (popupImg) {
+          popupImg.src = item.src
+          popupImg.alt = `Fan art by ${item.artist}`
+        }
+
+        if (popupName) popupName.textContent = item.artist
+
+        if (item.discord) {
+          popupHandle.textContent = item.discord
+          popupHandle.classList.remove('hidden')
+        } else {
+          popupHandle.textContent = ''
+          popupHandle.classList.add('hidden')
+        }
+
+        if (item.twitch) {
+          popupTwitchLink.href = `https://www.twitch.tv/${item.twitch}`
+          popupTwitchLink.textContent = `twitch.tv/${item.twitch}`
+          popupTwitchLink.classList.remove('hidden')
+        } else {
+          popupTwitchLink.href = '#'
+          popupTwitchLink.textContent = ''
+          popupTwitchLink.classList.add('hidden')
+        }
+
+        popupDivider?.classList.toggle('hidden', !(item.discord && item.twitch))
+        popupMeta?.classList.toggle('hidden', !(item.discord || item.twitch))
+
+        history.replaceState(null, '', `#${item.id}`)
+        setActiveThumb(index)
+        setSelectedCard(index)
+        resetZoom()
+      }
+
+      function openPopup(index) {
+        popup?.classList.remove('hidden')
+        popup?.setAttribute('aria-hidden', 'false')
+        document.documentElement.style.overflow = 'hidden'
+        renderPopup(index)
+      }
+
+      function closeModal() {
+        popup?.classList.add('hidden')
+        popup?.setAttribute('aria-hidden', 'true')
+        document.documentElement.style.overflow = ''
+        popupInner?.classList.remove('is-portrait', 'is-landscape', 'is-square')
+        if (popupImg) {
+          popupImg.src = ''
+          popupImg.alt = ''
+        }
+        cards.forEach((card) => card.classList.remove('is-selected'))
+        resetZoom()
+      }
+
+      function next(delta) {
+        const nextIndex = (currentIndex + delta + items.length) % items.length
+        renderPopup(nextIndex)
+      }
+
+      function openFromHash(options = {}) {
+        const hash = decodeURIComponent((window.location.hash || '').replace('#', ''))
+        if (!hash || !hash.startsWith('art-')) return false
+
+        const item = items.find((entry) => entry.id === hash)
+        if (!item) return false
+
+        if (options.openModal) {
+          openPopup(item.index)
+        } else {
+          const card = document.getElementById(item.id)
+          if (card) {
+            card.scrollIntoView({ behavior: options.instant ? 'auto' : 'smooth', block: 'center' })
+            setSelectedCard(item.index)
+          }
+        }
+
+        return true
+      }
+
+      function setupReveal() {
+        const elements = Array.from(document.querySelectorAll('.tnx-reveal'))
+        if (!elements.length) return
+
+        revealObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible')
+              revealObserver.unobserve(entry.target)
+            }
+          })
+        }, { threshold: 0.12 })
+
+        elements.forEach((element) => revealObserver.observe(element))
+      }
+
+      function handleBackToTop() {
+        backToTop?.classList.toggle('is-visible', window.scrollY > 520)
+      }
+
+      addListener(backToTop, 'click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      })
+
+      addListener(window, 'scroll', handleBackToTop, { passive: true })
+
+      cards.forEach((card) => {
+        addListener(card, 'click', () => openPopup(Number(card.dataset.index)))
+        addListener(card, 'keyup', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') openPopup(Number(card.dataset.index))
+        })
+      })
+
+      addListener(featuredGrid, 'click', (event) => {
+        const button = event.target.closest('[data-featured-index]')
+        if (!button) return
+        openPopup(Number(button.dataset.featuredIndex))
+      })
+
+      artistFilterButtons.forEach((button) => {
+        addListener(button, 'click', () => {
+          currentArtistFilter = button.dataset.artistFilter || 'all'
+          filterGallery()
+          document.querySelector('.tnx-gallery')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        })
+      })
+
+      addListener(artSearch, 'input', filterGallery)
+      addListener(clearArtSearch, 'click', () => {
+        if (!artSearch) return
+        artSearch.value = ''
+        artSearch.focus()
+        filterGallery()
+      })
+
+      thumbButtons.forEach((button) => {
+        addListener(button, 'click', () => renderPopup(Number(button.dataset.index)))
+      })
+
+      addListener(closePopup, 'click', closeModal)
+      addListener(popup, 'click', (event) => {
+        if (event.target === popup) closeModal()
+      })
+
+      addListener(prevArt, 'click', () => next(-1))
+      addListener(nextArt, 'click', () => next(1))
+
+      addListener(copyArtLink, 'click', () => {
+        const item = items[currentIndex]
+        if (!item) return
+        copyText(getArtLink(item), copyArtLink, 'تم نسخ الرابط')
+      })
+
+      addListener(popupImg, 'load', () => {
+        setPopupLayout()
+        animatePopupImage()
+      })
+
+      addListener(window, 'hashchange', () => openFromHash({ openModal: false }))
+
+      addListener(document, 'keydown', (event) => {
+        if (!popup || popup.classList.contains('hidden')) return
+        if (event.key === 'Escape') closeModal()
+        if (event.key === 'ArrowLeft') next(1)
+        if (event.key === 'ArrowRight') next(-1)
+      })
+
+      addListener(zoomStage, 'click', (event) => {
+        if (!popup || popup.classList.contains('hidden')) return
+        if (event.target !== popupImg && scale === 1) return
+
+        if (scale === 1) {
+          setOriginFromEvent(event)
+          scale = 2.6
+          tx = 0
+          ty = 0
+          applyTransform()
+        } else {
+          resetZoom()
+        }
+      })
+
+      addListener(zoomStage, 'pointerdown', (event) => {
+        if (scale <= 1) return
+        if (event.target !== popupImg) return
+
+        isDragging = true
+        zoomStage.classList.add('is-dragging')
+        lastX = event.clientX
+        lastY = event.clientY
+        zoomStage.setPointerCapture(event.pointerId)
+      })
+
+      addListener(zoomStage, 'pointermove', (event) => {
+        if (!isDragging) return
+
+        const dx = event.clientX - lastX
+        const dy = event.clientY - lastY
+        lastX = event.clientX
+        lastY = event.clientY
+        tx += dx
+        ty += dy
+        applyTransform()
+      })
+
+      addListener(zoomStage, 'pointerup', (event) => {
+        if (!isDragging) return
+        isDragging = false
+        zoomStage.classList.remove('is-dragging')
+        try { zoomStage.releasePointerCapture(event.pointerId) } catch {}
+      })
+
+      addListener(zoomStage, 'pointercancel', () => {
+        isDragging = false
+        zoomStage.classList.remove('is-dragging')
+      })
+
+      addListener(zoomStage, 'wheel', (event) => {
+        if (!popup || popup.classList.contains('hidden')) return
+        event.preventDefault()
+
+        setOriginFromEvent(event)
+
+        const delta = Math.sign(event.deltaY)
+        const step = 0.25
+
+        scale += delta > 0 ? -step : step
+        scale = clamp(scale, 1, 6)
+
+        if (scale === 1) {
+          tx = 0
+          ty = 0
+        }
+
+        applyTransform()
+      }, { passive: false })
+
+      renderFeatured()
+      filterGallery()
+      setupReveal()
+      handleBackToTop()
+      openFromHash({ instant: true, openModal: false })
+    })()
   </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </Layout>
