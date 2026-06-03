@@ -11,7 +11,8 @@ const metadata = {
 <Layout metadata={metadata}>
   <main class="tnx-profile-page" dir="rtl">
     <div id="profileBg" class="profile-bg"></div>
-    <div class="profile-vignette"></div>
+    <div class="profile-noise"></div>
+    <div class="profile-glow"></div>
 
     <section class="profile-shell">
       <section id="searchView" class="search-view hidden">
@@ -36,37 +37,36 @@ const metadata = {
       </section>
 
       <section id="profileView" class="profile-view hidden">
-        <header class="hero-card">
+        <header class="player-card">
           <div id="coverArt" class="cover-art"></div>
 
-          <div class="hero-content">
-            <section class="identity-card">
+          <div class="player-core">
+            <div class="avatar-stack">
               <div class="avatar-frame">
                 <div id="avatar" class="avatar"></div>
               </div>
+              <div id="levelChip" class="level-chip">LVL 1</div>
+            </div>
 
-              <div class="identity-text">
-                <div class="top-line">
-                  <span id="jobChip" class="job-chip">Citizen</span>
-                  <span id="levelChip" class="level-chip">LVL 1</span>
-                </div>
-
+            <div class="player-info">
+              <div class="name-row">
                 <h1 id="displayName">—</h1>
-
-                <div class="meta-row">
-                  <span id="loginName">@—</span>
-                  <span id="countryName" class="hidden">Saudi Arabia</span>
-                </div>
-
-                <p id="bioText">عضو في مجتمع TNX6.</p>
-
-                <div id="featuredBadges" class="featured-badges"></div>
+                <span id="jobChip" class="job-chip">Citizen</span>
               </div>
-            </section>
 
-            <aside class="hud-card">
-              <div class="hud-head">
-                <span>PLAYER STATUS</span>
+              <div class="meta-row">
+                <span id="loginName">@—</span>
+                <span id="countryName" class="hidden">Saudi Arabia</span>
+              </div>
+
+              <p id="bioText" class="bio-text">عضو في مجتمع TNX6.</p>
+
+              <div id="featuredBadges" class="featured-badges"></div>
+            </div>
+
+            <div class="progress-card">
+              <div class="progress-top">
+                <span>Progress</span>
                 <strong id="levelLabel">Level 1</strong>
               </div>
 
@@ -75,42 +75,45 @@ const metadata = {
               </div>
 
               <p id="nextLevelText">—</p>
+            </div>
+          </div>
 
-              <div class="wallet-grid">
-                <div>
-                  <span>النقاط</span>
-                  <strong id="pointsValue">0</strong>
-                </div>
-                <div>
-                  <span>الذهب</span>
-                  <strong id="goldValue">0</strong>
-                </div>
-                <div>
-                  <span>السمعة</span>
-                  <strong id="repValue">0</strong>
-                </div>
-                <div>
-                  <span>البادجات</span>
-                  <strong id="badgesTopValue">0</strong>
-                </div>
-              </div>
-            </aside>
+          <div class="wallet-strip">
+            <div class="wallet-cell">
+              <span>النقاط</span>
+              <strong id="pointsValue">0</strong>
+            </div>
+
+            <div class="wallet-cell">
+              <span>الذهب</span>
+              <strong id="goldValue">0</strong>
+            </div>
+
+            <div class="wallet-cell">
+              <span>السمعة</span>
+              <strong id="repValue">0</strong>
+            </div>
+
+            <div class="wallet-cell">
+              <span>البادجات</span>
+              <strong id="badgesTopValue">0</strong>
+            </div>
           </div>
         </header>
 
-        <section class="premium-row">
-          <article class="feature-panel rare-panel">
+        <section class="feature-row">
+          <article class="feature-card rare-feature">
             <div class="section-head">
               <div>
-                <span>FEATURED ITEM</span>
+                <span>RAREST ITEM</span>
                 <h2>أندر غرض</h2>
               </div>
             </div>
 
-            <div id="rareFeature" class="rare-feature"></div>
+            <div id="rareFeature" class="rare-feature-body"></div>
           </article>
 
-          <article class="feature-panel badges-panel">
+          <article class="feature-card badge-feature">
             <div class="section-head">
               <div>
                 <span>BADGE WALL</span>
@@ -121,9 +124,21 @@ const metadata = {
 
             <div id="badgeWall" class="badge-wall"></div>
           </article>
+
+          <article class="feature-card mail-feature">
+            <div class="section-head">
+              <div>
+                <span>MAILBOX</span>
+                <h2>آخر البريد</h2>
+              </div>
+              <strong id="mailCountMini">0</strong>
+            </div>
+
+            <div id="mailPreview" class="mail-preview"></div>
+          </article>
         </section>
 
-        <section class="content-panel inventory-panel">
+        <section class="content-panel">
           <div class="section-head inventory-head">
             <div>
               <span>INVENTORY</span>
@@ -199,7 +214,7 @@ const metadata = {
     html::-webkit-scrollbar-thumb {
       border: 2px solid rgba(0, 0, 0, .45);
       border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255, 218, 106, .92), rgba(194, 146, 0, .58));
+      background: linear-gradient(180deg, rgba(255, 218, 106, .9), rgba(194, 146, 0, .55));
     }
 
     .tnx-profile-page {
@@ -222,8 +237,9 @@ const metadata = {
         linear-gradient(135deg, #05050a 0%, #0e0e17 52%, #180c04 100%);
       background-position: center;
       background-size: cover;
-      filter: saturate(1.06) contrast(1.06);
-      transform: scale(1.02);
+      opacity: .42;
+      filter: blur(2px) saturate(.92) contrast(1.08);
+      transform: scale(1.06);
     }
 
     .profile-bg::after {
@@ -231,11 +247,24 @@ const metadata = {
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(180deg, rgba(0,0,0,.72), rgba(0,0,0,.22) 38%, rgba(0,0,0,.9)),
-        linear-gradient(90deg, rgba(0,0,0,.78), transparent 50%, rgba(0,0,0,.72));
+        linear-gradient(180deg, rgba(0,0,0,.88), rgba(0,0,0,.68) 38%, rgba(0,0,0,.96)),
+        linear-gradient(90deg, rgba(0,0,0,.88), rgba(0,0,0,.42) 50%, rgba(0,0,0,.88));
     }
 
-    .profile-vignette {
+    .profile-noise {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: .06;
+      background-image:
+        linear-gradient(rgba(255, 218, 106, .3) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 218, 106, .3) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: radial-gradient(circle at center, black, transparent 68%);
+    }
+
+    .profile-glow {
       position: fixed;
       inset: 0;
       z-index: 0;
@@ -247,9 +276,9 @@ const metadata = {
     .profile-shell {
       position: relative;
       z-index: 1;
-      width: min(100%, 1160px);
+      width: min(100%, 1180px);
       margin: 0 auto;
-      padding: 5.5rem 1rem 5rem;
+      padding: 5.75rem 1rem 5rem;
     }
 
     .search-view {
@@ -415,18 +444,18 @@ const metadata = {
       gap: 1rem;
     }
 
-    .hero-card {
+    .player-card {
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(255,218,106,.18);
       border-radius: 34px;
       background: rgba(8,8,12,.82);
-      box-shadow: 0 34px 110px rgba(0,0,0,.52);
+      box-shadow: 0 34px 110px rgba(0,0,0,.58), inset 0 0 0 1px rgba(255,255,255,.025);
       backdrop-filter: blur(20px);
     }
 
     .cover-art {
-      height: 155px;
+      height: 215px;
       background-position: center;
       background-size: cover;
     }
@@ -437,32 +466,30 @@ const metadata = {
       width: 100%;
       height: 100%;
       background:
-        linear-gradient(180deg, rgba(0,0,0,.08), rgba(8,8,12,.92)),
-        radial-gradient(circle at 24% 48%, rgba(var(--accent), .34), transparent 35%);
+        linear-gradient(180deg, rgba(0,0,0,.12), rgba(8,8,12,.88)),
+        radial-gradient(circle at 22% 48%, rgba(var(--accent), .34), transparent 35%);
     }
 
-    .hero-content {
+    .player-core {
       position: relative;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 320px;
-      gap: 1rem;
-      padding: 0 1.25rem 1.25rem;
-      margin-top: -72px;
+      grid-template-columns: 162px minmax(0, 1fr) 270px;
+      gap: 1.2rem;
       align-items: end;
+      padding: 0 1.35rem 1.1rem;
+      margin-top: -74px;
     }
 
-    .identity-card {
+    .avatar-stack {
       display: grid;
-      grid-template-columns: 148px minmax(0, 1fr);
-      gap: 1rem;
-      align-items: end;
-      min-width: 0;
+      justify-items: center;
+      gap: .7rem;
     }
 
     .avatar-frame {
-      width: 148px;
-      height: 148px;
-      border-radius: 32px;
+      width: 152px;
+      height: 152px;
+      border-radius: 34px;
       padding: 4px;
       background:
         linear-gradient(135deg, rgba(255,218,106,.95), var(--profile-color, #ffda6a), rgba(255,255,255,.18));
@@ -474,45 +501,42 @@ const metadata = {
     .avatar {
       width: 100%;
       height: 100%;
-      border-radius: 27px;
+      border-radius: 29px;
       background: #111 center / cover no-repeat;
     }
 
-    .identity-text {
-      min-width: 0;
-      padding-bottom: .1rem;
-    }
-
-    .top-line {
-      display: flex;
-      gap: .45rem;
-      flex-wrap: wrap;
-      align-items: center;
-      margin-bottom: .45rem;
-    }
-
-    .job-chip,
     .level-chip {
-      border: 1px solid rgba(255,218,106,.24);
+      display: inline-flex;
+      justify-content: center;
+      min-width: 6.4rem;
+      border: 1px solid rgba(255,218,106,.32);
       border-radius: 999px;
-      background: rgba(0,0,0,.48);
-      color: #f7e6ac;
-      padding: .42rem .62rem;
-      font-size: .74rem;
-      font-weight: 900;
-      backdrop-filter: blur(12px);
-    }
-
-    .level-chip {
+      background: rgba(0,0,0,.52);
       color: #ffda6a;
+      padding: .54rem .8rem;
+      font-size: .78rem;
+      font-weight: 950;
       direction: ltr;
     }
 
-    .identity-text h1 {
+    .player-info {
+      min-width: 0;
+      padding-bottom: .18rem;
+    }
+
+    .name-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+
+    .name-row h1 {
       margin: 0;
       overflow: hidden;
       color: #fff;
-      font-size: clamp(2.45rem, 5vw, 4.3rem);
+      font-size: clamp(2.55rem, 5vw, 5.15rem);
       font-weight: 950;
       line-height: .95;
       letter-spacing: -.05em;
@@ -521,13 +545,25 @@ const metadata = {
       white-space: nowrap;
     }
 
+    .job-chip {
+      flex-shrink: 0;
+      border: 1px solid rgba(255,218,106,.24);
+      border-radius: 999px;
+      background: rgba(0,0,0,.44);
+      color: #f7e6ac;
+      padding: .48rem .7rem;
+      font-size: .78rem;
+      font-weight: 900;
+      backdrop-filter: blur(12px);
+    }
+
     .meta-row {
       display: flex;
       flex-wrap: wrap;
-      gap: .45rem;
-      margin-top: .65rem;
+      gap: .5rem;
+      margin-top: .68rem;
       color: rgba(229,231,235,.82);
-      font-size: .82rem;
+      font-size: .84rem;
       font-weight: 850;
     }
 
@@ -535,18 +571,18 @@ const metadata = {
       border: 1px solid rgba(255,255,255,.12);
       border-radius: 999px;
       background: rgba(0,0,0,.34);
-      padding: .34rem .54rem;
+      padding: .38rem .58rem;
     }
 
     #loginName {
       direction: ltr;
     }
 
-    .identity-text p {
-      max-width: 680px;
-      margin: .72rem 0 0;
+    .bio-text {
+      max-width: 720px;
+      margin: .78rem 0 0;
       color: rgb(209,213,219);
-      font-size: .9rem;
+      font-size: .92rem;
       font-weight: 720;
       line-height: 1.7;
     }
@@ -554,16 +590,16 @@ const metadata = {
     .featured-badges {
       display: flex;
       flex-wrap: wrap;
-      gap: .5rem;
-      margin-top: .85rem;
+      gap: .55rem;
+      margin-top: .9rem;
     }
 
     .featured-badges img,
     .badge-placeholder {
       display: grid;
       place-items: center;
-      width: 46px;
-      height: 46px;
+      width: 48px;
+      height: 48px;
       border: 1px solid rgba(255,218,106,.2);
       border-radius: 14px;
       background: rgba(0,0,0,.38);
@@ -573,29 +609,28 @@ const metadata = {
       font-weight: 950;
     }
 
-    .hud-card {
+    .progress-card {
       border: 1px solid rgba(255,218,106,.14);
-      border-radius: 24px;
+      border-radius: 22px;
       background: rgba(0,0,0,.44);
       padding: 1rem;
       backdrop-filter: blur(14px);
     }
 
-    .hud-head {
+    .progress-top {
       display: flex;
       justify-content: space-between;
       gap: .8rem;
       align-items: center;
     }
 
-    .hud-head span {
+    .progress-top span {
       color: rgb(156,163,175);
-      font-size: .68rem;
-      font-weight: 950;
-      letter-spacing: .1em;
+      font-size: .74rem;
+      font-weight: 850;
     }
 
-    .hud-head strong {
+    .progress-top strong {
       color: #ffda6a;
       font-size: .86rem;
       font-weight: 950;
@@ -618,52 +653,54 @@ const metadata = {
       box-shadow: 0 0 18px rgba(255,218,106,.35);
     }
 
-    .hud-card p {
-      margin: .55rem 0 .85rem;
+    .progress-card p {
+      margin: .55rem 0 0;
       color: rgb(156,163,175);
-      font-size: .68rem;
+      font-size: .7rem;
       font-weight: 720;
     }
 
-    .wallet-grid {
+    .wallet-strip {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: .55rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: .75rem;
+      padding: 0 1.35rem 1.35rem;
     }
 
-    .wallet-grid div {
-      border: 1px solid rgba(255,218,106,.12);
-      border-radius: 16px;
+    .wallet-cell {
+      border: 1px solid rgba(255,218,106,.14);
+      border-radius: 20px;
       background:
         radial-gradient(circle at top right, rgba(255,218,106,.1), transparent 45%),
-        rgba(0,0,0,.32);
-      padding: .72rem;
+        rgba(0,0,0,.44);
+      padding: .92rem;
+      backdrop-filter: blur(12px);
     }
 
-    .wallet-grid span {
+    .wallet-cell span {
       display: block;
       color: rgb(156,163,175);
-      font-size: .68rem;
+      font-size: .74rem;
       font-weight: 850;
     }
 
-    .wallet-grid strong {
+    .wallet-cell strong {
       display: block;
-      margin-top: .2rem;
+      margin-top: .25rem;
       color: #ffda6a;
-      font-size: 1.05rem;
+      font-size: 1.36rem;
       font-weight: 950;
       direction: ltr;
       text-align: right;
     }
 
-    .premium-row {
+    .feature-row {
       display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(0, .9fr);
+      grid-template-columns: 1.25fr .95fr .95fr;
       gap: 1rem;
     }
 
-    .feature-panel,
+    .feature-card,
     .content-panel {
       border: 1px solid rgba(255,218,106,.14);
       border-radius: 26px;
@@ -713,17 +750,13 @@ const metadata = {
       direction: ltr;
     }
 
-    .rare-feature {
-      min-height: 198px;
+    .rare-feature-body {
+      min-height: 188px;
     }
 
     .big-item {
-      display: grid;
-      grid-template-columns: 120px minmax(0, 1fr) auto;
-      gap: 1rem;
-      align-items: center;
       height: 100%;
-      min-height: 198px;
+      min-height: 188px;
       border: 1px solid rgba(255,218,106,.18);
       border-radius: 22px;
       background:
@@ -735,18 +768,19 @@ const metadata = {
     .big-item-icon {
       display: grid;
       place-items: center;
-      width: 112px;
-      height: 112px;
+      width: 70px;
+      height: 70px;
       border: 1px solid rgba(255,218,106,.2);
-      border-radius: 26px;
+      border-radius: 20px;
       background: rgba(255,218,106,.08);
-      font-size: 3rem;
+      font-size: 2.1rem;
+      margin-bottom: .85rem;
     }
 
     .big-item h3 {
       margin: 0;
       color: #fff;
-      font-size: 1.65rem;
+      font-size: 1.35rem;
       font-weight: 950;
       line-height: 1.2;
     }
@@ -754,22 +788,20 @@ const metadata = {
     .big-item p {
       margin: .55rem 0 0;
       color: rgb(156,163,175);
-      font-size: .86rem;
+      font-size: .82rem;
       font-weight: 740;
       line-height: 1.6;
     }
 
     .big-item strong {
-      display: grid;
-      place-items: center;
-      min-width: 64px;
-      height: 44px;
+      display: inline-flex;
+      margin-top: .78rem;
       border: 1px solid rgba(255,218,106,.18);
       border-radius: 999px;
       background: rgba(0,0,0,.34);
       color: #ffda6a;
-      padding: 0 .7rem;
-      font-size: .85rem;
+      padding: .4rem .58rem;
+      font-size: .76rem;
       font-weight: 950;
       direction: ltr;
     }
@@ -787,12 +819,87 @@ const metadata = {
       border-radius: 16px;
     }
 
+    .mail-preview,
+    .mail-list,
+    .achievements-list {
+      display: grid;
+      gap: .65rem;
+    }
+
+    .mail-card,
+    .achievement-card {
+      display: flex;
+      align-items: flex-start;
+      gap: .75rem;
+      border: 1px solid rgba(255,218,106,.1);
+      border-radius: 16px;
+      background: rgba(0,0,0,.28);
+      padding: .72rem;
+    }
+
+    .mail-card.is-unread {
+      border-color: rgba(255,218,106,.32);
+      background: rgba(255,218,106,.05);
+    }
+
+    .mail-avatar,
+    .achievement-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,218,106,.16);
+      border-radius: 14px;
+      background: rgba(255,218,106,.07);
+      color: #ffda6a;
+      font-size: 1.15rem;
+      font-weight: 950;
+    }
+
+    .mail-card strong,
+    .achievement-card strong {
+      display: block;
+      color: #fff;
+      font-size: .82rem;
+      font-weight: 950;
+      line-height: 1.25;
+    }
+
+    .mail-card span,
+    .achievement-card span {
+      display: block;
+      margin-top: .18rem;
+      color: rgb(156,163,175);
+      font-size: .68rem;
+      font-weight: 730;
+      line-height: 1.45;
+    }
+
+    .mail-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+    }
+
+    .mail-date {
+      color: rgb(107,114,128) !important;
+      font-size: .62rem !important;
+      white-space: nowrap;
+    }
+
+    .mail-message {
+      color: rgb(209,213,219) !important;
+      font-size: .74rem !important;
+      word-break: break-word;
+    }
+
     .inventory-head {
       align-items: center;
     }
 
-    .inventory-tools,
-    .mail-tabs {
+    .inventory-tools {
       display: flex;
       flex-wrap: wrap;
       justify-content: flex-end;
@@ -940,79 +1047,10 @@ const metadata = {
       gap: 1rem;
     }
 
-    .mail-list,
-    .achievements-list {
-      display: grid;
-      gap: .65rem;
-    }
-
-    .mail-card,
-    .achievement-card {
+    .mail-tabs {
       display: flex;
-      align-items: flex-start;
-      gap: .75rem;
-      border: 1px solid rgba(255,218,106,.1);
-      border-radius: 16px;
-      background: rgba(0,0,0,.28);
-      padding: .72rem;
-    }
-
-    .mail-card.is-unread {
-      border-color: rgba(255,218,106,.32);
-      background: rgba(255,218,106,.05);
-    }
-
-    .mail-avatar,
-    .achievement-icon {
-      display: grid;
-      place-items: center;
-      width: 42px;
-      height: 42px;
-      flex-shrink: 0;
-      border: 1px solid rgba(255,218,106,.16);
-      border-radius: 14px;
-      background: rgba(255,218,106,.07);
-      color: #ffda6a;
-      font-size: 1.15rem;
-      font-weight: 950;
-    }
-
-    .mail-card strong,
-    .achievement-card strong {
-      display: block;
-      color: #fff;
-      font-size: .82rem;
-      font-weight: 950;
-      line-height: 1.25;
-    }
-
-    .mail-card span,
-    .achievement-card span {
-      display: block;
-      margin-top: .18rem;
-      color: rgb(156,163,175);
-      font-size: .68rem;
-      font-weight: 730;
-      line-height: 1.45;
-    }
-
-    .mail-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: .5rem;
-    }
-
-    .mail-date {
-      color: rgb(107,114,128) !important;
-      font-size: .62rem !important;
-      white-space: nowrap;
-    }
-
-    .mail-message {
-      color: rgb(209,213,219) !important;
-      font-size: .74rem !important;
-      word-break: break-word;
+      gap: .42rem;
+      flex-wrap: wrap;
     }
 
     .actions-row {
@@ -1080,11 +1118,15 @@ const metadata = {
     }
 
     @media (max-width: 1040px) {
-      .hero-content {
-        grid-template-columns: 1fr;
+      .player-core {
+        grid-template-columns: 152px minmax(0, 1fr);
       }
 
-      .premium-row,
+      .progress-card {
+        grid-column: 1 / -1;
+      }
+
+      .feature-row,
       .lower-grid {
         grid-template-columns: 1fr;
       }
@@ -1096,33 +1138,27 @@ const metadata = {
       }
 
       .cover-art {
-        height: 135px;
+        height: 210px;
       }
 
-      .identity-card {
+      .player-core {
         grid-template-columns: 1fr;
         justify-items: center;
         text-align: center;
       }
 
-      .identity-text h1 {
-        white-space: normal;
-        font-size: 2.55rem;
-      }
-
-      .top-line,
+      .name-row,
       .meta-row,
       .featured-badges {
         justify-content: center;
       }
 
-      .big-item {
-        grid-template-columns: 1fr;
-        text-align: center;
-        justify-items: center;
+      .name-row h1 {
+        white-space: normal;
+        font-size: 2.55rem;
       }
 
-      .wallet-grid,
+      .wallet-strip,
       .badge-wall {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -1148,7 +1184,7 @@ const metadata = {
     }
 
     @media (max-width: 390px) {
-      .wallet-grid,
+      .wallet-strip,
       .inventory-grid {
         grid-template-columns: 1fr;
       }
@@ -1157,7 +1193,7 @@ const metadata = {
 
   <script is:inline data-reinit>
     ;(async () => {
-      const cleanupKey = '__tnxEliteProfileCleanup'
+      const cleanupKey = '__tnxPlayerProfileCleanup'
       if (window[cleanupKey]) window[cleanupKey]()
 
       const listeners = []
@@ -1507,12 +1543,14 @@ const metadata = {
         $('countryName').textContent = country
 
         $('badgeCountMini').textContent = fmt(badges.length)
+        $('mailCountMini').textContent = fmt(unread.length || mails.length)
         $('achCount').textContent = fmt(buildAchievements(user).length)
         $('badgesPageLink').href = `/badges?user=${encodeURIComponent(login)}`
 
         renderFeaturedBadges(badges)
         renderRareFeature(itemsAll)
         renderBadgeWall(badges)
+        renderMailPreview(user)
         renderInventory(user)
         renderAchievements(buildAchievements(user))
         renderMail(user)
@@ -1549,10 +1587,8 @@ const metadata = {
         $('rareFeature').innerHTML = `
           <div class="big-item">
             <div class="big-item-icon">${esc(item.meta.icon)}</div>
-            <div>
-              <h3>${esc(item.name)}</h3>
-              <p>${esc(item.description)}</p>
-            </div>
+            <h3>${esc(item.name)}</h3>
+            <p>${esc(item.description)}</p>
             <strong>x${fmt(item.qty)}</strong>
           </div>
         `
@@ -1571,6 +1607,14 @@ const metadata = {
                 : `<div class="badge-placeholder" title="${esc(name)}">★</div>`
             }).join('')
           : `<div class="empty-line">ما فيه بادجات.</div>`
+      }
+
+      function renderMailPreview(user) {
+        const mails = mailItems(user).slice(0, 2)
+
+        $('mailPreview').innerHTML = mails.length
+          ? mails.map((mail) => mailTemplate(mail)).join('')
+          : `<div class="empty-line">ما فيه بريد.</div>`
       }
 
       function renderInventory(user) {
@@ -1661,7 +1705,6 @@ const metadata = {
         const unread = all.filter((mail) => !mail.read)
         const list = state.mailFilter === 'unread' ? unread : all
 
-        $('mailCountMini').textContent = fmt(unread.length || all.length)
         $('mailEmpty').classList.toggle('hidden', list.length > 0)
 
         document.querySelectorAll('[data-mail-filter]').forEach((button) => {
