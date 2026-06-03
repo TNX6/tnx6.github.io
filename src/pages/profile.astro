@@ -2,1005 +2,1044 @@
 import Layout from '~/layouts/PageLayout.astro'
 
 const metadata = {
-  title: 'البروفايل — TNX6',
+  title: 'TNX6 Profile',
   ignoreTitleTemplate: true,
-  description: 'بروفايل عضو في مجتمع TNX6 — أغراض، رصيد، بادجات، بريد، وإنجازات.',
+  description: 'بروفايل أعضاء مجتمع TNX6.',
 }
 ---
 
 <Layout metadata={metadata}>
-  <main class="tnx-profile-page" dir="rtl">
-    <div class="tnx-bg" id="profileBg"></div>
-    <div class="tnx-bg-overlay"></div>
+  <main class="profile-page" dir="rtl">
+    <div id="pageBg" class="page-bg"></div>
+    <div class="page-overlay"></div>
 
-    <button id="backToTop" class="tnx-back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
+    <section class="page-shell">
+      <section id="searchView" class="search-view hidden">
+        <div class="search-card">
+          <span class="eyebrow">TNX6 PROFILE</span>
+          <h1>بروفايل العضو</h1>
+          <p>ابحث باسم العضو أو افتح رابط مباشر مثل <b>/profile?user=haneen48</b></p>
 
-    <section class="tnx-shell">
-      <section id="searchScreen" class="tnx-search-screen hidden">
-        <div class="tnx-search-box">
-          <div class="tnx-kicker">TNX6 PROFILE</div>
-          <h1>ابحث عن عضو</h1>
-          <p>اكتب اسم العضو عشان تفتح بروفايله الكامل.</p>
-
-          <div class="tnx-search">
+          <div class="search-box">
             <span>⌕</span>
-            <input id="userSearch" type="search" autocomplete="off" placeholder="اسم العضو..." />
-            <button type="button" id="clearUserSearch" aria-label="مسح البحث">×</button>
+            <input id="userSearch" type="search" autocomplete="off" placeholder="اكتب اسم Twitch..." />
+            <button id="clearSearch" type="button" aria-label="مسح">×</button>
           </div>
 
-          <div id="userResults" class="tnx-user-results"></div>
+          <div id="searchResults" class="search-results"></div>
         </div>
       </section>
 
-      <section id="profileScreen" class="tnx-profile-screen hidden">
-        <header class="tnx-profile-header">
-          <div class="tnx-identity">
-            <div class="tnx-avatar" id="pAvatar"></div>
+      <section id="notFoundView" class="empty-view hidden">
+        <strong>ما لقيت العضو</strong>
+        <span>تأكد من الاسم أو من ملف <b>user_badges.json</b>.</span>
+      </section>
 
-            <div class="tnx-identity-text">
-              <h1 id="pName">—</h1>
-              <div class="tnx-country hidden" id="pCountry"></div>
-              <div class="tnx-bio" id="pBio"></div>
+      <section id="profileView" class="profile-view hidden">
+        <header class="hero-card">
+          <div id="heroCover" class="hero-cover"></div>
+
+          <div class="hero-content">
+            <div id="avatar" class="avatar"></div>
+
+            <div class="identity">
+              <div class="title-line">
+                <h1 id="displayName">—</h1>
+                <span id="levelPill" class="level-pill">LVL 1</span>
+              </div>
+
+              <div class="sub-line">
+                <span id="loginName">@—</span>
+                <span id="jobName">Citizen</span>
+                <span id="countryName" class="hidden">Saudi Arabia</span>
+              </div>
+
+              <p id="bioText" class="bio-text">عضو في مجتمع TNX6.</p>
+
+              <div id="equippedBadges" class="equipped-badges"></div>
             </div>
-          </div>
 
-          <div class="tnx-header-side">
-            <div class="tnx-level-row">
-              <span>Level</span>
-              <span class="tnx-level-badge" id="pLevel">1</span>
-            </div>
+            <div class="wallet">
+              <div class="wallet-card">
+                <span>النقاط</span>
+                <strong id="pointsValue">0</strong>
+              </div>
 
-            <div class="tnx-header-actions">
-              <button type="button" class="tnx-mail-btn" id="mailToggle" aria-label="البريد">
-                <span class="ti-mail-glyph">✉</span>
-                <span class="tnx-mail-count hidden" id="mailCount">0</span>
-              </button>
+              <div class="wallet-card gold">
+                <span>الذهب</span>
+                <strong id="goldValue">0</strong>
+              </div>
 
-              <button type="button" class="tnx-copy-link" id="copyProfileLink">نسخ الرابط</button>
+              <div class="wallet-card rep">
+                <span>السمعة</span>
+                <strong id="repValue">0</strong>
+              </div>
             </div>
           </div>
         </header>
 
-        <section class="tnx-mailbox hidden" id="mailboxSection">
-          <div class="tnx-box-head">
-            <strong>صندوق البريد</strong>
+        <section class="dashboard">
+          <main class="main-column">
+            <section class="panel inventory-panel">
+              <div class="panel-head">
+                <div>
+                  <span>INVENTORY</span>
+                  <h2>حقيبة الأغراض</h2>
+                </div>
+                <strong id="inventoryTotal">0</strong>
+              </div>
 
-            <div class="tnx-mail-filters">
-              <button type="button" class="is-active" data-mail-filter="all">
-                الكل <small id="mailAllCount">0</small>
-              </button>
+              <div id="inventoryGrid" class="inventory-grid"></div>
+              <div id="inventoryEmpty" class="inline-empty hidden">ما فيه أغراض في الحقيبة.</div>
+            </section>
 
-              <button type="button" data-mail-filter="unread">
-                غير المقروءة <small id="mailUnreadCount">0</small>
-              </button>
-            </div>
-          </div>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <span>BADGES</span>
+                  <h2>البادجات</h2>
+                </div>
+                <strong id="badgesTotal">0</strong>
+              </div>
 
-          <div id="mailList" class="tnx-mail-list"></div>
+              <div id="badgesGrid" class="badges-grid"></div>
+              <div id="badgesEmpty" class="inline-empty hidden">ما فيه بادجات ظاهرة.</div>
+            </section>
 
-          <div class="tnx-mail-hint">
-            الرسائل تُرسل من الشات عبر أمر <code>!mail @USER رسالتك</code>
-          </div>
-        </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <span>ACHIEVEMENTS</span>
+                  <h2>آخر الإنجازات</h2>
+                </div>
+                <strong id="achievementsTotal">0</strong>
+              </div>
 
-        <div class="tnx-profile-body">
-          <main class="tnx-main-col">
-            <div class="tnx-box-head">
-              <strong>حقيبة الأغراض</strong>
-              <span id="invCount">0 غرض</span>
-            </div>
-
-            <div class="tnx-panel">
-              <div id="inventoryGrid" class="tnx-inv-grid"></div>
-              <div id="inventoryEmpty" class="tnx-inline-empty hidden">ما فيه أغراض في الحقيبة.</div>
-            </div>
-
-            <div class="tnx-box-head tnx-section-gap">
-              <strong>آخر الإنجازات</strong>
-              <span id="achCount">0 إنجاز</span>
-            </div>
-
-            <div class="tnx-panel">
-              <div id="achievementsList" class="tnx-ach-list"></div>
-              <div id="achievementsEmpty" class="tnx-inline-empty hidden">لا توجد إنجازات بعد.</div>
-            </div>
+              <div id="achievementsList" class="achievements-list"></div>
+              <div id="achievementsEmpty" class="inline-empty hidden">لا توجد إنجازات بعد.</div>
+            </section>
           </main>
 
-          <aside class="tnx-side-col">
-            <div class="tnx-panel tnx-balance">
-              <div class="tnx-side-title">الرصيد الحالي</div>
-
-              <div class="tnx-balance-row">
-                <span>★ النقاط</span>
-                <strong id="pPoints">0</strong>
+          <aside class="side-column">
+            <section class="panel mailbox-panel">
+              <div class="panel-head">
+                <div>
+                  <span>MAILBOX</span>
+                  <h2>صندوق البريد</h2>
+                </div>
+                <strong id="mailTotal">0</strong>
               </div>
 
-              <div class="tnx-balance-row">
-                <span>🪙 الذهب</span>
-                <strong id="pGold" class="gold">0</strong>
+              <div class="mail-tabs">
+                <button class="is-active" type="button" data-mail-filter="all">الكل</button>
+                <button type="button" data-mail-filter="unread">غير المقروء</button>
               </div>
 
-              <div class="tnx-balance-row">
-                <span>🔥 السمعة</span>
-                <strong id="pRep" class="rep">0</strong>
+              <div id="mailList" class="mail-list"></div>
+              <div id="mailEmpty" class="inline-empty hidden">ما فيه رسائل.</div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <span>RARE ITEMS</span>
+                  <h2>الأندر</h2>
+                </div>
               </div>
-            </div>
 
-            <div class="tnx-side-block">
-              <div class="tnx-side-title">البادجات <em id="badgeCount">0</em></div>
-              <div id="badgeShowcase" class="tnx-badge-showcase"></div>
-            </div>
+              <div id="rareItems" class="rare-list"></div>
+              <div id="rareEmpty" class="inline-empty hidden">ما فيه أغراض نادرة.</div>
+            </section>
 
-            <div class="tnx-panel tnx-quicklist">
-              <button type="button" data-jump="inventoryGrid">
-                <span>الأغراض</span>
-                <em id="qlItems">0</em>
-              </button>
-
-              <button type="button" data-jump="badgeShowcase">
-                <span>البادجات</span>
-                <em id="qlBadges">0</em>
-              </button>
-
-              <button type="button" data-jump="achievementsList">
-                <span>الإنجازات</span>
-                <em id="qlAch">0</em>
-              </button>
-
-              <a id="badgePageLink" href="/badges">
-                <span>بطاقة البادجات</span>
-                <em>↗</em>
-              </a>
-            </div>
+            <section class="panel quick-panel">
+              <a id="badgePageLink" href="/badges">بطاقة البادجات <span>↗</span></a>
+              <button id="copyLink" type="button">نسخ رابط البروفايل <span>⌁</span></button>
+              <button type="button" data-jump="inventoryGrid">الأغراض <span id="quickItems">0</span></button>
+              <button type="button" data-jump="badgesGrid">البادجات <span id="quickBadges">0</span></button>
+            </section>
           </aside>
-        </div>
-      </section>
-
-      <section id="notFoundScreen" class="tnx-empty hidden">
-        <strong>ما لقيت هذا العضو</strong>
-        <span>تأكد من اسم العضو في الرابط أو من ملف user_badges.json.</span>
+        </section>
       </section>
     </section>
+
+    <button id="backToTop" class="back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
   </main>
 
   <style is:global>
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
 
     html {
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 218, 106, 0.45) rgba(0, 0, 0, 0.38);
+      scrollbar-color: rgba(255, 218, 106, .45) rgba(0, 0, 0, .35);
     }
 
-    html::-webkit-scrollbar {
-      width: 10px;
-    }
-
-    html::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.38);
-    }
-
+    html::-webkit-scrollbar { width: 10px; }
+    html::-webkit-scrollbar-track { background: rgba(0,0,0,.35); }
     html::-webkit-scrollbar-thumb {
-      border: 2px solid rgba(0, 0, 0, 0.38);
+      border: 2px solid rgba(0,0,0,.35);
       border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255, 218, 106, 0.85), rgba(194, 146, 0, 0.55));
+      background: linear-gradient(180deg, rgba(255,218,106,.85), rgba(194,146,0,.55));
     }
 
-    .tnx-profile-page {
+    .profile-page {
       position: relative;
       min-height: 100vh;
       overflow: hidden;
-      background: #07050b;
-      color: #c7d5e0;
+      background: #07070b;
+      color: #f8fafc;
       font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    .tnx-bg {
+    .page-bg {
       position: fixed;
       inset: 0;
       z-index: 0;
-      pointer-events: none;
+      background:
+        radial-gradient(circle at 20% 12%, rgba(255, 218, 106, .16), transparent 28%),
+        radial-gradient(circle at 80% 20%, rgba(124, 58, 237, .14), transparent 30%),
+        linear-gradient(135deg, #07070b 0%, #0b0b12 48%, #140b05 100%);
       background-size: cover;
       background-position: center;
-      background-color: #0b1015;
-      filter: saturate(1.06) contrast(1.02);
+      filter: saturate(1.05) contrast(1.03);
       transform: scale(1.02);
+      pointer-events: none;
     }
 
-    .tnx-bg-overlay {
+    .page-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.68), rgba(0,0,0,.32) 42%, rgba(0,0,0,.82)),
+        linear-gradient(90deg, rgba(0,0,0,.72), transparent 48%, rgba(0,0,0,.68));
+    }
+
+    .page-overlay {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
       background:
-        linear-gradient(to bottom, rgba(7, 5, 11, 0.62), rgba(7, 5, 11, 0.36) 30%, rgba(7, 5, 11, 0.88)),
-        linear-gradient(to right, rgba(0, 0, 0, 0.72), transparent 44%, rgba(0, 0, 0, 0.72));
+        radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.24) 48%, rgba(0,0,0,.72) 100%);
     }
 
-    .tnx-shell {
+    .page-shell {
       position: relative;
       z-index: 1;
-      width: min(100%, 960px);
+      width: min(100%, 1180px);
       margin: 0 auto;
-      padding: 6.5rem 1.25rem 5rem;
+      padding: 5.8rem 1rem 5rem;
     }
 
-    .tnx-search-screen {
+    .search-view {
       display: grid;
       place-items: center;
-      min-height: 60vh;
+      min-height: 62vh;
     }
 
-    .tnx-search-box {
-      width: min(100%, 540px);
-      border: 1px solid rgba(255, 218, 106, 0.2);
-      border-radius: 1.5rem;
-      background: rgba(6, 6, 8, 0.8);
-      padding: 2rem 1.5rem;
+    .search-card,
+    .empty-view {
+      width: min(100%, 620px);
+      border: 1px solid rgba(255, 218, 106, .18);
+      border-radius: 24px;
+      background: rgba(7, 7, 11, .82);
+      padding: 2rem;
       text-align: center;
-      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
-      backdrop-filter: blur(16px);
+      box-shadow: 0 28px 80px rgba(0,0,0,.42);
+      backdrop-filter: blur(18px);
     }
 
-    .tnx-kicker {
+    .eyebrow {
       display: inline-flex;
-      border: 1px solid rgba(255, 218, 106, 0.25);
+      border: 1px solid rgba(255, 218, 106, .28);
       border-radius: 999px;
-      background: rgba(255, 218, 106, 0.06);
+      background: rgba(255, 218, 106, .07);
       color: #ffda6a;
-      padding: 0.45rem 0.75rem;
-      font-size: 0.68rem;
-      font-weight: 950;
-      letter-spacing: 0.13em;
+      padding: .45rem .8rem;
+      font-size: .7rem;
+      font-weight: 900;
+      letter-spacing: .12em;
     }
 
-    .tnx-search-box h1 {
-      margin: 0.75rem 0 0;
-      background: linear-gradient(90deg, #fff1a8, #ffda6a, #c29200);
-      background-clip: text;
-      color: transparent;
-      font-size: clamp(2rem, 7vw, 3.3rem);
+    .search-card h1 {
+      margin: .9rem 0 0;
+      color: #fff;
+      font-size: clamp(2.2rem, 6vw, 4rem);
       font-weight: 950;
       line-height: 1;
     }
 
-    .tnx-search-box p {
-      margin: 0.65rem 0 1.25rem;
+    .search-card p {
       color: rgb(156, 163, 175);
-      font-size: 0.92rem;
-      font-weight: 750;
+      font-size: .95rem;
+      font-weight: 700;
       line-height: 1.7;
     }
 
-    .tnx-search {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr) auto;
-      gap: 0.75rem;
-      align-items: center;
-      border: 1px solid rgba(255, 218, 106, 0.2);
-      border-radius: 1.15rem;
-      background: rgba(0, 0, 0, 0.32);
-      padding: 0.85rem;
+    .search-card b {
+      color: #f7e6ac;
+      direction: ltr;
+      unicode-bidi: embed;
     }
 
-    .tnx-search span {
+    .search-box {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: .75rem;
+      align-items: center;
+      border: 1px solid rgba(255, 218, 106, .2);
+      border-radius: 16px;
+      background: rgba(0,0,0,.34);
+      padding: .85rem;
+    }
+
+    .search-box span {
       color: #ffda6a;
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 950;
     }
 
-    .tnx-search input {
-      width: 100%;
+    .search-box input {
       border: 0;
       outline: 0;
       background: transparent;
-      color: white;
-      font-size: 0.95rem;
-      font-weight: 850;
+      color: #fff;
+      font-size: .96rem;
+      font-weight: 800;
     }
 
-    .tnx-search button {
-      display: grid;
-      place-items: center;
+    .search-box button {
       width: 2.2rem;
       height: 2.2rem;
-      border: 1px solid rgba(255, 218, 106, 0.2);
+      border: 1px solid rgba(255, 218, 106, .2);
       border-radius: 999px;
-      background: rgba(255, 218, 106, 0.08);
+      background: rgba(255, 218, 106, .08);
       color: #ffda6a;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       cursor: pointer;
     }
 
-    .tnx-user-results {
+    .search-results {
       display: grid;
-      gap: 0.5rem;
-      margin-top: 0.85rem;
+      gap: .55rem;
+      margin-top: .85rem;
     }
 
-    .tnx-user-result {
-      border: 1px solid rgba(255, 218, 106, 0.16);
-      border-radius: 0.9rem;
-      background: rgba(0, 0, 0, 0.32);
+    .search-result {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      border: 1px solid rgba(255, 218, 106, .12);
+      border-radius: 14px;
+      background: rgba(0,0,0,.34);
       color: #f7e6ac;
-      padding: 0.75rem 0.9rem;
+      padding: .75rem;
       text-align: right;
-      font-weight: 900;
       cursor: pointer;
       transition: 160ms ease;
     }
 
-    .tnx-user-result:hover {
-      border-color: rgba(255, 218, 106, 0.45);
-      background: rgba(255, 218, 106, 0.09);
-      color: #ffda6a;
+    .search-result:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 218, 106, .42);
+      background: rgba(255, 218, 106, .08);
     }
 
-    .tnx-profile-header {
-      display: grid;
-      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-      gap: 1.5rem;
-      align-items: start;
-      margin-bottom: 1.25rem;
-    }
-
-    .tnx-identity {
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
-    }
-
-    .tnx-avatar {
-      width: 84px;
-      height: 84px;
-      flex-shrink: 0;
-      border: 2px solid var(--pColor, #6c5ce7);
-      background: var(--pColor, #6c5ce7);
-      background-size: cover;
-      background-position: center;
-      box-shadow: 0 18px 34px rgba(0, 0, 0, 0.38), 0 0 18px color-mix(in srgb, var(--pColor, #6c5ce7) 42%, transparent);
-    }
-
-    .tnx-identity-text {
-      min-width: 0;
-    }
-
-    .tnx-identity-text h1 {
-      margin: 0;
-      overflow: hidden;
-      color: #fff;
-      font-size: 1.55rem;
-      font-weight: 650;
-      text-overflow: ellipsis;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-      white-space: nowrap;
-    }
-
-    .tnx-country {
-      margin-top: 7px;
-      color: #a0b3c0;
-      font-size: 0.78rem;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-    }
-
-    .tnx-country::before {
-      content: "🏳 ";
-    }
-
-    .tnx-bio {
-      margin-top: 10px;
-      color: #8fa3b0;
-      font-size: 0.8rem;
-      font-style: italic;
-      line-height: 1.7;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-    }
-
-    .tnx-bio span {
-      color: #b3a0ff;
-      font-style: normal;
-    }
-
-    .tnx-header-side {
-      display: grid;
-      gap: 0.75rem;
-      justify-items: start;
-    }
-
-    .tnx-level-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .tnx-level-row > span:first-child {
-      color: #a0b3c0;
-      font-size: 1rem;
-    }
-
-    .tnx-level-badge {
-      display: grid;
-      place-items: center;
-      width: 32px;
-      height: 32px;
-      border: 2px solid #c0392b;
-      border-radius: 50%;
-      background: rgba(192, 57, 43, 0.12);
-      color: #e74c3c;
-      font-size: 0.82rem;
-      font-weight: 650;
-    }
-
-    .tnx-header-actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .tnx-mail-btn {
-      position: relative;
-      display: grid;
-      place-items: center;
+    .search-result img {
       width: 42px;
-      height: 38px;
-      border: 1px solid rgba(255, 218, 106, 0.3);
-      border-radius: 4px;
-      background: rgba(255, 218, 106, 0.08);
-      color: #ffda6a;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: 160ms ease;
+      height: 42px;
+      border-radius: 12px;
+      object-fit: cover;
     }
 
-    .tnx-mail-btn:hover {
-      background: rgba(255, 218, 106, 0.14);
-    }
-
-    .tnx-mail-count {
-      position: absolute;
-      top: -8px;
-      left: -8px;
-      display: grid;
-      place-items: center;
-      min-width: 20px;
-      height: 20px;
-      border: 2px solid #07050b;
-      border-radius: 999px;
-      background: #e74c3c;
-      color: white;
-      font-size: 0.68rem;
-      font-weight: 700;
-      padding: 0 4px;
-    }
-
-    .tnx-copy-link {
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 4px;
-      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
-      color: #c7d5e0;
-      padding: 9px 16px;
-      font-size: 0.78rem;
-      font-weight: 650;
-      cursor: pointer;
-      transition: 160ms ease;
-    }
-
-    .tnx-copy-link:hover,
-    .tnx-copy-link.is-copied {
-      border-color: rgba(52, 211, 153, 0.55);
-      background: rgba(52, 211, 153, 0.14);
-      color: rgb(167, 243, 208);
-    }
-
-    .tnx-box-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-      margin-bottom: 8px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 6px;
-    }
-
-    .tnx-box-head strong {
-      color: #e1e7ea;
-      font-size: 0.9rem;
-      font-weight: 650;
-    }
-
-    .tnx-box-head span {
-      color: #6d839a;
-      font-size: 0.75rem;
-    }
-
-    .tnx-section-gap {
-      margin-top: 1.25rem;
-    }
-
-    .tnx-panel {
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      background: rgba(0, 0, 0, 0.42);
-      padding: 14px;
-      backdrop-filter: blur(10px);
-    }
-
-    .tnx-inline-empty {
-      color: #6d839a;
-      font-size: 0.82rem;
-      text-align: center;
-      padding: 1rem;
-    }
-
-    .tnx-mailbox {
-      border: 1px solid rgba(255, 218, 106, 0.2);
-      border-radius: 0.5rem;
-      background: rgba(6, 6, 8, 0.85);
-      padding: 1rem;
-      margin-bottom: 1.25rem;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.32);
-    }
-
-    .tnx-mail-filters {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .tnx-mail-filters button {
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 4px;
-      background: rgba(0, 0, 0, 0.3);
-      color: #a0b3c0;
-      padding: 6px 12px;
-      font-size: 0.72rem;
-      font-weight: 650;
-      cursor: pointer;
-    }
-
-    .tnx-mail-filters button.is-active {
-      border-color: rgba(255, 218, 106, 0.45);
-      background: rgba(255, 218, 106, 0.12);
-      color: #ffe9a8;
-    }
-
-    .tnx-mail-filters small {
-      opacity: 0.7;
-      margin-inline-start: 4px;
-    }
-
-    .tnx-mail-list {
-      display: grid;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .tnx-mail-item {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(0, 0, 0, 0.3);
-      padding: 12px 14px;
-    }
-
-    .tnx-mail-item.is-unread {
-      border-color: rgba(255, 218, 106, 0.32);
-      border-right: 3px solid #ffda6a;
-      background: rgba(255, 218, 106, 0.05);
-    }
-
-    .tnx-mail-avatar {
-      display: grid;
-      place-items: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      flex-shrink: 0;
-      background: linear-gradient(135deg, #6c5ce7, #423fff);
-      color: white;
-      font-size: 1.05rem;
-      font-weight: 700;
-    }
-
-    .tnx-mail-body {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .tnx-mail-top {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .tnx-mail-from {
-      color: #ffda6a;
-      font-size: 0.84rem;
-      font-weight: 700;
-    }
-
-    .tnx-mail-item:not(.is-unread) .tnx-mail-from {
-      color: #c7d5e0;
-    }
-
-    .tnx-mail-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: #e74c3c;
-    }
-
-    .tnx-mail-date {
-      color: #6d839a;
-      font-size: 0.68rem;
-      margin-inline-start: auto;
-    }
-
-    .tnx-mail-text {
-      color: #d8e0e6;
-      font-size: 0.8rem;
-      line-height: 1.6;
-      margin-top: 5px;
-      word-break: break-word;
-    }
-
-    .tnx-mail-item:not(.is-unread) .tnx-mail-text {
-      color: #a0b3c0;
-    }
-
-    .tnx-mail-hint {
-      margin-top: 12px;
-      padding: 10px;
-      border: 1px dashed rgba(255, 255, 255, 0.14);
-      background: rgba(0, 0, 0, 0.2);
-      text-align: center;
-      color: #6d839a;
-      font-size: 0.74rem;
-      line-height: 1.7;
-    }
-
-    .tnx-mail-hint code {
-      color: #ffda6a;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
-
-    .tnx-profile-body {
-      display: grid;
-      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-      gap: 1.5rem;
-      align-items: start;
-    }
-
-    .tnx-inv-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-    }
-
-    .tnx-inv-item {
-      position: relative;
-      display: grid;
-      place-items: center;
-      aspect-ratio: 1;
-      border: 1px solid var(--cat, rgba(255, 218, 106, 0.4));
-      background: linear-gradient(135deg, var(--cat-soft, rgba(255, 218, 106, 0.12)), rgba(0, 0, 0, 0.4));
-      color: var(--cat, #ffda6a);
-      font-size: 1.7rem;
-      cursor: pointer;
-      transition: 160ms ease;
-    }
-
-    .tnx-inv-item:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.1);
-    }
-
-    .tnx-inv-item.is-rare {
-      overflow: hidden;
-    }
-
-    .tnx-inv-item.is-rare::before {
-      content: "";
-      position: absolute;
-      inset: -40%;
-      background: conic-gradient(from 0deg, transparent, rgba(255, 218, 106, 0.25), transparent 28%);
-      animation: tnxShine 5s linear infinite;
-      pointer-events: none;
-    }
-
-    @keyframes tnxShine {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .tnx-inv-item > span:first-child {
-      position: relative;
-      z-index: 1;
-    }
-
-    .tnx-inv-amount {
-      position: absolute;
-      bottom: 3px;
-      left: 4px;
-      z-index: 1;
-      color: var(--cat, #ffda6a);
-      font-size: 0.62rem;
-      font-weight: 700;
-    }
-
-    .tnx-inv-more {
-      display: grid;
-      place-items: center;
-      aspect-ratio: 1;
-      border: 1px dashed rgba(255, 255, 255, 0.22);
-      background: rgba(255, 255, 255, 0.03);
-      color: #6d839a;
-      font-size: 0.82rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .tnx-ach-list {
-      display: grid;
-      gap: 8px;
-    }
-
-    .tnx-ach-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .tnx-ach-icon {
-      display: grid;
-      place-items: center;
-      width: 38px;
-      height: 38px;
-      border: 1px solid rgba(255, 218, 106, 0.3);
-      background: rgba(255, 218, 106, 0.1);
-      color: #ffda6a;
-      font-size: 1.1rem;
-      flex-shrink: 0;
-    }
-
-    .tnx-ach-item strong {
+    .search-result strong {
       display: block;
-      color: #e1e7ea;
-      font-size: 0.8rem;
-      font-weight: 700;
+      color: #fff;
+      font-size: .92rem;
+      font-weight: 900;
     }
 
-    .tnx-ach-item span {
+    .search-result span {
       display: block;
-      color: #6d839a;
-      font-size: 0.68rem;
-      line-height: 1.4;
+      margin-top: 2px;
+      color: rgb(156, 163, 175);
+      font-size: .74rem;
+      direction: ltr;
+      text-align: right;
     }
 
-    .tnx-side-col {
+    .empty-view {
+      display: grid;
+      place-items: center;
+      gap: .5rem;
+      min-height: 280px;
+    }
+
+    .empty-view strong {
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+    }
+
+    .empty-view span {
+      color: rgb(156, 163, 175);
+      font-size: .9rem;
+    }
+
+    .profile-view {
       display: grid;
       gap: 1rem;
     }
 
-    .tnx-side-title {
-      color: #e1e7ea;
-      font-size: 0.86rem;
-      font-weight: 700;
-      margin-bottom: 8px;
+    .hero-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 320px;
+      border: 1px solid rgba(255, 218, 106, .18);
+      border-radius: 28px;
+      background: rgba(7, 7, 11, .78);
+      box-shadow: 0 28px 90px rgba(0,0,0,.48);
+      backdrop-filter: blur(18px);
     }
 
-    .tnx-side-title em {
-      color: #ffda6a;
-      font-style: normal;
-      margin-inline-start: 4px;
+    .hero-cover {
+      position: absolute;
+      inset: 0;
+      background-position: center;
+      background-size: cover;
+      opacity: .95;
     }
 
-    .tnx-balance .tnx-balance-row {
+    .hero-cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.12), rgba(7,7,11,.7) 56%, rgba(7,7,11,.96)),
+        radial-gradient(circle at 20% 36%, rgba(var(--accent), .28), transparent 36%),
+        linear-gradient(90deg, rgba(0,0,0,.65), transparent 52%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 128px minmax(0, 1fr) 310px;
+      gap: 1.1rem;
+      align-items: end;
+      min-height: 320px;
+      padding: 1.25rem;
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border: 4px solid var(--profile-color, #ffda6a);
+      border-radius: 22px;
+      background-color: #111;
+      background-size: cover;
+      background-position: center;
+      box-shadow:
+        0 20px 42px rgba(0,0,0,.55),
+        0 0 26px color-mix(in srgb, var(--profile-color, #ffda6a) 38%, transparent);
+    }
+
+    .identity {
+      min-width: 0;
+    }
+
+    .title-line {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 7px 0;
+      gap: .75rem;
+      min-width: 0;
     }
 
-    .tnx-balance-row span {
-      color: #a0b3c0;
-      font-size: 0.78rem;
+    .title-line h1 {
+      margin: 0;
+      overflow: hidden;
+      color: #fff;
+      font-size: clamp(2rem, 5vw, 4.4rem);
+      font-weight: 950;
+      line-height: .95;
+      letter-spacing: -.04em;
+      text-overflow: ellipsis;
+      text-shadow: 0 5px 22px rgba(0,0,0,.72);
+      white-space: nowrap;
     }
 
-    .tnx-balance-row strong {
+    .level-pill {
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 218, 106, .36);
+      border-radius: 999px;
+      background: rgba(0,0,0,.48);
       color: #ffda6a;
-      font-size: 0.88rem;
-      font-weight: 750;
+      padding: .45rem .65rem;
+      font-size: .76rem;
+      font-weight: 950;
       direction: ltr;
     }
 
-    .tnx-balance-row strong.gold {
-      color: #ffd700;
-    }
-
-    .tnx-balance-row strong.rep {
-      color: #c084fc;
-    }
-
-    .tnx-side-block {
-      padding: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      background: rgba(0, 0, 0, 0.32);
-      backdrop-filter: blur(10px);
-    }
-
-    .tnx-badge-showcase {
+    .sub-line {
       display: flex;
-      gap: 7px;
       flex-wrap: wrap;
+      gap: .5rem;
+      margin-top: .65rem;
+      color: rgba(229, 231, 235, .82);
+      font-size: .84rem;
+      font-weight: 850;
     }
 
-    .tnx-badge-showcase img,
-    .tnx-badge-showcase .tnx-badge-fallback {
+    .sub-line span {
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      background: rgba(0,0,0,.34);
+      padding: .38rem .58rem;
+    }
+
+    #loginName {
+      direction: ltr;
+    }
+
+    .bio-text {
+      max-width: 620px;
+      margin: .75rem 0 0;
+      color: rgb(209, 213, 219);
+      font-size: .9rem;
+      font-weight: 700;
+      line-height: 1.7;
+    }
+
+    .equipped-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-top: .85rem;
+    }
+
+    .equipped-badges img,
+    .badge-placeholder {
       display: grid;
       place-items: center;
-      width: 44px;
-      height: 44px;
-      border: 1px solid rgba(255, 218, 106, 0.3);
-      background: radial-gradient(circle, rgba(255, 218, 106, 0.14), transparent 65%);
-      color: #ffda6a;
-      font-size: 1.1rem;
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(255, 218, 106, .2);
+      border-radius: 12px;
+      background: rgba(0,0,0,.38);
       object-fit: contain;
+      padding: 4px;
     }
 
-    .tnx-quicklist {
+    .badge-placeholder {
+      color: #ffda6a;
+      font-weight: 950;
+    }
+
+    .wallet {
+      display: grid;
+      gap: .65rem;
+    }
+
+    .wallet-card {
+      border: 1px solid rgba(255, 218, 106, .14);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at top right, rgba(255,218,106,.1), transparent 45%),
+        rgba(0,0,0,.44);
+      padding: .9rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .wallet-card span {
+      display: block;
+      color: rgb(156, 163, 175);
+      font-size: .74rem;
+      font-weight: 850;
+    }
+
+    .wallet-card strong {
+      display: block;
+      margin-top: .25rem;
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .wallet-card.gold strong { color: #ffd166; }
+    .wallet-card.rep strong { color: #c084fc; }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .main-column,
+    .side-column {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .panel {
+      border: 1px solid rgba(255, 218, 106, .14);
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012)),
+        rgba(7,7,11,.78);
+      box-shadow:
+        0 22px 64px rgba(0,0,0,.38),
+        inset 0 0 20px rgba(255,218,106,.018);
+      padding: 1rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 1rem;
+      margin-bottom: .9rem;
+    }
+
+    .panel-head span {
+      display: block;
+      color: #c29200;
+      font-size: .68rem;
+      font-weight: 950;
+      letter-spacing: .13em;
+    }
+
+    .panel-head h2 {
+      margin: .24rem 0 0;
+      color: #f7e6ac;
+      font-size: 1.35rem;
+      font-weight: 950;
+      line-height: 1.15;
+    }
+
+    .panel-head > strong {
+      display: grid;
+      place-items: center;
+      min-width: 54px;
+      height: 42px;
+      border: 1px solid rgba(255, 218, 106, .18);
+      border-radius: 14px;
+      background: rgba(255, 218, 106, .06);
+      color: #ffda6a;
+      font-size: 1rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+      gap: .7rem;
+    }
+
+    .item-card {
+      position: relative;
+      min-height: 156px;
+      overflow: hidden;
+      border: 1px solid var(--item-color, rgba(255,218,106,.18));
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at top right, var(--item-soft, rgba(255,218,106,.08)), transparent 48%),
+        rgba(0,0,0,.32);
+      padding: .78rem;
+      transition: 160ms ease;
+    }
+
+    .item-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--item-color, rgba(255,218,106,.45));
+      background:
+        radial-gradient(circle at top right, var(--item-soft, rgba(255,218,106,.14)), transparent 52%),
+        rgba(0,0,0,.38);
+    }
+
+    .item-card.is-rare::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(from 0deg, transparent, rgba(255,218,106,.18), transparent 28%);
+      animation: shine 6s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes shine { to { transform: rotate(360deg); } }
+
+    .item-icon,
+    .item-card h3,
+    .item-card p,
+    .item-tags,
+    .item-qty {
+      position: relative;
+      z-index: 1;
+    }
+
+    .item-icon {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--item-color, rgba(255,218,106,.22));
+      border-radius: 14px;
+      background: var(--item-soft, rgba(255,218,106,.08));
+      font-size: 1.45rem;
+      margin-bottom: .65rem;
+    }
+
+    .item-qty {
+      position: absolute;
+      top: .65rem;
+      left: .65rem;
+      min-width: 2rem;
+      height: 2rem;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--item-color, rgba(255,218,106,.22));
+      border-radius: 999px;
+      background: rgba(0,0,0,.55);
+      color: var(--item-color, #ffda6a);
+      font-size: .72rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .item-card h3 {
+      margin: 0;
+      color: #fff;
+      font-size: .9rem;
+      font-weight: 950;
+      line-height: 1.25;
+    }
+
+    .item-card p {
+      display: -webkit-box;
+      overflow: hidden;
+      margin: .35rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: .68rem;
+      font-weight: 750;
+      line-height: 1.45;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .item-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .28rem;
+      margin-top: .62rem;
+    }
+
+    .item-tags span {
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 999px;
+      background: rgba(255,255,255,.04);
+      color: #f7e6ac;
+      padding: .21rem .38rem;
+      font-size: .56rem;
+      font-weight: 850;
+    }
+
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+      gap: .65rem;
+    }
+
+    .badge-tile {
+      display: grid;
+      place-items: center;
+      gap: .4rem;
+      min-height: 108px;
+      border: 1px solid rgba(255, 218, 106, .1);
+      border-radius: 16px;
+      background: rgba(0,0,0,.26);
+      padding: .6rem;
+      text-align: center;
+    }
+
+    .badge-tile img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,.42));
+    }
+
+    .badge-tile span {
+      color: rgb(229, 231, 235);
+      font-size: .62rem;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .achievements-list,
+    .mail-list,
+    .rare-list {
+      display: grid;
+      gap: .65rem;
+    }
+
+    .achievement-card,
+    .mail-card,
+    .rare-card {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      border: 1px solid rgba(255, 218, 106, .1);
+      border-radius: 16px;
+      background: rgba(0,0,0,.28);
+      padding: .72rem;
+    }
+
+    .achievement-icon,
+    .mail-avatar,
+    .rare-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 218, 106, .16);
+      border-radius: 14px;
+      background: rgba(255,218,106,.07);
+      color: #ffda6a;
+      font-size: 1.2rem;
+      font-weight: 950;
+    }
+
+    .achievement-card strong,
+    .mail-card strong,
+    .rare-card strong {
+      display: block;
+      color: #fff;
+      font-size: .82rem;
+      font-weight: 950;
+      line-height: 1.25;
+    }
+
+    .achievement-card span,
+    .mail-card span,
+    .rare-card span {
+      display: block;
+      margin-top: .18rem;
+      color: rgb(156, 163, 175);
+      font-size: .68rem;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .mail-card {
+      align-items: flex-start;
+    }
+
+    .mail-card.is-unread {
+      border-color: rgba(255, 218, 106, .32);
+      background: rgba(255, 218, 106, .05);
+    }
+
+    .mail-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+    }
+
+    .mail-date {
+      color: rgb(107, 114, 128) !important;
+      font-size: .62rem !important;
+      white-space: nowrap;
+    }
+
+    .mail-message {
+      color: rgb(209, 213, 219) !important;
+      font-size: .74rem !important;
+      word-break: break-word;
+    }
+
+    .mail-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-bottom: .75rem;
+    }
+
+    .mail-tabs button {
+      border: 1px solid rgba(255, 218, 106, .16);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, .06);
+      color: #f7e6ac;
+      padding: .42rem .62rem;
+      font-size: .68rem;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .mail-tabs button.is-active {
+      border-color: rgba(255, 218, 106, .42);
+      background: rgba(255, 218, 106, .13);
+      color: #ffda6a;
+    }
+
+    .quick-panel {
       padding: 0;
       overflow: hidden;
     }
 
-    .tnx-quicklist button,
-    .tnx-quicklist a {
+    .quick-panel a,
+    .quick-panel button {
       display: flex;
       justify-content: space-between;
       align-items: center;
       width: 100%;
       border: 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(255,255,255,.07);
       background: transparent;
-      color: #c7d5e0;
-      padding: 12px 14px;
+      color: #e5e7eb;
+      padding: .85rem 1rem;
       font-family: inherit;
-      font-size: 0.8rem;
+      font-size: .8rem;
+      font-weight: 850;
       text-align: right;
       text-decoration: none;
       cursor: pointer;
     }
 
-    .tnx-quicklist button:last-child,
-    .tnx-quicklist a:last-child {
-      border-bottom: none;
-    }
-
-    .tnx-quicklist button span,
-    .tnx-quicklist a span {
-      font-weight: 700;
-    }
-
-    .tnx-quicklist button em,
-    .tnx-quicklist a em {
-      color: #6d839a;
-      font-style: normal;
-    }
-
-    .tnx-quicklist button:hover,
-    .tnx-quicklist a:hover {
-      background: rgba(255, 218, 106, 0.06);
-    }
-
-    .tnx-empty {
-      display: grid;
-      place-items: center;
-      gap: 0.35rem;
-      min-height: 50vh;
-      text-align: center;
-    }
-
-    .tnx-empty strong {
+    .quick-panel a:hover,
+    .quick-panel button:hover {
+      background: rgba(255, 218, 106, .07);
       color: #ffda6a;
-      font-size: 1.4rem;
-      font-weight: 950;
     }
 
-    .tnx-empty span {
+    .quick-panel a:last-child,
+    .quick-panel button:last-child {
+      border-bottom: 0;
+    }
+
+    .quick-panel span {
+      color: #ffda6a;
+      direction: ltr;
+    }
+
+    .inline-empty {
       color: rgb(156, 163, 175);
-      font-size: 0.9rem;
+      font-size: .82rem;
+      font-weight: 750;
+      text-align: center;
+      padding: 1.25rem .5rem;
     }
 
-    .tnx-back-top {
+    .back-top {
       position: fixed;
-      left: 1.25rem;
-      bottom: 1.25rem;
-      z-index: 90;
-      display: grid;
-      place-items: center;
-      width: 3.1rem;
-      height: 3.1rem;
-      border: 1px solid rgba(255, 218, 106, 0.42);
+      left: 1rem;
+      bottom: 1rem;
+      z-index: 60;
+      width: 3rem;
+      height: 3rem;
+      border: 1px solid rgba(255, 218, 106, .32);
       border-radius: 999px;
-      background: rgba(7, 5, 11, 0.9);
+      background: rgba(7,7,11,.88);
       color: #ffda6a;
-      font-size: 1.35rem;
+      font-size: 1.15rem;
+      font-weight: 950;
       cursor: pointer;
       opacity: 0;
-      transform: translateY(16px);
+      transform: translateY(12px);
       pointer-events: none;
-      transition: 220ms ease;
-      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.38);
+      transition: 160ms ease;
       backdrop-filter: blur(12px);
     }
 
-    .tnx-back-top.is-visible {
+    .back-top.is-visible {
       opacity: 1;
       transform: translateY(0);
       pointer-events: auto;
     }
 
-    @media (max-width: 820px) {
-      .tnx-profile-header,
-      .tnx-profile-body {
+    @media (max-width: 980px) {
+      .hero-content {
+        grid-template-columns: 112px minmax(0, 1fr);
+      }
+
+      .wallet {
+        grid-column: 1 / -1;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .dashboard {
         grid-template-columns: 1fr;
       }
 
-      .tnx-inv-grid {
-        grid-template-columns: repeat(4, 1fr);
+      .side-column {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .tnx-header-side {
-        justify-items: stretch;
+      .quick-panel {
+        grid-column: 1 / -1;
       }
     }
 
-    @media (max-width: 560px) {
-      .tnx-shell {
-        padding-top: 5.25rem;
+    @media (max-width: 680px) {
+      .page-shell {
+        padding-top: 5rem;
       }
 
-      .tnx-profile-header {
-        gap: 1rem;
+      .hero-content {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+        min-height: auto;
+        padding-top: 5rem;
       }
 
-      .tnx-identity {
-        align-items: center;
+      .title-line {
+        justify-content: center;
+        flex-wrap: wrap;
       }
 
-      .tnx-avatar {
-        width: 72px;
-        height: 72px;
+      .title-line h1 {
+        white-space: normal;
+        font-size: 2.4rem;
       }
 
-      .tnx-identity-text h1 {
-        font-size: 1.25rem;
+      .sub-line,
+      .equipped-badges {
+        justify-content: center;
       }
 
-      .tnx-inv-grid {
-        grid-template-columns: repeat(3, 1fr);
+      .wallet,
+      .side-column {
+        grid-template-columns: 1fr;
+      }
+
+      .inventory-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 420px) {
+      .inventory-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 
   <script is:inline data-reinit>
     ;(async () => {
-      const cleanupKey = '__tnxProfilePageCleanup'
-
-      if (window[cleanupKey]) {
-        window[cleanupKey]()
-      }
+      const cleanupKey = '__tnxProfileHubRebuildCleanup'
+      if (window[cleanupKey]) window[cleanupKey]()
 
       const listeners = []
       const timers = []
 
       function addListener(target, event, handler, options) {
         if (!target) return
-
         target.addEventListener(event, handler, options)
         listeners.push(() => target.removeEventListener(event, handler, options))
       }
@@ -1012,77 +1051,56 @@ const metadata = {
 
       window[cleanupKey] = () => {
         listeners.forEach((cleanup) => cleanup())
-        listeners.length = 0
-        timers.forEach((id) => window.clearTimeout(id))
-        timers.length = 0
+        timers.forEach((timer) => window.clearTimeout(timer))
       }
 
-      const ITEM_META = {
-        Vip: { cat: 'status', icon: '👑' },
-        'Vip+': { cat: 'status', icon: '👑', rare: true },
-        'محامي': { cat: 'status', icon: '⚖️' },
-        'رخصة محامي': { cat: 'status', icon: '⚖️' },
-        'عريف الفصل': { cat: 'status', icon: '🎖️' },
-        Crown: { cat: 'rare', icon: '👑', rare: true },
-        'ملك': { cat: 'rare', icon: '👑', rare: true },
-        'نيوك': { cat: 'attacks', icon: '☢️', rare: true },
-        'تغير العنوان': { cat: 'attacks', icon: '📝' },
-        'تغيير العنوان': { cat: 'attacks', icon: '📝' },
-        'تغيير العنوان مطور': { cat: 'attacks', icon: '📝', rare: true },
-        'تجميد الشاشة': { cat: 'attacks', icon: '❄️' },
-        'قنبلة دخانية': { cat: 'attacks', icon: '💣' },
-        'يد الحرامي': { cat: 'pvp', icon: '🥷' },
-        'اقول لا يكثر': { cat: 'pvp', icon: '🚫' },
-        'أقول لا يكثر': { cat: 'pvp', icon: '🚫' },
-        'رمي النرد': { cat: 'luck', icon: '🎲' },
-        'البطاطا الحارة': { cat: 'luck', icon: '🥔' },
-        'صندوق': { cat: 'boxes', icon: '📦' },
-        'صندوق نادر': { cat: 'boxes', icon: '🎁', rare: true },
-        'صندوق السمعة': { cat: 'boxes', icon: '🎁', rare: true },
-        'رخصة مصرفي': { cat: 'permits', icon: '📜' },
-        'خشب': { cat: 'resources', icon: '🪵' },
-        'طماط': { cat: 'resources', icon: '🍅' },
-        'سمكة': { cat: 'fishing', icon: '🐟' },
-        'مرق سمك': { cat: 'cooking', icon: '🍲' },
-        'مطرقة ذهبية': { cat: 'rare', icon: '🔨', rare: true },
-        'البريد': { cat: 'economy', icon: '📬' },
-        'سمعة': { cat: 'economy', icon: '🔥' },
-        'عملة الجرأة': { cat: 'luck', icon: '🪙' },
+      const state = {
+        users: [],
+        inventories: [],
+        mailboxes: [],
+        profiles: [],
+        items: [],
+        activeUser: null,
+        mailFilter: 'all',
       }
 
-      const CAT_COLORS = {
-        status: ['#c084fc', 'rgba(192,132,252,0.14)'],
-        attacks: ['#f87171', 'rgba(248,113,113,0.14)'],
-        pvp: ['#fb923c', 'rgba(251,146,60,0.14)'],
-        luck: ['#fbbf24', 'rgba(251,191,36,0.14)'],
-        boxes: ['#34d399', 'rgba(52,211,153,0.14)'],
-        permits: ['#60a5fa', 'rgba(96,165,250,0.14)'],
-        resources: ['#a3a3a3', 'rgba(163,163,163,0.12)'],
-        fishing: ['#38bdf8', 'rgba(56,189,248,0.14)'],
-        cooking: ['#fb7185', 'rgba(251,113,133,0.14)'],
-        rare: ['#ffda6a', 'rgba(255,218,106,0.16)'],
-        economy: ['#f7e6ac', 'rgba(247,230,172,0.12)'],
+      const CATEGORY = {
+        status: ['#c084fc', 'rgba(192,132,252,.15)', 'status'],
+        attacks: ['#f87171', 'rgba(248,113,113,.15)', 'attack'],
+        pvp: ['#fb923c', 'rgba(251,146,60,.15)', 'pvp'],
+        luck: ['#fbbf24', 'rgba(251,191,36,.15)', 'luck'],
+        boxes: ['#34d399', 'rgba(52,211,153,.15)', 'box'],
+        permits: ['#60a5fa', 'rgba(96,165,250,.15)', 'license'],
+        resources: ['#a3a3a3', 'rgba(163,163,163,.13)', 'resource'],
+        rare: ['#ffda6a', 'rgba(255,218,106,.18)', 'rare'],
+        economy: ['#f7e6ac', 'rgba(247,230,172,.13)', 'item'],
       }
 
-      const INV_LIMIT = 14
+      const HARD_ITEMS = {
+        vip: { icon: '👑', cat: 'status', rare: true },
+        'vip+': { icon: '👑', cat: 'status', rare: true },
+        crown: { icon: '👑', cat: 'rare', rare: true },
+        'ملك': { icon: '👑', cat: 'rare', rare: true },
+        'نيوك': { icon: '☢️', cat: 'attacks', rare: true },
+        'محامي': { icon: '⚖️', cat: 'status' },
+        'رخصة محامي': { icon: '⚖️', cat: 'status' },
+        'عريف الفصل': { icon: '🎖️', cat: 'status' },
+        'البريد': { icon: '📬', cat: 'economy' },
+        'سمعة': { icon: '🔥', cat: 'economy' },
+        'عملة الجرأة': { icon: '🪙', cat: 'luck' },
+        'صندوق': { icon: '📦', cat: 'boxes' },
+        'صندوق نادر': { icon: '🎁', cat: 'boxes', rare: true },
+        'صندوق السمعة': { icon: '🎁', cat: 'boxes', rare: true },
+        'خشب': { icon: '🪵', cat: 'resources' },
+        'حديد': { icon: '⛓️', cat: 'resources' },
+        'ذهب': { icon: '🪙', cat: 'rare', rare: true },
+        'تغيير العنوان': { icon: '📝', cat: 'attacks' },
+        'تغيير العنوان مطور': { icon: '📝', cat: 'attacks', rare: true },
+        'أقول لا يكثر': { icon: '🚫', cat: 'pvp' },
+        'اقول لا يكثر': { icon: '🚫', cat: 'pvp' },
+      }
 
       const $ = (id) => document.getElementById(id)
-
-      const searchScreen = $('searchScreen')
-      const profileScreen = $('profileScreen')
-      const notFoundScreen = $('notFoundScreen')
-      const userSearch = $('userSearch')
-      const clearUserSearch = $('clearUserSearch')
-      const userResults = $('userResults')
-      const backToTop = $('backToTop')
-
-      let users = []
-      let inventories = []
-      let mailboxes = []
-      let profileExtras = []
-      let itemCatalog = []
-      let activeUser = null
-      let mailState = { user: null, filter: 'all' }
 
       function esc(value) {
         return String(value ?? '')
@@ -1108,9 +1126,13 @@ const metadata = {
         return normalize(value).replace(/\s+/g, '')
       }
 
-      function fmt(value) {
+      function num(value) {
         const number = Number(value || 0)
-        return Number.isFinite(number) ? number.toLocaleString('en-US') : '0'
+        return Number.isFinite(number) ? number : 0
+      }
+
+      function fmt(value) {
+        return num(value).toLocaleString('en-US')
       }
 
       function safeUrl(value) {
@@ -1118,302 +1140,324 @@ const metadata = {
         return /^https?:\/\//i.test(url) || url.startsWith('/') ? url : ''
       }
 
-      function getField(source, keys, fallback) {
-        for (const itemKey of keys) {
-          if (source && source[itemKey] !== undefined && source[itemKey] !== null && source[itemKey] !== '') {
-            return source[itemKey]
-          }
+      function get(source, names, fallback = '') {
+        for (const name of names) {
+          if (source && source[name] !== undefined && source[name] !== null && source[name] !== '') return source[name]
         }
-
         return fallback
       }
 
       function userLogin(user) {
-        return String(getField(user, ['userLogin', 'UserLogin', 'login'], '')).trim()
+        return String(get(user, ['userLogin', 'UserLogin', 'login', 'userName'], '')).trim()
       }
 
       function userName(user) {
-        return String(getField(user, ['userName', 'UserName', 'displayName', 'userLogin'], '')).trim()
+        return String(get(user, ['userName', 'UserName', 'displayName', 'userLogin'], '')).trim()
       }
 
       function userId(user) {
-        return String(getField(user, ['userId', 'UserId', 'id'], '')).trim()
+        return String(get(user, ['userId', 'UserId', 'id'], '')).trim()
       }
 
-      function findByUser(collection, user) {
+      function matchUser(entry, user) {
         const id = userId(user)
         const login = normalize(userLogin(user))
         const name = normalize(userName(user))
 
-        return collection.find((entry) => {
-          const entryId = String(getField(entry, ['userId', 'UserId', 'id'], '')).trim()
-          const entryLogin = normalize(getField(entry, ['userLogin', 'UserLogin', 'login'], ''))
-          const entryName = normalize(getField(entry, ['userName', 'UserName', 'displayName'], ''))
+        const entryId = String(get(entry, ['userId', 'UserId', 'id'], '')).trim()
+        const entryLogin = normalize(get(entry, ['userLogin', 'UserLogin', 'login'], ''))
+        const entryName = normalize(get(entry, ['userName', 'UserName', 'displayName'], ''))
 
-          return (
-            (id && entryId && id === entryId) ||
-            (login && entryLogin && login === entryLogin) ||
-            (login && entryName && login === entryName) ||
-            (name && entryLogin && name === entryLogin) ||
-            (name && entryName && name === entryName)
-          )
-        }) || null
+        return (
+          (id && entryId && id === entryId) ||
+          (login && entryLogin && login === entryLogin) ||
+          (login && entryName && login === entryName) ||
+          (name && entryLogin && name === entryLogin) ||
+          (name && entryName && name === entryName)
+        )
       }
 
-      function mergeUserData(user) {
-        const inventoryRecord = findByUser(inventories, user)
-        const mailboxRecord = findByUser(mailboxes, user)
-        const profileRecord = findByUser(profileExtras, user)
+      function findRecord(collection, user) {
+        return collection.find((entry) => matchUser(entry, user)) || null
+      }
 
-        const merged = {
-          ...user,
-          ...(profileRecord || {}),
-        }
+      function mergeUser(user) {
+        const profile = findRecord(state.profiles, user) || {}
+        const inv = findRecord(state.inventories, user) || {}
+        const mail = findRecord(state.mailboxes, user) || {}
 
-        if (inventoryRecord) {
-          merged.inventory = Array.isArray(inventoryRecord.items)
-            ? inventoryRecord.items
-            : Array.isArray(inventoryRecord.inventory)
-              ? inventoryRecord.inventory
-              : []
-        } else if (!Array.isArray(merged.inventory)) {
-          merged.inventory = []
-        }
+        const merged = { ...user, ...profile }
 
-        if (mailboxRecord) {
-          merged.mailbox = Array.isArray(mailboxRecord.messages)
-            ? mailboxRecord.messages
-            : Array.isArray(mailboxRecord.mailbox)
-              ? mailboxRecord.mailbox
-              : []
-        } else if (!Array.isArray(merged.mailbox)) {
-          merged.mailbox = []
-        }
+        merged.inventory = Array.isArray(profile.inventory)
+          ? profile.inventory
+          : Array.isArray(inv.items)
+            ? inv.items
+            : Array.isArray(inv.inventory)
+              ? inv.inventory
+              : Array.isArray(user.inventory)
+                ? user.inventory
+                : []
+
+        merged.mailbox = Array.isArray(profile.mailbox)
+          ? profile.mailbox
+          : Array.isArray(mail.messages)
+            ? mail.messages
+            : Array.isArray(mail.mailbox)
+              ? mail.mailbox
+              : Array.isArray(user.mailbox)
+                ? user.mailbox
+                : []
 
         return merged
       }
 
       function getItemName(entry) {
-        return String(getField(entry, ['item', 'name', 'itemName', 'Name', 'key'], '')).trim()
+        return String(get(entry, ['name', 'itemName', 'item', 'Name', 'key'], '')).trim()
       }
 
-      function getItemAmount(entry) {
-        const raw = getField(entry, ['amount', 'quantity', 'qty', 'count', 'Value'], 1)
-        const number = Number(raw)
-        return Number.isFinite(number) && number > 0 ? number : 1
+      function getItemQty(entry) {
+        return Math.max(1, num(get(entry, ['quantity', 'qty', 'amount', 'count', 'Value'], 1)))
       }
 
-      function getCatalogItem(name) {
+      function catalogItem(name) {
         const itemKey = key(name)
-        return itemCatalog.find((item) => key(getField(item, ['name', 'itemName', 'title'], '')) === itemKey) || null
+        return state.items.find((item) => key(get(item, ['name', 'itemName', 'title'], '')) === itemKey) || null
       }
 
-      function getMeta(name) {
-        const hard = ITEM_META[name]
+      function itemMeta(name) {
+        const itemKey = key(name)
+        const hard = Object.entries(HARD_ITEMS).find(([hardName]) => key(hardName) === itemKey)?.[1]
         if (hard) return hard
 
-        const catalog = getCatalogItem(name)
-        if (catalog) {
-          return {
-            cat: getField(catalog, ['category', 'type', 'cat'], 'economy'),
-            icon: getField(catalog, ['icon', 'emoji'], '📦'),
-            rare: Boolean(catalog.rare) || ['rare', 'legendary'].includes(normalize(catalog.rarity)),
-          }
-        }
+        const item = catalogItem(name)
+        if (!item) return { icon: '📦', cat: 'economy' }
 
-        return { cat: 'economy', icon: '📦' }
+        return {
+          icon: get(item, ['icon', 'emoji'], '📦'),
+          cat: get(item, ['category', 'type', 'cat'], 'economy'),
+          rare: Boolean(item.rare) || ['rare', 'legendary'].includes(normalize(item.rarity)),
+        }
       }
 
-      function timeAgo(dateStr) {
-        const date = new Date(dateStr)
+      function inventoryItems(user) {
+        return (Array.isArray(user.inventory) ? user.inventory : [])
+          .map((entry) => {
+            const name = getItemName(entry)
+            const qty = getItemQty(entry)
+            const meta = itemMeta(name)
+            const details = catalogItem(name)
+            return {
+              name,
+              qty,
+              meta,
+              description: get(details, ['description', 'desc', 'how'], 'غرض من حقيبة العضو.'),
+            }
+          })
+          .filter((item) => item.name)
+      }
+
+      function badgeName(badge) {
+        return String(get(badge, ['name', 'badgeName', 'title', 'value1'], '')).trim()
+      }
+
+      function badgeImage(badge) {
+        return safeUrl(get(badge, ['url', 'image', 'badgeUrl', 'value2'], ''))
+      }
+
+      function levelFor(user) {
+        const explicit = num(get(user, ['level'], 0))
+        if (explicit > 0) return explicit
+        return Math.max(1, Math.floor(num(get(user, ['points', 'totalPoints'], 0)) / 100000) + 1)
+      }
+
+      function hexToRgb(hex) {
+        const clean = String(hex || '#ffda6a').replace('#', '')
+        const number = parseInt(clean, 16)
+        if (!Number.isFinite(number)) return '255, 218, 106'
+        return [(number >> 16) & 255, (number >> 8) & 255, number & 255].join(', ')
+      }
+
+      function validColor(value) {
+        return /^#[0-9a-fA-F]{6}$/.test(String(value || '')) ? value : '#ffda6a'
+      }
+
+      function timeAgo(value) {
+        const date = new Date(value)
         if (Number.isNaN(date.getTime())) return ''
-
         const seconds = Math.floor((Date.now() - date.getTime()) / 1000)
-
         if (seconds < 60) return 'الآن'
         if (seconds < 3600) return `قبل ${Math.floor(seconds / 60)} دقيقة`
         if (seconds < 86400) return `قبل ${Math.floor(seconds / 3600)} ساعة`
-        if (seconds < 172800) return 'أمس'
-        if (seconds < 604800) return `قبل ${Math.floor(seconds / 86400)} أيام`
-
+        if (seconds < 604800) return `قبل ${Math.floor(seconds / 86400)} يوم`
         return `قبل ${Math.floor(seconds / 604800)} أسبوع`
       }
 
       async function loadJson(url, fallback) {
         try {
-          const response = await fetch(`${url}?v=${Date.now()}`, { cache: 'no-store' })
-          if (!response.ok) return fallback
-          const data = await response.json()
-          return data
-        } catch (error) {
-          console.warn(`Failed to load ${url}`, error)
+          const res = await fetch(`${url}?v=${Date.now()}`, { cache: 'no-store' })
+          if (!res.ok) return fallback
+          return await res.json()
+        } catch {
           return fallback
         }
       }
 
-      function renderProfile(baseUser) {
-        const user = mergeUserData(baseUser)
-        activeUser = user
+      function openSearch() {
+        $('searchView').classList.remove('hidden')
+        $('profileView').classList.add('hidden')
+        $('notFoundView').classList.add('hidden')
+      }
 
-        searchScreen.classList.add('hidden')
-        notFoundScreen.classList.add('hidden')
-        profileScreen.classList.remove('hidden')
+      function openNotFound() {
+        $('searchView').classList.add('hidden')
+        $('profileView').classList.add('hidden')
+        $('notFoundView').classList.remove('hidden')
+      }
 
-        const color = /^#[0-9a-f]{6}$/i.test(user.backgroundColor || '') ? user.backgroundColor : '#6c5ce7'
-        const banner = safeUrl(user.bannerImage)
-        const avatar = safeUrl(user.profileImageUrl)
+      function findUser(login) {
+        const target = normalize(login)
+        return state.users.find((user) => normalize(userLogin(user)) === target || normalize(userName(user)) === target) || null
+      }
 
-        const bg = $('profileBg')
-
-        if (banner) {
-          bg.style.background = ''
-          bg.style.backgroundImage = `url('${banner}')`
-        } else {
-          bg.style.backgroundImage = ''
-          bg.style.background = `linear-gradient(160deg, ${color}, #0b1015 70%)`
-        }
-
-        const av = $('pAvatar')
-        av.style.setProperty('--pColor', color)
-        av.style.backgroundImage = avatar ? `url('${avatar}')` : ''
-
-        $('pName').textContent = userName(user) || userLogin(user) || '—'
-
-        const country = getField(user, ['country'], '')
-        const countryEl = $('pCountry')
-
-        if (country) {
-          countryEl.textContent = country
-          countryEl.classList.remove('hidden')
-        } else {
-          countryEl.classList.add('hidden')
-        }
-
-        const bio = getField(user, ['bio'], '')
-        const jobName = getField(user, ['jobName'], '')
+      function profileLink(user) {
         const login = userLogin(user)
-        const bioEl = $('pBio')
+        const url = new URL(location.href)
+        url.searchParams.set('user', login)
+        url.hash = ''
+        return url.toString()
+      }
 
-        bioEl.innerHTML = `${esc(bio || jobName || 'عضو في مجتمع TNX6')}${login ? `<br><span>TTV: ${esc(login)}</span>` : ''}`
+      function renderProfile(rawUser) {
+        const user = mergeUser(rawUser)
+        state.activeUser = user
 
-        const explicitLevel = Number(getField(user, ['level'], 0))
-        const points = Number(getField(user, ['points', 'totalPoints'], 0))
-        const level = explicitLevel > 0 ? explicitLevel : Math.max(1, Math.floor(points / 100000) + 1)
+        $('searchView').classList.add('hidden')
+        $('notFoundView').classList.add('hidden')
+        $('profileView').classList.remove('hidden')
 
-        $('pLevel').textContent = fmt(level)
-        $('pPoints').textContent = fmt(points)
-        $('pGold').textContent = fmt(getField(user, ['gold'], 0))
-        $('pRep').textContent = fmt(getField(user, ['reputation', 'rep', 'سمعة'], 0))
+        const color = validColor(get(user, ['backgroundColor', 'profileColor'], '#ffda6a'))
+        const banner = safeUrl(get(user, ['bannerImage', 'banner', 'backgroundImage'], ''))
+        const avatar = safeUrl(get(user, ['profileImageUrl', 'avatar', 'ProfileImageUrl'], ''))
+        const login = userLogin(user)
+        const name = userName(user) || login
 
-        const badgePageLink = $('badgePageLink')
-        if (badgePageLink) {
-          badgePageLink.href = `/badges?user=${encodeURIComponent(login)}`
-        }
+        $('pageBg').style.backgroundImage = banner
+          ? `url('${banner}')`
+          : `radial-gradient(circle at 20% 12%, rgba(255, 218, 106, .16), transparent 28%), linear-gradient(135deg, ${color}, #07070b)`
 
+        $('heroCover').style.setProperty('--accent', hexToRgb(color))
+        $('heroCover').style.backgroundImage = banner ? `url('${banner}')` : `linear-gradient(135deg, ${color}, #07070b)`
+
+        $('avatar').style.setProperty('--profile-color', color)
+        $('avatar').style.backgroundImage = avatar ? `url('${avatar}')` : ''
+
+        $('displayName').textContent = name
+        $('loginName').textContent = `@${login}`
+        $('jobName').textContent = get(user, ['jobName'], 'Citizen')
+
+        const country = get(user, ['country'], '')
+        $('countryName').classList.toggle('hidden', !country)
+        $('countryName').textContent = country
+
+        $('bioText').textContent = get(user, ['bio'], 'عضو في مجتمع TNX6.')
+
+        const level = levelFor(user)
+        $('levelPill').textContent = `LVL ${fmt(level)}`
+        $('pointsValue').textContent = fmt(get(user, ['points', 'totalPoints'], 0))
+        $('goldValue').textContent = fmt(get(user, ['gold'], 0))
+        $('repValue').textContent = fmt(get(user, ['reputation', 'rep'], 0))
+
+        $('badgePageLink').href = `/badges?user=${encodeURIComponent(login)}`
+
+        renderEquippedBadges(user)
         renderInventory(user)
         renderBadges(user)
         renderAchievements(user)
-        renderMailbox(user)
+        renderMail(user)
+        renderRare(user)
+      }
+
+      function renderEquippedBadges(user) {
+        const badges = Array.isArray(user.badges) ? user.badges : []
+        const equipped = badges.filter((badge) => badge.equipped).slice(0, 7)
+        const list = equipped.length ? equipped : badges.slice(0, 7)
+
+        $('equippedBadges').innerHTML = list.length
+          ? list.map((badge) => {
+              const img = badgeImage(badge)
+              const name = badgeName(badge)
+              return img
+                ? `<img src="${esc(img)}" alt="${esc(name)}" title="${esc(name)}" loading="lazy" />`
+                : `<div class="badge-placeholder" title="${esc(name)}">★</div>`
+            }).join('')
+          : `<div class="badge-placeholder">—</div>`
       }
 
       function renderInventory(user) {
-        const inv = Array.isArray(user.inventory) ? user.inventory : []
-        const grid = $('inventoryGrid')
+        const items = inventoryItems(user)
+        $('inventoryTotal').textContent = fmt(items.length)
+        $('quickItems').textContent = fmt(items.length)
+        $('inventoryEmpty').classList.toggle('hidden', items.length > 0)
 
-        $('invCount').textContent = `${fmt(inv.length)} غرض`
-        $('qlItems').textContent = fmt(inv.length)
-        $('inventoryEmpty').classList.toggle('hidden', inv.length > 0)
-
-        const shown = inv.slice(0, INV_LIMIT)
-        const extra = inv.length - shown.length
-
-        grid.innerHTML = shown.map((entry) => {
-          const name = getItemName(entry)
-          const amount = getItemAmount(entry)
-          const meta = getMeta(name)
-          const [cat, soft] = CAT_COLORS[meta.cat] || CAT_COLORS.economy
-          const rare = meta.rare ? ' is-rare' : ''
-
+        $('inventoryGrid').innerHTML = items.map((item) => {
+          const [color, soft, label] = CATEGORY[item.meta.cat] || CATEGORY.economy
+          const rare = item.meta.rare ? ' is-rare' : ''
           return `
-            <div class="tnx-inv-item${rare}" style="--cat:${cat};--cat-soft:${soft};" title="${esc(name)} ×${amount}">
-              <span>${esc(meta.icon)}</span>
-              <span class="tnx-inv-amount">${fmt(amount)}</span>
-            </div>
+            <article class="item-card${rare}" style="--item-color:${color};--item-soft:${soft};">
+              <span class="item-qty">x${fmt(item.qty)}</span>
+              <div class="item-icon">${esc(item.meta.icon)}</div>
+              <h3>${esc(item.name)}</h3>
+              <p>${esc(item.description)}</p>
+              <div class="item-tags">
+                <span>${esc(label)}</span>
+                ${item.meta.rare ? '<span>rare</span>' : ''}
+              </div>
+            </article>
           `
-        }).join('') + (extra > 0 ? `<div class="tnx-inv-more">+${fmt(extra)}</div>` : '')
+        }).join('')
       }
 
       function renderBadges(user) {
         const badges = Array.isArray(user.badges) ? user.badges : []
-        const equipped = badges.filter((badge) => badge.equipped).slice(0, 6)
-        const list = equipped.length ? equipped : badges.slice(0, 6)
+        $('badgesTotal').textContent = fmt(badges.length)
+        $('quickBadges').textContent = fmt(badges.length)
+        $('badgesEmpty').classList.toggle('hidden', badges.length > 0)
 
-        $('badgeCount').textContent = fmt(badges.length)
-        $('qlBadges').textContent = fmt(badges.length)
-
-        $('badgeShowcase').innerHTML = list.map((badge) => {
-          const url = safeUrl(badge.url || badge.image || badge.badgeUrl)
-          const name = badge.name || badge.badgeName || ''
-
-          return url
-            ? `<img src="${esc(url)}" alt="${esc(name)}" title="${esc(name)}" loading="lazy" />`
-            : `<div class="tnx-badge-fallback" title="${esc(name)}">★</div>`
-        }).join('') || '<div class="tnx-badge-fallback">—</div>'
+        $('badgesGrid').innerHTML = badges.slice(0, 60).map((badge) => {
+          const img = badgeImage(badge)
+          const name = badgeName(badge)
+          return `
+            <div class="badge-tile">
+              ${img ? `<img src="${esc(img)}" alt="${esc(name)}" loading="lazy" />` : '<div class="badge-placeholder">★</div>'}
+              <span>${esc(name)}</span>
+            </div>
+          `
+        }).join('')
       }
 
-      function buildAutoAchievements(user) {
-        const achievements = Array.isArray(user.achievements) ? [...user.achievements] : []
+      function buildAchievements(user) {
+        const manual = Array.isArray(user.achievements) ? [...user.achievements] : []
         const badges = Array.isArray(user.badges) ? user.badges : []
-        const inv = Array.isArray(user.inventory) ? user.inventory : []
-        const points = Number(getField(user, ['points', 'totalPoints'], 0))
-        const gold = Number(getField(user, ['gold'], 0))
+        const items = inventoryItems(user)
+        const points = num(get(user, ['points', 'totalPoints'], 0))
+        const gold = num(get(user, ['gold'], 0))
 
-        if (badges.length >= 1) {
-          achievements.push({
-            icon: '🎖️',
-            title: 'جامع بادجات',
-            subtitle: `يمتلك ${fmt(badges.length)} بادج`,
-          })
-        }
+        if (badges.length) manual.push({ icon: '🎖️', title: 'جامع بادجات', subtitle: `يمتلك ${fmt(badges.length)} بادج` })
+        if (items.length) manual.push({ icon: '🎒', title: 'صاحب حقيبة', subtitle: `يمتلك ${fmt(items.length)} نوع من الأغراض` })
+        if (points >= 100000) manual.push({ icon: '⭐', title: 'رصيد عالي', subtitle: `وصل إلى ${fmt(points)} نقطة` })
+        if (gold >= 1000) manual.push({ icon: '🪙', title: 'جامع ذهب', subtitle: `يمتلك ${fmt(gold)} ذهب` })
 
-        if (inv.length >= 1) {
-          achievements.push({
-            icon: '🎒',
-            title: 'صاحب حقيبة',
-            subtitle: `يمتلك ${fmt(inv.length)} نوع من الأغراض`,
-          })
-        }
-
-        if (points >= 100000) {
-          achievements.push({
-            icon: '⭐',
-            title: 'رصيد عالي',
-            subtitle: `وصل إلى ${fmt(points)} نقطة`,
-          })
-        }
-
-        if (gold >= 1000) {
-          achievements.push({
-            icon: '🪙',
-            title: 'جامع ذهب',
-            subtitle: `يمتلك ${fmt(gold)} ذهب`,
-          })
-        }
-
-        return achievements.slice(0, 5)
+        return manual.slice(0, 6)
       }
 
       function renderAchievements(user) {
-        const achievements = buildAutoAchievements(user)
-        const list = $('achievementsList')
-
-        $('achCount').textContent = `${fmt(achievements.length)} إنجاز`
-        $('qlAch').textContent = fmt(achievements.length)
+        const achievements = buildAchievements(user)
+        $('achievementsTotal').textContent = fmt(achievements.length)
         $('achievementsEmpty').classList.toggle('hidden', achievements.length > 0)
 
-        list.innerHTML = achievements.map((item) => `
-          <div class="tnx-ach-item">
-            <div class="tnx-ach-icon">${esc(item.icon || '🏆')}</div>
+        $('achievementsList').innerHTML = achievements.map((item) => `
+          <div class="achievement-card">
+            <div class="achievement-icon">${esc(item.icon || '🏆')}</div>
             <div>
               <strong>${esc(item.title || item.name || '')}</strong>
               <span>${esc(item.subtitle || item.description || '')}</span>
@@ -1422,197 +1466,172 @@ const metadata = {
         `).join('')
       }
 
-      function renderMailbox(user) {
-        mailState.user = user
-        const mail = Array.isArray(user.mailbox) ? user.mailbox : []
-        const unread = mail.filter((item) => !item.read)
-
-        const countEl = $('mailCount')
-
-        if (unread.length > 0) {
-          countEl.textContent = fmt(unread.length)
-          countEl.classList.remove('hidden')
-        } else {
-          countEl.classList.add('hidden')
-        }
-
-        $('mailAllCount').textContent = fmt(mail.length)
-        $('mailUnreadCount').textContent = fmt(unread.length)
-
-        drawMailList()
+      function mailItems(user) {
+        const mail = Array.isArray(user.mailbox) ? [...user.mailbox] : []
+        return mail.sort((a, b) => new Date(get(b, ['date', 'createdAt'], 0)) - new Date(get(a, ['date', 'createdAt'], 0)))
       }
 
-      function drawMailList() {
-        const user = mailState.user
+      function renderMail(user) {
+        const all = mailItems(user)
+        const unread = all.filter((mail) => !mail.read)
+        const list = state.mailFilter === 'unread' ? unread : all
 
-        if (!user) return
+        $('mailTotal').textContent = fmt(unread.length || all.length)
+        $('mailEmpty').classList.toggle('hidden', list.length > 0)
 
-        let mail = Array.isArray(user.mailbox) ? [...user.mailbox] : []
-
-        if (mailState.filter === 'unread') {
-          mail = mail.filter((item) => !item.read)
-        }
-
-        mail.sort((a, b) => new Date(b.date) - new Date(a.date))
-
-        $('mailList').innerHTML = mail.length ? mail.map((item) => {
-          const from = String(item.from || item.fromLogin || '؟')
-          const initial = from.charAt(0).toUpperCase()
-          const unread = !item.read ? ' is-unread' : ''
+        $('mailList').innerHTML = list.slice(0, 8).map((mail) => {
+          const from = get(mail, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], '؟')
+          const date = get(mail, ['date', 'createdAt'], '')
+          const message = get(mail, ['message'], '')
+          const unreadClass = !mail.read ? ' is-unread' : ''
+          const initial = String(from).charAt(0).toUpperCase() || '؟'
 
           return `
-            <div class="tnx-mail-item${unread}">
-              <div class="tnx-mail-avatar">${esc(initial)}</div>
-
-              <div class="tnx-mail-body">
-                <div class="tnx-mail-top">
-                  <span class="tnx-mail-from">${esc(from)}</span>
-                  ${!item.read ? '<span class="tnx-mail-dot"></span>' : ''}
-                  <span class="tnx-mail-date">${esc(timeAgo(item.date))}</span>
+            <div class="mail-card${unreadClass}">
+              <div class="mail-avatar">${esc(initial)}</div>
+              <div>
+                <div class="mail-top">
+                  <strong>${esc(from)}</strong>
+                  <span class="mail-date">${esc(timeAgo(date))}</span>
                 </div>
-
-                <div class="tnx-mail-text">${esc(item.message || '')}</div>
+                <span class="mail-message">${esc(message)}</span>
               </div>
             </div>
           `
-        }).join('') : '<div class="tnx-inline-empty">ما فيه رسائل.</div>'
+        }).join('')
       }
 
-      function findUser(login) {
-        const target = normalize(login)
+      function renderRare(user) {
+        const rare = inventoryItems(user).filter((item) => item.meta.rare).slice(0, 6)
+        $('rareEmpty').classList.toggle('hidden', rare.length > 0)
 
-        return users.find((item) => {
-          return normalize(userLogin(item)) === target || normalize(userName(item)) === target
-        }) || null
+        $('rareItems').innerHTML = rare.map((item) => `
+          <div class="rare-card">
+            <div class="rare-icon">${esc(item.meta.icon)}</div>
+            <div>
+              <strong>${esc(item.name)}</strong>
+              <span>x${fmt(item.qty)}</span>
+            </div>
+          </div>
+        `).join('')
       }
 
-      function getProfileLink(login) {
-        const clean = String(login || '').replace(/[^a-zA-Z0-9_-]/g, '')
-        return `${location.origin}${location.pathname}?user=${encodeURIComponent(clean)}`
-      }
+      function renderSearch(query) {
+        const q = normalize(query)
+        $('searchResults').innerHTML = ''
+        if (!q) return
 
-      function openFromQuery() {
-        const param = new URLSearchParams(location.search).get('user')
+        const matches = state.users.filter((user) =>
+          normalize(userName(user)).includes(q) || normalize(userLogin(user)).includes(q)
+        ).slice(0, 10)
 
-        if (!param) {
-          searchScreen.classList.remove('hidden')
-          return
-        }
-
-        const user = findUser(param)
-
-        if (user) {
-          renderProfile(user)
-        } else {
-          notFoundScreen.classList.remove('hidden')
-        }
-      }
-
-      function renderResults(query) {
-        const normalized = normalize(query)
-
-        userResults.innerHTML = ''
-
-        if (!normalized) return
-
-        const matches = users
-          .filter((item) => normalize(userName(item)).includes(normalized) || normalize(userLogin(item)).includes(normalized))
-          .slice(0, 10)
-
-        userResults.innerHTML = matches.map((item) => {
-          const login = userLogin(item)
-          const name = userName(item) || login
+        $('searchResults').innerHTML = matches.map((user) => {
+          const login = userLogin(user)
+          const name = userName(user) || login
+          const avatar = safeUrl(get(user, ['profileImageUrl', 'avatar', 'ProfileImageUrl'], ''))
 
           return `
-            <button type="button" class="tnx-user-result" data-login="${esc(login)}">
-              ${esc(name)}
+            <button type="button" class="search-result" data-login="${esc(login)}">
+              ${avatar ? `<img src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />` : ''}
+              <div>
+                <strong>${esc(name)}</strong>
+                <span>@${esc(login)}</span>
+              </div>
             </button>
           `
         }).join('')
       }
 
-      addListener(userSearch, 'input', () => renderResults(userSearch.value))
+      function openFromQuery() {
+        const raw = new URLSearchParams(location.search).get('user')
+        if (!raw) {
+          openSearch()
+          return
+        }
 
-      addListener(clearUserSearch, 'click', () => {
-        userSearch.value = ''
-        userResults.innerHTML = ''
-        userSearch.focus()
+        const user = findUser(raw)
+        if (!user) {
+          openNotFound()
+          return
+        }
+
+        renderProfile(user)
+      }
+
+      function findUser(login) {
+        const target = normalize(login)
+        return state.users.find((user) =>
+          normalize(userLogin(user)) === target || normalize(userName(user)) === target
+        ) || null
+      }
+
+      addListener($('userSearch'), 'input', (event) => renderSearch(event.target.value))
+
+      addListener($('clearSearch'), 'click', () => {
+        $('userSearch').value = ''
+        $('searchResults').innerHTML = ''
+        $('userSearch').focus()
       })
 
-      addListener(userResults, 'click', (event) => {
+      addListener($('searchResults'), 'click', (event) => {
         const button = event.target.closest('[data-login]')
-
         if (!button) return
-
         const user = findUser(button.dataset.login)
+        if (!user) return
 
-        if (user) {
-          history.replaceState(null, '', getProfileLink(userLogin(user)))
-          renderProfile(user)
+        history.replaceState(null, '', profileLink(user))
+        renderProfile(user)
+      })
+
+      addListener($('copyLink'), 'click', async (event) => {
+        if (!state.activeUser) return
+        const button = event.currentTarget
+        const old = button.innerHTML
+
+        try {
+          await navigator.clipboard.writeText(profileLink(state.activeUser))
+          button.innerHTML = 'تم النسخ <span>✓</span>'
+          addTimer(window.setTimeout(() => {
+            button.innerHTML = old
+          }, 1200))
+        } catch {
+          button.innerHTML = profileLink(state.activeUser)
         }
       })
 
-      addListener($('mailToggle'), 'click', () => {
-        $('mailboxSection').classList.toggle('hidden')
-      })
-
-      Array.from(document.querySelectorAll('[data-mail-filter]')).forEach((button) => {
+      document.querySelectorAll('[data-mail-filter]').forEach((button) => {
         addListener(button, 'click', () => {
-          mailState.filter = button.dataset.mailFilter
-
-          document.querySelectorAll('[data-mail-filter]').forEach((item) => {
-            item.classList.toggle('is-active', item === button)
-          })
-
-          drawMailList()
+          state.mailFilter = button.dataset.mailFilter || 'all'
+          document.querySelectorAll('[data-mail-filter]').forEach((item) => item.classList.toggle('is-active', item === button))
+          if (state.activeUser) renderMail(state.activeUser)
         })
       })
 
-      addListener($('copyProfileLink'), 'click', async (event) => {
-        const login = activeUser ? userLogin(activeUser) : ''
-
-        if (!login) return
-
-        try {
-          await navigator.clipboard.writeText(getProfileLink(login))
-          event.currentTarget.textContent = 'تم النسخ'
-          event.currentTarget.classList.add('is-copied')
-
-          addTimer(window.setTimeout(() => {
-            event.currentTarget.textContent = 'نسخ الرابط'
-            event.currentTarget.classList.remove('is-copied')
-          }, 1200))
-        } catch {
-          event.currentTarget.textContent = getProfileLink(login)
-        }
-      })
-
-      Array.from(document.querySelectorAll('[data-jump]')).forEach((button) => {
+      document.querySelectorAll('[data-jump]').forEach((button) => {
         addListener(button, 'click', () => {
           $(button.dataset.jump)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
         })
       })
 
-      addListener(backToTop, 'click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-      })
+      addListener($('backToTop'), 'click', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
 
       addListener(window, 'scroll', () => {
-        backToTop.classList.toggle('is-visible', window.scrollY > 400)
+        $('backToTop').classList.toggle('is-visible', window.scrollY > 420)
       }, { passive: true })
 
-      users = await loadJson('/api/user_badges.json', [])
-      inventories = await loadJson('/api/user_inventory.json', [])
-      mailboxes = await loadJson('/api/user_mailbox.json', [])
-      profileExtras = await loadJson('/api/user_profile.json', [])
+      const [users, inventories, mailboxes, profiles, itemPayload] = await Promise.all([
+        loadJson('/api/user_badges.json', []),
+        loadJson('/api/user_inventory.json', []),
+        loadJson('/api/user_mailbox.json', []),
+        loadJson('/api/user_profile.json', []),
+        loadJson('/api/items.json', { items: [] }),
+      ])
 
-      const itemsPayload = await loadJson('/api/items.json', { items: [] })
-      itemCatalog = Array.isArray(itemsPayload) ? itemsPayload : Array.isArray(itemsPayload.items) ? itemsPayload.items : []
-
-      if (!Array.isArray(users)) users = []
-      if (!Array.isArray(inventories)) inventories = []
-      if (!Array.isArray(mailboxes)) mailboxes = []
-      if (!Array.isArray(profileExtras)) profileExtras = []
+      state.users = Array.isArray(users) ? users : []
+      state.inventories = Array.isArray(inventories) ? inventories : []
+      state.mailboxes = Array.isArray(mailboxes) ? mailboxes : []
+      state.profiles = Array.isArray(profiles) ? profiles : []
+      state.items = Array.isArray(itemPayload) ? itemPayload : Array.isArray(itemPayload.items) ? itemPayload.items : []
 
       openFromQuery()
     })()
