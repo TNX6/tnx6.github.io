@@ -4,137 +4,1864 @@ import Layout from '~/layouts/PageLayout.astro'
 const metadata = {
   title: 'Profile — TNX6',
   ignoreTitleTemplate: true,
-  description: 'صفحة بروفايل أعضاء مجتمع TNX6.',
+  description: 'Steam-style profile page for TNX6 community members.',
 }
 ---
 
 <Layout metadata={metadata}>
-  <main class="profile-page" dir="rtl">
+  <main class="steam-profile-page" dir="rtl">
     <div class="page-bg"></div>
-    <div class="grid-bg"></div>
+    <div class="page-noise"></div>
 
-    <button id="backToTop" class="back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
+    <section class="profile-shell">
+      <header class="profile-top">
+        <div>
+          <div class="eyebrow">
+            <span></span>
+            TNX6 COMMUNITY PROFILE
+          </div>
 
-    <section class="shell">
-      <header class="hero">
-        <div class="eyebrow"><span></span> TNX6 PROFILE</div>
-        <h1>بروفايل العضو</h1>
-        <p>صفحة تعرض صورة العضو، خلفيته، نقاطه، ذهبه، وظيفته، بادجاته، وأغراضه بشكل قريب من Steam Profile.</p>
+          <h1>بروفايل العضو</h1>
 
-        <div class="search-box">
-          <span>⌕</span>
-          <input id="profileSearch" type="search" autocomplete="off" placeholder="اكتب اسم المستخدم..." />
-          <button id="clearProfileSearch" type="button" aria-label="مسح">×</button>
+          <p>
+            بطاقة شخصية للعضو تعرض الخلفية، الصورة، النقاط، الذهب، البادجات، والحقيبة.
+          </p>
         </div>
 
-        <div id="profileResults" class="profile-results"></div>
+        <div class="search-card">
+          <div class="search-box">
+            <span>⌕</span>
+            <input id="profileSearch" type="search" autocomplete="off" placeholder="ابحث باسم المستخدم..." />
+            <button id="clearProfileSearch" type="button" aria-label="مسح">×</button>
+          </div>
+
+          <div id="profileResults" class="profile-results"></div>
+        </div>
       </header>
 
-      <section id="profileEmpty" class="empty">
+      <section id="emptyState" class="empty-state">
+        <div class="empty-icon">⌁</div>
         <strong>ابحث عن عضو</strong>
-        <span>اكتب اسم Twitch أو افتح رابط مباشر مثل: /profile?user=haneen48</span>
+        <span>مثال: <b>/profile?user=haneen48</b></span>
       </section>
 
       <section id="profileContent" class="profile-content hidden">
-        <section id="profileHeader" class="profile-header"></section>
+        <section id="steamCard" class="steam-card"></section>
 
-        <section class="profile-layout">
-          <div class="main-column">
-            <section class="panel">
-              <div class="section-head">
-                <span>BADGES SHOWCASE</span>
-                <h2>البادجات</h2>
-                <p>البادجات المختارة والمفتوحة عند العضو.</p>
+        <div class="layout-grid">
+          <main class="main-column">
+            <section class="panel showcase-panel">
+              <div class="panel-head">
+                <div>
+                  <span>FEATURED SHOWCASE</span>
+                  <h2>واجهة العضو</h2>
+                </div>
               </div>
-              <div id="badgeShowcase" class="badge-showcase"></div>
+
+              <div id="featuredShowcase" class="featured-showcase"></div>
             </section>
 
             <section class="panel">
-              <div class="section-head row-head">
+              <div class="panel-head row">
                 <div>
                   <span>INVENTORY</span>
                   <h2>الحقيبة</h2>
-                  <p>الأغراض المملوكة وعدد كل غرض.</p>
                 </div>
-                <div class="inventory-count"><strong id="inventoryCount">0</strong><span>غرض</span></div>
+
+                <div class="small-counter">
+                  <strong id="inventoryTypeCount">0</strong>
+                  <small>نوع</small>
+                </div>
               </div>
 
-              <div class="filter-row" id="inventoryFilters">
-                <button type="button" class="is-active" data-inv-filter="all">الكل</button>
-                <button type="button" data-inv-filter="featured">مميز</button>
-                <button type="button" data-inv-filter="box">صناديق</button>
-                <button type="button" data-inv-filter="license">رخص</button>
-                <button type="button" data-inv-filter="resource">موارد</button>
-                <button type="button" data-inv-filter="usable">قابل للاستخدام</button>
+              <div class="filter-strip" id="inventoryFilters">
+                <button type="button" class="is-active" data-filter="all">الكل</button>
+                <button type="button" data-filter="rare">نادر</button>
+                <button type="button" data-filter="box">صناديق</button>
+                <button type="button" data-filter="license">رخص</button>
+                <button type="button" data-filter="resource">موارد</button>
+                <button type="button" data-filter="usable">استخدام</button>
               </div>
 
               <div id="inventoryGrid" class="inventory-grid"></div>
-              <div id="inventoryEmpty" class="empty empty-small hidden"><strong>ما فيه أغراض ظاهرة</strong><span>الحقيبة فاضية أو الفلتر الحالي ما طلع نتائج.</span></div>
+
+              <div id="inventoryEmpty" class="mini-empty hidden">
+                <strong>ما فيه أغراض ظاهرة</strong>
+                <span>الحقيبة فاضية أو الفلتر الحالي ما طلع نتائج.</span>
+              </div>
             </section>
-          </div>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <span>BADGE COLLECTION</span>
+                  <h2>مجموعة البادجات</h2>
+                </div>
+              </div>
+
+              <div id="badgeCollection" class="badge-collection"></div>
+            </section>
+          </main>
 
           <aside class="side-column">
-            <section class="panel"><div class="section-head"><span>QUICK STATS</span><h2>إحصائيات</h2></div><div id="quickStats" class="quick-stats"></div></section>
-            <section class="panel"><div class="section-head"><span>RARE ITEMS</span><h2>أندر الأغراض</h2></div><div id="rareItems" class="rare-items"></div></section>
-            <section class="panel"><div class="section-head"><span>LINKS</span><h2>روابط</h2></div><div class="profile-links"><a id="badgesPageLink" href="/badges">عرض بطاقة البادجات</a><button id="copyProfileLink" type="button">نسخ رابط البروفايل</button></div></section>
+            <section class="panel side-panel">
+              <div class="panel-head">
+                <div>
+                  <span>PROFILE STATS</span>
+                  <h2>الإحصائيات</h2>
+                </div>
+              </div>
+
+              <div id="statsList" class="stats-list"></div>
+            </section>
+
+            <section class="panel side-panel">
+              <div class="panel-head">
+                <div>
+                  <span>RAREST ITEMS</span>
+                  <h2>أندر الأغراض</h2>
+                </div>
+              </div>
+
+              <div id="rareList" class="rare-list"></div>
+            </section>
+
+            <section class="panel side-panel">
+              <div class="panel-head">
+                <div>
+                  <span>ACTIONS</span>
+                  <h2>روابط</h2>
+                </div>
+              </div>
+
+              <div class="action-list">
+                <a id="badgesLink" href="/badges">بطاقة البادجات</a>
+                <button id="copyProfileLink" type="button">نسخ رابط البروفايل</button>
+              </div>
+            </section>
           </aside>
-        </section>
+        </div>
       </section>
     </section>
+
+    <button id="backToTop" class="back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
   </main>
 
   <style is:global>
-    .hidden{display:none!important}html{scrollbar-width:thin;scrollbar-color:rgba(255,218,106,.38) rgba(0,0,0,.3)}html::-webkit-scrollbar{width:10px}html::-webkit-scrollbar-track{background:rgba(0,0,0,.35)}html::-webkit-scrollbar-thumb{border:2px solid rgba(0,0,0,.35);border-radius:999px;background:linear-gradient(180deg,rgba(255,218,106,.78),rgba(194,146,0,.5))}.profile-page{position:relative;min-height:100vh;overflow:hidden;background:#07050b;color:#fff;font-family:Poppins,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}.page-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 12% 9%,rgba(255,218,106,.15),transparent 28%),radial-gradient(circle at 86% 14%,rgba(194,146,0,.13),transparent 34%),radial-gradient(circle at 48% 92%,rgba(124,58,237,.12),transparent 38%),linear-gradient(135deg,#07050b 0%,#050507 55%,#130c05 100%);animation:bgBreathe 9s ease-in-out infinite}@keyframes bgBreathe{0%,100%{filter:saturate(1) brightness(1);transform:scale(1)}50%{filter:saturate(1.12) brightness(1.06);transform:scale(1.018)}}.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.06;background-image:linear-gradient(rgba(255,218,106,.42) 1px,transparent 1px),linear-gradient(90deg,rgba(255,218,106,.42) 1px,transparent 1px);background-size:58px 58px;mask-image:radial-gradient(circle at center,#000 0%,transparent 74%)}.shell{position:relative;z-index:1;width:min(100%,1240px);margin:0 auto;padding:6.5rem 1rem 5rem}.back-top{position:fixed;left:1.25rem;bottom:1.25rem;z-index:90;display:grid;place-items:center;width:3.1rem;height:3.1rem;border:1px solid rgba(255,218,106,.42);border-radius:999px;background:rgba(7,5,11,.9);color:#ffda6a;font-size:1.35rem;font-weight:950;cursor:pointer;box-shadow:0 18px 40px rgba(0,0,0,.45),0 0 22px rgba(255,218,106,.12);backdrop-filter:blur(14px);opacity:0;transform:translateY(16px) scale(.92);pointer-events:none;transition:220ms cubic-bezier(.22,1,.36,1)}.back-top.is-visible{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}.hero{max-width:940px;margin:0 auto 1rem;text-align:center}.eyebrow{display:inline-flex;align-items:center;gap:.55rem;border:1px solid rgba(255,218,106,.3);border-radius:999px;background:rgba(0,0,0,.4);color:#ffda6a;padding:.55rem .95rem;font-size:.78rem;font-weight:950;letter-spacing:.16em}.eyebrow span{width:.48rem;height:.48rem;border-radius:999px;background:#ffda6a;box-shadow:0 0 14px #ffda6a}.hero h1{margin:1.1rem 0 0;background:linear-gradient(90deg,#fff1a8,#ffda6a 44%,#c29200);background-clip:text;color:transparent;font-size:clamp(3.1rem,7vw,6.6rem);font-weight:950;line-height:.95;letter-spacing:-.055em}.hero p{max-width:760px;margin:1.15rem auto 0;color:#d1d5db;font-size:1.04rem;font-weight:760;line-height:1.9}.search-box{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.75rem;align-items:center;max-width:680px;margin:1.2rem auto 0;border:1px solid rgba(255,218,106,.22);border-radius:1.15rem;background:rgba(0,0,0,.32);padding:.85rem;box-shadow:0 18px 46px rgba(0,0,0,.28);backdrop-filter:blur(14px)}.search-box span{color:#ffda6a;font-size:1.4rem;font-weight:950}.search-box input{width:100%;border:0;outline:0;background:transparent;color:white;font-size:.96rem;font-weight:850}.search-box button{display:grid;place-items:center;width:2.2rem;height:2.2rem;border:1px solid rgba(255,218,106,.2);border-radius:999px;background:rgba(255,218,106,.08);color:#ffda6a;font-size:1.2rem;font-weight:950;cursor:pointer}.profile-results{display:grid;gap:.55rem;max-width:680px;margin:.75rem auto 0}.profile-result{display:flex;align-items:center;gap:.8rem;border:1px solid rgba(255,218,106,.16);border-radius:1rem;background:rgba(0,0,0,.42);color:white;padding:.75rem;text-align:right;cursor:pointer;transition:180ms ease}.profile-result:hover{transform:translateY(-2px);border-color:rgba(255,218,106,.48);background:rgba(255,218,106,.08)}.profile-result img{width:42px;height:42px;border-radius:999px;object-fit:cover;border:1px solid rgba(255,218,106,.25)}.profile-result strong{display:block;color:#f7e6ac;font-size:.95rem;font-weight:950}.profile-result span{display:block;margin-top:.15rem;color:#9ca3af;font-size:.75rem;font-weight:800;direction:ltr;text-align:right}.empty{display:grid;place-items:center;gap:.35rem;max-width:720px;margin:1rem auto 0;min-height:220px;border:1px solid rgba(255,218,106,.16);border-radius:1.6rem;background:rgba(6,6,8,.76);padding:2rem;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.35);backdrop-filter:blur(16px)}.empty-small{max-width:none;min-height:180px;margin:0}.empty strong{color:#ffda6a;font-size:1.35rem;font-weight:950}.empty span{color:#9ca3af;font-size:.9rem;font-weight:800;line-height:1.7}.profile-content{display:grid;gap:1rem;margin-top:1rem}.profile-header{position:relative;overflow:hidden;min-height:380px;border:1px solid rgba(255,218,106,.22);border-radius:2rem;background:rgba(6,6,8,.78);box-shadow:0 28px 80px rgba(0,0,0,.48);backdrop-filter:blur(16px)}.profile-banner{position:absolute;inset:0 0 auto 0;height:210px;background-position:center;background-size:cover;opacity:.95}.profile-banner::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.1),rgba(7,5,11,.85)),radial-gradient(circle at top right,rgba(255,218,106,.12),transparent 42%)}.profile-header-body{position:relative;z-index:1;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:1.25rem;align-items:end;padding:145px 1.35rem 1.35rem}.profile-avatar{width:152px;height:152px;border:6px solid var(--profile-color,#ffda6a);border-radius:1.8rem;object-fit:cover;background:#111;box-shadow:0 22px 48px rgba(0,0,0,.48)}.profile-title{min-width:0;padding-bottom:.2rem}.profile-title h2{margin:0;color:#fff;font-size:clamp(2rem,4vw,4rem);font-weight:950;line-height:1;text-shadow:0 4px 18px rgba(0,0,0,.72);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.profile-title p{margin:.5rem 0 0;color:#d1d5db;font-size:.92rem;font-weight:850;direction:ltr;text-align:right}.profile-job{display:inline-flex;align-items:center;gap:.5rem;margin-top:.75rem;border:1px solid rgba(255,218,106,.25);border-radius:999px;background:rgba(0,0,0,.45);color:#f7e6ac;padding:.55rem .75rem;font-size:.82rem;font-weight:950}.profile-job iconify-icon{color:#ffda6a;font-size:1.15rem}.profile-money{display:grid;grid-template-columns:repeat(2,minmax(110px,1fr));gap:.75rem;width:320px;max-width:100%}.money-card{border:1px solid rgba(255,218,106,.16);border-radius:1.15rem;background:rgba(0,0,0,.42);padding:1rem;text-align:center;backdrop-filter:blur(14px)}.money-card span{display:block;color:#9ca3af;font-size:.75rem;font-weight:850}.money-card strong{display:block;margin-top:.35rem;color:#ffda6a;font-size:1.35rem;font-weight:950;direction:ltr}.profile-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1rem;align-items:start}.main-column,.side-column{display:grid;gap:1rem}.panel{border:1px solid rgba(255,218,106,.18);border-radius:1.6rem;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012)),rgba(6,6,8,.78);box-shadow:0 24px 70px rgba(0,0,0,.38),inset 0 0 22px rgba(255,218,106,.025);padding:1.1rem;backdrop-filter:blur(16px)}.section-head{margin-bottom:1rem}.row-head{display:flex;justify-content:space-between;align-items:start;gap:1rem}.section-head span{color:#c29200;font-size:.75rem;font-weight:950;letter-spacing:.12em}.section-head h2{margin:.35rem 0 0;color:#f7e6ac;font-size:1.55rem;font-weight:950;line-height:1.15}.section-head p{margin:.45rem 0 0;color:#9ca3af;font-size:.86rem;font-weight:800;line-height:1.65}.inventory-count{display:grid;place-items:center;min-width:90px;border:1px solid rgba(255,218,106,.18);border-radius:1rem;background:rgba(255,218,106,.06);padding:.7rem}.inventory-count strong{color:#ffda6a;font-size:1.4rem;font-weight:950;line-height:1}.inventory-count span{margin-top:.25rem;color:#9ca3af;font-size:.72rem;font-weight:850}.badge-showcase{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:.7rem}.badge-tile{display:grid;place-items:center;gap:.5rem;min-height:118px;border:1px solid rgba(255,218,106,.14);border-radius:1.1rem;background:rgba(0,0,0,.28);padding:.7rem;text-align:center}.badge-tile img{width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 8px 14px rgba(0,0,0,.42))}.badge-tile span{color:#e5e7eb;font-size:.68rem;font-weight:850;line-height:1.35}.filter-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}.filter-row button{border:1px solid rgba(255,218,106,.22);border-radius:.85rem;background:rgba(255,218,106,.07);color:#f7e6ac;padding:.55rem .75rem;font-size:.78rem;font-weight:950;cursor:pointer;transition:180ms ease}.filter-row button:hover,.filter-row button.is-active{transform:translateY(-1px);border-color:rgba(255,218,106,.55);background:rgba(255,218,106,.14);color:#ffda6a}.inventory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.8rem}.item-card{position:relative;display:grid;gap:.65rem;min-height:176px;border:1px solid rgba(255,218,106,.14);border-radius:1.15rem;background:radial-gradient(circle at top right,rgba(255,218,106,.07),transparent 42%),rgba(0,0,0,.3);padding:.85rem;overflow:hidden;transition:200ms ease}.item-card:hover{transform:translateY(-3px) scale(1.012);border-color:rgba(255,218,106,.5);box-shadow:0 18px 36px rgba(0,0,0,.36),0 0 22px rgba(255,218,106,.1)}.item-card.is-rare{border-color:rgba(255,218,106,.34);box-shadow:inset 0 0 28px rgba(255,218,106,.03)}.item-icon{display:grid;place-items:center;width:3rem;height:3rem;border:1px solid rgba(255,218,106,.18);border-radius:1rem;background:rgba(255,218,106,.07);color:#ffda6a;font-size:1.45rem}.item-card h3{margin:0;color:white;font-size:1rem;font-weight:950;line-height:1.25}.item-card p{margin:0;color:#9ca3af;font-size:.75rem;font-weight:800;line-height:1.55}.item-qty{position:absolute;top:.75rem;left:.75rem;display:grid;place-items:center;min-width:2.2rem;height:2.2rem;border:1px solid rgba(255,218,106,.26);border-radius:999px;background:rgba(0,0,0,.52);color:#ffda6a;font-size:.82rem;font-weight:950;direction:ltr}.item-meta{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:auto}.item-meta span{border:1px solid rgba(255,218,106,.12);border-radius:999px;background:rgba(255,218,106,.06);color:#f7e6ac;padding:.28rem .45rem;font-size:.62rem;font-weight:900}.quick-stats,.rare-items,.profile-links{display:grid;gap:.65rem}.stat-row,.rare-item{display:flex;justify-content:space-between;gap:.8rem;border:1px solid rgba(255,218,106,.12);border-radius:1rem;background:rgba(0,0,0,.26);padding:.85rem}.stat-row span{color:#9ca3af;font-size:.78rem;font-weight:850}.stat-row strong,.rare-item span{color:#ffda6a;font-size:.92rem;font-weight:950;direction:ltr}.rare-item strong{color:#f7e6ac;font-size:.86rem;font-weight:950}.profile-links a,.profile-links button{display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(255,218,106,.24);border-radius:.95rem;background:rgba(255,218,106,.08);color:#f7e6ac;padding:.78rem .85rem;font-size:.82rem;font-weight:950;text-decoration:none;cursor:pointer;transition:180ms ease}.profile-links a:hover,.profile-links button:hover,.profile-links button.is-copied{transform:translateY(-2px);border-color:rgba(255,218,106,.56);background:rgba(255,218,106,.14);color:#ffda6a}@media(max-width:1040px){.profile-layout{grid-template-columns:1fr}.side-column{grid-template-columns:repeat(2,minmax(0,1fr))}.side-column .panel:last-child{grid-column:1/-1}.profile-header-body{grid-template-columns:auto minmax(0,1fr)}.profile-money{grid-column:1/-1;width:100%}}@media(max-width:720px){.shell{padding-top:5.5rem}.hero h1{font-size:3rem}.profile-header-body{grid-template-columns:1fr;justify-items:center;text-align:center}.profile-title p{text-align:center}.profile-avatar{width:132px;height:132px}.side-column{grid-template-columns:1fr}.profile-money{grid-template-columns:1fr}.row-head{flex-direction:column}.inventory-count{width:100%}.inventory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:460px){.inventory-grid{grid-template-columns:1fr}}
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 218, 106, 0.38) rgba(0, 0, 0, 0.3);
+    }
+
+    html::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    html::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.35);
+    }
+
+    html::-webkit-scrollbar-thumb {
+      border: 2px solid rgba(0, 0, 0, 0.35);
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255, 218, 106, 0.78), rgba(194, 146, 0, 0.5));
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .steam-profile-page {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      background: #07050b;
+      color: #fff;
+      font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 16% 12%, rgba(255, 218, 106, 0.16), transparent 30%),
+        radial-gradient(circle at 85% 10%, rgba(124, 58, 237, 0.14), transparent 30%),
+        radial-gradient(circle at 52% 90%, rgba(194, 146, 0, 0.14), transparent 36%),
+        linear-gradient(135deg, #07050b 0%, #0a0b10 46%, #130c05 100%);
+      animation: bgBreathe 10s ease-in-out infinite;
+    }
+
+    @keyframes bgBreathe {
+      0%, 100% { transform: scale(1); filter: brightness(1) saturate(1); }
+      50% { transform: scale(1.018); filter: brightness(1.06) saturate(1.12); }
+    }
+
+    .page-noise {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.07;
+      background-image:
+        linear-gradient(rgba(255, 218, 106, 0.45) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 218, 106, 0.45) 1px, transparent 1px);
+      background-size: 58px 58px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 72%);
+    }
+
+    .profile-shell {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 1280px);
+      margin: 0 auto;
+      padding: 6.25rem 1rem 5rem;
+    }
+
+    .profile-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(330px, 440px);
+      gap: 1rem;
+      align-items: end;
+      margin-bottom: 1rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      border: 1px solid rgba(255, 218, 106, 0.3);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.38);
+      color: #ffda6a;
+      padding: 0.55rem 0.9rem;
+      font-size: 0.74rem;
+      font-weight: 950;
+      letter-spacing: 0.16em;
+      backdrop-filter: blur(14px);
+    }
+
+    .eyebrow span {
+      width: 0.48rem;
+      height: 0.48rem;
+      border-radius: 999px;
+      background: #ffda6a;
+      box-shadow: 0 0 14px #ffda6a;
+    }
+
+    .profile-top h1 {
+      margin: 0.9rem 0 0;
+      background: linear-gradient(90deg, #fff1a8, #ffda6a 42%, #c29200);
+      background-clip: text;
+      color: transparent;
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      font-weight: 950;
+      line-height: 0.92;
+      letter-spacing: -0.055em;
+    }
+
+    .profile-top p {
+      max-width: 680px;
+      margin: 1rem 0 0;
+      color: rgb(209, 213, 219);
+      font-size: 1rem;
+      font-weight: 780;
+      line-height: 1.8;
+    }
+
+    .search-card {
+      position: relative;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 1.4rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.08), transparent 42%),
+        rgba(7, 5, 11, 0.76);
+      padding: 0.85rem;
+      box-shadow: 0 22px 58px rgba(0, 0, 0, 0.36);
+      backdrop-filter: blur(16px);
+    }
+
+    .search-box {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 0.7rem;
+      align-items: center;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.32);
+      padding: 0.75rem;
+    }
+
+    .search-box span {
+      color: #ffda6a;
+      font-size: 1.3rem;
+      font-weight: 950;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 850;
+    }
+
+    .search-box button {
+      display: grid;
+      place-items: center;
+      width: 2rem;
+      height: 2rem;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      font-size: 1.15rem;
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .profile-results {
+      display: grid;
+      gap: 0.55rem;
+      margin-top: 0.65rem;
+    }
+
+    .profile-result {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.75rem;
+      align-items: center;
+      border: 1px solid rgba(255, 218, 106, 0.14);
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.34);
+      padding: 0.68rem;
+      color: white;
+      text-align: right;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .profile-result:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 218, 106, 0.48);
+      background: rgba(255, 218, 106, 0.08);
+    }
+
+    .profile-result img {
+      width: 42px;
+      height: 42px;
+      border-radius: 0.85rem;
+      object-fit: cover;
+      border: 1px solid rgba(255, 218, 106, 0.28);
+    }
+
+    .profile-result strong {
+      display: block;
+      color: #f7e6ac;
+      font-size: 0.92rem;
+      font-weight: 950;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .profile-result span {
+      display: block;
+      margin-top: 0.14rem;
+      color: rgb(156, 163, 175);
+      font-size: 0.72rem;
+      font-weight: 850;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .empty-state,
+    .mini-empty {
+      display: grid;
+      place-items: center;
+      gap: 0.45rem;
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 1.6rem;
+      background:
+        radial-gradient(circle at top, rgba(255, 218, 106, 0.08), transparent 44%),
+        rgba(7, 5, 11, 0.76);
+      padding: 2rem;
+      min-height: 230px;
+      text-align: center;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+      backdrop-filter: blur(16px);
+    }
+
+    .mini-empty {
+      min-height: 170px;
+      margin-top: 0.85rem;
+    }
+
+    .empty-icon {
+      display: grid;
+      place-items: center;
+      width: 4rem;
+      height: 4rem;
+      border-radius: 1.25rem;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      background: rgba(255, 218, 106, 0.06);
+      color: #ffda6a;
+      font-size: 1.8rem;
+      font-weight: 950;
+      margin-bottom: 0.35rem;
+    }
+
+    .empty-state strong,
+    .mini-empty strong {
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+    }
+
+    .empty-state span,
+    .mini-empty span {
+      color: rgb(156, 163, 175);
+      font-size: 0.9rem;
+      font-weight: 800;
+      line-height: 1.7;
+    }
+
+    .empty-state b {
+      color: #f7e6ac;
+      direction: ltr;
+      unicode-bidi: embed;
+    }
+
+    .profile-content {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .steam-card {
+      position: relative;
+      min-height: 430px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 2rem;
+      background: rgba(7, 5, 11, 0.76);
+      box-shadow:
+        0 30px 90px rgba(0, 0, 0, 0.54),
+        inset 0 0 34px rgba(255, 218, 106, 0.025);
+      backdrop-filter: blur(18px);
+    }
+
+    .steam-cover {
+      position: absolute;
+      inset: 0;
+      background-position: center;
+      background-size: cover;
+      transform: scale(1.02);
+      filter: saturate(1.06) contrast(1.04);
+    }
+
+    .steam-cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.18), rgba(7, 5, 11, 0.92) 72%, rgba(7, 5, 11, 0.98)),
+        radial-gradient(circle at 18% 28%, rgba(var(--accent-rgb), 0.28), transparent 38%),
+        radial-gradient(circle at 82% 18%, rgba(255, 218, 106, 0.12), transparent 38%);
+    }
+
+    .steam-profile-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr) 280px;
+      gap: 1.2rem;
+      align-items: end;
+      min-height: 430px;
+      padding: 1.35rem;
+    }
+
+    .avatar-block {
+      display: grid;
+      justify-items: center;
+      gap: 0.8rem;
+    }
+
+    .avatar-frame {
+      position: relative;
+      width: 170px;
+      height: 170px;
+      border-radius: 1.55rem;
+      padding: 6px;
+      background:
+        linear-gradient(135deg, rgba(255, 218, 106, 0.95), rgba(var(--accent-rgb), 0.98), rgba(255, 255, 255, 0.22));
+      box-shadow:
+        0 24px 46px rgba(0, 0, 0, 0.48),
+        0 0 26px rgba(var(--accent-rgb), 0.28);
+    }
+
+    .avatar-frame img {
+      width: 100%;
+      height: 100%;
+      border-radius: 1.22rem;
+      object-fit: cover;
+      display: block;
+      background: #111;
+    }
+
+    .online-dot {
+      position: absolute;
+      right: 0.65rem;
+      bottom: 0.65rem;
+      width: 1rem;
+      height: 1rem;
+      border: 3px solid #101014;
+      border-radius: 999px;
+      background: #34d399;
+      box-shadow: 0 0 14px rgba(52, 211, 153, 0.75);
+    }
+
+    .level-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 5.4rem;
+      border: 1px solid rgba(255, 218, 106, 0.26);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.55);
+      color: #ffda6a;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.82rem;
+      font-weight: 950;
+      direction: ltr;
+      backdrop-filter: blur(12px);
+    }
+
+    .profile-identity {
+      min-width: 0;
+      padding-bottom: 0.25rem;
+    }
+
+    .profile-identity h2 {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(2.4rem, 5vw, 5rem);
+      font-weight: 950;
+      line-height: 0.95;
+      letter-spacing: -0.045em;
+      text-shadow: 0 5px 20px rgba(0, 0, 0, 0.75);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .profile-login {
+      margin: 0.65rem 0 0;
+      color: rgb(209, 213, 219);
+      font-size: 0.94rem;
+      font-weight: 850;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .job-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-top: 0.9rem;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.45);
+      color: #f7e6ac;
+      padding: 0.62rem 0.85rem;
+      font-size: 0.86rem;
+      font-weight: 950;
+      backdrop-filter: blur(12px);
+    }
+
+    .job-pill iconify-icon {
+      color: #ffda6a;
+      font-size: 1.22rem;
+    }
+
+    .mini-showcase {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-top: 1rem;
+    }
+
+    .mini-badge {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(255, 218, 106, 0.14);
+      border-radius: 0.85rem;
+      background: rgba(0, 0, 0, 0.42);
+      backdrop-filter: blur(10px);
+    }
+
+    .mini-badge img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      filter: drop-shadow(0 7px 12px rgba(0, 0, 0, 0.5));
+    }
+
+    .profile-wallet {
+      display: grid;
+      gap: 0.75rem;
+      align-self: end;
+    }
+
+    .wallet-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 1.2rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 44%),
+        rgba(0, 0, 0, 0.48);
+      padding: 1rem;
+      backdrop-filter: blur(14px);
+    }
+
+    .wallet-card span {
+      display: block;
+      color: rgb(156, 163, 175);
+      font-size: 0.75rem;
+      font-weight: 900;
+    }
+
+    .wallet-card strong {
+      display: block;
+      margin-top: 0.35rem;
+      color: #ffda6a;
+      font-size: 1.7rem;
+      font-weight: 950;
+      direction: ltr;
+      text-align: right;
+      text-shadow: 0 0 14px rgba(255, 218, 106, 0.28);
+    }
+
+    .layout-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .main-column,
+    .side-column {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .panel {
+      border: 1px solid rgba(255, 218, 106, 0.17);
+      border-radius: 1.55rem;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
+        rgba(7, 5, 11, 0.78);
+      box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.38),
+        inset 0 0 22px rgba(255, 218, 106, 0.022);
+      padding: 1.05rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .panel-head {
+      margin-bottom: 1rem;
+    }
+
+    .panel-head.row {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .panel-head span {
+      display: block;
+      color: #c29200;
+      font-size: 0.72rem;
+      font-weight: 950;
+      letter-spacing: 0.13em;
+    }
+
+    .panel-head h2 {
+      margin: 0.3rem 0 0;
+      color: #f7e6ac;
+      font-size: 1.5rem;
+      font-weight: 950;
+      line-height: 1.15;
+    }
+
+    .small-counter {
+      display: grid;
+      place-items: center;
+      min-width: 82px;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 1rem;
+      background: rgba(255, 218, 106, 0.06);
+      padding: 0.65rem;
+    }
+
+    .small-counter strong {
+      color: #ffda6a;
+      font-size: 1.25rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .small-counter small {
+      color: rgb(156, 163, 175);
+      font-size: 0.68rem;
+      font-weight: 850;
+      margin-top: 0.25rem;
+    }
+
+    .featured-showcase {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 0.85rem;
+    }
+
+    .big-feature-card,
+    .showcase-stack {
+      min-height: 230px;
+    }
+
+    .big-feature-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 218, 106, 0.22);
+      border-radius: 1.25rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.13), transparent 46%),
+        rgba(0, 0, 0, 0.36);
+      padding: 1rem;
+    }
+
+    .big-feature-icon {
+      display: grid;
+      place-items: center;
+      width: 4.8rem;
+      height: 4.8rem;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 1.35rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .big-feature-card h3 {
+      margin: 0;
+      color: white;
+      font-size: 1.55rem;
+      font-weight: 950;
+      line-height: 1.15;
+    }
+
+    .big-feature-card p {
+      margin: 0.6rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.86rem;
+      font-weight: 800;
+      line-height: 1.65;
+    }
+
+    .big-feature-card strong {
+      display: inline-flex;
+      margin-top: 0.9rem;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.36);
+      color: #ffda6a;
+      padding: 0.45rem 0.6rem;
+      font-size: 0.8rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .showcase-stack {
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    .showcase-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      border: 1px solid rgba(255, 218, 106, 0.13);
+      border-radius: 1.05rem;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.75rem;
+    }
+
+    .showcase-row div {
+      min-width: 0;
+    }
+
+    .showcase-row strong {
+      display: block;
+      color: #f7e6ac;
+      font-size: 0.9rem;
+      font-weight: 950;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .showcase-row span {
+      display: block;
+      color: rgb(156, 163, 175);
+      font-size: 0.72rem;
+      font-weight: 800;
+      margin-top: 0.2rem;
+    }
+
+    .showcase-row b {
+      display: grid;
+      place-items: center;
+      min-width: 2.6rem;
+      height: 2.4rem;
+      border-radius: 0.8rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      font-size: 0.8rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .filter-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.95rem;
+    }
+
+    .filter-strip button {
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 0.85rem;
+      background: rgba(255, 218, 106, 0.07);
+      color: #f7e6ac;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.78rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .filter-strip button:hover,
+    .filter-strip button.is-active {
+      transform: translateY(-1px);
+      border-color: rgba(255, 218, 106, 0.55);
+      background: rgba(255, 218, 106, 0.14);
+      color: #ffda6a;
+    }
+
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .inventory-item {
+      position: relative;
+      overflow: hidden;
+      min-height: 168px;
+      border: 1px solid rgba(255, 218, 106, 0.13);
+      border-radius: 1.08rem;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
+        rgba(0, 0, 0, 0.34);
+      padding: 0.82rem;
+      transition: 200ms ease;
+    }
+
+    .inventory-item::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(255, 218, 106, 0.08), transparent 46%);
+      pointer-events: none;
+    }
+
+    .inventory-item:hover {
+      transform: translateY(-3px) scale(1.012);
+      border-color: rgba(255, 218, 106, 0.46);
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.36), 0 0 22px rgba(255, 218, 106, 0.1);
+    }
+
+    .inventory-item.is-rare {
+      border-color: rgba(255, 218, 106, 0.34);
+      box-shadow: inset 0 0 28px rgba(255, 218, 106, 0.03);
+    }
+
+    .item-icon {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 3rem;
+      height: 3rem;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 1rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      font-size: 1.45rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .inventory-item h3 {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 950;
+      line-height: 1.25;
+    }
+
+    .inventory-item p {
+      position: relative;
+      z-index: 1;
+      margin: 0.4rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.72rem;
+      font-weight: 800;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .qty {
+      position: absolute;
+      top: 0.7rem;
+      left: 0.7rem;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      min-width: 2.15rem;
+      height: 2.15rem;
+      border: 1px solid rgba(255, 218, 106, 0.24);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.56);
+      color: #ffda6a;
+      font-size: 0.78rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .item-tags {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.32rem;
+      margin-top: 0.75rem;
+    }
+
+    .item-tags span {
+      border: 1px solid rgba(255, 218, 106, 0.11);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.055);
+      color: #f7e6ac;
+      padding: 0.25rem 0.42rem;
+      font-size: 0.6rem;
+      font-weight: 900;
+    }
+
+    .badge-collection {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+      gap: 0.65rem;
+    }
+
+    .badge-tile {
+      display: grid;
+      place-items: center;
+      gap: 0.48rem;
+      min-height: 112px;
+      border: 1px solid rgba(255, 218, 106, 0.12);
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.26);
+      padding: 0.65rem;
+      text-align: center;
+    }
+
+    .badge-tile img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.42));
+    }
+
+    .badge-tile span {
+      color: rgb(229, 231, 235);
+      font-size: 0.65rem;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .stats-list,
+    .rare-list,
+    .action-list {
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    .stat-row,
+    .rare-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      border: 1px solid rgba(255, 218, 106, 0.12);
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.28);
+      padding: 0.82rem;
+    }
+
+    .stat-row span {
+      color: rgb(156, 163, 175);
+      font-size: 0.78rem;
+      font-weight: 850;
+    }
+
+    .stat-row strong {
+      color: #ffda6a;
+      font-size: 0.92rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .rare-row strong {
+      color: #f7e6ac;
+      font-size: 0.84rem;
+      font-weight: 950;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .rare-row span {
+      color: #ffda6a;
+      font-size: 0.78rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .action-list a,
+    .action-list button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 218, 106, 0.22);
+      border-radius: 0.95rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #f7e6ac;
+      padding: 0.8rem 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 950;
+      text-decoration: none;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .action-list a:hover,
+    .action-list button:hover,
+    .action-list button.is-copied {
+      transform: translateY(-2px);
+      border-color: rgba(255, 218, 106, 0.55);
+      background: rgba(255, 218, 106, 0.14);
+      color: #ffda6a;
+    }
+
+    .back-top {
+      position: fixed;
+      left: 1.25rem;
+      bottom: 1.25rem;
+      z-index: 90;
+      display: grid;
+      place-items: center;
+      width: 3.05rem;
+      height: 3.05rem;
+      border: 1px solid rgba(255, 218, 106, 0.42);
+      border-radius: 999px;
+      background: rgba(7, 5, 11, 0.9);
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 0 22px rgba(255, 218, 106, 0.12);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      transform: translateY(16px) scale(0.92);
+      pointer-events: none;
+      transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .back-top.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    @media (max-width: 1080px) {
+      .profile-top,
+      .layout-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .steam-profile-inner {
+        grid-template-columns: 170px minmax(0, 1fr);
+      }
+
+      .profile-wallet {
+        grid-column: 1 / -1;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .side-column {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .side-column .panel:last-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .profile-shell {
+        padding-top: 5.5rem;
+      }
+
+      .profile-top h1 {
+        font-size: 3.15rem;
+      }
+
+      .steam-profile-inner {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+        padding-top: 6rem;
+      }
+
+      .profile-identity h2 {
+        white-space: normal;
+        font-size: 2.4rem;
+      }
+
+      .profile-login {
+        text-align: center;
+      }
+
+      .mini-showcase {
+        justify-content: center;
+      }
+
+      .profile-wallet,
+      .featured-showcase,
+      .side-column {
+        grid-template-columns: 1fr;
+      }
+
+      .steam-card {
+        min-height: auto;
+      }
+
+      .steam-profile-inner {
+        min-height: auto;
+      }
+
+      .steam-cover {
+        height: 100%;
+      }
+
+      .panel-head.row {
+        flex-direction: column;
+      }
+
+      .small-counter {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .inventory-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .inventory-item {
+        min-height: 154px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .inventory-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 
   <script is:inline data-reinit>
     ;(() => {
-      const cleanupKey = '__tnxProfilePageCleanup'
-      if (window[cleanupKey]) window[cleanupKey]()
-      const listeners = [], timers = []
-      function addListener(target,event,handler,options){if(!target)return;target.addEventListener(event,handler,options);listeners.push(()=>target.removeEventListener(event,handler,options))}
-      function addTimer(id){timers.push(id);return id}
-      window[cleanupKey]=()=>{listeners.forEach(fn=>fn());listeners.length=0;timers.forEach(id=>clearTimeout(id));timers.length=0}
+      const cleanupKey = '__tnxSteamProfileCleanup'
 
-      const state={users:[],inventories:[],items:[],activeUser:null,inventoryFilter:'all'}
-      const profileSearch=document.getElementById('profileSearch'),clearProfileSearch=document.getElementById('clearProfileSearch'),profileResults=document.getElementById('profileResults'),profileEmpty=document.getElementById('profileEmpty'),profileContent=document.getElementById('profileContent'),profileHeader=document.getElementById('profileHeader'),badgeShowcase=document.getElementById('badgeShowcase'),inventoryGrid=document.getElementById('inventoryGrid'),inventoryEmpty=document.getElementById('inventoryEmpty'),inventoryCount=document.getElementById('inventoryCount'),inventoryFilters=Array.from(document.querySelectorAll('[data-inv-filter]')),quickStats=document.getElementById('quickStats'),rareItems=document.getElementById('rareItems'),badgesPageLink=document.getElementById('badgesPageLink'),copyProfileLink=document.getElementById('copyProfileLink'),backToTop=document.getElementById('backToTop')
-      const ITEM_META={'crown':{icon:'👑',type:'featured',rarity:'legendary'},'نيوك':{icon:'💣',type:'featured',rarity:'legendary'},'vip+':{icon:'💎',type:'license',rarity:'rare'},'رخصة محامي':{icon:'⚖️',type:'license',rarity:'rare'},'البريد':{icon:'📬',type:'usable',rarity:'uncommon'},'صندوق':{icon:'🎁',type:'box',rarity:'rare'},'صندوق السمعة':{icon:'🎁',type:'box',rarity:'rare'},'خشب':{icon:'🪵',type:'resource',rarity:'common'},'حديد':{icon:'⛓️',type:'resource',rarity:'common'},'ذهب':{icon:'🟡',type:'resource',rarity:'rare'}}
-      const JOB_ICONS={tier1_Citizen:'mdi:account',tier2_Farmer:'mdi:sprout',tier3_Merchant:'mdi:store',tier3_Lawyer:'mdi:gavel',tier4_Judge:'mdi:scale-balance',tier5_King:'mdi:crown'}
-      function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
-      function normalize(v){return String(v||'').toLowerCase().replace(/[ًٌٍَُِّْـ]/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/\s+/g,' ').trim()}
-      function slug(v){return normalize(v).replace(/\s+/g,'')}
-      function formatNumber(v){return Number(v||0).toLocaleString('en-US')}
-      function safeUrl(v){const u=String(v||'').trim();if(!/^https?:\/\//i.test(u)&&!u.startsWith('/'))return'';return u.replace(/["'()\\]/g,'')}
-      function cssUrl(v){const u=safeUrl(v);return u?`url('${u}')`:'none'}
-      function safeColor(v,f='#423fff'){const c=String(v||'').trim();return /^#[0-9a-fA-F]{6}$/.test(c)?c:f}
-      function getUserName(u){return String(u?.userLogin||u?.userName||u?.UserLogin||u?.UserName||'').trim()}
-      function getDisplayName(u){return String(u?.userName||u?.UserName||u?.userLogin||u?.UserLogin||'').trim()}
-      function getInvName(u){return String(u?.userLogin||u?.UserLogin||u?.userName||u?.UserName||'').trim()}
-      function getBadgeImage(b){return safeUrl(b?.url||b?.image||b?.badgeUrl||b?.value2)}
-      function getBadgeName(b){return String(b?.name||b?.title||b?.badgeName||b?.value1||'').trim()}
-      function getItemName(i){return String(i?.name||i?.itemName||i?.Name||i?.key||'').trim()}
-      function getItemQty(i){const n=Number(i?.quantity??i?.qty??i?.count??i?.amount??i?.Value??1);return Number.isFinite(n)&&n>0?n:1}
-      function getItemDetails(name){const k=slug(name);return state.items.find(i=>slug(i.name||i.itemName||i.title)===k)||null}
-      function getItemMeta(name,details){const k=slug(name);const hard=Object.entries(ITEM_META).find(([n])=>slug(n)===k)?.[1]||null;return{icon:hard?.icon||details?.icon||'⬟',type:hard?.type||normalize(details?.category||details?.type||'')||'usable',rarity:hard?.rarity||normalize(details?.rarity||'')||'common'}}
-      function getUserInventory(user){const id=String(user?.userId||user?.UserId||'').trim();const login=normalize(getUserName(user));return state.inventories.find(e=>{const invId=String(e.userId||e.UserId||'').trim();const invLogin=normalize(getInvName(e));return(id&&invId&&id===invId)||(login&&invLogin&&login===invLogin)})||null}
-      function getInventoryItems(user){const inv=getUserInventory(user);if(!inv)return[];if(Array.isArray(inv.items))return inv.items;if(Array.isArray(inv.inventory))return inv.inventory;return[]}
-      function getProfileLink(user){const url=new URL(window.location.href);url.searchParams.set('user',getUserName(user));url.hash='';return url.toString()}
-      async function copyText(text,button,done='تم النسخ'){if(!button)return;const old=button.textContent;try{await navigator.clipboard.writeText(text);button.textContent=done;button.classList.add('is-copied');addTimer(setTimeout(()=>{button.textContent=old;button.classList.remove('is-copied')},1000))}catch{button.textContent=text;addTimer(setTimeout(()=>button.textContent=old,1300))}}
-      async function loadJson(url,fallback){try{const res=await fetch(`${url}?v=${Date.now()}`,{cache:'no-store'});if(!res.ok)throw new Error(url);return await res.json()}catch(e){console.error(e);return fallback}}
-      async function loadData(){const [users,inv,itemsPayload]=await Promise.all([loadJson('/api/user_badges.json',[]),loadJson('/api/user_inventory.json',[]),loadJson('/api/items.json',{items:[]})]);state.users=Array.isArray(users)?users:[];state.inventories=Array.isArray(inv)?inv:[];state.items=Array.isArray(itemsPayload)?itemsPayload:Array.isArray(itemsPayload?.items)?itemsPayload.items:[]}
-      function renderResults(query){const q=normalize(query);profileResults.innerHTML='';if(!q)return;const matches=state.users.filter(u=>normalize(getDisplayName(u)).includes(q)||normalize(getUserName(u)).includes(q)).slice(0,10);if(!matches.length){profileResults.innerHTML='<div class="empty empty-small"><strong>ما فيه نتائج</strong><span>تأكد من اسم المستخدم.</span></div>';return}profileResults.innerHTML=matches.map((u,i)=>{const name=getDisplayName(u),login=getUserName(u),avatar=safeUrl(u.profileImageUrl||u.avatar||u.ProfileImageUrl);return`<button type="button" class="profile-result" data-result-index="${i}"><img src="${esc(avatar)}" alt="${esc(name)}" loading="lazy"><div><strong>${esc(name)}</strong><span>${esc(login)}</span></div></button>`}).join('');Array.from(profileResults.querySelectorAll('[data-result-index]')).forEach(btn=>btn.addEventListener('click',()=>{const user=matches[Number(btn.dataset.resultIndex)];if(!user)return;profileSearch.value='';profileResults.innerHTML='';const url=new URL(window.location.href);url.searchParams.set('user',getUserName(user));url.hash='';history.replaceState(null,'',`${url.pathname}${url.search}`);renderProfile(user)}))}
-      function renderHeader(user){const name=getDisplayName(user),login=getUserName(user),color=safeColor(user.backgroundColor||user.profileColor||'#423fff'),avatar=safeUrl(user.profileImageUrl||user.avatar||user.ProfileImageUrl),banner=safeUrl(user.bannerImage||user.banner||user.backgroundImage),jobName=user.jobName||'Citizen',jobId=user.jobId||'tier1_Citizen',jobIcon=JOB_ICONS[jobId]||'mdi:account';profileHeader.innerHTML=`<div class="profile-banner" style="background-image:${cssUrl(banner)};background-color:${color}"></div><div class="profile-header-body" style="--profile-color:${color}"><img class="profile-avatar" src="${esc(avatar)}" alt="${esc(name)}" loading="lazy"><div class="profile-title"><h2 title="${esc(name)}">${esc(name)}</h2><p>${esc(login)}</p><div class="profile-job"><iconify-icon icon="${esc(jobIcon)}"></iconify-icon><span>${esc(jobName)}</span></div></div><div class="profile-money"><div class="money-card"><span>النقاط</span><strong>${formatNumber(user.points)}</strong></div><div class="money-card"><span>الذهب</span><strong>${formatNumber(user.gold)}</strong></div></div></div>`}
-      function renderBadges(user){const badges=Array.isArray(user.badges)?user.badges:[];const equipped=badges.filter(b=>b.equipped).slice(0,8);const shown=equipped.length?equipped:badges.slice(0,8);if(!shown.length){badgeShowcase.innerHTML='<div class="empty empty-small"><strong>ما فيه بادجات</strong><span>ما تم العثور على بادجات لهذا العضو.</span></div>';return}badgeShowcase.innerHTML=shown.map(b=>`<div class="badge-tile"><img src="${esc(getBadgeImage(b))}" alt="${esc(getBadgeName(b))}" loading="lazy"><span>${esc(getBadgeName(b))}</span></div>`).join('')}
-      function filteredInventory(user){const items=getInventoryItems(user).map(e=>{const name=getItemName(e),qty=getItemQty(e),details=getItemDetails(name),meta=getItemMeta(name,details),description=details?.description||details?.desc||details?.how||'غرض من حقيبة العضو.';return{name,qty,details,meta,description}}).filter(i=>i.name);if(state.inventoryFilter==='all')return items;if(state.inventoryFilter==='featured')return items.filter(i=>i.meta.rarity==='legendary'||i.meta.type==='featured');if(state.inventoryFilter==='usable')return items.filter(i=>i.meta.type==='usable'||i.details?.usable===true);return items.filter(i=>i.meta.type===state.inventoryFilter)}
-      function renderInventory(user){const items=filteredInventory(user);inventoryFilters.forEach(b=>b.classList.toggle('is-active',b.dataset.invFilter===state.inventoryFilter));inventoryCount.textContent=String(getInventoryItems(user).length);inventoryEmpty.classList.toggle('hidden',items.length>0);inventoryGrid.classList.toggle('hidden',items.length===0);inventoryGrid.innerHTML=items.map(i=>{const rare=i.meta.rarity==='legendary'||i.meta.rarity==='rare',price=i.details?.price||i.details?.cost||i.details?.sellPrice||'';return`<article class="item-card${rare?' is-rare':''}"><span class="item-qty">x${formatNumber(i.qty)}</span><div class="item-icon">${esc(i.meta.icon)}</div><div><h3>${esc(i.name)}</h3><p>${esc(i.description)}</p></div><div class="item-meta"><span>${esc(i.meta.type)}</span><span>${esc(i.meta.rarity)}</span>${price?`<span>${formatNumber(price)} نقطة</span>`:''}</div></article>`}).join('')}
-      function renderStats(user){const inv=getInventoryItems(user),totalQty=inv.reduce((s,i)=>s+getItemQty(i),0),badges=Array.isArray(user.badges)?user.badges:[],equipped=badges.filter(b=>b.equipped).length,rare=inv.filter(i=>{const meta=getItemMeta(getItemName(i),getItemDetails(getItemName(i)));return meta.rarity==='legendary'||meta.rarity==='rare'}).length;quickStats.innerHTML=`<div class="stat-row"><span>عدد البادجات</span><strong>${formatNumber(badges.length)}</strong></div><div class="stat-row"><span>بادجات مجهزة</span><strong>${formatNumber(equipped)}</strong></div><div class="stat-row"><span>أنواع الأغراض</span><strong>${formatNumber(inv.length)}</strong></div><div class="stat-row"><span>إجمالي الكميات</span><strong>${formatNumber(totalQty)}</strong></div><div class="stat-row"><span>أغراض نادرة</span><strong>${formatNumber(rare)}</strong></div>`}
-      function renderRare(user){const items=getInventoryItems(user).map(e=>{const name=getItemName(e),qty=getItemQty(e),meta=getItemMeta(name,getItemDetails(name));return{name,qty,meta}}).filter(i=>i.meta.rarity==='legendary'||i.meta.rarity==='rare'||i.meta.type==='featured').slice(0,6);if(!items.length){rareItems.innerHTML='<div class="empty empty-small"><strong>ما فيه عرض</strong><span>ما لقينا أغراض نادرة حاليًا.</span></div>';return}rareItems.innerHTML=items.map(i=>`<div class="rare-item"><strong>${esc(i.meta.icon)} ${esc(i.name)}</strong><span>x${formatNumber(i.qty)}</span></div>`).join('')}
-      function renderProfile(user){state.activeUser=user;profileEmpty.classList.add('hidden');profileContent.classList.remove('hidden');renderHeader(user);renderBadges(user);renderInventory(user);renderStats(user);renderRare(user);badgesPageLink.href=`/badges?user=${encodeURIComponent(getUserName(user))}`}
-      function openFromQuery(){const raw=new URLSearchParams(window.location.search).get('user');if(!raw)return false;const key=normalize(raw);let user=state.users.find(u=>normalize(getUserName(u))===key)||state.users.find(u=>normalize(getDisplayName(u))===key)||state.users.find(u=>normalize(getUserName(u)).includes(key)||normalize(getDisplayName(u)).includes(key));if(!user){profileEmpty.innerHTML='<strong>ما لقيت العضو</strong><span>تأكد أن اسمه موجود في user_badges.json أو جرب البحث من فوق.</span>';profileEmpty.classList.remove('hidden');profileContent.classList.add('hidden');return false}renderProfile(user);return true}
-      function handleBack(){backToTop.classList.toggle('is-visible',window.scrollY>520)}
-      addListener(profileSearch,'input',()=>renderResults(profileSearch.value));addListener(clearProfileSearch,'click',()=>{profileSearch.value='';profileResults.innerHTML='';profileSearch.focus()});inventoryFilters.forEach(b=>addListener(b,'click',()=>{state.inventoryFilter=b.dataset.invFilter||'all';if(state.activeUser)renderInventory(state.activeUser)}));addListener(copyProfileLink,'click',()=>{if(state.activeUser)copyText(getProfileLink(state.activeUser),copyProfileLink,'تم نسخ الرابط')});addListener(backToTop,'click',()=>window.scrollTo({top:0,behavior:'smooth'}));addListener(window,'scroll',handleBack,{passive:true});(async()=>{await loadData();openFromQuery();handleBack()})()
+      if (window[cleanupKey]) {
+        window[cleanupKey]()
+      }
+
+      const listeners = []
+      const timers = []
+
+      function addListener(target, event, handler, options) {
+        if (!target) return
+        target.addEventListener(event, handler, options)
+        listeners.push(() => target.removeEventListener(event, handler, options))
+      }
+
+      function addTimer(id) {
+        timers.push(id)
+        return id
+      }
+
+      window[cleanupKey] = () => {
+        listeners.forEach((cleanup) => cleanup())
+        listeners.length = 0
+        timers.forEach((timer) => window.clearTimeout(timer))
+        timers.length = 0
+      }
+
+      const state = {
+        users: [],
+        inventories: [],
+        items: [],
+        activeUser: null,
+        filter: 'all',
+      }
+
+      const profileSearch = document.getElementById('profileSearch')
+      const clearProfileSearch = document.getElementById('clearProfileSearch')
+      const profileResults = document.getElementById('profileResults')
+      const emptyState = document.getElementById('emptyState')
+      const profileContent = document.getElementById('profileContent')
+      const steamCard = document.getElementById('steamCard')
+      const featuredShowcase = document.getElementById('featuredShowcase')
+      const inventoryGrid = document.getElementById('inventoryGrid')
+      const inventoryEmpty = document.getElementById('inventoryEmpty')
+      const inventoryTypeCount = document.getElementById('inventoryTypeCount')
+      const badgeCollection = document.getElementById('badgeCollection')
+      const statsList = document.getElementById('statsList')
+      const rareList = document.getElementById('rareList')
+      const badgesLink = document.getElementById('badgesLink')
+      const copyProfileLink = document.getElementById('copyProfileLink')
+      const backToTop = document.getElementById('backToTop')
+      const filterButtons = Array.from(document.querySelectorAll('[data-filter]'))
+
+      const JOB_ICONS = {
+        tier1_Citizen: 'mdi:account',
+        tier2_Farmer: 'mdi:sprout',
+        tier3_Merchant: 'mdi:store',
+        tier3_Lawyer: 'mdi:gavel',
+        tier4_Judge: 'mdi:scale-balance',
+        tier5_King: 'mdi:crown',
+      }
+
+      const ITEM_META = {
+        crown: { icon: '👑', type: 'featured', rarity: 'legendary' },
+        'ملك': { icon: '👑', type: 'featured', rarity: 'legendary' },
+        'نيوك': { icon: '💣', type: 'featured', rarity: 'legendary' },
+        'vip+': { icon: '💎', type: 'license', rarity: 'rare' },
+        'vip': { icon: '💎', type: 'license', rarity: 'rare' },
+        'رخصة محامي': { icon: '⚖️', type: 'license', rarity: 'rare' },
+        'البريد': { icon: '📬', type: 'usable', rarity: 'uncommon' },
+        'صندوق': { icon: '🎁', type: 'box', rarity: 'rare' },
+        'صندوق السمعة': { icon: '🎁', type: 'box', rarity: 'rare' },
+        'خشب': { icon: '🪵', type: 'resource', rarity: 'common' },
+        'حديد': { icon: '⛓️', type: 'resource', rarity: 'common' },
+        'ذهب': { icon: '🟡', type: 'resource', rarity: 'rare' },
+      }
+
+      function esc(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;')
+      }
+
+      function normalize(value) {
+        return String(value || '')
+          .toLowerCase()
+          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[أإآ]/g, 'ا')
+          .replace(/ة/g, 'ه')
+          .replace(/ى/g, 'ي')
+          .replace(/\s+/g, ' ')
+          .trim()
+      }
+
+      function key(value) {
+        return normalize(value).replace(/\s+/g, '')
+      }
+
+      function formatNumber(value) {
+        const n = Number(value || 0)
+        return Number.isFinite(n) ? n.toLocaleString('en-US') : '0'
+      }
+
+      function safeUrl(value) {
+        const url = String(value || '').trim()
+        if (!/^https?:\/\//i.test(url) && !url.startsWith('/')) return ''
+        return url.replace(/["'()\\]/g, '')
+      }
+
+      function cssUrl(value) {
+        const url = safeUrl(value)
+        return url ? `url('${url}')` : 'none'
+      }
+
+      function safeColor(value, fallback = '#423fff') {
+        const color = String(value || '').trim()
+        return /^#[0-9a-fA-F]{6}$/.test(color) ? color : fallback
+      }
+
+      function hexToRgb(hex) {
+        const clean = safeColor(hex).replace('#', '')
+        const value = parseInt(clean, 16)
+        return [(value >> 16) & 255, (value >> 8) & 255, value & 255].join(', ')
+      }
+
+      function displayName(user) {
+        return String(user?.userName || user?.UserName || user?.userLogin || user?.UserLogin || '').trim()
+      }
+
+      function loginName(user) {
+        return String(user?.userLogin || user?.UserLogin || user?.userName || user?.UserName || '').trim()
+      }
+
+      function userId(user) {
+        return String(user?.userId || user?.UserId || '').trim()
+      }
+
+      function getBadgeName(badge) {
+        return String(badge?.name || badge?.badgeName || badge?.title || badge?.value1 || '').trim()
+      }
+
+      function getBadgeImage(badge) {
+        return safeUrl(badge?.url || badge?.image || badge?.badgeUrl || badge?.value2)
+      }
+
+      function itemName(item) {
+        return String(item?.name || item?.itemName || item?.Name || item?.key || '').trim()
+      }
+
+      function itemQty(item) {
+        const raw = item?.quantity ?? item?.qty ?? item?.count ?? item?.amount ?? item?.Value ?? 1
+        const n = Number(raw)
+        return Number.isFinite(n) && n > 0 ? n : 1
+      }
+
+      function getDetails(name) {
+        const k = key(name)
+        return state.items.find((item) => key(item.name || item.itemName || item.title) === k) || null
+      }
+
+      function getMeta(name, details) {
+        const k = key(name)
+        const hard = Object.entries(ITEM_META).find(([metaName]) => key(metaName) === k)?.[1] || null
+        const type = normalize(details?.category || details?.type || '')
+        const rarity = normalize(details?.rarity || '')
+
+        return {
+          icon: hard?.icon || details?.icon || '⬟',
+          type: hard?.type || type || 'usable',
+          rarity: hard?.rarity || rarity || 'common',
+        }
+      }
+
+      function findInventory(user) {
+        const id = userId(user)
+        const login = normalize(loginName(user))
+
+        return state.inventories.find((entry) => {
+          const entryId = String(entry.userId || entry.UserId || '').trim()
+          const entryLogin = normalize(entry.userLogin || entry.UserLogin || entry.userName || entry.UserName || '')
+          return (id && entryId && id === entryId) || (login && entryLogin && login === entryLogin)
+        }) || null
+      }
+
+      function inventoryItems(user) {
+        const inv = findInventory(user)
+        if (!inv) return []
+        if (Array.isArray(inv.items)) return inv.items
+        if (Array.isArray(inv.inventory)) return inv.inventory
+        return []
+      }
+
+      function enrichedInventory(user) {
+        return inventoryItems(user)
+          .map((entry) => {
+            const name = itemName(entry)
+            const qty = itemQty(entry)
+            const details = getDetails(name)
+            const meta = getMeta(name, details)
+            const description = details?.description || details?.desc || details?.how || 'غرض موجود في حقيبة العضو.'
+            const price = details?.price || details?.cost || details?.sellPrice || ''
+
+            return { name, qty, details, meta, description, price }
+          })
+          .filter((item) => item.name)
+      }
+
+      function filteredInventory(user) {
+        const items = enrichedInventory(user)
+
+        if (state.filter === 'all') return items
+        if (state.filter === 'rare') return items.filter((item) => ['legendary', 'rare'].includes(item.meta.rarity) || item.meta.type === 'featured')
+        return items.filter((item) => item.meta.type === state.filter)
+      }
+
+      function profileUrl(user) {
+        const url = new URL(window.location.href)
+        url.searchParams.set('user', loginName(user))
+        url.hash = ''
+        return url.toString()
+      }
+
+      function updateQuery(user) {
+        const url = new URL(window.location.href)
+        url.searchParams.set('user', loginName(user))
+        url.hash = ''
+        history.replaceState(null, '', `${url.pathname}${url.search}`)
+      }
+
+      async function copyText(text, button, done = 'تم النسخ') {
+        if (!button) return
+        const old = button.textContent
+
+        try {
+          await navigator.clipboard.writeText(text)
+          button.textContent = done
+          button.classList.add('is-copied')
+          addTimer(window.setTimeout(() => {
+            button.textContent = old
+            button.classList.remove('is-copied')
+          }, 1000))
+        } catch {
+          button.textContent = text
+          addTimer(window.setTimeout(() => {
+            button.textContent = old
+          }, 1300))
+        }
+      }
+
+      async function loadJson(url, fallback) {
+        try {
+          const res = await fetch(`${url}?v=${Date.now()}`, { cache: 'no-store' })
+          if (!res.ok) throw new Error(`${url} failed`)
+          return await res.json()
+        } catch (err) {
+          console.error(err)
+          return fallback
+        }
+      }
+
+      async function loadData() {
+        const [users, inventories, itemsPayload] = await Promise.all([
+          loadJson('/api/user_badges.json', []),
+          loadJson('/api/user_inventory.json', []),
+          loadJson('/api/items.json', { items: [] }),
+        ])
+
+        state.users = Array.isArray(users) ? users : []
+        state.inventories = Array.isArray(inventories) ? inventories : []
+        state.items = Array.isArray(itemsPayload) ? itemsPayload : Array.isArray(itemsPayload?.items) ? itemsPayload.items : []
+      }
+
+      function renderSearchResults(query) {
+        if (!profileResults) return
+
+        profileResults.innerHTML = ''
+
+        const q = normalize(query)
+        if (!q) return
+
+        const matches = state.users
+          .filter((user) => normalize(displayName(user)).includes(q) || normalize(loginName(user)).includes(q))
+          .slice(0, 10)
+
+        if (matches.length === 0) {
+          profileResults.innerHTML = `
+            <div class="mini-empty">
+              <strong>ما فيه نتائج</strong>
+              <span>تأكد من اسم المستخدم.</span>
+            </div>
+          `
+          return
+        }
+
+        profileResults.innerHTML = matches.map((user, index) => {
+          const name = displayName(user)
+          const login = loginName(user)
+          const avatar = safeUrl(user.profileImageUrl || user.avatar || user.ProfileImageUrl)
+
+          return `
+            <button type="button" class="profile-result" data-result-index="${index}">
+              <img src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />
+              <div>
+                <strong>${esc(name)}</strong>
+                <span>${esc(login)}</span>
+              </div>
+            </button>
+          `
+        }).join('')
+
+        profileResults.querySelectorAll('[data-result-index]').forEach((button) => {
+          button.addEventListener('click', () => {
+            const user = matches[Number(button.dataset.resultIndex)]
+            if (!user) return
+            if (profileSearch) profileSearch.value = ''
+            profileResults.innerHTML = ''
+            updateQuery(user)
+            renderProfile(user)
+          })
+        })
+      }
+
+      function renderSteamCard(user) {
+        const name = displayName(user)
+        const login = loginName(user)
+        const avatar = safeUrl(user.profileImageUrl || user.avatar || user.ProfileImageUrl)
+        const banner = safeUrl(user.bannerImage || user.banner || user.backgroundImage)
+        const color = safeColor(user.backgroundColor || user.profileColor || '#423fff')
+        const points = Number(user.points || 0)
+        const gold = Number(user.gold || 0)
+        const level = Math.max(1, Math.floor(points / 100000) + 1)
+        const jobName = user.jobName || 'Citizen'
+        const jobId = user.jobId || 'tier1_Citizen'
+        const jobIcon = JOB_ICONS[jobId] || 'mdi:account'
+        const badges = Array.isArray(user.badges) ? user.badges : []
+        const equipped = badges.filter((badge) => badge.equipped).slice(0, 7)
+        const shownBadges = equipped.length ? equipped : badges.slice(0, 7)
+
+        steamCard.innerHTML = `
+          <div class="steam-cover" style="background-image: ${cssUrl(banner)}; background-color: ${color};"></div>
+
+          <div class="steam-profile-inner" style="--accent-rgb: ${hexToRgb(color)};">
+            <div class="avatar-block">
+              <div class="avatar-frame">
+                <img src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />
+                <span class="online-dot"></span>
+              </div>
+
+              <div class="level-pill">LEVEL ${formatNumber(level)}</div>
+            </div>
+
+            <div class="profile-identity">
+              <h2 title="${esc(name)}">${esc(name)}</h2>
+              <p class="profile-login">${esc(login)}</p>
+
+              <div class="job-pill">
+                <iconify-icon icon="${esc(jobIcon)}"></iconify-icon>
+                <span>${esc(jobName)}</span>
+              </div>
+
+              <div class="mini-showcase">
+                ${
+                  shownBadges.length
+                    ? shownBadges.map((badge) => {
+                        const badgeName = getBadgeName(badge)
+                        const img = getBadgeImage(badge)
+                        return `
+                          <div class="mini-badge" title="${esc(badgeName)}">
+                            <img src="${esc(img)}" alt="${esc(badgeName)}" loading="lazy" />
+                          </div>
+                        `
+                      }).join('')
+                    : '<div class="mini-badge">—</div>'
+                }
+              </div>
+            </div>
+
+            <div class="profile-wallet">
+              <div class="wallet-card">
+                <span>النقاط</span>
+                <strong>${formatNumber(points)}</strong>
+              </div>
+
+              <div class="wallet-card">
+                <span>الذهب</span>
+                <strong>${formatNumber(gold)}</strong>
+              </div>
+            </div>
+          </div>
+        `
+      }
+
+      function renderFeatured(user) {
+        const items = enrichedInventory(user)
+        const rare = [...items]
+          .sort((a, b) => {
+            const rank = { legendary: 4, rare: 3, uncommon: 2, common: 1 }
+            return (rank[b.meta.rarity] || 0) - (rank[a.meta.rarity] || 0) || b.qty - a.qty
+          })
+
+        const main = rare[0]
+        const stack = rare.slice(1, 5)
+
+        if (!main) {
+          featuredShowcase.innerHTML = `
+            <div class="mini-empty">
+              <strong>ما فيه واجهة أغراض</strong>
+              <span>الحقيبة فاضية أو لم يتم تصدير user_inventory.json بعد.</span>
+            </div>
+          `
+          return
+        }
+
+        featuredShowcase.innerHTML = `
+          <article class="big-feature-card">
+            <div class="big-feature-icon">${esc(main.meta.icon)}</div>
+            <h3>${esc(main.name)}</h3>
+            <p>${esc(main.description)}</p>
+            <strong>x${formatNumber(main.qty)}</strong>
+          </article>
+
+          <div class="showcase-stack">
+            ${
+              stack.length
+                ? stack.map((item) => `
+                    <div class="showcase-row">
+                      <div>
+                        <strong>${esc(item.meta.icon)} ${esc(item.name)}</strong>
+                        <span>${esc(item.meta.rarity)} · ${esc(item.meta.type)}</span>
+                      </div>
+                      <b>x${formatNumber(item.qty)}</b>
+                    </div>
+                  `).join('')
+                : `
+                  <div class="showcase-row">
+                    <div>
+                      <strong>لا توجد أغراض إضافية</strong>
+                      <span>سيظهر هنا المزيد عند وجود أغراض.</span>
+                    </div>
+                    <b>—</b>
+                  </div>
+                `
+            }
+          </div>
+        `
+      }
+
+      function renderInventory(user) {
+        const allItems = enrichedInventory(user)
+        const items = filteredInventory(user)
+
+        if (inventoryTypeCount) inventoryTypeCount.textContent = String(allItems.length)
+
+        filterButtons.forEach((button) => {
+          button.classList.toggle('is-active', button.dataset.filter === state.filter)
+        })
+
+        inventoryEmpty?.classList.toggle('hidden', items.length > 0)
+        inventoryGrid?.classList.toggle('hidden', items.length === 0)
+
+        inventoryGrid.innerHTML = items.map((item) => {
+          const rare = ['legendary', 'rare'].includes(item.meta.rarity) || item.meta.type === 'featured'
+          return `
+            <article class="inventory-item${rare ? ' is-rare' : ''}">
+              <span class="qty">x${formatNumber(item.qty)}</span>
+              <div class="item-icon">${esc(item.meta.icon)}</div>
+
+              <h3>${esc(item.name)}</h3>
+              <p>${esc(item.description)}</p>
+
+              <div class="item-tags">
+                <span>${esc(item.meta.type)}</span>
+                <span>${esc(item.meta.rarity)}</span>
+                ${item.price ? `<span>${formatNumber(item.price)} نقطة</span>` : ''}
+              </div>
+            </article>
+          `
+        }).join('')
+      }
+
+      function renderBadges(user) {
+        const badges = Array.isArray(user.badges) ? user.badges : []
+
+        if (!badges.length) {
+          badgeCollection.innerHTML = `
+            <div class="mini-empty">
+              <strong>ما فيه بادجات</strong>
+              <span>ما تم العثور على بادجات لهذا العضو.</span>
+            </div>
+          `
+          return
+        }
+
+        badgeCollection.innerHTML = badges.slice(0, 36).map((badge) => {
+          const name = getBadgeName(badge)
+          const img = getBadgeImage(badge)
+          return `
+            <div class="badge-tile">
+              <img src="${esc(img)}" alt="${esc(name)}" loading="lazy" />
+              <span>${esc(name)}</span>
+            </div>
+          `
+        }).join('')
+      }
+
+      function renderStats(user) {
+        const badges = Array.isArray(user.badges) ? user.badges : []
+        const equipped = badges.filter((badge) => badge.equipped).length
+        const items = enrichedInventory(user)
+        const totalQty = items.reduce((sum, item) => sum + item.qty, 0)
+        const rareCount = items.filter((item) => ['legendary', 'rare'].includes(item.meta.rarity) || item.meta.type === 'featured').length
+
+        statsList.innerHTML = `
+          <div class="stat-row">
+            <span>عدد البادجات</span>
+            <strong>${formatNumber(badges.length)}</strong>
+          </div>
+
+          <div class="stat-row">
+            <span>بادجات الواجهة</span>
+            <strong>${formatNumber(equipped)}</strong>
+          </div>
+
+          <div class="stat-row">
+            <span>أنواع الأغراض</span>
+            <strong>${formatNumber(items.length)}</strong>
+          </div>
+
+          <div class="stat-row">
+            <span>إجمالي الكميات</span>
+            <strong>${formatNumber(totalQty)}</strong>
+          </div>
+
+          <div class="stat-row">
+            <span>أغراض نادرة</span>
+            <strong>${formatNumber(rareCount)}</strong>
+          </div>
+        `
+      }
+
+      function renderRare(user) {
+        const items = enrichedInventory(user)
+          .filter((item) => ['legendary', 'rare'].includes(item.meta.rarity) || item.meta.type === 'featured')
+          .slice(0, 8)
+
+        if (!items.length) {
+          rareList.innerHTML = `
+            <div class="mini-empty">
+              <strong>ما فيه أغراض نادرة</strong>
+              <span>بتظهر هنا إذا صار عنده أغراض نادرة.</span>
+            </div>
+          `
+          return
+        }
+
+        rareList.innerHTML = items.map((item) => `
+          <div class="rare-row">
+            <strong>${esc(item.meta.icon)} ${esc(item.name)}</strong>
+            <span>x${formatNumber(item.qty)}</span>
+          </div>
+        `).join('')
+      }
+
+      function renderProfile(user) {
+        state.activeUser = user
+        emptyState?.classList.add('hidden')
+        profileContent?.classList.remove('hidden')
+
+        renderSteamCard(user)
+        renderFeatured(user)
+        renderInventory(user)
+        renderBadges(user)
+        renderStats(user)
+        renderRare(user)
+
+        const login = loginName(user)
+        if (badgesLink) badgesLink.href = `/badges?user=${encodeURIComponent(login)}`
+      }
+
+      function openFromQuery() {
+        const params = new URLSearchParams(window.location.search)
+        const raw = params.get('user')
+        if (!raw) return false
+
+        const q = normalize(raw)
+
+        let user = state.users.find((entry) => normalize(loginName(entry)) === q)
+        if (!user) user = state.users.find((entry) => normalize(displayName(entry)) === q)
+        if (!user) user = state.users.find((entry) => normalize(loginName(entry)).includes(q) || normalize(displayName(entry)).includes(q))
+
+        if (!user) {
+          emptyState.innerHTML = `
+            <div class="empty-icon">!</div>
+            <strong>ما لقيت العضو</strong>
+            <span>تأكد أنه موجود في <b>user_badges.json</b>.</span>
+          `
+          emptyState.classList.remove('hidden')
+          profileContent.classList.add('hidden')
+          return false
+        }
+
+        renderProfile(user)
+        return true
+      }
+
+      function handleBackTop() {
+        backToTop?.classList.toggle('is-visible', window.scrollY > 520)
+      }
+
+      addListener(profileSearch, 'input', () => renderSearchResults(profileSearch.value))
+
+      addListener(clearProfileSearch, 'click', () => {
+        if (!profileSearch) return
+        profileSearch.value = ''
+        profileResults.innerHTML = ''
+        profileSearch.focus()
+      })
+
+      filterButtons.forEach((button) => {
+        addListener(button, 'click', () => {
+          state.filter = button.dataset.filter || 'all'
+          if (state.activeUser) renderInventory(state.activeUser)
+        })
+      })
+
+      addListener(copyProfileLink, 'click', () => {
+        if (!state.activeUser) return
+        copyText(profileUrl(state.activeUser), copyProfileLink, 'تم نسخ الرابط')
+      })
+
+      addListener(backToTop, 'click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      })
+
+      addListener(window, 'scroll', handleBackTop, { passive: true })
+
+      ;(async () => {
+        await loadData()
+        openFromQuery()
+        handleBackTop()
+      })()
     })()
   </script>
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
 </Layout>
