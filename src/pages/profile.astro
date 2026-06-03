@@ -4,29 +4,30 @@ import Layout from '~/layouts/PageLayout.astro'
 const metadata = {
   title: 'TNX6 Profile',
   ignoreTitleTemplate: true,
-  description: 'TNX6 member profile.',
+  description: 'TNX6 community member profile.',
 }
 ---
 
 <Layout metadata={metadata}>
-  <main class="tnx-profile" dir="rtl">
-    <div id="bg" class="bg"></div>
-    <div class="veil"></div>
+  <main class="tnx-profile-page" dir="rtl">
+    <div id="profileBg" class="profile-bg"></div>
+    <div class="profile-noise"></div>
+    <div class="profile-glow"></div>
 
-    <section class="shell">
+    <section class="profile-shell">
       <section id="searchView" class="search-view hidden">
         <div class="search-card">
-          <span class="label">TNX6 PROFILE</span>
+          <span class="kicker">TNX6 PROFILE</span>
           <h1>بروفايل العضو</h1>
           <p>ابحث باسم Twitch أو افتح رابط مباشر مثل <b>/profile?user=haneen48</b></p>
 
-          <div class="search">
+          <div class="search-box">
             <span>⌕</span>
             <input id="searchInput" type="search" autocomplete="off" placeholder="اكتب اسم المستخدم..." />
-            <button id="clearSearch" type="button" aria-label="مسح">×</button>
+            <button id="clearSearch" type="button" aria-label="مسح البحث">×</button>
           </div>
 
-          <div id="searchResults" class="results"></div>
+          <div id="searchResults" class="search-results"></div>
         </div>
       </section>
 
@@ -35,92 +36,151 @@ const metadata = {
         <span>تأكد من الاسم أو من ملف user_badges.json.</span>
       </section>
 
-      <section id="profileView" class="profile hidden">
-        <section class="profile-card">
-          <div id="cover" class="cover"></div>
+      <section id="profileView" class="profile-view hidden">
+        <header class="player-card">
+          <div id="coverArt" class="cover-art"></div>
 
-          <div class="profile-top">
-            <div class="avatar-wrap">
-              <div id="avatar" class="avatar"></div>
-              <span id="level" class="level">LVL 1</span>
+          <div class="player-core">
+            <div class="avatar-stack">
+              <div class="avatar-frame">
+                <div id="avatar" class="avatar"></div>
+              </div>
+              <div id="levelChip" class="level-chip">LVL 1</div>
             </div>
 
-            <div class="identity">
-              <h1 id="displayName">—</h1>
+            <div class="player-info">
+              <div class="name-row">
+                <h1 id="displayName">—</h1>
+                <span id="jobChip" class="job-chip">Citizen</span>
+              </div>
 
-              <div class="meta">
+              <div class="meta-row">
                 <span id="loginName">@—</span>
-                <span id="jobName">Citizen</span>
                 <span id="countryName" class="hidden">Saudi Arabia</span>
               </div>
 
-              <p id="bio">عضو في مجتمع TNX6.</p>
+              <p id="bioText" class="bio-text">عضو في مجتمع TNX6.</p>
 
               <div id="featuredBadges" class="featured-badges"></div>
             </div>
+
+            <div class="progress-card">
+              <div class="progress-top">
+                <span>Progress</span>
+                <strong id="levelLabel">Level 1</strong>
+              </div>
+
+              <div class="progress-track">
+                <div id="levelProgress" class="progress-fill"></div>
+              </div>
+
+              <p id="nextLevelText">—</p>
+            </div>
           </div>
 
-          <div class="wallet-row">
-            <div class="wallet-card">
+          <div class="wallet-strip">
+            <div class="wallet-cell">
               <span>النقاط</span>
-              <strong id="points">0</strong>
+              <strong id="pointsValue">0</strong>
             </div>
-            <div class="wallet-card gold">
+
+            <div class="wallet-cell">
               <span>الذهب</span>
-              <strong id="gold">0</strong>
+              <strong id="goldValue">0</strong>
             </div>
-            <div class="wallet-card rep">
+
+            <div class="wallet-cell">
               <span>السمعة</span>
-              <strong id="rep">0</strong>
+              <strong id="repValue">0</strong>
             </div>
-            <div class="wallet-card">
+
+            <div class="wallet-cell">
               <span>البادجات</span>
-              <strong id="badgeTotalTop">0</strong>
+              <strong id="badgesTopValue">0</strong>
             </div>
           </div>
-        </section>
+        </header>
 
-        <section class="tabs-card">
-          <nav class="tabs" aria-label="Profile sections">
-            <button class="is-active" type="button" data-tab="inventory">الأغراض <b id="tabInv">0</b></button>
-            <button type="button" data-tab="badges">البادجات <b id="tabBadges">0</b></button>
-            <button type="button" data-tab="mail">البريد <b id="tabMail">0</b></button>
-            <button type="button" data-tab="achievements">الإنجازات <b id="tabAch">0</b></button>
-          </nav>
-
-          <section id="inventoryPanel" class="tab-panel">
+        <section class="feature-row">
+          <article class="feature-card rare-feature">
             <div class="section-head">
               <div>
-                <span>INVENTORY</span>
-                <h2>حقيبة الأغراض</h2>
+                <span>RAREST ITEM</span>
+                <h2>أندر غرض</h2>
               </div>
             </div>
 
-            <div id="showcase" class="showcase"></div>
-            <div id="inventoryGrid" class="inventory-grid"></div>
-            <div id="inventoryEmpty" class="empty-line hidden">ما فيه أغراض في الحقيبة.</div>
-          </section>
+            <div id="rareFeature" class="rare-feature-body"></div>
+          </article>
 
-          <section id="badgesPanel" class="tab-panel hidden">
+          <article class="feature-card badge-feature">
             <div class="section-head">
               <div>
-                <span>BADGES</span>
-                <h2>بادجات العضو</h2>
+                <span>BADGE WALL</span>
+                <h2>واجهة البادجات</h2>
               </div>
+              <strong id="badgeCountMini">0</strong>
             </div>
 
-            <div id="badgesGrid" class="badges-grid"></div>
-            <div id="badgesEmpty" class="empty-line hidden">ما فيه بادجات ظاهرة.</div>
-          </section>
+            <div id="badgeWall" class="badge-wall"></div>
+          </article>
 
-          <section id="mailPanel" class="tab-panel hidden">
-            <div class="section-head mail-head">
+          <article class="feature-card mail-feature">
+            <div class="section-head">
               <div>
                 <span>MAILBOX</span>
+                <h2>آخر البريد</h2>
+              </div>
+              <strong id="mailCountMini">0</strong>
+            </div>
+
+            <div id="mailPreview" class="mail-preview"></div>
+          </article>
+        </section>
+
+        <section class="content-panel">
+          <div class="section-head inventory-head">
+            <div>
+              <span>INVENTORY</span>
+              <h2>حقيبة الأغراض</h2>
+            </div>
+
+            <div class="inventory-tools">
+              <button class="is-active" type="button" data-filter="all">الكل</button>
+              <button type="button" data-filter="rare">النادر</button>
+              <button type="button" data-filter="status">الحالات</button>
+              <button type="button" data-filter="attacks">الهجمات</button>
+              <button type="button" data-filter="boxes">الصناديق</button>
+              <button type="button" data-filter="resources">الموارد</button>
+            </div>
+          </div>
+
+          <div id="inventoryGrid" class="inventory-grid"></div>
+          <div id="inventoryEmpty" class="empty-line hidden">ما فيه أغراض مطابقة.</div>
+        </section>
+
+        <section class="lower-grid">
+          <article class="content-panel">
+            <div class="section-head">
+              <div>
+                <span>ACHIEVEMENTS</span>
+                <h2>الإنجازات</h2>
+              </div>
+              <strong id="achCount">0</strong>
+            </div>
+
+            <div id="achievementsList" class="achievements-list"></div>
+            <div id="achievementsEmpty" class="empty-line hidden">لا توجد إنجازات بعد.</div>
+          </article>
+
+          <article class="content-panel">
+            <div class="section-head">
+              <div>
+                <span>MESSAGES</span>
                 <h2>صندوق البريد</h2>
               </div>
 
-              <div class="mail-filter">
+              <div class="mail-tabs">
                 <button class="is-active" type="button" data-mail-filter="all">الكل</button>
                 <button type="button" data-mail-filter="unread">غير المقروء</button>
               </div>
@@ -128,22 +188,10 @@ const metadata = {
 
             <div id="mailList" class="mail-list"></div>
             <div id="mailEmpty" class="empty-line hidden">ما فيه رسائل.</div>
-          </section>
-
-          <section id="achievementsPanel" class="tab-panel hidden">
-            <div class="section-head">
-              <div>
-                <span>ACHIEVEMENTS</span>
-                <h2>الإنجازات</h2>
-              </div>
-            </div>
-
-            <div id="achievementsList" class="achievements-list"></div>
-            <div id="achievementsEmpty" class="empty-line hidden">لا توجد إنجازات بعد.</div>
-          </section>
+          </article>
         </section>
 
-        <section class="actions">
+        <section class="actions-row">
           <a id="badgesPageLink" href="/badges">فتح بطاقة البادجات</a>
           <button id="copyLink" type="button">نسخ رابط البروفايل</button>
         </section>
@@ -158,63 +206,76 @@ const metadata = {
 
     html {
       scrollbar-width: thin;
-      scrollbar-color: rgba(255,218,106,.48) rgba(0,0,0,.4);
+      scrollbar-color: rgba(255, 218, 106, .55) rgba(0, 0, 0, .45);
     }
 
     html::-webkit-scrollbar { width: 10px; }
-    html::-webkit-scrollbar-track { background: rgba(0,0,0,.4); }
+    html::-webkit-scrollbar-track { background: rgba(0, 0, 0, .45); }
     html::-webkit-scrollbar-thumb {
-      border: 2px solid rgba(0,0,0,.4);
+      border: 2px solid rgba(0, 0, 0, .45);
       border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255,218,106,.9), rgba(194,146,0,.58));
+      background: linear-gradient(180deg, rgba(255, 218, 106, .9), rgba(194, 146, 0, .55));
     }
 
-    .tnx-profile {
+    .tnx-profile-page {
       position: relative;
       min-height: 100vh;
       overflow: hidden;
-      background: #06060a;
+      background: #05050a;
       color: #f8fafc;
       font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    .bg {
+    .profile-bg {
       position: fixed;
       inset: 0;
       z-index: 0;
+      pointer-events: none;
       background:
-        radial-gradient(circle at 20% 10%, rgba(255,218,106,.16), transparent 30%),
-        radial-gradient(circle at 82% 18%, rgba(124,58,237,.16), transparent 32%),
-        linear-gradient(135deg, #06060a, #101018 52%, #150b04);
+        radial-gradient(circle at 18% 10%, rgba(255, 218, 106, .18), transparent 30%),
+        radial-gradient(circle at 84% 12%, rgba(124, 58, 237, .18), transparent 32%),
+        linear-gradient(135deg, #05050a 0%, #0e0e17 52%, #180c04 100%);
       background-position: center;
       background-size: cover;
-      filter: saturate(1.04) contrast(1.04);
+      filter: saturate(1.04) contrast(1.05);
       transform: scale(1.02);
-      pointer-events: none;
     }
 
-    .bg::after {
+    .profile-bg::after {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(180deg, rgba(0,0,0,.72), rgba(0,0,0,.3) 38%, rgba(0,0,0,.9)),
-        linear-gradient(90deg, rgba(0,0,0,.78), transparent 52%, rgba(0,0,0,.72));
+        linear-gradient(180deg, rgba(0,0,0,.72), rgba(0,0,0,.26) 38%, rgba(0,0,0,.9)),
+        linear-gradient(90deg, rgba(0,0,0,.78), transparent 50%, rgba(0,0,0,.72));
     }
 
-    .veil {
+    .profile-noise {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: .06;
+      background-image:
+        linear-gradient(rgba(255, 218, 106, .3) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 218, 106, .3) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(circle at center, black, transparent 76%);
+    }
+
+    .profile-glow {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at center, transparent, rgba(0,0,0,.28) 52%, rgba(0,0,0,.82));
+        radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.26) 52%, rgba(0,0,0,.84) 100%);
     }
 
-    .shell {
+    .profile-shell {
       position: relative;
       z-index: 1;
-      width: min(100%, 1120px);
+      width: min(100%, 1180px);
       margin: 0 auto;
       padding: 5.75rem 1rem 5rem;
     }
@@ -227,17 +288,17 @@ const metadata = {
 
     .search-card,
     .not-found {
-      width: min(100%, 620px);
+      width: min(100%, 640px);
       border: 1px solid rgba(255,218,106,.18);
-      border-radius: 30px;
+      border-radius: 32px;
       background: rgba(8,8,12,.84);
       padding: 2rem;
       text-align: center;
-      box-shadow: 0 28px 90px rgba(0,0,0,.48);
-      backdrop-filter: blur(18px);
+      box-shadow: 0 30px 100px rgba(0,0,0,.5);
+      backdrop-filter: blur(20px);
     }
 
-    .label {
+    .kicker {
       display: inline-flex;
       border: 1px solid rgba(255,218,106,.28);
       border-radius: 999px;
@@ -271,24 +332,24 @@ const metadata = {
       unicode-bidi: embed;
     }
 
-    .search {
+    .search-box {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr) auto;
       gap: .75rem;
       align-items: center;
       border: 1px solid rgba(255,218,106,.2);
       border-radius: 18px;
-      background: rgba(0,0,0,.34);
+      background: rgba(0,0,0,.36);
       padding: .85rem;
     }
 
-    .search span {
+    .search-box span {
       color: #ffda6a;
       font-size: 1.35rem;
       font-weight: 950;
     }
 
-    .search input {
+    .search-box input {
       border: 0;
       outline: 0;
       background: transparent;
@@ -297,7 +358,7 @@ const metadata = {
       font-weight: 850;
     }
 
-    .search button {
+    .search-box button {
       width: 2.2rem;
       height: 2.2rem;
       border: 1px solid rgba(255,218,106,.2);
@@ -308,13 +369,13 @@ const metadata = {
       cursor: pointer;
     }
 
-    .results {
+    .search-results {
       display: grid;
       gap: .55rem;
       margin-top: .85rem;
     }
 
-    .result {
+    .search-result {
       display: flex;
       align-items: center;
       gap: .75rem;
@@ -329,13 +390,13 @@ const metadata = {
       transition: 160ms ease;
     }
 
-    .result:hover {
+    .search-result:hover {
       transform: translateY(-1px);
       border-color: rgba(255,218,106,.42);
       background: rgba(255,218,106,.08);
     }
 
-    .result img {
+    .search-result img {
       width: 42px;
       height: 42px;
       border-radius: 12px;
@@ -343,14 +404,14 @@ const metadata = {
       background: #111;
     }
 
-    .result strong {
+    .search-result strong {
       display: block;
       color: #fff;
       font-size: .92rem;
       font-weight: 900;
     }
 
-    .result span {
+    .search-result span {
       display: block;
       margin-top: 2px;
       color: rgb(156,163,175);
@@ -377,88 +438,104 @@ const metadata = {
       font-size: .9rem;
     }
 
-    .profile {
+    .profile-view {
       display: grid;
       gap: 1rem;
     }
 
-    .profile-card {
+    .player-card {
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(255,218,106,.18);
       border-radius: 34px;
       background: rgba(8,8,12,.82);
-      box-shadow: 0 32px 100px rgba(0,0,0,.52);
-      backdrop-filter: blur(18px);
+      box-shadow: 0 34px 110px rgba(0,0,0,.52);
+      backdrop-filter: blur(20px);
     }
 
-    .cover {
-      height: 220px;
+    .cover-art {
+      height: 250px;
       background-position: center;
       background-size: cover;
     }
 
-    .cover::after {
+    .cover-art::after {
       content: "";
       display: block;
       width: 100%;
       height: 100%;
       background:
         linear-gradient(180deg, rgba(0,0,0,.12), rgba(8,8,12,.88)),
-        radial-gradient(circle at 20% 45%, rgba(var(--accent), .32), transparent 35%);
+        radial-gradient(circle at 22% 48%, rgba(var(--accent), .34), transparent 35%);
     }
 
-    .profile-top {
+    .player-core {
       position: relative;
       display: grid;
-      grid-template-columns: 150px minmax(0, 1fr);
-      gap: 1.25rem;
+      grid-template-columns: 162px minmax(0, 1fr) 270px;
+      gap: 1.2rem;
       align-items: end;
-      padding: 0 1.35rem 1.35rem;
-      margin-top: -78px;
+      padding: 0 1.35rem 1.1rem;
+      margin-top: -88px;
     }
 
-    .avatar-wrap {
+    .avatar-stack {
       display: grid;
       justify-items: center;
-      gap: .75rem;
+      gap: .7rem;
+    }
+
+    .avatar-frame {
+      width: 152px;
+      height: 152px;
+      border-radius: 34px;
+      padding: 4px;
+      background:
+        linear-gradient(135deg, rgba(255,218,106,.95), var(--profile-color, #ffda6a), rgba(255,255,255,.18));
+      box-shadow:
+        0 24px 48px rgba(0,0,0,.6),
+        0 0 30px color-mix(in srgb, var(--profile-color, #ffda6a) 36%, transparent);
     }
 
     .avatar {
-      width: 142px;
-      height: 142px;
-      border: 4px solid var(--profile-color, #ffda6a);
-      border-radius: 30px;
+      width: 100%;
+      height: 100%;
+      border-radius: 29px;
       background: #111 center / cover no-repeat;
-      box-shadow:
-        0 22px 46px rgba(0,0,0,.58),
-        0 0 28px color-mix(in srgb, var(--profile-color, #ffda6a) 38%, transparent);
     }
 
-    .level {
+    .level-chip {
       display: inline-flex;
       justify-content: center;
-      min-width: 6.2rem;
+      min-width: 6.4rem;
       border: 1px solid rgba(255,218,106,.32);
       border-radius: 999px;
-      background: rgba(0,0,0,.5);
+      background: rgba(0,0,0,.52);
       color: #ffda6a;
-      padding: .52rem .75rem;
+      padding: .54rem .8rem;
       font-size: .78rem;
       font-weight: 950;
       direction: ltr;
     }
 
-    .identity {
+    .player-info {
       min-width: 0;
-      padding-bottom: .25rem;
+      padding-bottom: .18rem;
     }
 
-    .identity h1 {
+    .name-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+
+    .name-row h1 {
       margin: 0;
       overflow: hidden;
       color: #fff;
-      font-size: clamp(2.45rem, 5vw, 5rem);
+      font-size: clamp(2.55rem, 5vw, 5.15rem);
       font-weight: 950;
       line-height: .95;
       letter-spacing: -.05em;
@@ -467,7 +544,19 @@ const metadata = {
       white-space: nowrap;
     }
 
-    .meta {
+    .job-chip {
+      flex-shrink: 0;
+      border: 1px solid rgba(255,218,106,.24);
+      border-radius: 999px;
+      background: rgba(0,0,0,.44);
+      color: #f7e6ac;
+      padding: .48rem .7rem;
+      font-size: .78rem;
+      font-weight: 900;
+      backdrop-filter: blur(12px);
+    }
+
+    .meta-row {
       display: flex;
       flex-wrap: wrap;
       gap: .5rem;
@@ -477,7 +566,7 @@ const metadata = {
       font-weight: 850;
     }
 
-    .meta span {
+    .meta-row span {
       border: 1px solid rgba(255,255,255,.12);
       border-radius: 999px;
       background: rgba(0,0,0,.34);
@@ -488,7 +577,7 @@ const metadata = {
       direction: ltr;
     }
 
-    .identity p {
+    .bio-text {
       max-width: 720px;
       margin: .78rem 0 0;
       color: rgb(209,213,219);
@@ -519,14 +608,65 @@ const metadata = {
       font-weight: 950;
     }
 
-    .wallet-row {
+    .progress-card {
+      border: 1px solid rgba(255,218,106,.14);
+      border-radius: 22px;
+      background: rgba(0,0,0,.44);
+      padding: 1rem;
+      backdrop-filter: blur(14px);
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      gap: .8rem;
+      align-items: center;
+    }
+
+    .progress-top span {
+      color: rgb(156,163,175);
+      font-size: .74rem;
+      font-weight: 850;
+    }
+
+    .progress-top strong {
+      color: #ffda6a;
+      font-size: .86rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .progress-track {
+      height: 9px;
+      margin-top: .7rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #ffda6a, #c29200);
+      box-shadow: 0 0 18px rgba(255,218,106,.35);
+    }
+
+    .progress-card p {
+      margin: .55rem 0 0;
+      color: rgb(156,163,175);
+      font-size: .7rem;
+      font-weight: 720;
+    }
+
+    .wallet-strip {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: .75rem;
       padding: 0 1.35rem 1.35rem;
     }
 
-    .wallet-card {
+    .wallet-cell {
       border: 1px solid rgba(255,218,106,.14);
       border-radius: 20px;
       background:
@@ -536,14 +676,14 @@ const metadata = {
       backdrop-filter: blur(12px);
     }
 
-    .wallet-card span {
+    .wallet-cell span {
       display: block;
       color: rgb(156,163,175);
       font-size: .74rem;
       font-weight: 850;
     }
 
-    .wallet-card strong {
+    .wallet-cell strong {
       display: block;
       margin-top: .25rem;
       color: #ffda6a;
@@ -553,61 +693,22 @@ const metadata = {
       text-align: right;
     }
 
-    .wallet-card.gold strong { color: #ffd166; }
-    .wallet-card.rep strong { color: #c084fc; }
+    .feature-row {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr 1fr;
+      gap: 1rem;
+    }
 
-    .tabs-card {
+    .feature-card,
+    .content-panel {
       border: 1px solid rgba(255,218,106,.14);
-      border-radius: 30px;
+      border-radius: 26px;
       background:
         linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012)),
         rgba(8,8,12,.8);
-      box-shadow: 0 26px 80px rgba(0,0,0,.42);
-      overflow: hidden;
-      backdrop-filter: blur(18px);
-    }
-
-    .tabs {
-      display: flex;
-      gap: .45rem;
-      overflow-x: auto;
-      padding: .8rem;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.24);
-    }
-
-    .tabs button {
-      display: inline-flex;
-      align-items: center;
-      gap: .45rem;
-      border: 1px solid rgba(255,218,106,.12);
-      border-radius: 999px;
-      background: rgba(255,255,255,.035);
-      color: #e5e7eb;
-      padding: .62rem .85rem;
-      font-family: inherit;
-      font-size: .78rem;
-      font-weight: 850;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: 160ms ease;
-    }
-
-    .tabs button:hover,
-    .tabs button.is-active {
-      border-color: rgba(255,218,106,.42);
-      background: rgba(255,218,106,.12);
-      color: #ffda6a;
-    }
-
-    .tabs b {
-      color: inherit;
-      font-size: .72rem;
-      direction: ltr;
-    }
-
-    .tab-panel {
+      box-shadow: 0 24px 72px rgba(0,0,0,.4);
       padding: 1rem;
+      backdrop-filter: blur(18px);
     }
 
     .section-head {
@@ -615,7 +716,7 @@ const metadata = {
       justify-content: space-between;
       align-items: start;
       gap: 1rem;
-      margin-bottom: .95rem;
+      margin-bottom: .92rem;
     }
 
     .section-head span {
@@ -629,41 +730,53 @@ const metadata = {
     .section-head h2 {
       margin: .24rem 0 0;
       color: #f7e6ac;
-      font-size: 1.38rem;
+      font-size: 1.36rem;
       font-weight: 950;
       line-height: 1.15;
     }
 
-    .showcase {
+    .section-head > strong {
       display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: .85rem;
-      margin-bottom: .85rem;
+      place-items: center;
+      min-width: 48px;
+      height: 38px;
+      border: 1px solid rgba(255,218,106,.18);
+      border-radius: 14px;
+      background: rgba(255,218,106,.06);
+      color: #ffda6a;
+      font-size: .92rem;
+      font-weight: 950;
+      direction: ltr;
     }
 
-    .showcase-main {
-      min-height: 220px;
+    .rare-feature-body {
+      min-height: 188px;
+    }
+
+    .big-item {
+      height: 100%;
+      min-height: 188px;
       border: 1px solid rgba(255,218,106,.18);
-      border-radius: 20px;
+      border-radius: 22px;
       background:
-        radial-gradient(circle at top right, rgba(255,218,106,.12), transparent 46%),
-        rgba(0,0,0,.28);
+        radial-gradient(circle at top right, rgba(255,218,106,.13), transparent 48%),
+        rgba(0,0,0,.3);
       padding: 1rem;
     }
 
-    .showcase-icon {
+    .big-item-icon {
       display: grid;
       place-items: center;
-      width: 68px;
-      height: 68px;
+      width: 70px;
+      height: 70px;
       border: 1px solid rgba(255,218,106,.2);
-      border-radius: 18px;
+      border-radius: 20px;
       background: rgba(255,218,106,.08);
-      font-size: 2rem;
-      margin-bottom: .9rem;
+      font-size: 2.1rem;
+      margin-bottom: .85rem;
     }
 
-    .showcase-main h3 {
+    .big-item h3 {
       margin: 0;
       color: #fff;
       font-size: 1.35rem;
@@ -671,17 +784,17 @@ const metadata = {
       line-height: 1.2;
     }
 
-    .showcase-main p {
+    .big-item p {
       margin: .55rem 0 0;
       color: rgb(156,163,175);
       font-size: .82rem;
       font-weight: 740;
-      line-height: 1.65;
+      line-height: 1.6;
     }
 
-    .showcase-main strong {
+    .big-item strong {
       display: inline-flex;
-      margin-top: .85rem;
+      margin-top: .78rem;
       border: 1px solid rgba(255,218,106,.18);
       border-radius: 999px;
       background: rgba(0,0,0,.34);
@@ -692,15 +805,30 @@ const metadata = {
       direction: ltr;
     }
 
-    .showcase-list {
+    .badge-wall {
       display: grid;
-      gap: .58rem;
+      grid-template-columns: repeat(4, 1fr);
+      gap: .55rem;
     }
 
-    .showcase-row {
+    .badge-wall img,
+    .badge-wall .badge-placeholder {
+      width: 100%;
+      height: 58px;
+      border-radius: 16px;
+    }
+
+    .mail-preview,
+    .mail-list,
+    .achievements-list {
+      display: grid;
+      gap: .65rem;
+    }
+
+    .mail-card,
+    .achievement-card {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      align-items: flex-start;
       gap: .75rem;
       border: 1px solid rgba(255,218,106,.1);
       border-radius: 16px;
@@ -708,36 +836,95 @@ const metadata = {
       padding: .72rem;
     }
 
-    .showcase-row strong {
+    .mail-card.is-unread {
+      border-color: rgba(255,218,106,.32);
+      background: rgba(255,218,106,.05);
+    }
+
+    .mail-avatar,
+    .achievement-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,218,106,.16);
+      border-radius: 14px;
+      background: rgba(255,218,106,.07);
+      color: #ffda6a;
+      font-size: 1.15rem;
+      font-weight: 950;
+    }
+
+    .mail-card strong,
+    .achievement-card strong {
       display: block;
-      color: #f7e6ac;
+      color: #fff;
       font-size: .82rem;
       font-weight: 950;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      line-height: 1.25;
+    }
+
+    .mail-card span,
+    .achievement-card span {
+      display: block;
+      margin-top: .18rem;
+      color: rgb(156,163,175);
+      font-size: .68rem;
+      font-weight: 730;
+      line-height: 1.45;
+    }
+
+    .mail-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+    }
+
+    .mail-date {
+      color: rgb(107,114,128) !important;
+      font-size: .62rem !important;
       white-space: nowrap;
     }
 
-    .showcase-row span {
-      display: block;
-      margin-top: .16rem;
-      color: rgb(156,163,175);
-      font-size: .66rem;
-      font-weight: 740;
+    .mail-message {
+      color: rgb(209,213,219) !important;
+      font-size: .74rem !important;
+      word-break: break-word;
     }
 
-    .showcase-row b {
-      flex-shrink: 0;
-      display: grid;
-      place-items: center;
-      min-width: 42px;
-      height: 36px;
-      border-radius: 12px;
-      background: rgba(255,218,106,.08);
+    .inventory-head {
+      align-items: center;
+    }
+
+    .inventory-tools {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: .4rem;
+    }
+
+    .inventory-tools button,
+    .mail-tabs button {
+      border: 1px solid rgba(255,218,106,.16);
+      border-radius: 999px;
+      background: rgba(255,218,106,.06);
+      color: #f7e6ac;
+      padding: .42rem .62rem;
+      font-family: inherit;
+      font-size: .68rem;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .inventory-tools button.is-active,
+    .inventory-tools button:hover,
+    .mail-tabs button.is-active,
+    .mail-tabs button:hover {
+      border-color: rgba(255,218,106,.42);
+      background: rgba(255,218,106,.13);
       color: #ffda6a;
-      font-size: .74rem;
-      font-weight: 950;
-      direction: ltr;
     }
 
     .inventory-grid {
@@ -853,158 +1040,32 @@ const metadata = {
       font-weight: 850;
     }
 
-    .badges-grid {
+    .lower-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .mail-tabs {
+      display: flex;
+      gap: .42rem;
+      flex-wrap: wrap;
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: .7rem;
     }
 
-    .badge-tile {
-      display: grid;
-      place-items: center;
-      gap: .42rem;
-      min-height: 116px;
-      border: 1px solid rgba(255,218,106,.1);
-      border-radius: 18px;
-      background: rgba(0,0,0,.26);
-      padding: .64rem;
-      text-align: center;
-    }
-
-    .badge-tile img {
-      width: 60px;
-      height: 60px;
-      object-fit: contain;
-      filter: drop-shadow(0 8px 12px rgba(0,0,0,.42));
-    }
-
-    .badge-tile span {
-      color: rgb(229,231,235);
-      font-size: .62rem;
-      font-weight: 800;
-      line-height: 1.25;
-    }
-
-    .mail-head {
-      align-items: center;
-    }
-
-    .mail-filter {
-      display: flex;
-      gap: .42rem;
-      flex-wrap: wrap;
-    }
-
-    .mail-filter button {
-      border: 1px solid rgba(255,218,106,.16);
-      border-radius: 999px;
-      background: rgba(255,218,106,.06);
-      color: #f7e6ac;
-      padding: .42rem .62rem;
-      font-size: .68rem;
-      font-weight: 850;
-      cursor: pointer;
-    }
-
-    .mail-filter button.is-active {
-      border-color: rgba(255,218,106,.42);
-      background: rgba(255,218,106,.13);
-      color: #ffda6a;
-    }
-
-    .mail-list,
-    .achievements-list {
-      display: grid;
-      gap: .65rem;
-    }
-
-    .mail-card,
-    .achievement-card {
-      display: flex;
-      align-items: center;
-      gap: .75rem;
-      border: 1px solid rgba(255,218,106,.1);
-      border-radius: 16px;
-      background: rgba(0,0,0,.28);
-      padding: .72rem;
-    }
-
-    .mail-card {
-      align-items: flex-start;
-    }
-
-    .mail-card.is-unread {
-      border-color: rgba(255,218,106,.32);
-      background: rgba(255,218,106,.05);
-    }
-
-    .mail-avatar,
-    .achievement-icon {
-      display: grid;
-      place-items: center;
-      width: 42px;
-      height: 42px;
-      flex-shrink: 0;
-      border: 1px solid rgba(255,218,106,.16);
-      border-radius: 14px;
-      background: rgba(255,218,106,.07);
-      color: #ffda6a;
-      font-size: 1.15rem;
-      font-weight: 950;
-    }
-
-    .mail-card strong,
-    .achievement-card strong {
-      display: block;
-      color: #fff;
-      font-size: .82rem;
-      font-weight: 950;
-      line-height: 1.25;
-    }
-
-    .mail-card span,
-    .achievement-card span {
-      display: block;
-      margin-top: .18rem;
-      color: rgb(156,163,175);
-      font-size: .68rem;
-      font-weight: 730;
-      line-height: 1.45;
-    }
-
-    .mail-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: .5rem;
-    }
-
-    .mail-date {
-      color: rgb(107,114,128) !important;
-      font-size: .62rem !important;
-      white-space: nowrap;
-    }
-
-    .mail-message {
-      color: rgb(209,213,219) !important;
-      font-size: .74rem !important;
-      word-break: break-word;
-    }
-
-    .actions {
-      display: flex;
-      gap: .65rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .actions a,
-    .actions button {
+    .actions-row a,
+    .actions-row button {
       border: 1px solid rgba(255,218,106,.18);
       border-radius: 999px;
       background: rgba(8,8,12,.78);
       color: #f7e6ac;
-      padding: .72rem 1rem;
+      padding: .74rem 1.05rem;
       font-family: inherit;
       font-size: .82rem;
       font-weight: 900;
@@ -1013,8 +1074,8 @@ const metadata = {
       backdrop-filter: blur(14px);
     }
 
-    .actions a:hover,
-    .actions button:hover {
+    .actions-row a:hover,
+    .actions-row button:hover {
       border-color: rgba(255,218,106,.42);
       background: rgba(255,218,106,.12);
       color: #ffda6a;
@@ -1055,42 +1116,63 @@ const metadata = {
       pointer-events: auto;
     }
 
-    @media (max-width: 820px) {
-      .profile-top {
+    @media (max-width: 1040px) {
+      .player-core {
+        grid-template-columns: 152px minmax(0, 1fr);
+      }
+
+      .progress-card {
+        grid-column: 1 / -1;
+      }
+
+      .feature-row,
+      .lower-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .profile-shell {
+        padding-top: 5rem;
+      }
+
+      .cover-art {
+        height: 210px;
+      }
+
+      .player-core {
         grid-template-columns: 1fr;
         justify-items: center;
         text-align: center;
       }
 
-      .identity h1 {
-        white-space: normal;
-        font-size: 2.5rem;
-      }
-
-      .meta,
+      .name-row,
+      .meta-row,
       .featured-badges {
         justify-content: center;
       }
 
-      .wallet-row,
-      .showcase {
-        grid-template-columns: 1fr;
+      .name-row h1 {
+        white-space: normal;
+        font-size: 2.55rem;
+      }
+
+      .wallet-strip,
+      .badge-wall {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .inventory-head {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .inventory-tools {
+        justify-content: flex-start;
       }
     }
 
-    @media (max-width: 560px) {
-      .shell {
-        padding-top: 5rem;
-      }
-
-      .cover {
-        height: 180px;
-      }
-
-      .wallet-row {
-        padding-inline: 1rem;
-      }
-
+    @media (max-width: 520px) {
       .inventory-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -1098,13 +1180,10 @@ const metadata = {
       .item-card {
         min-height: 160px;
       }
-
-      .tabs {
-        padding: .65rem;
-      }
     }
 
     @media (max-width: 390px) {
+      .wallet-strip,
       .inventory-grid {
         grid-template-columns: 1fr;
       }
@@ -1113,7 +1192,7 @@ const metadata = {
 
   <script is:inline data-reinit>
     ;(async () => {
-      const cleanupKey = '__tnxCinematicProfileCleanup'
+      const cleanupKey = '__tnxPlayerProfileCleanup'
       if (window[cleanupKey]) window[cleanupKey]()
 
       const listeners = []
@@ -1142,7 +1221,7 @@ const metadata = {
         profiles: [],
         items: [],
         activeUser: null,
-        activeTab: 'inventory',
+        inventoryFilter: 'all',
         mailFilter: 'all',
       }
 
@@ -1247,7 +1326,6 @@ const metadata = {
         const id = userId(user)
         const login = normalize(userLogin(user))
         const name = normalize(userName(user))
-
         const entryId = String(get(entry, ['userId', 'UserId', 'id'], '')).trim()
         const entryLogin = normalize(get(entry, ['userLogin', 'UserLogin', 'login'], ''))
         const entryName = normalize(get(entry, ['userName', 'UserName', 'displayName'], ''))
@@ -1269,7 +1347,6 @@ const metadata = {
         const profile = findRecord(state.profiles, user) || {}
         const inv = findRecord(state.inventories, user) || {}
         const mail = findRecord(state.mailboxes, user) || {}
-
         const merged = { ...user, ...profile }
 
         merged.inventory = Array.isArray(profile.inventory)
@@ -1323,7 +1400,7 @@ const metadata = {
         }
       }
 
-      function inventoryItems(user) {
+      function allInventoryItems(user) {
         return (Array.isArray(user.inventory) ? user.inventory : [])
           .map((entry) => {
             const name = getItemName(entry)
@@ -1341,6 +1418,15 @@ const metadata = {
           .filter((item) => item.name)
       }
 
+      function inventoryItems(user) {
+        const items = allInventoryItems(user)
+        const f = state.inventoryFilter
+
+        if (f === 'all') return items
+        if (f === 'rare') return items.filter((item) => item.meta.rare || item.meta.cat === 'rare')
+        return items.filter((item) => item.meta.cat === f)
+      }
+
       function badgeName(badge) {
         return String(get(badge, ['name', 'badgeName', 'title', 'value1'], '')).trim()
       }
@@ -1353,6 +1439,12 @@ const metadata = {
         const explicit = num(get(user, ['level'], 0))
         if (explicit > 0) return explicit
         return Math.max(1, Math.floor(num(get(user, ['points', 'totalPoints'], 0)) / 100000) + 1)
+      }
+
+      function levelProgress(user) {
+        const points = num(get(user, ['points', 'totalPoints'], 0))
+        const within = points % 100000
+        return Math.round((within / 100000) * 100)
       }
 
       function hexToRgb(hex) {
@@ -1387,18 +1479,6 @@ const metadata = {
         }
       }
 
-      function showSearch() {
-        $('searchView').classList.remove('hidden')
-        $('profileView').classList.add('hidden')
-        $('notFoundView').classList.add('hidden')
-      }
-
-      function showNotFound() {
-        $('searchView').classList.add('hidden')
-        $('profileView').classList.add('hidden')
-        $('notFoundView').classList.remove('hidden')
-      }
-
       function findUser(login) {
         const target = normalize(login)
         return state.users.find((user) =>
@@ -1407,9 +1487,8 @@ const metadata = {
       }
 
       function profileLink(user) {
-        const login = userLogin(user)
         const url = new URL(location.href)
-        url.searchParams.set('user', login)
+        url.searchParams.set('user', userLogin(user))
         url.hash = ''
         return url.toString()
       }
@@ -1427,50 +1506,53 @@ const metadata = {
         const avatar = safeUrl(get(user, ['profileImageUrl', 'avatar', 'ProfileImageUrl'], ''))
         const login = userLogin(user)
         const name = userName(user) || login
-        const level = levelFor(user)
-        const items = inventoryItems(user)
         const badges = Array.isArray(user.badges) ? user.badges : []
-        const achievements = buildAchievements(user)
+        const itemsAll = allInventoryItems(user)
         const mails = mailItems(user)
         const unread = mails.filter((mail) => !mail.read)
+        const level = levelFor(user)
+        const progress = levelProgress(user)
 
-        $('bg').style.backgroundImage = banner
+        $('profileBg').style.backgroundImage = banner
           ? `url('${banner}')`
-          : `radial-gradient(circle at 20% 12%, rgba(255, 218, 106, .16), transparent 30%), linear-gradient(135deg, ${color}, #06060a)`
+          : `radial-gradient(circle at 18% 10%, rgba(255,218,106,.18), transparent 30%), linear-gradient(135deg, ${color}, #05050a)`
 
-        $('cover').style.setProperty('--accent', hexToRgb(color))
-        $('cover').style.backgroundImage = banner ? `url('${banner}')` : `linear-gradient(135deg, ${color}, #06060a)`
+        $('coverArt').style.setProperty('--accent', hexToRgb(color))
+        $('coverArt').style.backgroundImage = banner ? `url('${banner}')` : `linear-gradient(135deg, ${color}, #05050a)`
 
-        $('avatar').style.setProperty('--profile-color', color)
+        document.documentElement.style.setProperty('--profile-color', color)
         $('avatar').style.backgroundImage = avatar ? `url('${avatar}')` : ''
 
         $('displayName').textContent = name
         $('loginName').textContent = `@${login}`
-        $('jobName').textContent = get(user, ['jobName'], 'Citizen')
-        $('bio').textContent = get(user, ['bio'], 'عضو في مجتمع TNX6.')
-        $('level').textContent = `LVL ${fmt(level)}`
-        $('points').textContent = fmt(get(user, ['points', 'totalPoints'], 0))
-        $('gold').textContent = fmt(get(user, ['gold'], 0))
-        $('rep').textContent = fmt(get(user, ['reputation', 'rep'], 0))
-        $('badgeTotalTop').textContent = fmt(badges.length)
+        $('jobChip').textContent = get(user, ['jobName'], 'Citizen')
+        $('bioText').textContent = get(user, ['bio'], 'عضو في مجتمع TNX6.')
+        $('levelChip').textContent = `LVL ${fmt(level)}`
+        $('levelLabel').textContent = `Level ${fmt(level)}`
+        $('levelProgress').style.width = `${progress}%`
+        $('nextLevelText').textContent = `${fmt(progress)}% من التقدم للفل القادم`
+
+        $('pointsValue').textContent = fmt(get(user, ['points', 'totalPoints'], 0))
+        $('goldValue').textContent = fmt(get(user, ['gold'], 0))
+        $('repValue').textContent = fmt(get(user, ['reputation', 'rep'], 0))
+        $('badgesTopValue').textContent = fmt(badges.length)
 
         const country = get(user, ['country'], '')
         $('countryName').classList.toggle('hidden', !country)
         $('countryName').textContent = country
 
-        $('tabInv').textContent = fmt(items.length)
-        $('tabBadges').textContent = fmt(badges.length)
-        $('tabMail').textContent = fmt(unread.length || mails.length)
-        $('tabAch').textContent = fmt(achievements.length)
+        $('badgeCountMini').textContent = fmt(badges.length)
+        $('mailCountMini').textContent = fmt(unread.length || mails.length)
+        $('achCount').textContent = fmt(buildAchievements(user).length)
         $('badgesPageLink').href = `/badges?user=${encodeURIComponent(login)}`
 
         renderFeaturedBadges(badges)
-        renderShowcase(items)
-        renderInventory(items)
-        renderBadges(badges)
+        renderRareFeature(itemsAll)
+        renderBadgeWall(badges)
+        renderMailPreview(user)
+        renderInventory(user)
+        renderAchievements(buildAchievements(user))
         renderMail(user)
-        renderAchievements(achievements)
-        setActiveTab('inventory')
       }
 
       function renderFeaturedBadges(badges) {
@@ -1488,48 +1570,60 @@ const metadata = {
           : `<div class="badge-placeholder">—</div>`
       }
 
-      function renderShowcase(items) {
+      function renderRareFeature(items) {
         const sorted = [...items].sort((a, b) => {
           const rank = (item) => item.meta.rare ? 10 : 0
           return rank(b) - rank(a) || b.qty - a.qty
         })
 
-        const main = sorted[0]
-        const rest = sorted.slice(1, 5)
+        const item = sorted[0]
 
-        if (!main) {
-          $('showcase').innerHTML = `<div class="empty-line">ما فيه أغراض للعرض.</div>`
+        if (!item) {
+          $('rareFeature').innerHTML = `<div class="empty-line">ما فيه أغراض للعرض.</div>`
           return
         }
 
-        $('showcase').innerHTML = `
-          <article class="showcase-main">
-            <div class="showcase-icon">${esc(main.meta.icon)}</div>
-            <h3>${esc(main.name)}</h3>
-            <p>${esc(main.description)}</p>
-            <strong>x${fmt(main.qty)}</strong>
-          </article>
-
-          <div class="showcase-list">
-            ${
-              rest.length
-                ? rest.map((item) => `
-                  <div class="showcase-row">
-                    <div>
-                      <strong>${esc(item.meta.icon)} ${esc(item.name)}</strong>
-                      <span>${item.meta.rare ? 'rare' : 'item'}</span>
-                    </div>
-                    <b>x${fmt(item.qty)}</b>
-                  </div>
-                `).join('')
-                : `<div class="showcase-row"><div><strong>لا توجد أغراض إضافية</strong><span>بتظهر هنا إذا زادت الحقيبة.</span></div><b>—</b></div>`
-            }
+        $('rareFeature').innerHTML = `
+          <div class="big-item">
+            <div class="big-item-icon">${esc(item.meta.icon)}</div>
+            <h3>${esc(item.name)}</h3>
+            <p>${esc(item.description)}</p>
+            <strong>x${fmt(item.qty)}</strong>
           </div>
         `
       }
 
-      function renderInventory(items) {
+      function renderBadgeWall(badges) {
+        const equipped = badges.filter((badge) => badge.equipped).slice(0, 8)
+        const list = equipped.length ? equipped : badges.slice(0, 8)
+
+        $('badgeWall').innerHTML = list.length
+          ? list.map((badge) => {
+              const img = badgeImage(badge)
+              const name = badgeName(badge)
+              return img
+                ? `<img src="${esc(img)}" alt="${esc(name)}" title="${esc(name)}" loading="lazy" />`
+                : `<div class="badge-placeholder" title="${esc(name)}">★</div>`
+            }).join('')
+          : `<div class="empty-line">ما فيه بادجات.</div>`
+      }
+
+      function renderMailPreview(user) {
+        const mails = mailItems(user).slice(0, 2)
+
+        $('mailPreview').innerHTML = mails.length
+          ? mails.map((mail) => mailTemplate(mail)).join('')
+          : `<div class="empty-line">ما فيه بريد.</div>`
+      }
+
+      function renderInventory(user) {
+        const items = inventoryItems(user)
+
         $('inventoryEmpty').classList.toggle('hidden', items.length > 0)
+
+        document.querySelectorAll('[data-filter]').forEach((button) => {
+          button.classList.toggle('is-active', button.dataset.filter === state.inventoryFilter)
+        })
 
         $('inventoryGrid').innerHTML = items.map((item) => {
           const [color, soft, label] = CATEGORY[item.meta.cat] || CATEGORY.economy
@@ -1550,26 +1644,10 @@ const metadata = {
         }).join('')
       }
 
-      function renderBadges(badges) {
-        $('badgesEmpty').classList.toggle('hidden', badges.length > 0)
-
-        $('badgesGrid').innerHTML = badges.slice(0, 90).map((badge) => {
-          const img = badgeImage(badge)
-          const name = badgeName(badge)
-
-          return `
-            <div class="badge-tile">
-              ${img ? `<img src="${esc(img)}" alt="${esc(name)}" loading="lazy" />` : '<div class="badge-placeholder">★</div>'}
-              <span>${esc(name)}</span>
-            </div>
-          `
-        }).join('')
-      }
-
       function buildAchievements(user) {
         const manual = Array.isArray(user.achievements) ? [...user.achievements] : []
         const badges = Array.isArray(user.badges) ? user.badges : []
-        const items = inventoryItems(user)
+        const items = allInventoryItems(user)
         const points = num(get(user, ['points', 'totalPoints'], 0))
         const gold = num(get(user, ['gold'], 0))
 
@@ -1600,6 +1678,27 @@ const metadata = {
         return mail.sort((a, b) => new Date(get(b, ['date', 'createdAt'], 0)) - new Date(get(a, ['date', 'createdAt'], 0)))
       }
 
+      function mailTemplate(mail) {
+        const from = get(mail, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], '؟')
+        const date = get(mail, ['date', 'createdAt'], '')
+        const message = get(mail, ['message'], '')
+        const unreadClass = !mail.read ? ' is-unread' : ''
+        const initial = String(from).charAt(0).toUpperCase() || '؟'
+
+        return `
+          <div class="mail-card${unreadClass}">
+            <div class="mail-avatar">${esc(initial)}</div>
+            <div>
+              <div class="mail-top">
+                <strong>${esc(from)}</strong>
+                <span class="mail-date">${esc(timeAgo(date))}</span>
+              </div>
+              <span class="mail-message">${esc(message)}</span>
+            </div>
+          </div>
+        `
+      }
+
       function renderMail(user) {
         const all = mailItems(user)
         const unread = all.filter((mail) => !mail.read)
@@ -1607,39 +1706,11 @@ const metadata = {
 
         $('mailEmpty').classList.toggle('hidden', list.length > 0)
 
-        $('mailList').innerHTML = list.slice(0, 12).map((mail) => {
-          const from = get(mail, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], '؟')
-          const date = get(mail, ['date', 'createdAt'], '')
-          const message = get(mail, ['message'], '')
-          const unreadClass = !mail.read ? ' is-unread' : ''
-          const initial = String(from).charAt(0).toUpperCase() || '؟'
-
-          return `
-            <div class="mail-card${unreadClass}">
-              <div class="mail-avatar">${esc(initial)}</div>
-              <div>
-                <div class="mail-top">
-                  <strong>${esc(from)}</strong>
-                  <span class="mail-date">${esc(timeAgo(date))}</span>
-                </div>
-                <span class="mail-message">${esc(message)}</span>
-              </div>
-            </div>
-          `
-        }).join('')
-      }
-
-      function setActiveTab(tab) {
-        state.activeTab = tab
-
-        document.querySelectorAll('[data-tab]').forEach((button) => {
-          button.classList.toggle('is-active', button.dataset.tab === tab)
+        document.querySelectorAll('[data-mail-filter]').forEach((button) => {
+          button.classList.toggle('is-active', button.dataset.mailFilter === state.mailFilter)
         })
 
-        $('inventoryPanel').classList.toggle('hidden', tab !== 'inventory')
-        $('badgesPanel').classList.toggle('hidden', tab !== 'badges')
-        $('mailPanel').classList.toggle('hidden', tab !== 'mail')
-        $('achievementsPanel').classList.toggle('hidden', tab !== 'achievements')
+        $('mailList').innerHTML = list.slice(0, 12).map((mail) => mailTemplate(mail)).join('')
       }
 
       function renderSearch(query) {
@@ -1657,7 +1728,7 @@ const metadata = {
           const avatar = safeUrl(get(user, ['profileImageUrl', 'avatar', 'ProfileImageUrl'], ''))
 
           return `
-            <button type="button" class="result" data-login="${esc(login)}">
+            <button type="button" class="search-result" data-login="${esc(login)}">
               ${avatar ? `<img src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />` : ''}
               <div>
                 <strong>${esc(name)}</strong>
@@ -1666,6 +1737,13 @@ const metadata = {
             </button>
           `
         }).join('')
+      }
+
+      function findUser(login) {
+        const target = normalize(login)
+        return state.users.find((user) =>
+          normalize(userLogin(user)) === target || normalize(userName(user)) === target
+        ) || null
       }
 
       function openFromQuery() {
@@ -1690,11 +1768,11 @@ const metadata = {
         renderProfile(user)
       }
 
-      function findUser(login) {
-        const target = normalize(login)
-        return state.users.find((user) =>
-          normalize(userLogin(user)) === target || normalize(userName(user)) === target
-        ) || null
+      function profileLink(user) {
+        const url = new URL(location.href)
+        url.searchParams.set('user', userLogin(user))
+        url.hash = ''
+        return url.toString()
       }
 
       addListener($('searchInput'), 'input', (event) => renderSearch(event.target.value))
@@ -1715,20 +1793,23 @@ const metadata = {
         renderProfile(user)
       })
 
-      document.querySelectorAll('[data-tab]').forEach((button) => {
-        addListener(button, 'click', () => setActiveTab(button.dataset.tab || 'inventory'))
+      document.querySelectorAll('[data-filter]').forEach((button) => {
+        addListener(button, 'click', () => {
+          state.inventoryFilter = button.dataset.filter || 'all'
+          if (state.activeUser) renderInventory(state.activeUser)
+        })
       })
 
       document.querySelectorAll('[data-mail-filter]').forEach((button) => {
         addListener(button, 'click', () => {
           state.mailFilter = button.dataset.mailFilter || 'all'
-          document.querySelectorAll('[data-mail-filter]').forEach((item) => item.classList.toggle('is-active', item === button))
           if (state.activeUser) renderMail(state.activeUser)
         })
       })
 
       addListener($('copyLink'), 'click', async (event) => {
         if (!state.activeUser) return
+
         const button = event.currentTarget
         const old = button.textContent
 
