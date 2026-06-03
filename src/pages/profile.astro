@@ -4,29 +4,29 @@ import Layout from '~/layouts/PageLayout.astro'
 const metadata = {
   title: 'TNX6 Profile',
   ignoreTitleTemplate: true,
-  description: 'TNX6 community profile hub.',
+  description: 'TNX6 member profile.',
 }
 ---
 
 <Layout metadata={metadata}>
   <main class="tnx-profile" dir="rtl">
-    <div id="profileBg" class="profile-bg"></div>
-    <div class="profile-shade"></div>
+    <div id="bg" class="bg"></div>
+    <div class="veil"></div>
 
-    <section class="profile-shell">
+    <section class="shell">
       <section id="searchView" class="search-view hidden">
         <div class="search-card">
-          <div class="mini-label">TNX6 PROFILE</div>
+          <span class="label">TNX6 PROFILE</span>
           <h1>بروفايل العضو</h1>
           <p>ابحث باسم Twitch أو افتح رابط مباشر مثل <b>/profile?user=haneen48</b></p>
 
-          <div class="search-box">
+          <div class="search">
             <span>⌕</span>
             <input id="searchInput" type="search" autocomplete="off" placeholder="اكتب اسم المستخدم..." />
-            <button id="clearSearch" type="button" aria-label="مسح البحث">×</button>
+            <button id="clearSearch" type="button" aria-label="مسح">×</button>
           </div>
 
-          <div id="searchResults" class="search-results"></div>
+          <div id="searchResults" class="results"></div>
         </div>
       </section>
 
@@ -35,165 +35,117 @@ const metadata = {
         <span>تأكد من الاسم أو من ملف user_badges.json.</span>
       </section>
 
-      <section id="profileView" class="profile-view hidden">
-        <header class="hero">
-          <div id="heroBg" class="hero-bg"></div>
+      <section id="profileView" class="profile hidden">
+        <section class="profile-card">
+          <div id="cover" class="cover"></div>
 
-          <div class="hero-grid">
-            <div class="avatar-zone">
+          <div class="profile-top">
+            <div class="avatar-wrap">
               <div id="avatar" class="avatar"></div>
-              <div id="levelBadge" class="level-badge">LVL 1</div>
+              <span id="level" class="level">LVL 1</span>
             </div>
 
-            <div class="hero-info">
-              <div class="identity-row">
-                <h1 id="displayName">—</h1>
-                <span id="jobPill" class="job-pill">Citizen</span>
-              </div>
+            <div class="identity">
+              <h1 id="displayName">—</h1>
 
-              <div class="meta-row">
+              <div class="meta">
                 <span id="loginName">@—</span>
+                <span id="jobName">Citizen</span>
                 <span id="countryName" class="hidden">Saudi Arabia</span>
               </div>
 
-              <p id="bioText" class="bio">عضو في مجتمع TNX6.</p>
+              <p id="bio">عضو في مجتمع TNX6.</p>
 
               <div id="featuredBadges" class="featured-badges"></div>
             </div>
-
-            <aside class="hero-stats">
-              <div class="stat-card primary">
-                <span>النقاط</span>
-                <strong id="pointsValue">0</strong>
-              </div>
-
-              <div class="stat-card">
-                <span>الذهب</span>
-                <strong id="goldValue">0</strong>
-              </div>
-
-              <div class="stat-card">
-                <span>السمعة</span>
-                <strong id="repValue">0</strong>
-              </div>
-            </aside>
           </div>
-        </header>
 
-        <section class="summary-strip">
-          <div>
-            <span>الأغراض</span>
-            <strong id="summaryItems">0</strong>
-          </div>
-          <div>
-            <span>البادجات</span>
-            <strong id="summaryBadges">0</strong>
-          </div>
-          <div>
-            <span>الإنجازات</span>
-            <strong id="summaryAch">0</strong>
-          </div>
-          <div>
-            <span>البريد</span>
-            <strong id="summaryMail">0</strong>
+          <div class="wallet-row">
+            <div class="wallet-card">
+              <span>النقاط</span>
+              <strong id="points">0</strong>
+            </div>
+            <div class="wallet-card gold">
+              <span>الذهب</span>
+              <strong id="gold">0</strong>
+            </div>
+            <div class="wallet-card rep">
+              <span>السمعة</span>
+              <strong id="rep">0</strong>
+            </div>
+            <div class="wallet-card">
+              <span>البادجات</span>
+              <strong id="badgeTotalTop">0</strong>
+            </div>
           </div>
         </section>
 
-        <section class="content-grid">
-          <main class="main-col">
-            <section class="panel showcase-panel">
-              <div class="panel-head">
-                <div>
-                  <span>SHOWCASE</span>
-                  <h2>واجهة العضو</h2>
-                </div>
+        <section class="tabs-card">
+          <nav class="tabs" aria-label="Profile sections">
+            <button class="is-active" type="button" data-tab="inventory">الأغراض <b id="tabInv">0</b></button>
+            <button type="button" data-tab="badges">البادجات <b id="tabBadges">0</b></button>
+            <button type="button" data-tab="mail">البريد <b id="tabMail">0</b></button>
+            <button type="button" data-tab="achievements">الإنجازات <b id="tabAch">0</b></button>
+          </nav>
+
+          <section id="inventoryPanel" class="tab-panel">
+            <div class="section-head">
+              <div>
+                <span>INVENTORY</span>
+                <h2>حقيبة الأغراض</h2>
+              </div>
+            </div>
+
+            <div id="showcase" class="showcase"></div>
+            <div id="inventoryGrid" class="inventory-grid"></div>
+            <div id="inventoryEmpty" class="empty-line hidden">ما فيه أغراض في الحقيبة.</div>
+          </section>
+
+          <section id="badgesPanel" class="tab-panel hidden">
+            <div class="section-head">
+              <div>
+                <span>BADGES</span>
+                <h2>بادجات العضو</h2>
+              </div>
+            </div>
+
+            <div id="badgesGrid" class="badges-grid"></div>
+            <div id="badgesEmpty" class="empty-line hidden">ما فيه بادجات ظاهرة.</div>
+          </section>
+
+          <section id="mailPanel" class="tab-panel hidden">
+            <div class="section-head mail-head">
+              <div>
+                <span>MAILBOX</span>
+                <h2>صندوق البريد</h2>
               </div>
 
-              <div id="showcase" class="showcase"></div>
-            </section>
-
-            <section class="panel">
-              <div class="panel-head">
-                <div>
-                  <span>INVENTORY</span>
-                  <h2>حقيبة الأغراض</h2>
-                </div>
-
-                <strong id="inventoryCount">0</strong>
-              </div>
-
-              <div id="inventoryGrid" class="inventory-grid"></div>
-              <div id="inventoryEmpty" class="empty-line hidden">ما فيه أغراض في الحقيبة.</div>
-            </section>
-
-            <section class="panel">
-              <div class="panel-head">
-                <div>
-                  <span>BADGES</span>
-                  <h2>البادجات</h2>
-                </div>
-
-                <strong id="badgeCount">0</strong>
-              </div>
-
-              <div id="badgesGrid" class="badges-grid"></div>
-              <div id="badgesEmpty" class="empty-line hidden">ما فيه بادجات ظاهرة.</div>
-            </section>
-          </main>
-
-          <aside class="side-col">
-            <section class="panel compact-panel">
-              <div class="panel-head">
-                <div>
-                  <span>MAILBOX</span>
-                  <h2>البريد</h2>
-                </div>
-
-                <strong id="mailCount">0</strong>
-              </div>
-
-              <div class="mail-tabs">
-                <button type="button" class="is-active" data-mail-filter="all">الكل</button>
+              <div class="mail-filter">
+                <button class="is-active" type="button" data-mail-filter="all">الكل</button>
                 <button type="button" data-mail-filter="unread">غير المقروء</button>
               </div>
+            </div>
 
-              <div id="mailList" class="mail-list"></div>
-              <div id="mailEmpty" class="empty-line hidden">ما فيه رسائل.</div>
-            </section>
+            <div id="mailList" class="mail-list"></div>
+            <div id="mailEmpty" class="empty-line hidden">ما فيه رسائل.</div>
+          </section>
 
-            <section class="panel compact-panel">
-              <div class="panel-head">
-                <div>
-                  <span>ACHIEVEMENTS</span>
-                  <h2>الإنجازات</h2>
-                </div>
-
-                <strong id="achCount">0</strong>
+          <section id="achievementsPanel" class="tab-panel hidden">
+            <div class="section-head">
+              <div>
+                <span>ACHIEVEMENTS</span>
+                <h2>الإنجازات</h2>
               </div>
+            </div>
 
-              <div id="achievementsList" class="achievements-list"></div>
-              <div id="achievementsEmpty" class="empty-line hidden">لا توجد إنجازات بعد.</div>
-            </section>
+            <div id="achievementsList" class="achievements-list"></div>
+            <div id="achievementsEmpty" class="empty-line hidden">لا توجد إنجازات بعد.</div>
+          </section>
+        </section>
 
-            <section class="panel compact-panel">
-              <div class="panel-head">
-                <div>
-                  <span>RARE ITEMS</span>
-                  <h2>الأندر</h2>
-                </div>
-              </div>
-
-              <div id="rareList" class="rare-list"></div>
-              <div id="rareEmpty" class="empty-line hidden">ما فيه أغراض نادرة.</div>
-            </section>
-
-            <section class="panel quick-actions">
-              <a id="badgesPageLink" href="/badges">بطاقة البادجات <span>↗</span></a>
-              <button id="copyLink" type="button">نسخ رابط البروفايل <span>⌁</span></button>
-              <button type="button" data-jump="inventoryGrid">الأغراض <span id="quickItems">0</span></button>
-              <button type="button" data-jump="badgesGrid">البادجات <span id="quickBadges">0</span></button>
-            </section>
-          </aside>
+        <section class="actions">
+          <a id="badgesPageLink" href="/badges">فتح بطاقة البادجات</a>
+          <button id="copyLink" type="button">نسخ رابط البروفايل</button>
         </section>
       </section>
     </section>
@@ -206,7 +158,7 @@ const metadata = {
 
     html {
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 218, 106, .5) rgba(0, 0, 0, .4);
+      scrollbar-color: rgba(255,218,106,.48) rgba(0,0,0,.4);
     }
 
     html::-webkit-scrollbar { width: 10px; }
@@ -214,57 +166,57 @@ const metadata = {
     html::-webkit-scrollbar-thumb {
       border: 2px solid rgba(0,0,0,.4);
       border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255,218,106,.9), rgba(194,146,0,.55));
+      background: linear-gradient(180deg, rgba(255,218,106,.9), rgba(194,146,0,.58));
     }
 
     .tnx-profile {
       position: relative;
       min-height: 100vh;
       overflow: hidden;
-      background: #07070b;
+      background: #06060a;
       color: #f8fafc;
       font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    .profile-bg {
+    .bg {
       position: fixed;
       inset: 0;
       z-index: 0;
       background:
-        radial-gradient(circle at 20% 12%, rgba(255, 218, 106, .14), transparent 30%),
-        radial-gradient(circle at 85% 14%, rgba(124, 58, 237, .16), transparent 30%),
-        linear-gradient(135deg, #07070b 0%, #101019 50%, #160d05 100%);
+        radial-gradient(circle at 20% 10%, rgba(255,218,106,.16), transparent 30%),
+        radial-gradient(circle at 82% 18%, rgba(124,58,237,.16), transparent 32%),
+        linear-gradient(135deg, #06060a, #101018 52%, #150b04);
       background-position: center;
       background-size: cover;
-      filter: saturate(1.04) contrast(1.03);
+      filter: saturate(1.04) contrast(1.04);
       transform: scale(1.02);
       pointer-events: none;
     }
 
-    .profile-bg::after {
+    .bg::after {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(180deg, rgba(0,0,0,.68), rgba(0,0,0,.26) 36%, rgba(0,0,0,.88)),
-        linear-gradient(90deg, rgba(0,0,0,.72), transparent 50%, rgba(0,0,0,.72));
+        linear-gradient(180deg, rgba(0,0,0,.72), rgba(0,0,0,.3) 38%, rgba(0,0,0,.9)),
+        linear-gradient(90deg, rgba(0,0,0,.78), transparent 52%, rgba(0,0,0,.72));
     }
 
-    .profile-shade {
+    .veil {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.24) 52%, rgba(0,0,0,.78) 100%);
+        radial-gradient(circle at center, transparent, rgba(0,0,0,.28) 52%, rgba(0,0,0,.82));
     }
 
-    .profile-shell {
+    .shell {
       position: relative;
       z-index: 1;
-      width: min(100%, 1220px);
+      width: min(100%, 1120px);
       margin: 0 auto;
-      padding: 5.8rem 1rem 5rem;
+      padding: 5.75rem 1rem 5rem;
     }
 
     .search-view {
@@ -277,15 +229,15 @@ const metadata = {
     .not-found {
       width: min(100%, 620px);
       border: 1px solid rgba(255,218,106,.18);
-      border-radius: 28px;
-      background: rgba(8,8,12,.82);
+      border-radius: 30px;
+      background: rgba(8,8,12,.84);
       padding: 2rem;
       text-align: center;
-      box-shadow: 0 28px 90px rgba(0,0,0,.46);
+      box-shadow: 0 28px 90px rgba(0,0,0,.48);
       backdrop-filter: blur(18px);
     }
 
-    .mini-label {
+    .label {
       display: inline-flex;
       border: 1px solid rgba(255,218,106,.28);
       border-radius: 999px;
@@ -299,7 +251,7 @@ const metadata = {
 
     .search-card h1 {
       margin: .9rem 0 0;
-      color: white;
+      color: #fff;
       font-size: clamp(2.2rem, 6vw, 4rem);
       font-weight: 950;
       line-height: 1;
@@ -307,7 +259,7 @@ const metadata = {
     }
 
     .search-card p {
-      color: rgb(156, 163, 175);
+      color: rgb(156,163,175);
       font-size: .95rem;
       font-weight: 750;
       line-height: 1.75;
@@ -319,7 +271,7 @@ const metadata = {
       unicode-bidi: embed;
     }
 
-    .search-box {
+    .search {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr) auto;
       gap: .75rem;
@@ -330,22 +282,22 @@ const metadata = {
       padding: .85rem;
     }
 
-    .search-box span {
+    .search span {
       color: #ffda6a;
       font-size: 1.35rem;
       font-weight: 950;
     }
 
-    .search-box input {
+    .search input {
       border: 0;
       outline: 0;
       background: transparent;
-      color: white;
+      color: #fff;
       font-size: .96rem;
       font-weight: 850;
     }
 
-    .search-box button {
+    .search button {
       width: 2.2rem;
       height: 2.2rem;
       border: 1px solid rgba(255,218,106,.2);
@@ -356,13 +308,13 @@ const metadata = {
       cursor: pointer;
     }
 
-    .search-results {
+    .results {
       display: grid;
       gap: .55rem;
       margin-top: .85rem;
     }
 
-    .search-result {
+    .result {
       display: flex;
       align-items: center;
       gap: .75rem;
@@ -377,13 +329,13 @@ const metadata = {
       transition: 160ms ease;
     }
 
-    .search-result:hover {
+    .result:hover {
       transform: translateY(-1px);
       border-color: rgba(255,218,106,.42);
       background: rgba(255,218,106,.08);
     }
 
-    .search-result img {
+    .result img {
       width: 42px;
       height: 42px;
       border-radius: 12px;
@@ -391,17 +343,17 @@ const metadata = {
       background: #111;
     }
 
-    .search-result strong {
+    .result strong {
       display: block;
-      color: white;
+      color: #fff;
       font-size: .92rem;
       font-weight: 900;
     }
 
-    .search-result span {
+    .result span {
       display: block;
       margin-top: 2px;
-      color: rgb(156, 163, 175);
+      color: rgb(156,163,175);
       font-size: .74rem;
       direction: ltr;
       text-align: right;
@@ -421,107 +373,92 @@ const metadata = {
     }
 
     .not-found span {
-      color: rgb(156, 163, 175);
+      color: rgb(156,163,175);
       font-size: .9rem;
     }
 
-    .profile-view {
+    .profile {
       display: grid;
       gap: 1rem;
     }
 
-    .hero {
+    .profile-card {
       position: relative;
       overflow: hidden;
-      min-height: 340px;
       border: 1px solid rgba(255,218,106,.18);
-      border-radius: 30px;
-      background: rgba(8,8,12,.8);
-      box-shadow: 0 28px 96px rgba(0,0,0,.5);
+      border-radius: 34px;
+      background: rgba(8,8,12,.82);
+      box-shadow: 0 32px 100px rgba(0,0,0,.52);
       backdrop-filter: blur(18px);
     }
 
-    .hero-bg {
-      position: absolute;
-      inset: 0;
+    .cover {
+      height: 220px;
       background-position: center;
       background-size: cover;
-      opacity: .95;
     }
 
-    .hero-bg::after {
+    .cover::after {
       content: "";
-      position: absolute;
-      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
       background:
-        linear-gradient(180deg, rgba(0,0,0,.08), rgba(8,8,12,.66) 56%, rgba(8,8,12,.98)),
-        radial-gradient(circle at 22% 40%, rgba(var(--accent), .32), transparent 35%),
-        linear-gradient(90deg, rgba(0,0,0,.64), transparent 55%);
+        linear-gradient(180deg, rgba(0,0,0,.12), rgba(8,8,12,.88)),
+        radial-gradient(circle at 20% 45%, rgba(var(--accent), .32), transparent 35%);
     }
 
-    .hero-grid {
+    .profile-top {
       position: relative;
-      z-index: 1;
       display: grid;
-      grid-template-columns: 150px minmax(0, 1fr) 330px;
+      grid-template-columns: 150px minmax(0, 1fr);
       gap: 1.25rem;
       align-items: end;
-      min-height: 340px;
-      padding: 1.35rem;
+      padding: 0 1.35rem 1.35rem;
+      margin-top: -78px;
     }
 
-    .avatar-zone {
+    .avatar-wrap {
       display: grid;
       justify-items: center;
-      gap: .8rem;
+      gap: .75rem;
     }
 
     .avatar {
-      width: 138px;
-      height: 138px;
+      width: 142px;
+      height: 142px;
       border: 4px solid var(--profile-color, #ffda6a);
-      border-radius: 26px;
-      background-color: #111;
-      background-size: cover;
-      background-position: center;
+      border-radius: 30px;
+      background: #111 center / cover no-repeat;
       box-shadow:
         0 22px 46px rgba(0,0,0,.58),
         0 0 28px color-mix(in srgb, var(--profile-color, #ffda6a) 38%, transparent);
     }
 
-    .level-badge {
+    .level {
       display: inline-flex;
-      align-items: center;
       justify-content: center;
       min-width: 6.2rem;
       border: 1px solid rgba(255,218,106,.32);
       border-radius: 999px;
-      background: rgba(0,0,0,.48);
+      background: rgba(0,0,0,.5);
       color: #ffda6a;
       padding: .52rem .75rem;
       font-size: .78rem;
       font-weight: 950;
       direction: ltr;
-      backdrop-filter: blur(12px);
     }
 
-    .hero-info {
+    .identity {
       min-width: 0;
+      padding-bottom: .25rem;
     }
 
-    .identity-row {
-      display: flex;
-      align-items: center;
-      gap: .75rem;
-      min-width: 0;
-      flex-wrap: wrap;
-    }
-
-    .identity-row h1 {
+    .identity h1 {
       margin: 0;
       overflow: hidden;
-      color: white;
-      font-size: clamp(2.45rem, 5vw, 5.1rem);
+      color: #fff;
+      font-size: clamp(2.45rem, 5vw, 5rem);
       font-weight: 950;
       line-height: .95;
       letter-spacing: -.05em;
@@ -530,19 +467,7 @@ const metadata = {
       white-space: nowrap;
     }
 
-    .job-pill {
-      flex-shrink: 0;
-      border: 1px solid rgba(255,218,106,.24);
-      border-radius: 999px;
-      background: rgba(0,0,0,.44);
-      color: #f7e6ac;
-      padding: .48rem .7rem;
-      font-size: .78rem;
-      font-weight: 900;
-      backdrop-filter: blur(12px);
-    }
-
-    .meta-row {
+    .meta {
       display: flex;
       flex-wrap: wrap;
       gap: .5rem;
@@ -552,7 +477,7 @@ const metadata = {
       font-weight: 850;
     }
 
-    .meta-row span {
+    .meta span {
       border: 1px solid rgba(255,255,255,.12);
       border-radius: 999px;
       background: rgba(0,0,0,.34);
@@ -563,8 +488,8 @@ const metadata = {
       direction: ltr;
     }
 
-    .bio {
-      max-width: 640px;
+    .identity p {
+      max-width: 720px;
       margin: .78rem 0 0;
       color: rgb(209,213,219);
       font-size: .92rem;
@@ -594,14 +519,16 @@ const metadata = {
       font-weight: 950;
     }
 
-    .hero-stats {
+    .wallet-row {
       display: grid;
-      gap: .72rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: .75rem;
+      padding: 0 1.35rem 1.35rem;
     }
 
-    .stat-card {
+    .wallet-card {
       border: 1px solid rgba(255,218,106,.14);
-      border-radius: 18px;
+      border-radius: 20px;
       background:
         radial-gradient(circle at top right, rgba(255,218,106,.1), transparent 45%),
         rgba(0,0,0,.44);
@@ -609,97 +536,89 @@ const metadata = {
       backdrop-filter: blur(12px);
     }
 
-    .stat-card.primary {
-      border-color: rgba(255,218,106,.26);
-      background:
-        radial-gradient(circle at top right, rgba(255,218,106,.16), transparent 45%),
-        rgba(0,0,0,.48);
-    }
-
-    .stat-card span {
+    .wallet-card span {
       display: block;
       color: rgb(156,163,175);
       font-size: .74rem;
       font-weight: 850;
     }
 
-    .stat-card strong {
+    .wallet-card strong {
       display: block;
       margin-top: .25rem;
       color: #ffda6a;
-      font-size: 1.42rem;
+      font-size: 1.36rem;
       font-weight: 950;
       direction: ltr;
       text-align: right;
     }
 
-    .summary-strip {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: .75rem;
+    .wallet-card.gold strong { color: #ffd166; }
+    .wallet-card.rep strong { color: #c084fc; }
+
+    .tabs-card {
+      border: 1px solid rgba(255,218,106,.14);
+      border-radius: 30px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012)),
+        rgba(8,8,12,.8);
+      box-shadow: 0 26px 80px rgba(0,0,0,.42);
+      overflow: hidden;
+      backdrop-filter: blur(18px);
     }
 
-    .summary-strip div {
-      border: 1px solid rgba(255,218,106,.13);
-      border-radius: 18px;
-      background: rgba(8,8,12,.72);
-      padding: .85rem;
-      text-align: center;
-      box-shadow: 0 16px 44px rgba(0,0,0,.26);
-      backdrop-filter: blur(14px);
+    .tabs {
+      display: flex;
+      gap: .45rem;
+      overflow-x: auto;
+      padding: .8rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.24);
     }
 
-    .summary-strip span {
-      display: block;
-      color: rgb(156,163,175);
-      font-size: .72rem;
+    .tabs button {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      border: 1px solid rgba(255,218,106,.12);
+      border-radius: 999px;
+      background: rgba(255,255,255,.035);
+      color: #e5e7eb;
+      padding: .62rem .85rem;
+      font-family: inherit;
+      font-size: .78rem;
       font-weight: 850;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: 160ms ease;
     }
 
-    .summary-strip strong {
-      display: block;
-      margin-top: .25rem;
+    .tabs button:hover,
+    .tabs button.is-active {
+      border-color: rgba(255,218,106,.42);
+      background: rgba(255,218,106,.12);
       color: #ffda6a;
-      font-size: 1.25rem;
-      font-weight: 950;
+    }
+
+    .tabs b {
+      color: inherit;
+      font-size: .72rem;
       direction: ltr;
     }
 
-    .content-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 360px;
-      gap: 1rem;
-      align-items: start;
-    }
-
-    .main-col,
-    .side-col {
-      display: grid;
-      gap: 1rem;
-    }
-
-    .panel {
-      border: 1px solid rgba(255,218,106,.14);
-      border-radius: 24px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012)),
-        rgba(8,8,12,.78);
-      box-shadow:
-        0 22px 64px rgba(0,0,0,.38),
-        inset 0 0 20px rgba(255,218,106,.018);
+    .tab-panel {
       padding: 1rem;
-      backdrop-filter: blur(16px);
     }
 
-    .panel-head {
+    .section-head {
       display: flex;
       justify-content: space-between;
       align-items: start;
       gap: 1rem;
-      margin-bottom: .92rem;
+      margin-bottom: .95rem;
     }
 
-    .panel-head span {
+    .section-head span {
       display: block;
       color: #c29200;
       font-size: .68rem;
@@ -707,38 +626,25 @@ const metadata = {
       letter-spacing: .13em;
     }
 
-    .panel-head h2 {
+    .section-head h2 {
       margin: .24rem 0 0;
       color: #f7e6ac;
-      font-size: 1.36rem;
+      font-size: 1.38rem;
       font-weight: 950;
       line-height: 1.15;
     }
 
-    .panel-head > strong {
-      display: grid;
-      place-items: center;
-      min-width: 56px;
-      height: 42px;
-      border: 1px solid rgba(255,218,106,.18);
-      border-radius: 14px;
-      background: rgba(255,218,106,.06);
-      color: #ffda6a;
-      font-size: 1rem;
-      font-weight: 950;
-      direction: ltr;
-    }
-
     .showcase {
       display: grid;
-      grid-template-columns: 1.15fr 1fr;
+      grid-template-columns: 1.1fr 1fr;
       gap: .85rem;
+      margin-bottom: .85rem;
     }
 
     .showcase-main {
       min-height: 220px;
       border: 1px solid rgba(255,218,106,.18);
-      border-radius: 18px;
+      border-radius: 20px;
       background:
         radial-gradient(circle at top right, rgba(255,218,106,.12), transparent 46%),
         rgba(0,0,0,.28);
@@ -759,7 +665,7 @@ const metadata = {
 
     .showcase-main h3 {
       margin: 0;
-      color: white;
+      color: #fff;
       font-size: 1.35rem;
       font-weight: 950;
       line-height: 1.2;
@@ -836,16 +742,16 @@ const metadata = {
 
     .inventory-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
       gap: .75rem;
     }
 
     .item-card {
       position: relative;
-      min-height: 166px;
+      min-height: 168px;
       overflow: hidden;
       border: 1px solid var(--item-color, rgba(255,218,106,.18));
-      border-radius: 18px;
+      border-radius: 20px;
       background:
         radial-gradient(circle at top right, var(--item-soft, rgba(255,218,106,.08)), transparent 48%),
         rgba(0,0,0,.32);
@@ -884,21 +790,21 @@ const metadata = {
     .item-icon {
       display: grid;
       place-items: center;
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
       border: 1px solid var(--item-color, rgba(255,218,106,.22));
-      border-radius: 15px;
+      border-radius: 16px;
       background: var(--item-soft, rgba(255,218,106,.08));
-      font-size: 1.5rem;
-      margin-bottom: .68rem;
+      font-size: 1.55rem;
+      margin-bottom: .7rem;
     }
 
     .item-qty {
       position: absolute;
-      top: .7rem;
-      left: .7rem;
-      min-width: 2.08rem;
-      height: 2.08rem;
+      top: .72rem;
+      left: .72rem;
+      min-width: 2.12rem;
+      height: 2.12rem;
       display: grid;
       place-items: center;
       border: 1px solid var(--item-color, rgba(255,218,106,.22));
@@ -912,7 +818,7 @@ const metadata = {
 
     .item-card h3 {
       margin: 0;
-      color: white;
+      color: #fff;
       font-size: .92rem;
       font-weight: 950;
       line-height: 1.25;
@@ -949,25 +855,25 @@ const metadata = {
 
     .badges-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
-      gap: .68rem;
+      grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+      gap: .7rem;
     }
 
     .badge-tile {
       display: grid;
       place-items: center;
       gap: .42rem;
-      min-height: 112px;
+      min-height: 116px;
       border: 1px solid rgba(255,218,106,.1);
       border-radius: 18px;
       background: rgba(0,0,0,.26);
-      padding: .62rem;
+      padding: .64rem;
       text-align: center;
     }
 
     .badge-tile img {
-      width: 58px;
-      height: 58px;
+      width: 60px;
+      height: 60px;
       object-fit: contain;
       filter: drop-shadow(0 8px 12px rgba(0,0,0,.42));
     }
@@ -979,14 +885,17 @@ const metadata = {
       line-height: 1.25;
     }
 
-    .mail-tabs {
+    .mail-head {
+      align-items: center;
+    }
+
+    .mail-filter {
       display: flex;
       gap: .42rem;
       flex-wrap: wrap;
-      margin-bottom: .75rem;
     }
 
-    .mail-tabs button {
+    .mail-filter button {
       border: 1px solid rgba(255,218,106,.16);
       border-radius: 999px;
       background: rgba(255,218,106,.06);
@@ -997,22 +906,20 @@ const metadata = {
       cursor: pointer;
     }
 
-    .mail-tabs button.is-active {
+    .mail-filter button.is-active {
       border-color: rgba(255,218,106,.42);
       background: rgba(255,218,106,.13);
       color: #ffda6a;
     }
 
     .mail-list,
-    .achievements-list,
-    .rare-list {
+    .achievements-list {
       display: grid;
       gap: .65rem;
     }
 
     .mail-card,
-    .achievement-card,
-    .rare-card {
+    .achievement-card {
       display: flex;
       align-items: center;
       gap: .75rem;
@@ -1032,8 +939,7 @@ const metadata = {
     }
 
     .mail-avatar,
-    .achievement-icon,
-    .rare-icon {
+    .achievement-icon {
       display: grid;
       place-items: center;
       width: 42px;
@@ -1048,18 +954,16 @@ const metadata = {
     }
 
     .mail-card strong,
-    .achievement-card strong,
-    .rare-card strong {
+    .achievement-card strong {
       display: block;
-      color: white;
+      color: #fff;
       font-size: .82rem;
       font-weight: 950;
       line-height: 1.25;
     }
 
     .mail-card span,
-    .achievement-card span,
-    .rare-card span {
+    .achievement-card span {
       display: block;
       margin-top: .18rem;
       color: rgb(156,163,175);
@@ -1087,44 +991,33 @@ const metadata = {
       word-break: break-word;
     }
 
-    .quick-actions {
-      padding: 0;
-      overflow: hidden;
+    .actions {
+      display: flex;
+      gap: .65rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
-    .quick-actions a,
-    .quick-actions button {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      border: 0;
-      border-bottom: 1px solid rgba(255,255,255,.07);
-      background: transparent;
-      color: #e5e7eb;
-      padding: .86rem 1rem;
+    .actions a,
+    .actions button {
+      border: 1px solid rgba(255,218,106,.18);
+      border-radius: 999px;
+      background: rgba(8,8,12,.78);
+      color: #f7e6ac;
+      padding: .72rem 1rem;
       font-family: inherit;
-      font-size: .8rem;
-      font-weight: 850;
-      text-align: right;
+      font-size: .82rem;
+      font-weight: 900;
       text-decoration: none;
       cursor: pointer;
+      backdrop-filter: blur(14px);
     }
 
-    .quick-actions a:hover,
-    .quick-actions button:hover {
-      background: rgba(255,218,106,.07);
+    .actions a:hover,
+    .actions button:hover {
+      border-color: rgba(255,218,106,.42);
+      background: rgba(255,218,106,.12);
       color: #ffda6a;
-    }
-
-    .quick-actions a:last-child,
-    .quick-actions button:last-child {
-      border-bottom: 0;
-    }
-
-    .quick-actions span {
-      color: #ffda6a;
-      direction: ltr;
     }
 
     .empty-line {
@@ -1162,69 +1055,56 @@ const metadata = {
       pointer-events: auto;
     }
 
-    @media (max-width: 1060px) {
-      .hero-grid {
-        grid-template-columns: 140px minmax(0, 1fr);
-      }
-
-      .hero-stats {
-        grid-column: 1 / -1;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .content-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .side-col {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .quick-actions {
-        grid-column: 1 / -1;
-      }
-    }
-
-    @media (max-width: 740px) {
-      .profile-shell {
-        padding-top: 5rem;
-      }
-
-      .hero-grid {
+    @media (max-width: 820px) {
+      .profile-top {
         grid-template-columns: 1fr;
         justify-items: center;
         text-align: center;
-        min-height: auto;
-        padding-top: 4.8rem;
       }
 
-      .identity-row {
-        justify-content: center;
-      }
-
-      .identity-row h1 {
+      .identity h1 {
         white-space: normal;
-        font-size: 2.55rem;
+        font-size: 2.5rem;
       }
 
-      .meta-row,
+      .meta,
       .featured-badges {
         justify-content: center;
       }
 
-      .hero-stats,
-      .summary-strip,
-      .showcase,
-      .side-col {
+      .wallet-row,
+      .showcase {
         grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .shell {
+        padding-top: 5rem;
+      }
+
+      .cover {
+        height: 180px;
+      }
+
+      .wallet-row {
+        padding-inline: 1rem;
       }
 
       .inventory-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+
+      .item-card {
+        min-height: 160px;
+      }
+
+      .tabs {
+        padding: .65rem;
+      }
     }
 
-    @media (max-width: 440px) {
+    @media (max-width: 390px) {
       .inventory-grid {
         grid-template-columns: 1fr;
       }
@@ -1233,7 +1113,7 @@ const metadata = {
 
   <script is:inline data-reinit>
     ;(async () => {
-      const cleanupKey = '__tnxLegendaryProfileCleanup'
+      const cleanupKey = '__tnxCinematicProfileCleanup'
       if (window[cleanupKey]) window[cleanupKey]()
 
       const listeners = []
@@ -1262,6 +1142,7 @@ const metadata = {
         profiles: [],
         items: [],
         activeUser: null,
+        activeTab: 'inventory',
         mailFilter: 'all',
       }
 
@@ -1449,6 +1330,7 @@ const metadata = {
             const qty = getItemQty(entry)
             const meta = itemMeta(name)
             const details = catalogItem(name)
+
             return {
               name,
               qty,
@@ -1550,48 +1432,48 @@ const metadata = {
         const badges = Array.isArray(user.badges) ? user.badges : []
         const achievements = buildAchievements(user)
         const mails = mailItems(user)
-        const unreadMails = mails.filter((mail) => !mail.read)
+        const unread = mails.filter((mail) => !mail.read)
 
-        $('profileBg').style.backgroundImage = banner
+        $('bg').style.backgroundImage = banner
           ? `url('${banner}')`
-          : `radial-gradient(circle at 20% 12%, rgba(255, 218, 106, .14), transparent 30%), linear-gradient(135deg, ${color}, #07070b)`
+          : `radial-gradient(circle at 20% 12%, rgba(255, 218, 106, .16), transparent 30%), linear-gradient(135deg, ${color}, #06060a)`
 
-        $('heroBg').style.setProperty('--accent', hexToRgb(color))
-        $('heroBg').style.backgroundImage = banner ? `url('${banner}')` : `linear-gradient(135deg, ${color}, #07070b)`
+        $('cover').style.setProperty('--accent', hexToRgb(color))
+        $('cover').style.backgroundImage = banner ? `url('${banner}')` : `linear-gradient(135deg, ${color}, #06060a)`
 
         $('avatar').style.setProperty('--profile-color', color)
         $('avatar').style.backgroundImage = avatar ? `url('${avatar}')` : ''
 
         $('displayName').textContent = name
         $('loginName').textContent = `@${login}`
-        $('jobPill').textContent = get(user, ['jobName'], 'Citizen')
-        $('bioText').textContent = get(user, ['bio'], 'عضو في مجتمع TNX6.')
-        $('levelBadge').textContent = `LVL ${fmt(level)}`
-        $('pointsValue').textContent = fmt(get(user, ['points', 'totalPoints'], 0))
-        $('goldValue').textContent = fmt(get(user, ['gold'], 0))
-        $('repValue').textContent = fmt(get(user, ['reputation', 'rep'], 0))
+        $('jobName').textContent = get(user, ['jobName'], 'Citizen')
+        $('bio').textContent = get(user, ['bio'], 'عضو في مجتمع TNX6.')
+        $('level').textContent = `LVL ${fmt(level)}`
+        $('points').textContent = fmt(get(user, ['points', 'totalPoints'], 0))
+        $('gold').textContent = fmt(get(user, ['gold'], 0))
+        $('rep').textContent = fmt(get(user, ['reputation', 'rep'], 0))
+        $('badgeTotalTop').textContent = fmt(badges.length)
 
         const country = get(user, ['country'], '')
         $('countryName').classList.toggle('hidden', !country)
         $('countryName').textContent = country
 
-        $('summaryItems').textContent = fmt(items.length)
-        $('summaryBadges').textContent = fmt(badges.length)
-        $('summaryAch').textContent = fmt(achievements.length)
-        $('summaryMail').textContent = fmt(unreadMails.length || mails.length)
+        $('tabInv').textContent = fmt(items.length)
+        $('tabBadges').textContent = fmt(badges.length)
+        $('tabMail').textContent = fmt(unread.length || mails.length)
+        $('tabAch').textContent = fmt(achievements.length)
         $('badgesPageLink').href = `/badges?user=${encodeURIComponent(login)}`
 
-        renderFeaturedBadges(user)
-        renderShowcase(user, items)
+        renderFeaturedBadges(badges)
+        renderShowcase(items)
         renderInventory(items)
         renderBadges(badges)
-        renderAchievements(achievements)
         renderMail(user)
-        renderRare(items)
+        renderAchievements(achievements)
+        setActiveTab('inventory')
       }
 
-      function renderFeaturedBadges(user) {
-        const badges = Array.isArray(user.badges) ? user.badges : []
+      function renderFeaturedBadges(badges) {
         const equipped = badges.filter((badge) => badge.equipped).slice(0, 7)
         const list = equipped.length ? equipped : badges.slice(0, 7)
 
@@ -1606,7 +1488,7 @@ const metadata = {
           : `<div class="badge-placeholder">—</div>`
       }
 
-      function renderShowcase(user, items) {
+      function renderShowcase(items) {
         const sorted = [...items].sort((a, b) => {
           const rank = (item) => item.meta.rare ? 10 : 0
           return rank(b) - rank(a) || b.qty - a.qty
@@ -1647,13 +1529,12 @@ const metadata = {
       }
 
       function renderInventory(items) {
-        $('inventoryCount').textContent = fmt(items.length)
-        $('quickItems').textContent = fmt(items.length)
         $('inventoryEmpty').classList.toggle('hidden', items.length > 0)
 
         $('inventoryGrid').innerHTML = items.map((item) => {
           const [color, soft, label] = CATEGORY[item.meta.cat] || CATEGORY.economy
           const rare = item.meta.rare ? ' is-rare' : ''
+
           return `
             <article class="item-card${rare}" style="--item-color:${color};--item-soft:${soft};">
               <span class="item-qty">x${fmt(item.qty)}</span>
@@ -1670,13 +1551,12 @@ const metadata = {
       }
 
       function renderBadges(badges) {
-        $('badgeCount').textContent = fmt(badges.length)
-        $('quickBadges').textContent = fmt(badges.length)
         $('badgesEmpty').classList.toggle('hidden', badges.length > 0)
 
-        $('badgesGrid').innerHTML = badges.slice(0, 72).map((badge) => {
+        $('badgesGrid').innerHTML = badges.slice(0, 90).map((badge) => {
           const img = badgeImage(badge)
           const name = badgeName(badge)
+
           return `
             <div class="badge-tile">
               ${img ? `<img src="${esc(img)}" alt="${esc(name)}" loading="lazy" />` : '<div class="badge-placeholder">★</div>'}
@@ -1698,11 +1578,10 @@ const metadata = {
         if (points >= 100000) manual.push({ icon: '⭐', title: 'رصيد عالي', subtitle: `وصل إلى ${fmt(points)} نقطة` })
         if (gold >= 1000) manual.push({ icon: '🪙', title: 'جامع ذهب', subtitle: `يمتلك ${fmt(gold)} ذهب` })
 
-        return manual.slice(0, 6)
+        return manual.slice(0, 8)
       }
 
       function renderAchievements(achievements) {
-        $('achCount').textContent = fmt(achievements.length)
         $('achievementsEmpty').classList.toggle('hidden', achievements.length > 0)
 
         $('achievementsList').innerHTML = achievements.map((item) => `
@@ -1726,10 +1605,9 @@ const metadata = {
         const unread = all.filter((mail) => !mail.read)
         const list = state.mailFilter === 'unread' ? unread : all
 
-        $('mailCount').textContent = fmt(unread.length || all.length)
         $('mailEmpty').classList.toggle('hidden', list.length > 0)
 
-        $('mailList').innerHTML = list.slice(0, 8).map((mail) => {
+        $('mailList').innerHTML = list.slice(0, 12).map((mail) => {
           const from = get(mail, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], '؟')
           const date = get(mail, ['date', 'createdAt'], '')
           const message = get(mail, ['message'], '')
@@ -1751,19 +1629,17 @@ const metadata = {
         }).join('')
       }
 
-      function renderRare(items) {
-        const rare = items.filter((item) => item.meta.rare).slice(0, 6)
-        $('rareEmpty').classList.toggle('hidden', rare.length > 0)
+      function setActiveTab(tab) {
+        state.activeTab = tab
 
-        $('rareList').innerHTML = rare.map((item) => `
-          <div class="rare-card">
-            <div class="rare-icon">${esc(item.meta.icon)}</div>
-            <div>
-              <strong>${esc(item.name)}</strong>
-              <span>x${fmt(item.qty)}</span>
-            </div>
-          </div>
-        `).join('')
+        document.querySelectorAll('[data-tab]').forEach((button) => {
+          button.classList.toggle('is-active', button.dataset.tab === tab)
+        })
+
+        $('inventoryPanel').classList.toggle('hidden', tab !== 'inventory')
+        $('badgesPanel').classList.toggle('hidden', tab !== 'badges')
+        $('mailPanel').classList.toggle('hidden', tab !== 'mail')
+        $('achievementsPanel').classList.toggle('hidden', tab !== 'achievements')
       }
 
       function renderSearch(query) {
@@ -1781,7 +1657,7 @@ const metadata = {
           const avatar = safeUrl(get(user, ['profileImageUrl', 'avatar', 'ProfileImageUrl'], ''))
 
           return `
-            <button type="button" class="search-result" data-login="${esc(login)}">
+            <button type="button" class="result" data-login="${esc(login)}">
               ${avatar ? `<img src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />` : ''}
               <div>
                 <strong>${esc(name)}</strong>
@@ -1794,18 +1670,31 @@ const metadata = {
 
       function openFromQuery() {
         const raw = new URLSearchParams(location.search).get('user')
+
         if (!raw) {
-          showSearch()
+          $('searchView').classList.remove('hidden')
+          $('profileView').classList.add('hidden')
+          $('notFoundView').classList.add('hidden')
           return
         }
 
         const user = findUser(raw)
+
         if (!user) {
-          showNotFound()
+          $('searchView').classList.add('hidden')
+          $('profileView').classList.add('hidden')
+          $('notFoundView').classList.remove('hidden')
           return
         }
 
         renderProfile(user)
+      }
+
+      function findUser(login) {
+        const target = normalize(login)
+        return state.users.find((user) =>
+          normalize(userLogin(user)) === target || normalize(userName(user)) === target
+        ) || null
       }
 
       addListener($('searchInput'), 'input', (event) => renderSearch(event.target.value))
@@ -1826,20 +1715,8 @@ const metadata = {
         renderProfile(user)
       })
 
-      addListener($('copyLink'), 'click', async (event) => {
-        if (!state.activeUser) return
-        const button = event.currentTarget
-        const old = button.innerHTML
-
-        try {
-          await navigator.clipboard.writeText(profileLink(state.activeUser))
-          button.innerHTML = 'تم النسخ <span>✓</span>'
-          addTimer(window.setTimeout(() => {
-            button.innerHTML = old
-          }, 1200))
-        } catch {
-          button.innerHTML = profileLink(state.activeUser)
-        }
+      document.querySelectorAll('[data-tab]').forEach((button) => {
+        addListener(button, 'click', () => setActiveTab(button.dataset.tab || 'inventory'))
       })
 
       document.querySelectorAll('[data-mail-filter]').forEach((button) => {
@@ -1850,10 +1727,18 @@ const metadata = {
         })
       })
 
-      document.querySelectorAll('[data-jump]').forEach((button) => {
-        addListener(button, 'click', () => {
-          $(button.dataset.jump)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        })
+      addListener($('copyLink'), 'click', async (event) => {
+        if (!state.activeUser) return
+        const button = event.currentTarget
+        const old = button.textContent
+
+        try {
+          await navigator.clipboard.writeText(profileLink(state.activeUser))
+          button.textContent = 'تم النسخ'
+          addTimer(window.setTimeout(() => { button.textContent = old }, 1200))
+        } catch {
+          button.textContent = profileLink(state.activeUser)
+        }
       })
 
       addListener($('backToTop'), 'click', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
