@@ -109,8 +109,11 @@ const metadata = {
 
           <article class="medal-wall">
             <div class="section-label">
-              <span>MEDALS</span>
-              <h2>ميداليات العضو</h2>
+              <div>
+                <span>MEDALS</span>
+                <h2>ميداليات العضو</h2>
+              </div>
+              <strong id="badgeCountMini">0</strong>
             </div>
 
             <div id="badgeWall" class="medals"></div>
@@ -455,7 +458,7 @@ const metadata = {
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: 310px minmax(0, 1fr) 230px;
+      grid-template-columns: 280px minmax(0, 1fr) 220px;
       gap: 1.25rem;
       min-height: 560px;
       align-items: center;
@@ -469,8 +472,8 @@ const metadata = {
     }
 
     .portrait-frame {
-      width: 270px;
-      height: 355px;
+      width: 250px;
+      height: 330px;
       border-radius: 36px;
       padding: 5px;
       background:
@@ -550,15 +553,17 @@ const metadata = {
 
     .identity-side h1 {
       margin: 0;
-      overflow: hidden;
+      overflow: visible;
       color: #fff;
-      font-size: clamp(3.5rem, 7vw, 7rem);
+      font-size: clamp(3rem, 6vw, 5.8rem);
       font-weight: 950;
-      line-height: .88;
-      letter-spacing: -.065em;
+      line-height: .9;
+      letter-spacing: -.06em;
       text-shadow: 0 8px 28px rgba(0,0,0,.78);
-      white-space: nowrap;
-      text-overflow: ellipsis;
+      white-space: normal;
+      word-break: break-word;
+      direction: ltr;
+      unicode-bidi: isolate;
     }
 
     .bio-text {
@@ -1577,8 +1582,8 @@ const metadata = {
         $('countryName').classList.toggle('hidden', !country)
         $('countryName').textContent = country
 
-        $('badgeCountMini').textContent = fmt(badges.length)
-        $('achCount').textContent = fmt(buildAchievements(user).length)
+        if ($('badgeCountMini')) $('badgeCountMini').textContent = fmt(badges.length)
+        if ($('achCount')) $('achCount').textContent = fmt(buildAchievements(user).length)
         $('badgesPageLink').href = `/badges?user=${encodeURIComponent(login)}`
 
         renderFeaturedBadges(badges)
@@ -1605,6 +1610,7 @@ const metadata = {
       }
 
       function renderRareFeature(items) {
+        items = Array.isArray(items) ? items.filter(Boolean) : []
         const sorted = [...items].sort((a, b) => {
           const rank = (item) => item.meta.rare ? 10 : 0
           return rank(b) - rank(a) || b.qty - a.qty
