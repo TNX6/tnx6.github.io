@@ -2,460 +2,1239 @@
 import Layout from '~/layouts/PageLayout.astro'
 
 const metadata = {
-  title: 'البروفايل — TNX6',
+  title: 'TNX6 Profile',
   ignoreTitleTemplate: true,
-  description: 'بروفايل عضو في مجتمع TNX6 — أغراض، رصيد، بادجات، بريد، وإنجازات.',
+  description: 'TNX6 community profile hub.',
 }
 ---
 
 <Layout metadata={metadata}>
-  <main class="tnx-profile-page" dir="rtl">
-    <div class="tnx-global-bg"></div>
-    <div class="tnx-global-grid"></div>
+  <main class="tnx-profile" dir="rtl">
+    <div id="profileBg" class="profile-bg"></div>
+    <div class="profile-shade"></div>
 
-    <button id="backToTop" class="tnx-back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
+    <section class="profile-shell">
+      <section id="searchView" class="search-view hidden">
+        <div class="search-card">
+          <div class="mini-label">TNX6 PROFILE</div>
+          <h1>بروفايل العضو</h1>
+          <p>ابحث باسم Twitch أو افتح رابط مباشر مثل <b>/profile?user=haneen48</b></p>
 
-    <section class="tnx-shell">
-      
-      <section id="searchScreen" class="tnx-search-screen hidden">
-        <div class="tnx-search-box tnx-reveal">
-          <div class="tnx-kicker">TNX6 PROFILE</div>
-          <h1>ابحث عن عضو</h1>
-          <p>اكتب اسم العضو عشان تفتح بروفايله الكامل وتشوف إنجازاته.</p>
-
-          <div class="tnx-search">
+          <div class="search-box">
             <span>⌕</span>
-            <input id="userSearch" type="search" autocomplete="off" placeholder="اسم العضو (مثال: TNX6)..." />
-            <button type="button" id="clearUserSearch" aria-label="مسح البحث">×</button>
+            <input id="searchInput" type="search" autocomplete="off" placeholder="اكتب اسم المستخدم..." />
+            <button id="clearSearch" type="button" aria-label="مسح البحث">×</button>
           </div>
 
-          <div id="userResults" class="tnx-user-results"></div>
+          <div id="searchResults" class="search-results"></div>
         </div>
       </section>
 
-      <section id="profileScreen" class="tnx-profile-screen hidden">
-        
-        <header class="tnx-profile-header tnx-reveal">
-          <div class="tnx-profile-banner" id="profileBg">
-            <div class="tnx-banner-overlay"></div>
-          </div>
+      <section id="notFoundView" class="not-found hidden">
+        <strong>ما لقيت العضو</strong>
+        <span>تأكد من الاسم أو من ملف user_badges.json.</span>
+      </section>
 
-          <div class="tnx-header-content">
-            <div class="tnx-identity">
-              <div class="tnx-avatar-wrap">
-                <div class="tnx-avatar" id="pAvatar"></div>
-              </div>
+      <section id="profileView" class="profile-view hidden">
+        <header class="hero">
+          <div id="heroBg" class="hero-bg"></div>
 
-              <div class="tnx-identity-text">
-                <h1 id="pName">—</h1>
-                <div class="tnx-identity-badges">
-                  <div class="tnx-level-badge">
-                    <span>Lvl</span>
-                    <strong id="pLevel">1</strong>
-                  </div>
-                  <div class="tnx-country hidden" id="pCountry"></div>
-                </div>
-                <div class="tnx-bio" id="pBio"></div>
-              </div>
+          <div class="hero-grid">
+            <div class="avatar-zone">
+              <div id="avatar" class="avatar"></div>
+              <div id="levelBadge" class="level-badge">LVL 1</div>
             </div>
 
-            <div class="tnx-header-actions">
-              <button type="button" class="tnx-action-btn" id="mailToggle" aria-label="البريد">
-                <span class="ti-mail-glyph">✉</span>
-                <span class="tnx-mail-count hidden" id="mailCount">0</span>
-              </button>
+            <div class="hero-info">
+              <div class="identity-row">
+                <h1 id="displayName">—</h1>
+                <span id="jobPill" class="job-pill">Citizen</span>
+              </div>
 
-              <button type="button" class="tnx-copy-link" id="copyProfileLink">نسخ الرابط</button>
+              <div class="meta-row">
+                <span id="loginName">@—</span>
+                <span id="countryName" class="hidden">Saudi Arabia</span>
+              </div>
+
+              <p id="bioText" class="bio">عضو في مجتمع TNX6.</p>
+
+              <div id="featuredBadges" class="featured-badges"></div>
             </div>
+
+            <aside class="hero-stats">
+              <div class="stat-card primary">
+                <span>النقاط</span>
+                <strong id="pointsValue">0</strong>
+              </div>
+
+              <div class="stat-card">
+                <span>الذهب</span>
+                <strong id="goldValue">0</strong>
+              </div>
+
+              <div class="stat-card">
+                <span>السمعة</span>
+                <strong id="repValue">0</strong>
+              </div>
+            </aside>
           </div>
         </header>
 
-        <section class="tnx-mailbox hidden" id="mailboxSection">
-          <div class="tnx-box-head">
-            <div class="tnx-box-title">
-              <span class="icon">📬</span>
-              <strong>صندوق البريد</strong>
-            </div>
-            <div class="tnx-mail-filters">
-              <button type="button" class="is-active" data-mail-filter="all">
-                الكل <small id="mailAllCount">0</small>
-              </button>
-              <button type="button" data-mail-filter="unread">
-                غير المقروءة <small id="mailUnreadCount">0</small>
-              </button>
-            </div>
+        <section class="summary-strip">
+          <div>
+            <span>الأغراض</span>
+            <strong id="summaryItems">0</strong>
           </div>
-          <div id="mailList" class="tnx-mail-list"></div>
-          <div class="tnx-mail-hint">
-            الرسائل تُرسل من الشات عبر أمر <code>!mail @USER رسالتك</code>
+          <div>
+            <span>البادجات</span>
+            <strong id="summaryBadges">0</strong>
+          </div>
+          <div>
+            <span>الإنجازات</span>
+            <strong id="summaryAch">0</strong>
+          </div>
+          <div>
+            <span>البريد</span>
+            <strong id="summaryMail">0</strong>
           </div>
         </section>
 
-        <div class="tnx-profile-body">
-          
-          <aside class="tnx-side-col tnx-reveal" style="transition-delay: 100ms;">
-            
-            <div class="tnx-panel tnx-balance">
-              <h3 class="tnx-panel-title">المحفظة</h3>
-              
-              <div class="tnx-balance-row">
-                <div class="label">
-                  <span class="icon" style="color: #60a5fa;">★</span> النقاط
+        <section class="content-grid">
+          <main class="main-col">
+            <section class="panel showcase-panel">
+              <div class="panel-head">
+                <div>
+                  <span>SHOWCASE</span>
+                  <h2>واجهة العضو</h2>
                 </div>
-                <strong id="pPoints">0</strong>
               </div>
 
-              <div class="tnx-balance-row">
-                <div class="label">
-                  <span class="icon" style="color: #ffd700;">🪙</span> الذهب
+              <div id="showcase" class="showcase"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <span>INVENTORY</span>
+                  <h2>حقيبة الأغراض</h2>
                 </div>
-                <strong id="pGold" class="gold">0</strong>
+
+                <strong id="inventoryCount">0</strong>
               </div>
 
-              <div class="tnx-balance-row">
-                <div class="label">
-                  <span class="icon" style="color: #c084fc;">🔥</span> السمعة
+              <div id="inventoryGrid" class="inventory-grid"></div>
+              <div id="inventoryEmpty" class="empty-line hidden">ما فيه أغراض في الحقيبة.</div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <span>BADGES</span>
+                  <h2>البادجات</h2>
                 </div>
-                <strong id="pRep" class="rep">0</strong>
+
+                <strong id="badgeCount">0</strong>
               </div>
-            </div>
 
-            <div class="tnx-panel">
-              <div class="tnx-box-head">
-                <h3 class="tnx-panel-title m-0">البادجات</h3>
-                <span class="tnx-count-badge" id="badgeCount">0</span>
-              </div>
-              <div id="badgeShowcase" class="tnx-badge-showcase"></div>
-            </div>
-
-            <div class="tnx-panel tnx-quicklist">
-              <button type="button" data-jump="inventoryGrid">
-                <span>الأغراض</span>
-                <em id="qlItems">0</em>
-              </button>
-              <button type="button" data-jump="badgeShowcase">
-                <span>البادجات</span>
-                <em id="qlBadges">0</em>
-              </button>
-              <button type="button" data-jump="achievementsList">
-                <span>الإنجازات</span>
-                <em id="qlAch">0</em>
-              </button>
-              <a id="badgePageLink" href="/badges">
-                <span>دليل البادجات الكامل</span>
-                <em>↗</em>
-              </a>
-            </div>
-
-          </aside>
-
-          <main class="tnx-main-col tnx-reveal" style="transition-delay: 200ms;">
-            
-            <div class="tnx-panel">
-              <div class="tnx-box-head">
-                <h3 class="tnx-panel-title m-0">حقيبة الأغراض</h3>
-                <span class="tnx-count-badge" id="invCount">0 غرض</span>
-              </div>
-              <div id="inventoryGrid" class="tnx-inv-grid"></div>
-              <div id="inventoryEmpty" class="tnx-inline-empty hidden">لا توجد أغراض في الحقيبة حالياً.</div>
-            </div>
-
-            <div class="tnx-panel tnx-section-gap">
-              <div class="tnx-box-head">
-                <h3 class="tnx-panel-title m-0">الإنجازات</h3>
-                <span class="tnx-count-badge" id="achCount">0 إنجاز</span>
-              </div>
-              <div id="achievementsList" class="tnx-ach-list"></div>
-              <div id="achievementsEmpty" class="tnx-inline-empty hidden">لم يفتح أي إنجازات بعد.</div>
-            </div>
-
+              <div id="badgesGrid" class="badges-grid"></div>
+              <div id="badgesEmpty" class="empty-line hidden">ما فيه بادجات ظاهرة.</div>
+            </section>
           </main>
-        </div>
-      </section>
 
-      <section id="notFoundScreen" class="tnx-empty hidden">
-        <div class="empty-icon">👻</div>
-        <strong>ما لقيت هذا العضو</strong>
-        <span>تأكد من اسم العضو في الرابط أو من مربع البحث.</span>
-        <button type="button" class="tnx-copy-link mt-4" onclick="document.getElementById('notFoundScreen').classList.add('hidden'); document.getElementById('searchScreen').classList.remove('hidden');">الرجوع للبحث</button>
+          <aside class="side-col">
+            <section class="panel compact-panel">
+              <div class="panel-head">
+                <div>
+                  <span>MAILBOX</span>
+                  <h2>البريد</h2>
+                </div>
+
+                <strong id="mailCount">0</strong>
+              </div>
+
+              <div class="mail-tabs">
+                <button type="button" class="is-active" data-mail-filter="all">الكل</button>
+                <button type="button" data-mail-filter="unread">غير المقروء</button>
+              </div>
+
+              <div id="mailList" class="mail-list"></div>
+              <div id="mailEmpty" class="empty-line hidden">ما فيه رسائل.</div>
+            </section>
+
+            <section class="panel compact-panel">
+              <div class="panel-head">
+                <div>
+                  <span>ACHIEVEMENTS</span>
+                  <h2>الإنجازات</h2>
+                </div>
+
+                <strong id="achCount">0</strong>
+              </div>
+
+              <div id="achievementsList" class="achievements-list"></div>
+              <div id="achievementsEmpty" class="empty-line hidden">لا توجد إنجازات بعد.</div>
+            </section>
+
+            <section class="panel compact-panel">
+              <div class="panel-head">
+                <div>
+                  <span>RARE ITEMS</span>
+                  <h2>الأندر</h2>
+                </div>
+              </div>
+
+              <div id="rareList" class="rare-list"></div>
+              <div id="rareEmpty" class="empty-line hidden">ما فيه أغراض نادرة.</div>
+            </section>
+
+            <section class="panel quick-actions">
+              <a id="badgesPageLink" href="/badges">بطاقة البادجات <span>↗</span></a>
+              <button id="copyLink" type="button">نسخ رابط البروفايل <span>⌁</span></button>
+              <button type="button" data-jump="inventoryGrid">الأغراض <span id="quickItems">0</span></button>
+              <button type="button" data-jump="badgesGrid">البادجات <span id="quickBadges">0</span></button>
+            </section>
+          </aside>
+        </section>
       </section>
     </section>
+
+    <button id="backToTop" class="back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
   </main>
 
   <style is:global>
     .hidden { display: none !important; }
 
     html {
-      scroll-behavior: smooth;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 218, 106, 0.45) rgba(0, 0, 0, 0.38);
-    }
-    html::-webkit-scrollbar { width: 10px; }
-    html::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.38); }
-    html::-webkit-scrollbar-thumb {
-      border: 2px solid rgba(0, 0, 0, 0.38); border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255, 218, 106, 0.85), rgba(194, 146, 0, 0.55));
+      scrollbar-color: rgba(255, 218, 106, .5) rgba(0, 0, 0, .4);
     }
 
-    .tnx-profile-page {
-      position: relative; min-height: 100vh; overflow: hidden;
-      background: #07050b; color: #c7d5e0;
+    html::-webkit-scrollbar { width: 10px; }
+    html::-webkit-scrollbar-track { background: rgba(0,0,0,.4); }
+    html::-webkit-scrollbar-thumb {
+      border: 2px solid rgba(0,0,0,.4);
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255,218,106,.9), rgba(194,146,0,.55));
+    }
+
+    .tnx-profile {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      background: #07070b;
+      color: #f8fafc;
       font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    /* الخلفية العامة للصفحة */
-    .tnx-global-bg {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    .profile-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
       background:
-        radial-gradient(circle at 12% 9%, rgba(255, 218, 106, 0.08), transparent 28%),
-        radial-gradient(circle at 86% 14%, rgba(194, 146, 0, 0.08), transparent 34%),
-        radial-gradient(circle at 48% 92%, rgba(124, 58, 237, 0.05), transparent 38%),
-        linear-gradient(135deg, #07050b 0%, #0a0812 55%, #130c05 100%);
-    }
-    .tnx-global-grid {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.04;
-      background-image: linear-gradient(rgba(255, 218, 106, 0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 218, 106, 0.4) 1px, transparent 1px);
-      background-size: 58px 58px; mask-image: radial-gradient(circle at center, black 0%, transparent 74%);
-    }
-
-    .tnx-shell { position: relative; z-index: 1; width: min(100%, 1100px); margin: 0 auto; padding: 6.5rem 1.25rem 5rem; }
-
-    /* أنيميشن الظهور السلس */
-    .tnx-reveal {
-      animation: revealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-    @keyframes revealUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+        radial-gradient(circle at 20% 12%, rgba(255, 218, 106, .14), transparent 30%),
+        radial-gradient(circle at 85% 14%, rgba(124, 58, 237, .16), transparent 30%),
+        linear-gradient(135deg, #07070b 0%, #101019 50%, #160d05 100%);
+      background-position: center;
+      background-size: cover;
+      filter: saturate(1.04) contrast(1.03);
+      transform: scale(1.02);
+      pointer-events: none;
     }
 
-    /* --- شاشة البحث --- */
-    .tnx-search-screen { display: grid; place-items: center; min-height: 60vh; }
-    .tnx-search-box {
-      width: min(100%, 580px); border: 1px solid rgba(255, 218, 106, 0.15); border-radius: 1.5rem;
-      background: rgba(10, 10, 15, 0.8); padding: 2.5rem 2rem; text-align: center;
-      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5); backdrop-filter: blur(20px);
-    }
-    .tnx-kicker {
-      display: inline-flex; border: 1px solid rgba(255, 218, 106, 0.25); border-radius: 999px;
-      background: rgba(255, 218, 106, 0.06); color: #ffda6a; padding: 0.45rem 0.75rem;
-      font-size: 0.68rem; font-weight: 900; letter-spacing: 0.15em;
-    }
-    .tnx-search-box h1 {
-      margin: 1rem 0 0.5rem; color: #fff; font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 900; line-height: 1.1;
-    }
-    .tnx-search-box p { margin: 0 0 1.5rem; color: #9ca3af; font-size: 0.95rem; line-height: 1.6; }
-
-    .tnx-search {
-      display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 0.75rem; align-items: center;
-      border: 1px solid rgba(255, 218, 106, 0.2); border-radius: 1rem; background: rgba(0, 0, 0, 0.5);
-      padding: 0.8rem 1rem; transition: 0.3s ease;
-    }
-    .tnx-search:focus-within { border-color: rgba(255, 218, 106, 0.6); box-shadow: 0 0 15px rgba(255, 218, 106, 0.1); }
-    .tnx-search span { color: #ffda6a; font-size: 1.4rem; }
-    .tnx-search input { width: 100%; border: 0; outline: 0; background: transparent; color: white; font-size: 1rem; }
-    .tnx-search button {
-      width: 2.2rem; height: 2.2rem; border: none; border-radius: 50%; background: rgba(255, 218, 106, 0.1);
-      color: #ffda6a; font-size: 1.2rem; cursor: pointer; transition: 0.2s;
-    }
-    .tnx-search button:hover { background: rgba(255, 218, 106, 0.25); transform: scale(1.1); }
-
-    .tnx-user-results { display: grid; gap: 0.5rem; margin-top: 0.85rem; }
-    .tnx-user-result {
-      border: 1px solid rgba(255, 218, 106, 0.1); border-radius: 0.8rem; background: rgba(255,255,255, 0.03);
-      color: #fff; padding: 0.8rem 1rem; text-align: right; font-weight: 700; cursor: pointer; transition: 0.2s;
-    }
-    .tnx-user-result:hover { border-color: #ffda6a; background: rgba(255, 218, 106, 0.1); transform: translateX(-4px); }
-
-    /* --- الهيدر (بانر Steam) --- */
-    .tnx-profile-header {
-      position: relative; background: #0f0f15; border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 1.5rem; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    }
-    .tnx-profile-banner {
-      height: 240px; width: 100%; background-size: cover; background-position: center; position: relative;
-    }
-    .tnx-banner-overlay {
-      position: absolute; inset: 0; background: linear-gradient(to top, #0f0f15 0%, transparent 70%);
+    .profile-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.68), rgba(0,0,0,.26) 36%, rgba(0,0,0,.88)),
+        linear-gradient(90deg, rgba(0,0,0,.72), transparent 50%, rgba(0,0,0,.72));
     }
 
-    .tnx-header-content {
-      position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;
-      padding: 0 2.5rem 2rem; margin-top: -60px; flex-wrap: wrap; gap: 1.5rem;
+    .profile-shade {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.24) 52%, rgba(0,0,0,.78) 100%);
     }
 
-    .tnx-identity { display: flex; gap: 1.5rem; align-items: flex-end; }
-    .tnx-avatar-wrap {
-      background: #0f0f15; padding: 6px; border-radius: 50%; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-    }
-    .tnx-avatar {
-      width: 130px; height: 130px; border-radius: 50%; background-color: var(--pColor, #6c5ce7);
-      background-size: cover; background-position: center; border: 3px solid var(--pColor, #6c5ce7);
-    }
-
-    .tnx-identity-text { padding-bottom: 0.5rem; }
-    .tnx-identity-text h1 { margin: 0 0 0.5rem 0; color: #fff; font-size: 2.2rem; font-weight: 900; line-height: 1; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
-    
-    .tnx-identity-badges { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.6rem; }
-    .tnx-level-badge {
-      display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(255,218,106,0.1); border: 1px solid rgba(255,218,106,0.3);
-      padding: 0.2rem 0.8rem; border-radius: 1rem; color: #ffda6a; font-size: 0.8rem; font-weight: 800;
-    }
-    .tnx-country { color: #a0b3c0; font-size: 0.85rem; font-weight: 600; }
-    .tnx-country::before { content: "🏳 "; }
-    
-    .tnx-bio { color: #9ca3af; font-size: 0.9rem; line-height: 1.6; max-width: 400px; }
-    .tnx-bio span { color: #c084fc; font-weight: 700; background: rgba(192,132,252,0.1); padding: 0.1rem 0.5rem; border-radius: 0.4rem; }
-
-    .tnx-header-actions { display: flex; gap: 0.8rem; align-items: center; padding-bottom: 0.5rem; }
-    .tnx-action-btn {
-      position: relative; display: grid; place-items: center; width: 44px; height: 44px;
-      border: 1px solid rgba(255,255,255,0.1); border-radius: 0.8rem; background: rgba(255,255,255,0.05);
-      color: #fff; font-size: 1.2rem; cursor: pointer; transition: 0.2s; backdrop-filter: blur(5px);
-    }
-    .tnx-action-btn:hover { background: rgba(255,218,106,0.15); border-color: #ffda6a; color: #ffda6a; transform: translateY(-2px); }
-    .tnx-mail-count {
-      position: absolute; top: -6px; right: -6px; min-width: 22px; height: 22px; display: grid; place-items: center;
-      background: #e74c3c; border: 2px solid #0f0f15; border-radius: 50%; color: #fff; font-size: 0.7rem; font-weight: 800;
+    .profile-shell {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 1220px);
+      margin: 0 auto;
+      padding: 5.8rem 1rem 5rem;
     }
 
-    .tnx-copy-link {
-      border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.8rem; background: rgba(255,255,255,0.05);
-      color: #fff; padding: 0 1.2rem; height: 44px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: 0.2s; backdrop-filter: blur(5px);
-    }
-    .tnx-copy-link:hover, .tnx-copy-link.is-copied { background: #10b981; border-color: #10b981; color: #fff; transform: translateY(-2px); }
-
-    /* --- Panels العامة --- */
-    .tnx-panel {
-      background: rgba(15, 15, 22, 0.6); border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 1.2rem; padding: 1.5rem; backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-    .tnx-panel-title { margin: 0 0 1.2rem 0; color: #fff; font-size: 1.1rem; font-weight: 800; }
-    .m-0 { margin-bottom: 0 !important; }
-    
-    .tnx-box-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.8rem; }
-    .tnx-count-badge { background: rgba(255,255,255,0.05); padding: 0.2rem 0.6rem; border-radius: 1rem; color: #9ca3af; font-size: 0.75rem; font-weight: 700;}
-    .tnx-section-gap { margin-top: 1.5rem; }
-
-    /* --- تخطيط الجسم --- */
-    .tnx-profile-body { display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; align-items: start; }
-    .tnx-side-col { display: grid; gap: 1.5rem; }
-    .tnx-main-col { display: grid; gap: 1.5rem; }
-
-    /* --- الإحصائيات (المحفظة) --- */
-    .tnx-balance-row { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-    .tnx-balance-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .tnx-balance-row .label { color: #d1d5db; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
-    .tnx-balance-row strong { font-size: 1.1rem; font-weight: 900; }
-    .tnx-balance-row strong.gold { color: #ffd700; }
-    .tnx-balance-row strong.rep { color: #c084fc; }
-
-    /* --- البادجات والإنفنتوري --- */
-    .tnx-badge-showcase { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-    .tnx-badge-showcase img, .tnx-badge-fallback {
-      width: 48px; height: 48px; border-radius: 0.5rem; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,218,106,0.15);
-      object-fit: contain; padding: 4px; transition: 0.2s;
-    }
-    .tnx-badge-showcase img:hover { transform: scale(1.1) translateY(-2px); border-color: rgba(255,218,106,0.6); background: rgba(255,218,106,0.1); }
-    .tnx-badge-fallback { display: grid; place-items: center; color: #ffda6a; font-size: 1.2rem; }
-
-    .tnx-inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 0.8rem; }
-    .tnx-inv-item {
-      aspect-ratio: 1; border-radius: 0.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, var(--cat-soft), rgba(0,0,0,0.6)); border: 1px solid var(--cat);
-      position: relative; transition: 0.2s; cursor: pointer; text-align: center;
-    }
-    .tnx-inv-item:hover { transform: translateY(-4px); filter: brightness(1.2); box-shadow: 0 5px 15px var(--cat-soft); }
-    .tnx-inv-item span:first-child { font-size: 2rem; margin-bottom: 0.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
-    .tnx-inv-amount {
-      position: absolute; bottom: -5px; right: -5px; background: var(--cat); color: #000;
-      font-size: 0.7rem; font-weight: 900; padding: 0.1rem 0.4rem; border-radius: 0.4rem; border: 2px solid #15151e;
-    }
-    .tnx-inv-more {
-      aspect-ratio: 1; border-radius: 0.8rem; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.2);
-      display: grid; place-items: center; color: #9ca3af; font-weight: 800; font-size: 1rem;
+    .search-view {
+      min-height: 64vh;
+      display: grid;
+      place-items: center;
     }
 
-    /* تأثير البادجات النادرة */
-    .tnx-inv-item.is-rare::after {
-      content: ""; position: absolute; inset: 0; border-radius: inherit;
-      box-shadow: inset 0 0 15px var(--cat); animation: rarePulse 2s infinite alternate; pointer-events: none;
+    .search-card,
+    .not-found {
+      width: min(100%, 620px);
+      border: 1px solid rgba(255,218,106,.18);
+      border-radius: 28px;
+      background: rgba(8,8,12,.82);
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 28px 90px rgba(0,0,0,.46);
+      backdrop-filter: blur(18px);
     }
-    @keyframes rarePulse { from { opacity: 0.3; } to { opacity: 1; } }
 
-    /* --- الإنجازات --- */
-    .tnx-ach-list { display: grid; gap: 0.8rem; }
-    .tnx-ach-item {
-      display: flex; align-items: center; gap: 1rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
-      padding: 1rem; border-radius: 1rem; transition: 0.2s;
+    .mini-label {
+      display: inline-flex;
+      border: 1px solid rgba(255,218,106,.28);
+      border-radius: 999px;
+      background: rgba(255,218,106,.07);
+      color: #ffda6a;
+      padding: .45rem .82rem;
+      font-size: .7rem;
+      font-weight: 950;
+      letter-spacing: .13em;
     }
-    .tnx-ach-item:hover { background: rgba(255,218,106,0.05); border-color: rgba(255,218,106,0.2); transform: translateX(-4px); }
-    .tnx-ach-icon {
-      width: 44px; height: 44px; border-radius: 0.6rem; background: rgba(255,218,106,0.1); border: 1px solid rgba(255,218,106,0.3);
-      display: grid; place-items: center; font-size: 1.5rem;
-    }
-    .tnx-ach-item strong { color: #fff; font-size: 0.95rem; font-weight: 800; display: block; margin-bottom: 0.2rem; }
-    .tnx-ach-item span { color: #9ca3af; font-size: 0.8rem; }
 
-    /* --- Quick Links --- */
-    .tnx-quicklist { padding: 0.5rem; }
-    .tnx-quicklist button, .tnx-quicklist a {
-      display: flex; justify-content: space-between; align-items: center; width: 100%;
-      background: transparent; border: none; padding: 1rem; color: #d1d5db; font-size: 0.9rem; font-weight: 600;
-      border-radius: 0.8rem; cursor: pointer; transition: 0.2s; text-decoration: none;
+    .search-card h1 {
+      margin: .9rem 0 0;
+      color: white;
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 950;
+      line-height: 1;
+      letter-spacing: -.04em;
     }
-    .tnx-quicklist button:hover, .tnx-quicklist a:hover { background: rgba(255,255,255,0.05); color: #fff; padding-right: 1.5rem; }
-    .tnx-quicklist em { font-style: normal; background: rgba(0,0,0,0.5); padding: 0.2rem 0.6rem; border-radius: 1rem; font-size: 0.75rem;}
-    .tnx-quicklist a em { background: #ffda6a; color: #000; }
 
-    /* --- البريد --- */
-    .tnx-mailbox { margin-bottom: 1.5rem; }
-    .tnx-mail-filters { display: flex; gap: 0.5rem; }
-    .tnx-mail-filters button {
-      background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); color: #9ca3af; padding: 0.4rem 0.8rem;
-      border-radius: 0.5rem; font-size: 0.8rem; cursor: pointer; transition: 0.2s;
+    .search-card p {
+      color: rgb(156, 163, 175);
+      font-size: .95rem;
+      font-weight: 750;
+      line-height: 1.75;
     }
-    .tnx-mail-filters button.is-active { background: rgba(255,218,106,0.15); border-color: #ffda6a; color: #ffda6a; }
-    .tnx-mail-list { display: grid; gap: 0.5rem; margin-top: 1rem; }
-    .tnx-mail-item {
-      display: flex; gap: 1rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 1rem;
+
+    .search-card b {
+      color: #f7e6ac;
+      direction: ltr;
+      unicode-bidi: embed;
     }
-    .tnx-mail-item.is-unread { border-right: 4px solid #ffda6a; background: rgba(255,218,106,0.05); border-color: rgba(255,218,106,0.2); }
-    .tnx-mail-avatar { width: 44px; height: 44px; border-radius: 50%; background: #423fff; display: grid; place-items: center; font-weight: 800; font-size: 1.2rem; }
-    .tnx-mail-body { flex: 1; }
-    .tnx-mail-top { display: flex; justify-content: space-between; margin-bottom: 0.4rem; }
-    .tnx-mail-from { font-weight: 800; color: #fff; }
-    .tnx-mail-item.is-unread .tnx-mail-from { color: #ffda6a; }
-    .tnx-mail-date { font-size: 0.75rem; color: #6b7280; }
-    .tnx-mail-text { font-size: 0.85rem; color: #d1d5db; line-height: 1.5; }
 
-    .tnx-mail-hint { margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.02); border-radius: 0.8rem; text-align: center; font-size: 0.8rem; color: #9ca3af; }
-    .tnx-mail-hint code { color: #ffda6a; background: rgba(0,0,0,0.5); padding: 0.2rem 0.4rem; border-radius: 0.3rem; }
-
-    .tnx-inline-empty { text-align: center; color: #6b7280; font-size: 0.9rem; padding: 2rem; background: rgba(0,0,0,0.2); border-radius: 1rem; }
-
-    /* الموبايل */
-    @media (max-width: 900px) {
-      .tnx-profile-body { grid-template-columns: 1fr; }
-      .tnx-profile-header { text-align: center; }
-      .tnx-header-content { flex-direction: column; align-items: center; margin-top: -70px; }
-      .tnx-identity { flex-direction: column; align-items: center; }
-      .tnx-identity-badges { justify-content: center; }
-      .tnx-bio { margin: 0 auto; }
+    .search-box {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: .75rem;
+      align-items: center;
+      border: 1px solid rgba(255,218,106,.2);
+      border-radius: 18px;
+      background: rgba(0,0,0,.34);
+      padding: .85rem;
     }
-    @media (max-width: 600px) {
-      .tnx-shell { padding-top: 4rem; }
-      .tnx-inv-grid { grid-template-columns: repeat(4, 1fr); }
+
+    .search-box span {
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+    }
+
+    .search-box input {
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: white;
+      font-size: .96rem;
+      font-weight: 850;
+    }
+
+    .search-box button {
+      width: 2.2rem;
+      height: 2.2rem;
+      border: 1px solid rgba(255,218,106,.2);
+      border-radius: 999px;
+      background: rgba(255,218,106,.08);
+      color: #ffda6a;
+      font-size: 1.12rem;
+      cursor: pointer;
+    }
+
+    .search-results {
+      display: grid;
+      gap: .55rem;
+      margin-top: .85rem;
+    }
+
+    .search-result {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      width: 100%;
+      border: 1px solid rgba(255,218,106,.12);
+      border-radius: 16px;
+      background: rgba(0,0,0,.34);
+      color: #f7e6ac;
+      padding: .75rem;
+      text-align: right;
+      cursor: pointer;
+      transition: 160ms ease;
+    }
+
+    .search-result:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,218,106,.42);
+      background: rgba(255,218,106,.08);
+    }
+
+    .search-result img {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      object-fit: cover;
+      background: #111;
+    }
+
+    .search-result strong {
+      display: block;
+      color: white;
+      font-size: .92rem;
+      font-weight: 900;
+    }
+
+    .search-result span {
+      display: block;
+      margin-top: 2px;
+      color: rgb(156, 163, 175);
+      font-size: .74rem;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .not-found {
+      display: grid;
+      place-items: center;
+      gap: .5rem;
+      min-height: 280px;
+    }
+
+    .not-found strong {
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+    }
+
+    .not-found span {
+      color: rgb(156, 163, 175);
+      font-size: .9rem;
+    }
+
+    .profile-view {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 340px;
+      border: 1px solid rgba(255,218,106,.18);
+      border-radius: 30px;
+      background: rgba(8,8,12,.8);
+      box-shadow: 0 28px 96px rgba(0,0,0,.5);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-position: center;
+      background-size: cover;
+      opacity: .95;
+    }
+
+    .hero-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.08), rgba(8,8,12,.66) 56%, rgba(8,8,12,.98)),
+        radial-gradient(circle at 22% 40%, rgba(var(--accent), .32), transparent 35%),
+        linear-gradient(90deg, rgba(0,0,0,.64), transparent 55%);
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr) 330px;
+      gap: 1.25rem;
+      align-items: end;
+      min-height: 340px;
+      padding: 1.35rem;
+    }
+
+    .avatar-zone {
+      display: grid;
+      justify-items: center;
+      gap: .8rem;
+    }
+
+    .avatar {
+      width: 138px;
+      height: 138px;
+      border: 4px solid var(--profile-color, #ffda6a);
+      border-radius: 26px;
+      background-color: #111;
+      background-size: cover;
+      background-position: center;
+      box-shadow:
+        0 22px 46px rgba(0,0,0,.58),
+        0 0 28px color-mix(in srgb, var(--profile-color, #ffda6a) 38%, transparent);
+    }
+
+    .level-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 6.2rem;
+      border: 1px solid rgba(255,218,106,.32);
+      border-radius: 999px;
+      background: rgba(0,0,0,.48);
+      color: #ffda6a;
+      padding: .52rem .75rem;
+      font-size: .78rem;
+      font-weight: 950;
+      direction: ltr;
+      backdrop-filter: blur(12px);
+    }
+
+    .hero-info {
+      min-width: 0;
+    }
+
+    .identity-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      min-width: 0;
+      flex-wrap: wrap;
+    }
+
+    .identity-row h1 {
+      margin: 0;
+      overflow: hidden;
+      color: white;
+      font-size: clamp(2.45rem, 5vw, 5.1rem);
+      font-weight: 950;
+      line-height: .95;
+      letter-spacing: -.05em;
+      text-overflow: ellipsis;
+      text-shadow: 0 5px 22px rgba(0,0,0,.72);
+      white-space: nowrap;
+    }
+
+    .job-pill {
+      flex-shrink: 0;
+      border: 1px solid rgba(255,218,106,.24);
+      border-radius: 999px;
+      background: rgba(0,0,0,.44);
+      color: #f7e6ac;
+      padding: .48rem .7rem;
+      font-size: .78rem;
+      font-weight: 900;
+      backdrop-filter: blur(12px);
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-top: .68rem;
+      color: rgba(229,231,235,.82);
+      font-size: .84rem;
+      font-weight: 850;
+    }
+
+    .meta-row span {
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      background: rgba(0,0,0,.34);
+      padding: .38rem .58rem;
+    }
+
+    #loginName {
+      direction: ltr;
+    }
+
+    .bio {
+      max-width: 640px;
+      margin: .78rem 0 0;
+      color: rgb(209,213,219);
+      font-size: .92rem;
+      font-weight: 720;
+      line-height: 1.7;
+    }
+
+    .featured-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .55rem;
+      margin-top: .9rem;
+    }
+
+    .featured-badges img,
+    .badge-placeholder {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(255,218,106,.2);
+      border-radius: 14px;
+      background: rgba(0,0,0,.38);
+      object-fit: contain;
+      padding: 4px;
+      color: #ffda6a;
+      font-weight: 950;
+    }
+
+    .hero-stats {
+      display: grid;
+      gap: .72rem;
+    }
+
+    .stat-card {
+      border: 1px solid rgba(255,218,106,.14);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at top right, rgba(255,218,106,.1), transparent 45%),
+        rgba(0,0,0,.44);
+      padding: .92rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .stat-card.primary {
+      border-color: rgba(255,218,106,.26);
+      background:
+        radial-gradient(circle at top right, rgba(255,218,106,.16), transparent 45%),
+        rgba(0,0,0,.48);
+    }
+
+    .stat-card span {
+      display: block;
+      color: rgb(156,163,175);
+      font-size: .74rem;
+      font-weight: 850;
+    }
+
+    .stat-card strong {
+      display: block;
+      margin-top: .25rem;
+      color: #ffda6a;
+      font-size: 1.42rem;
+      font-weight: 950;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: .75rem;
+    }
+
+    .summary-strip div {
+      border: 1px solid rgba(255,218,106,.13);
+      border-radius: 18px;
+      background: rgba(8,8,12,.72);
+      padding: .85rem;
+      text-align: center;
+      box-shadow: 0 16px 44px rgba(0,0,0,.26);
+      backdrop-filter: blur(14px);
+    }
+
+    .summary-strip span {
+      display: block;
+      color: rgb(156,163,175);
+      font-size: .72rem;
+      font-weight: 850;
+    }
+
+    .summary-strip strong {
+      display: block;
+      margin-top: .25rem;
+      color: #ffda6a;
+      font-size: 1.25rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .main-col,
+    .side-col {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .panel {
+      border: 1px solid rgba(255,218,106,.14);
+      border-radius: 24px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012)),
+        rgba(8,8,12,.78);
+      box-shadow:
+        0 22px 64px rgba(0,0,0,.38),
+        inset 0 0 20px rgba(255,218,106,.018);
+      padding: 1rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 1rem;
+      margin-bottom: .92rem;
+    }
+
+    .panel-head span {
+      display: block;
+      color: #c29200;
+      font-size: .68rem;
+      font-weight: 950;
+      letter-spacing: .13em;
+    }
+
+    .panel-head h2 {
+      margin: .24rem 0 0;
+      color: #f7e6ac;
+      font-size: 1.36rem;
+      font-weight: 950;
+      line-height: 1.15;
+    }
+
+    .panel-head > strong {
+      display: grid;
+      place-items: center;
+      min-width: 56px;
+      height: 42px;
+      border: 1px solid rgba(255,218,106,.18);
+      border-radius: 14px;
+      background: rgba(255,218,106,.06);
+      color: #ffda6a;
+      font-size: 1rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .showcase {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: .85rem;
+    }
+
+    .showcase-main {
+      min-height: 220px;
+      border: 1px solid rgba(255,218,106,.18);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at top right, rgba(255,218,106,.12), transparent 46%),
+        rgba(0,0,0,.28);
+      padding: 1rem;
+    }
+
+    .showcase-icon {
+      display: grid;
+      place-items: center;
+      width: 68px;
+      height: 68px;
+      border: 1px solid rgba(255,218,106,.2);
+      border-radius: 18px;
+      background: rgba(255,218,106,.08);
+      font-size: 2rem;
+      margin-bottom: .9rem;
+    }
+
+    .showcase-main h3 {
+      margin: 0;
+      color: white;
+      font-size: 1.35rem;
+      font-weight: 950;
+      line-height: 1.2;
+    }
+
+    .showcase-main p {
+      margin: .55rem 0 0;
+      color: rgb(156,163,175);
+      font-size: .82rem;
+      font-weight: 740;
+      line-height: 1.65;
+    }
+
+    .showcase-main strong {
+      display: inline-flex;
+      margin-top: .85rem;
+      border: 1px solid rgba(255,218,106,.18);
+      border-radius: 999px;
+      background: rgba(0,0,0,.34);
+      color: #ffda6a;
+      padding: .4rem .58rem;
+      font-size: .76rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .showcase-list {
+      display: grid;
+      gap: .58rem;
+    }
+
+    .showcase-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .75rem;
+      border: 1px solid rgba(255,218,106,.1);
+      border-radius: 16px;
+      background: rgba(0,0,0,.28);
+      padding: .72rem;
+    }
+
+    .showcase-row strong {
+      display: block;
+      color: #f7e6ac;
+      font-size: .82rem;
+      font-weight: 950;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .showcase-row span {
+      display: block;
+      margin-top: .16rem;
+      color: rgb(156,163,175);
+      font-size: .66rem;
+      font-weight: 740;
+    }
+
+    .showcase-row b {
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      min-width: 42px;
+      height: 36px;
+      border-radius: 12px;
+      background: rgba(255,218,106,.08);
+      color: #ffda6a;
+      font-size: .74rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: .75rem;
+    }
+
+    .item-card {
+      position: relative;
+      min-height: 166px;
+      overflow: hidden;
+      border: 1px solid var(--item-color, rgba(255,218,106,.18));
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at top right, var(--item-soft, rgba(255,218,106,.08)), transparent 48%),
+        rgba(0,0,0,.32);
+      padding: .82rem;
+      transition: 160ms ease;
+    }
+
+    .item-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--item-color, rgba(255,218,106,.45));
+      background:
+        radial-gradient(circle at top right, var(--item-soft, rgba(255,218,106,.16)), transparent 52%),
+        rgba(0,0,0,.4);
+    }
+
+    .item-card.is-rare::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(from 0deg, transparent, rgba(255,218,106,.18), transparent 28%);
+      animation: shine 6s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes shine { to { transform: rotate(360deg); } }
+
+    .item-icon,
+    .item-card h3,
+    .item-card p,
+    .item-tags,
+    .item-qty {
+      position: relative;
+      z-index: 1;
+    }
+
+    .item-icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border: 1px solid var(--item-color, rgba(255,218,106,.22));
+      border-radius: 15px;
+      background: var(--item-soft, rgba(255,218,106,.08));
+      font-size: 1.5rem;
+      margin-bottom: .68rem;
+    }
+
+    .item-qty {
+      position: absolute;
+      top: .7rem;
+      left: .7rem;
+      min-width: 2.08rem;
+      height: 2.08rem;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--item-color, rgba(255,218,106,.22));
+      border-radius: 999px;
+      background: rgba(0,0,0,.56);
+      color: var(--item-color, #ffda6a);
+      font-size: .72rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .item-card h3 {
+      margin: 0;
+      color: white;
+      font-size: .92rem;
+      font-weight: 950;
+      line-height: 1.25;
+    }
+
+    .item-card p {
+      display: -webkit-box;
+      overflow: hidden;
+      margin: .36rem 0 0;
+      color: rgb(156,163,175);
+      font-size: .69rem;
+      font-weight: 730;
+      line-height: 1.45;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .item-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .28rem;
+      margin-top: .65rem;
+    }
+
+    .item-tags span {
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 999px;
+      background: rgba(255,255,255,.04);
+      color: #f7e6ac;
+      padding: .22rem .4rem;
+      font-size: .56rem;
+      font-weight: 850;
+    }
+
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+      gap: .68rem;
+    }
+
+    .badge-tile {
+      display: grid;
+      place-items: center;
+      gap: .42rem;
+      min-height: 112px;
+      border: 1px solid rgba(255,218,106,.1);
+      border-radius: 18px;
+      background: rgba(0,0,0,.26);
+      padding: .62rem;
+      text-align: center;
+    }
+
+    .badge-tile img {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,.42));
+    }
+
+    .badge-tile span {
+      color: rgb(229,231,235);
+      font-size: .62rem;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .mail-tabs {
+      display: flex;
+      gap: .42rem;
+      flex-wrap: wrap;
+      margin-bottom: .75rem;
+    }
+
+    .mail-tabs button {
+      border: 1px solid rgba(255,218,106,.16);
+      border-radius: 999px;
+      background: rgba(255,218,106,.06);
+      color: #f7e6ac;
+      padding: .42rem .62rem;
+      font-size: .68rem;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .mail-tabs button.is-active {
+      border-color: rgba(255,218,106,.42);
+      background: rgba(255,218,106,.13);
+      color: #ffda6a;
+    }
+
+    .mail-list,
+    .achievements-list,
+    .rare-list {
+      display: grid;
+      gap: .65rem;
+    }
+
+    .mail-card,
+    .achievement-card,
+    .rare-card {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      border: 1px solid rgba(255,218,106,.1);
+      border-radius: 16px;
+      background: rgba(0,0,0,.28);
+      padding: .72rem;
+    }
+
+    .mail-card {
+      align-items: flex-start;
+    }
+
+    .mail-card.is-unread {
+      border-color: rgba(255,218,106,.32);
+      background: rgba(255,218,106,.05);
+    }
+
+    .mail-avatar,
+    .achievement-icon,
+    .rare-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,218,106,.16);
+      border-radius: 14px;
+      background: rgba(255,218,106,.07);
+      color: #ffda6a;
+      font-size: 1.15rem;
+      font-weight: 950;
+    }
+
+    .mail-card strong,
+    .achievement-card strong,
+    .rare-card strong {
+      display: block;
+      color: white;
+      font-size: .82rem;
+      font-weight: 950;
+      line-height: 1.25;
+    }
+
+    .mail-card span,
+    .achievement-card span,
+    .rare-card span {
+      display: block;
+      margin-top: .18rem;
+      color: rgb(156,163,175);
+      font-size: .68rem;
+      font-weight: 730;
+      line-height: 1.45;
+    }
+
+    .mail-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+    }
+
+    .mail-date {
+      color: rgb(107,114,128) !important;
+      font-size: .62rem !important;
+      white-space: nowrap;
+    }
+
+    .mail-message {
+      color: rgb(209,213,219) !important;
+      font-size: .74rem !important;
+      word-break: break-word;
+    }
+
+    .quick-actions {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .quick-actions a,
+    .quick-actions button {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      background: transparent;
+      color: #e5e7eb;
+      padding: .86rem 1rem;
+      font-family: inherit;
+      font-size: .8rem;
+      font-weight: 850;
+      text-align: right;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .quick-actions a:hover,
+    .quick-actions button:hover {
+      background: rgba(255,218,106,.07);
+      color: #ffda6a;
+    }
+
+    .quick-actions a:last-child,
+    .quick-actions button:last-child {
+      border-bottom: 0;
+    }
+
+    .quick-actions span {
+      color: #ffda6a;
+      direction: ltr;
+    }
+
+    .empty-line {
+      color: rgb(156,163,175);
+      font-size: .82rem;
+      font-weight: 750;
+      text-align: center;
+      padding: 1.25rem .5rem;
+    }
+
+    .back-top {
+      position: fixed;
+      left: 1rem;
+      bottom: 1rem;
+      z-index: 60;
+      width: 3rem;
+      height: 3rem;
+      border: 1px solid rgba(255,218,106,.32);
+      border-radius: 999px;
+      background: rgba(8,8,12,.88);
+      color: #ffda6a;
+      font-size: 1.15rem;
+      font-weight: 950;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: 160ms ease;
+      backdrop-filter: blur(12px);
+    }
+
+    .back-top.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    @media (max-width: 1060px) {
+      .hero-grid {
+        grid-template-columns: 140px minmax(0, 1fr);
+      }
+
+      .hero-stats {
+        grid-column: 1 / -1;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .side-col {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .quick-actions {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 740px) {
+      .profile-shell {
+        padding-top: 5rem;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+        min-height: auto;
+        padding-top: 4.8rem;
+      }
+
+      .identity-row {
+        justify-content: center;
+      }
+
+      .identity-row h1 {
+        white-space: normal;
+        font-size: 2.55rem;
+      }
+
+      .meta-row,
+      .featured-badges {
+        justify-content: center;
+      }
+
+      .hero-stats,
+      .summary-strip,
+      .showcase,
+      .side-col {
+        grid-template-columns: 1fr;
+      }
+
+      .inventory-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 440px) {
+      .inventory-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 
   <script is:inline data-reinit>
     ;(async () => {
-      const cleanupKey = '__tnxProfilePageCleanup'
-
-      if (window[cleanupKey]) {
-        window[cleanupKey]()
-      }
+      const cleanupKey = '__tnxLegendaryProfileCleanup'
+      if (window[cleanupKey]) window[cleanupKey]()
 
       const listeners = []
       const timers = []
@@ -473,91 +1252,90 @@ const metadata = {
 
       window[cleanupKey] = () => {
         listeners.forEach((cleanup) => cleanup())
-        listeners.length = 0
-        timers.forEach((id) => window.clearTimeout(id))
-        timers.length = 0
+        timers.forEach((timer) => window.clearTimeout(timer))
       }
 
-      const ITEM_META = {
-        Vip: { cat: 'status', icon: '👑' },
-        'Vip+': { cat: 'status', icon: '👑', rare: true },
-        'محامي': { cat: 'status', icon: '⚖️' },
-        'رخصة محامي': { cat: 'status', icon: '⚖️' },
-        'عريف الفصل': { cat: 'status', icon: '🎖️' },
-        Crown: { cat: 'rare', icon: '👑', rare: true },
-        'ملك': { cat: 'rare', icon: '👑', rare: true },
-        'نيوك': { cat: 'attacks', icon: '☢️', rare: true },
-        'تغير العنوان': { cat: 'attacks', icon: '📝' },
-        'تغيير العنوان': { cat: 'attacks', icon: '📝' },
-        'تغيير العنوان مطور': { cat: 'attacks', icon: '📝', rare: true },
-        'تجميد الشاشة': { cat: 'attacks', icon: '❄️' },
-        'قنبلة دخانية': { cat: 'attacks', icon: '💣' },
-        'يد الحرامي': { cat: 'pvp', icon: '🥷' },
-        'اقول لا يكثر': { cat: 'pvp', icon: '🚫' },
-        'أقول لا يكثر': { cat: 'pvp', icon: '🚫' },
-        'رمي النرد': { cat: 'luck', icon: '🎲' },
-        'البطاطا الحارة': { cat: 'luck', icon: '🥔' },
-        'صندوق': { cat: 'boxes', icon: '📦' },
-        'صندوق نادر': { cat: 'boxes', icon: '🎁', rare: true },
-        'صندوق السمعة': { cat: 'boxes', icon: '🎁', rare: true },
-        'رخصة مصرفي': { cat: 'permits', icon: '📜' },
-        'خشب': { cat: 'resources', icon: '🪵' },
-        'طماط': { cat: 'resources', icon: '🍅' },
-        'سمكة': { cat: 'fishing', icon: '🐟' },
-        'مرق سمك': { cat: 'cooking', icon: '🍲' },
-        'مطرقة ذهبية': { cat: 'rare', icon: '🔨', rare: true },
-        'البريد': { cat: 'economy', icon: '📬' },
-        'سمعة': { cat: 'economy', icon: '🔥' },
-        'عملة الجرأة': { cat: 'luck', icon: '🪙' },
+      const state = {
+        users: [],
+        inventories: [],
+        mailboxes: [],
+        profiles: [],
+        items: [],
+        activeUser: null,
+        mailFilter: 'all',
       }
 
-      const CAT_COLORS = {
-        status: ['#c084fc', 'rgba(192,132,252,0.14)'],
-        attacks: ['#f87171', 'rgba(248,113,113,0.14)'],
-        pvp: ['#fb923c', 'rgba(251,146,60,0.14)'],
-        luck: ['#fbbf24', 'rgba(251,191,36,0.14)'],
-        boxes: ['#34d399', 'rgba(52,211,153,0.14)'],
-        permits: ['#60a5fa', 'rgba(96,165,250,0.14)'],
-        resources: ['#a3a3a3', 'rgba(163,163,163,0.12)'],
-        fishing: ['#38bdf8', 'rgba(56,189,248,0.14)'],
-        cooking: ['#fb7185', 'rgba(251,113,133,0.14)'],
-        rare: ['#ffda6a', 'rgba(255,218,106,0.16)'],
-        economy: ['#f7e6ac', 'rgba(247,230,172,0.12)'],
+      const CATEGORY = {
+        status: ['#c084fc', 'rgba(192,132,252,.15)', 'status'],
+        attacks: ['#f87171', 'rgba(248,113,113,.15)', 'attack'],
+        pvp: ['#fb923c', 'rgba(251,146,60,.15)', 'pvp'],
+        luck: ['#fbbf24', 'rgba(251,191,36,.15)', 'luck'],
+        boxes: ['#34d399', 'rgba(52,211,153,.15)', 'box'],
+        permits: ['#60a5fa', 'rgba(96,165,250,.15)', 'license'],
+        resources: ['#a3a3a3', 'rgba(163,163,163,.13)', 'resource'],
+        rare: ['#ffda6a', 'rgba(255,218,106,.18)', 'rare'],
+        economy: ['#f7e6ac', 'rgba(247,230,172,.13)', 'item'],
       }
 
-      const INV_LIMIT = 14
+      const HARD_ITEMS = {
+        vip: { icon: '👑', cat: 'status', rare: true },
+        'vip+': { icon: '👑', cat: 'status', rare: true },
+        crown: { icon: '👑', cat: 'rare', rare: true },
+        'ملك': { icon: '👑', cat: 'rare', rare: true },
+        'نيوك': { icon: '☢️', cat: 'attacks', rare: true },
+        'محامي': { icon: '⚖️', cat: 'status' },
+        'رخصة محامي': { icon: '⚖️', cat: 'status' },
+        'عريف الفصل': { icon: '🎖️', cat: 'status' },
+        'البريد': { icon: '📬', cat: 'economy' },
+        'سمعة': { icon: '🔥', cat: 'economy' },
+        'عملة الجرأة': { icon: '🪙', cat: 'luck' },
+        'صندوق': { icon: '📦', cat: 'boxes' },
+        'صندوق نادر': { icon: '🎁', cat: 'boxes', rare: true },
+        'صندوق السمعة': { icon: '🎁', cat: 'boxes', rare: true },
+        'خشب': { icon: '🪵', cat: 'resources' },
+        'حديد': { icon: '⛓️', cat: 'resources' },
+        'ذهب': { icon: '🪙', cat: 'rare', rare: true },
+        'تغيير العنوان': { icon: '📝', cat: 'attacks' },
+        'تغير العنوان': { icon: '📝', cat: 'attacks' },
+        'تغيير العنوان مطور': { icon: '📝', cat: 'attacks', rare: true },
+        'أقول لا يكثر': { icon: '🚫', cat: 'pvp' },
+        'اقول لا يكثر': { icon: '🚫', cat: 'pvp' },
+        'تجميد الشاشة': { icon: '❄️', cat: 'attacks' },
+      }
 
       const $ = (id) => document.getElementById(id)
 
-      const searchScreen = $('searchScreen')
-      const profileScreen = $('profileScreen')
-      const notFoundScreen = $('notFoundScreen')
-      const userSearch = $('userSearch')
-      const clearUserSearch = $('clearUserSearch')
-      const userResults = $('userResults')
-      const backToTop = $('backToTop')
-
-      let users = []
-      let inventories = []
-      let mailboxes = []
-      let profileExtras = []
-      let itemCatalog = []
-      let activeUser = null
-      let mailState = { user: null, filter: 'all' }
-
       function esc(value) {
-        return String(value ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[m])
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;')
       }
 
       function normalize(value) {
-        return String(value || '').toLowerCase().replace(/[ًٌٍَُِّْـ]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+/g, ' ').trim()
+        return String(value || '')
+          .toLowerCase()
+          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[أإآ]/g, 'ا')
+          .replace(/ة/g, 'ه')
+          .replace(/ى/g, 'ي')
+          .replace(/\s+/g, ' ')
+          .trim()
       }
 
-      function key(value) { return normalize(value).replace(/\s+/g, '') }
+      function key(value) {
+        return normalize(value).replace(/\s+/g, '')
+      }
+
+      function num(value) {
+        const number = Number(value || 0)
+        return Number.isFinite(number) ? number : 0
+      }
 
       function fmt(value) {
-        const number = Number(value || 0)
-        return Number.isFinite(number) ? number.toLocaleString('en-US') : '0'
+        return num(value).toLocaleString('en-US')
       }
 
       function safeUrl(value) {
@@ -565,229 +1343,371 @@ const metadata = {
         return /^https?:\/\//i.test(url) || url.startsWith('/') ? url : ''
       }
 
-      function getField(source, keys, fallback) {
-        for (const itemKey of keys) {
-          if (source && source[itemKey] !== undefined && source[itemKey] !== null && source[itemKey] !== '') return source[itemKey]
+      function get(source, names, fallback = '') {
+        for (const name of names) {
+          if (source && source[name] !== undefined && source[name] !== null && source[name] !== '') return source[name]
         }
         return fallback
       }
 
-      function userLogin(user) { return String(getField(user, ['userLogin', 'UserLogin', 'login'], '')).trim() }
-      function userName(user) { return String(getField(user, ['userName', 'UserName', 'displayName', 'userLogin'], '')).trim() }
-      function userId(user) { return String(getField(user, ['userId', 'UserId', 'id'], '')).trim() }
+      function userLogin(user) {
+        return String(get(user, ['userLogin', 'UserLogin', 'login', 'userName'], '')).trim()
+      }
 
-      function findByUser(collection, user) {
+      function userName(user) {
+        return String(get(user, ['userName', 'UserName', 'displayName', 'userLogin'], '')).trim()
+      }
+
+      function userId(user) {
+        return String(get(user, ['userId', 'UserId', 'id'], '')).trim()
+      }
+
+      function matchUser(entry, user) {
         const id = userId(user)
         const login = normalize(userLogin(user))
         const name = normalize(userName(user))
 
-        return collection.find((entry) => {
-          const entryId = String(getField(entry, ['userId', 'UserId', 'id'], '')).trim()
-          const entryLogin = normalize(getField(entry, ['userLogin', 'UserLogin', 'login'], ''))
-          const entryName = normalize(getField(entry, ['userName', 'UserName', 'displayName'], ''))
+        const entryId = String(get(entry, ['userId', 'UserId', 'id'], '')).trim()
+        const entryLogin = normalize(get(entry, ['userLogin', 'UserLogin', 'login'], ''))
+        const entryName = normalize(get(entry, ['userName', 'UserName', 'displayName'], ''))
 
-          return (
-            (id && entryId && id === entryId) ||
-            (login && entryLogin && login === entryLogin) ||
-            (login && entryName && login === entryName) ||
-            (name && entryLogin && name === entryLogin) ||
-            (name && entryName && name === entryName)
-          )
-        }) || null
+        return (
+          (id && entryId && id === entryId) ||
+          (login && entryLogin && login === entryLogin) ||
+          (login && entryName && login === entryName) ||
+          (name && entryLogin && name === entryLogin) ||
+          (name && entryName && name === entryName)
+        )
       }
 
-      function mergeUserData(user) {
-        const inventoryRecord = findByUser(inventories, user)
-        const mailboxRecord = findByUser(mailboxes, user)
-        const profileRecord = findByUser(profileExtras, user)
+      function findRecord(collection, user) {
+        return collection.find((entry) => matchUser(entry, user)) || null
+      }
 
-        const merged = { ...user, ...(profileRecord || {}) }
+      function mergeUser(user) {
+        const profile = findRecord(state.profiles, user) || {}
+        const inv = findRecord(state.inventories, user) || {}
+        const mail = findRecord(state.mailboxes, user) || {}
 
-        if (inventoryRecord) {
-          merged.inventory = Array.isArray(inventoryRecord.items) ? inventoryRecord.items : Array.isArray(inventoryRecord.inventory) ? inventoryRecord.inventory : []
-        } else if (!Array.isArray(merged.inventory)) { merged.inventory = [] }
+        const merged = { ...user, ...profile }
 
-        if (mailboxRecord) {
-          merged.mailbox = Array.isArray(mailboxRecord.messages) ? mailboxRecord.messages : Array.isArray(mailboxRecord.mailbox) ? mailboxRecord.mailbox : []
-        } else if (!Array.isArray(merged.mailbox)) { merged.mailbox = [] }
+        merged.inventory = Array.isArray(profile.inventory)
+          ? profile.inventory
+          : Array.isArray(inv.items)
+            ? inv.items
+            : Array.isArray(inv.inventory)
+              ? inv.inventory
+              : Array.isArray(user.inventory)
+                ? user.inventory
+                : []
+
+        merged.mailbox = Array.isArray(profile.mailbox)
+          ? profile.mailbox
+          : Array.isArray(mail.messages)
+            ? mail.messages
+            : Array.isArray(mail.mailbox)
+              ? mail.mailbox
+              : Array.isArray(user.mailbox)
+                ? user.mailbox
+                : []
 
         return merged
       }
 
-      function getItemName(entry) { return String(getField(entry, ['item', 'name', 'itemName', 'Name', 'key'], '')).trim() }
-      function getItemAmount(entry) {
-        const raw = getField(entry, ['amount', 'quantity', 'qty', 'count', 'Value'], 1)
-        const number = Number(raw)
-        return Number.isFinite(number) && number > 0 ? number : 1
+      function getItemName(entry) {
+        return String(get(entry, ['name', 'itemName', 'item', 'Name', 'key'], '')).trim()
       }
 
-      function getCatalogItem(name) {
+      function getItemQty(entry) {
+        return Math.max(1, num(get(entry, ['quantity', 'qty', 'amount', 'count', 'Value'], 1)))
+      }
+
+      function catalogItem(name) {
         const itemKey = key(name)
-        return itemCatalog.find((item) => key(getField(item, ['name', 'itemName', 'title'], '')) === itemKey) || null
+        return state.items.find((item) => key(get(item, ['name', 'itemName', 'title'], '')) === itemKey) || null
       }
 
-      function getMeta(name) {
-        const hard = ITEM_META[name]
+      function itemMeta(name) {
+        const itemKey = key(name)
+        const hard = Object.entries(HARD_ITEMS).find(([hardName]) => key(hardName) === itemKey)?.[1]
         if (hard) return hard
 
-        const catalog = getCatalogItem(name)
-        if (catalog) {
-          return {
-            cat: getField(catalog, ['category', 'type', 'cat'], 'economy'),
-            icon: getField(catalog, ['icon', 'emoji'], '📦'),
-            rare: Boolean(catalog.rare) || ['rare', 'legendary'].includes(normalize(catalog.rarity)),
-          }
+        const item = catalogItem(name)
+        if (!item) return { icon: '📦', cat: 'economy' }
+
+        return {
+          icon: get(item, ['icon', 'emoji'], '📦'),
+          cat: get(item, ['category', 'type', 'cat'], 'economy'),
+          rare: Boolean(item.rare) || ['rare', 'legendary'].includes(normalize(item.rarity)),
         }
-        return { cat: 'economy', icon: '📦' }
       }
 
-      function timeAgo(dateStr) {
-        const date = new Date(dateStr)
+      function inventoryItems(user) {
+        return (Array.isArray(user.inventory) ? user.inventory : [])
+          .map((entry) => {
+            const name = getItemName(entry)
+            const qty = getItemQty(entry)
+            const meta = itemMeta(name)
+            const details = catalogItem(name)
+            return {
+              name,
+              qty,
+              meta,
+              description: get(details, ['description', 'desc', 'how'], 'غرض من حقيبة العضو.'),
+            }
+          })
+          .filter((item) => item.name)
+      }
+
+      function badgeName(badge) {
+        return String(get(badge, ['name', 'badgeName', 'title', 'value1'], '')).trim()
+      }
+
+      function badgeImage(badge) {
+        return safeUrl(get(badge, ['url', 'image', 'badgeUrl', 'value2'], ''))
+      }
+
+      function levelFor(user) {
+        const explicit = num(get(user, ['level'], 0))
+        if (explicit > 0) return explicit
+        return Math.max(1, Math.floor(num(get(user, ['points', 'totalPoints'], 0)) / 100000) + 1)
+      }
+
+      function hexToRgb(hex) {
+        const clean = String(hex || '#ffda6a').replace('#', '')
+        const number = parseInt(clean, 16)
+        if (!Number.isFinite(number)) return '255, 218, 106'
+        return [(number >> 16) & 255, (number >> 8) & 255, number & 255].join(', ')
+      }
+
+      function validColor(value) {
+        return /^#[0-9a-fA-F]{6}$/.test(String(value || '')) ? value : '#ffda6a'
+      }
+
+      function timeAgo(value) {
+        const date = new Date(value)
         if (Number.isNaN(date.getTime())) return ''
         const seconds = Math.floor((Date.now() - date.getTime()) / 1000)
         if (seconds < 60) return 'الآن'
         if (seconds < 3600) return `قبل ${Math.floor(seconds / 60)} دقيقة`
         if (seconds < 86400) return `قبل ${Math.floor(seconds / 3600)} ساعة`
-        if (seconds < 172800) return 'أمس'
-        if (seconds < 604800) return `قبل ${Math.floor(seconds / 86400)} أيام`
+        if (seconds < 604800) return `قبل ${Math.floor(seconds / 86400)} يوم`
         return `قبل ${Math.floor(seconds / 604800)} أسبوع`
       }
 
       async function loadJson(url, fallback) {
         try {
-          const response = await fetch(`${url}?v=${Date.now()}`, { cache: 'no-store' })
-          if (!response.ok) return fallback
-          const data = await response.json()
-          return data
-        } catch (error) {
-          console.warn(`Failed to load ${url}`, error)
+          const res = await fetch(`${url}?v=${Date.now()}`, { cache: 'no-store' })
+          if (!res.ok) return fallback
+          return await res.json()
+        } catch {
           return fallback
         }
       }
 
-      function renderProfile(baseUser) {
-        const user = mergeUserData(baseUser)
-        activeUser = user
+      function showSearch() {
+        $('searchView').classList.remove('hidden')
+        $('profileView').classList.add('hidden')
+        $('notFoundView').classList.add('hidden')
+      }
 
-        searchScreen.classList.add('hidden')
-        notFoundScreen.classList.add('hidden')
-        profileScreen.classList.remove('hidden')
+      function showNotFound() {
+        $('searchView').classList.add('hidden')
+        $('profileView').classList.add('hidden')
+        $('notFoundView').classList.remove('hidden')
+      }
 
-        const color = /^#[0-9a-f]{6}$/i.test(user.backgroundColor || '') ? user.backgroundColor : '#6c5ce7'
-        const banner = safeUrl(user.bannerImage)
-        const avatar = safeUrl(user.profileImageUrl)
+      function findUser(login) {
+        const target = normalize(login)
+        return state.users.find((user) =>
+          normalize(userLogin(user)) === target || normalize(userName(user)) === target
+        ) || null
+      }
 
-        const bg = $('profileBg')
-        if (banner) {
-          bg.style.background = ''
-          bg.style.backgroundImage = `url('${banner}')`
-        } else {
-          bg.style.backgroundImage = ''
-          bg.style.background = `linear-gradient(160deg, ${color}, #0b1015 70%)`
+      function profileLink(user) {
+        const login = userLogin(user)
+        const url = new URL(location.href)
+        url.searchParams.set('user', login)
+        url.hash = ''
+        return url.toString()
+      }
+
+      function renderProfile(rawUser) {
+        const user = mergeUser(rawUser)
+        state.activeUser = user
+
+        $('searchView').classList.add('hidden')
+        $('notFoundView').classList.add('hidden')
+        $('profileView').classList.remove('hidden')
+
+        const color = validColor(get(user, ['backgroundColor', 'profileColor'], '#ffda6a'))
+        const banner = safeUrl(get(user, ['bannerImage', 'banner', 'backgroundImage'], ''))
+        const avatar = safeUrl(get(user, ['profileImageUrl', 'avatar', 'ProfileImageUrl'], ''))
+        const login = userLogin(user)
+        const name = userName(user) || login
+        const level = levelFor(user)
+        const items = inventoryItems(user)
+        const badges = Array.isArray(user.badges) ? user.badges : []
+        const achievements = buildAchievements(user)
+        const mails = mailItems(user)
+        const unreadMails = mails.filter((mail) => !mail.read)
+
+        $('profileBg').style.backgroundImage = banner
+          ? `url('${banner}')`
+          : `radial-gradient(circle at 20% 12%, rgba(255, 218, 106, .14), transparent 30%), linear-gradient(135deg, ${color}, #07070b)`
+
+        $('heroBg').style.setProperty('--accent', hexToRgb(color))
+        $('heroBg').style.backgroundImage = banner ? `url('${banner}')` : `linear-gradient(135deg, ${color}, #07070b)`
+
+        $('avatar').style.setProperty('--profile-color', color)
+        $('avatar').style.backgroundImage = avatar ? `url('${avatar}')` : ''
+
+        $('displayName').textContent = name
+        $('loginName').textContent = `@${login}`
+        $('jobPill').textContent = get(user, ['jobName'], 'Citizen')
+        $('bioText').textContent = get(user, ['bio'], 'عضو في مجتمع TNX6.')
+        $('levelBadge').textContent = `LVL ${fmt(level)}`
+        $('pointsValue').textContent = fmt(get(user, ['points', 'totalPoints'], 0))
+        $('goldValue').textContent = fmt(get(user, ['gold'], 0))
+        $('repValue').textContent = fmt(get(user, ['reputation', 'rep'], 0))
+
+        const country = get(user, ['country'], '')
+        $('countryName').classList.toggle('hidden', !country)
+        $('countryName').textContent = country
+
+        $('summaryItems').textContent = fmt(items.length)
+        $('summaryBadges').textContent = fmt(badges.length)
+        $('summaryAch').textContent = fmt(achievements.length)
+        $('summaryMail').textContent = fmt(unreadMails.length || mails.length)
+        $('badgesPageLink').href = `/badges?user=${encodeURIComponent(login)}`
+
+        renderFeaturedBadges(user)
+        renderShowcase(user, items)
+        renderInventory(items)
+        renderBadges(badges)
+        renderAchievements(achievements)
+        renderMail(user)
+        renderRare(items)
+      }
+
+      function renderFeaturedBadges(user) {
+        const badges = Array.isArray(user.badges) ? user.badges : []
+        const equipped = badges.filter((badge) => badge.equipped).slice(0, 7)
+        const list = equipped.length ? equipped : badges.slice(0, 7)
+
+        $('featuredBadges').innerHTML = list.length
+          ? list.map((badge) => {
+              const img = badgeImage(badge)
+              const name = badgeName(badge)
+              return img
+                ? `<img src="${esc(img)}" alt="${esc(name)}" title="${esc(name)}" loading="lazy" />`
+                : `<div class="badge-placeholder" title="${esc(name)}">★</div>`
+            }).join('')
+          : `<div class="badge-placeholder">—</div>`
+      }
+
+      function renderShowcase(user, items) {
+        const sorted = [...items].sort((a, b) => {
+          const rank = (item) => item.meta.rare ? 10 : 0
+          return rank(b) - rank(a) || b.qty - a.qty
+        })
+
+        const main = sorted[0]
+        const rest = sorted.slice(1, 5)
+
+        if (!main) {
+          $('showcase').innerHTML = `<div class="empty-line">ما فيه أغراض للعرض.</div>`
+          return
         }
 
-        const av = $('pAvatar')
-        av.style.setProperty('--pColor', color)
-        av.style.backgroundImage = avatar ? `url('${avatar}')` : ''
+        $('showcase').innerHTML = `
+          <article class="showcase-main">
+            <div class="showcase-icon">${esc(main.meta.icon)}</div>
+            <h3>${esc(main.name)}</h3>
+            <p>${esc(main.description)}</p>
+            <strong>x${fmt(main.qty)}</strong>
+          </article>
 
-        $('pName').textContent = userName(user) || userLogin(user) || '—'
-
-        const country = getField(user, ['country'], '')
-        const countryEl = $('pCountry')
-        if (country) { countryEl.textContent = country; countryEl.classList.remove('hidden') } 
-        else { countryEl.classList.add('hidden') }
-
-        const bio = getField(user, ['bio'], '')
-        const jobName = getField(user, ['jobName'], '')
-        const login = userLogin(user)
-        $('pBio').innerHTML = `${esc(bio || jobName || 'عضو في مجتمع TNX6')}${login ? `<br><span>TTV: ${esc(login)}</span>` : ''}`
-
-        const explicitLevel = Number(getField(user, ['level'], 0))
-        const points = Number(getField(user, ['points', 'totalPoints'], 0))
-        const level = explicitLevel > 0 ? explicitLevel : Math.max(1, Math.floor(points / 100000) + 1)
-
-        $('pLevel').textContent = fmt(level)
-        $('pPoints').textContent = fmt(points)
-        $('pGold').textContent = fmt(getField(user, ['gold'], 0))
-        $('pRep').textContent = fmt(getField(user, ['reputation', 'rep', 'سمعة'], 0))
-
-        const badgePageLink = $('badgePageLink')
-        if (badgePageLink) badgePageLink.href = `/badges?user=${encodeURIComponent(login)}`
-
-        renderInventory(user)
-        renderBadges(user)
-        renderAchievements(user)
-        renderMailbox(user)
+          <div class="showcase-list">
+            ${
+              rest.length
+                ? rest.map((item) => `
+                  <div class="showcase-row">
+                    <div>
+                      <strong>${esc(item.meta.icon)} ${esc(item.name)}</strong>
+                      <span>${item.meta.rare ? 'rare' : 'item'}</span>
+                    </div>
+                    <b>x${fmt(item.qty)}</b>
+                  </div>
+                `).join('')
+                : `<div class="showcase-row"><div><strong>لا توجد أغراض إضافية</strong><span>بتظهر هنا إذا زادت الحقيبة.</span></div><b>—</b></div>`
+            }
+          </div>
+        `
       }
 
-      function renderInventory(user) {
-        const inv = Array.isArray(user.inventory) ? user.inventory : []
-        const grid = $('inventoryGrid')
+      function renderInventory(items) {
+        $('inventoryCount').textContent = fmt(items.length)
+        $('quickItems').textContent = fmt(items.length)
+        $('inventoryEmpty').classList.toggle('hidden', items.length > 0)
 
-        $('invCount').textContent = `${fmt(inv.length)} غرض`
-        $('qlItems').textContent = fmt(inv.length)
-        $('inventoryEmpty').classList.toggle('hidden', inv.length > 0)
-
-        const shown = inv.slice(0, INV_LIMIT)
-        const extra = inv.length - shown.length
-
-        grid.innerHTML = shown.map((entry) => {
-          const name = getItemName(entry)
-          const amount = getItemAmount(entry)
-          const meta = getMeta(name)
-          const [cat, soft] = CAT_COLORS[meta.cat] || CAT_COLORS.economy
-          const rare = meta.rare ? ' is-rare' : ''
-
+        $('inventoryGrid').innerHTML = items.map((item) => {
+          const [color, soft, label] = CATEGORY[item.meta.cat] || CATEGORY.economy
+          const rare = item.meta.rare ? ' is-rare' : ''
           return `
-            <div class="tnx-inv-item${rare}" style="--cat:${cat};--cat-soft:${soft};" title="${esc(name)} ×${amount}">
-              <span>${esc(meta.icon)}</span>
-              <span class="tnx-inv-amount">${fmt(amount)}</span>
+            <article class="item-card${rare}" style="--item-color:${color};--item-soft:${soft};">
+              <span class="item-qty">x${fmt(item.qty)}</span>
+              <div class="item-icon">${esc(item.meta.icon)}</div>
+              <h3>${esc(item.name)}</h3>
+              <p>${esc(item.description)}</p>
+              <div class="item-tags">
+                <span>${esc(label)}</span>
+                ${item.meta.rare ? '<span>rare</span>' : ''}
+              </div>
+            </article>
+          `
+        }).join('')
+      }
+
+      function renderBadges(badges) {
+        $('badgeCount').textContent = fmt(badges.length)
+        $('quickBadges').textContent = fmt(badges.length)
+        $('badgesEmpty').classList.toggle('hidden', badges.length > 0)
+
+        $('badgesGrid').innerHTML = badges.slice(0, 72).map((badge) => {
+          const img = badgeImage(badge)
+          const name = badgeName(badge)
+          return `
+            <div class="badge-tile">
+              ${img ? `<img src="${esc(img)}" alt="${esc(name)}" loading="lazy" />` : '<div class="badge-placeholder">★</div>'}
+              <span>${esc(name)}</span>
             </div>
           `
-        }).join('') + (extra > 0 ? `<div class="tnx-inv-more">+${fmt(extra)}</div>` : '')
+        }).join('')
       }
 
-      function renderBadges(user) {
+      function buildAchievements(user) {
+        const manual = Array.isArray(user.achievements) ? [...user.achievements] : []
         const badges = Array.isArray(user.badges) ? user.badges : []
-        const equipped = badges.filter((badge) => badge.equipped).slice(0, 6)
-        const list = equipped.length ? equipped : badges.slice(0, 6)
+        const items = inventoryItems(user)
+        const points = num(get(user, ['points', 'totalPoints'], 0))
+        const gold = num(get(user, ['gold'], 0))
 
-        $('badgeCount').textContent = fmt(badges.length)
-        $('qlBadges').textContent = fmt(badges.length)
+        if (badges.length) manual.push({ icon: '🎖️', title: 'جامع بادجات', subtitle: `يمتلك ${fmt(badges.length)} بادج` })
+        if (items.length) manual.push({ icon: '🎒', title: 'صاحب حقيبة', subtitle: `يمتلك ${fmt(items.length)} نوع من الأغراض` })
+        if (points >= 100000) manual.push({ icon: '⭐', title: 'رصيد عالي', subtitle: `وصل إلى ${fmt(points)} نقطة` })
+        if (gold >= 1000) manual.push({ icon: '🪙', title: 'جامع ذهب', subtitle: `يمتلك ${fmt(gold)} ذهب` })
 
-        $('badgeShowcase').innerHTML = list.map((badge) => {
-          const url = safeUrl(badge.url || badge.image || badge.badgeUrl)
-          const name = badge.name || badge.badgeName || ''
-          return url ? `<img src="${esc(url)}" alt="${esc(name)}" title="${esc(name)}" loading="lazy" />` : `<div class="tnx-badge-fallback" title="${esc(name)}">★</div>`
-        }).join('') || '<div class="tnx-badge-fallback">—</div>'
+        return manual.slice(0, 6)
       }
 
-      function buildAutoAchievements(user) {
-        const achievements = Array.isArray(user.achievements) ? [...user.achievements] : []
-        const badges = Array.isArray(user.badges) ? user.badges : []
-        const inv = Array.isArray(user.inventory) ? user.inventory : []
-        const points = Number(getField(user, ['points', 'totalPoints'], 0))
-        const gold = Number(getField(user, ['gold'], 0))
-
-        if (badges.length >= 1) achievements.push({ icon: '🎖️', title: 'جامع بادجات', subtitle: `يمتلك ${fmt(badges.length)} بادج` })
-        if (inv.length >= 1) achievements.push({ icon: '🎒', title: 'صاحب حقيبة', subtitle: `يمتلك ${fmt(inv.length)} نوع من الأغراض` })
-        if (points >= 100000) achievements.push({ icon: '⭐', title: 'رصيد عالي', subtitle: `وصل إلى ${fmt(points)} نقطة` })
-        if (gold >= 1000) achievements.push({ icon: '🪙', title: 'جامع ذهب', subtitle: `يمتلك ${fmt(gold)} ذهب` })
-
-        return achievements.slice(0, 5)
-      }
-
-      function renderAchievements(user) {
-        const achievements = buildAutoAchievements(user)
-        const list = $('achievementsList')
-
-        $('achCount').textContent = `${fmt(achievements.length)} إنجاز`
-        $('qlAch').textContent = fmt(achievements.length)
+      function renderAchievements(achievements) {
+        $('achCount').textContent = fmt(achievements.length)
         $('achievementsEmpty').classList.toggle('hidden', achievements.length > 0)
 
-        list.innerHTML = achievements.map((item) => `
-          <div class="tnx-ach-item">
-            <div class="tnx-ach-icon">${esc(item.icon || '🏆')}</div>
+        $('achievementsList').innerHTML = achievements.map((item) => `
+          <div class="achievement-card">
+            <div class="achievement-icon">${esc(item.icon || '🏆')}</div>
             <div>
               <strong>${esc(item.title || item.name || '')}</strong>
               <span>${esc(item.subtitle || item.description || '')}</span>
@@ -796,138 +1716,165 @@ const metadata = {
         `).join('')
       }
 
-      function renderMailbox(user) {
-        mailState.user = user
-        const mail = Array.isArray(user.mailbox) ? user.mailbox : []
-        const unread = mail.filter((item) => !item.read)
-
-        const countEl = $('mailCount')
-        if (unread.length > 0) { countEl.textContent = fmt(unread.length); countEl.classList.remove('hidden') } 
-        else { countEl.classList.add('hidden') }
-
-        $('mailAllCount').textContent = fmt(mail.length)
-        $('mailUnreadCount').textContent = fmt(unread.length)
-        drawMailList()
+      function mailItems(user) {
+        const mail = Array.isArray(user.mailbox) ? [...user.mailbox] : []
+        return mail.sort((a, b) => new Date(get(b, ['date', 'createdAt'], 0)) - new Date(get(a, ['date', 'createdAt'], 0)))
       }
 
-      function drawMailList() {
-        const user = mailState.user
-        if (!user) return
+      function renderMail(user) {
+        const all = mailItems(user)
+        const unread = all.filter((mail) => !mail.read)
+        const list = state.mailFilter === 'unread' ? unread : all
 
-        let mail = Array.isArray(user.mailbox) ? [...user.mailbox] : []
-        if (mailState.filter === 'unread') mail = mail.filter((item) => !item.read)
+        $('mailCount').textContent = fmt(unread.length || all.length)
+        $('mailEmpty').classList.toggle('hidden', list.length > 0)
 
-        mail.sort((a, b) => new Date(b.date) - new Date(a.date))
-
-        $('mailList').innerHTML = mail.length ? mail.map((item) => {
-          const from = String(item.from || item.fromLogin || '؟')
-          const initial = from.charAt(0).toUpperCase()
-          const unread = !item.read ? ' is-unread' : ''
+        $('mailList').innerHTML = list.slice(0, 8).map((mail) => {
+          const from = get(mail, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], '؟')
+          const date = get(mail, ['date', 'createdAt'], '')
+          const message = get(mail, ['message'], '')
+          const unreadClass = !mail.read ? ' is-unread' : ''
+          const initial = String(from).charAt(0).toUpperCase() || '؟'
 
           return `
-            <div class="tnx-mail-item${unread}">
-              <div class="tnx-mail-avatar">${esc(initial)}</div>
-              <div class="tnx-mail-body">
-                <div class="tnx-mail-top">
-                  <span class="tnx-mail-from">${esc(from)}</span>
-                  ${!item.read ? '<span class="tnx-mail-dot"></span>' : ''}
-                  <span class="tnx-mail-date">${esc(timeAgo(item.date))}</span>
+            <div class="mail-card${unreadClass}">
+              <div class="mail-avatar">${esc(initial)}</div>
+              <div>
+                <div class="mail-top">
+                  <strong>${esc(from)}</strong>
+                  <span class="mail-date">${esc(timeAgo(date))}</span>
                 </div>
-                <div class="tnx-mail-text">${esc(item.message || '')}</div>
+                <span class="mail-message">${esc(message)}</span>
               </div>
             </div>
           `
-        }).join('') : '<div class="tnx-inline-empty">ما فيه رسائل.</div>'
-      }
-
-      function findUser(login) {
-        const target = normalize(login)
-        return users.find((item) => normalize(userLogin(item)) === target || normalize(userName(item)) === target) || null
-      }
-
-      function getProfileLink(login) {
-        const clean = String(login || '').replace(/[^a-zA-Z0-9_-]/g, '')
-        return `${location.origin}${location.pathname}?user=${encodeURIComponent(clean)}`
-      }
-
-      function openFromQuery() {
-        const param = new URLSearchParams(location.search).get('user')
-        if (!param) { searchScreen.classList.remove('hidden'); return }
-
-        const user = findUser(param)
-        if (user) renderProfile(user)
-        else notFoundScreen.classList.remove('hidden')
-      }
-
-      function renderResults(query) {
-        const normalized = normalize(query)
-        userResults.innerHTML = ''
-        if (!normalized) return
-
-        const matches = users
-          .filter((item) => normalize(userName(item)).includes(normalized) || normalize(userLogin(item)).includes(normalized))
-          .slice(0, 6)
-
-        userResults.innerHTML = matches.map((item) => {
-          const login = userLogin(item)
-          const name = userName(item) || login
-          return `<button type="button" class="tnx-user-result" data-login="${esc(login)}">${esc(name)}</button>`
         }).join('')
       }
 
-      addListener(userSearch, 'input', () => renderResults(userSearch.value))
+      function renderRare(items) {
+        const rare = items.filter((item) => item.meta.rare).slice(0, 6)
+        $('rareEmpty').classList.toggle('hidden', rare.length > 0)
 
-      addListener(clearUserSearch, 'click', () => {
-        userSearch.value = ''; userResults.innerHTML = ''; userSearch.focus()
+        $('rareList').innerHTML = rare.map((item) => `
+          <div class="rare-card">
+            <div class="rare-icon">${esc(item.meta.icon)}</div>
+            <div>
+              <strong>${esc(item.name)}</strong>
+              <span>x${fmt(item.qty)}</span>
+            </div>
+          </div>
+        `).join('')
+      }
+
+      function renderSearch(query) {
+        const q = normalize(query)
+        $('searchResults').innerHTML = ''
+        if (!q) return
+
+        const matches = state.users.filter((user) =>
+          normalize(userName(user)).includes(q) || normalize(userLogin(user)).includes(q)
+        ).slice(0, 10)
+
+        $('searchResults').innerHTML = matches.map((user) => {
+          const login = userLogin(user)
+          const name = userName(user) || login
+          const avatar = safeUrl(get(user, ['profileImageUrl', 'avatar', 'ProfileImageUrl'], ''))
+
+          return `
+            <button type="button" class="search-result" data-login="${esc(login)}">
+              ${avatar ? `<img src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />` : ''}
+              <div>
+                <strong>${esc(name)}</strong>
+                <span>@${esc(login)}</span>
+              </div>
+            </button>
+          `
+        }).join('')
+      }
+
+      function openFromQuery() {
+        const raw = new URLSearchParams(location.search).get('user')
+        if (!raw) {
+          showSearch()
+          return
+        }
+
+        const user = findUser(raw)
+        if (!user) {
+          showNotFound()
+          return
+        }
+
+        renderProfile(user)
+      }
+
+      addListener($('searchInput'), 'input', (event) => renderSearch(event.target.value))
+
+      addListener($('clearSearch'), 'click', () => {
+        $('searchInput').value = ''
+        $('searchResults').innerHTML = ''
+        $('searchInput').focus()
       })
 
-      addListener(userResults, 'click', (event) => {
+      addListener($('searchResults'), 'click', (event) => {
         const button = event.target.closest('[data-login]')
         if (!button) return
         const user = findUser(button.dataset.login)
-        if (user) { history.replaceState(null, '', getProfileLink(userLogin(user))); renderProfile(user) }
+        if (!user) return
+
+        history.replaceState(null, '', profileLink(user))
+        renderProfile(user)
       })
 
-      addListener($('mailToggle'), 'click', () => $('mailboxSection').classList.toggle('hidden'))
+      addListener($('copyLink'), 'click', async (event) => {
+        if (!state.activeUser) return
+        const button = event.currentTarget
+        const old = button.innerHTML
 
-      Array.from(document.querySelectorAll('[data-mail-filter]')).forEach((button) => {
+        try {
+          await navigator.clipboard.writeText(profileLink(state.activeUser))
+          button.innerHTML = 'تم النسخ <span>✓</span>'
+          addTimer(window.setTimeout(() => {
+            button.innerHTML = old
+          }, 1200))
+        } catch {
+          button.innerHTML = profileLink(state.activeUser)
+        }
+      })
+
+      document.querySelectorAll('[data-mail-filter]').forEach((button) => {
         addListener(button, 'click', () => {
-          mailState.filter = button.dataset.mailFilter
+          state.mailFilter = button.dataset.mailFilter || 'all'
           document.querySelectorAll('[data-mail-filter]').forEach((item) => item.classList.toggle('is-active', item === button))
-          drawMailList()
+          if (state.activeUser) renderMail(state.activeUser)
         })
       })
 
-      addListener($('copyProfileLink'), 'click', async (event) => {
-        const login = activeUser ? userLogin(activeUser) : ''
-        if (!login) return
-        try {
-          await navigator.clipboard.writeText(getProfileLink(login))
-          event.currentTarget.textContent = 'تم النسخ'
-          event.currentTarget.classList.add('is-copied')
-          addTimer(window.setTimeout(() => { event.currentTarget.textContent = 'نسخ الرابط'; event.currentTarget.classList.remove('is-copied') }, 1200))
-        } catch { event.currentTarget.textContent = getProfileLink(login) }
+      document.querySelectorAll('[data-jump]').forEach((button) => {
+        addListener(button, 'click', () => {
+          $(button.dataset.jump)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        })
       })
 
-      Array.from(document.querySelectorAll('[data-jump]')).forEach((button) => {
-        addListener(button, 'click', () => $(button.dataset.jump)?.scrollIntoView({ behavior: 'smooth', block: 'center' }))
-      })
+      addListener($('backToTop'), 'click', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
 
-      addListener(backToTop, 'click', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
-      addListener(window, 'scroll', () => backToTop.classList.toggle('is-visible', window.scrollY > 400), { passive: true })
+      addListener(window, 'scroll', () => {
+        $('backToTop').classList.toggle('is-visible', window.scrollY > 420)
+      }, { passive: true })
 
-      users = await loadJson('/api/user_badges.json', [])
-      inventories = await loadJson('/api/user_inventory.json', [])
-      mailboxes = await loadJson('/api/user_mailbox.json', [])
-      profileExtras = await loadJson('/api/user_profile.json', [])
+      const [users, inventories, mailboxes, profiles, itemPayload] = await Promise.all([
+        loadJson('/api/user_badges.json', []),
+        loadJson('/api/user_inventory.json', []),
+        loadJson('/api/user_mailbox.json', []),
+        loadJson('/api/user_profile.json', []),
+        loadJson('/api/items.json', { items: [] }),
+      ])
 
-      const itemsPayload = await loadJson('/api/items.json', { items: [] })
-      itemCatalog = Array.isArray(itemsPayload) ? itemsPayload : Array.isArray(itemsPayload.items) ? itemsPayload.items : []
-
-      if (!Array.isArray(users)) users = []
-      if (!Array.isArray(inventories)) inventories = []
-      if (!Array.isArray(mailboxes)) mailboxes = []
-      if (!Array.isArray(profileExtras)) profileExtras = []
+      state.users = Array.isArray(users) ? users : []
+      state.inventories = Array.isArray(inventories) ? inventories : []
+      state.mailboxes = Array.isArray(mailboxes) ? mailboxes : []
+      state.profiles = Array.isArray(profiles) ? profiles : []
+      state.items = Array.isArray(itemPayload) ? itemPayload : Array.isArray(itemPayload.items) ? itemPayload.items : []
 
       openFromQuery()
     })()
