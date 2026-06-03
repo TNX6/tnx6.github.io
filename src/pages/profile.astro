@@ -10,13 +10,6 @@ const metadata = {
 
 <Layout metadata={metadata}>
   <main class="tnx-profile-page" dir="rtl">
-    <section id="loadingView" class="profile-loading">
-      <div class="loading-card">
-        <div class="spinner" aria-hidden="true"></div>
-        <span>جاري تحميل البيانات...</span>
-      </div>
-    </section>
-
     <section id="searchView" class="profile-search hidden">
       <div class="search-card">
         <span class="eyebrow">TNX6 PROFILE</span>
@@ -25,13 +18,11 @@ const metadata = {
 
         <div class="search-box">
           <span>⌕</span>
-          <input id="searchInput" type="search" autocomplete="off" role="combobox"
-                 aria-expanded="false" aria-controls="searchResults" aria-autocomplete="list"
-                 placeholder="اكتب اسم المستخدم..." />
+          <input id="searchInput" type="search" autocomplete="off" placeholder="اكتب اسم المستخدم..." />
           <button id="clearSearch" type="button" aria-label="مسح البحث">×</button>
         </div>
 
-        <div id="searchResults" class="search-results" role="listbox"></div>
+        <div id="searchResults" class="search-results"></div>
       </div>
     </section>
 
@@ -93,6 +84,8 @@ const metadata = {
                     <span id="currentXp">0</span>
                     <span id="neededXp">0</span>
                   </div>
+
+                  <div class="xp-breakdown" id="xpBreakdown"></div>
                 </div>
               </div>
 
@@ -143,11 +136,6 @@ const metadata = {
               <div class="rank-row">
                 <span class="rank-label">النقاط</span>
                 <span class="rank-value" id="points">---</span>
-              </div>
-
-              <div class="rank-row">
-                <span class="rank-label">الذهب</span>
-                <span class="rank-value" id="gold">---</span>
               </div>
             </section>
           </aside>
@@ -232,43 +220,6 @@ const metadata = {
       mask-image: linear-gradient(to bottom, rgba(0,0,0,.9), transparent 90%);
       pointer-events: none;
       z-index: 0;
-    }
-
-    /* ---- Loading state ---- */
-    .profile-loading {
-      position: relative;
-      z-index: 1;
-      width: min(1180px, calc(100% - 32px));
-      min-height: 60vh;
-      margin: 34px auto;
-      display: grid;
-      place-items: center;
-    }
-
-    .loading-card {
-      display: grid;
-      gap: 1.1rem;
-      place-items: center;
-      color: var(--muted);
-      font-weight: 850;
-      font-size: .95rem;
-    }
-
-    .spinner {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      border: 4px solid rgba(255, 223, 138, .14);
-      border-top-color: var(--gold2);
-      animation: tnx-spin .9s linear infinite;
-    }
-
-    @keyframes tnx-spin {
-      to { transform: rotate(360deg); }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .spinner { animation-duration: 2.2s; }
     }
 
     .profile-search {
@@ -387,16 +338,10 @@ const metadata = {
       transition: 160ms ease;
     }
 
-    .search-result:hover,
-    .search-result.is-active {
+    .search-result:hover {
       transform: translateY(-1px);
-      border-color: rgba(255,223,138,.45);
-      background: rgba(215,168,79,.1);
-    }
-
-    .search-result.is-active {
-      outline: 2px solid rgba(255,223,138,.3);
-      outline-offset: 1px;
+      border-color: rgba(255,223,138,.42);
+      background: rgba(215,168,79,.08);
     }
 
     .search-result img {
@@ -507,8 +452,57 @@ const metadata = {
       position: absolute;
       inset: -5px;
       border-radius: 34px;
+      background: conic-gradient(from 160deg, #3a2b17, #8a6a35, #5d4219, #8a6a35, #3a2b17);
+      box-shadow: 0 0 26px rgba(215,168,79,.18);
+      transition: filter .2s ease, box-shadow .2s ease;
+    }
+
+    .avatar-wrap.level-frame-basic .avatar-ring {
+      background: conic-gradient(from 160deg, #2b2b2d, #9b8a68, #343436, #9b8a68, #2b2b2d);
+      box-shadow: 0 0 22px rgba(255,255,255,.08);
+    }
+
+    .avatar-wrap.level-frame-gold .avatar-ring {
       background: conic-gradient(from 160deg, #5d4219, #ffdf8a, #9c6b20, #ffdf8a, #5d4219);
       box-shadow: 0 0 38px rgba(215,168,79,.28);
+    }
+
+    .avatar-wrap.level-frame-animated .avatar-ring {
+      background: conic-gradient(from 160deg, #5d4219, #ffdf8a, #7a4dff, #ffdf8a, #5d4219);
+      box-shadow: 0 0 42px rgba(255,223,138,.34), 0 0 18px rgba(122,77,255,.16);
+      animation: avatarFrameSpin 7s linear infinite;
+    }
+
+    .avatar-wrap.level-frame-legendary .avatar-ring {
+      background: conic-gradient(from 160deg, #331400, #ffdf8a, #ff5d5d, #b36bff, #ffdf8a, #331400);
+      box-shadow: 0 0 54px rgba(255,223,138,.42), 0 0 26px rgba(255,93,93,.2);
+      animation: avatarFrameSpin 5s linear infinite;
+    }
+
+    .avatar-wrap.level-frame-special .avatar-ring {
+      background: conic-gradient(from 160deg, #ffffff, #ffdf8a, #7CFFB2, #b36bff, #ffdf8a, #ffffff);
+      box-shadow: 0 0 70px rgba(255,223,138,.52), 0 0 35px rgba(124,255,178,.22), 0 0 22px rgba(179,107,255,.22);
+      animation: avatarFrameSpin 3.8s linear infinite;
+    }
+
+    .avatar-wrap.level-frame-special::after {
+      content: "";
+      position: absolute;
+      inset: -14px;
+      border-radius: 42px;
+      border: 1px solid rgba(255,223,138,.22);
+      box-shadow: 0 0 38px rgba(255,223,138,.18);
+      animation: avatarFramePulse 1.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes avatarFrameSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes avatarFramePulse {
+      0%, 100% { opacity: .3; transform: scale(.98); }
+      50% { opacity: .85; transform: scale(1.03); }
     }
 
     .avatar {
@@ -771,6 +765,43 @@ const metadata = {
       color: rgba(244,240,232,.72);
       font-size: 13px;
       font-weight: 800;
+    }
+
+    .xp-breakdown {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .xp-source {
+      border: 1px solid rgba(255,255,255,.075);
+      border-radius: 16px;
+      background: rgba(0,0,0,.18);
+      padding: 10px 11px;
+    }
+
+    .xp-source span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 850;
+      margin-bottom: 4px;
+    }
+
+    .xp-source strong {
+      display: block;
+      color: var(--gold2);
+      font-size: 14px;
+      font-weight: 1000;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .xp-source.total {
+      grid-column: 1 / -1;
+      background: rgba(215,168,79,.095);
+      border-color: rgba(255,223,138,.18);
     }
 
     .stats-grid {
@@ -1077,6 +1108,56 @@ const metadata = {
       font-size: 14px;
     }
 
+    .item-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0 16px 16px;
+    }
+
+    .item-action-btn {
+      border: 1px solid rgba(255,223,138,.16);
+      border-radius: 16px;
+      background: rgba(255,255,255,.055);
+      color: rgba(244,240,232,.9);
+      padding: 11px 12px;
+      font-family: inherit;
+      font-weight: 950;
+      cursor: pointer;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .item-action-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,223,138,.35);
+      background: rgba(215,168,79,.11);
+      color: var(--gold2);
+    }
+
+    .item-command-hint {
+      margin: 0 16px 16px;
+      border: 1px solid rgba(255,223,138,.14);
+      border-radius: 18px;
+      background: rgba(0,0,0,.24);
+      padding: 12px;
+      color: rgba(244,240,232,.8);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.7;
+    }
+
+    .item-command-hint code {
+      display: inline-block;
+      direction: ltr;
+      color: var(--gold2);
+      background: rgba(255,223,138,.08);
+      border: 1px solid rgba(255,223,138,.14);
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+    }
+
     .back-top {
       position: fixed;
       left: 1rem;
@@ -1169,6 +1250,11 @@ const metadata = {
       .stats-grid {
         grid-template-columns: 1fr;
       }
+
+      .xp-breakdown,
+      .item-actions {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 
@@ -1196,43 +1282,17 @@ const metadata = {
         timers.forEach((timer) => window.clearTimeout(timer))
       }
 
-      /* ---------------------------------------------------------------
-       * CONFIG — كل الأرقام السحرية في مكان واحد للموازنة السهلة
-       * ------------------------------------------------------------- */
-      const CONFIG = {
-        WATCH_MINUTE_WEIGHT: 150,   // كل دقيقة مشاهدة = كم XP
-        DAILY_LOGIN_XP: 500,        // كل تسجيل دخول يومي = كم XP
-        POINTS_PER_XP: 10,          // كل 10 نقاط = 1 XP
-        MAX_LEVEL: 250,
-        LEVEL_XP_BASE: 10000,
-        LEVEL_XP_EXP: 1.17,
-        LEVEL_XP_LINEAR: 2500,
-        SEARCH_DEBOUNCE_MS: 150,
-        SEARCH_MAX_RESULTS: 10,
-        BADGE_XP: {
-          Common: 250,
-          Rare: 750,
-          Epic: 1500,
-          Legendary: 3000,
-          Mythic: 5000,
-        },
-      }
-
       const state = {
         users: [],
+        inventories: [],
+        mailboxes: [],
+        profiles: [],
         items: [],
         leaderboards: {
           points: [],
           gold: [],
           watchtime: [],
         },
-        // فهارس O(1) تُبنى بعد تحميل البيانات
-        index: {
-          profiles: null,
-          inventories: null,
-          mailboxes: null,
-        },
-        rankIndex: null,        // Map(key -> rank)
         activeUser: null,
       }
 
@@ -1342,13 +1402,6 @@ const metadata = {
         return /^https?:\/\//i.test(url) || url.startsWith('/') ? url : ''
       }
 
-      // تنظيف رابط قبل حقنه داخل url("...") في CSS لمنع كسر السياق/الحقن
-      function cssUrl(value) {
-        const url = safeUrl(value)
-        if (!url) return ''
-        return url.replace(/["'()\\<>\s]/g, (ch) => encodeURIComponent(ch))
-      }
-
       function get(source, names, fallback = '') {
         if (!source) return fallback
 
@@ -1435,45 +1488,6 @@ const metadata = {
         return String(get(user, ['userId', 'UserId', 'id'], '')).trim()
       }
 
-      /* ---------------------------------------------------------------
-       * فهرسة المجموعات: تحوّل البحث الخطي O(n) إلى O(1)
-       * (كان مصدر بطء O(n²) في mergeUser + levelRankFor)
-       * ------------------------------------------------------------- */
-      function buildIndex(collection) {
-        const byId = new Map()
-        const byLogin = new Map()
-        const byName = new Map()
-
-        for (const entry of collection) {
-          const id = String(get(entry, ['userId', 'UserId', 'id'], '')).trim()
-          const login = normalize(get(entry, ['userLogin', 'UserLogin', 'login'], ''))
-          const name = normalize(get(entry, ['userName', 'UserName', 'displayName'], ''))
-
-          if (id && !byId.has(id)) byId.set(id, entry)
-          if (login && !byLogin.has(login)) byLogin.set(login, entry)
-          if (name && !byName.has(name)) byName.set(name, entry)
-        }
-
-        return { byId, byLogin, byName }
-      }
-
-      function lookupRecord(index, user) {
-        if (!index) return null
-
-        const id = userId(user)
-        const login = normalize(userLogin(user))
-        const name = normalize(userName(user))
-
-        if (id && index.byId.has(id)) return index.byId.get(id)
-        if (login && index.byLogin.has(login)) return index.byLogin.get(login)
-        if (name && index.byName.has(name)) return index.byName.get(name)
-        // مطابقات متقاطعة (login مقابل name والعكس) للحفاظ على سلوك matchUser القديم
-        if (login && index.byName.has(login)) return index.byName.get(login)
-        if (name && index.byLogin.has(name)) return index.byLogin.get(name)
-
-        return null
-      }
-
       function matchUser(entry, user) {
         const id = userId(user)
         const login = normalize(userLogin(user))
@@ -1491,26 +1505,58 @@ const metadata = {
         )
       }
 
+      function findRecord(collection, user) {
+        return collection.find((entry) => matchUser(entry, user)) || null
+      }
+
       function leaderboardEntryName(entry) {
         return String(get(entry, [
-          '__name', 'UserName', 'userName', 'displayName', 'name', 'username', 'Name'
+          '__name',
+          'UserName',
+          'userName',
+          'displayName',
+          'name',
+          'username',
+          'Name'
         ], '')).trim()
       }
 
       function leaderboardEntryLogin(entry) {
         return String(get(entry, [
-          '__login', 'UserLogin', 'userLogin', 'login', 'username', 'Login'
+          '__login',
+          'UserLogin',
+          'userLogin',
+          'login',
+          'username',
+          'Login'
         ], '')).trim()
       }
 
       function leaderboardEntryId(entry) {
-        return String(get(entry, ['userId', 'UserId', 'id', 'Id', '__id'], '')).trim()
+        return String(get(entry, [
+          'userId',
+          'UserId',
+          'id',
+          'Id',
+          '__id'
+        ], '')).trim()
       }
 
       function leaderboardEntryValue(entry) {
         return get(entry, [
-          '__value', 'Value', 'value', 'score', 'Score', 'points', 'Points',
-          'total', 'Total', 'amount', 'Amount', 'watchtime', 'Watchtime'
+          '__value',
+          'Value',
+          'value',
+          'score',
+          'Score',
+          'points',
+          'Points',
+          'total',
+          'Total',
+          'amount',
+          'Amount',
+          'watchtime',
+          'Watchtime'
         ], 0)
       }
 
@@ -1537,7 +1583,10 @@ const metadata = {
           })
           .filter((entry) => entry.name || entry.login || entry.id)
           .sort((a, b) => b.number - a.number)
-          .map((entry, index) => ({ ...entry, rank: index + 1 }))
+          .map((entry, index) => ({
+            ...entry,
+            rank: index + 1,
+          }))
       }
 
       function findLeaderboardEntry(boardId, user) {
@@ -1564,14 +1613,21 @@ const metadata = {
         return null
       }
 
-      // توحيد منطق صياغة الـ watchtime (كان مكرّراً في مكانين)
       function formatWatchtimeFromMinutes(minutes) {
         const total = Math.floor(num(minutes))
+
         if (total <= 0) return '0 يوم'
 
         const days = total / 1440
-        if (days < 1) return `${days.toFixed(2)} يوم`
-        if (days < 10) return `${days.toFixed(1)} يوم`
+
+        if (days < 1) {
+          return `${days.toFixed(2)} يوم`
+        }
+
+        if (days < 10) {
+          return `${days.toFixed(1)} يوم`
+        }
+
         return `${Math.floor(days).toLocaleString('en-US')} يوم`
       }
 
@@ -1588,7 +1644,6 @@ const metadata = {
         const goldEntry = findLeaderboardEntry('gold', merged)
         if (goldEntry) {
           merged.gold = num(goldEntry.value)
-          merged.goldRank = `#${goldEntry.rank}`
         }
 
         const watchtimeEntry = findLeaderboardEntry('watchtime', merged)
@@ -1607,9 +1662,9 @@ const metadata = {
       }
 
       function mergeUser(user) {
-        const profile = lookupRecord(state.index.profiles, user) || {}
-        const inv = lookupRecord(state.index.inventories, user) || {}
-        const mail = lookupRecord(state.index.mailboxes, user) || {}
+        const profile = findRecord(state.profiles, user) || {}
+        const inv = findRecord(state.inventories, user) || {}
+        const mail = findRecord(state.mailboxes, user) || {}
         const merged = { ...user, ...profile }
 
         merged.inventory = Array.isArray(profile.inventory)
@@ -1643,30 +1698,14 @@ const metadata = {
         return Math.max(1, num(get(entry, ['quantity', 'qty', 'amount', 'count', 'Value'], 1)))
       }
 
-      // فهرس الكاتالوج لتجنّب البحث الخطي على كل غرض
-      let catalogIndex = null
-      function buildCatalogIndex() {
-        catalogIndex = new Map()
-        for (const item of state.items) {
-          const k = key(get(item, ['name', 'itemName', 'title'], ''))
-          if (k && !catalogIndex.has(k)) catalogIndex.set(k, item)
-        }
-      }
-
       function catalogItem(name) {
-        if (!catalogIndex) buildCatalogIndex()
-        return catalogIndex.get(key(name)) || null
+        const itemKey = key(name)
+        return state.items.find((item) => key(get(item, ['name', 'itemName', 'title'], '')) === itemKey) || null
       }
-
-      const HARD_ITEMS_BY_KEY = (() => {
-        const map = new Map()
-        for (const [name, meta] of Object.entries(HARD_ITEMS)) map.set(key(name), meta)
-        return map
-      })()
 
       function itemMeta(name) {
         const itemKey = key(name)
-        const hard = HARD_ITEMS_BY_KEY.get(itemKey)
+        const hard = Object.entries(HARD_ITEMS).find(([hardName]) => key(hardName) === itemKey)?.[1]
         if (hard) return hard
 
         const item = catalogItem(name)
@@ -1719,26 +1758,44 @@ const metadata = {
         const name = normalize(badgeName(badge))
 
         if (
-          name.includes('vip') || name.includes('king') || name.includes('ملك') ||
-          name.includes('3m') || name.includes('1m') || name.includes('1000q') ||
-          name.includes('100d') || name.includes('500k')
+          name.includes('vip') ||
+          name.includes('king') ||
+          name.includes('ملك') ||
+          name.includes('3m') ||
+          name.includes('1m') ||
+          name.includes('1000q') ||
+          name.includes('100d') ||
+          name.includes('500k')
         ) return 'Legendary'
 
         if (
-          name.includes('250k') || name.includes('600q') ||
-          name.includes('60d') || name.includes('500q')
+          name.includes('250k') ||
+          name.includes('600q') ||
+          name.includes('60d') ||
+          name.includes('500q')
         ) return 'Epic'
 
         if (
-          name.includes('100k') || name.includes('300q') || name.includes('30d') ||
-          name.includes('law') || name.includes('محامي')
+          name.includes('100k') ||
+          name.includes('300q') ||
+          name.includes('30d') ||
+          name.includes('law') ||
+          name.includes('محامي')
         ) return 'Rare'
 
         return 'Common'
       }
 
       function badgeXpValue(rarity) {
-        return CONFIG.BADGE_XP[rarity] || CONFIG.BADGE_XP.Common
+        const table = {
+          Common: 250,
+          Rare: 750,
+          Epic: 1500,
+          Legendary: 3000,
+          Mythic: 5000,
+        }
+
+        return table[rarity] || table.Common
       }
 
       function badgeXp(badge) {
@@ -1771,21 +1828,25 @@ const metadata = {
                 linear-gradient(135deg, #1a1208, #080808 58%, #1d160b)`
       }
 
+      const WATCH_MINUTE_WEIGHT = 150
+      const DAILY_LOGIN_XP = 500
+
       function currentPoints(user) {
         return num(deepGet(user, ['points', 'totalPoints', 'balance', 'loyaltyPoints'], 0))
       }
 
-      function currentGold(user) {
-        return num(deepGet(user, ['gold', 'Gold', 'goldBalance'], 0))
-      }
-
       function pointsXp(user) {
-        return Math.floor(currentPoints(user) / CONFIG.POINTS_PER_XP)
+        return Math.floor(currentPoints(user) / 10)
       }
 
       function watchSeconds(user) {
         const watchtimeValue = deepGet(user, [
-          'watchtime', 'Watchtime', 'watchTime', 'WatchTime', 'twitchWatchtime', 'twitch_watchtime'
+          'watchtime',
+          'Watchtime',
+          'watchTime',
+          'WatchTime',
+          'twitchWatchtime',
+          'twitch_watchtime'
         ], '')
 
         if (watchtimeValue !== '') {
@@ -1794,22 +1855,41 @@ const metadata = {
         }
 
         const directSeconds = num(deepGet(user, [
-          'watchSeconds', 'watchtimeSeconds', 'watchTimeSeconds', 'totalWatchSeconds', 'totalWatchtimeSeconds'
+          'watchSeconds',
+          'watchtimeSeconds',
+          'watchTimeSeconds',
+          'totalWatchSeconds',
+          'totalWatchtimeSeconds'
         ], 0))
+
         if (directSeconds > 0) return directSeconds
 
         const directMinutes = num(deepGet(user, [
-          'watchMinutes', 'watchtimeMinutes', 'watchTimeMinutes', 'totalWatchMinutes', 'totalWatchtimeMinutes'
+          'watchMinutes',
+          'watchtimeMinutes',
+          'watchTimeMinutes',
+          'totalWatchMinutes',
+          'totalWatchtimeMinutes'
         ], 0))
+
         if (directMinutes > 0) return directMinutes * 60
 
         const directHours = num(deepGet(user, [
-          'watchHours', 'watchtimeHours', 'watchTimeHours', 'totalWatchHours', 'totalWatchtimeHours'
+          'watchHours',
+          'watchtimeHours',
+          'watchTimeHours',
+          'totalWatchHours',
+          'totalWatchtimeHours'
         ], 0))
+
         if (directHours > 0) return directHours * 3600
 
         return parseWatchtimeText(deepGet(user, [
-          'watchtimeText', 'watchTimeText', 'watchTime', 'totalWatchtime', 'totalWatchTime'
+          'watchtimeText',
+          'watchTimeText',
+          'watchTime',
+          'totalWatchtime',
+          'totalWatchTime'
         ], ''))
       }
 
@@ -1822,11 +1902,13 @@ const metadata = {
           const first = Number(clockMatch[1])
           const second = Number(clockMatch[2])
           const third = Number(clockMatch[3] || 0)
+
           if (clockMatch[3] !== undefined) return (first * 3600) + (second * 60) + third
           return (first * 60) + second
         }
 
         let seconds = 0
+
         const dayMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:d|day|days|يوم|ايام|أيام)/)
         const hourMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:h|hr|hrs|hour|hours|ساعة|ساعه)/)
         const minuteMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:m|min|mins|minute|minutes|دقيقة|دقيقه)/)
@@ -1836,10 +1918,13 @@ const metadata = {
         if (hourMatch) seconds += Number(hourMatch[1]) * 3600
         if (minuteMatch) seconds += Number(minuteMatch[1]) * 60
         if (secondMatch) seconds += Number(secondMatch[1])
+
         if (seconds > 0) return seconds
 
         const plainNumber = Number(text.replace(/,/g, ''))
-        if (Number.isFinite(plainNumber) && plainNumber > 0) return plainNumber * 60
+        if (Number.isFinite(plainNumber) && plainNumber > 0) {
+          return plainNumber * 60
+        }
 
         return 0
       }
@@ -1853,10 +1938,15 @@ const metadata = {
 
         if (totalMinutes <= 0) {
           const fallback = deepGet(user, ['watchtimeText', 'watchTimeText', 'watchtime', 'Watchtime', 'WatchTime'], '')
+
           if (fallback !== '') {
             const parsedMinutes = Math.floor(parseWatchtimeText(fallback) / 60)
-            if (parsedMinutes > 0) return formatWatchtimeFromMinutes(parsedMinutes)
+
+            if (parsedMinutes > 0) {
+              return formatWatchtimeFromMinutes(parsedMinutes)
+            }
           }
+
           return '0 يوم'
         }
 
@@ -1866,7 +1956,7 @@ const metadata = {
       function levelScore(user) {
         const badges = Array.isArray(user.badges) ? user.badges : []
         const pointsScore = pointsXp(user)
-        const watchScore = watchMinutes(user) * CONFIG.WATCH_MINUTE_WEIGHT
+        const watchScore = watchMinutes(user) * WATCH_MINUTE_WEIGHT
         const loginScore = dailyLoginXp(user)
         const badgesScore = totalBadgeXp(badges)
 
@@ -1879,7 +1969,7 @@ const metadata = {
         let remaining = score
         let required = getRequiredXp(level)
 
-        while (remaining >= required && level < CONFIG.MAX_LEVEL) {
+        while (remaining >= required && level < 250) {
           remaining -= required
           level++
           required = getRequiredXp(level)
@@ -1893,7 +1983,7 @@ const metadata = {
           mode: 'XP',
           score,
           pointsScore: pointsXp(user),
-          watchScore: watchMinutes(user) * CONFIG.WATCH_MINUTE_WEIGHT,
+          watchScore: watchMinutes(user) * WATCH_MINUTE_WEIGHT,
           dailyLoginScore: dailyLoginXp(user),
           dailyLoginCount: dailyLoginCount(user),
           badgeScore: totalBadgeXp(Array.isArray(user.badges) ? user.badges : []),
@@ -1902,9 +1992,7 @@ const metadata = {
       }
 
       function getRequiredXp(level) {
-        return Math.floor(
-          CONFIG.LEVEL_XP_BASE * Math.pow(level, CONFIG.LEVEL_XP_EXP) + (level * CONFIG.LEVEL_XP_LINEAR)
-        )
+        return Math.floor(10000 * Math.pow(level, 1.17) + (level * 2500))
       }
 
       function getLevelTitle(level) {
@@ -1916,26 +2004,21 @@ const metadata = {
         return 'عضو جديد'
       }
 
-      /* ---------------------------------------------------------------
-       * بناء فهرس الترتيب مرة واحدة بعد التحميل بدل إعادة حساب
-       * كل القائمة لكل مستخدم (كان O(n²)).
-       * ------------------------------------------------------------- */
-      function buildRankIndex() {
+      function levelRankFor(user) {
         const rows = state.users
           .map((rawUser) => {
             const merged = mergeUser(rawUser)
             const levelData = calculateLevel(merged)
+
             return {
-              merged,
+              user: merged,
               level: levelData.level,
               score: levelData.score,
               points: currentPoints(merged),
               name: userName(merged) || userLogin(merged),
-              keyId: userId(merged),
-              keyLogin: normalize(userLogin(merged)),
             }
           })
-          .filter((row) => row.keyId || row.keyLogin || userName(row.merged))
+          .filter((row) => userId(row.user) || userLogin(row.user) || userName(row.user))
           .sort((a, b) => {
             if (b.level !== a.level) return b.level - a.level
             if (b.score !== a.score) return b.score - a.score
@@ -1943,24 +2026,12 @@ const metadata = {
             return String(a.name).localeCompare(String(b.name))
           })
 
-        const map = new Map()
-        rows.forEach((row, index) => {
-          const rank = index + 1
-          if (row.keyId) map.set('id:' + row.keyId, rank)
-          if (row.keyLogin) map.set('login:' + row.keyLogin, rank)
-        })
-
-        state.rankIndex = map
+        const index = rows.findIndex((row) => matchUser(row.user, user))
+        return index >= 0 ? index + 1 : null
       }
 
       function rankFor(user) {
-        const idx = state.rankIndex
-        if (!idx) return '—'
-
-        const id = userId(user)
-        const login = normalize(userLogin(user))
-
-        let rank = (id && idx.get('id:' + id)) || (login && idx.get('login:' + login))
+        const rank = levelRankFor(user)
         return rank ? `#${rank}` : '—'
       }
 
@@ -1970,14 +2041,24 @@ const metadata = {
 
       function dailyLoginCount(user) {
         return num(deepGet(user, [
-          'dailyLogin', 'dailyLogins', 'daily_login', 'daily_logins',
-          'dailyCheckIns', 'dailyCheckins', 'checkins', 'checkIns',
-          'attendance', 'loginCount', 'login_count', 'daily', 'streak'
+          'dailyLogin',
+          'dailyLogins',
+          'daily_login',
+          'daily_logins',
+          'dailyCheckIns',
+          'dailyCheckins',
+          'checkins',
+          'checkIns',
+          'attendance',
+          'loginCount',
+          'login_count',
+          'daily',
+          'streak'
         ], 0))
       }
 
       function dailyLoginXp(user) {
-        return dailyLoginCount(user) * CONFIG.DAILY_LOGIN_XP
+        return dailyLoginCount(user) * DAILY_LOGIN_XP
       }
 
       function checkinsFor(user) {
@@ -2001,29 +2082,25 @@ const metadata = {
         return chips.slice(0, 5)
       }
 
-      function showView(id) {
-        ;['loadingView', 'searchView', 'notFoundView', 'profileView'].forEach((viewId) => {
-          $(viewId)?.classList.toggle('hidden', viewId !== id)
-        })
-      }
-
       function renderProfile(rawUser) {
         const user = mergeUser(rawUser)
         state.activeUser = user
 
-        showView('profileView')
+        $('searchView')?.classList.add('hidden')
+        $('notFoundView')?.classList.add('hidden')
+        $('profileView')?.classList.remove('hidden')
 
         const login = userLogin(user)
         const name = userName(user) || login
         const avatar = safeUrl(get(user, ['profileImageUrl', 'avatar', 'ProfileImageUrl'], '')) || fallbackAvatar(name)
-        const coverUrl = cssUrl(get(user, ['bannerImage', 'banner', 'backgroundImage'], ''))
+        const cover = safeUrl(get(user, ['bannerImage', 'banner', 'backgroundImage'], ''))
         const badges = Array.isArray(user.badges) ? user.badges : []
         const inventory = inventoryItems(user)
         const mail = mailItems(user)
         const level = calculateLevel(user)
         const bio = get(user, ['bio'], 'ملف العضو يعرض المستوى، الحقيبة، البادجات، والبريد في صفحة واحدة بشكل واضح.')
 
-        document.documentElement.style.setProperty('--cover-image', coverUrl ? `url("${coverUrl}")` : fallbackCover())
+        document.documentElement.style.setProperty('--cover-image', cover ? `url("${cover}")` : fallbackCover())
 
         if ($('avatar')) $('avatar').src = avatar
         if ($('onlineDot')) $('onlineDot').style.display = get(user, ['online', 'isOnline'], false) ? 'block' : 'none'
@@ -2034,16 +2111,17 @@ const metadata = {
 
         setText('levelNumber', level.level)
         setText('levelTitle', getLevelTitle(level.level))
-        setText('levelDesc', `النظام يحسب من النقاط وwatchtime وتسجيل الدخول والبادجات. كل ${CONFIG.POINTS_PER_XP} نقاط = 1 XP، وكل دقيقة مشاهدة = ${CONFIG.WATCH_MINUTE_WEIGHT} XP. باقي ${formatNumber(level.requiredXp - level.currentXp)} XP للوصول إلى لفل ${level.level + 1}.`)
+        setText('levelDesc', `النظام يحسب من النقاط وwatchtime وتسجيل الدخول والبادجات. كل 10 نقاط = 1 XP، وكل دقيقة مشاهدة = 150 XP. باقي ${formatNumber(level.requiredXp - level.currentXp)} XP للوصول إلى لفل ${level.level + 1}.`)
         setText('currentXp', `${formatNumber(level.currentXp)} XP`)
         setText('neededXp', `${formatNumber(level.requiredXp)} XP`)
         if ($('xpFill')) $('xpFill').style.width = level.percent + '%'
+        renderXpBreakdown(level)
+        applyAvatarFrame(level.level)
 
         setText('rank', rankFor(user))
         setText('messages', formatNumber(messagesFor(user)))
         setText('checkins', formatNumber(checkinsFor(user)))
         setText('points', formatNumber(currentPoints(user)))
-        setText('gold', formatNumber(currentGold(user)))
 
         setText('inventoryCount', `${inventory.length} ${inventory.length === 1 ? 'غرض' : 'أغراض'}`)
         setText('badgesCount', `${badges.length} مفتوحة`)
@@ -2067,6 +2145,45 @@ const metadata = {
         `).join('')
       }
 
+      function applyAvatarFrame(level) {
+        const wrap = document.querySelector('.avatar-wrap')
+        if (!wrap) return
+
+        wrap.classList.remove(
+          'level-frame-basic',
+          'level-frame-gold',
+          'level-frame-animated',
+          'level-frame-legendary',
+          'level-frame-special'
+        )
+
+        if (level >= 50) wrap.classList.add('level-frame-special')
+        else if (level >= 35) wrap.classList.add('level-frame-legendary')
+        else if (level >= 20) wrap.classList.add('level-frame-animated')
+        else if (level >= 10) wrap.classList.add('level-frame-gold')
+        else wrap.classList.add('level-frame-basic')
+      }
+
+      function renderXpBreakdown(level) {
+        const box = $('xpBreakdown')
+        if (!box) return
+
+        const rows = [
+          { label: 'النقاط', value: level.pointsScore },
+          { label: 'المشاهدة', value: level.watchScore },
+          { label: 'تسجيل الدخول', value: level.dailyLoginScore },
+          { label: 'البادجات', value: level.badgeScore },
+          { label: 'المجموع', value: level.score, total: true },
+        ]
+
+        box.innerHTML = rows.map((row) => `
+          <div class="xp-source${row.total ? ' total' : ''}">
+            <span>${esc(row.label)}</span>
+            <strong>${formatNumber(row.value)} XP</strong>
+          </div>
+        `).join('')
+      }
+
       function renderStats(user, inventory, badges, mail) {
         const box = $('statsGrid')
         if (!box) return
@@ -2076,7 +2193,6 @@ const metadata = {
         const stats = [
           { label: 'Watchtime', value: watchtimeLabel(user) },
           { label: 'Daily Login', value: formatNumber(dailyLoginCount(user)) },
-          { label: 'Gold', value: formatNumber(currentGold(user)) },
           { label: 'Badge XP', value: formatNumber(totalBadgeXp(badges)) },
           { label: 'Level XP', value: formatNumber(level.score) },
           { label: 'Items', value: formatNumber(inventory.length) },
@@ -2105,7 +2221,7 @@ const metadata = {
         box.innerHTML = sorted.map((item, index) => {
           const color = rarityColors[item.rarity] || rarityColors[item.cat] || '#ffffff'
           return `
-            <button class="item" type="button" data-item-index="${index}" style="--rarity-color:${esc(color)}">
+            <button class="item" type="button" data-item-index="${index}" style="--rarity-color:${color}">
               <div class="item-icon">${esc(item.icon)}</div>
               <div>
                 <h3 class="item-name">${esc(item.name)}</h3>
@@ -2138,6 +2254,7 @@ const metadata = {
         box.innerHTML = badges.slice(0, 15).map((badge) => {
           const name = badgeName(badge)
           const image = badgeImage(badge)
+
           const rarity = badgeRarity(badge)
           const xp = badgeXp(badge)
 
@@ -2186,6 +2303,33 @@ const metadata = {
         $('mailModal')?.setAttribute('aria-hidden', 'true')
       }
 
+      function commandItemName(name) {
+        const text = String(name || '').trim()
+        return text.includes(' ') ? `"${text}"` : text
+      }
+
+      function itemActionHint(action, item) {
+        const itemName = commandItemName(item.name)
+
+        if (action === 'use') {
+          return `استخدم الغرض من الشات بالأمر: <code>!use ${esc(itemName)}</code>`
+        }
+
+        if (action === 'gift') {
+          return `إهداء الغرض من الشات: <code>!gift username ${esc(itemName)}</code>`
+        }
+
+        if (action === 'sell') {
+          return `بيع الغرض من الشات: <code>!sell ${esc(itemName)}</code>`
+        }
+
+        if (action === 'market') {
+          return `عرض الغرض في السوق يحتاج أمر السوق عند تفعيله: <code>!market ${esc(itemName)}</code>`
+        }
+
+        return 'استخدم الأوامر من الشات.'
+      }
+
       function openItemModal(item) {
         const modal = document.createElement('div')
         modal.className = 'modal-backdrop show'
@@ -2201,54 +2345,53 @@ const metadata = {
                 <p>${esc(item.description)}</p>
               </div>
             </div>
+            <div class="item-actions">
+              <button class="item-action-btn" type="button" data-item-action="use">استخدام</button>
+              <button class="item-action-btn" type="button" data-item-action="gift">إهداء</button>
+              <button class="item-action-btn" type="button" data-item-action="sell">بيع</button>
+              <button class="item-action-btn" type="button" data-item-action="market">عرض في السوق</button>
+            </div>
+            <div class="item-command-hint" data-item-hint>
+              اختر العملية فوق. التنفيذ حاليًا من الشات حتى نربط الصفحة بأكشنات Streamer.bot.
+            </div>
           </div>
         `
 
         document.body.appendChild(modal)
 
-        const close = () => {
-          modal.remove()
-          window.removeEventListener('keydown', onKey)
-        }
-        const onKey = (event) => {
-          if (event.key === 'Escape') close()
-        }
-
+        const close = () => modal.remove()
         addListener(modal, 'click', (event) => {
           if (event.target === modal) close()
         })
         addListener(modal.querySelector('[data-close-item]'), 'click', close)
-        window.addEventListener('keydown', onKey)
-      }
 
-      /* ---------------------------------------------------------------
-       * البحث: debounce + تنقّل بالكيبورد (أسهم + Enter + Escape)
-       * ------------------------------------------------------------- */
-      let activeResultIndex = -1
+        modal.querySelectorAll('[data-item-action]').forEach((button) => {
+          addListener(button, 'click', () => {
+            const hint = modal.querySelector('[data-item-hint]')
+            if (hint) hint.innerHTML = itemActionHint(button.dataset.itemAction, item)
+          })
+        })
+      }
 
       function renderSearch(query) {
         const target = $('searchResults')
-        const input = $('searchInput')
         if (!target) return
 
         const q = normalize(query)
         target.innerHTML = ''
-        activeResultIndex = -1
-        if (input) input.setAttribute('aria-expanded', 'false')
         if (!q) return
 
         const matches = state.users.filter((user) =>
           normalize(userName(user)).includes(q) || normalize(userLogin(user)).includes(q)
-        ).slice(0, CONFIG.SEARCH_MAX_RESULTS)
+        ).slice(0, 10)
 
-        target.innerHTML = matches.map((user, index) => {
+        target.innerHTML = matches.map((user) => {
           const login = userLogin(user)
           const name = userName(user) || login
           const avatar = safeUrl(get(user, ['profileImageUrl', 'avatar', 'ProfileImageUrl'], '')) || fallbackAvatar(name)
 
           return `
-            <button type="button" class="search-result" role="option" id="result-${index}"
-                    data-login="${esc(login)}" data-index="${index}">
+            <button type="button" class="search-result" data-login="${esc(login)}">
               <img src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />
               <div>
                 <strong>${esc(name)}</strong>
@@ -2257,33 +2400,6 @@ const metadata = {
             </button>
           `
         }).join('')
-
-        if (input) input.setAttribute('aria-expanded', matches.length ? 'true' : 'false')
-      }
-
-      function setActiveResult(nextIndex) {
-        const buttons = Array.from($('searchResults')?.querySelectorAll('.search-result') || [])
-        if (!buttons.length) return
-
-        const count = buttons.length
-        activeResultIndex = ((nextIndex % count) + count) % count
-
-        buttons.forEach((btn, i) => {
-          const active = i === activeResultIndex
-          btn.classList.toggle('is-active', active)
-          if (active) {
-            btn.scrollIntoView({ block: 'nearest' })
-            $('searchInput')?.setAttribute('aria-activedescendant', btn.id)
-          }
-        })
-      }
-
-      function openSearchResult(button) {
-        if (!button) return
-        const user = findUser(button.dataset.login)
-        if (!user) return
-        history.replaceState(null, '', profileLink(user))
-        renderProfile(user)
       }
 
       function findUser(login) {
@@ -2297,15 +2413,18 @@ const metadata = {
         const raw = new URLSearchParams(location.search).get('user')
 
         if (!raw) {
-          showView('searchView')
-          $('searchInput')?.focus()
+          $('searchView')?.classList.remove('hidden')
+          $('profileView')?.classList.add('hidden')
+          $('notFoundView')?.classList.add('hidden')
           return
         }
 
         const user = findUser(raw)
 
         if (!user) {
-          showView('notFoundView')
+          $('searchView')?.classList.add('hidden')
+          $('profileView')?.classList.add('hidden')
+          $('notFoundView')?.classList.remove('hidden')
           return
         }
 
@@ -2329,53 +2448,23 @@ const metadata = {
         }
       }
 
-      /* ---- ربط الأحداث ---- */
-      let searchTimer = null
-      addListener($('searchInput'), 'input', (event) => {
-        const value = event.target.value
-        if (searchTimer) window.clearTimeout(searchTimer)
-        searchTimer = addTimer(window.setTimeout(() => renderSearch(value), CONFIG.SEARCH_DEBOUNCE_MS))
-      })
-
-      addListener($('searchInput'), 'keydown', (event) => {
-        const buttons = Array.from($('searchResults')?.querySelectorAll('.search-result') || [])
-
-        if (event.key === 'ArrowDown') {
-          event.preventDefault()
-          setActiveResult(activeResultIndex + 1)
-        } else if (event.key === 'ArrowUp') {
-          event.preventDefault()
-          setActiveResult(activeResultIndex - 1)
-        } else if (event.key === 'Enter') {
-          if (activeResultIndex >= 0 && buttons[activeResultIndex]) {
-            event.preventDefault()
-            openSearchResult(buttons[activeResultIndex])
-          } else if (buttons.length === 1) {
-            event.preventDefault()
-            openSearchResult(buttons[0])
-          }
-        } else if (event.key === 'Escape') {
-          if ($('searchInput')) $('searchInput').value = ''
-          renderSearch('')
-        }
-      })
+      addListener($('searchInput'), 'input', (event) => renderSearch(event.target.value))
 
       addListener($('clearSearch'), 'click', () => {
         if (!$('searchInput') || !$('searchResults')) return
         $('searchInput').value = ''
-        renderSearch('')
+        $('searchResults').innerHTML = ''
         $('searchInput').focus()
       })
 
       addListener($('searchResults'), 'click', (event) => {
         const button = event.target.closest('[data-login]')
         if (!button) return
-        openSearchResult(button)
-      })
+        const user = findUser(button.dataset.login)
+        if (!user) return
 
-      addListener($('searchResults'), 'mousemove', (event) => {
-        const button = event.target.closest('[data-index]')
-        if (button) setActiveResult(Number(button.dataset.index))
+        history.replaceState(null, '', profileLink(user))
+        renderProfile(user)
       })
 
       addListener($('openMailButton'), 'click', openMail)
@@ -2383,10 +2472,6 @@ const metadata = {
 
       addListener($('mailModal'), 'click', (event) => {
         if (event.target === $('mailModal')) closeMail()
-      })
-
-      addListener(window, 'keydown', (event) => {
-        if (event.key === 'Escape' && $('mailModal')?.classList.contains('show')) closeMail()
       })
 
       addListener($('copyLink'), 'click', async (event) => {
@@ -2410,7 +2495,6 @@ const metadata = {
         $('backToTop')?.classList.toggle('is-visible', window.scrollY > 420)
       }, { passive: true })
 
-      /* ---- تحميل البيانات ثم بناء الفهارس ---- */
       const [users, inventories, mailboxes, profiles, itemPayload, leaderboardPayload] = await Promise.all([
         loadJson('/api/user_badges.json', []),
         loadJson('/api/user_inventory.json', []),
@@ -2421,6 +2505,9 @@ const metadata = {
       ])
 
       state.users = Array.isArray(users) ? users : []
+      state.inventories = Array.isArray(inventories) ? inventories : []
+      state.mailboxes = Array.isArray(mailboxes) ? mailboxes : []
+      state.profiles = Array.isArray(profiles) ? profiles : []
       state.items = Array.isArray(itemPayload) ? itemPayload : Array.isArray(itemPayload.items) ? itemPayload.items : []
 
       state.leaderboards = {
@@ -2428,13 +2515,6 @@ const metadata = {
         gold: normalizeLeaderboardData(leaderboardPayload, 'gold'),
         watchtime: normalizeLeaderboardData(leaderboardPayload, 'watchtime'),
       }
-
-      // فهارس O(1) للسجلات والكاتالوج، ثم فهرس الترتيب مرة واحدة
-      state.index.profiles = buildIndex(Array.isArray(profiles) ? profiles : [])
-      state.index.inventories = buildIndex(Array.isArray(inventories) ? inventories : [])
-      state.index.mailboxes = buildIndex(Array.isArray(mailboxes) ? mailboxes : [])
-      buildCatalogIndex()
-      buildRankIndex()
 
       openFromQuery()
     })()
