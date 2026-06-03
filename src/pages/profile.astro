@@ -117,7 +117,7 @@ const metadata = {
               </div>
 
               <div class="rank-row">
-                <span class="rank-label">الرتبة</span>
+                <span class="rank-label">رتبة الليفل</span>
                 <span class="rank-value" id="rank">---</span>
               </div>
 
@@ -1861,8 +1861,35 @@ const metadata = {
         return 'عضو جديد'
       }
 
+      function levelRankFor(user) {
+        const rows = state.users
+          .map((rawUser) => {
+            const merged = mergeUser(rawUser)
+            const levelData = calculateLevel(merged)
+
+            return {
+              user: merged,
+              level: levelData.level,
+              score: levelData.score,
+              points: currentPoints(merged),
+              name: userName(merged) || userLogin(merged),
+            }
+          })
+          .filter((row) => userId(row.user) || userLogin(row.user) || userName(row.user))
+          .sort((a, b) => {
+            if (b.level !== a.level) return b.level - a.level
+            if (b.score !== a.score) return b.score - a.score
+            if (b.points !== a.points) return b.points - a.points
+            return String(a.name).localeCompare(String(b.name))
+          })
+
+        const index = rows.findIndex((row) => matchUser(row.user, user))
+        return index >= 0 ? index + 1 : null
+      }
+
       function rankFor(user) {
-        return get(user, ['rank', 'ranking'], '—')
+        const rank = levelRankFor(user)
+        return rank ? `#${rank}` : '—'
       }
 
       function messagesFor(user) {
