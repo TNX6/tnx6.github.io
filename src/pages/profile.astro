@@ -10,13 +10,13 @@ const metadata = {
 
 <Layout metadata={metadata}>
   <main class="tnx-profile-page" dir="rtl">
-    <div id="profileBg" class="profile-bg"></div>
-    <div class="profile-darkness"></div>
+    <div id="pageBg" class="page-bg"></div>
+    <div class="page-vignette"></div>
 
     <section class="profile-shell">
       <section id="searchView" class="search-view hidden">
         <div class="search-card">
-          <span class="kicker">TNX6 PROFILE</span>
+          <span class="eyebrow">TNX6 PROFILE</span>
           <h1>بروفايل العضو</h1>
           <p>ابحث باسم Twitch أو افتح رابط مباشر مثل <b>/profile?user=haneen48</b></p>
 
@@ -36,98 +36,104 @@ const metadata = {
       </section>
 
       <section id="profileView" class="profile-view hidden">
-        <section class="character-card">
-          <div id="coverArt" class="cover-art"></div>
+        <section class="profile-hero">
+          <div id="heroCover" class="hero-cover"></div>
 
-          <div class="character-layout">
-            <aside class="portrait-side">
-              <div class="portrait-frame">
-                <div id="avatar" class="portrait"></div>
+          <div class="hero-inner">
+            <aside class="hero-avatar">
+              <div class="avatar-ring">
+                <div id="avatar" class="avatar"></div>
               </div>
 
-              <div class="level-medallion">
+              <div class="level-box">
                 <span>LEVEL</span>
                 <strong id="levelNumber">1</strong>
               </div>
             </aside>
 
-            <section class="identity-side">
-              <div class="identity-top">
-                <span id="jobChip" class="job-chip">Citizen</span>
-                <span id="loginName" class="login-chip">@—</span>
+            <section class="hero-identity">
+              <div class="identity-pills">
+                <span id="loginName">@—</span>
+                <span id="jobName">Citizen</span>
+                <span id="countryName" class="hidden">Saudi Arabia</span>
               </div>
 
               <h1 id="displayName">—</h1>
 
-              <p id="bioText" class="bio-text">عضو في مجتمع TNX6.</p>
+              <p id="bioText">عضو في مجتمع TNX6.</p>
 
-              <div id="countryName" class="country-chip hidden">Saudi Arabia</div>
-
-              <div id="featuredBadges" class="badge-ribbon"></div>
-
-              <div class="power-meter">
-                <div class="meter-head">
-                  <span id="levelLabel">Level 1</span>
-                  <strong id="nextLevelText">—</strong>
-                </div>
-                <div class="meter-track">
-                  <div id="levelProgress" class="meter-fill"></div>
-                </div>
-              </div>
+              <div id="featuredBadges" class="featured-badges"></div>
             </section>
 
-            <aside class="stats-side">
-              <div class="stat-line">
-                <span>النقاط</span>
-                <strong id="pointsValue">0</strong>
+            <aside class="hero-status">
+              <div class="status-head">
+                <span>STATUS</span>
+                <strong id="levelLabel">Level 1</strong>
               </div>
-              <div class="stat-line">
-                <span>الذهب</span>
-                <strong id="goldValue">0</strong>
+
+              <div class="progress-track">
+                <div id="levelProgress" class="progress-fill"></div>
               </div>
-              <div class="stat-line">
-                <span>السمعة</span>
-                <strong id="repValue">0</strong>
-              </div>
-              <div class="stat-line">
-                <span>البادجات</span>
-                <strong id="badgesTopValue">0</strong>
+
+              <p id="nextLevelText">—</p>
+
+              <div class="stat-grid">
+                <div>
+                  <span>النقاط</span>
+                  <strong id="pointsValue">0</strong>
+                </div>
+                <div>
+                  <span>الذهب</span>
+                  <strong id="goldValue">0</strong>
+                </div>
+                <div>
+                  <span>السمعة</span>
+                  <strong id="repValue">0</strong>
+                </div>
+                <div>
+                  <span>البادجات</span>
+                  <strong id="badgesCountValue">0</strong>
+                </div>
               </div>
             </aside>
           </div>
         </section>
 
-        <section class="showcase-band">
-          <article class="signature-item">
-            <div class="section-label">
-              <span>SIGNATURE ITEM</span>
-              <h2>العنصر الأبرز</h2>
+        <section class="top-showcase">
+          <article class="panel featured-items-panel">
+            <div class="panel-head">
+              <div>
+                <span>SHOWCASE</span>
+                <h2>أبرز الأغراض</h2>
+              </div>
             </div>
 
-            <div id="rareFeature" class="signature-body"></div>
+            <div id="featuredItems" class="featured-items"></div>
+            <div id="featuredItemsEmpty" class="empty-line hidden">ما فيه أغراض للعرض.</div>
           </article>
 
-          <article class="medal-wall">
-            <div class="section-label">
+          <article class="panel badge-panel">
+            <div class="panel-head">
               <div>
-                <span>MEDALS</span>
-                <h2>ميداليات العضو</h2>
+                <span>BADGES</span>
+                <h2>واجهة البادجات</h2>
               </div>
-              <strong id="badgeCountMini">0</strong>
+              <strong id="badgeWallCount">0</strong>
             </div>
 
-            <div id="badgeWall" class="medals"></div>
+            <div id="badgeWall" class="badge-wall"></div>
+            <div id="badgeWallEmpty" class="empty-line hidden">ما فيه بادجات ظاهرة.</div>
           </article>
         </section>
 
-        <section class="inventory-section">
-          <div class="section-label inventory-title">
+        <section class="panel inventory-panel">
+          <div class="panel-head inventory-head">
             <div>
-              <span>LOADOUT</span>
+              <span>INVENTORY</span>
               <h2>حقيبة الأغراض</h2>
             </div>
 
-            <div class="inventory-filters">
+            <div class="filters">
               <button class="is-active" type="button" data-filter="all">الكل</button>
               <button type="button" data-filter="rare">النادر</button>
               <button type="button" data-filter="status">الحالات</button>
@@ -137,26 +143,26 @@ const metadata = {
             </div>
           </div>
 
-          <div id="inventoryGrid" class="loadout-grid"></div>
+          <div id="inventoryGrid" class="inventory-grid"></div>
           <div id="inventoryEmpty" class="empty-line hidden">ما فيه أغراض مطابقة.</div>
         </section>
 
-        <section class="secondary-grid">
-          <article class="secondary-card">
-            <div class="section-label secondary-title">
+        <section class="bottom-grid">
+          <article class="panel">
+            <div class="panel-head">
               <div>
                 <span>ACHIEVEMENTS</span>
                 <h2>الإنجازات</h2>
               </div>
-              <strong id="achCount">0</strong>
+              <strong id="achievementsCount">0</strong>
             </div>
 
-            <div id="achievementsList" class="achievement-list"></div>
+            <div id="achievementsList" class="stack-list"></div>
             <div id="achievementsEmpty" class="empty-line hidden">لا توجد إنجازات بعد.</div>
           </article>
 
-          <article class="secondary-card">
-            <div class="section-label secondary-title">
+          <article class="panel">
+            <div class="panel-head">
               <div>
                 <span>MAILBOX</span>
                 <h2>صندوق البريد</h2>
@@ -168,7 +174,7 @@ const metadata = {
               </div>
             </div>
 
-            <div id="mailList" class="mail-list"></div>
+            <div id="mailList" class="stack-list"></div>
             <div id="mailEmpty" class="empty-line hidden">ما فيه رسائل.</div>
           </article>
         </section>
@@ -180,9 +186,9 @@ const metadata = {
       </section>
     </section>
 
-    <div id="itemModal" class="item-modal hidden" aria-hidden="true">
+    <div id="itemModal" class="modal hidden" aria-hidden="true">
       <button id="closeItemModal" class="modal-close" type="button" aria-label="إغلاق">×</button>
-      <div id="itemModalContent" class="modal-content"></div>
+      <div id="itemModalContent" class="modal-card"></div>
     </div>
 
     <button id="backToTop" class="back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
@@ -213,39 +219,38 @@ const metadata = {
       font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    .profile-bg {
+    .page-bg {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 18% 10%, rgba(255,218,106,.14), transparent 30%),
-        radial-gradient(circle at 84% 10%, rgba(124,58,237,.12), transparent 34%),
-        linear-gradient(135deg, #05050a, #0d0d14 50%, #160b04);
+        radial-gradient(circle at 16% 12%, rgba(255,218,106,.16), transparent 28%),
+        radial-gradient(circle at 84% 16%, rgba(124,58,237,.12), transparent 32%),
+        linear-gradient(135deg, #05050a, #0d0d14 50%, #150b04);
       background-position: center;
       background-size: cover;
-      opacity: .5;
-      filter: blur(2px) saturate(.9) contrast(1.08);
+      opacity: .42;
+      filter: blur(2px) saturate(.9) contrast(1.1);
       transform: scale(1.06);
     }
 
-    .profile-bg::after {
+    .page-bg::after {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(180deg, rgba(0,0,0,.86), rgba(0,0,0,.68) 38%, rgba(0,0,0,.96)),
-        linear-gradient(90deg, rgba(0,0,0,.88), rgba(0,0,0,.38) 50%, rgba(0,0,0,.88));
+        linear-gradient(180deg, rgba(0,0,0,.9), rgba(0,0,0,.72) 36%, rgba(0,0,0,.96)),
+        linear-gradient(90deg, rgba(0,0,0,.9), rgba(0,0,0,.45) 50%, rgba(0,0,0,.9));
     }
 
-    .profile-darkness {
+    .page-vignette {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 50% 18%, rgba(255,218,106,.07), transparent 28%),
-        radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.32) 54%, rgba(0,0,0,.88) 100%);
+        radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.3) 54%, rgba(0,0,0,.9) 100%);
     }
 
     .profile-shell {
@@ -266,7 +271,7 @@ const metadata = {
     .not-found {
       width: min(100%, 620px);
       border: 1px solid rgba(255,218,106,.18);
-      border-radius: 32px;
+      border-radius: 30px;
       background: rgba(8,8,12,.86);
       padding: 2rem;
       text-align: center;
@@ -274,7 +279,7 @@ const metadata = {
       backdrop-filter: blur(20px);
     }
 
-    .kicker {
+    .eyebrow {
       display: inline-flex;
       border: 1px solid rgba(255,218,106,.28);
       border-radius: 999px;
@@ -419,99 +424,96 @@ const metadata = {
       gap: 1rem;
     }
 
-    .character-card {
+    .profile-hero {
       position: relative;
       overflow: hidden;
-      min-height: 560px;
       border: 1px solid rgba(255,218,106,.2);
-      border-radius: 38px;
+      border-radius: 34px;
       background:
-        radial-gradient(circle at 74% 28%, rgba(255,218,106,.09), transparent 24%),
         linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.012)),
-        rgba(8,8,12,.84);
+        rgba(8,8,12,.86);
       box-shadow:
-        0 38px 120px rgba(0,0,0,.58),
+        0 34px 110px rgba(0,0,0,.58),
         inset 0 0 0 1px rgba(255,255,255,.025);
       backdrop-filter: blur(22px);
     }
 
-    .cover-art {
+    .hero-cover {
       position: absolute;
       inset: 0;
       background-position: center;
       background-size: cover;
-      opacity: .42;
+      opacity: .38;
       filter: saturate(.95) contrast(1.05);
     }
 
-    .cover-art::after {
+    .hero-cover::after {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at 79% 37%, rgba(var(--accent), .28), transparent 28%),
-        linear-gradient(90deg, rgba(8,8,12,.96), rgba(8,8,12,.52) 50%, rgba(8,8,12,.92)),
-        linear-gradient(180deg, rgba(8,8,12,.3), rgba(8,8,12,.94));
+        radial-gradient(circle at 84% 32%, rgba(var(--accent), .28), transparent 28%),
+        linear-gradient(90deg, rgba(8,8,12,.94), rgba(8,8,12,.55) 52%, rgba(8,8,12,.92)),
+        linear-gradient(180deg, rgba(8,8,12,.32), rgba(8,8,12,.95));
     }
 
-    .character-layout {
+    .hero-inner {
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: 280px minmax(0, 1fr) 220px;
-      gap: 1.25rem;
-      min-height: 560px;
+      grid-template-areas: "status identity avatar";
+      grid-template-columns: 270px minmax(0, 1fr) 210px;
+      gap: 1.2rem;
+      min-height: 420px;
       align-items: center;
-      padding: 2rem;
+      padding: 1.6rem;
     }
 
-    .portrait-side {
+    .hero-avatar {
+      grid-area: avatar;
       display: grid;
-      justify-items: center;
-      gap: 1rem;
+      place-items: center;
+      gap: .85rem;
     }
 
-    .portrait-frame {
-      width: 250px;
-      height: 330px;
-      border-radius: 36px;
+    .avatar-ring {
+      width: 188px;
+      height: 188px;
+      border-radius: 34px;
       padding: 5px;
       background:
         linear-gradient(135deg, rgba(255,218,106,.96), var(--profile-color, #ffda6a), rgba(255,255,255,.18));
       box-shadow:
-        0 28px 64px rgba(0,0,0,.65),
-        0 0 38px color-mix(in srgb, var(--profile-color, #ffda6a) 34%, transparent);
+        0 26px 56px rgba(0,0,0,.64),
+        0 0 32px color-mix(in srgb, var(--profile-color, #ffda6a) 34%, transparent);
     }
 
-    .portrait {
+    .avatar {
       width: 100%;
       height: 100%;
-      border-radius: 31px;
+      border-radius: 29px;
       background: #111 center / cover no-repeat;
     }
 
-    .level-medallion {
+    .level-box {
       display: grid;
       place-items: center;
-      width: 128px;
-      height: 84px;
-      border: 1px solid rgba(255,218,106,.28);
-      border-radius: 24px;
-      background:
-        radial-gradient(circle at top, rgba(255,218,106,.14), transparent 60%),
-        rgba(0,0,0,.42);
-      box-shadow: inset 0 0 24px rgba(255,218,106,.04);
+      min-width: 116px;
+      border: 1px solid rgba(255,218,106,.26);
+      border-radius: 20px;
+      background: rgba(0,0,0,.42);
+      padding: .72rem .95rem;
     }
 
-    .level-medallion span {
+    .level-box span {
       color: rgb(156,163,175);
       font-size: .66rem;
       font-weight: 950;
       letter-spacing: .12em;
     }
 
-    .level-medallion strong {
-      margin-top: .2rem;
+    .level-box strong {
+      margin-top: .18rem;
       color: #ffda6a;
       font-size: 2rem;
       font-weight: 950;
@@ -519,13 +521,13 @@ const metadata = {
       direction: ltr;
     }
 
-    .identity-side {
+    .hero-identity {
+      grid-area: identity;
       min-width: 0;
-      align-self: center;
-      padding-inline: .4rem;
+      text-align: right;
     }
 
-    .identity-top {
+    .identity-pills {
       display: flex;
       flex-wrap: wrap;
       gap: .48rem;
@@ -533,9 +535,7 @@ const metadata = {
       margin-bottom: .8rem;
     }
 
-    .job-chip,
-    .login-chip,
-    .country-chip {
+    .identity-pills span {
       border: 1px solid rgba(255,218,106,.22);
       border-radius: 999px;
       background: rgba(0,0,0,.42);
@@ -546,55 +546,48 @@ const metadata = {
       backdrop-filter: blur(12px);
     }
 
-    .login-chip {
+    #loginName {
       color: rgb(229,231,235);
       direction: ltr;
     }
 
-    .identity-side h1 {
+    .hero-identity h1 {
       margin: 0;
-      overflow: visible;
       color: #fff;
       font-size: clamp(3rem, 6vw, 5.8rem);
       font-weight: 950;
       line-height: .9;
       letter-spacing: -.06em;
       text-shadow: 0 8px 28px rgba(0,0,0,.78);
-      white-space: normal;
       word-break: break-word;
       direction: ltr;
       unicode-bidi: isolate;
     }
 
-    .bio-text {
+    .hero-identity p {
       max-width: 620px;
-      margin: 1rem 0 0;
+      margin: .95rem 0 0;
       color: rgb(209,213,219);
-      font-size: 1rem;
+      font-size: .98rem;
       font-weight: 720;
       line-height: 1.75;
     }
 
-    .country-chip {
-      display: inline-flex;
-      margin-top: .85rem;
-    }
-
-    .badge-ribbon {
+    .featured-badges {
       display: flex;
       flex-wrap: wrap;
-      gap: .6rem;
-      margin-top: 1.1rem;
+      gap: .55rem;
+      margin-top: 1.05rem;
     }
 
-    .badge-ribbon img,
+    .featured-badges img,
     .badge-placeholder {
       display: grid;
       place-items: center;
-      width: 54px;
-      height: 54px;
+      width: 50px;
+      height: 50px;
       border: 1px solid rgba(255,218,106,.18);
-      border-radius: 16px;
+      border-radius: 15px;
       background: rgba(0,0,0,.38);
       object-fit: contain;
       padding: 4px;
@@ -603,39 +596,47 @@ const metadata = {
       filter: drop-shadow(0 8px 12px rgba(0,0,0,.42));
     }
 
-    .power-meter {
-      max-width: 560px;
-      margin-top: 1.3rem;
-      border: 1px solid rgba(255,218,106,.12);
-      border-radius: 20px;
-      background: rgba(0,0,0,.32);
-      padding: .95rem;
+    .hero-status {
+      grid-area: status;
+      border: 1px solid rgba(255,218,106,.13);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at top right, rgba(255,218,106,.1), transparent 45%),
+        rgba(0,0,0,.38);
+      padding: 1rem;
+      box-shadow: inset 0 0 24px rgba(255,218,106,.035);
     }
 
-    .meter-head {
+    .status-head {
       display: flex;
       justify-content: space-between;
-      gap: 1rem;
-      color: rgb(156,163,175);
-      font-size: .76rem;
-      font-weight: 850;
+      gap: .8rem;
+      align-items: center;
     }
 
-    .meter-head span {
+    .status-head span {
+      color: rgb(156,163,175);
+      font-size: .68rem;
+      font-weight: 950;
+      letter-spacing: .1em;
+    }
+
+    .status-head strong {
       color: #ffda6a;
+      font-size: .86rem;
       font-weight: 950;
       direction: ltr;
     }
 
-    .meter-track {
+    .progress-track {
       height: 10px;
-      margin-top: .7rem;
+      margin-top: .75rem;
       border-radius: 999px;
       background: rgba(255,255,255,.08);
       overflow: hidden;
     }
 
-    .meter-fill {
+    .progress-fill {
       width: 0%;
       height: 100%;
       border-radius: 999px;
@@ -643,59 +644,62 @@ const metadata = {
       box-shadow: 0 0 18px rgba(255,218,106,.35);
     }
 
-    .stats-side {
+    .hero-status p {
+      margin: .55rem 0 .85rem;
+      color: rgb(156,163,175);
+      font-size: .68rem;
+      font-weight: 720;
+    }
+
+    .stat-grid {
       display: grid;
-      gap: .72rem;
-      align-self: center;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .58rem;
     }
 
-    .stat-line {
+    .stat-grid div {
       border: 1px solid rgba(255,218,106,.12);
-      border-radius: 20px;
-      background:
-        radial-gradient(circle at top right, rgba(255,218,106,.1), transparent 45%),
-        rgba(0,0,0,.38);
-      padding: .9rem;
+      border-radius: 16px;
+      background: rgba(0,0,0,.26);
+      padding: .75rem;
     }
 
-    .stat-line span {
+    .stat-grid span {
       display: block;
       color: rgb(156,163,175);
-      font-size: .74rem;
+      font-size: .68rem;
       font-weight: 850;
     }
 
-    .stat-line strong {
+    .stat-grid strong {
       display: block;
-      margin-top: .22rem;
+      margin-top: .18rem;
       color: #ffda6a;
-      font-size: 1.35rem;
+      font-size: 1.04rem;
       font-weight: 950;
       direction: ltr;
       text-align: right;
     }
 
-    .showcase-band {
+    .top-showcase,
+    .bottom-grid {
       display: grid;
       grid-template-columns: 1.15fr .85fr;
       gap: 1rem;
     }
 
-    .signature-item,
-    .medal-wall,
-    .inventory-section,
-    .secondary-card {
+    .panel {
       border: 1px solid rgba(255,218,106,.14);
       border-radius: 28px;
       background:
         linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012)),
-        rgba(8,8,12,.8);
+        rgba(8,8,12,.82);
       box-shadow: 0 24px 72px rgba(0,0,0,.42);
       padding: 1rem;
       backdrop-filter: blur(18px);
     }
 
-    .section-label {
+    .panel-head {
       display: flex;
       justify-content: space-between;
       align-items: start;
@@ -703,7 +707,7 @@ const metadata = {
       margin-bottom: .95rem;
     }
 
-    .section-label span {
+    .panel-head span {
       display: block;
       color: #c29200;
       font-size: .68rem;
@@ -711,7 +715,7 @@ const metadata = {
       letter-spacing: .13em;
     }
 
-    .section-label h2 {
+    .panel-head h2 {
       margin: .24rem 0 0;
       color: #f7e6ac;
       font-size: 1.42rem;
@@ -719,8 +723,7 @@ const metadata = {
       line-height: 1.15;
     }
 
-    .section-label > strong,
-    .secondary-title > strong {
+    .panel-head > strong {
       display: grid;
       place-items: center;
       min-width: 48px;
@@ -734,84 +737,107 @@ const metadata = {
       direction: ltr;
     }
 
-    .signature-body {
+    .featured-items {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: .75rem;
       min-height: 220px;
     }
 
-    .signature-card {
-      display: grid;
-      grid-template-columns: 150px minmax(0, 1fr) auto;
-      gap: 1rem;
-      align-items: center;
-      min-height: 220px;
-      border: 1px solid rgba(255,218,106,.18);
+    .featured-item {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--item-color, rgba(255,218,106,.18));
       border-radius: 24px;
       background:
-        radial-gradient(circle at top right, rgba(255,218,106,.14), transparent 48%),
-        rgba(0,0,0,.3);
-      padding: 1.1rem;
+        radial-gradient(circle at top right, var(--item-soft, rgba(255,218,106,.12)), transparent 48%),
+        rgba(0,0,0,.32);
+      padding: 1rem;
+      min-height: 220px;
+      cursor: pointer;
+      transition: 160ms ease;
     }
 
-    .signature-icon {
+    .featured-item:hover {
+      transform: translateY(-2px);
+      border-color: var(--item-color, rgba(255,218,106,.42));
+      background:
+        radial-gradient(circle at top right, var(--item-soft, rgba(255,218,106,.18)), transparent 48%),
+        rgba(0,0,0,.4);
+    }
+
+    .featured-item:first-child {
+      min-height: 220px;
+    }
+
+    .featured-icon {
       display: grid;
       place-items: center;
-      width: 132px;
-      height: 132px;
-      border: 1px solid rgba(255,218,106,.2);
-      border-radius: 30px;
-      background: rgba(255,218,106,.08);
-      font-size: 3.3rem;
+      width: 74px;
+      height: 74px;
+      border: 1px solid var(--item-color, rgba(255,218,106,.18));
+      border-radius: 22px;
+      background: var(--item-soft, rgba(255,218,106,.1));
+      font-size: 2.2rem;
+      margin-bottom: .8rem;
     }
 
-    .signature-card h3 {
+    .featured-item h3 {
       margin: 0;
       color: #fff;
-      font-size: 1.8rem;
+      font-size: 1.1rem;
       font-weight: 950;
-      line-height: 1.15;
+      line-height: 1.25;
     }
 
-    .signature-card p {
-      margin: .55rem 0 0;
+    .featured-item p {
+      display: -webkit-box;
+      overflow: hidden;
+      margin: .45rem 0 0;
       color: rgb(156,163,175);
-      font-size: .88rem;
-      font-weight: 740;
-      line-height: 1.65;
+      font-size: .75rem;
+      font-weight: 730;
+      line-height: 1.5;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
     }
 
-    .signature-card strong {
+    .featured-qty {
+      position: absolute;
+      top: .8rem;
+      left: .8rem;
       display: grid;
       place-items: center;
-      min-width: 68px;
-      height: 46px;
-      border: 1px solid rgba(255,218,106,.18);
+      min-width: 2.2rem;
+      height: 2.2rem;
+      border: 1px solid var(--item-color, rgba(255,218,106,.18));
       border-radius: 999px;
-      background: rgba(0,0,0,.34);
-      color: #ffda6a;
-      padding: 0 .74rem;
-      font-size: .86rem;
+      background: rgba(0,0,0,.58);
+      color: var(--item-color, #ffda6a);
+      padding: 0 .35rem;
+      font-size: .72rem;
       font-weight: 950;
       direction: ltr;
     }
 
-    .medals {
+    .badge-wall {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: .65rem;
     }
 
-    .medals img,
-    .medals .badge-placeholder {
+    .badge-wall img,
+    .badge-wall .badge-placeholder {
       width: 100%;
       height: 68px;
       border-radius: 18px;
     }
 
-    .inventory-title {
+    .inventory-head {
       align-items: center;
     }
 
-    .inventory-filters,
+    .filters,
     .mail-tabs {
       display: flex;
       flex-wrap: wrap;
@@ -819,7 +845,7 @@ const metadata = {
       gap: .4rem;
     }
 
-    .inventory-filters button,
+    .filters button,
     .mail-tabs button {
       border: 1px solid rgba(255,218,106,.16);
       border-radius: 999px;
@@ -832,8 +858,8 @@ const metadata = {
       cursor: pointer;
     }
 
-    .inventory-filters button.is-active,
-    .inventory-filters button:hover,
+    .filters button.is-active,
+    .filters button:hover,
     .mail-tabs button.is-active,
     .mail-tabs button:hover {
       border-color: rgba(255,218,106,.42);
@@ -841,35 +867,38 @@ const metadata = {
       color: #ffda6a;
     }
 
-    .loadout-grid {
+    .inventory-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
       gap: .72rem;
     }
 
-    .loadout-item {
+    .inventory-item {
       position: relative;
       display: grid;
-      place-items: center;
-      aspect-ratio: 1;
+      gap: .52rem;
+      min-height: 132px;
       border: 1px solid var(--item-color, rgba(255,218,106,.18));
-      border-radius: 22px;
+      border-radius: 20px;
       background:
         radial-gradient(circle at top right, var(--item-soft, rgba(255,218,106,.08)), transparent 52%),
         rgba(0,0,0,.34);
+      padding: .72rem;
+      text-align: right;
       cursor: pointer;
       transition: 160ms ease;
     }
 
-    .loadout-item:hover {
-      transform: translateY(-3px) scale(1.02);
+    .inventory-item:hover {
+      transform: translateY(-3px);
       border-color: var(--item-color, rgba(255,218,106,.45));
       background:
         radial-gradient(circle at top right, var(--item-soft, rgba(255,218,106,.16)), transparent 52%),
         rgba(0,0,0,.43);
     }
 
-    .loadout-item.is-rare::before {
+    .inventory-item.is-rare::before,
+    .featured-item.is-rare::before {
       content: "";
       position: absolute;
       inset: -45%;
@@ -880,62 +909,59 @@ const metadata = {
 
     @keyframes shine { to { transform: rotate(360deg); } }
 
-    .loadout-icon {
+    .inventory-icon,
+    .inventory-item h3,
+    .inventory-qty {
       position: relative;
       z-index: 1;
-      font-size: 2rem;
-      filter: drop-shadow(0 10px 14px rgba(0,0,0,.42));
     }
 
-    .loadout-qty {
-      position: absolute;
-      top: .45rem;
-      left: .45rem;
-      z-index: 1;
+    .inventory-icon {
       display: grid;
       place-items: center;
-      min-width: 1.8rem;
-      height: 1.8rem;
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--item-color, rgba(255,218,106,.18));
+      border-radius: 15px;
+      background: var(--item-soft, rgba(255,218,106,.08));
+      font-size: 1.45rem;
+    }
+
+    .inventory-item h3 {
+      margin: 0;
+      overflow: hidden;
+      color: #fff;
+      font-size: .74rem;
+      font-weight: 900;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .inventory-qty {
+      position: absolute;
+      top: .62rem;
+      left: .62rem;
+      display: grid;
+      place-items: center;
+      min-width: 1.9rem;
+      height: 1.9rem;
       border: 1px solid var(--item-color, rgba(255,218,106,.22));
       border-radius: 999px;
       background: rgba(0,0,0,.62);
       color: var(--item-color, #ffda6a);
-      padding: 0 .3rem;
+      padding: 0 .32rem;
       font-size: .65rem;
       font-weight: 950;
       direction: ltr;
     }
 
-    .loadout-name {
-      position: absolute;
-      right: .45rem;
-      bottom: .42rem;
-      left: .45rem;
-      z-index: 1;
-      overflow: hidden;
-      color: #f8fafc;
-      font-size: .58rem;
-      font-weight: 850;
-      text-align: center;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      opacity: .88;
-    }
-
-    .secondary-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
-    .achievement-list,
-    .mail-list {
+    .stack-list {
       display: grid;
       gap: .65rem;
     }
 
-    .achievement-card,
-    .mail-card {
+    .stack-card {
       display: flex;
       align-items: flex-start;
       gap: .75rem;
@@ -945,13 +971,12 @@ const metadata = {
       padding: .72rem;
     }
 
-    .mail-card.is-unread {
+    .stack-card.is-unread {
       border-color: rgba(255,218,106,.32);
       background: rgba(255,218,106,.05);
     }
 
-    .achievement-icon,
-    .mail-avatar {
+    .stack-icon {
       display: grid;
       place-items: center;
       width: 42px;
@@ -965,8 +990,7 @@ const metadata = {
       font-weight: 950;
     }
 
-    .achievement-card strong,
-    .mail-card strong {
+    .stack-card strong {
       display: block;
       color: #fff;
       font-size: .82rem;
@@ -974,8 +998,7 @@ const metadata = {
       line-height: 1.25;
     }
 
-    .achievement-card span,
-    .mail-card span {
+    .stack-card span {
       display: block;
       margin-top: .18rem;
       color: rgb(156,163,175);
@@ -1040,18 +1063,18 @@ const metadata = {
       padding: 1.25rem .5rem;
     }
 
-    .item-modal {
+    .modal {
       position: fixed;
       inset: 0;
       z-index: 120;
       display: grid;
       place-items: center;
       padding: 1rem;
-      background: rgba(0,0,0,.72);
+      background: rgba(0,0,0,.74);
       backdrop-filter: blur(12px);
     }
 
-    .modal-content {
+    .modal-card {
       width: min(100%, 420px);
       border: 1px solid rgba(255,218,106,.18);
       border-radius: 28px;
@@ -1063,7 +1086,7 @@ const metadata = {
       text-align: center;
     }
 
-    .modal-item-icon {
+    .modal-icon {
       display: grid;
       place-items: center;
       width: 88px;
@@ -1075,14 +1098,14 @@ const metadata = {
       font-size: 2.5rem;
     }
 
-    .modal-content h3 {
+    .modal-card h3 {
       margin: 0;
       color: #fff;
       font-size: 1.35rem;
       font-weight: 950;
     }
 
-    .modal-content p {
+    .modal-card p {
       margin: .6rem 0 0;
       color: rgb(156,163,175);
       font-size: .86rem;
@@ -1090,7 +1113,7 @@ const metadata = {
       line-height: 1.65;
     }
 
-    .modal-content strong {
+    .modal-card strong {
       display: inline-flex;
       margin-top: .8rem;
       border: 1px solid rgba(255,218,106,.18);
@@ -1146,22 +1169,20 @@ const metadata = {
     }
 
     @media (max-width: 1040px) {
-      .character-layout {
-        grid-template-columns: 260px minmax(0, 1fr);
+      .hero-inner {
+        grid-template-areas:
+          "avatar identity"
+          "status status";
+        grid-template-columns: 210px minmax(0, 1fr);
+        min-height: auto;
       }
 
-      .stats-side {
-        grid-column: 1 / -1;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+      .hero-status {
+        grid-template-columns: 1fr;
       }
 
-      .portrait-frame {
-        width: 240px;
-        height: 315px;
-      }
-
-      .showcase-band,
-      .secondary-grid {
+      .top-showcase,
+      .bottom-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -1171,71 +1192,66 @@ const metadata = {
         padding-top: 5rem;
       }
 
-      .character-card {
-        min-height: auto;
-      }
-
-      .character-layout {
+      .hero-inner {
+        grid-template-areas:
+          "avatar"
+          "identity"
+          "status";
         grid-template-columns: 1fr;
-        justify-items: center;
         text-align: center;
-        min-height: auto;
       }
 
-      .portrait-frame {
-        width: 220px;
-        height: 290px;
+      .hero-identity {
+        text-align: center;
       }
 
-      .identity-top,
-      .badge-ribbon {
+      .identity-pills,
+      .featured-badges {
         justify-content: center;
       }
 
-      .identity-side h1 {
-        white-space: normal;
+      .hero-identity h1 {
         font-size: 3rem;
       }
 
-      .stats-side,
-      .medals {
+      .stat-grid,
+      .badge-wall,
+      .featured-items {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .signature-card {
-        grid-template-columns: 1fr;
-        text-align: center;
-        justify-items: center;
-      }
-
-      .inventory-title {
+      .inventory-head {
         align-items: start;
         flex-direction: column;
       }
 
-      .inventory-filters {
+      .filters {
         justify-content: flex-start;
       }
     }
 
     @media (max-width: 520px) {
-      .loadout-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+      .featured-items,
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .inventory-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
     @media (max-width: 390px) {
-      .stats-side,
-      .medals,
-      .loadout-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .badge-wall,
+      .inventory-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 
   <script is:inline data-reinit>
     ;(async () => {
-      const cleanupKey = '__tnxCharacterProfileCleanup'
+      const cleanupKey = '__tnxProfileFreshRebuildCleanup'
       if (window[cleanupKey]) window[cleanupKey]()
 
       const listeners = []
@@ -1307,6 +1323,11 @@ const metadata = {
       }
 
       const $ = (id) => document.getElementById(id)
+
+      function setText(id, value) {
+        const el = $(id)
+        if (el) el.textContent = value
+      }
 
       function esc(value) {
         return String(value ?? '')
@@ -1461,7 +1482,7 @@ const metadata = {
           .filter((item) => item.name)
       }
 
-      function inventoryItems(user) {
+      function filteredInventoryItems(user) {
         const items = allInventoryItems(user)
         const f = state.inventoryFilter
 
@@ -1540,9 +1561,9 @@ const metadata = {
         const user = mergeUser(rawUser)
         state.activeUser = user
 
-        $('searchView').classList.add('hidden')
-        $('notFoundView').classList.add('hidden')
-        $('profileView').classList.remove('hidden')
+        $('searchView')?.classList.add('hidden')
+        $('notFoundView')?.classList.add('hidden')
+        $('profileView')?.classList.remove('hidden')
 
         const color = validColor(get(user, ['backgroundColor', 'profileColor'], '#ffda6a'))
         const banner = safeUrl(get(user, ['bannerImage', 'banner', 'backgroundImage'], ''))
@@ -1554,40 +1575,47 @@ const metadata = {
         const level = levelFor(user)
         const progress = levelProgress(user)
 
-        $('profileBg').style.backgroundImage = banner
-          ? `url('${banner}')`
-          : `radial-gradient(circle at 18% 10%, rgba(255,218,106,.14), transparent 30%), linear-gradient(135deg, ${color}, #05050a)`
+        if ($('pageBg')) {
+          $('pageBg').style.backgroundImage = banner
+            ? `url('${banner}')`
+            : `radial-gradient(circle at 16% 12%, rgba(255,218,106,.16), transparent 28%), linear-gradient(135deg, ${color}, #05050a)`
+        }
 
-        $('coverArt').style.setProperty('--accent', hexToRgb(color))
-        $('coverArt').style.backgroundImage = banner ? `url('${banner}')` : `linear-gradient(135deg, ${color}, #05050a)`
+        if ($('heroCover')) {
+          $('heroCover').style.setProperty('--accent', hexToRgb(color))
+          $('heroCover').style.backgroundImage = banner ? `url('${banner}')` : `linear-gradient(135deg, ${color}, #05050a)`
+        }
 
         document.documentElement.style.setProperty('--profile-color', color)
-        $('avatar').style.backgroundImage = avatar ? `url('${avatar}')` : ''
 
-        $('displayName').textContent = name
-        $('loginName').textContent = `@${login}`
-        $('jobChip').textContent = get(user, ['jobName'], 'Citizen')
-        $('bioText').textContent = get(user, ['bio'], 'عضو في مجتمع TNX6.')
-        $('levelNumber').textContent = fmt(level)
-        $('levelLabel').textContent = `Level ${fmt(level)}`
-        $('levelProgress').style.width = `${progress}%`
-        $('nextLevelText').textContent = `${fmt(progress)}% من التقدم للفل القادم`
+        if ($('avatar')) $('avatar').style.backgroundImage = avatar ? `url('${avatar}')` : ''
 
-        $('pointsValue').textContent = fmt(get(user, ['points', 'totalPoints'], 0))
-        $('goldValue').textContent = fmt(get(user, ['gold'], 0))
-        $('repValue').textContent = fmt(get(user, ['reputation', 'rep'], 0))
-        $('badgesTopValue').textContent = fmt(badges.length)
+        setText('displayName', name)
+        setText('loginName', `@${login}`)
+        setText('jobName', get(user, ['jobName'], 'Citizen'))
+        setText('bioText', get(user, ['bio'], 'عضو في مجتمع TNX6.'))
+        setText('levelNumber', fmt(level))
+        setText('levelLabel', `Level ${fmt(level)}`)
+        setText('nextLevelText', `${fmt(progress)}% من التقدم للفل القادم`)
+        if ($('levelProgress')) $('levelProgress').style.width = `${progress}%`
+
+        setText('pointsValue', fmt(get(user, ['points', 'totalPoints'], 0)))
+        setText('goldValue', fmt(get(user, ['gold'], 0)))
+        setText('repValue', fmt(get(user, ['reputation', 'rep'], 0)))
+        setText('badgesCountValue', fmt(badges.length))
+        setText('badgeWallCount', fmt(badges.length))
+        setText('achievementsCount', fmt(buildAchievements(user).length))
 
         const country = get(user, ['country'], '')
-        $('countryName').classList.toggle('hidden', !country)
-        $('countryName').textContent = country
+        if ($('countryName')) {
+          $('countryName').classList.toggle('hidden', !country)
+          $('countryName').textContent = country
+        }
 
-        if ($('badgeCountMini')) $('badgeCountMini').textContent = fmt(badges.length)
-        if ($('achCount')) $('achCount').textContent = fmt(buildAchievements(user).length)
-        $('badgesPageLink').href = `/badges?user=${encodeURIComponent(login)}`
+        if ($('badgesPageLink')) $('badgesPageLink').href = `/badges?user=${encodeURIComponent(login)}`
 
         renderFeaturedBadges(badges)
-        renderRareFeature(itemsAll)
+        renderFeaturedItems(itemsAll)
         renderBadgeWall(badges)
         renderInventory(user)
         renderAchievements(buildAchievements(user))
@@ -1595,10 +1623,13 @@ const metadata = {
       }
 
       function renderFeaturedBadges(badges) {
+        const target = $('featuredBadges')
+        if (!target) return
+
         const equipped = badges.filter((badge) => badge.equipped).slice(0, 7)
         const list = equipped.length ? equipped : badges.slice(0, 7)
 
-        $('featuredBadges').innerHTML = list.length
+        target.innerHTML = list.length
           ? list.map((badge) => {
               const img = badgeImage(badge)
               const name = badgeName(badge)
@@ -1609,70 +1640,89 @@ const metadata = {
           : `<div class="badge-placeholder">—</div>`
       }
 
-      function renderRareFeature(items) {
-        items = Array.isArray(items) ? items.filter(Boolean) : []
-        const sorted = [...items].sort((a, b) => {
-          const rank = (item) => item.meta.rare ? 10 : 0
-          return rank(b) - rank(a) || b.qty - a.qty
+      function sortItems(items) {
+        return [...items].sort((a, b) => {
+          const rank = (item) => item.meta.rare ? 100 : 0
+          return rank(b) - rank(a) || b.qty - a.qty || a.name.localeCompare(b.name)
         })
+      }
 
-        const item = sorted[0]
+      function renderFeaturedItems(items) {
+        const target = $('featuredItems')
+        const empty = $('featuredItemsEmpty')
+        if (!target) return
 
-        if (!item) {
-          $('rareFeature').innerHTML = `<div class="empty-line">ما فيه أغراض للعرض.</div>`
-          return
-        }
+        const featured = sortItems(items).slice(0, 3)
 
-        $('rareFeature').innerHTML = `
-          <div class="signature-card">
-            <div class="signature-icon">${esc(item.meta.icon)}</div>
-            <div>
+        if (empty) empty.classList.toggle('hidden', featured.length > 0)
+
+        target.innerHTML = featured.map((item) => {
+          const [color, soft] = CATEGORY[item.meta.cat] || CATEGORY.economy
+          const rare = item.meta.rare ? ' is-rare' : ''
+          return `
+            <button class="featured-item${rare}" type="button" data-item-name="${esc(item.name)}" style="--item-color:${color};--item-soft:${soft};">
+              <span class="featured-qty">x${fmt(item.qty)}</span>
+              <div class="featured-icon">${esc(item.meta.icon)}</div>
               <h3>${esc(item.name)}</h3>
               <p>${esc(item.description)}</p>
-            </div>
-            <strong>x${fmt(item.qty)}</strong>
-          </div>
-        `
+            </button>
+          `
+        }).join('')
+
+        target.querySelectorAll('[data-item-name]').forEach((button) => {
+          addListener(button, 'click', () => {
+            const item = items.find((x) => x.name === button.dataset.itemName)
+            if (item) openItemModal(item)
+          })
+        })
       }
 
       function renderBadgeWall(badges) {
+        const target = $('badgeWall')
+        const empty = $('badgeWallEmpty')
+        if (!target) return
+
         const equipped = badges.filter((badge) => badge.equipped).slice(0, 8)
         const list = equipped.length ? equipped : badges.slice(0, 8)
 
-        $('badgeWall').innerHTML = list.length
-          ? list.map((badge) => {
-              const img = badgeImage(badge)
-              const name = badgeName(badge)
-              return img
-                ? `<img src="${esc(img)}" alt="${esc(name)}" title="${esc(name)}" loading="lazy" />`
-                : `<div class="badge-placeholder" title="${esc(name)}">★</div>`
-            }).join('')
-          : `<div class="empty-line">ما فيه بادجات.</div>`
+        if (empty) empty.classList.toggle('hidden', list.length > 0)
+
+        target.innerHTML = list.map((badge) => {
+          const img = badgeImage(badge)
+          const name = badgeName(badge)
+          return img
+            ? `<img src="${esc(img)}" alt="${esc(name)}" title="${esc(name)}" loading="lazy" />`
+            : `<div class="badge-placeholder" title="${esc(name)}">★</div>`
+        }).join('')
       }
 
       function renderInventory(user) {
-        const items = inventoryItems(user)
+        const target = $('inventoryGrid')
+        const empty = $('inventoryEmpty')
+        if (!target) return
 
-        $('inventoryEmpty').classList.toggle('hidden', items.length > 0)
+        const items = filteredInventoryItems(user)
+
+        if (empty) empty.classList.toggle('hidden', items.length > 0)
 
         document.querySelectorAll('[data-filter]').forEach((button) => {
           button.classList.toggle('is-active', button.dataset.filter === state.inventoryFilter)
         })
 
-        $('inventoryGrid').innerHTML = items.map((item, index) => {
+        target.innerHTML = items.map((item, index) => {
           const [color, soft] = CATEGORY[item.meta.cat] || CATEGORY.economy
           const rare = item.meta.rare ? ' is-rare' : ''
 
           return `
-            <button class="loadout-item${rare}" type="button" data-item-index="${index}" style="--item-color:${color};--item-soft:${soft};" title="${esc(item.name)}">
-              <span class="loadout-qty">x${fmt(item.qty)}</span>
-              <span class="loadout-icon">${esc(item.meta.icon)}</span>
-              <span class="loadout-name">${esc(item.name)}</span>
+            <button class="inventory-item${rare}" type="button" data-item-index="${index}" style="--item-color:${color};--item-soft:${soft};" title="${esc(item.name)}">
+              <span class="inventory-qty">x${fmt(item.qty)}</span>
+              <div class="inventory-icon">${esc(item.meta.icon)}</div>
+              <h3>${esc(item.name)}</h3>
             </button>
           `
         }).join('')
 
-        $('inventoryGrid').querySelectorAll('[data-item-index]').forEach((button) => {
+        target.querySelectorAll('[data-item-index]').forEach((button) => {
           addListener(button, 'click', () => {
             const item = items[Number(button.dataset.itemIndex)]
             if (item) openItemModal(item)
@@ -1681,8 +1731,10 @@ const metadata = {
       }
 
       function openItemModal(item) {
+        if (!$('itemModalContent') || !$('itemModal')) return
+
         $('itemModalContent').innerHTML = `
-          <div class="modal-item-icon">${esc(item.meta.icon)}</div>
+          <div class="modal-icon">${esc(item.meta.icon)}</div>
           <h3>${esc(item.name)}</h3>
           <p>${esc(item.description)}</p>
           <strong>x${fmt(item.qty)}</strong>
@@ -1693,8 +1745,8 @@ const metadata = {
       }
 
       function closeItemModal() {
-        $('itemModal').classList.add('hidden')
-        $('itemModal').setAttribute('aria-hidden', 'true')
+        $('itemModal')?.classList.add('hidden')
+        $('itemModal')?.setAttribute('aria-hidden', 'true')
       }
 
       function buildAchievements(user) {
@@ -1713,11 +1765,15 @@ const metadata = {
       }
 
       function renderAchievements(achievements) {
-        $('achievementsEmpty').classList.toggle('hidden', achievements.length > 0)
+        const target = $('achievementsList')
+        const empty = $('achievementsEmpty')
+        if (!target) return
 
-        $('achievementsList').innerHTML = achievements.map((item) => `
-          <div class="achievement-card">
-            <div class="achievement-icon">${esc(item.icon || '🏆')}</div>
+        if (empty) empty.classList.toggle('hidden', achievements.length > 0)
+
+        target.innerHTML = achievements.map((item) => `
+          <div class="stack-card">
+            <div class="stack-icon">${esc(item.icon || '🏆')}</div>
             <div>
               <strong>${esc(item.title || item.name || '')}</strong>
               <span>${esc(item.subtitle || item.description || '')}</span>
@@ -1739,8 +1795,8 @@ const metadata = {
         const initial = String(from).charAt(0).toUpperCase() || '؟'
 
         return `
-          <div class="mail-card${unreadClass}">
-            <div class="mail-avatar">${esc(initial)}</div>
+          <div class="stack-card${unreadClass}">
+            <div class="stack-icon">${esc(initial)}</div>
             <div>
               <div class="mail-top">
                 <strong>${esc(from)}</strong>
@@ -1753,29 +1809,36 @@ const metadata = {
       }
 
       function renderMail(user) {
+        const target = $('mailList')
+        const empty = $('mailEmpty')
+        if (!target) return
+
         const all = mailItems(user)
         const unread = all.filter((mail) => !mail.read)
         const list = state.mailFilter === 'unread' ? unread : all
 
-        $('mailEmpty').classList.toggle('hidden', list.length > 0)
+        if (empty) empty.classList.toggle('hidden', list.length > 0)
 
         document.querySelectorAll('[data-mail-filter]').forEach((button) => {
           button.classList.toggle('is-active', button.dataset.mailFilter === state.mailFilter)
         })
 
-        $('mailList').innerHTML = list.slice(0, 12).map((mail) => mailTemplate(mail)).join('')
+        target.innerHTML = list.slice(0, 12).map((mail) => mailTemplate(mail)).join('')
       }
 
       function renderSearch(query) {
+        const target = $('searchResults')
+        if (!target) return
+
         const q = normalize(query)
-        $('searchResults').innerHTML = ''
+        target.innerHTML = ''
         if (!q) return
 
         const matches = state.users.filter((user) =>
           normalize(userName(user)).includes(q) || normalize(userLogin(user)).includes(q)
         ).slice(0, 10)
 
-        $('searchResults').innerHTML = matches.map((user) => {
+        target.innerHTML = matches.map((user) => {
           const login = userLogin(user)
           const name = userName(user) || login
           const avatar = safeUrl(get(user, ['profileImageUrl', 'avatar', 'ProfileImageUrl'], ''))
@@ -1792,45 +1855,32 @@ const metadata = {
         }).join('')
       }
 
-      function findUser(login) {
-        const target = normalize(login)
-        return state.users.find((user) =>
-          normalize(userLogin(user)) === target || normalize(userName(user)) === target
-        ) || null
-      }
-
       function openFromQuery() {
         const raw = new URLSearchParams(location.search).get('user')
 
         if (!raw) {
-          $('searchView').classList.remove('hidden')
-          $('profileView').classList.add('hidden')
-          $('notFoundView').classList.add('hidden')
+          $('searchView')?.classList.remove('hidden')
+          $('profileView')?.classList.add('hidden')
+          $('notFoundView')?.classList.add('hidden')
           return
         }
 
         const user = findUser(raw)
 
         if (!user) {
-          $('searchView').classList.add('hidden')
-          $('profileView').classList.add('hidden')
-          $('notFoundView').classList.remove('hidden')
+          $('searchView')?.classList.add('hidden')
+          $('profileView')?.classList.add('hidden')
+          $('notFoundView')?.classList.remove('hidden')
           return
         }
 
         renderProfile(user)
       }
 
-      function profileLink(user) {
-        const url = new URL(location.href)
-        url.searchParams.set('user', userLogin(user))
-        url.hash = ''
-        return url.toString()
-      }
-
       addListener($('searchInput'), 'input', (event) => renderSearch(event.target.value))
 
       addListener($('clearSearch'), 'click', () => {
+        if (!$('searchInput') || !$('searchResults')) return
         $('searchInput').value = ''
         $('searchResults').innerHTML = ''
         $('searchInput').focus()
@@ -1888,7 +1938,7 @@ const metadata = {
       addListener($('backToTop'), 'click', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
 
       addListener(window, 'scroll', () => {
-        $('backToTop').classList.toggle('is-visible', window.scrollY > 420)
+        $('backToTop')?.classList.toggle('is-visible', window.scrollY > 420)
       }, { passive: true })
 
       const [users, inventories, mailboxes, profiles, itemPayload] = await Promise.all([
