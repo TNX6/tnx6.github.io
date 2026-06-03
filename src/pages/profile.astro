@@ -1473,18 +1473,19 @@ const metadata = {
       function formatWatchtimeFromMinutes(minutes) {
         const total = Math.floor(num(minutes))
 
-        if (total <= 0) return '0 دقيقة'
+        if (total <= 0) return '0 يوم'
 
-        const days = Math.floor(total / 1440)
-        const hours = Math.floor((total % 1440) / 60)
-        const mins = total % 60
+        const days = total / 1440
 
-        if (days > 0 && hours > 0) return `${days} يوم ${hours} ساعة`
-        if (days > 0) return `${days} يوم`
-        if (hours > 0 && mins > 0) return `${hours} ساعة ${mins} دقيقة`
-        if (hours > 0) return `${hours} ساعة`
+        if (days < 1) {
+          return `${days.toFixed(2)} يوم`
+        }
 
-        return `${mins} دقيقة`
+        if (days < 10) {
+          return `${days.toFixed(1)} يوم`
+        }
+
+        return `${Math.floor(days).toLocaleString('en-US')} يوم`
       }
 
       function applyLeaderboardMetrics(user) {
