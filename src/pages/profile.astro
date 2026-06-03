@@ -1792,14 +1792,22 @@ const metadata = {
 
       function watchtimeLabel(user) {
         const totalMinutes = watchMinutes(user)
-        if (totalMinutes <= 0) return deepGet(user, ['watchtimeText', 'watchTimeText', 'watchtime', 'Watchtime', 'WatchTime'], 'غير موجود')
 
-        const hours = Math.floor(totalMinutes / 60)
-        const minutes = totalMinutes % 60
+        if (totalMinutes <= 0) {
+          const fallback = deepGet(user, ['watchtimeText', 'watchTimeText', 'watchtime', 'Watchtime', 'WatchTime'], '')
 
-        if (hours <= 0) return `${minutes} دقيقة`
-        if (minutes <= 0) return `${hours} ساعة`
-        return `${hours} ساعة ${minutes} دقيقة`
+          if (fallback !== '') {
+            const parsedMinutes = Math.floor(parseWatchtimeText(fallback) / 60)
+
+            if (parsedMinutes > 0) {
+              return formatWatchtimeFromMinutes(parsedMinutes)
+            }
+          }
+
+          return '0 يوم'
+        }
+
+        return formatWatchtimeFromMinutes(totalMinutes)
       }
 
       function levelScore(user) {
