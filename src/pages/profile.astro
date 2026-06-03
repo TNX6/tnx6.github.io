@@ -11,8 +11,7 @@ const metadata = {
 <Layout metadata={metadata}>
   <main class="tnx-profile-page" dir="rtl">
     <div id="profileBg" class="profile-bg"></div>
-    <div class="profile-noise"></div>
-    <div class="profile-glow"></div>
+    <div class="profile-darkness"></div>
 
     <section class="profile-shell">
       <section id="searchView" class="search-view hidden">
@@ -37,115 +36,95 @@ const metadata = {
       </section>
 
       <section id="profileView" class="profile-view hidden">
-        <header class="player-card">
+        <section class="character-card">
           <div id="coverArt" class="cover-art"></div>
 
-          <div class="player-core">
-            <div class="avatar-stack">
-              <div class="avatar-frame">
-                <div id="avatar" class="avatar"></div>
+          <div class="character-layout">
+            <aside class="portrait-side">
+              <div class="portrait-frame">
+                <div id="avatar" class="portrait"></div>
               </div>
-              <div id="levelChip" class="level-chip">LVL 1</div>
-            </div>
 
-            <div class="player-info">
-              <div class="name-row">
-                <h1 id="displayName">—</h1>
+              <div class="level-medallion">
+                <span>LEVEL</span>
+                <strong id="levelNumber">1</strong>
+              </div>
+            </aside>
+
+            <section class="identity-side">
+              <div class="identity-top">
                 <span id="jobChip" class="job-chip">Citizen</span>
+                <span id="loginName" class="login-chip">@—</span>
               </div>
 
-              <div class="meta-row">
-                <span id="loginName">@—</span>
-                <span id="countryName" class="hidden">Saudi Arabia</span>
-              </div>
+              <h1 id="displayName">—</h1>
 
               <p id="bioText" class="bio-text">عضو في مجتمع TNX6.</p>
 
-              <div id="featuredBadges" class="featured-badges"></div>
-            </div>
+              <div id="countryName" class="country-chip hidden">Saudi Arabia</div>
 
-            <div class="progress-card">
-              <div class="progress-top">
-                <span>Progress</span>
-                <strong id="levelLabel">Level 1</strong>
+              <div id="featuredBadges" class="badge-ribbon"></div>
+
+              <div class="power-meter">
+                <div class="meter-head">
+                  <span id="levelLabel">Level 1</span>
+                  <strong id="nextLevelText">—</strong>
+                </div>
+                <div class="meter-track">
+                  <div id="levelProgress" class="meter-fill"></div>
+                </div>
               </div>
+            </section>
 
-              <div class="progress-track">
-                <div id="levelProgress" class="progress-fill"></div>
+            <aside class="stats-side">
+              <div class="stat-line">
+                <span>النقاط</span>
+                <strong id="pointsValue">0</strong>
               </div>
-
-              <p id="nextLevelText">—</p>
-            </div>
+              <div class="stat-line">
+                <span>الذهب</span>
+                <strong id="goldValue">0</strong>
+              </div>
+              <div class="stat-line">
+                <span>السمعة</span>
+                <strong id="repValue">0</strong>
+              </div>
+              <div class="stat-line">
+                <span>البادجات</span>
+                <strong id="badgesTopValue">0</strong>
+              </div>
+            </aside>
           </div>
+        </section>
 
-          <div class="wallet-strip">
-            <div class="wallet-cell">
-              <span>النقاط</span>
-              <strong id="pointsValue">0</strong>
+        <section class="showcase-band">
+          <article class="signature-item">
+            <div class="section-label">
+              <span>SIGNATURE ITEM</span>
+              <h2>العنصر الأبرز</h2>
             </div>
 
-            <div class="wallet-cell">
-              <span>الذهب</span>
-              <strong id="goldValue">0</strong>
-            </div>
-
-            <div class="wallet-cell">
-              <span>السمعة</span>
-              <strong id="repValue">0</strong>
-            </div>
-
-            <div class="wallet-cell">
-              <span>البادجات</span>
-              <strong id="badgesTopValue">0</strong>
-            </div>
-          </div>
-        </header>
-
-        <section class="feature-row">
-          <article class="feature-card rare-feature">
-            <div class="section-head">
-              <div>
-                <span>RAREST ITEM</span>
-                <h2>أندر غرض</h2>
-              </div>
-            </div>
-
-            <div id="rareFeature" class="rare-feature-body"></div>
+            <div id="rareFeature" class="signature-body"></div>
           </article>
 
-          <article class="feature-card badge-feature">
-            <div class="section-head">
-              <div>
-                <span>BADGE WALL</span>
-                <h2>واجهة البادجات</h2>
-              </div>
-              <strong id="badgeCountMini">0</strong>
+          <article class="medal-wall">
+            <div class="section-label">
+              <span>MEDALS</span>
+              <h2>ميداليات العضو</h2>
             </div>
 
-            <div id="badgeWall" class="badge-wall"></div>
-          </article>
-
-          <article class="feature-card mail-feature">
-            <div class="section-head">
-              <div>
-                <span>MAILBOX</span>
-                <h2>آخر البريد</h2>
-              </div>
-              <strong id="mailCountMini">0</strong>
-            </div>
-
-            <div id="mailPreview" class="mail-preview"></div>
+            <div id="badgeWall" class="medals"></div>
           </article>
         </section>
 
-        <section class="content-panel">
-          <div class="section-head inventory-head">
+        <section class="inventory-section">
+          <div class="section-label inventory-title">
             <div>
-              <span>INVENTORY</span>
+              <span>LOADOUT</span>
               <h2>حقيبة الأغراض</h2>
             </div>
 
-            <div class="inventory-tools">
+            <div class="inventory-filters">
               <button class="is-active" type="button" data-filter="all">الكل</button>
               <button type="button" data-filter="rare">النادر</button>
               <button type="button" data-filter="status">الحالات</button>
@@ -155,13 +134,13 @@ const metadata = {
             </div>
           </div>
 
-          <div id="inventoryGrid" class="inventory-grid"></div>
+          <div id="inventoryGrid" class="loadout-grid"></div>
           <div id="inventoryEmpty" class="empty-line hidden">ما فيه أغراض مطابقة.</div>
         </section>
 
-        <section class="lower-grid">
-          <article class="content-panel">
-            <div class="section-head">
+        <section class="secondary-grid">
+          <article class="secondary-card">
+            <div class="section-label secondary-title">
               <div>
                 <span>ACHIEVEMENTS</span>
                 <h2>الإنجازات</h2>
@@ -169,14 +148,14 @@ const metadata = {
               <strong id="achCount">0</strong>
             </div>
 
-            <div id="achievementsList" class="achievements-list"></div>
+            <div id="achievementsList" class="achievement-list"></div>
             <div id="achievementsEmpty" class="empty-line hidden">لا توجد إنجازات بعد.</div>
           </article>
 
-          <article class="content-panel">
-            <div class="section-head">
+          <article class="secondary-card">
+            <div class="section-label secondary-title">
               <div>
-                <span>MESSAGES</span>
+                <span>MAILBOX</span>
                 <h2>صندوق البريد</h2>
               </div>
 
@@ -198,6 +177,11 @@ const metadata = {
       </section>
     </section>
 
+    <div id="itemModal" class="item-modal hidden" aria-hidden="true">
+      <button id="closeItemModal" class="modal-close" type="button" aria-label="إغلاق">×</button>
+      <div id="itemModalContent" class="modal-content"></div>
+    </div>
+
     <button id="backToTop" class="back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
   </main>
 
@@ -206,22 +190,22 @@ const metadata = {
 
     html {
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 218, 106, .55) rgba(0, 0, 0, .45);
+      scrollbar-color: rgba(255, 218, 106, .55) rgba(0, 0, 0, .48);
     }
 
     html::-webkit-scrollbar { width: 10px; }
-    html::-webkit-scrollbar-track { background: rgba(0, 0, 0, .45); }
+    html::-webkit-scrollbar-track { background: rgba(0,0,0,.48); }
     html::-webkit-scrollbar-thumb {
-      border: 2px solid rgba(0, 0, 0, .45);
+      border: 2px solid rgba(0,0,0,.48);
       border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255, 218, 106, .9), rgba(194, 146, 0, .55));
+      background: linear-gradient(180deg, rgba(255,218,106,.95), rgba(194,146,0,.6));
     }
 
     .tnx-profile-page {
       position: relative;
       min-height: 100vh;
       overflow: hidden;
-      background: #05050a;
+      background: #030306;
       color: #f8fafc;
       font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
@@ -232,13 +216,13 @@ const metadata = {
       z-index: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 18% 10%, rgba(255, 218, 106, .18), transparent 30%),
-        radial-gradient(circle at 84% 12%, rgba(124, 58, 237, .18), transparent 32%),
-        linear-gradient(135deg, #05050a 0%, #0e0e17 52%, #180c04 100%);
+        radial-gradient(circle at 18% 10%, rgba(255,218,106,.14), transparent 30%),
+        radial-gradient(circle at 84% 10%, rgba(124,58,237,.12), transparent 34%),
+        linear-gradient(135deg, #05050a, #0d0d14 50%, #160b04);
       background-position: center;
       background-size: cover;
-      opacity: .42;
-      filter: blur(2px) saturate(.92) contrast(1.08);
+      opacity: .5;
+      filter: blur(2px) saturate(.9) contrast(1.08);
       transform: scale(1.06);
     }
 
@@ -247,38 +231,26 @@ const metadata = {
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(180deg, rgba(0,0,0,.88), rgba(0,0,0,.68) 38%, rgba(0,0,0,.96)),
-        linear-gradient(90deg, rgba(0,0,0,.88), rgba(0,0,0,.42) 50%, rgba(0,0,0,.88));
+        linear-gradient(180deg, rgba(0,0,0,.86), rgba(0,0,0,.68) 38%, rgba(0,0,0,.96)),
+        linear-gradient(90deg, rgba(0,0,0,.88), rgba(0,0,0,.38) 50%, rgba(0,0,0,.88));
     }
 
-    .profile-noise {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      opacity: .06;
-      background-image:
-        linear-gradient(rgba(255, 218, 106, .3) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 218, 106, .3) 1px, transparent 1px);
-      background-size: 72px 72px;
-      mask-image: radial-gradient(circle at center, black, transparent 68%);
-    }
-
-    .profile-glow {
+    .profile-darkness {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.26) 52%, rgba(0,0,0,.84) 100%);
+        radial-gradient(circle at 50% 18%, rgba(255,218,106,.07), transparent 28%),
+        radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.32) 54%, rgba(0,0,0,.88) 100%);
     }
 
     .profile-shell {
       position: relative;
       z-index: 1;
-      width: min(100%, 1180px);
+      width: min(100%, 1120px);
       margin: 0 auto;
-      padding: 5.75rem 1rem 5rem;
+      padding: 5.5rem 1rem 5rem;
     }
 
     .search-view {
@@ -289,13 +261,13 @@ const metadata = {
 
     .search-card,
     .not-found {
-      width: min(100%, 640px);
+      width: min(100%, 620px);
       border: 1px solid rgba(255,218,106,.18);
       border-radius: 32px;
-      background: rgba(8,8,12,.84);
+      background: rgba(8,8,12,.86);
       padding: 2rem;
       text-align: center;
-      box-shadow: 0 30px 100px rgba(0,0,0,.5);
+      box-shadow: 0 30px 100px rgba(0,0,0,.55);
       backdrop-filter: blur(20px);
     }
 
@@ -444,208 +416,221 @@ const metadata = {
       gap: 1rem;
     }
 
-    .player-card {
+    .character-card {
       position: relative;
       overflow: hidden;
-      border: 1px solid rgba(255,218,106,.18);
-      border-radius: 34px;
-      background: rgba(8,8,12,.82);
-      box-shadow: 0 34px 110px rgba(0,0,0,.58), inset 0 0 0 1px rgba(255,255,255,.025);
-      backdrop-filter: blur(20px);
+      min-height: 560px;
+      border: 1px solid rgba(255,218,106,.2);
+      border-radius: 38px;
+      background:
+        radial-gradient(circle at 74% 28%, rgba(255,218,106,.09), transparent 24%),
+        linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.012)),
+        rgba(8,8,12,.84);
+      box-shadow:
+        0 38px 120px rgba(0,0,0,.58),
+        inset 0 0 0 1px rgba(255,255,255,.025);
+      backdrop-filter: blur(22px);
     }
 
     .cover-art {
-      height: 215px;
+      position: absolute;
+      inset: 0;
       background-position: center;
       background-size: cover;
+      opacity: .42;
+      filter: saturate(.95) contrast(1.05);
     }
 
     .cover-art::after {
       content: "";
-      display: block;
-      width: 100%;
-      height: 100%;
+      position: absolute;
+      inset: 0;
       background:
-        linear-gradient(180deg, rgba(0,0,0,.12), rgba(8,8,12,.88)),
-        radial-gradient(circle at 22% 48%, rgba(var(--accent), .34), transparent 35%);
+        radial-gradient(circle at 79% 37%, rgba(var(--accent), .28), transparent 28%),
+        linear-gradient(90deg, rgba(8,8,12,.96), rgba(8,8,12,.52) 50%, rgba(8,8,12,.92)),
+        linear-gradient(180deg, rgba(8,8,12,.3), rgba(8,8,12,.94));
     }
 
-    .player-core {
+    .character-layout {
       position: relative;
+      z-index: 1;
       display: grid;
-      grid-template-columns: 162px minmax(0, 1fr) 270px;
-      gap: 1.2rem;
-      align-items: end;
-      padding: 0 1.35rem 1.1rem;
-      margin-top: -74px;
+      grid-template-columns: 310px minmax(0, 1fr) 230px;
+      gap: 1.25rem;
+      min-height: 560px;
+      align-items: center;
+      padding: 2rem;
     }
 
-    .avatar-stack {
+    .portrait-side {
       display: grid;
       justify-items: center;
-      gap: .7rem;
+      gap: 1rem;
     }
 
-    .avatar-frame {
-      width: 152px;
-      height: 152px;
-      border-radius: 34px;
-      padding: 4px;
+    .portrait-frame {
+      width: 270px;
+      height: 355px;
+      border-radius: 36px;
+      padding: 5px;
       background:
-        linear-gradient(135deg, rgba(255,218,106,.95), var(--profile-color, #ffda6a), rgba(255,255,255,.18));
+        linear-gradient(135deg, rgba(255,218,106,.96), var(--profile-color, #ffda6a), rgba(255,255,255,.18));
       box-shadow:
-        0 24px 48px rgba(0,0,0,.6),
-        0 0 30px color-mix(in srgb, var(--profile-color, #ffda6a) 36%, transparent);
+        0 28px 64px rgba(0,0,0,.65),
+        0 0 38px color-mix(in srgb, var(--profile-color, #ffda6a) 34%, transparent);
     }
 
-    .avatar {
+    .portrait {
       width: 100%;
       height: 100%;
-      border-radius: 29px;
+      border-radius: 31px;
       background: #111 center / cover no-repeat;
     }
 
-    .level-chip {
-      display: inline-flex;
-      justify-content: center;
-      min-width: 6.4rem;
-      border: 1px solid rgba(255,218,106,.32);
-      border-radius: 999px;
-      background: rgba(0,0,0,.52);
-      color: #ffda6a;
-      padding: .54rem .8rem;
-      font-size: .78rem;
+    .level-medallion {
+      display: grid;
+      place-items: center;
+      width: 128px;
+      height: 84px;
+      border: 1px solid rgba(255,218,106,.28);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at top, rgba(255,218,106,.14), transparent 60%),
+        rgba(0,0,0,.42);
+      box-shadow: inset 0 0 24px rgba(255,218,106,.04);
+    }
+
+    .level-medallion span {
+      color: rgb(156,163,175);
+      font-size: .66rem;
       font-weight: 950;
+      letter-spacing: .12em;
+    }
+
+    .level-medallion strong {
+      margin-top: .2rem;
+      color: #ffda6a;
+      font-size: 2rem;
+      font-weight: 950;
+      line-height: 1;
       direction: ltr;
     }
 
-    .player-info {
+    .identity-side {
       min-width: 0;
-      padding-bottom: .18rem;
+      align-self: center;
+      padding-inline: .4rem;
     }
 
-    .name-row {
+    .identity-top {
       display: flex;
-      align-items: center;
-      gap: .75rem;
       flex-wrap: wrap;
-      min-width: 0;
+      gap: .48rem;
+      align-items: center;
+      margin-bottom: .8rem;
     }
 
-    .name-row h1 {
-      margin: 0;
-      overflow: hidden;
-      color: #fff;
-      font-size: clamp(2.55rem, 5vw, 5.15rem);
-      font-weight: 950;
-      line-height: .95;
-      letter-spacing: -.05em;
-      text-overflow: ellipsis;
-      text-shadow: 0 5px 22px rgba(0,0,0,.72);
-      white-space: nowrap;
-    }
-
-    .job-chip {
-      flex-shrink: 0;
-      border: 1px solid rgba(255,218,106,.24);
+    .job-chip,
+    .login-chip,
+    .country-chip {
+      border: 1px solid rgba(255,218,106,.22);
       border-radius: 999px;
-      background: rgba(0,0,0,.44);
+      background: rgba(0,0,0,.42);
       color: #f7e6ac;
-      padding: .48rem .7rem;
-      font-size: .78rem;
+      padding: .46rem .7rem;
+      font-size: .76rem;
       font-weight: 900;
       backdrop-filter: blur(12px);
     }
 
-    .meta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .5rem;
-      margin-top: .68rem;
-      color: rgba(229,231,235,.82);
-      font-size: .84rem;
-      font-weight: 850;
-    }
-
-    .meta-row span {
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 999px;
-      background: rgba(0,0,0,.34);
-      padding: .38rem .58rem;
-    }
-
-    #loginName {
+    .login-chip {
+      color: rgb(229,231,235);
       direction: ltr;
     }
 
-    .bio-text {
-      max-width: 720px;
-      margin: .78rem 0 0;
-      color: rgb(209,213,219);
-      font-size: .92rem;
-      font-weight: 720;
-      line-height: 1.7;
+    .identity-side h1 {
+      margin: 0;
+      overflow: hidden;
+      color: #fff;
+      font-size: clamp(3.5rem, 7vw, 7rem);
+      font-weight: 950;
+      line-height: .88;
+      letter-spacing: -.065em;
+      text-shadow: 0 8px 28px rgba(0,0,0,.78);
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
-    .featured-badges {
+    .bio-text {
+      max-width: 620px;
+      margin: 1rem 0 0;
+      color: rgb(209,213,219);
+      font-size: 1rem;
+      font-weight: 720;
+      line-height: 1.75;
+    }
+
+    .country-chip {
+      display: inline-flex;
+      margin-top: .85rem;
+    }
+
+    .badge-ribbon {
       display: flex;
       flex-wrap: wrap;
-      gap: .55rem;
-      margin-top: .9rem;
+      gap: .6rem;
+      margin-top: 1.1rem;
     }
 
-    .featured-badges img,
+    .badge-ribbon img,
     .badge-placeholder {
       display: grid;
       place-items: center;
-      width: 48px;
-      height: 48px;
-      border: 1px solid rgba(255,218,106,.2);
-      border-radius: 14px;
+      width: 54px;
+      height: 54px;
+      border: 1px solid rgba(255,218,106,.18);
+      border-radius: 16px;
       background: rgba(0,0,0,.38);
       object-fit: contain;
       padding: 4px;
       color: #ffda6a;
       font-weight: 950;
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,.42));
     }
 
-    .progress-card {
-      border: 1px solid rgba(255,218,106,.14);
-      border-radius: 22px;
-      background: rgba(0,0,0,.44);
-      padding: 1rem;
-      backdrop-filter: blur(14px);
+    .power-meter {
+      max-width: 560px;
+      margin-top: 1.3rem;
+      border: 1px solid rgba(255,218,106,.12);
+      border-radius: 20px;
+      background: rgba(0,0,0,.32);
+      padding: .95rem;
     }
 
-    .progress-top {
+    .meter-head {
       display: flex;
       justify-content: space-between;
-      gap: .8rem;
-      align-items: center;
-    }
-
-    .progress-top span {
+      gap: 1rem;
       color: rgb(156,163,175);
-      font-size: .74rem;
+      font-size: .76rem;
       font-weight: 850;
     }
 
-    .progress-top strong {
+    .meter-head span {
       color: #ffda6a;
-      font-size: .86rem;
       font-weight: 950;
       direction: ltr;
     }
 
-    .progress-track {
-      height: 9px;
+    .meter-track {
+      height: 10px;
       margin-top: .7rem;
       border-radius: 999px;
       background: rgba(255,255,255,.08);
       overflow: hidden;
     }
 
-    .progress-fill {
+    .meter-fill {
       width: 0%;
       height: 100%;
       border-radius: 999px;
@@ -653,74 +638,67 @@ const metadata = {
       box-shadow: 0 0 18px rgba(255,218,106,.35);
     }
 
-    .progress-card p {
-      margin: .55rem 0 0;
-      color: rgb(156,163,175);
-      font-size: .7rem;
-      font-weight: 720;
-    }
-
-    .wallet-strip {
+    .stats-side {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: .75rem;
-      padding: 0 1.35rem 1.35rem;
+      gap: .72rem;
+      align-self: center;
     }
 
-    .wallet-cell {
-      border: 1px solid rgba(255,218,106,.14);
+    .stat-line {
+      border: 1px solid rgba(255,218,106,.12);
       border-radius: 20px;
       background:
         radial-gradient(circle at top right, rgba(255,218,106,.1), transparent 45%),
-        rgba(0,0,0,.44);
-      padding: .92rem;
-      backdrop-filter: blur(12px);
+        rgba(0,0,0,.38);
+      padding: .9rem;
     }
 
-    .wallet-cell span {
+    .stat-line span {
       display: block;
       color: rgb(156,163,175);
       font-size: .74rem;
       font-weight: 850;
     }
 
-    .wallet-cell strong {
+    .stat-line strong {
       display: block;
-      margin-top: .25rem;
+      margin-top: .22rem;
       color: #ffda6a;
-      font-size: 1.36rem;
+      font-size: 1.35rem;
       font-weight: 950;
       direction: ltr;
       text-align: right;
     }
 
-    .feature-row {
+    .showcase-band {
       display: grid;
-      grid-template-columns: 1.25fr .95fr .95fr;
+      grid-template-columns: 1.15fr .85fr;
       gap: 1rem;
     }
 
-    .feature-card,
-    .content-panel {
+    .signature-item,
+    .medal-wall,
+    .inventory-section,
+    .secondary-card {
       border: 1px solid rgba(255,218,106,.14);
-      border-radius: 26px;
+      border-radius: 28px;
       background:
         linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012)),
         rgba(8,8,12,.8);
-      box-shadow: 0 24px 72px rgba(0,0,0,.4);
+      box-shadow: 0 24px 72px rgba(0,0,0,.42);
       padding: 1rem;
       backdrop-filter: blur(18px);
     }
 
-    .section-head {
+    .section-label {
       display: flex;
       justify-content: space-between;
       align-items: start;
       gap: 1rem;
-      margin-bottom: .92rem;
+      margin-bottom: .95rem;
     }
 
-    .section-head span {
+    .section-label span {
       display: block;
       color: #c29200;
       font-size: .68rem;
@@ -728,15 +706,16 @@ const metadata = {
       letter-spacing: .13em;
     }
 
-    .section-head h2 {
+    .section-label h2 {
       margin: .24rem 0 0;
       color: #f7e6ac;
-      font-size: 1.36rem;
+      font-size: 1.42rem;
       font-weight: 950;
       line-height: 1.15;
     }
 
-    .section-head > strong {
+    .section-label > strong,
+    .secondary-title > strong {
       display: grid;
       place-items: center;
       min-width: 48px;
@@ -750,84 +729,208 @@ const metadata = {
       direction: ltr;
     }
 
-    .rare-feature-body {
-      min-height: 188px;
+    .signature-body {
+      min-height: 220px;
     }
 
-    .big-item {
-      height: 100%;
-      min-height: 188px;
+    .signature-card {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr) auto;
+      gap: 1rem;
+      align-items: center;
+      min-height: 220px;
       border: 1px solid rgba(255,218,106,.18);
-      border-radius: 22px;
+      border-radius: 24px;
       background:
-        radial-gradient(circle at top right, rgba(255,218,106,.13), transparent 48%),
+        radial-gradient(circle at top right, rgba(255,218,106,.14), transparent 48%),
         rgba(0,0,0,.3);
-      padding: 1rem;
+      padding: 1.1rem;
     }
 
-    .big-item-icon {
+    .signature-icon {
       display: grid;
       place-items: center;
-      width: 70px;
-      height: 70px;
+      width: 132px;
+      height: 132px;
       border: 1px solid rgba(255,218,106,.2);
-      border-radius: 20px;
+      border-radius: 30px;
       background: rgba(255,218,106,.08);
-      font-size: 2.1rem;
-      margin-bottom: .85rem;
+      font-size: 3.3rem;
     }
 
-    .big-item h3 {
+    .signature-card h3 {
       margin: 0;
       color: #fff;
-      font-size: 1.35rem;
+      font-size: 1.8rem;
       font-weight: 950;
-      line-height: 1.2;
+      line-height: 1.15;
     }
 
-    .big-item p {
+    .signature-card p {
       margin: .55rem 0 0;
       color: rgb(156,163,175);
-      font-size: .82rem;
+      font-size: .88rem;
       font-weight: 740;
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
-    .big-item strong {
-      display: inline-flex;
-      margin-top: .78rem;
+    .signature-card strong {
+      display: grid;
+      place-items: center;
+      min-width: 68px;
+      height: 46px;
       border: 1px solid rgba(255,218,106,.18);
       border-radius: 999px;
       background: rgba(0,0,0,.34);
       color: #ffda6a;
-      padding: .4rem .58rem;
-      font-size: .76rem;
+      padding: 0 .74rem;
+      font-size: .86rem;
       font-weight: 950;
       direction: ltr;
     }
 
-    .badge-wall {
+    .medals {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: .55rem;
+      gap: .65rem;
     }
 
-    .badge-wall img,
-    .badge-wall .badge-placeholder {
+    .medals img,
+    .medals .badge-placeholder {
       width: 100%;
-      height: 58px;
-      border-radius: 16px;
+      height: 68px;
+      border-radius: 18px;
     }
 
-    .mail-preview,
-    .mail-list,
-    .achievements-list {
+    .inventory-title {
+      align-items: center;
+    }
+
+    .inventory-filters,
+    .mail-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: .4rem;
+    }
+
+    .inventory-filters button,
+    .mail-tabs button {
+      border: 1px solid rgba(255,218,106,.16);
+      border-radius: 999px;
+      background: rgba(255,218,106,.06);
+      color: #f7e6ac;
+      padding: .42rem .62rem;
+      font-family: inherit;
+      font-size: .68rem;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .inventory-filters button.is-active,
+    .inventory-filters button:hover,
+    .mail-tabs button.is-active,
+    .mail-tabs button:hover {
+      border-color: rgba(255,218,106,.42);
+      background: rgba(255,218,106,.13);
+      color: #ffda6a;
+    }
+
+    .loadout-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+      gap: .72rem;
+    }
+
+    .loadout-item {
+      position: relative;
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1;
+      border: 1px solid var(--item-color, rgba(255,218,106,.18));
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at top right, var(--item-soft, rgba(255,218,106,.08)), transparent 52%),
+        rgba(0,0,0,.34);
+      cursor: pointer;
+      transition: 160ms ease;
+    }
+
+    .loadout-item:hover {
+      transform: translateY(-3px) scale(1.02);
+      border-color: var(--item-color, rgba(255,218,106,.45));
+      background:
+        radial-gradient(circle at top right, var(--item-soft, rgba(255,218,106,.16)), transparent 52%),
+        rgba(0,0,0,.43);
+    }
+
+    .loadout-item.is-rare::before {
+      content: "";
+      position: absolute;
+      inset: -45%;
+      background: conic-gradient(from 0deg, transparent, rgba(255,218,106,.18), transparent 28%);
+      animation: shine 6s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes shine { to { transform: rotate(360deg); } }
+
+    .loadout-icon {
+      position: relative;
+      z-index: 1;
+      font-size: 2rem;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,.42));
+    }
+
+    .loadout-qty {
+      position: absolute;
+      top: .45rem;
+      left: .45rem;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      min-width: 1.8rem;
+      height: 1.8rem;
+      border: 1px solid var(--item-color, rgba(255,218,106,.22));
+      border-radius: 999px;
+      background: rgba(0,0,0,.62);
+      color: var(--item-color, #ffda6a);
+      padding: 0 .3rem;
+      font-size: .65rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .loadout-name {
+      position: absolute;
+      right: .45rem;
+      bottom: .42rem;
+      left: .45rem;
+      z-index: 1;
+      overflow: hidden;
+      color: #f8fafc;
+      font-size: .58rem;
+      font-weight: 850;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      opacity: .88;
+    }
+
+    .secondary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .achievement-list,
+    .mail-list {
       display: grid;
       gap: .65rem;
     }
 
-    .mail-card,
-    .achievement-card {
+    .achievement-card,
+    .mail-card {
       display: flex;
       align-items: flex-start;
       gap: .75rem;
@@ -842,8 +945,8 @@ const metadata = {
       background: rgba(255,218,106,.05);
     }
 
-    .mail-avatar,
-    .achievement-icon {
+    .achievement-icon,
+    .mail-avatar {
       display: grid;
       place-items: center;
       width: 42px;
@@ -857,8 +960,8 @@ const metadata = {
       font-weight: 950;
     }
 
-    .mail-card strong,
-    .achievement-card strong {
+    .achievement-card strong,
+    .mail-card strong {
       display: block;
       color: #fff;
       font-size: .82rem;
@@ -866,8 +969,8 @@ const metadata = {
       line-height: 1.25;
     }
 
-    .mail-card span,
-    .achievement-card span {
+    .achievement-card span,
+    .mail-card span {
       display: block;
       margin-top: .18rem;
       color: rgb(156,163,175);
@@ -893,164 +996,6 @@ const metadata = {
       color: rgb(209,213,219) !important;
       font-size: .74rem !important;
       word-break: break-word;
-    }
-
-    .inventory-head {
-      align-items: center;
-    }
-
-    .inventory-tools {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      gap: .4rem;
-    }
-
-    .inventory-tools button,
-    .mail-tabs button {
-      border: 1px solid rgba(255,218,106,.16);
-      border-radius: 999px;
-      background: rgba(255,218,106,.06);
-      color: #f7e6ac;
-      padding: .42rem .62rem;
-      font-family: inherit;
-      font-size: .68rem;
-      font-weight: 850;
-      cursor: pointer;
-    }
-
-    .inventory-tools button.is-active,
-    .inventory-tools button:hover,
-    .mail-tabs button.is-active,
-    .mail-tabs button:hover {
-      border-color: rgba(255,218,106,.42);
-      background: rgba(255,218,106,.13);
-      color: #ffda6a;
-    }
-
-    .inventory-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
-      gap: .75rem;
-    }
-
-    .item-card {
-      position: relative;
-      min-height: 168px;
-      overflow: hidden;
-      border: 1px solid var(--item-color, rgba(255,218,106,.18));
-      border-radius: 20px;
-      background:
-        radial-gradient(circle at top right, var(--item-soft, rgba(255,218,106,.08)), transparent 48%),
-        rgba(0,0,0,.32);
-      padding: .82rem;
-      transition: 160ms ease;
-    }
-
-    .item-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--item-color, rgba(255,218,106,.45));
-      background:
-        radial-gradient(circle at top right, var(--item-soft, rgba(255,218,106,.16)), transparent 52%),
-        rgba(0,0,0,.4);
-    }
-
-    .item-card.is-rare::before {
-      content: "";
-      position: absolute;
-      inset: -40%;
-      background: conic-gradient(from 0deg, transparent, rgba(255,218,106,.18), transparent 28%);
-      animation: shine 6s linear infinite;
-      pointer-events: none;
-    }
-
-    @keyframes shine { to { transform: rotate(360deg); } }
-
-    .item-icon,
-    .item-card h3,
-    .item-card p,
-    .item-tags,
-    .item-qty {
-      position: relative;
-      z-index: 1;
-    }
-
-    .item-icon {
-      display: grid;
-      place-items: center;
-      width: 50px;
-      height: 50px;
-      border: 1px solid var(--item-color, rgba(255,218,106,.22));
-      border-radius: 16px;
-      background: var(--item-soft, rgba(255,218,106,.08));
-      font-size: 1.55rem;
-      margin-bottom: .7rem;
-    }
-
-    .item-qty {
-      position: absolute;
-      top: .72rem;
-      left: .72rem;
-      min-width: 2.12rem;
-      height: 2.12rem;
-      display: grid;
-      place-items: center;
-      border: 1px solid var(--item-color, rgba(255,218,106,.22));
-      border-radius: 999px;
-      background: rgba(0,0,0,.56);
-      color: var(--item-color, #ffda6a);
-      font-size: .72rem;
-      font-weight: 950;
-      direction: ltr;
-    }
-
-    .item-card h3 {
-      margin: 0;
-      color: #fff;
-      font-size: .92rem;
-      font-weight: 950;
-      line-height: 1.25;
-    }
-
-    .item-card p {
-      display: -webkit-box;
-      overflow: hidden;
-      margin: .36rem 0 0;
-      color: rgb(156,163,175);
-      font-size: .69rem;
-      font-weight: 730;
-      line-height: 1.45;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-    }
-
-    .item-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .28rem;
-      margin-top: .65rem;
-    }
-
-    .item-tags span {
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 999px;
-      background: rgba(255,255,255,.04);
-      color: #f7e6ac;
-      padding: .22rem .4rem;
-      font-size: .56rem;
-      font-weight: 850;
-    }
-
-    .lower-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
-    .mail-tabs {
-      display: flex;
-      gap: .42rem;
-      flex-wrap: wrap;
     }
 
     .actions-row {
@@ -1090,6 +1035,84 @@ const metadata = {
       padding: 1.25rem .5rem;
     }
 
+    .item-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(12px);
+    }
+
+    .modal-content {
+      width: min(100%, 420px);
+      border: 1px solid rgba(255,218,106,.18);
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at top right, rgba(255,218,106,.12), transparent 48%),
+        rgba(8,8,12,.96);
+      box-shadow: 0 30px 90px rgba(0,0,0,.62);
+      padding: 1.15rem;
+      text-align: center;
+    }
+
+    .modal-item-icon {
+      display: grid;
+      place-items: center;
+      width: 88px;
+      height: 88px;
+      margin: 0 auto .8rem;
+      border: 1px solid rgba(255,218,106,.22);
+      border-radius: 24px;
+      background: rgba(255,218,106,.08);
+      font-size: 2.5rem;
+    }
+
+    .modal-content h3 {
+      margin: 0;
+      color: #fff;
+      font-size: 1.35rem;
+      font-weight: 950;
+    }
+
+    .modal-content p {
+      margin: .6rem 0 0;
+      color: rgb(156,163,175);
+      font-size: .86rem;
+      font-weight: 740;
+      line-height: 1.65;
+    }
+
+    .modal-content strong {
+      display: inline-flex;
+      margin-top: .8rem;
+      border: 1px solid rgba(255,218,106,.18);
+      border-radius: 999px;
+      background: rgba(0,0,0,.34);
+      color: #ffda6a;
+      padding: .42rem .7rem;
+      font-size: .8rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .modal-close {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 121;
+      width: 2.8rem;
+      height: 2.8rem;
+      border: 1px solid rgba(255,218,106,.22);
+      border-radius: 999px;
+      background: rgba(8,8,12,.88);
+      color: #ffda6a;
+      font-size: 1.35rem;
+      cursor: pointer;
+    }
+
     .back-top {
       position: fixed;
       left: 1rem;
@@ -1118,16 +1141,22 @@ const metadata = {
     }
 
     @media (max-width: 1040px) {
-      .player-core {
-        grid-template-columns: 152px minmax(0, 1fr);
+      .character-layout {
+        grid-template-columns: 260px minmax(0, 1fr);
       }
 
-      .progress-card {
+      .stats-side {
         grid-column: 1 / -1;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
 
-      .feature-row,
-      .lower-grid {
+      .portrait-frame {
+        width: 240px;
+        height: 315px;
+      }
+
+      .showcase-band,
+      .secondary-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -1137,63 +1166,71 @@ const metadata = {
         padding-top: 5rem;
       }
 
-      .cover-art {
-        height: 210px;
+      .character-card {
+        min-height: auto;
       }
 
-      .player-core {
+      .character-layout {
         grid-template-columns: 1fr;
         justify-items: center;
         text-align: center;
+        min-height: auto;
       }
 
-      .name-row,
-      .meta-row,
-      .featured-badges {
+      .portrait-frame {
+        width: 220px;
+        height: 290px;
+      }
+
+      .identity-top,
+      .badge-ribbon {
         justify-content: center;
       }
 
-      .name-row h1 {
+      .identity-side h1 {
         white-space: normal;
-        font-size: 2.55rem;
+        font-size: 3rem;
       }
 
-      .wallet-strip,
-      .badge-wall {
+      .stats-side,
+      .medals {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .inventory-head {
+      .signature-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+        justify-items: center;
+      }
+
+      .inventory-title {
         align-items: start;
         flex-direction: column;
       }
 
-      .inventory-tools {
+      .inventory-filters {
         justify-content: flex-start;
       }
     }
 
     @media (max-width: 520px) {
-      .inventory-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .item-card {
-        min-height: 160px;
+      .loadout-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
 
     @media (max-width: 390px) {
-      .wallet-strip,
-      .inventory-grid {
-        grid-template-columns: 1fr;
+      .stats-side,
+      .medals,
+      .loadout-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
   </style>
 
   <script is:inline data-reinit>
     ;(async () => {
-      const cleanupKey = '__tnxPlayerProfileCleanup'
+      const cleanupKey = '__tnxCharacterProfileCleanup'
       if (window[cleanupKey]) window[cleanupKey]()
 
       const listeners = []
@@ -1509,14 +1546,12 @@ const metadata = {
         const name = userName(user) || login
         const badges = Array.isArray(user.badges) ? user.badges : []
         const itemsAll = allInventoryItems(user)
-        const mails = mailItems(user)
-        const unread = mails.filter((mail) => !mail.read)
         const level = levelFor(user)
         const progress = levelProgress(user)
 
         $('profileBg').style.backgroundImage = banner
           ? `url('${banner}')`
-          : `radial-gradient(circle at 18% 10%, rgba(255,218,106,.18), transparent 30%), linear-gradient(135deg, ${color}, #05050a)`
+          : `radial-gradient(circle at 18% 10%, rgba(255,218,106,.14), transparent 30%), linear-gradient(135deg, ${color}, #05050a)`
 
         $('coverArt').style.setProperty('--accent', hexToRgb(color))
         $('coverArt').style.backgroundImage = banner ? `url('${banner}')` : `linear-gradient(135deg, ${color}, #05050a)`
@@ -1528,7 +1563,7 @@ const metadata = {
         $('loginName').textContent = `@${login}`
         $('jobChip').textContent = get(user, ['jobName'], 'Citizen')
         $('bioText').textContent = get(user, ['bio'], 'عضو في مجتمع TNX6.')
-        $('levelChip').textContent = `LVL ${fmt(level)}`
+        $('levelNumber').textContent = fmt(level)
         $('levelLabel').textContent = `Level ${fmt(level)}`
         $('levelProgress').style.width = `${progress}%`
         $('nextLevelText').textContent = `${fmt(progress)}% من التقدم للفل القادم`
@@ -1543,14 +1578,12 @@ const metadata = {
         $('countryName').textContent = country
 
         $('badgeCountMini').textContent = fmt(badges.length)
-        $('mailCountMini').textContent = fmt(unread.length || mails.length)
         $('achCount').textContent = fmt(buildAchievements(user).length)
         $('badgesPageLink').href = `/badges?user=${encodeURIComponent(login)}`
 
         renderFeaturedBadges(badges)
         renderRareFeature(itemsAll)
         renderBadgeWall(badges)
-        renderMailPreview(user)
         renderInventory(user)
         renderAchievements(buildAchievements(user))
         renderMail(user)
@@ -1585,10 +1618,12 @@ const metadata = {
         }
 
         $('rareFeature').innerHTML = `
-          <div class="big-item">
-            <div class="big-item-icon">${esc(item.meta.icon)}</div>
-            <h3>${esc(item.name)}</h3>
-            <p>${esc(item.description)}</p>
+          <div class="signature-card">
+            <div class="signature-icon">${esc(item.meta.icon)}</div>
+            <div>
+              <h3>${esc(item.name)}</h3>
+              <p>${esc(item.description)}</p>
+            </div>
             <strong>x${fmt(item.qty)}</strong>
           </div>
         `
@@ -1609,14 +1644,6 @@ const metadata = {
           : `<div class="empty-line">ما فيه بادجات.</div>`
       }
 
-      function renderMailPreview(user) {
-        const mails = mailItems(user).slice(0, 2)
-
-        $('mailPreview').innerHTML = mails.length
-          ? mails.map((mail) => mailTemplate(mail)).join('')
-          : `<div class="empty-line">ما فيه بريد.</div>`
-      }
-
       function renderInventory(user) {
         const items = inventoryItems(user)
 
@@ -1626,23 +1653,42 @@ const metadata = {
           button.classList.toggle('is-active', button.dataset.filter === state.inventoryFilter)
         })
 
-        $('inventoryGrid').innerHTML = items.map((item) => {
-          const [color, soft, label] = CATEGORY[item.meta.cat] || CATEGORY.economy
+        $('inventoryGrid').innerHTML = items.map((item, index) => {
+          const [color, soft] = CATEGORY[item.meta.cat] || CATEGORY.economy
           const rare = item.meta.rare ? ' is-rare' : ''
 
           return `
-            <article class="item-card${rare}" style="--item-color:${color};--item-soft:${soft};">
-              <span class="item-qty">x${fmt(item.qty)}</span>
-              <div class="item-icon">${esc(item.meta.icon)}</div>
-              <h3>${esc(item.name)}</h3>
-              <p>${esc(item.description)}</p>
-              <div class="item-tags">
-                <span>${esc(label)}</span>
-                ${item.meta.rare ? '<span>rare</span>' : ''}
-              </div>
-            </article>
+            <button class="loadout-item${rare}" type="button" data-item-index="${index}" style="--item-color:${color};--item-soft:${soft};" title="${esc(item.name)}">
+              <span class="loadout-qty">x${fmt(item.qty)}</span>
+              <span class="loadout-icon">${esc(item.meta.icon)}</span>
+              <span class="loadout-name">${esc(item.name)}</span>
+            </button>
           `
         }).join('')
+
+        $('inventoryGrid').querySelectorAll('[data-item-index]').forEach((button) => {
+          addListener(button, 'click', () => {
+            const item = items[Number(button.dataset.itemIndex)]
+            if (item) openItemModal(item)
+          })
+        })
+      }
+
+      function openItemModal(item) {
+        $('itemModalContent').innerHTML = `
+          <div class="modal-item-icon">${esc(item.meta.icon)}</div>
+          <h3>${esc(item.name)}</h3>
+          <p>${esc(item.description)}</p>
+          <strong>x${fmt(item.qty)}</strong>
+        `
+
+        $('itemModal').classList.remove('hidden')
+        $('itemModal').setAttribute('aria-hidden', 'false')
+      }
+
+      function closeItemModal() {
+        $('itemModal').classList.add('hidden')
+        $('itemModal').setAttribute('aria-hidden', 'true')
       }
 
       function buildAchievements(user) {
@@ -1821,6 +1867,16 @@ const metadata = {
         } catch {
           button.textContent = profileLink(state.activeUser)
         }
+      })
+
+      addListener($('itemModal'), 'click', (event) => {
+        if (event.target === $('itemModal')) closeItemModal()
+      })
+
+      addListener($('closeItemModal'), 'click', closeItemModal)
+
+      addListener(document, 'keydown', (event) => {
+        if (event.key === 'Escape') closeItemModal()
       })
 
       addListener($('backToTop'), 'click', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
