@@ -127,7 +127,7 @@ const metadata = {
               </div>
 
               <div class="rank-row">
-                <span class="rank-label">الحضور</span>
+                <span class="rank-label">تسجيل الدخول اليومي</span>
                 <span class="rank-value" id="checkins">---</span>
               </div>
 
@@ -719,7 +719,7 @@ const metadata = {
     .stats-grid {
       margin-top: 18px;
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 10px;
     }
 
@@ -1223,8 +1223,26 @@ const metadata = {
       }
 
       function num(value) {
-        const number = Number(value || 0)
-        return Number.isFinite(number) ? number : 0
+        if (value === null || value === undefined || value === '') return 0
+
+        if (typeof value === 'number') {
+          return Number.isFinite(value) ? value : 0
+        }
+
+        const cleaned = String(value)
+          .replace(/,/g, '')
+          .replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+          .replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+          .trim()
+
+        const direct = Number(cleaned)
+        if (Number.isFinite(direct)) return direct
+
+        const match = cleaned.match(/-?\d+(?:\.\d+)?/)
+        if (!match) return 0
+
+        const parsed = Number(match[0])
+        return Number.isFinite(parsed) ? parsed : 0
       }
 
       function formatNumber(value) {
@@ -1237,9 +1255,22 @@ const metadata = {
       }
 
       function get(source, names, fallback = '') {
+        if (!source) return fallback
+
         for (const name of names) {
-          if (source && source[name] !== undefined && source[name] !== null && source[name] !== '') return source[name]
+          if (source[name] !== undefined && source[name] !== null && source[name] !== '') return source[name]
         }
+
+        const keys = Object.keys(source)
+        for (const name of names) {
+          const wanted = String(name).toLowerCase()
+          const foundKey = keys.find((key) => String(key).toLowerCase() === wanted)
+
+          if (foundKey && source[foundKey] !== undefined && source[foundKey] !== null && source[foundKey] !== '') {
+            return source[foundKey]
+          }
+        }
+
         return fallback
       }
 
@@ -1360,6 +1391,67 @@ const metadata = {
         return safeUrl(get(badge, ['url', 'image', 'badgeUrl', 'value2'], ''))
       }
 
+      function badgeRarity(badge) {
+        const explicit = normalize(get(badge, ['rarity', 'tier', 'badgeRarity', 'type'], ''))
+        if (explicit) {
+          if (explicit.includes('mythic') || explicit.includes('اسطوري') || explicit.includes('أسطوري')) return 'Mythic'
+          if (explicit.includes('legendary') || explicit.includes('legend')) return 'Legendary'
+          if (explicit.includes('epic')) return 'Epic'
+          if (explicit.includes('rare')) return 'Rare'
+          if (explicit.includes('common')) return 'Common'
+        }
+
+        const name = normalize(badgeName(badge))
+
+        if (
+          name.includes('vip') ||
+          name.includes('king') ||
+          name.includes('ملك') ||
+          name.includes('3m') ||
+          name.includes('1m') ||
+          name.includes('1000q') ||
+          name.includes('100d') ||
+          name.includes('500k')
+        ) return 'Legendary'
+
+        if (
+          name.includes('250k') ||
+          name.includes('600q') ||
+          name.includes('60d') ||
+          name.includes('500q')
+        ) return 'Epic'
+
+        if (
+          name.includes('100k') ||
+          name.includes('300q') ||
+          name.includes('30d') ||
+          name.includes('law') ||
+          name.includes('محامي')
+        ) return 'Rare'
+
+        return 'Common'
+      }
+
+      function badgeXpValue(rarity) {
+        const table = {
+          Common: 250,
+          Rare: 750,
+          Epic: 1500,
+          Legendary: 3000,
+          Mythic: 5000,
+        }
+
+        return table[rarity] || table.Common
+      }
+
+      function badgeXp(badge) {
+        return badgeXpValue(badgeRarity(badge))
+      }
+
+      function totalBadgeXp(badges) {
+        return (Array.isArray(badges) ? badges : []).reduce((sum, badge) => sum + badgeXp(badge), 0)
+      }
+
       function fallbackAvatar(name) {
         const letter = encodeURIComponent((name || 'U').charAt(0).toUpperCase())
         return `data:image/svg+xml;utf8,
@@ -1382,7 +1474,8 @@ const metadata = {
                 linear-gradient(135deg, #1a1208, #080808 58%, #1d160b)`
       }
 
-      const WATCH_MINUTE_WEIGHT = 250
+      const WATCH_MINUTE_WEIGHT = 150
+      const DAILY_LOGIN_XP = 500
 
       function currentPoints(user) {
         return num(get(user, ['points', 'totalPoints', 'balance', 'loyaltyPoints'], 0))
@@ -1481,7 +1574,7 @@ const metadata = {
 
       function watchtimeLabel(user) {
         const totalMinutes = watchMinutes(user)
-        if (totalMinutes <= 0) return get(user, ['watchtimeText', 'watchTimeText', 'watchtime'], '—')
+        if (totalMinutes <= 0) return get(user, ['watchtimeText', 'watchTimeText', 'watchtime', 'Watchtime', 'WatchTime'], '—')
 
         const hours = Math.floor(totalMinutes / 60)
         const minutes = totalMinutes % 60
@@ -1492,10 +1585,13 @@ const metadata = {
       }
 
       function levelScore(user) {
+        const badges = Array.isArray(user.badges) ? user.badges : []
         const pointsScore = pointsXp(user)
         const watchScore = watchMinutes(user) * WATCH_MINUTE_WEIGHT
+        const loginScore = dailyLoginXp(user)
+        const badgesScore = totalBadgeXp(badges)
 
-        return Math.floor(pointsScore + watchScore)
+        return Math.floor(pointsScore + watchScore + loginScore + badgesScore)
       }
 
       function calculateLevel(user) {
@@ -1519,6 +1615,9 @@ const metadata = {
           score,
           pointsScore: pointsXp(user),
           watchScore: watchMinutes(user) * WATCH_MINUTE_WEIGHT,
+          dailyLoginScore: dailyLoginXp(user),
+          dailyLoginCount: dailyLoginCount(user),
+          badgeScore: totalBadgeXp(Array.isArray(user.badges) ? user.badges : []),
           watchMinutes: watchMinutes(user),
         }
       }
@@ -1544,8 +1643,30 @@ const metadata = {
         return get(user, ['messages', 'messageCount', 'chatMessages'], 0)
       }
 
+      function dailyLoginCount(user) {
+        return num(get(user, [
+          'dailyLogin',
+          'dailyLogins',
+          'daily_login',
+          'daily_logins',
+          'dailyCheckIns',
+          'dailyCheckins',
+          'checkins',
+          'checkIns',
+          'attendance',
+          'loginCount',
+          'login_count',
+          'daily',
+          'streak'
+        ], 0))
+      }
+
+      function dailyLoginXp(user) {
+        return dailyLoginCount(user) * DAILY_LOGIN_XP
+      }
+
       function checkinsFor(user) {
-        return get(user, ['checkins', 'checkIns', 'dailyCheckIns', 'attendance'], 0)
+        return dailyLoginCount(user)
       }
 
       function chipsFor(user, level, badges, inventory) {
@@ -1594,7 +1715,7 @@ const metadata = {
 
         setText('levelNumber', level.level)
         setText('levelTitle', getLevelTitle(level.level))
-        setText('levelDesc', `النظام يحسب من النقاط وwatchtime. كل 10 نقاط = 1 XP. باقي ${formatNumber(level.requiredXp - level.currentXp)} XP للوصول إلى لفل ${level.level + 1}.`)
+        setText('levelDesc', `النظام يحسب من النقاط وwatchtime وتسجيل الدخول والبادجات. كل 10 نقاط = 1 XP، وكل دقيقة مشاهدة = 150 XP. باقي ${formatNumber(level.requiredXp - level.currentXp)} XP للوصول إلى لفل ${level.level + 1}.`)
         setText('currentXp', `${formatNumber(level.currentXp)} XP`)
         setText('neededXp', `${formatNumber(level.requiredXp)} XP`)
         if ($('xpFill')) $('xpFill').style.width = level.percent + '%'
@@ -1634,6 +1755,8 @@ const metadata = {
 
         const stats = [
           { label: 'Watchtime', value: watchtimeLabel(user) },
+          { label: 'Daily Login', value: formatNumber(dailyLoginCount(user)) },
+          { label: 'Badge XP', value: formatNumber(totalBadgeXp(badges)) },
           { label: 'Level XP', value: formatNumber(level.score) },
           { label: 'Items', value: formatNumber(inventory.length) },
           { label: 'Badges', value: formatNumber(badges.length) },
@@ -1695,8 +1818,11 @@ const metadata = {
           const name = badgeName(badge)
           const image = badgeImage(badge)
 
+          const rarity = badgeRarity(badge)
+          const xp = badgeXp(badge)
+
           return `
-            <div class="badge" title="${esc(name)}">
+            <div class="badge" title="${esc(name)} - ${esc(rarity)} - ${formatNumber(xp)} XP">
               ${image ? `<img src="${esc(image)}" alt="${esc(name)}" loading="lazy" />` : `<div class="badge-icon">🏅</div>`}
               <div class="badge-name">${esc(name)}</div>
             </div>
