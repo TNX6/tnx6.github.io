@@ -2,100 +2,153 @@
 import Layout from '~/layouts/PageLayout.astro'
 
 const metadata = {
-  title: 'Profile — TNX6',
+  title: 'TNX Profile',
   ignoreTitleTemplate: true,
-  description: 'Steam-inspired TNX6 community member profile.',
+  description: 'صفحة بروفايل أعضاء TNX6.',
 }
 ---
 
 <Layout metadata={metadata}>
-  <main class="tnx-steam-profile" dir="ltr">
-    <div id="profileBackdrop" class="steam-backdrop"></div>
-    <div class="steam-backdrop-shade"></div>
+  <main class="tnx-profile-page" dir="rtl">
+    <div id="profileBackdrop" class="profile-backdrop"></div>
+    <div class="profile-vignette"></div>
 
-    <nav class="fake-steam-nav" aria-label="Profile navigation">
-      <div class="fake-steam-inner">
-        <div class="steam-brand">
-          <span class="steam-mark">●</span>
-          <strong>STEAM</strong>
+    <section class="profile-shell">
+      <header class="profile-page-head">
+        <div>
+          <span class="page-kicker">TNX6 PROFILE</span>
+          <h1>بروفايل العضو</h1>
+          <p>صفحة تعرض حساب العضو بشكل واضح: الخلفية، الصورة، الوظيفة، النقاط، الذهب، البادجات، والأغراض.</p>
         </div>
 
-        <div class="steam-nav-links">
-          <span>STORE</span>
-          <span>COMMUNITY</span>
-          <span class="is-active">TNX</span>
-          <span>CHAT</span>
-          <span>SUPPORT</span>
-        </div>
+        <section class="profile-search-panel">
+          <div class="profile-search">
+            <span>⌕</span>
+            <input id="profileSearch" type="search" autocomplete="off" placeholder="ابحث باسم Twitch..." />
+            <button id="clearProfileSearch" type="button" aria-label="مسح البحث">×</button>
+          </div>
 
-        <div class="steam-top-search">
-          <label for="profileSearch">Search</label>
-          <input id="profileSearch" type="search" autocomplete="off" placeholder="Twitch username..." />
-          <button id="clearProfileSearch" type="button" aria-label="Clear search">×</button>
-        </div>
-      </div>
+          <div id="profileResults" class="profile-results"></div>
+        </section>
+      </header>
 
-      <div id="profileResults" class="profile-results"></div>
-    </nav>
-
-    <section class="steam-profile-shell">
-      <section id="emptyState" class="steam-empty">
-        <strong>Search for a member</strong>
-        <span>Use Twitch username or open: <b>/profile?user=haneen48</b></span>
+      <section id="emptyState" class="empty-state">
+        <strong>ابحث عن عضو</strong>
+        <span>اكتب اسم المستخدم أو افتح رابط مباشر مثل: <b>/profile?user=haneen48</b></span>
       </section>
 
       <section id="profileContent" class="profile-content hidden">
-        <header id="profileTop" class="profile-top"></header>
+        <section id="profileHero" class="profile-hero"></section>
 
-        <section class="profile-main-grid">
-          <main class="profile-left">
-            <section id="mainArtwork" class="artwork-showcase"></section>
-
-            <section class="content-panel">
-              <div class="panel-title">
-                <h2>Inventory Showcase</h2>
-                <span id="inventoryCount">0 items</span>
+        <section class="profile-layout">
+          <main class="profile-main">
+            <section class="profile-panel">
+              <div class="panel-head">
+                <div>
+                  <span>DISPLAY CASE</span>
+                  <h2>واجهة العضو</h2>
+                </div>
               </div>
 
-              <div class="inventory-tabs" id="inventoryFilters">
-                <button type="button" class="is-active" data-filter="all">All</button>
-                <button type="button" data-filter="rare">Rare</button>
-                <button type="button" data-filter="box">Boxes</button>
-                <button type="button" data-filter="license">Licenses</button>
-                <button type="button" data-filter="resource">Resources</button>
-                <button type="button" data-filter="usable">Usable</button>
+              <div id="displayCase" class="display-case"></div>
+            </section>
+
+            <section class="profile-panel">
+              <div class="panel-head panel-head-row">
+                <div>
+                  <span>INVENTORY</span>
+                  <h2>الأغراض</h2>
+                </div>
+
+                <div class="panel-counter">
+                  <strong id="inventoryCount">0</strong>
+                  <small>نوع</small>
+                </div>
+              </div>
+
+              <div id="inventoryFilters" class="filter-row">
+                <button type="button" class="is-active" data-filter="all">الكل</button>
+                <button type="button" data-filter="rare">النادر</button>
+                <button type="button" data-filter="featured">المميز</button>
+                <button type="button" data-filter="box">الصناديق</button>
+                <button type="button" data-filter="license">الرخص</button>
+                <button type="button" data-filter="resource">الموارد</button>
+                <button type="button" data-filter="usable">استخدام</button>
               </div>
 
               <div id="inventoryGrid" class="inventory-grid"></div>
 
               <div id="inventoryEmpty" class="small-empty hidden">
-                <strong>No visible items</strong>
-                <span>The inventory is empty or this filter has no results.</span>
+                <strong>ما فيه أغراض ظاهرة</strong>
+                <span>الحقيبة فاضية أو الفلتر الحالي ما طلع نتائج.</span>
               </div>
             </section>
 
-            <section class="content-panel">
-              <div class="panel-title">
-                <h2>Badge Collection</h2>
-                <span id="badgeCount">0 badges</span>
+            <section class="profile-panel">
+              <div class="panel-head panel-head-row">
+                <div>
+                  <span>BADGES</span>
+                  <h2>البادجات</h2>
+                </div>
+
+                <div class="panel-counter">
+                  <strong id="badgeCount">0</strong>
+                  <small>بادج</small>
+                </div>
               </div>
 
               <div id="badgesGrid" class="badges-grid"></div>
             </section>
           </main>
 
-          <aside id="profileSidebar" class="profile-sidebar"></aside>
+          <aside class="profile-side">
+            <section class="profile-panel">
+              <div class="panel-head">
+                <div>
+                  <span>OVERVIEW</span>
+                  <h2>ملخص</h2>
+                </div>
+              </div>
+
+              <div id="statsList" class="stats-list"></div>
+            </section>
+
+            <section class="profile-panel">
+              <div class="panel-head">
+                <div>
+                  <span>RARE ITEMS</span>
+                  <h2>أندر الأغراض</h2>
+                </div>
+              </div>
+
+              <div id="rareList" class="rare-list"></div>
+            </section>
+
+            <section class="profile-panel">
+              <div class="panel-head">
+                <div>
+                  <span>LINKS</span>
+                  <h2>روابط</h2>
+                </div>
+              </div>
+
+              <div class="profile-links">
+                <a id="badgesLink" href="/badges">عرض بطاقة البادجات</a>
+                <button id="copyProfileLink" type="button">نسخ رابط البروفايل</button>
+              </div>
+            </section>
+          </aside>
         </section>
       </section>
     </section>
 
-    <button id="backToTop" class="back-top" type="button" aria-label="Back to top">↑</button>
+    <button id="backToTop" class="back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
   </main>
 
   <style is:global>
     html {
       scrollbar-width: thin;
-      scrollbar-color: rgba(120, 150, 120, 0.62) rgba(0, 0, 0, 0.55);
+      scrollbar-color: rgba(255, 218, 106, 0.42) rgba(0, 0, 0, 0.42);
     }
 
     html::-webkit-scrollbar {
@@ -103,692 +156,720 @@ const metadata = {
     }
 
     html::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.55);
+      background: rgba(0, 0, 0, 0.42);
     }
 
     html::-webkit-scrollbar-thumb {
-      border: 2px solid rgba(0, 0, 0, 0.55);
+      border: 2px solid rgba(0, 0, 0, 0.42);
       border-radius: 999px;
-      background: linear-gradient(180deg, rgba(160, 170, 135, 0.8), rgba(65, 80, 64, 0.75));
+      background: linear-gradient(180deg, rgba(255, 218, 106, 0.78), rgba(194, 146, 0, 0.52));
     }
 
     .hidden {
       display: none !important;
     }
 
-    .tnx-steam-profile {
+    .tnx-profile-page {
       position: relative;
       min-height: 100vh;
       overflow: hidden;
-      background: #050708;
-      color: #c7d5e0;
-      font-family: Arial, Helvetica, sans-serif;
+      background: #07070a;
+      color: #fff;
+      font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    .steam-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      background:
-        radial-gradient(circle at 75% 48%, rgba(255, 255, 220, 0.32), transparent 16%),
-        linear-gradient(90deg, #020404 0%, #101610 50%, #050505 100%);
-      background-position: center;
-      background-size: cover;
-      filter: saturate(0.75) contrast(1.08) brightness(0.72);
-      transform: scale(1.02);
-    }
-
-    .steam-backdrop::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(90deg, rgba(0, 0, 0, 0.76) 0%, rgba(0, 0, 0, 0.25) 48%, rgba(0, 0, 0, 0.86) 100%),
-        linear-gradient(180deg, rgba(0, 0, 0, 0.34) 0%, rgba(0, 0, 0, 0.08) 30%, rgba(0, 0, 0, 0.82) 100%);
-    }
-
-    .steam-backdrop-shade {
+    .profile-backdrop {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 50% 56%, transparent 0%, rgba(0, 0, 0, 0.08) 40%, rgba(0, 0, 0, 0.74) 100%);
+        radial-gradient(circle at 20% 10%, rgba(255, 218, 106, 0.16), transparent 28%),
+        radial-gradient(circle at 86% 15%, rgba(124, 58, 237, 0.14), transparent 30%),
+        linear-gradient(135deg, #07070a 0%, #0c0c12 46%, #160d04 100%);
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.05) contrast(1.04);
+      transform: scale(1.02);
     }
 
-    .fake-steam-nav {
+    .profile-backdrop::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.34) 46%, rgba(0,0,0,0.78) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.18) 42%, rgba(0,0,0,0.88) 100%);
+    }
+
+    .profile-vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.22) 48%, rgba(0, 0, 0, 0.82) 100%);
+    }
+
+    .profile-shell {
       position: relative;
-      z-index: 5;
-      background: #171a21;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      box-shadow: 0 2px 18px rgba(0, 0, 0, 0.32);
-    }
-
-    .fake-steam-inner {
-      width: min(100%, 1100px);
-      height: 64px;
+      z-index: 1;
+      width: min(100%, 1160px);
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr) 280px;
-      gap: 26px;
-      align-items: center;
-      padding: 0 12px;
+      padding: 6rem 1rem 5rem;
     }
 
-    .steam-brand {
+    .profile-page-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
+      gap: 1rem;
+      align-items: end;
+      margin-bottom: 1rem;
+    }
+
+    .page-kicker {
       display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      color: #dcdedf;
-      letter-spacing: 0.08em;
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    .steam-mark {
-      display: grid;
-      place-items: center;
-      width: 30px;
-      height: 30px;
+      width: fit-content;
+      border: 1px solid rgba(255, 218, 106, 0.26);
       border-radius: 999px;
-      background: #dcdedf;
-      color: #171a21;
-      font-size: 13px;
+      background: rgba(0, 0, 0, 0.36);
+      color: #ffda6a;
+      padding: 0.5rem 0.82rem;
+      font-size: 0.72rem;
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      backdrop-filter: blur(12px);
     }
 
-    .steam-nav-links {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      color: #dcdedf;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
+    .profile-page-head h1 {
+      margin: 0.85rem 0 0;
+      color: #fff;
+      font-size: clamp(2.8rem, 6vw, 5.6rem);
+      font-weight: 950;
+      line-height: 0.94;
+      letter-spacing: -0.055em;
+      text-shadow: 0 0 24px rgba(255, 218, 106, 0.12), 0 6px 22px rgba(0, 0, 0, 0.72);
     }
 
-    .steam-nav-links span {
-      opacity: 0.9;
+    .profile-page-head p {
+      max-width: 680px;
+      margin: 0.95rem 0 0;
+      color: rgba(229, 231, 235, 0.78);
+      font-size: 0.98rem;
+      font-weight: 750;
+      line-height: 1.75;
     }
 
-    .steam-nav-links .is-active {
-      color: #66c0f4;
-      text-decoration: underline;
-      text-underline-offset: 4px;
+    .profile-search-panel {
+      position: relative;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 1.2rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.08), transparent 42%),
+        rgba(8, 8, 12, 0.74);
+      padding: 0.8rem;
+      box-shadow: 0 22px 58px rgba(0, 0, 0, 0.36);
+      backdrop-filter: blur(16px);
     }
 
-    .steam-top-search {
+    .profile-search {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr) auto;
-      gap: 8px;
+      gap: 0.7rem;
       align-items: center;
-      border: 1px solid rgba(102, 192, 244, 0.24);
-      border-radius: 2px;
-      background: rgba(0, 0, 0, 0.28);
-      padding: 6px 8px;
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 0.92rem;
+      background: rgba(0, 0, 0, 0.34);
+      padding: 0.72rem;
     }
 
-    .steam-top-search label {
-      color: #8f98a0;
-      font-size: 11px;
-      font-weight: 700;
+    .profile-search span {
+      color: #ffda6a;
+      font-size: 1.2rem;
+      font-weight: 950;
     }
 
-    .steam-top-search input {
+    .profile-search input {
       width: 100%;
       border: 0;
       outline: 0;
       background: transparent;
-      color: #ffffff;
-      font-size: 12px;
-      font-weight: 700;
+      color: #fff;
+      font-size: 0.94rem;
+      font-weight: 850;
     }
 
-    .steam-top-search button {
-      width: 20px;
-      height: 20px;
-      border: 0;
-      border-radius: 2px;
-      background: rgba(102, 192, 244, 0.16);
-      color: #66c0f4;
+    .profile-search button {
+      display: grid;
+      place-items: center;
+      width: 2rem;
+      height: 2rem;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      font-size: 1.08rem;
+      font-weight: 950;
       cursor: pointer;
-      font-weight: 900;
     }
 
     .profile-results {
-      position: absolute;
-      left: 50%;
-      top: 58px;
-      width: min(100% - 24px, 360px);
-      transform: translateX(-50%);
       display: grid;
-      gap: 4px;
-      z-index: 20;
+      gap: 0.55rem;
+      margin-top: 0.62rem;
     }
 
     .profile-result {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr);
-      gap: 9px;
+      gap: 0.72rem;
       align-items: center;
-      border: 1px solid rgba(118, 139, 120, 0.28);
-      background: rgba(24, 31, 24, 0.94);
-      color: #c7d5e0;
-      padding: 7px;
+      border: 1px solid rgba(255, 218, 106, 0.12);
+      border-radius: 0.85rem;
+      background: rgba(0, 0, 0, 0.34);
+      color: white;
+      padding: 0.64rem;
+      text-align: right;
       cursor: pointer;
-      text-align: left;
-      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
+      transition: 160ms ease;
     }
 
     .profile-result:hover {
-      background: rgba(55, 72, 56, 0.98);
+      transform: translateY(-1px);
+      border-color: rgba(255, 218, 106, 0.42);
+      background: rgba(255, 218, 106, 0.08);
     }
 
     .profile-result img {
-      width: 38px;
-      height: 38px;
+      width: 42px;
+      height: 42px;
+      border-radius: 0.75rem;
       object-fit: cover;
+      border: 1px solid rgba(255, 218, 106, 0.22);
     }
 
     .profile-result strong {
       display: block;
       overflow: hidden;
-      color: #ffffff;
-      font-size: 13px;
-      font-weight: 800;
+      color: #f7e6ac;
+      font-size: 0.92rem;
+      font-weight: 950;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
     .profile-result span {
       display: block;
-      margin-top: 2px;
-      color: #8f98a0;
-      font-size: 11px;
-      font-weight: 700;
+      margin-top: 0.12rem;
+      color: rgb(156, 163, 175);
+      font-size: 0.72rem;
+      font-weight: 800;
+      direction: ltr;
+      text-align: right;
     }
 
-    .steam-profile-shell {
-      position: relative;
-      z-index: 2;
-      width: min(100%, 980px);
-      margin: 0 auto;
-      padding: 26px 12px 70px;
-    }
-
-    .steam-empty,
+    .empty-state,
     .small-empty {
-      min-height: 200px;
       display: grid;
       place-items: center;
-      gap: 6px;
-      background: rgba(20, 25, 21, 0.78);
-      border: 1px solid rgba(160, 170, 135, 0.16);
-      color: #c7d5e0;
+      gap: 0.4rem;
+      min-height: 220px;
+      border: 1px solid rgba(255, 218, 106, 0.14);
+      border-radius: 1.35rem;
+      background:
+        radial-gradient(circle at top, rgba(255, 218, 106, 0.08), transparent 45%),
+        rgba(8, 8, 12, 0.76);
+      padding: 2rem;
       text-align: center;
-      padding: 24px;
-      backdrop-filter: blur(8px);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+      backdrop-filter: blur(16px);
     }
 
     .small-empty {
-      min-height: 130px;
-      margin-top: 10px;
+      min-height: 150px;
+      box-shadow: none;
     }
 
-    .steam-empty strong,
+    .empty-state strong,
     .small-empty strong {
-      color: #ffffff;
-      font-size: 18px;
+      color: #ffda6a;
+      font-size: 1.3rem;
+      font-weight: 950;
     }
 
-    .steam-empty span,
+    .empty-state span,
     .small-empty span {
-      color: #8f98a0;
-      font-size: 13px;
+      color: rgb(156, 163, 175);
+      font-size: 0.88rem;
+      font-weight: 800;
+      line-height: 1.65;
     }
 
-    .steam-empty b {
-      color: #66c0f4;
+    .empty-state b {
+      color: #f7e6ac;
+      direction: ltr;
+      unicode-bidi: embed;
     }
 
     .profile-content {
       display: grid;
-      gap: 14px;
+      gap: 1rem;
     }
 
-    .profile-top {
-      display: grid;
-      grid-template-columns: 124px minmax(0, 1fr) 210px;
-      gap: 18px;
-      align-items: start;
-      min-height: 120px;
-      padding: 0 4px;
-    }
-
-    .top-avatar {
-      width: 118px;
-      height: 118px;
-      border: 1px solid rgba(200, 205, 180, 0.24);
-      background: rgba(0, 0, 0, 0.32);
-      object-fit: cover;
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.38);
-    }
-
-    .top-identity {
-      min-width: 0;
-      padding-top: 8px;
-    }
-
-    .top-name-row {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      min-width: 0;
-    }
-
-    .top-identity h1 {
-      margin: 0;
-      overflow: hidden;
-      color: #ffffff;
-      font-size: 25px;
-      font-weight: 400;
-      line-height: 1.1;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.75);
-    }
-
-    .name-caret {
-      color: rgba(255, 255, 255, 0.65);
-      font-size: 15px;
-    }
-
-    .profile-location {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 8px;
-      color: #d5d6d3;
-      font-size: 12px;
-      opacity: 0.92;
-    }
-
-    .tiny-flag {
-      width: 14px;
-      height: 9px;
-      background: linear-gradient(#136b37, #136b37);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18);
-    }
-
-    .profile-quote {
-      margin-top: 12px;
-      color: #dadbd2;
-      font-size: 12px;
-      font-weight: 700;
-      font-style: italic;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.72);
-    }
-
-    .top-level-card {
-      align-self: start;
-      padding-top: 10px;
-      color: #dfe3db;
-      text-align: left;
-    }
-
-    .level-line {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      color: #ffffff;
-      font-size: 18px;
-      font-weight: 400;
-    }
-
-    .level-number {
-      display: grid;
-      place-items: center;
-      width: 26px;
-      height: 26px;
-      border: 1px solid rgba(255, 82, 82, 0.76);
-      border-radius: 999px;
-      color: #ff6060;
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .level-hint {
-      width: 100%;
-      margin-top: 10px;
-      padding: 8px 9px;
-      background: rgba(40, 45, 36, 0.68);
-      color: #c7d5e0;
-      font-size: 11px;
-      line-height: 1.35;
-    }
-
-    .edit-button {
-      display: inline-flex;
-      margin-top: 10px;
-      padding: 7px 10px;
-      background: rgba(160, 166, 140, 0.22);
-      color: #d8dacd;
-      font-size: 12px;
-      text-decoration: none;
-    }
-
-    .profile-main-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 226px;
-      gap: 10px;
-      align-items: start;
-    }
-
-    .profile-left {
-      display: grid;
-      gap: 12px;
-    }
-
-    .artwork-showcase {
-      min-height: 426px;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 86px;
-      gap: 4px;
-      background: rgba(9, 11, 8, 0.62);
-      padding: 8px;
-      box-shadow: 0 12px 28px rgba(0,0,0,0.42);
-    }
-
-    .art-main {
+    .profile-hero {
       position: relative;
-      min-height: 410px;
       overflow: hidden;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 1.45rem;
+      background: rgba(8, 8, 12, 0.76);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.48);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-cover {
+      position: absolute;
+      inset: 0;
       background-position: center;
       background-size: cover;
-      filter: saturate(0.78) contrast(1.02);
+      opacity: 0.98;
+      filter: saturate(1.04) contrast(1.04);
     }
 
-    .art-main::after {
+    .hero-cover::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.02), rgba(0,0,0,0.16));
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0.12), rgba(8,8,12,0.58) 46%, rgba(8,8,12,0.96) 100%),
+        radial-gradient(circle at 18% 35%, rgba(var(--accent-rgb), 0.28), transparent 34%),
+        linear-gradient(to left, rgba(0,0,0,0.58), transparent 45%);
     }
 
-    .art-fallback {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      color: rgba(255,255,255,0.72);
-      font-size: 84px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
+    .hero-inner {
+      position: relative;
       z-index: 1;
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr) 250px;
+      gap: 1.15rem;
+      align-items: end;
+      min-height: 330px;
+      padding: 1.25rem;
     }
 
-    .art-side {
-      display: grid;
-      gap: 4px;
+    .avatar-frame {
+      width: 142px;
+      height: 142px;
+      border-radius: 1.15rem;
+      padding: 5px;
+      background:
+        linear-gradient(135deg, rgba(255,218,106,0.95), rgba(var(--accent-rgb),0.92), rgba(255,255,255,0.18));
+      box-shadow:
+        0 22px 44px rgba(0, 0, 0, 0.52),
+        0 0 24px rgba(var(--accent-rgb), 0.24);
     }
 
-    .art-letter {
-      display: grid;
-      place-items: center;
-      min-height: 132px;
-      background-position: center;
-      background-size: cover;
-      color: rgba(255, 250, 160, 0.88);
-      font-family: Georgia, serif;
-      font-size: 54px;
-      font-weight: 800;
-      text-shadow: 0 0 18px rgba(255, 250, 160, 0.42), 0 3px 10px #000;
-      filter: saturate(0.8) contrast(1.05);
+    .avatar-frame img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 0.86rem;
+      object-fit: cover;
+      background: #111;
     }
 
-    .art-more {
-      display: grid;
-      place-items: center;
-      height: 42px;
+    .identity {
+      min-width: 0;
+    }
+
+    .identity h2 {
+      margin: 0;
+      overflow: hidden;
+      color: #fff;
+      font-size: clamp(2.2rem, 5vw, 4.8rem);
+      font-weight: 950;
+      line-height: 0.96;
+      letter-spacing: -0.045em;
+      text-overflow: ellipsis;
+      text-shadow: 0 5px 20px rgba(0, 0, 0, 0.72);
+      white-space: nowrap;
+    }
+
+    .login {
+      margin: 0.55rem 0 0;
+      color: rgba(229, 231, 235, 0.82);
+      font-size: 0.9rem;
+      font-weight: 850;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .job-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      border: 1px solid rgba(255, 218, 106, 0.22);
+      border-radius: 999px;
       background: rgba(0, 0, 0, 0.42);
-      color: #dfe3db;
-      font-size: 13px;
-      font-weight: 700;
+      color: #f7e6ac;
+      padding: 0.56rem 0.78rem;
+      font-size: 0.82rem;
+      font-weight: 950;
+      backdrop-filter: blur(12px);
     }
 
-    .profile-sidebar {
-      min-height: 426px;
-      background: rgba(65, 70, 57, 0.72);
-      padding: 12px 10px;
-      color: #c7d5e0;
-      backdrop-filter: blur(4px);
+    .job-pill iconify-icon {
+      color: #ffda6a;
+      font-size: 1.12rem;
     }
 
-    .status-block {
-      margin-bottom: 20px;
-    }
-
-    .offline-title {
-      color: rgba(255,255,255,0.62);
-      font-size: 18px;
-      font-weight: 400;
-    }
-
-    .offline-sub {
-      margin-top: 6px;
-      color: rgba(210,215,205,0.66);
-      font-size: 12px;
-    }
-
-    .side-stat {
-      margin-top: 16px;
-      color: #c8ccc2;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .side-stat b {
-      color: rgba(255,255,255,0.48);
-      font-size: 22px;
-      font-weight: 400;
-      margin-left: 4px;
-    }
-
-    .side-badges {
+    .hero-badges {
       display: flex;
-      gap: 10px;
       flex-wrap: wrap;
-      margin-top: 10px;
-      margin-bottom: 20px;
+      gap: 0.5rem;
+      margin-top: 0.9rem;
     }
 
-    .side-badges img {
+    .hero-badge {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(255, 218, 106, 0.12);
+      border-radius: 0.82rem;
+      background: rgba(0, 0, 0, 0.38);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-badge img {
       width: 34px;
       height: 34px;
       object-fit: contain;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.45));
+      filter: drop-shadow(0 7px 10px rgba(0,0,0,0.48));
     }
 
-    .side-links {
+    .hero-stats {
       display: grid;
-      gap: 10px;
-      margin-top: 14px;
+      gap: 0.7rem;
     }
 
-    .side-link {
+    .level-card,
+    .wallet-card {
+      border: 1px solid rgba(255, 218, 106, 0.14);
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.45);
+      padding: 0.86rem;
+      backdrop-filter: blur(14px);
+    }
+
+    .level-card span,
+    .wallet-card span {
+      display: block;
+      color: rgb(156, 163, 175);
+      font-size: 0.72rem;
+      font-weight: 850;
+    }
+
+    .level-card strong,
+    .wallet-card strong {
+      display: block;
+      margin-top: 0.25rem;
+      color: #ffda6a;
+      font-size: 1.35rem;
+      font-weight: 950;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .profile-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .profile-main,
+    .profile-side {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .profile-panel {
+      border: 1px solid rgba(255, 218, 106, 0.15);
+      border-radius: 1.25rem;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.032), rgba(255, 255, 255, 0.012)),
+        rgba(8, 8, 12, 0.78);
+      box-shadow:
+        0 22px 58px rgba(0, 0, 0, 0.34),
+        inset 0 0 20px rgba(255, 218, 106, 0.018);
+      padding: 1rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .panel-head {
+      margin-bottom: 0.9rem;
+    }
+
+    .panel-head-row {
       display: flex;
+      align-items: start;
       justify-content: space-between;
-      gap: 10px;
-      color: #c8ccc2;
-      font-size: 13px;
-      font-weight: 700;
+      gap: 1rem;
     }
 
-    .side-link span {
-      color: rgba(255,255,255,0.44);
-      font-size: 20px;
-      font-weight: 400;
-      line-height: 0.85;
+    .panel-head span {
+      display: block;
+      color: #c29200;
+      font-size: 0.7rem;
+      font-weight: 950;
+      letter-spacing: 0.12em;
     }
 
-    .friends-list {
+    .panel-head h2 {
+      margin: 0.28rem 0 0;
+      color: #f7e6ac;
+      font-size: 1.38rem;
+      font-weight: 950;
+      line-height: 1.15;
+    }
+
+    .panel-counter {
       display: grid;
-      gap: 8px;
-      margin-top: 18px;
+      place-items: center;
+      min-width: 78px;
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 0.9rem;
+      background: rgba(255, 218, 106, 0.055);
+      padding: 0.58rem;
     }
 
-    .friend-row {
+    .panel-counter strong {
+      color: #ffda6a;
+      font-size: 1.15rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .panel-counter small {
+      margin-top: 0.2rem;
+      color: rgb(156, 163, 175);
+      font-size: 0.64rem;
+      font-weight: 850;
+    }
+
+    .display-case {
       display: grid;
-      grid-template-columns: 28px minmax(0, 1fr) auto;
-      gap: 7px;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 0.78rem;
+    }
+
+    .display-main {
+      min-height: 220px;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 1rem;
+      background:
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 46%),
+        rgba(0, 0, 0, 0.28);
+      padding: 0.95rem;
+      overflow: hidden;
+    }
+
+    .display-icon {
+      display: grid;
+      place-items: center;
+      width: 4.4rem;
+      height: 4.4rem;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 1rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      font-size: 2rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .display-main h3 {
+      margin: 0;
+      color: #fff;
+      font-size: 1.35rem;
+      font-weight: 950;
+      line-height: 1.18;
+    }
+
+    .display-main p {
+      margin: 0.55rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.82rem;
+      font-weight: 800;
+      line-height: 1.6;
+    }
+
+    .display-main strong {
+      display: inline-flex;
+      margin-top: 0.8rem;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.34);
+      color: #ffda6a;
+      padding: 0.4rem 0.55rem;
+      font-size: 0.76rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .display-list {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .display-row {
+      display: flex;
       align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+      border: 1px solid rgba(255, 218, 106, 0.1);
+      border-radius: 0.9rem;
+      background: rgba(0, 0, 0, 0.27);
+      padding: 0.68rem;
     }
 
-    .friend-row img {
-      width: 28px;
-      height: 28px;
-      object-fit: cover;
+    .display-row div {
+      min-width: 0;
     }
 
-    .friend-row strong {
+    .display-row strong {
       display: block;
       overflow: hidden;
-      color: #9ec8e8;
-      font-size: 11px;
-      font-weight: 700;
+      color: #f7e6ac;
+      font-size: 0.84rem;
+      font-weight: 950;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .friend-row small {
+    .display-row span {
       display: block;
-      margin-top: 1px;
-      color: rgba(255,255,255,0.42);
-      font-size: 10px;
+      margin-top: 0.16rem;
+      color: rgb(156, 163, 175);
+      font-size: 0.68rem;
+      font-weight: 800;
     }
 
-    .friend-level {
+    .display-row b {
       display: grid;
       place-items: center;
-      min-width: 26px;
-      height: 26px;
-      border: 1px solid rgba(255,255,255,0.44);
-      border-radius: 999px;
-      color: #deded2;
-      font-size: 12px;
-      font-weight: 700;
+      min-width: 2.4rem;
+      height: 2.2rem;
+      border-radius: 0.72rem;
+      background: rgba(255, 218, 106, 0.08);
+      color: #ffda6a;
+      font-size: 0.74rem;
+      font-weight: 950;
+      direction: ltr;
     }
 
-    .content-panel {
-      background: rgba(14, 18, 16, 0.72);
-      padding: 12px;
-      box-shadow: 0 12px 28px rgba(0,0,0,0.32);
-    }
-
-    .panel-title {
+    .filter-row {
       display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding-bottom: 8px;
-      margin-bottom: 10px;
-    }
-
-    .panel-title h2 {
-      margin: 0;
-      color: #ffffff;
-      font-size: 16px;
-      font-weight: 400;
-    }
-
-    .panel-title span {
-      color: rgba(255,255,255,0.45);
-      font-size: 12px;
-    }
-
-    .inventory-tabs {
-      display: flex;
-      gap: 6px;
       flex-wrap: wrap;
-      margin-bottom: 10px;
+      gap: 0.45rem;
+      margin-bottom: 0.85rem;
     }
 
-    .inventory-tabs button {
-      border: 0;
-      background: rgba(120, 128, 105, 0.24);
-      color: #c8ccc2;
-      padding: 6px 8px;
-      font-size: 11px;
-      font-weight: 700;
+    .filter-row button {
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 0.78rem;
+      background: rgba(255, 218, 106, 0.06);
+      color: #f7e6ac;
+      padding: 0.5rem 0.68rem;
+      font-size: 0.74rem;
+      font-weight: 950;
       cursor: pointer;
+      transition: 160ms ease;
     }
 
-    .inventory-tabs button:hover,
-    .inventory-tabs button.is-active {
-      background: rgba(120, 128, 105, 0.48);
-      color: #ffffff;
+    .filter-row button:hover,
+    .filter-row button.is-active {
+      transform: translateY(-1px);
+      border-color: rgba(255, 218, 106, 0.46);
+      background: rgba(255, 218, 106, 0.13);
+      color: #ffda6a;
     }
 
     .inventory-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(116px, 1fr));
-      gap: 8px;
+      grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+      gap: 0.68rem;
     }
 
-    .item-slot {
+    .item-card {
       position: relative;
-      min-height: 132px;
-      background: rgba(0,0,0,0.36);
-      border: 1px solid rgba(255,255,255,0.06);
-      padding: 8px;
-      transition: 150ms ease;
+      overflow: hidden;
+      min-height: 150px;
+      border: 1px solid rgba(255, 218, 106, 0.1);
+      border-radius: 0.92rem;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.032), rgba(255, 255, 255, 0.01)),
+        rgba(0, 0, 0, 0.3);
+      padding: 0.72rem;
+      transition: 170ms ease;
     }
 
-    .item-slot:hover {
-      border-color: rgba(200,205,180,0.3);
-      background: rgba(40,45,36,0.56);
+    .item-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 218, 106, 0.4);
+      background: rgba(255, 218, 106, 0.07);
     }
 
-    .item-slot.is-rare {
-      box-shadow: inset 0 0 0 1px rgba(255,220,110,0.25);
+    .item-card.is-rare {
+      box-shadow: inset 0 0 0 1px rgba(255, 218, 106, 0.18);
     }
 
     .item-icon {
       display: grid;
       place-items: center;
-      width: 42px;
-      height: 42px;
-      background: rgba(160,166,140,0.16);
-      color: #e5e1a4;
-      font-size: 23px;
-      margin-bottom: 8px;
+      width: 2.8rem;
+      height: 2.8rem;
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 0.8rem;
+      background: rgba(255, 218, 106, 0.075);
+      color: #ffda6a;
+      font-size: 1.35rem;
+      margin-bottom: 0.62rem;
     }
 
     .item-qty {
       position: absolute;
-      top: 7px;
-      right: 7px;
-      color: #e5e1a4;
-      font-size: 12px;
-      font-weight: 800;
+      top: 0.6rem;
+      left: 0.6rem;
+      display: grid;
+      place-items: center;
+      min-width: 2rem;
+      height: 2rem;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.54);
+      color: #ffda6a;
+      font-size: 0.72rem;
+      font-weight: 950;
       direction: ltr;
     }
 
-    .item-slot h3 {
+    .item-card h3 {
       margin: 0;
-      color: #ffffff;
-      font-size: 12px;
-      line-height: 1.2;
-      font-weight: 700;
+      color: #fff;
+      font-size: 0.88rem;
+      font-weight: 950;
+      line-height: 1.24;
     }
 
-    .item-slot p {
+    .item-card p {
       display: -webkit-box;
       overflow: hidden;
-      margin: 5px 0 0;
-      color: rgba(200,204,194,0.58);
-      font-size: 10px;
-      line-height: 1.35;
+      margin: 0.35rem 0 0;
+      color: rgb(156, 163, 175);
+      font-size: 0.68rem;
+      font-weight: 800;
+      line-height: 1.42;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
     }
@@ -796,137 +877,233 @@ const metadata = {
     .item-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 3px;
-      margin-top: 7px;
+      gap: 0.26rem;
+      margin-top: 0.6rem;
     }
 
     .item-tags span {
-      background: rgba(120, 128, 105, 0.22);
-      color: rgba(230,230,215,0.7);
-      padding: 2px 4px;
-      font-size: 9px;
-      font-weight: 700;
+      border: 1px solid rgba(255, 218, 106, 0.1);
+      border-radius: 999px;
+      background: rgba(255, 218, 106, 0.052);
+      color: #f7e6ac;
+      padding: 0.21rem 0.36rem;
+      font-size: 0.55rem;
+      font-weight: 900;
     }
 
     .badges-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-      gap: 8px;
+      grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+      gap: 0.58rem;
     }
 
     .badge-tile {
-      min-height: 90px;
       display: grid;
       place-items: center;
-      gap: 5px;
-      background: rgba(0,0,0,0.34);
-      border: 1px solid rgba(255,255,255,0.06);
-      padding: 7px;
+      gap: 0.38rem;
+      min-height: 96px;
+      border: 1px solid rgba(255, 218, 106, 0.1);
+      border-radius: 0.85rem;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.55rem;
       text-align: center;
     }
 
     .badge-tile img {
-      width: 46px;
-      height: 46px;
+      width: 50px;
+      height: 50px;
       object-fit: contain;
+      filter: drop-shadow(0 7px 10px rgba(0, 0, 0, 0.42));
     }
 
     .badge-tile span {
-      color: rgba(230,230,215,0.74);
-      font-size: 10px;
+      color: rgb(229, 231, 235);
+      font-size: 0.58rem;
+      font-weight: 800;
       line-height: 1.25;
+    }
+
+    .stats-list,
+    .rare-list,
+    .profile-links {
+      display: grid;
+      gap: 0.58rem;
+    }
+
+    .stat-row,
+    .rare-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.65rem;
+      border: 1px solid rgba(255, 218, 106, 0.1);
+      border-radius: 0.85rem;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.7rem;
+    }
+
+    .stat-row span {
+      color: rgb(156, 163, 175);
+      font-size: 0.74rem;
+      font-weight: 850;
+    }
+
+    .stat-row strong,
+    .rare-row span {
+      color: #ffda6a;
+      font-size: 0.84rem;
+      font-weight: 950;
+      direction: ltr;
+    }
+
+    .rare-row strong {
+      min-width: 0;
+      overflow: hidden;
+      color: #f7e6ac;
+      font-size: 0.78rem;
+      font-weight: 950;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .profile-links a,
+    .profile-links button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 218, 106, 0.18);
+      border-radius: 0.85rem;
+      background: rgba(255, 218, 106, 0.06);
+      color: #f7e6ac;
+      padding: 0.68rem;
+      font-size: 0.78rem;
+      font-weight: 950;
+      text-decoration: none;
+      cursor: pointer;
+      transition: 160ms ease;
+    }
+
+    .profile-links a:hover,
+    .profile-links button:hover,
+    .profile-links button.is-copied {
+      border-color: rgba(255, 218, 106, 0.46);
+      background: rgba(255, 218, 106, 0.13);
+      color: #ffda6a;
     }
 
     .back-top {
       position: fixed;
-      left: 16px;
-      bottom: 16px;
-      z-index: 30;
-      width: 38px;
-      height: 38px;
-      border: 1px solid rgba(160,170,135,0.25);
+      left: 1rem;
+      bottom: 1rem;
+      z-index: 60;
+      width: 3rem;
+      height: 3rem;
+      border: 1px solid rgba(255, 218, 106, 0.35);
       border-radius: 999px;
-      background: rgba(18,23,18,0.82);
-      color: #dfe3db;
+      background: rgba(8, 8, 12, 0.88);
+      color: #ffda6a;
+      font-size: 1.2rem;
+      font-weight: 950;
       cursor: pointer;
       opacity: 0;
       pointer-events: none;
-      transition: 150ms ease;
+      transform: translateY(14px);
+      transition: 170ms ease;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.36);
+      backdrop-filter: blur(12px);
     }
 
     .back-top.is-visible {
       opacity: 1;
       pointer-events: auto;
+      transform: translateY(0);
     }
 
-    @media (max-width: 900px) {
-      .fake-steam-inner {
-        grid-template-columns: auto 1fr;
+    @media (max-width: 1020px) {
+      .profile-page-head,
+      .profile-layout {
+        grid-template-columns: 1fr;
       }
 
-      .steam-nav-links {
-        display: none;
+      .hero-inner {
+        grid-template-columns: 140px minmax(0, 1fr);
       }
 
-      .steam-top-search {
+      .hero-stats {
+        grid-column: 1 / -1;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .profile-side {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .profile-side .profile-panel:last-child {
         grid-column: 1 / -1;
       }
-
-      .fake-steam-inner {
-        height: auto;
-        padding-block: 12px;
-      }
-
-      .profile-top,
-      .profile-main-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .top-level-card {
-        display: none;
-      }
-
-      .artwork-showcase {
-        grid-template-columns: 1fr;
-      }
-
-      .art-side {
-        display: none;
-      }
-
-      .profile-sidebar {
-        min-height: auto;
-      }
     }
 
-    @media (max-width: 560px) {
-      .steam-profile-shell {
-        padding-top: 16px;
+    @media (max-width: 720px) {
+      .profile-shell {
+        padding-top: 5rem;
       }
 
-      .profile-top {
-        text-align: center;
+      .profile-page-head h1 {
+        font-size: 3rem;
+      }
+
+      .hero-inner {
+        grid-template-columns: 1fr;
+        min-height: auto;
         justify-items: center;
+        padding-top: 5rem;
+        text-align: center;
       }
 
-      .top-identity h1 {
+      .identity h2 {
         white-space: normal;
+        font-size: 2.35rem;
       }
 
-      .profile-location,
-      .top-name-row {
+      .login {
+        text-align: center;
+      }
+
+      .hero-badges {
         justify-content: center;
       }
 
+      .hero-stats,
+      .display-case,
+      .profile-side {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-head-row {
+        flex-direction: column;
+      }
+
+      .panel-counter {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
       .inventory-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 380px) {
+      .inventory-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 
   <script is:inline data-reinit>
     ;(() => {
-      const cleanupKey = '__tnxSteamReferenceProfileCleanup'
+      const cleanupKey = '__tnxProfileCleanV1Cleanup'
 
       if (window[cleanupKey]) {
         window[cleanupKey]()
@@ -967,16 +1144,28 @@ const metadata = {
       const profileResults = document.getElementById('profileResults')
       const emptyState = document.getElementById('emptyState')
       const profileContent = document.getElementById('profileContent')
-      const profileTop = document.getElementById('profileTop')
-      const mainArtwork = document.getElementById('mainArtwork')
-      const profileSidebar = document.getElementById('profileSidebar')
+      const profileHero = document.getElementById('profileHero')
+      const displayCase = document.getElementById('displayCase')
       const inventoryGrid = document.getElementById('inventoryGrid')
       const inventoryEmpty = document.getElementById('inventoryEmpty')
       const inventoryCount = document.getElementById('inventoryCount')
       const badgeCount = document.getElementById('badgeCount')
       const badgesGrid = document.getElementById('badgesGrid')
+      const statsList = document.getElementById('statsList')
+      const rareList = document.getElementById('rareList')
+      const badgesLink = document.getElementById('badgesLink')
+      const copyProfileLink = document.getElementById('copyProfileLink')
       const backToTop = document.getElementById('backToTop')
       const filterButtons = Array.from(document.querySelectorAll('[data-filter]'))
+
+      const JOB_ICONS = {
+        tier1_Citizen: 'mdi:account',
+        tier2_Farmer: 'mdi:sprout',
+        tier3_Merchant: 'mdi:store',
+        tier3_Lawyer: 'mdi:gavel',
+        tier4_Judge: 'mdi:scale-balance',
+        tier5_King: 'mdi:crown',
+      }
 
       const ITEM_META = {
         crown: { icon: '👑', type: 'featured', rarity: 'legendary' },
@@ -1033,6 +1222,17 @@ const metadata = {
         return url ? `url('${url}')` : 'none'
       }
 
+      function safeColor(value, fallback = '#423fff') {
+        const color = String(value || '').trim()
+        return /^#[0-9a-fA-F]{6}$/.test(color) ? color : fallback
+      }
+
+      function hexToRgb(hex) {
+        const clean = safeColor(hex).replace('#', '')
+        const number = parseInt(clean, 16)
+        return [(number >> 16) & 255, (number >> 8) & 255, number & 255].join(', ')
+      }
+
       function displayName(user) {
         return String(user?.userName || user?.UserName || user?.userLogin || user?.UserLogin || '').trim()
       }
@@ -1045,30 +1245,30 @@ const metadata = {
         return String(user?.userId || user?.UserId || '').trim()
       }
 
-      function badgeName(badge) {
+      function getBadgeName(badge) {
         return String(badge?.name || badge?.badgeName || badge?.title || badge?.value1 || '').trim()
       }
 
-      function badgeImage(badge) {
+      function getBadgeImage(badge) {
         return safeUrl(badge?.url || badge?.image || badge?.badgeUrl || badge?.value2)
       }
 
-      function itemName(item) {
+      function getItemName(item) {
         return String(item?.name || item?.itemName || item?.Name || item?.key || '').trim()
       }
 
-      function itemQty(item) {
+      function getItemQty(item) {
         const raw = item?.quantity ?? item?.qty ?? item?.count ?? item?.amount ?? item?.Value ?? 1
         const number = Number(raw)
         return Number.isFinite(number) && number > 0 ? number : 1
       }
 
-      function itemDetails(name) {
+      function getItemDetails(name) {
         const itemKey = key(name)
         return state.items.find((item) => key(item.name || item.itemName || item.title) === itemKey) || null
       }
 
-      function itemMeta(name, details) {
+      function getItemMeta(name, details) {
         const itemKey = key(name)
         const hard = Object.entries(ITEM_META).find(([metaName]) => key(metaName) === itemKey)?.[1] || null
         const type = normalize(details?.category || details?.type || '')
@@ -1081,7 +1281,7 @@ const metadata = {
         }
       }
 
-      function inventoryRecord(user) {
+      function getInventoryRecord(user) {
         const id = userId(user)
         const login = normalize(loginName(user))
 
@@ -1093,7 +1293,7 @@ const metadata = {
       }
 
       function rawInventory(user) {
-        const record = inventoryRecord(user)
+        const record = getInventoryRecord(user)
         if (!record) return []
         if (Array.isArray(record.items)) return record.items
         if (Array.isArray(record.inventory)) return record.inventory
@@ -1103,11 +1303,11 @@ const metadata = {
       function inventoryItems(user) {
         return rawInventory(user)
           .map((entry) => {
-            const name = itemName(entry)
-            const quantity = itemQty(entry)
-            const details = itemDetails(name)
-            const meta = itemMeta(name, details)
-            const description = details?.description || details?.desc || details?.how || 'Inventory item.'
+            const name = getItemName(entry)
+            const quantity = getItemQty(entry)
+            const details = getItemDetails(name)
+            const meta = getItemMeta(name, details)
+            const description = details?.description || details?.desc || details?.how || 'غرض موجود في حقيبة العضو.'
             const price = details?.price || details?.cost || details?.sellPrice || ''
 
             return { name, quantity, details, meta, description, price }
@@ -1117,8 +1317,10 @@ const metadata = {
 
       function filteredInventory(user) {
         const items = inventoryItems(user)
+
         if (state.filter === 'all') return items
         if (state.filter === 'rare') return items.filter((item) => ['legendary', 'rare'].includes(item.meta.rarity) || item.meta.type === 'featured')
+        if (state.filter === 'featured') return items.filter((item) => item.meta.type === 'featured' || item.meta.rarity === 'legendary')
         return items.filter((item) => item.meta.type === state.filter)
       }
 
@@ -1145,6 +1347,41 @@ const metadata = {
         state.items = Array.isArray(itemsPayload) ? itemsPayload : Array.isArray(itemsPayload?.items) ? itemsPayload.items : []
       }
 
+      function profileUrl(user) {
+        const url = new URL(window.location.href)
+        url.searchParams.set('user', loginName(user))
+        url.hash = ''
+        return url.toString()
+      }
+
+      function updateQuery(user) {
+        const url = new URL(window.location.href)
+        url.searchParams.set('user', loginName(user))
+        url.hash = ''
+        history.replaceState(null, '', `${url.pathname}${url.search}`)
+      }
+
+      async function copyText(text, button, doneText = 'تم النسخ') {
+        if (!button) return
+
+        const old = button.textContent
+
+        try {
+          await navigator.clipboard.writeText(text)
+          button.textContent = doneText
+          button.classList.add('is-copied')
+          addTimer(window.setTimeout(() => {
+            button.textContent = old
+            button.classList.remove('is-copied')
+          }, 1000))
+        } catch {
+          button.textContent = text
+          addTimer(window.setTimeout(() => {
+            button.textContent = old
+          }, 1300))
+        }
+      }
+
       function renderResults(value) {
         profileResults.innerHTML = ''
 
@@ -1153,17 +1390,14 @@ const metadata = {
 
         const matches = state.users
           .filter((user) => normalize(displayName(user)).includes(query) || normalize(loginName(user)).includes(query))
-          .slice(0, 8)
+          .slice(0, 10)
 
         if (!matches.length) {
           profileResults.innerHTML = `
-            <button type="button" class="profile-result">
-              <div></div>
-              <div>
-                <strong>No results</strong>
-                <span>Check username</span>
-              </div>
-            </button>
+            <div class="small-empty">
+              <strong>ما فيه نتائج</strong>
+              <span>تأكد من اسم المستخدم.</span>
+            </div>
           `
           return
         }
@@ -1188,6 +1422,7 @@ const metadata = {
           button.addEventListener('click', () => {
             const user = matches[Number(button.dataset.index)]
             if (!user) return
+
             if (profileSearch) profileSearch.value = ''
             profileResults.innerHTML = ''
             updateQuery(user)
@@ -1196,130 +1431,130 @@ const metadata = {
         })
       }
 
-      function profileUrl(user) {
-        const url = new URL(window.location.href)
-        url.searchParams.set('user', loginName(user))
-        url.hash = ''
-        return url.toString()
-      }
-
-      function updateQuery(user) {
-        const url = new URL(window.location.href)
-        url.searchParams.set('user', loginName(user))
-        url.hash = ''
-        history.replaceState(null, '', `${url.pathname}${url.search}`)
-      }
-
-      function shownBadges(user, limit = 4) {
+      function shownBadges(user, limit = 7) {
         const badges = Array.isArray(user.badges) ? user.badges : []
         const equipped = badges.filter((badge) => badge.equipped).slice(0, limit)
         return equipped.length ? equipped : badges.slice(0, limit)
       }
 
-      function renderTop(user) {
+      function renderHero(user) {
         const name = displayName(user)
         const login = loginName(user)
         const avatar = safeUrl(user.profileImageUrl || user.avatar || user.ProfileImageUrl)
-        const points = Number(user.points || 0)
-        const level = Math.max(1, Math.floor(points / 100000) + 1)
-
-        profileTop.innerHTML = `
-          <img class="top-avatar" src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />
-
-          <div class="top-identity">
-            <div class="top-name-row">
-              <h1 title="${esc(name)}">${esc(name)}</h1>
-              <span class="name-caret">▼</span>
-            </div>
-
-            <div class="profile-location">
-              <span class="tiny-flag"></span>
-              <span>Saudi Arabia</span>
-            </div>
-
-            <div class="profile-quote">i Keep Making Mistakes<br />TTV: ${esc(login)}</div>
-          </div>
-
-          <div class="top-level-card">
-            <div class="level-line">
-              <span>Level</span>
-              <b class="level-number">${formatNumber(level)}</b>
-            </div>
-
-            <div class="level-hint">
-              You can feature one of your badges here.<br />
-              Select one from your profile page.
-            </div>
-
-            <a class="edit-button" href="/badges?user=${encodeURIComponent(login)}">View badges</a>
-          </div>
-        `
-      }
-
-      function renderArtwork(user) {
-        const avatar = safeUrl(user.profileImageUrl || user.avatar || user.ProfileImageUrl)
         const banner = safeUrl(user.bannerImage || user.banner || user.backgroundImage)
-        const art = banner || avatar
-
-        mainArtwork.innerHTML = `
-          <div class="art-main" style="background-image: ${cssUrl(art)};">
-            ${!art ? '<div class="art-fallback">TNX</div>' : ''}
-          </div>
-
-          <div class="art-side">
-            <div class="art-letter" style="background-image: ${cssUrl(art)};">T</div>
-            <div class="art-letter" style="background-image: ${cssUrl(art)};">N</div>
-            <div class="art-letter" style="background-image: ${cssUrl(art)};">X</div>
-            <div class="art-more">+ 2</div>
-          </div>
-        `
-      }
-
-      function renderSidebar(user) {
-        const badges = Array.isArray(user.badges) ? user.badges : []
-        const items = inventoryItems(user)
+        const color = safeColor(user.backgroundColor || user.profileColor || '#423fff')
         const points = Number(user.points || 0)
         const gold = Number(user.gold || 0)
-        const miniBadges = shownBadges(user, 4)
-        const avatar = safeUrl(user.profileImageUrl || user.avatar || user.ProfileImageUrl)
+        const level = Math.max(1, Math.floor(points / 100000) + 1)
+        const jobName = user.jobName || 'Citizen'
+        const jobId = user.jobId || 'tier1_Citizen'
+        const jobIcon = JOB_ICONS[jobId] || 'mdi:account'
+        const badges = shownBadges(user, 7)
 
-        profileSidebar.innerHTML = `
-          <div class="status-block">
-            <div class="offline-title">Currently Offline</div>
-            <div class="offline-sub">Last Online 12 hrs, 58 mins ago</div>
-          </div>
+        profileBackdrop.style.backgroundImage = banner
+          ? `url("${banner}")`
+          : `linear-gradient(135deg, ${color}, #07070a)`
 
-          <div class="side-stat">Badges <b>${formatNumber(badges.length)}</b></div>
-          <div class="side-badges">
-            ${
-              miniBadges.length
-                ? miniBadges.map((badge) => `
-                  <img src="${esc(badgeImage(badge))}" alt="${esc(badgeName(badge))}" title="${esc(badgeName(badge))}" loading="lazy" />
-                `).join('')
-                : '<span>—</span>'
-            }
-          </div>
+        profileHero.innerHTML = `
+          <div class="hero-cover" style="--accent-rgb: ${hexToRgb(color)}; background-image: ${cssUrl(banner)}; background-color: ${color};"></div>
 
-          <div class="side-link"><strong>Points</strong><span>${formatNumber(points)}</span></div>
-          <div class="side-link"><strong>Gold</strong><span>${formatNumber(gold)}</span></div>
-          <div class="side-link"><strong>Inventory</strong><span>${formatNumber(items.length)}</span></div>
-          <div class="side-link"><strong>Workshop Items</strong><span>${formatNumber(items.filter((item) => item.meta.type === 'resource').length)}</span></div>
-          <div class="side-link"><strong>Reviews</strong><span>${formatNumber(items.filter((item) => item.meta.rarity === 'rare').length)}</span></div>
-          <div class="side-link"><strong>Artwork</strong><span>${formatNumber(badges.length ? Math.min(4, badges.length) : 0)}</span></div>
+          <div class="hero-inner" style="--accent-rgb: ${hexToRgb(color)};">
+            <div class="avatar-frame">
+              <img src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />
+            </div>
 
-          <div class="side-stat">Friends <b>${Math.min(15, Math.max(5, items.length))}</b></div>
+            <div class="identity">
+              <h2 title="${esc(name)}">${esc(name)}</h2>
+              <p class="login">${esc(login)}</p>
 
-          <div class="friends-list">
-            ${[0, 1, 2, 3, 4].map((_, index) => `
-              <div class="friend-row">
-                <img src="${esc(avatar)}" alt="" loading="lazy" />
-                <div>
-                  <strong>${index === 0 ? 'TNX6' : 'Member ' + (index + 1)}</strong>
-                  <small>${index === 1 ? 'Online' : 'Last Online ' + (index + 2) + ' hrs ago'}</small>
-                </div>
-                <span class="friend-level">${[36, 20, 7, 6, 5][index]}</span>
+              <div class="job-pill">
+                <iconify-icon icon="${esc(jobIcon)}"></iconify-icon>
+                <span>${esc(jobName)}</span>
               </div>
-            `).join('')}
+
+              <div class="hero-badges">
+                ${
+                  badges.length
+                    ? badges.map((badge) => `
+                      <div class="hero-badge" title="${esc(getBadgeName(badge))}">
+                        <img src="${esc(getBadgeImage(badge))}" alt="${esc(getBadgeName(badge))}" loading="lazy" />
+                      </div>
+                    `).join('')
+                    : '<div class="hero-badge">—</div>'
+                }
+              </div>
+            </div>
+
+            <div class="hero-stats">
+              <div class="level-card">
+                <span>Level</span>
+                <strong>${formatNumber(level)}</strong>
+              </div>
+
+              <div class="wallet-card">
+                <span>النقاط</span>
+                <strong>${formatNumber(points)}</strong>
+              </div>
+
+              <div class="wallet-card">
+                <span>الذهب</span>
+                <strong>${formatNumber(gold)}</strong>
+              </div>
+            </div>
+          </div>
+        `
+      }
+
+      function renderDisplayCase(user) {
+        const items = inventoryItems(user)
+          .sort((a, b) => {
+            const rank = { legendary: 4, rare: 3, uncommon: 2, common: 1 }
+            return (rank[b.meta.rarity] || 0) - (rank[a.meta.rarity] || 0) || b.quantity - a.quantity
+          })
+
+        const main = items[0]
+        const rest = items.slice(1, 5)
+
+        if (!main) {
+          displayCase.innerHTML = `
+            <div class="small-empty">
+              <strong>ما فيه أغراض للعرض</strong>
+              <span>شغّل تصدير الحقيبة أو تأكد من user_inventory.json.</span>
+            </div>
+          `
+          return
+        }
+
+        displayCase.innerHTML = `
+          <article class="display-main">
+            <div class="display-icon">${esc(main.meta.icon)}</div>
+            <h3>${esc(main.name)}</h3>
+            <p>${esc(main.description)}</p>
+            <strong>x${formatNumber(main.quantity)}</strong>
+          </article>
+
+          <div class="display-list">
+            ${
+              rest.length
+                ? rest.map((item) => `
+                  <div class="display-row">
+                    <div>
+                      <strong>${esc(item.meta.icon)} ${esc(item.name)}</strong>
+                      <span>${esc(item.meta.rarity)} · ${esc(item.meta.type)}</span>
+                    </div>
+                    <b>x${formatNumber(item.quantity)}</b>
+                  </div>
+                `).join('')
+                : `
+                  <div class="display-row">
+                    <div>
+                      <strong>لا توجد أغراض إضافية</strong>
+                      <span>بتظهر هنا إذا صار عنده أغراض أكثر.</span>
+                    </div>
+                    <b>—</b>
+                  </div>
+                `
+            }
           </div>
         `
       }
@@ -1328,7 +1563,7 @@ const metadata = {
         const all = inventoryItems(user)
         const items = filteredInventory(user)
 
-        if (inventoryCount) inventoryCount.textContent = `${formatNumber(all.length)} items`
+        if (inventoryCount) inventoryCount.textContent = String(all.length)
 
         filterButtons.forEach((button) => {
           button.classList.toggle('is-active', button.dataset.filter === state.filter)
@@ -1341,7 +1576,7 @@ const metadata = {
           const rare = ['legendary', 'rare'].includes(item.meta.rarity) || item.meta.type === 'featured'
 
           return `
-            <article class="item-slot${rare ? ' is-rare' : ''}">
+            <article class="item-card${rare ? ' is-rare' : ''}">
               <span class="item-qty">x${formatNumber(item.quantity)}</span>
               <div class="item-icon">${esc(item.meta.icon)}</div>
               <h3>${esc(item.name)}</h3>
@@ -1349,7 +1584,7 @@ const metadata = {
               <div class="item-tags">
                 <span>${esc(item.meta.type)}</span>
                 <span>${esc(item.meta.rarity)}</span>
-                ${item.price ? `<span>${formatNumber(item.price)} pts</span>` : ''}
+                ${item.price ? `<span>${formatNumber(item.price)} نقطة</span>` : ''}
               </div>
             </article>
           `
@@ -1359,44 +1594,101 @@ const metadata = {
       function renderBadges(user) {
         const badges = Array.isArray(user.badges) ? user.badges : []
 
-        if (badgeCount) badgeCount.textContent = `${formatNumber(badges.length)} badges`
+        if (badgeCount) badgeCount.textContent = String(badges.length)
 
         if (!badges.length) {
           badgesGrid.innerHTML = `
             <div class="small-empty">
-              <strong>No badges</strong>
-              <span>No badges were found for this member.</span>
+              <strong>ما فيه بادجات</strong>
+              <span>ما لقينا بادجات لهذا العضو.</span>
             </div>
           `
           return
         }
 
-        badgesGrid.innerHTML = badges.slice(0, 36).map((badge) => `
+        badgesGrid.innerHTML = badges.slice(0, 42).map((badge) => `
           <div class="badge-tile">
-            <img src="${esc(badgeImage(badge))}" alt="${esc(badgeName(badge))}" loading="lazy" />
-            <span>${esc(badgeName(badge))}</span>
+            <img src="${esc(getBadgeImage(badge))}" alt="${esc(getBadgeName(badge))}" loading="lazy" />
+            <span>${esc(getBadgeName(badge))}</span>
+          </div>
+        `).join('')
+      }
+
+      function renderStats(user) {
+        const badges = Array.isArray(user.badges) ? user.badges : []
+        const equipped = badges.filter((badge) => badge.equipped).length
+        const items = inventoryItems(user)
+        const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0)
+        const rareCount = items.filter((item) => ['legendary', 'rare'].includes(item.meta.rarity) || item.meta.type === 'featured').length
+
+        statsList.innerHTML = `
+          <div class="stat-row">
+            <span>عدد البادجات</span>
+            <strong>${formatNumber(badges.length)}</strong>
+          </div>
+
+          <div class="stat-row">
+            <span>بادجات الواجهة</span>
+            <strong>${formatNumber(equipped)}</strong>
+          </div>
+
+          <div class="stat-row">
+            <span>أنواع الأغراض</span>
+            <strong>${formatNumber(items.length)}</strong>
+          </div>
+
+          <div class="stat-row">
+            <span>إجمالي الكميات</span>
+            <strong>${formatNumber(totalQuantity)}</strong>
+          </div>
+
+          <div class="stat-row">
+            <span>أغراض نادرة</span>
+            <strong>${formatNumber(rareCount)}</strong>
+          </div>
+        `
+      }
+
+      function renderRare(user) {
+        const items = inventoryItems(user)
+          .filter((item) => ['legendary', 'rare'].includes(item.meta.rarity) || item.meta.type === 'featured')
+          .slice(0, 8)
+
+        if (!items.length) {
+          rareList.innerHTML = `
+            <div class="small-empty">
+              <strong>ما فيه نادر</strong>
+              <span>الأغراض النادرة بتظهر هنا.</span>
+            </div>
+          `
+          return
+        }
+
+        rareList.innerHTML = items.map((item) => `
+          <div class="rare-row">
+            <strong>${esc(item.meta.icon)} ${esc(item.name)}</strong>
+            <span>x${formatNumber(item.quantity)}</span>
           </div>
         `).join('')
       }
 
       function renderProfile(user) {
         state.activeUser = user
-
-        const banner = safeUrl(user.bannerImage || user.banner || user.backgroundImage)
-        const color = String(user.backgroundColor || '#1a2419')
-
-        profileBackdrop.style.backgroundImage = banner
-          ? `url("${banner}")`
-          : `linear-gradient(180deg, ${color}, #050708)`
-
         emptyState?.classList.add('hidden')
         profileContent?.classList.remove('hidden')
 
-        renderTop(user)
-        renderArtwork(user)
-        renderSidebar(user)
+        renderHero(user)
+        renderDisplayCase(user)
         renderInventory(user)
         renderBadges(user)
+        renderStats(user)
+        renderRare(user)
+
+        const login = loginName(user)
+
+        if (badgesLink) {
+          badgesLink.href = `/badges?user=${encodeURIComponent(login)}`
+        }
       }
 
       function openFromQuery() {
@@ -1413,8 +1705,8 @@ const metadata = {
 
         if (!user) {
           emptyState.innerHTML = `
-            <strong>Member not found</strong>
-            <span>Make sure this user exists in <b>user_badges.json</b>.</span>
+            <strong>ما لقيت العضو</strong>
+            <span>تأكد أنه موجود في <b>user_badges.json</b>.</span>
           `
           emptyState.classList.remove('hidden')
           profileContent.classList.add('hidden')
@@ -1427,29 +1719,6 @@ const metadata = {
 
       function handleBackToTop() {
         backToTop?.classList.toggle('is-visible', window.scrollY > 520)
-      }
-
-      async function copyProfileLink() {
-        if (!state.activeUser) return
-        const button = document.getElementById('copyProfileLink')
-        if (!button) return
-
-        const old = button.textContent
-
-        try {
-          await navigator.clipboard.writeText(profileUrl(state.activeUser))
-          button.textContent = 'Copied'
-          button.classList.add('is-copied')
-          addTimer(window.setTimeout(() => {
-            button.textContent = old
-            button.classList.remove('is-copied')
-          }, 1000))
-        } catch {
-          button.textContent = profileUrl(state.activeUser)
-          addTimer(window.setTimeout(() => {
-            button.textContent = old
-          }, 1400))
-        }
       }
 
       addListener(profileSearch, 'input', () => renderResults(profileSearch.value))
@@ -1468,11 +1737,9 @@ const metadata = {
         })
       })
 
-      addListener(document, 'click', (event) => {
-        const target = event.target
-        if (target && target.id === 'copyProfileLink') {
-          copyProfileLink()
-        }
+      addListener(copyProfileLink, 'click', () => {
+        if (!state.activeUser) return
+        copyText(profileUrl(state.activeUser), copyProfileLink, 'تم نسخ الرابط')
       })
 
       addListener(backToTop, 'click', () => {
@@ -1488,4 +1755,7 @@ const metadata = {
       })()
     })()
   </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
 </Layout>
