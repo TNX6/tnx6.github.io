@@ -74,7 +74,6 @@ const metadata = {
 
                 <div class="level-info">
                   <h2 id="levelTitle">عضو جديد</h2>
-                  <p id="levelDesc">كل تفاعل يرفع مستواك داخل المجتمع.</p>
 
                   <div class="xp-bar">
                     <div class="xp-fill" id="xpFill"></div>
@@ -89,7 +88,6 @@ const metadata = {
                 </div>
               </div>
 
-              <div class="stats-grid" id="statsGrid"></div>
             </section>
 
             <section class="card">
@@ -441,68 +439,123 @@ const metadata = {
       align-items: end;
     }
 
+    @property --frame-angle {
+      syntax: "<angle>";
+      inherits: false;
+      initial-value: 160deg;
+    }
+
     .avatar-wrap {
       width: 148px;
       height: 148px;
       position: relative;
       flex: none;
+      isolation: isolate;
     }
 
     .avatar-ring {
       position: absolute;
       inset: -5px;
       border-radius: 34px;
-      background: conic-gradient(from 160deg, #3a2b17, #8a6a35, #5d4219, #8a6a35, #3a2b17);
+      background: conic-gradient(
+        from var(--frame-angle, 160deg),
+        #3a2b17,
+        #8a6a35,
+        #5d4219,
+        #8a6a35,
+        #3a2b17
+      );
       box-shadow: 0 0 26px rgba(215,168,79,.18);
       transition: filter .2s ease, box-shadow .2s ease;
+      transform: translateZ(0);
+      z-index: 0;
     }
 
     .avatar-wrap.level-frame-basic .avatar-ring {
-      background: conic-gradient(from 160deg, #2b2b2d, #9b8a68, #343436, #9b8a68, #2b2b2d);
+      background: conic-gradient(
+        from var(--frame-angle, 160deg),
+        #2b2b2d,
+        #9b8a68,
+        #343436,
+        #9b8a68,
+        #2b2b2d
+      );
       box-shadow: 0 0 22px rgba(255,255,255,.08);
     }
 
     .avatar-wrap.level-frame-gold .avatar-ring {
-      background: conic-gradient(from 160deg, #5d4219, #ffdf8a, #9c6b20, #ffdf8a, #5d4219);
+      background: conic-gradient(
+        from var(--frame-angle, 160deg),
+        #5d4219,
+        #ffdf8a,
+        #9c6b20,
+        #ffdf8a,
+        #5d4219
+      );
       box-shadow: 0 0 38px rgba(215,168,79,.28);
     }
 
     .avatar-wrap.level-frame-animated .avatar-ring {
-      background: conic-gradient(from 160deg, #5d4219, #ffdf8a, #7a4dff, #ffdf8a, #5d4219);
+      background: conic-gradient(
+        from var(--frame-angle, 160deg),
+        #5d4219,
+        #ffdf8a,
+        #7a4dff,
+        #ffdf8a,
+        #5d4219
+      );
       box-shadow: 0 0 42px rgba(255,223,138,.34), 0 0 18px rgba(122,77,255,.16);
-      animation: avatarFrameSpin 7s linear infinite;
+      animation: avatarFrameGradientSpin 7s linear infinite;
     }
 
     .avatar-wrap.level-frame-legendary .avatar-ring {
-      background: conic-gradient(from 160deg, #331400, #ffdf8a, #ff5d5d, #b36bff, #ffdf8a, #331400);
+      background: conic-gradient(
+        from var(--frame-angle, 160deg),
+        #331400,
+        #ffdf8a,
+        #ff5d5d,
+        #b36bff,
+        #ffdf8a,
+        #331400
+      );
       box-shadow: 0 0 54px rgba(255,223,138,.42), 0 0 26px rgba(255,93,93,.2);
-      animation: avatarFrameSpin 5s linear infinite;
+      animation: avatarFrameGradientSpin 5s linear infinite, avatarFrameSoftPulse 2.4s ease-in-out infinite;
     }
 
     .avatar-wrap.level-frame-special .avatar-ring {
-      background: conic-gradient(from 160deg, #ffffff, #ffdf8a, #7CFFB2, #b36bff, #ffdf8a, #ffffff);
+      background: conic-gradient(
+        from var(--frame-angle, 160deg),
+        #ffffff,
+        #ffdf8a,
+        #7CFFB2,
+        #b36bff,
+        #ffdf8a,
+        #ffffff
+      );
       box-shadow: 0 0 70px rgba(255,223,138,.52), 0 0 35px rgba(124,255,178,.22), 0 0 22px rgba(179,107,255,.22);
-      animation: avatarFrameSpin 3.8s linear infinite;
+      animation: avatarFrameGradientSpin 4s linear infinite, avatarFrameSoftPulse 1.8s ease-in-out infinite;
     }
 
     .avatar-wrap.level-frame-special::after {
       content: "";
       position: absolute;
-      inset: -14px;
+      inset: -12px;
       border-radius: 42px;
       border: 1px solid rgba(255,223,138,.22);
       box-shadow: 0 0 38px rgba(255,223,138,.18);
-      animation: avatarFramePulse 1.8s ease-in-out infinite;
+      animation: avatarFrameSoftPulse 1.8s ease-in-out infinite;
       pointer-events: none;
+      z-index: -1;
     }
 
-    @keyframes avatarFrameSpin {
-      to { transform: rotate(360deg); }
+    @keyframes avatarFrameGradientSpin {
+      from { --frame-angle: 160deg; }
+      to { --frame-angle: 520deg; }
     }
 
-    @keyframes avatarFramePulse {
-      0%, 100% { opacity: .3; transform: scale(.98); }
-      50% { opacity: .85; transform: scale(1.03); }
+    @keyframes avatarFrameSoftPulse {
+      0%, 100% { filter: brightness(1); opacity: .9; }
+      50% { filter: brightness(1.22); opacity: 1; }
     }
 
     .avatar {
@@ -690,14 +743,24 @@ const metadata = {
 
     .level-main {
       display: grid;
-      grid-template-columns: auto 1fr;
+      grid-template-columns: minmax(0, 1fr) 112px;
       gap: 18px;
-      align-items: center;
+      align-items: start;
+      direction: ltr;
+    }
+
+    .level-info {
+      grid-column: 1;
+      min-width: 0;
+      direction: rtl;
     }
 
     .level-badge {
-      width: 116px;
-      height: 116px;
+      grid-column: 2;
+      align-self: start;
+      width: 112px;
+      height: 112px;
+      margin-top: 34px;
       border-radius: 28px;
       display: grid;
       place-items: center;
@@ -727,7 +790,7 @@ const metadata = {
     }
 
     .level-info h2 {
-      margin: 0 0 8px;
+      margin: 0 0 14px;
       font-size: 25px;
       font-weight: 950;
     }
@@ -805,6 +868,7 @@ const metadata = {
     }
 
     .stats-grid {
+      display: none !important;
       margin-top: 18px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -1241,6 +1305,12 @@ const metadata = {
       .level-main {
         grid-template-columns: 1fr;
         text-align: center;
+        direction: rtl;
+      }
+
+      .level-info,
+      .level-badge {
+        grid-column: auto;
       }
 
       .level-badge {
@@ -2130,7 +2200,6 @@ const metadata = {
         if ($('badgesPageLink')) $('badgesPageLink').href = `/badges?user=${encodeURIComponent(login)}`
 
         renderChips(chipsFor(user, level.level, badges, inventory))
-        renderStats(user, inventory, badges, mail)
         renderInventory(inventory)
         renderBadges(badges)
         renderMail(mail)
