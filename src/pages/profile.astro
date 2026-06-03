@@ -1382,49 +1382,149 @@ const metadata = {
                 linear-gradient(135deg, #1a1208, #080808 58%, #1d160b)`
       }
 
+      const WATCH_MINUTE_WEIGHT = 250
+
       function currentPoints(user) {
-        return num(get(user, ['points', 'totalPoints'], 0))
+        return num(get(user, ['points', 'totalPoints', 'balance', 'loyaltyPoints'], 0))
+      }
+
+      function pointsXp(user) {
+        return Math.floor(currentPoints(user) / 10)
+      }
+
+      function watchSeconds(user) {
+        const watchtimeValue = get(user, ['watchtime'], '')
+
+        if (watchtimeValue !== '') {
+          const parsedWatchtime = parseWatchtimeText(watchtimeValue)
+          if (parsedWatchtime > 0) return parsedWatchtime
+        }
+
+        const directSeconds = num(get(user, [
+          'watchSeconds',
+          'watchtimeSeconds',
+          'watchTimeSeconds',
+          'totalWatchSeconds',
+          'totalWatchtimeSeconds'
+        ], 0))
+
+        if (directSeconds > 0) return directSeconds
+
+        const directMinutes = num(get(user, [
+          'watchMinutes',
+          'watchtimeMinutes',
+          'watchTimeMinutes',
+          'totalWatchMinutes',
+          'totalWatchtimeMinutes'
+        ], 0))
+
+        if (directMinutes > 0) return directMinutes * 60
+
+        const directHours = num(get(user, [
+          'watchHours',
+          'watchtimeHours',
+          'watchTimeHours',
+          'totalWatchHours',
+          'totalWatchtimeHours'
+        ], 0))
+
+        if (directHours > 0) return directHours * 3600
+
+        return parseWatchtimeText(get(user, [
+          'watchtimeText',
+          'watchTimeText',
+          'watchTime',
+          'totalWatchtime',
+          'totalWatchTime'
+        ], ''))
+      }
+
+      function parseWatchtimeText(value) {
+        const text = String(value || '').toLowerCase().trim()
+        if (!text) return 0
+
+        const clockMatch = text.match(/^(\d+):(\d{1,2})(?::(\d{1,2}))?$/)
+        if (clockMatch) {
+          const first = Number(clockMatch[1])
+          const second = Number(clockMatch[2])
+          const third = Number(clockMatch[3] || 0)
+
+          if (clockMatch[3] !== undefined) return (first * 3600) + (second * 60) + third
+          return (first * 60) + second
+        }
+
+        let seconds = 0
+
+        const dayMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:d|day|days|يوم|ايام|أيام)/)
+        const hourMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:h|hr|hrs|hour|hours|ساعة|ساعه)/)
+        const minuteMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:m|min|mins|minute|minutes|دقيقة|دقيقه)/)
+        const secondMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:s|sec|secs|second|seconds|ثانية|ثانيه)/)
+
+        if (dayMatch) seconds += Number(dayMatch[1]) * 86400
+        if (hourMatch) seconds += Number(hourMatch[1]) * 3600
+        if (minuteMatch) seconds += Number(minuteMatch[1]) * 60
+        if (secondMatch) seconds += Number(secondMatch[1])
+
+        if (seconds > 0) return seconds
+
+        const plainNumber = Number(text.replace(/,/g, ''))
+        if (Number.isFinite(plainNumber) && plainNumber > 0) {
+          return plainNumber * 60
+        }
+
+        return 0
+      }
+
+      function watchMinutes(user) {
+        return Math.floor(watchSeconds(user) / 60)
+      }
+
+      function watchtimeLabel(user) {
+        const totalMinutes = watchMinutes(user)
+        if (totalMinutes <= 0) return get(user, ['watchtimeText', 'watchTimeText', 'watchtime'], '—')
+
+        const hours = Math.floor(totalMinutes / 60)
+        const minutes = totalMinutes % 60
+
+        if (hours <= 0) return `${minutes} دقيقة`
+        if (minutes <= 0) return `${hours} ساعة`
+        return `${hours} ساعة ${minutes} دقيقة`
+      }
+
+      function levelScore(user) {
+        const pointsScore = pointsXp(user)
+        const watchScore = watchMinutes(user) * WATCH_MINUTE_WEIGHT
+
+        return Math.floor(pointsScore + watchScore)
       }
 
       function calculateLevel(user) {
-        const explicitLevel = num(get(user, ['level'], 0))
-        const explicitXp = num(get(user, ['totalXp', 'xp'], 0))
+        const score = levelScore(user)
+        let level = 1
+        let remaining = score
+        let required = getRequiredXp(level)
 
-        if (explicitXp > 0) {
-          let level = 1
-          let remaining = explicitXp
-          let required = getRequiredXp(level)
-
-          while (remaining >= required) {
-            remaining -= required
-            level++
-            required = getRequiredXp(level)
-          }
-
-          return {
-            level: explicitLevel > 0 ? explicitLevel : level,
-            currentXp: remaining,
-            requiredXp: required,
-            percent: Math.min(100, Math.round((remaining / required) * 100)),
-            mode: 'XP',
-          }
+        while (remaining >= required && level < 250) {
+          remaining -= required
+          level++
+          required = getRequiredXp(level)
         }
-
-        const points = currentPoints(user)
-        const level = explicitLevel > 0 ? explicitLevel : Math.max(1, Math.floor(points / 100000) + 1)
-        const current = points % 100000
 
         return {
           level,
-          currentXp: current,
-          requiredXp: 100000,
-          percent: Math.min(100, Math.round((current / 100000) * 100)),
-          mode: 'نقطة',
+          currentXp: remaining,
+          requiredXp: required,
+          percent: required > 0 ? Math.min(100, Math.round((remaining / required) * 100)) : 0,
+          mode: 'XP',
+          score,
+          pointsScore: pointsXp(user),
+          watchScore: watchMinutes(user) * WATCH_MINUTE_WEIGHT,
+          watchMinutes: watchMinutes(user),
         }
       }
 
       function getRequiredXp(level) {
-        return Math.floor(1000 + (level * 420) + Math.pow(level, 1.35) * 120)
+        return Math.floor(10000 * Math.pow(level, 1.17) + (level * 2500))
       }
 
       function getLevelTitle(level) {
@@ -1494,9 +1594,9 @@ const metadata = {
 
         setText('levelNumber', level.level)
         setText('levelTitle', getLevelTitle(level.level))
-        setText('levelDesc', `باقي ${formatNumber(level.requiredXp - level.currentXp)} ${level.mode} للوصول إلى لفل ${level.level + 1}.`)
-        setText('currentXp', `${formatNumber(level.currentXp)} ${level.mode}`)
-        setText('neededXp', `${formatNumber(level.requiredXp)} ${level.mode}`)
+        setText('levelDesc', `النظام يحسب من النقاط وwatchtime. كل 10 نقاط = 1 XP. باقي ${formatNumber(level.requiredXp - level.currentXp)} XP للوصول إلى لفل ${level.level + 1}.`)
+        setText('currentXp', `${formatNumber(level.currentXp)} XP`)
+        setText('neededXp', `${formatNumber(level.requiredXp)} XP`)
         if ($('xpFill')) $('xpFill').style.width = level.percent + '%'
 
         setText('rank', rankFor(user))
@@ -1530,11 +1630,13 @@ const metadata = {
         const box = $('statsGrid')
         if (!box) return
 
+        const level = calculateLevel(user)
+
         const stats = [
-          { label: 'Watchtime', value: get(user, ['watchtimeText', 'watchTimeText', 'watchtime'], '—') },
+          { label: 'Watchtime', value: watchtimeLabel(user) },
+          { label: 'Level XP', value: formatNumber(level.score) },
           { label: 'Items', value: formatNumber(inventory.length) },
           { label: 'Badges', value: formatNumber(badges.length) },
-          { label: 'Mail', value: formatNumber(mail.length) },
         ]
 
         box.innerHTML = stats.map((stat) => `
