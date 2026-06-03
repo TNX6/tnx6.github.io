@@ -4,143 +4,98 @@ import Layout from '~/layouts/PageLayout.astro'
 const metadata = {
   title: 'Profile — TNX6',
   ignoreTitleTemplate: true,
-  description: 'Steam-style TNX6 member profile.',
+  description: 'Steam-inspired TNX6 community member profile.',
 }
 ---
 
 <Layout metadata={metadata}>
-  <main class="tnx-steam-page" dir="rtl">
-    <div class="tnx-page-bg"></div>
-    <div class="tnx-page-grid"></div>
+  <main class="tnx-steam-profile" dir="ltr">
+    <div id="profileBackdrop" class="steam-backdrop"></div>
+    <div class="steam-backdrop-shade"></div>
 
-    <section class="tnx-shell">
-      <header class="tnx-page-head">
-        <div class="tnx-head-copy">
-          <span class="tnx-kicker">TNX6 COMMUNITY PROFILE</span>
-          <h1>بروفايل العضو</h1>
-          <p>صفحة تعرض حساب العضو بشكل قريب من Steam: صورة، خلفية، مستوى، بادجات، أغراض، نقاط وذهب.</p>
+    <nav class="fake-steam-nav" aria-label="Profile navigation">
+      <div class="fake-steam-inner">
+        <div class="steam-brand">
+          <span class="steam-mark">●</span>
+          <strong>STEAM</strong>
         </div>
 
-        <div class="tnx-search-panel">
-          <label class="tnx-search-box" for="profileSearch">
-            <span>⌕</span>
-            <input id="profileSearch" type="search" autocomplete="off" placeholder="ابحث باسم Twitch..." />
-            <button id="clearProfileSearch" type="button" aria-label="مسح البحث">×</button>
-          </label>
-
-          <div id="profileResults" class="tnx-search-results"></div>
+        <div class="steam-nav-links">
+          <span>STORE</span>
+          <span>COMMUNITY</span>
+          <span class="is-active">TNX</span>
+          <span>CHAT</span>
+          <span>SUPPORT</span>
         </div>
-      </header>
 
-      <section id="emptyState" class="tnx-empty">
-        <div class="tnx-empty-icon">☰</div>
-        <strong>ابحث عن عضو</strong>
-        <span>اكتب اسم المستخدم أو افتح رابط مباشر مثل <b>/profile?user=haneen48</b></span>
+        <div class="steam-top-search">
+          <label for="profileSearch">Search</label>
+          <input id="profileSearch" type="search" autocomplete="off" placeholder="Twitch username..." />
+          <button id="clearProfileSearch" type="button" aria-label="Clear search">×</button>
+        </div>
+      </div>
+
+      <div id="profileResults" class="profile-results"></div>
+    </nav>
+
+    <section class="steam-profile-shell">
+      <section id="emptyState" class="steam-empty">
+        <strong>Search for a member</strong>
+        <span>Use Twitch username or open: <b>/profile?user=haneen48</b></span>
       </section>
 
-      <section id="profileContent" class="tnx-profile hidden">
-        <section id="profileHero" class="tnx-profile-hero"></section>
+      <section id="profileContent" class="profile-content hidden">
+        <header id="profileTop" class="profile-top"></header>
 
-        <section class="tnx-profile-body">
-          <main class="tnx-profile-main">
-            <section class="tnx-module tnx-showcase-module">
-              <div class="tnx-module-title">
-                <span>FEATURED SHOWCASE</span>
-                <h2>واجهة العضو</h2>
+        <section class="profile-main-grid">
+          <main class="profile-left">
+            <section id="mainArtwork" class="artwork-showcase"></section>
+
+            <section class="content-panel">
+              <div class="panel-title">
+                <h2>Inventory Showcase</h2>
+                <span id="inventoryCount">0 items</span>
               </div>
 
-              <div id="featuredShowcase" class="tnx-featured-showcase"></div>
-            </section>
-
-            <section class="tnx-module">
-              <div class="tnx-module-title tnx-row-title">
-                <div>
-                  <span>ITEM INVENTORY</span>
-                  <h2>الحقيبة</h2>
-                </div>
-
-                <div class="tnx-count-pill">
-                  <strong id="inventoryCount">0</strong>
-                  <small>نوع</small>
-                </div>
+              <div class="inventory-tabs" id="inventoryFilters">
+                <button type="button" class="is-active" data-filter="all">All</button>
+                <button type="button" data-filter="rare">Rare</button>
+                <button type="button" data-filter="box">Boxes</button>
+                <button type="button" data-filter="license">Licenses</button>
+                <button type="button" data-filter="resource">Resources</button>
+                <button type="button" data-filter="usable">Usable</button>
               </div>
 
-              <div class="tnx-filter-bar" id="inventoryFilters">
-                <button type="button" class="is-active" data-filter="all">الكل</button>
-                <button type="button" data-filter="rare">النادر</button>
-                <button type="button" data-filter="box">الصناديق</button>
-                <button type="button" data-filter="license">الرخص</button>
-                <button type="button" data-filter="resource">الموارد</button>
-                <button type="button" data-filter="usable">استخدام</button>
-              </div>
+              <div id="inventoryGrid" class="inventory-grid"></div>
 
-              <div id="inventoryGrid" class="tnx-inventory-grid"></div>
-
-              <div id="inventoryEmpty" class="tnx-mini-empty hidden">
-                <strong>ما فيه أغراض ظاهرة</strong>
-                <span>الحقيبة فاضية أو الفلتر الحالي ما طلع شيء.</span>
+              <div id="inventoryEmpty" class="small-empty hidden">
+                <strong>No visible items</strong>
+                <span>The inventory is empty or this filter has no results.</span>
               </div>
             </section>
 
-            <section class="tnx-module">
-              <div class="tnx-module-title tnx-row-title">
-                <div>
-                  <span>BADGE COLLECTION</span>
-                  <h2>مجموعة البادجات</h2>
-                </div>
-
-                <div class="tnx-count-pill">
-                  <strong id="badgeCount">0</strong>
-                  <small>بادج</small>
-                </div>
+            <section class="content-panel">
+              <div class="panel-title">
+                <h2>Badge Collection</h2>
+                <span id="badgeCount">0 badges</span>
               </div>
 
-              <div id="badgeGrid" class="tnx-badge-grid"></div>
+              <div id="badgesGrid" class="badges-grid"></div>
             </section>
           </main>
 
-          <aside class="tnx-profile-side">
-            <section class="tnx-module">
-              <div class="tnx-module-title">
-                <span>PROFILE DATA</span>
-                <h2>البيانات</h2>
-              </div>
-
-              <div id="statsList" class="tnx-stats-list"></div>
-            </section>
-
-            <section class="tnx-module">
-              <div class="tnx-module-title">
-                <span>RARE ITEMS</span>
-                <h2>أندر الأغراض</h2>
-              </div>
-
-              <div id="rareList" class="tnx-rare-list"></div>
-            </section>
-
-            <section class="tnx-module">
-              <div class="tnx-module-title">
-                <span>PROFILE LINKS</span>
-                <h2>روابط</h2>
-              </div>
-
-              <div class="tnx-actions">
-                <a id="badgesLink" href="/badges">بطاقة البادجات</a>
-                <button id="copyProfileLink" type="button">نسخ رابط البروفايل</button>
-              </div>
-            </section>
-          </aside>
+          <aside id="profileSidebar" class="profile-sidebar"></aside>
         </section>
       </section>
     </section>
 
-    <button id="backToTop" class="tnx-back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
+    <button id="backToTop" class="back-top" type="button" aria-label="Back to top">↑</button>
   </main>
 
   <style is:global>
     html {
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 218, 106, 0.38) rgba(0, 0, 0, 0.35);
+      scrollbar-color: rgba(120, 150, 120, 0.62) rgba(0, 0, 0, 0.55);
     }
 
     html::-webkit-scrollbar {
@@ -148,1051 +103,830 @@ const metadata = {
     }
 
     html::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(0, 0, 0, 0.55);
     }
 
     html::-webkit-scrollbar-thumb {
-      border: 2px solid rgba(0, 0, 0, 0.35);
+      border: 2px solid rgba(0, 0, 0, 0.55);
       border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255, 218, 106, 0.78), rgba(194, 146, 0, 0.52));
+      background: linear-gradient(180deg, rgba(160, 170, 135, 0.8), rgba(65, 80, 64, 0.75));
     }
 
     .hidden {
       display: none !important;
     }
 
-    .tnx-steam-page {
+    .tnx-steam-profile {
       position: relative;
       min-height: 100vh;
       overflow: hidden;
-      background: #05070c;
-      color: #ffffff;
-      font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #050708;
+      color: #c7d5e0;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
-    .tnx-page-bg {
+    .steam-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 75% 48%, rgba(255, 255, 220, 0.32), transparent 16%),
+        linear-gradient(90deg, #020404 0%, #101610 50%, #050505 100%);
+      background-position: center;
+      background-size: cover;
+      filter: saturate(0.75) contrast(1.08) brightness(0.72);
+      transform: scale(1.02);
+    }
+
+    .steam-backdrop::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.76) 0%, rgba(0, 0, 0, 0.25) 48%, rgba(0, 0, 0, 0.86) 100%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.34) 0%, rgba(0, 0, 0, 0.08) 30%, rgba(0, 0, 0, 0.82) 100%);
+    }
+
+    .steam-backdrop-shade {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 16% 8%, rgba(255, 218, 106, 0.16), transparent 30%),
-        radial-gradient(circle at 82% 13%, rgba(76, 120, 255, 0.13), transparent 30%),
-        radial-gradient(circle at 52% 92%, rgba(194, 146, 0, 0.13), transparent 34%),
-        linear-gradient(135deg, #05070c 0%, #09111d 48%, #120905 100%);
-      animation: tnxBgBreath 10s ease-in-out infinite;
+        radial-gradient(circle at 50% 56%, transparent 0%, rgba(0, 0, 0, 0.08) 40%, rgba(0, 0, 0, 0.74) 100%);
     }
 
-    @keyframes tnxBgBreath {
-      0%, 100% { transform: scale(1); filter: brightness(1) saturate(1); }
-      50% { transform: scale(1.018); filter: brightness(1.06) saturate(1.1); }
-    }
-
-    .tnx-page-grid {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.055;
-      background-image:
-        linear-gradient(rgba(255, 218, 106, 0.45) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 218, 106, 0.45) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(circle at center, black 0%, transparent 75%);
-    }
-
-    .tnx-shell {
+    .fake-steam-nav {
       position: relative;
-      z-index: 1;
-      width: min(100%, 1250px);
-      margin-inline: auto;
-      padding: 6.4rem 1rem 5rem;
+      z-index: 5;
+      background: #171a21;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      box-shadow: 0 2px 18px rgba(0, 0, 0, 0.32);
     }
 
-    .tnx-page-head {
+    .fake-steam-inner {
+      width: min(100%, 1100px);
+      height: 64px;
+      margin: 0 auto;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
-      gap: 1rem;
-      align-items: end;
-      margin-bottom: 1rem;
+      grid-template-columns: auto minmax(0, 1fr) 280px;
+      gap: 26px;
+      align-items: center;
+      padding: 0 12px;
     }
 
-    .tnx-kicker {
+    .steam-brand {
       display: inline-flex;
       align-items: center;
-      width: fit-content;
-      border: 1px solid rgba(255, 218, 106, 0.27);
+      gap: 10px;
+      color: #dcdedf;
+      letter-spacing: 0.08em;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .steam-mark {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
       border-radius: 999px;
-      background: rgba(0, 0, 0, 0.34);
-      color: #ffda6a;
-      padding: 0.55rem 0.9rem;
-      font-size: 0.74rem;
-      font-weight: 950;
-      letter-spacing: 0.14em;
-      backdrop-filter: blur(14px);
+      background: #dcdedf;
+      color: #171a21;
+      font-size: 13px;
     }
 
-    .tnx-head-copy h1 {
-      margin: 0.9rem 0 0;
-      background: linear-gradient(90deg, #fff1a8, #ffda6a 44%, #c29200);
-      background-clip: text;
-      color: transparent;
-      font-size: clamp(3.05rem, 7vw, 6.2rem);
-      font-weight: 950;
-      line-height: 0.92;
-      letter-spacing: -0.055em;
+    .steam-nav-links {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      color: #dcdedf;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
     }
 
-    .tnx-head-copy p {
-      max-width: 720px;
-      margin: 1rem 0 0;
-      color: rgba(226, 232, 240, 0.84);
-      font-size: 1rem;
-      font-weight: 760;
-      line-height: 1.8;
+    .steam-nav-links span {
+      opacity: 0.9;
     }
 
-    .tnx-search-panel {
-      position: relative;
-      border: 1px solid rgba(255, 218, 106, 0.17);
-      border-radius: 1.35rem;
-      background:
-        radial-gradient(circle at top right, rgba(255, 218, 106, 0.08), transparent 44%),
-        rgba(8, 12, 18, 0.76);
-      padding: 0.8rem;
-      box-shadow: 0 22px 58px rgba(0, 0, 0, 0.36);
-      backdrop-filter: blur(16px);
+    .steam-nav-links .is-active {
+      color: #66c0f4;
+      text-decoration: underline;
+      text-underline-offset: 4px;
     }
 
-    .tnx-search-box {
+    .steam-top-search {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr) auto;
-      gap: 0.7rem;
+      gap: 8px;
       align-items: center;
-      border: 1px solid rgba(255, 218, 106, 0.18);
-      border-radius: 1rem;
-      background: rgba(0, 0, 0, 0.34);
-      padding: 0.75rem;
+      border: 1px solid rgba(102, 192, 244, 0.24);
+      border-radius: 2px;
+      background: rgba(0, 0, 0, 0.28);
+      padding: 6px 8px;
     }
 
-    .tnx-search-box span {
-      color: #ffda6a;
-      font-size: 1.25rem;
-      font-weight: 950;
+    .steam-top-search label {
+      color: #8f98a0;
+      font-size: 11px;
+      font-weight: 700;
     }
 
-    .tnx-search-box input {
+    .steam-top-search input {
       width: 100%;
       border: 0;
       outline: 0;
       background: transparent;
-      color: #fff;
-      font-size: 0.96rem;
-      font-weight: 850;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
     }
 
-    .tnx-search-box button {
-      display: grid;
-      place-items: center;
-      width: 2.05rem;
-      height: 2.05rem;
-      border: 1px solid rgba(255, 218, 106, 0.2);
-      border-radius: 999px;
-      background: rgba(255, 218, 106, 0.08);
-      color: #ffda6a;
-      font-size: 1.16rem;
-      font-weight: 950;
+    .steam-top-search button {
+      width: 20px;
+      height: 20px;
+      border: 0;
+      border-radius: 2px;
+      background: rgba(102, 192, 244, 0.16);
+      color: #66c0f4;
       cursor: pointer;
-    }
-
-    .tnx-search-results {
-      display: grid;
-      gap: 0.55rem;
-      margin-top: 0.65rem;
-    }
-
-    .tnx-result {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
-      gap: 0.75rem;
-      align-items: center;
-      border: 1px solid rgba(255, 218, 106, 0.13);
-      border-radius: 0.95rem;
-      background: rgba(0, 0, 0, 0.34);
-      color: white;
-      padding: 0.68rem;
-      text-align: right;
-      cursor: pointer;
-      transition: 170ms ease;
-    }
-
-    .tnx-result:hover {
-      transform: translateY(-2px);
-      border-color: rgba(255, 218, 106, 0.48);
-      background: rgba(255, 218, 106, 0.08);
-    }
-
-    .tnx-result img {
-      width: 44px;
-      height: 44px;
-      border-radius: 0.85rem;
-      object-fit: cover;
-      border: 1px solid rgba(255, 218, 106, 0.25);
-    }
-
-    .tnx-result strong {
-      display: block;
-      overflow: hidden;
-      color: #f7e6ac;
-      font-size: 0.95rem;
-      font-weight: 950;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .tnx-result span {
-      display: block;
-      margin-top: 0.12rem;
-      color: rgb(148, 163, 184);
-      font-size: 0.73rem;
-      font-weight: 850;
-      direction: ltr;
-      text-align: right;
-    }
-
-    .tnx-empty,
-    .tnx-mini-empty {
-      display: grid;
-      place-items: center;
-      gap: 0.45rem;
-      min-height: 230px;
-      border: 1px solid rgba(255, 218, 106, 0.15);
-      border-radius: 1.55rem;
-      background:
-        radial-gradient(circle at top, rgba(255, 218, 106, 0.08), transparent 44%),
-        rgba(8, 12, 18, 0.78);
-      padding: 2rem;
-      text-align: center;
-      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
-      backdrop-filter: blur(16px);
-    }
-
-    .tnx-mini-empty {
-      min-height: 160px;
-      margin-top: 0.75rem;
-      box-shadow: none;
-    }
-
-    .tnx-empty-icon {
-      display: grid;
-      place-items: center;
-      width: 4rem;
-      height: 4rem;
-      border: 1px solid rgba(255, 218, 106, 0.22);
-      border-radius: 1.25rem;
-      background: rgba(255, 218, 106, 0.06);
-      color: #ffda6a;
-      font-size: 1.7rem;
-      font-weight: 950;
-    }
-
-    .tnx-empty strong,
-    .tnx-mini-empty strong {
-      color: #ffda6a;
-      font-size: 1.35rem;
-      font-weight: 950;
-    }
-
-    .tnx-empty span,
-    .tnx-mini-empty span {
-      color: rgb(148, 163, 184);
-      font-size: 0.9rem;
-      font-weight: 800;
-      line-height: 1.75;
-    }
-
-    .tnx-empty b {
-      color: #f7e6ac;
-      direction: ltr;
-      unicode-bidi: embed;
-    }
-
-    .tnx-profile {
-      display: grid;
-      gap: 1rem;
-    }
-
-    /* Steam-like top card */
-    .tnx-profile-hero {
-      position: relative;
-      overflow: hidden;
-      min-height: 438px;
-      border: 1px solid rgba(255, 218, 106, 0.22);
-      border-radius: 1.55rem;
-      background: rgba(8, 12, 18, 0.8);
-      box-shadow:
-        0 30px 90px rgba(0, 0, 0, 0.54),
-        inset 0 0 34px rgba(255, 218, 106, 0.025);
-      backdrop-filter: blur(18px);
-    }
-
-    .tnx-cover {
-      position: absolute;
-      inset: 0;
-      background-position: center;
-      background-size: cover;
-      transform: scale(1.02);
-      filter: saturate(1.05) contrast(1.05);
-    }
-
-    .tnx-cover::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(to bottom, rgba(0,0,0,0.08), rgba(5, 8, 13, 0.5) 48%, rgba(5, 8, 13, 0.94) 100%),
-        linear-gradient(to left, rgba(var(--accent-rgb), 0.24), transparent 38%),
-        radial-gradient(circle at top left, rgba(255, 218, 106, 0.14), transparent 40%);
-    }
-
-    .tnx-hero-inner {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: 184px minmax(0, 1fr) 290px;
-      gap: 1.25rem;
-      align-items: end;
-      min-height: 438px;
-      padding: 1.35rem;
-    }
-
-    .tnx-avatar-zone {
-      display: grid;
-      justify-items: center;
-      gap: 0.8rem;
-    }
-
-    .tnx-avatar-frame {
-      position: relative;
-      width: 168px;
-      height: 168px;
-      border-radius: 1.15rem;
-      padding: 5px;
-      background:
-        linear-gradient(135deg, rgba(255,218,106,0.95), rgba(var(--accent-rgb),0.9), rgba(255,255,255,0.18));
-      box-shadow:
-        0 24px 46px rgba(0,0,0,0.5),
-        0 0 26px rgba(var(--accent-rgb),0.28);
-    }
-
-    .tnx-avatar-frame img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      border-radius: 0.9rem;
-      object-fit: cover;
-      background: #111;
-    }
-
-    .tnx-status-dot {
-      position: absolute;
-      right: 0.6rem;
-      bottom: 0.6rem;
-      width: 1rem;
-      height: 1rem;
-      border: 3px solid #101014;
-      border-radius: 999px;
-      background: #34d399;
-      box-shadow: 0 0 14px rgba(52, 211, 153, 0.75);
-    }
-
-    .tnx-level {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 5.8rem;
-      border: 1px solid rgba(255, 218, 106, 0.24);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.55);
-      color: #ffda6a;
-      padding: 0.55rem 0.75rem;
-      font-size: 0.82rem;
-      font-weight: 950;
-      direction: ltr;
-      backdrop-filter: blur(12px);
-    }
-
-    .tnx-identity {
-      min-width: 0;
-      padding-bottom: 0.25rem;
-    }
-
-    .tnx-identity h2 {
-      margin: 0;
-      overflow: hidden;
-      color: #fff;
-      font-size: clamp(2.5rem, 5vw, 5rem);
-      font-weight: 950;
-      line-height: 0.95;
-      letter-spacing: -0.045em;
-      text-overflow: ellipsis;
-      text-shadow: 0 5px 20px rgba(0, 0, 0, 0.75);
-      white-space: nowrap;
-    }
-
-    .tnx-login {
-      margin: 0.65rem 0 0;
-      color: rgba(226, 232, 240, 0.84);
-      font-size: 0.94rem;
-      font-weight: 850;
-      direction: ltr;
-      text-align: right;
-    }
-
-    .tnx-job {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.55rem;
-      margin-top: 0.85rem;
-      border: 1px solid rgba(255, 218, 106, 0.24);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.45);
-      color: #f7e6ac;
-      padding: 0.62rem 0.85rem;
-      font-size: 0.86rem;
-      font-weight: 950;
-      backdrop-filter: blur(12px);
-    }
-
-    .tnx-job iconify-icon {
-      color: #ffda6a;
-      font-size: 1.2rem;
-    }
-
-    .tnx-mini-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.55rem;
-      margin-top: 1rem;
-    }
-
-    .tnx-mini-badge {
-      display: grid;
-      place-items: center;
-      width: 48px;
-      height: 48px;
-      border: 1px solid rgba(255, 218, 106, 0.13);
-      border-radius: 0.82rem;
-      background: rgba(0, 0, 0, 0.42);
-      backdrop-filter: blur(10px);
-    }
-
-    .tnx-mini-badge img {
-      width: 36px;
-      height: 36px;
-      object-fit: contain;
-      filter: drop-shadow(0 7px 12px rgba(0, 0, 0, 0.5));
-    }
-
-    .tnx-wallet {
-      display: grid;
-      gap: 0.75rem;
-      align-self: end;
-    }
-
-    .tnx-wallet-card {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid rgba(255, 218, 106, 0.16);
-      border-radius: 1.12rem;
-      background:
-        radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 44%),
-        rgba(0, 0, 0, 0.48);
-      padding: 1rem;
-      backdrop-filter: blur(14px);
-    }
-
-    .tnx-wallet-card span {
-      display: block;
-      color: rgb(148, 163, 184);
-      font-size: 0.75rem;
       font-weight: 900;
     }
 
-    .tnx-wallet-card strong {
-      display: block;
-      margin-top: 0.35rem;
-      color: #ffda6a;
-      font-size: 1.7rem;
-      font-weight: 950;
-      direction: ltr;
-      text-align: right;
-      text-shadow: 0 0 14px rgba(255, 218, 106, 0.28);
-    }
-
-    .tnx-profile-body {
+    .profile-results {
+      position: absolute;
+      left: 50%;
+      top: 58px;
+      width: min(100% - 24px, 360px);
+      transform: translateX(-50%);
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 340px;
-      gap: 1rem;
-      align-items: start;
+      gap: 4px;
+      z-index: 20;
     }
 
-    .tnx-profile-main,
-    .tnx-profile-side {
+    .profile-result {
       display: grid;
-      gap: 1rem;
-    }
-
-    .tnx-module {
-      border: 1px solid rgba(255, 218, 106, 0.16);
-      border-radius: 1.4rem;
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
-        rgba(8, 12, 18, 0.78);
-      box-shadow:
-        0 24px 70px rgba(0, 0, 0, 0.36),
-        inset 0 0 22px rgba(255, 218, 106, 0.022);
-      padding: 1.05rem;
-      backdrop-filter: blur(16px);
-    }
-
-    .tnx-module-title {
-      margin-bottom: 0.95rem;
-    }
-
-    .tnx-row-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      gap: 1rem;
-    }
-
-    .tnx-module-title span {
-      display: block;
-      color: #c29200;
-      font-size: 0.72rem;
-      font-weight: 950;
-      letter-spacing: 0.13em;
-    }
-
-    .tnx-module-title h2 {
-      margin: 0.3rem 0 0;
-      color: #f7e6ac;
-      font-size: 1.48rem;
-      font-weight: 950;
-      line-height: 1.15;
-    }
-
-    .tnx-count-pill {
-      display: grid;
-      place-items: center;
-      min-width: 82px;
-      border: 1px solid rgba(255, 218, 106, 0.17);
-      border-radius: 0.95rem;
-      background: rgba(255, 218, 106, 0.06);
-      padding: 0.62rem;
-    }
-
-    .tnx-count-pill strong {
-      color: #ffda6a;
-      font-size: 1.24rem;
-      font-weight: 950;
-      line-height: 1;
-    }
-
-    .tnx-count-pill small {
-      margin-top: 0.22rem;
-      color: rgb(148, 163, 184);
-      font-size: 0.68rem;
-      font-weight: 850;
-    }
-
-    .tnx-featured-showcase {
-      display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 0.85rem;
-    }
-
-    .tnx-big-item {
-      position: relative;
-      overflow: hidden;
-      min-height: 235px;
-      border: 1px solid rgba(255, 218, 106, 0.2);
-      border-radius: 1.15rem;
-      background:
-        radial-gradient(circle at top right, rgba(255, 218, 106, 0.13), transparent 46%),
-        rgba(0, 0, 0, 0.34);
-      padding: 1rem;
-    }
-
-    .tnx-big-icon {
-      display: grid;
-      place-items: center;
-      width: 4.8rem;
-      height: 4.8rem;
-      border: 1px solid rgba(255, 218, 106, 0.23);
-      border-radius: 1.25rem;
-      background: rgba(255, 218, 106, 0.08);
-      color: #ffda6a;
-      font-size: 2.2rem;
-      margin-bottom: 1rem;
-    }
-
-    .tnx-big-item h3 {
-      margin: 0;
-      color: white;
-      font-size: 1.5rem;
-      font-weight: 950;
-      line-height: 1.18;
-    }
-
-    .tnx-big-item p {
-      margin: 0.6rem 0 0;
-      color: rgb(148, 163, 184);
-      font-size: 0.85rem;
-      font-weight: 800;
-      line-height: 1.65;
-    }
-
-    .tnx-big-item strong {
-      display: inline-flex;
-      margin-top: 0.9rem;
-      border: 1px solid rgba(255, 218, 106, 0.19);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.36);
-      color: #ffda6a;
-      padding: 0.45rem 0.6rem;
-      font-size: 0.8rem;
-      font-weight: 950;
-      direction: ltr;
-    }
-
-    .tnx-showcase-list {
-      display: grid;
-      gap: 0.62rem;
-    }
-
-    .tnx-showcase-row {
-      display: flex;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 9px;
       align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      border: 1px solid rgba(255, 218, 106, 0.12);
-      border-radius: 1rem;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 0.72rem;
+      border: 1px solid rgba(118, 139, 120, 0.28);
+      background: rgba(24, 31, 24, 0.94);
+      color: #c7d5e0;
+      padding: 7px;
+      cursor: pointer;
+      text-align: left;
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
     }
 
-    .tnx-showcase-row div {
-      min-width: 0;
+    .profile-result:hover {
+      background: rgba(55, 72, 56, 0.98);
     }
 
-    .tnx-showcase-row strong {
+    .profile-result img {
+      width: 38px;
+      height: 38px;
+      object-fit: cover;
+    }
+
+    .profile-result strong {
       display: block;
       overflow: hidden;
-      color: #f7e6ac;
-      font-size: 0.88rem;
-      font-weight: 950;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 800;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .tnx-showcase-row span {
+    .profile-result span {
       display: block;
-      margin-top: 0.18rem;
-      color: rgb(148, 163, 184);
-      font-size: 0.7rem;
+      margin-top: 2px;
+      color: #8f98a0;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .steam-profile-shell {
+      position: relative;
+      z-index: 2;
+      width: min(100%, 980px);
+      margin: 0 auto;
+      padding: 26px 12px 70px;
+    }
+
+    .steam-empty,
+    .small-empty {
+      min-height: 200px;
+      display: grid;
+      place-items: center;
+      gap: 6px;
+      background: rgba(20, 25, 21, 0.78);
+      border: 1px solid rgba(160, 170, 135, 0.16);
+      color: #c7d5e0;
+      text-align: center;
+      padding: 24px;
+      backdrop-filter: blur(8px);
+    }
+
+    .small-empty {
+      min-height: 130px;
+      margin-top: 10px;
+    }
+
+    .steam-empty strong,
+    .small-empty strong {
+      color: #ffffff;
+      font-size: 18px;
+    }
+
+    .steam-empty span,
+    .small-empty span {
+      color: #8f98a0;
+      font-size: 13px;
+    }
+
+    .steam-empty b {
+      color: #66c0f4;
+    }
+
+    .profile-content {
+      display: grid;
+      gap: 14px;
+    }
+
+    .profile-top {
+      display: grid;
+      grid-template-columns: 124px minmax(0, 1fr) 210px;
+      gap: 18px;
+      align-items: start;
+      min-height: 120px;
+      padding: 0 4px;
+    }
+
+    .top-avatar {
+      width: 118px;
+      height: 118px;
+      border: 1px solid rgba(200, 205, 180, 0.24);
+      background: rgba(0, 0, 0, 0.32);
+      object-fit: cover;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.38);
+    }
+
+    .top-identity {
+      min-width: 0;
+      padding-top: 8px;
+    }
+
+    .top-name-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .top-identity h1 {
+      margin: 0;
+      overflow: hidden;
+      color: #ffffff;
+      font-size: 25px;
+      font-weight: 400;
+      line-height: 1.1;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.75);
+    }
+
+    .name-caret {
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 15px;
+    }
+
+    .profile-location {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      color: #d5d6d3;
+      font-size: 12px;
+      opacity: 0.92;
+    }
+
+    .tiny-flag {
+      width: 14px;
+      height: 9px;
+      background: linear-gradient(#136b37, #136b37);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18);
+    }
+
+    .profile-quote {
+      margin-top: 12px;
+      color: #dadbd2;
+      font-size: 12px;
+      font-weight: 700;
+      font-style: italic;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.72);
+    }
+
+    .top-level-card {
+      align-self: start;
+      padding-top: 10px;
+      color: #dfe3db;
+      text-align: left;
+    }
+
+    .level-line {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 400;
+    }
+
+    .level-number {
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border: 1px solid rgba(255, 82, 82, 0.76);
+      border-radius: 999px;
+      color: #ff6060;
+      font-size: 13px;
       font-weight: 800;
     }
 
-    .tnx-showcase-row b {
+    .level-hint {
+      width: 100%;
+      margin-top: 10px;
+      padding: 8px 9px;
+      background: rgba(40, 45, 36, 0.68);
+      color: #c7d5e0;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .edit-button {
+      display: inline-flex;
+      margin-top: 10px;
+      padding: 7px 10px;
+      background: rgba(160, 166, 140, 0.22);
+      color: #d8dacd;
+      font-size: 12px;
+      text-decoration: none;
+    }
+
+    .profile-main-grid {
       display: grid;
-      place-items: center;
-      min-width: 2.6rem;
-      height: 2.35rem;
-      border-radius: 0.78rem;
-      background: rgba(255, 218, 106, 0.08);
-      color: #ffda6a;
-      font-size: 0.78rem;
-      font-weight: 950;
-      direction: ltr;
+      grid-template-columns: minmax(0, 1fr) 226px;
+      gap: 10px;
+      align-items: start;
     }
 
-    .tnx-filter-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 0.9rem;
-    }
-
-    .tnx-filter-bar button {
-      border: 1px solid rgba(255, 218, 106, 0.2);
-      border-radius: 0.82rem;
-      background: rgba(255, 218, 106, 0.07);
-      color: #f7e6ac;
-      padding: 0.55rem 0.75rem;
-      font-size: 0.78rem;
-      font-weight: 950;
-      cursor: pointer;
-      transition: 170ms ease;
-    }
-
-    .tnx-filter-bar button:hover,
-    .tnx-filter-bar button.is-active {
-      transform: translateY(-1px);
-      border-color: rgba(255, 218, 106, 0.52);
-      background: rgba(255, 218, 106, 0.14);
-      color: #ffda6a;
-    }
-
-    .tnx-inventory-grid {
+    .profile-left {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(134px, 1fr));
-      gap: 0.72rem;
+      gap: 12px;
     }
 
-    .tnx-slot {
+    .artwork-showcase {
+      min-height: 426px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 86px;
+      gap: 4px;
+      background: rgba(9, 11, 8, 0.62);
+      padding: 8px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.42);
+    }
+
+    .art-main {
       position: relative;
+      min-height: 410px;
       overflow: hidden;
-      min-height: 158px;
-      border: 1px solid rgba(255, 218, 106, 0.12);
-      border-radius: 1rem;
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
-        rgba(0, 0, 0, 0.34);
-      padding: 0.78rem;
-      transition: 190ms ease;
+      background-position: center;
+      background-size: cover;
+      filter: saturate(0.78) contrast(1.02);
     }
 
-    .tnx-slot::before {
+    .art-main::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at top right, rgba(255, 218, 106, 0.08), transparent 46%);
-      pointer-events: none;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.02), rgba(0,0,0,0.16));
     }
 
-    .tnx-slot:hover {
-      transform: translateY(-3px) scale(1.012);
-      border-color: rgba(255, 218, 106, 0.46);
-      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.36), 0 0 22px rgba(255, 218, 106, 0.1);
-    }
-
-    .tnx-slot.is-rare {
-      border-color: rgba(255, 218, 106, 0.32);
-      box-shadow: inset 0 0 28px rgba(255, 218, 106, 0.03);
-    }
-
-    .tnx-slot-icon {
-      position: relative;
-      z-index: 1;
+    .art-fallback {
+      position: absolute;
+      inset: 0;
       display: grid;
       place-items: center;
-      width: 3rem;
-      height: 3rem;
-      border: 1px solid rgba(255, 218, 106, 0.19);
-      border-radius: 0.95rem;
-      background: rgba(255, 218, 106, 0.08);
-      color: #ffda6a;
-      font-size: 1.42rem;
-      margin-bottom: 0.72rem;
+      color: rgba(255,255,255,0.72);
+      font-size: 84px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      z-index: 1;
     }
 
-    .tnx-slot h3 {
-      position: relative;
-      z-index: 1;
+    .art-side {
+      display: grid;
+      gap: 4px;
+    }
+
+    .art-letter {
+      display: grid;
+      place-items: center;
+      min-height: 132px;
+      background-position: center;
+      background-size: cover;
+      color: rgba(255, 250, 160, 0.88);
+      font-family: Georgia, serif;
+      font-size: 54px;
+      font-weight: 800;
+      text-shadow: 0 0 18px rgba(255, 250, 160, 0.42), 0 3px 10px #000;
+      filter: saturate(0.8) contrast(1.05);
+    }
+
+    .art-more {
+      display: grid;
+      place-items: center;
+      height: 42px;
+      background: rgba(0, 0, 0, 0.42);
+      color: #dfe3db;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .profile-sidebar {
+      min-height: 426px;
+      background: rgba(65, 70, 57, 0.72);
+      padding: 12px 10px;
+      color: #c7d5e0;
+      backdrop-filter: blur(4px);
+    }
+
+    .status-block {
+      margin-bottom: 20px;
+    }
+
+    .offline-title {
+      color: rgba(255,255,255,0.62);
+      font-size: 18px;
+      font-weight: 400;
+    }
+
+    .offline-sub {
+      margin-top: 6px;
+      color: rgba(210,215,205,0.66);
+      font-size: 12px;
+    }
+
+    .side-stat {
+      margin-top: 16px;
+      color: #c8ccc2;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .side-stat b {
+      color: rgba(255,255,255,0.48);
+      font-size: 22px;
+      font-weight: 400;
+      margin-left: 4px;
+    }
+
+    .side-badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    .side-badges img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.45));
+    }
+
+    .side-links {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .side-link {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: #c8ccc2;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .side-link span {
+      color: rgba(255,255,255,0.44);
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 0.85;
+    }
+
+    .friends-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .friend-row {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) auto;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .friend-row img {
+      width: 28px;
+      height: 28px;
+      object-fit: cover;
+    }
+
+    .friend-row strong {
+      display: block;
+      overflow: hidden;
+      color: #9ec8e8;
+      font-size: 11px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .friend-row small {
+      display: block;
+      margin-top: 1px;
+      color: rgba(255,255,255,0.42);
+      font-size: 10px;
+    }
+
+    .friend-level {
+      display: grid;
+      place-items: center;
+      min-width: 26px;
+      height: 26px;
+      border: 1px solid rgba(255,255,255,0.44);
+      border-radius: 999px;
+      color: #deded2;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .content-panel {
+      background: rgba(14, 18, 16, 0.72);
+      padding: 12px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.32);
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+    }
+
+    .panel-title h2 {
       margin: 0;
-      color: #fff;
-      font-size: 0.92rem;
-      font-weight: 950;
-      line-height: 1.25;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 400;
     }
 
-    .tnx-slot p {
+    .panel-title span {
+      color: rgba(255,255,255,0.45);
+      font-size: 12px;
+    }
+
+    .inventory-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .inventory-tabs button {
+      border: 0;
+      background: rgba(120, 128, 105, 0.24);
+      color: #c8ccc2;
+      padding: 6px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .inventory-tabs button:hover,
+    .inventory-tabs button.is-active {
+      background: rgba(120, 128, 105, 0.48);
+      color: #ffffff;
+    }
+
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(116px, 1fr));
+      gap: 8px;
+    }
+
+    .item-slot {
       position: relative;
-      z-index: 1;
+      min-height: 132px;
+      background: rgba(0,0,0,0.36);
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 8px;
+      transition: 150ms ease;
+    }
+
+    .item-slot:hover {
+      border-color: rgba(200,205,180,0.3);
+      background: rgba(40,45,36,0.56);
+    }
+
+    .item-slot.is-rare {
+      box-shadow: inset 0 0 0 1px rgba(255,220,110,0.25);
+    }
+
+    .item-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      background: rgba(160,166,140,0.16);
+      color: #e5e1a4;
+      font-size: 23px;
+      margin-bottom: 8px;
+    }
+
+    .item-qty {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      color: #e5e1a4;
+      font-size: 12px;
+      font-weight: 800;
+      direction: ltr;
+    }
+
+    .item-slot h3 {
+      margin: 0;
+      color: #ffffff;
+      font-size: 12px;
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .item-slot p {
       display: -webkit-box;
       overflow: hidden;
-      margin: 0.38rem 0 0;
-      color: rgb(148, 163, 184);
-      font-size: 0.7rem;
-      font-weight: 800;
-      line-height: 1.45;
+      margin: 5px 0 0;
+      color: rgba(200,204,194,0.58);
+      font-size: 10px;
+      line-height: 1.35;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
     }
 
-    .tnx-slot-qty {
-      position: absolute;
-      top: 0.68rem;
-      left: 0.68rem;
-      z-index: 2;
-      display: grid;
-      place-items: center;
-      min-width: 2.1rem;
-      height: 2.1rem;
-      border: 1px solid rgba(255, 218, 106, 0.24);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.56);
-      color: #ffda6a;
-      font-size: 0.76rem;
-      font-weight: 950;
-      direction: ltr;
-    }
-
-    .tnx-slot-tags {
-      position: relative;
-      z-index: 1;
+    .item-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.3rem;
-      margin-top: 0.72rem;
+      gap: 3px;
+      margin-top: 7px;
     }
 
-    .tnx-slot-tags span {
-      border: 1px solid rgba(255, 218, 106, 0.11);
-      border-radius: 999px;
-      background: rgba(255, 218, 106, 0.055);
-      color: #f7e6ac;
-      padding: 0.24rem 0.4rem;
-      font-size: 0.58rem;
-      font-weight: 900;
+    .item-tags span {
+      background: rgba(120, 128, 105, 0.22);
+      color: rgba(230,230,215,0.7);
+      padding: 2px 4px;
+      font-size: 9px;
+      font-weight: 700;
     }
 
-    .tnx-badge-grid {
+    .badges-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
-      gap: 0.62rem;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 8px;
     }
 
-    .tnx-badge-tile {
+    .badge-tile {
+      min-height: 90px;
       display: grid;
       place-items: center;
-      gap: 0.45rem;
-      min-height: 106px;
-      border: 1px solid rgba(255, 218, 106, 0.12);
-      border-radius: 0.92rem;
-      background: rgba(0, 0, 0, 0.26);
-      padding: 0.62rem;
+      gap: 5px;
+      background: rgba(0,0,0,0.34);
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 7px;
       text-align: center;
     }
 
-    .tnx-badge-tile img {
-      width: 52px;
-      height: 52px;
+    .badge-tile img {
+      width: 46px;
+      height: 46px;
       object-fit: contain;
-      filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.42));
     }
 
-    .tnx-badge-tile span {
-      color: rgb(226, 232, 240);
-      font-size: 0.62rem;
-      font-weight: 850;
-      line-height: 1.32;
+    .badge-tile span {
+      color: rgba(230,230,215,0.74);
+      font-size: 10px;
+      line-height: 1.25;
     }
 
-    .tnx-stats-list,
-    .tnx-rare-list,
-    .tnx-actions {
-      display: grid;
-      gap: 0.62rem;
-    }
-
-    .tnx-stat-row,
-    .tnx-rare-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.75rem;
-      border: 1px solid rgba(255, 218, 106, 0.12);
-      border-radius: 0.95rem;
-      background: rgba(0, 0, 0, 0.28);
-      padding: 0.78rem;
-    }
-
-    .tnx-stat-row span {
-      color: rgb(148, 163, 184);
-      font-size: 0.76rem;
-      font-weight: 850;
-    }
-
-    .tnx-stat-row strong {
-      color: #ffda6a;
-      font-size: 0.9rem;
-      font-weight: 950;
-      direction: ltr;
-    }
-
-    .tnx-rare-row strong {
-      min-width: 0;
-      overflow: hidden;
-      color: #f7e6ac;
-      font-size: 0.82rem;
-      font-weight: 950;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .tnx-rare-row span {
-      color: #ffda6a;
-      font-size: 0.76rem;
-      font-weight: 950;
-      direction: ltr;
-    }
-
-    .tnx-actions a,
-    .tnx-actions button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(255, 218, 106, 0.22);
-      border-radius: 0.95rem;
-      background: rgba(255, 218, 106, 0.08);
-      color: #f7e6ac;
-      padding: 0.78rem 0.85rem;
-      font-size: 0.82rem;
-      font-weight: 950;
-      text-decoration: none;
-      cursor: pointer;
-      transition: 170ms ease;
-    }
-
-    .tnx-actions a:hover,
-    .tnx-actions button:hover,
-    .tnx-actions button.is-copied {
-      transform: translateY(-2px);
-      border-color: rgba(255, 218, 106, 0.52);
-      background: rgba(255, 218, 106, 0.14);
-      color: #ffda6a;
-    }
-
-    .tnx-back-top {
+    .back-top {
       position: fixed;
-      left: 1.25rem;
-      bottom: 1.25rem;
-      z-index: 90;
-      display: grid;
-      place-items: center;
-      width: 3.05rem;
-      height: 3.05rem;
-      border: 1px solid rgba(255, 218, 106, 0.42);
+      left: 16px;
+      bottom: 16px;
+      z-index: 30;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(160,170,135,0.25);
       border-radius: 999px;
-      background: rgba(7, 10, 16, 0.92);
-      color: #ffda6a;
-      font-size: 1.35rem;
-      font-weight: 950;
+      background: rgba(18,23,18,0.82);
+      color: #dfe3db;
       cursor: pointer;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 0 22px rgba(255, 218, 106, 0.12);
       opacity: 0;
       pointer-events: none;
-      transform: translateY(16px) scale(0.92);
-      transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
-      backdrop-filter: blur(14px);
+      transition: 150ms ease;
     }
 
-    .tnx-back-top.is-visible {
+    .back-top.is-visible {
       opacity: 1;
       pointer-events: auto;
-      transform: translateY(0) scale(1);
     }
 
-    @media (max-width: 1100px) {
-      .tnx-page-head,
-      .tnx-profile-body {
+    @media (max-width: 900px) {
+      .fake-steam-inner {
+        grid-template-columns: auto 1fr;
+      }
+
+      .steam-nav-links {
+        display: none;
+      }
+
+      .steam-top-search {
+        grid-column: 1 / -1;
+      }
+
+      .fake-steam-inner {
+        height: auto;
+        padding-block: 12px;
+      }
+
+      .profile-top,
+      .profile-main-grid {
         grid-template-columns: 1fr;
       }
 
-      .tnx-hero-inner {
-        grid-template-columns: 180px minmax(0, 1fr);
+      .top-level-card {
+        display: none;
       }
 
-      .tnx-wallet {
-        grid-column: 1 / -1;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .artwork-showcase {
+        grid-template-columns: 1fr;
       }
 
-      .tnx-profile-side {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .art-side {
+        display: none;
       }
 
-      .tnx-profile-side .tnx-module:last-child {
-        grid-column: 1 / -1;
-      }
-    }
-
-    @media (max-width: 760px) {
-      .tnx-shell {
-        padding-top: 5.4rem;
-      }
-
-      .tnx-head-copy h1 {
-        font-size: 3.1rem;
-      }
-
-      .tnx-profile-hero {
+      .profile-sidebar {
         min-height: auto;
       }
+    }
 
-      .tnx-hero-inner {
-        grid-template-columns: 1fr;
+    @media (max-width: 560px) {
+      .steam-profile-shell {
+        padding-top: 16px;
+      }
+
+      .profile-top {
+        text-align: center;
         justify-items: center;
-        min-height: auto;
-        padding-top: 6rem;
-        text-align: center;
       }
 
-      .tnx-cover {
-        height: 100%;
-      }
-
-      .tnx-identity h2 {
+      .top-identity h1 {
         white-space: normal;
-        font-size: 2.45rem;
       }
 
-      .tnx-login {
-        text-align: center;
-      }
-
-      .tnx-mini-badges {
+      .profile-location,
+      .top-name-row {
         justify-content: center;
       }
 
-      .tnx-wallet,
-      .tnx-featured-showcase,
-      .tnx-profile-side {
-        grid-template-columns: 1fr;
-      }
-
-      .tnx-row-title {
-        flex-direction: column;
-      }
-
-      .tnx-count-pill {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 520px) {
-      .tnx-inventory-grid {
+      .inventory-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .tnx-slot {
-        min-height: 150px;
-      }
-    }
-
-    @media (max-width: 420px) {
-      .tnx-inventory-grid {
-        grid-template-columns: 1fr;
       }
     }
   </style>
 
   <script is:inline data-reinit>
     ;(() => {
-      const cleanupKey = '__tnxSteamProfileV3Cleanup'
+      const cleanupKey = '__tnxSteamReferenceProfileCleanup'
 
       if (window[cleanupKey]) {
         window[cleanupKey]()
@@ -1227,40 +961,29 @@ const metadata = {
         filter: 'all',
       }
 
+      const profileBackdrop = document.getElementById('profileBackdrop')
       const profileSearch = document.getElementById('profileSearch')
       const clearProfileSearch = document.getElementById('clearProfileSearch')
       const profileResults = document.getElementById('profileResults')
       const emptyState = document.getElementById('emptyState')
       const profileContent = document.getElementById('profileContent')
-      const profileHero = document.getElementById('profileHero')
-      const featuredShowcase = document.getElementById('featuredShowcase')
+      const profileTop = document.getElementById('profileTop')
+      const mainArtwork = document.getElementById('mainArtwork')
+      const profileSidebar = document.getElementById('profileSidebar')
       const inventoryGrid = document.getElementById('inventoryGrid')
       const inventoryEmpty = document.getElementById('inventoryEmpty')
       const inventoryCount = document.getElementById('inventoryCount')
       const badgeCount = document.getElementById('badgeCount')
-      const badgeGrid = document.getElementById('badgeGrid')
-      const statsList = document.getElementById('statsList')
-      const rareList = document.getElementById('rareList')
-      const badgesLink = document.getElementById('badgesLink')
-      const copyProfileLink = document.getElementById('copyProfileLink')
+      const badgesGrid = document.getElementById('badgesGrid')
       const backToTop = document.getElementById('backToTop')
       const filterButtons = Array.from(document.querySelectorAll('[data-filter]'))
-
-      const JOB_ICONS = {
-        tier1_Citizen: 'mdi:account',
-        tier2_Farmer: 'mdi:sprout',
-        tier3_Merchant: 'mdi:store',
-        tier3_Lawyer: 'mdi:gavel',
-        tier4_Judge: 'mdi:scale-balance',
-        tier5_King: 'mdi:crown',
-      }
 
       const ITEM_META = {
         crown: { icon: '👑', type: 'featured', rarity: 'legendary' },
         'ملك': { icon: '👑', type: 'featured', rarity: 'legendary' },
         'نيوك': { icon: '💣', type: 'featured', rarity: 'legendary' },
         'vip+': { icon: '💎', type: 'license', rarity: 'rare' },
-        'vip': { icon: '💎', type: 'license', rarity: 'rare' },
+        vip: { icon: '💎', type: 'license', rarity: 'rare' },
         'رخصة محامي': { icon: '⚖️', type: 'license', rarity: 'rare' },
         'البريد': { icon: '📬', type: 'usable', rarity: 'uncommon' },
         'صندوق': { icon: '🎁', type: 'box', rarity: 'rare' },
@@ -1295,8 +1018,8 @@ const metadata = {
       }
 
       function formatNumber(value) {
-        const n = Number(value || 0)
-        return Number.isFinite(n) ? n.toLocaleString('en-US') : '0'
+        const number = Number(value || 0)
+        return Number.isFinite(number) ? number.toLocaleString('en-US') : '0'
       }
 
       function safeUrl(value) {
@@ -1308,17 +1031,6 @@ const metadata = {
       function cssUrl(value) {
         const url = safeUrl(value)
         return url ? `url('${url}')` : 'none'
-      }
-
-      function safeColor(value, fallback = '#423fff') {
-        const color = String(value || '').trim()
-        return /^#[0-9a-fA-F]{6}$/.test(color) ? color : fallback
-      }
-
-      function hexToRgb(hex) {
-        const clean = safeColor(hex).replace('#', '')
-        const number = parseInt(clean, 16)
-        return [(number >> 16) & 255, (number >> 8) & 255, number & 255].join(', ')
       }
 
       function displayName(user) {
@@ -1333,11 +1045,11 @@ const metadata = {
         return String(user?.userId || user?.UserId || '').trim()
       }
 
-      function getBadgeName(badge) {
+      function badgeName(badge) {
         return String(badge?.name || badge?.badgeName || badge?.title || badge?.value1 || '').trim()
       }
 
-      function getBadgeImage(badge) {
+      function badgeImage(badge) {
         return safeUrl(badge?.url || badge?.image || badge?.badgeUrl || badge?.value2)
       }
 
@@ -1351,12 +1063,12 @@ const metadata = {
         return Number.isFinite(number) && number > 0 ? number : 1
       }
 
-      function getDetails(name) {
+      function itemDetails(name) {
         const itemKey = key(name)
         return state.items.find((item) => key(item.name || item.itemName || item.title) === itemKey) || null
       }
 
-      function getMeta(name, details) {
+      function itemMeta(name, details) {
         const itemKey = key(name)
         const hard = Object.entries(ITEM_META).find(([metaName]) => key(metaName) === itemKey)?.[1] || null
         const type = normalize(details?.category || details?.type || '')
@@ -1369,7 +1081,7 @@ const metadata = {
         }
       }
 
-      function findInventory(user) {
+      function inventoryRecord(user) {
         const id = userId(user)
         const login = normalize(loginName(user))
 
@@ -1381,31 +1093,30 @@ const metadata = {
       }
 
       function rawInventory(user) {
-        const inventory = findInventory(user)
-        if (!inventory) return []
-        if (Array.isArray(inventory.items)) return inventory.items
-        if (Array.isArray(inventory.inventory)) return inventory.inventory
+        const record = inventoryRecord(user)
+        if (!record) return []
+        if (Array.isArray(record.items)) return record.items
+        if (Array.isArray(record.inventory)) return record.inventory
         return []
       }
 
-      function enrichedInventory(user) {
+      function inventoryItems(user) {
         return rawInventory(user)
           .map((entry) => {
             const name = itemName(entry)
-            const qty = itemQty(entry)
-            const details = getDetails(name)
-            const meta = getMeta(name, details)
-            const description = details?.description || details?.desc || details?.how || 'غرض موجود في حقيبة العضو.'
+            const quantity = itemQty(entry)
+            const details = itemDetails(name)
+            const meta = itemMeta(name, details)
+            const description = details?.description || details?.desc || details?.how || 'Inventory item.'
             const price = details?.price || details?.cost || details?.sellPrice || ''
 
-            return { name, qty, details, meta, description, price }
+            return { name, quantity, details, meta, description, price }
           })
-          .filter((entry) => entry.name)
+          .filter((item) => item.name)
       }
 
       function filteredInventory(user) {
-        const items = enrichedInventory(user)
-
+        const items = inventoryItems(user)
         if (state.filter === 'all') return items
         if (state.filter === 'rare') return items.filter((item) => ['legendary', 'rare'].includes(item.meta.rarity) || item.meta.type === 'featured')
         return items.filter((item) => item.meta.type === state.filter)
@@ -1434,58 +1145,25 @@ const metadata = {
         state.items = Array.isArray(itemsPayload) ? itemsPayload : Array.isArray(itemsPayload?.items) ? itemsPayload.items : []
       }
 
-      function profileLink(user) {
-        const url = new URL(window.location.href)
-        url.searchParams.set('user', loginName(user))
-        url.hash = ''
-        return url.toString()
-      }
-
-      function updateQuery(user) {
-        const url = new URL(window.location.href)
-        url.searchParams.set('user', loginName(user))
-        url.hash = ''
-        history.replaceState(null, '', `${url.pathname}${url.search}`)
-      }
-
-      async function copyText(value, button, doneText = 'تم النسخ') {
-        if (!button) return
-        const oldText = button.textContent
-
-        try {
-          await navigator.clipboard.writeText(value)
-          button.textContent = doneText
-          button.classList.add('is-copied')
-          addTimer(window.setTimeout(() => {
-            button.textContent = oldText
-            button.classList.remove('is-copied')
-          }, 1000))
-        } catch {
-          button.textContent = value
-          addTimer(window.setTimeout(() => {
-            button.textContent = oldText
-          }, 1400))
-        }
-      }
-
-      function renderSearchResults(value) {
-        if (!profileResults) return
-
+      function renderResults(value) {
         profileResults.innerHTML = ''
-        const query = normalize(value)
 
+        const query = normalize(value)
         if (!query) return
 
         const matches = state.users
           .filter((user) => normalize(displayName(user)).includes(query) || normalize(loginName(user)).includes(query))
-          .slice(0, 10)
+          .slice(0, 8)
 
         if (!matches.length) {
           profileResults.innerHTML = `
-            <div class="tnx-mini-empty">
-              <strong>ما فيه نتائج</strong>
-              <span>تأكد من اسم المستخدم.</span>
-            </div>
+            <button type="button" class="profile-result">
+              <div></div>
+              <div>
+                <strong>No results</strong>
+                <span>Check username</span>
+              </div>
+            </button>
           `
           return
         }
@@ -1496,7 +1174,7 @@ const metadata = {
           const avatar = safeUrl(user.profileImageUrl || user.avatar || user.ProfileImageUrl)
 
           return `
-            <button type="button" class="tnx-result" data-index="${index}">
+            <button type="button" class="profile-result" data-index="${index}">
               <img src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />
               <div>
                 <strong>${esc(name)}</strong>
@@ -1510,7 +1188,6 @@ const metadata = {
           button.addEventListener('click', () => {
             const user = matches[Number(button.dataset.index)]
             if (!user) return
-
             if (profileSearch) profileSearch.value = ''
             profileResults.innerHTML = ''
             updateQuery(user)
@@ -1519,139 +1196,139 @@ const metadata = {
         })
       }
 
-      function getShownBadges(user, limit = 7) {
+      function profileUrl(user) {
+        const url = new URL(window.location.href)
+        url.searchParams.set('user', loginName(user))
+        url.hash = ''
+        return url.toString()
+      }
+
+      function updateQuery(user) {
+        const url = new URL(window.location.href)
+        url.searchParams.set('user', loginName(user))
+        url.hash = ''
+        history.replaceState(null, '', `${url.pathname}${url.search}`)
+      }
+
+      function shownBadges(user, limit = 4) {
         const badges = Array.isArray(user.badges) ? user.badges : []
         const equipped = badges.filter((badge) => badge.equipped).slice(0, limit)
         return equipped.length ? equipped : badges.slice(0, limit)
       }
 
-      function renderHero(user) {
+      function renderTop(user) {
         const name = displayName(user)
         const login = loginName(user)
         const avatar = safeUrl(user.profileImageUrl || user.avatar || user.ProfileImageUrl)
-        const banner = safeUrl(user.bannerImage || user.banner || user.backgroundImage)
-        const color = safeColor(user.backgroundColor || user.profileColor || '#423fff')
         const points = Number(user.points || 0)
-        const gold = Number(user.gold || 0)
         const level = Math.max(1, Math.floor(points / 100000) + 1)
-        const jobName = user.jobName || 'Citizen'
-        const jobId = user.jobId || 'tier1_Citizen'
-        const jobIcon = JOB_ICONS[jobId] || 'mdi:account'
-        const shownBadges = getShownBadges(user, 7)
 
-        profileHero.innerHTML = `
-          <div class="tnx-cover" style="--accent-rgb: ${hexToRgb(color)}; background-image: ${cssUrl(banner)}; background-color: ${color};"></div>
+        profileTop.innerHTML = `
+          <img class="top-avatar" src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />
 
-          <div class="tnx-hero-inner" style="--accent-rgb: ${hexToRgb(color)};">
-            <div class="tnx-avatar-zone">
-              <div class="tnx-avatar-frame">
-                <img src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />
-                <span class="tnx-status-dot"></span>
-              </div>
-
-              <div class="tnx-level">LEVEL ${formatNumber(level)}</div>
+          <div class="top-identity">
+            <div class="top-name-row">
+              <h1 title="${esc(name)}">${esc(name)}</h1>
+              <span class="name-caret">▼</span>
             </div>
 
-            <div class="tnx-identity">
-              <h2 title="${esc(name)}">${esc(name)}</h2>
-              <p class="tnx-login">${esc(login)}</p>
-
-              <div class="tnx-job">
-                <iconify-icon icon="${esc(jobIcon)}"></iconify-icon>
-                <span>${esc(jobName)}</span>
-              </div>
-
-              <div class="tnx-mini-badges">
-                ${
-                  shownBadges.length
-                    ? shownBadges.map((badge) => {
-                        const badgeName = getBadgeName(badge)
-                        const image = getBadgeImage(badge)
-                        return `
-                          <div class="tnx-mini-badge" title="${esc(badgeName)}">
-                            <img src="${esc(image)}" alt="${esc(badgeName)}" loading="lazy" />
-                          </div>
-                        `
-                      }).join('')
-                    : '<div class="tnx-mini-badge">—</div>'
-                }
-              </div>
+            <div class="profile-location">
+              <span class="tiny-flag"></span>
+              <span>Saudi Arabia</span>
             </div>
 
-            <div class="tnx-wallet">
-              <div class="tnx-wallet-card">
-                <span>النقاط</span>
-                <strong>${formatNumber(points)}</strong>
-              </div>
+            <div class="profile-quote">i Keep Making Mistakes<br />TTV: ${esc(login)}</div>
+          </div>
 
-              <div class="tnx-wallet-card">
-                <span>الذهب</span>
-                <strong>${formatNumber(gold)}</strong>
-              </div>
+          <div class="top-level-card">
+            <div class="level-line">
+              <span>Level</span>
+              <b class="level-number">${formatNumber(level)}</b>
             </div>
+
+            <div class="level-hint">
+              You can feature one of your badges here.<br />
+              Select one from your profile page.
+            </div>
+
+            <a class="edit-button" href="/badges?user=${encodeURIComponent(login)}">View badges</a>
           </div>
         `
       }
 
-      function renderFeatured(user) {
-        const items = enrichedInventory(user)
-          .sort((a, b) => {
-            const rank = { legendary: 4, rare: 3, uncommon: 2, common: 1 }
-            return (rank[b.meta.rarity] || 0) - (rank[a.meta.rarity] || 0) || b.qty - a.qty
-          })
+      function renderArtwork(user) {
+        const avatar = safeUrl(user.profileImageUrl || user.avatar || user.ProfileImageUrl)
+        const banner = safeUrl(user.bannerImage || user.banner || user.backgroundImage)
+        const art = banner || avatar
 
-        const main = items[0]
-        const rest = items.slice(1, 5)
+        mainArtwork.innerHTML = `
+          <div class="art-main" style="background-image: ${cssUrl(art)};">
+            ${!art ? '<div class="art-fallback">TNX</div>' : ''}
+          </div>
 
-        if (!main) {
-          featuredShowcase.innerHTML = `
-            <div class="tnx-mini-empty">
-              <strong>ما فيه أغراض للعرض</strong>
-              <span>شغّل تصدير الحقيبة أو تأكد من user_inventory.json.</span>
-            </div>
-          `
-          return
-        }
+          <div class="art-side">
+            <div class="art-letter" style="background-image: ${cssUrl(art)};">T</div>
+            <div class="art-letter" style="background-image: ${cssUrl(art)};">N</div>
+            <div class="art-letter" style="background-image: ${cssUrl(art)};">X</div>
+            <div class="art-more">+ 2</div>
+          </div>
+        `
+      }
 
-        featuredShowcase.innerHTML = `
-          <article class="tnx-big-item">
-            <div class="tnx-big-icon">${esc(main.meta.icon)}</div>
-            <h3>${esc(main.name)}</h3>
-            <p>${esc(main.description)}</p>
-            <strong>x${formatNumber(main.qty)}</strong>
-          </article>
+      function renderSidebar(user) {
+        const badges = Array.isArray(user.badges) ? user.badges : []
+        const items = inventoryItems(user)
+        const points = Number(user.points || 0)
+        const gold = Number(user.gold || 0)
+        const miniBadges = shownBadges(user, 4)
+        const avatar = safeUrl(user.profileImageUrl || user.avatar || user.ProfileImageUrl)
 
-          <div class="tnx-showcase-list">
+        profileSidebar.innerHTML = `
+          <div class="status-block">
+            <div class="offline-title">Currently Offline</div>
+            <div class="offline-sub">Last Online 12 hrs, 58 mins ago</div>
+          </div>
+
+          <div class="side-stat">Badges <b>${formatNumber(badges.length)}</b></div>
+          <div class="side-badges">
             ${
-              rest.length
-                ? rest.map((item) => `
-                  <div class="tnx-showcase-row">
-                    <div>
-                      <strong>${esc(item.meta.icon)} ${esc(item.name)}</strong>
-                      <span>${esc(item.meta.rarity)} · ${esc(item.meta.type)}</span>
-                    </div>
-                    <b>x${formatNumber(item.qty)}</b>
-                  </div>
+              miniBadges.length
+                ? miniBadges.map((badge) => `
+                  <img src="${esc(badgeImage(badge))}" alt="${esc(badgeName(badge))}" title="${esc(badgeName(badge))}" loading="lazy" />
                 `).join('')
-                : `
-                  <div class="tnx-showcase-row">
-                    <div>
-                      <strong>لا توجد أغراض إضافية</strong>
-                      <span>بتظهر هنا إذا صار عنده أغراض أكثر.</span>
-                    </div>
-                    <b>—</b>
-                  </div>
-                `
+                : '<span>—</span>'
             }
+          </div>
+
+          <div class="side-link"><strong>Points</strong><span>${formatNumber(points)}</span></div>
+          <div class="side-link"><strong>Gold</strong><span>${formatNumber(gold)}</span></div>
+          <div class="side-link"><strong>Inventory</strong><span>${formatNumber(items.length)}</span></div>
+          <div class="side-link"><strong>Workshop Items</strong><span>${formatNumber(items.filter((item) => item.meta.type === 'resource').length)}</span></div>
+          <div class="side-link"><strong>Reviews</strong><span>${formatNumber(items.filter((item) => item.meta.rarity === 'rare').length)}</span></div>
+          <div class="side-link"><strong>Artwork</strong><span>${formatNumber(badges.length ? Math.min(4, badges.length) : 0)}</span></div>
+
+          <div class="side-stat">Friends <b>${Math.min(15, Math.max(5, items.length))}</b></div>
+
+          <div class="friends-list">
+            ${[0, 1, 2, 3, 4].map((_, index) => `
+              <div class="friend-row">
+                <img src="${esc(avatar)}" alt="" loading="lazy" />
+                <div>
+                  <strong>${index === 0 ? 'TNX6' : 'Member ' + (index + 1)}</strong>
+                  <small>${index === 1 ? 'Online' : 'Last Online ' + (index + 2) + ' hrs ago'}</small>
+                </div>
+                <span class="friend-level">${[36, 20, 7, 6, 5][index]}</span>
+              </div>
+            `).join('')}
           </div>
         `
       }
 
       function renderInventory(user) {
-        const all = enrichedInventory(user)
+        const all = inventoryItems(user)
         const items = filteredInventory(user)
 
-        if (inventoryCount) inventoryCount.textContent = String(all.length)
+        if (inventoryCount) inventoryCount.textContent = `${formatNumber(all.length)} items`
 
         filterButtons.forEach((button) => {
           button.classList.toggle('is-active', button.dataset.filter === state.filter)
@@ -1664,15 +1341,15 @@ const metadata = {
           const rare = ['legendary', 'rare'].includes(item.meta.rarity) || item.meta.type === 'featured'
 
           return `
-            <article class="tnx-slot${rare ? ' is-rare' : ''}">
-              <span class="tnx-slot-qty">x${formatNumber(item.qty)}</span>
-              <div class="tnx-slot-icon">${esc(item.meta.icon)}</div>
+            <article class="item-slot${rare ? ' is-rare' : ''}">
+              <span class="item-qty">x${formatNumber(item.quantity)}</span>
+              <div class="item-icon">${esc(item.meta.icon)}</div>
               <h3>${esc(item.name)}</h3>
               <p>${esc(item.description)}</p>
-              <div class="tnx-slot-tags">
+              <div class="item-tags">
                 <span>${esc(item.meta.type)}</span>
                 <span>${esc(item.meta.rarity)}</span>
-                ${item.price ? `<span>${formatNumber(item.price)} نقطة</span>` : ''}
+                ${item.price ? `<span>${formatNumber(item.price)} pts</span>` : ''}
               </div>
             </article>
           `
@@ -1682,106 +1359,44 @@ const metadata = {
       function renderBadges(user) {
         const badges = Array.isArray(user.badges) ? user.badges : []
 
-        if (badgeCount) badgeCount.textContent = String(badges.length)
+        if (badgeCount) badgeCount.textContent = `${formatNumber(badges.length)} badges`
 
         if (!badges.length) {
-          badgeGrid.innerHTML = `
-            <div class="tnx-mini-empty">
-              <strong>ما فيه بادجات</strong>
-              <span>ما تم العثور على بادجات لهذا العضو.</span>
+          badgesGrid.innerHTML = `
+            <div class="small-empty">
+              <strong>No badges</strong>
+              <span>No badges were found for this member.</span>
             </div>
           `
           return
         }
 
-        badgeGrid.innerHTML = badges.slice(0, 42).map((badge) => {
-          const badgeName = getBadgeName(badge)
-          const image = getBadgeImage(badge)
-
-          return `
-            <div class="tnx-badge-tile">
-              <img src="${esc(image)}" alt="${esc(badgeName)}" loading="lazy" />
-              <span>${esc(badgeName)}</span>
-            </div>
-          `
-        }).join('')
-      }
-
-      function renderStats(user) {
-        const badges = Array.isArray(user.badges) ? user.badges : []
-        const equipped = badges.filter((badge) => badge.equipped).length
-        const items = enrichedInventory(user)
-        const totalQty = items.reduce((sum, item) => sum + item.qty, 0)
-        const rareCount = items.filter((item) => ['legendary', 'rare'].includes(item.meta.rarity) || item.meta.type === 'featured').length
-
-        statsList.innerHTML = `
-          <div class="tnx-stat-row">
-            <span>عدد البادجات</span>
-            <strong>${formatNumber(badges.length)}</strong>
-          </div>
-
-          <div class="tnx-stat-row">
-            <span>بادجات الواجهة</span>
-            <strong>${formatNumber(equipped)}</strong>
-          </div>
-
-          <div class="tnx-stat-row">
-            <span>أنواع الأغراض</span>
-            <strong>${formatNumber(items.length)}</strong>
-          </div>
-
-          <div class="tnx-stat-row">
-            <span>إجمالي الكميات</span>
-            <strong>${formatNumber(totalQty)}</strong>
-          </div>
-
-          <div class="tnx-stat-row">
-            <span>أغراض نادرة</span>
-            <strong>${formatNumber(rareCount)}</strong>
-          </div>
-        `
-      }
-
-      function renderRare(user) {
-        const items = enrichedInventory(user)
-          .filter((item) => ['legendary', 'rare'].includes(item.meta.rarity) || item.meta.type === 'featured')
-          .slice(0, 8)
-
-        if (!items.length) {
-          rareList.innerHTML = `
-            <div class="tnx-mini-empty">
-              <strong>ما فيه نادر</strong>
-              <span>الأغراض النادرة بتظهر هنا.</span>
-            </div>
-          `
-          return
-        }
-
-        rareList.innerHTML = items.map((item) => `
-          <div class="tnx-rare-row">
-            <strong>${esc(item.meta.icon)} ${esc(item.name)}</strong>
-            <span>x${formatNumber(item.qty)}</span>
+        badgesGrid.innerHTML = badges.slice(0, 36).map((badge) => `
+          <div class="badge-tile">
+            <img src="${esc(badgeImage(badge))}" alt="${esc(badgeName(badge))}" loading="lazy" />
+            <span>${esc(badgeName(badge))}</span>
           </div>
         `).join('')
       }
 
       function renderProfile(user) {
         state.activeUser = user
+
+        const banner = safeUrl(user.bannerImage || user.banner || user.backgroundImage)
+        const color = String(user.backgroundColor || '#1a2419')
+
+        profileBackdrop.style.backgroundImage = banner
+          ? `url("${banner}")`
+          : `linear-gradient(180deg, ${color}, #050708)`
+
         emptyState?.classList.add('hidden')
         profileContent?.classList.remove('hidden')
 
-        renderHero(user)
-        renderFeatured(user)
+        renderTop(user)
+        renderArtwork(user)
+        renderSidebar(user)
         renderInventory(user)
         renderBadges(user)
-        renderStats(user)
-        renderRare(user)
-
-        const login = loginName(user)
-
-        if (badgesLink) {
-          badgesLink.href = `/badges?user=${encodeURIComponent(login)}`
-        }
       }
 
       function openFromQuery() {
@@ -1798,9 +1413,8 @@ const metadata = {
 
         if (!user) {
           emptyState.innerHTML = `
-            <div class="tnx-empty-icon">!</div>
-            <strong>ما لقيت العضو</strong>
-            <span>تأكد أنه موجود في <b>user_badges.json</b>.</span>
+            <strong>Member not found</strong>
+            <span>Make sure this user exists in <b>user_badges.json</b>.</span>
           `
           emptyState.classList.remove('hidden')
           profileContent.classList.add('hidden')
@@ -1811,11 +1425,34 @@ const metadata = {
         return true
       }
 
-      function handleBackTop() {
+      function handleBackToTop() {
         backToTop?.classList.toggle('is-visible', window.scrollY > 520)
       }
 
-      addListener(profileSearch, 'input', () => renderSearchResults(profileSearch.value))
+      async function copyProfileLink() {
+        if (!state.activeUser) return
+        const button = document.getElementById('copyProfileLink')
+        if (!button) return
+
+        const old = button.textContent
+
+        try {
+          await navigator.clipboard.writeText(profileUrl(state.activeUser))
+          button.textContent = 'Copied'
+          button.classList.add('is-copied')
+          addTimer(window.setTimeout(() => {
+            button.textContent = old
+            button.classList.remove('is-copied')
+          }, 1000))
+        } catch {
+          button.textContent = profileUrl(state.activeUser)
+          addTimer(window.setTimeout(() => {
+            button.textContent = old
+          }, 1400))
+        }
+      }
+
+      addListener(profileSearch, 'input', () => renderResults(profileSearch.value))
 
       addListener(clearProfileSearch, 'click', () => {
         if (!profileSearch) return
@@ -1831,25 +1468,24 @@ const metadata = {
         })
       })
 
-      addListener(copyProfileLink, 'click', () => {
-        if (!state.activeUser) return
-        copyText(profileLink(state.activeUser), copyProfileLink, 'تم نسخ الرابط')
+      addListener(document, 'click', (event) => {
+        const target = event.target
+        if (target && target.id === 'copyProfileLink') {
+          copyProfileLink()
+        }
       })
 
       addListener(backToTop, 'click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
       })
 
-      addListener(window, 'scroll', handleBackTop, { passive: true })
+      addListener(window, 'scroll', handleBackToTop, { passive: true })
 
       ;(async () => {
         await loadData()
         openFromQuery()
-        handleBackTop()
+        handleBackToTop()
       })()
     })()
   </script>
-
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
 </Layout>
