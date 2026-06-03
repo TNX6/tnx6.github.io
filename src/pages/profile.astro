@@ -4,153 +4,143 @@ import Layout from '~/layouts/PageLayout.astro'
 const metadata = {
   title: 'Profile — TNX6',
   ignoreTitleTemplate: true,
-  description: 'Steam-style profile page for TNX6 community members.',
+  description: 'Steam-style TNX6 member profile.',
 }
 ---
 
 <Layout metadata={metadata}>
-  <main class="steam-profile-page" dir="rtl">
-    <div class="page-bg"></div>
-    <div class="page-noise"></div>
+  <main class="tnx-steam-page" dir="rtl">
+    <div class="tnx-page-bg"></div>
+    <div class="tnx-page-grid"></div>
 
-    <section class="profile-shell">
-      <header class="profile-top">
-        <div>
-          <div class="eyebrow">
-            <span></span>
-            TNX6 COMMUNITY PROFILE
-          </div>
-
+    <section class="tnx-shell">
+      <header class="tnx-page-head">
+        <div class="tnx-head-copy">
+          <span class="tnx-kicker">TNX6 COMMUNITY PROFILE</span>
           <h1>بروفايل العضو</h1>
-
-          <p>
-            بطاقة شخصية للعضو تعرض الخلفية، الصورة، النقاط، الذهب، البادجات، والحقيبة.
-          </p>
+          <p>صفحة تعرض حساب العضو بشكل قريب من Steam: صورة، خلفية، مستوى، بادجات، أغراض، نقاط وذهب.</p>
         </div>
 
-        <div class="search-card">
-          <div class="search-box">
+        <div class="tnx-search-panel">
+          <label class="tnx-search-box" for="profileSearch">
             <span>⌕</span>
-            <input id="profileSearch" type="search" autocomplete="off" placeholder="ابحث باسم المستخدم..." />
-            <button id="clearProfileSearch" type="button" aria-label="مسح">×</button>
-          </div>
+            <input id="profileSearch" type="search" autocomplete="off" placeholder="ابحث باسم Twitch..." />
+            <button id="clearProfileSearch" type="button" aria-label="مسح البحث">×</button>
+          </label>
 
-          <div id="profileResults" class="profile-results"></div>
+          <div id="profileResults" class="tnx-search-results"></div>
         </div>
       </header>
 
-      <section id="emptyState" class="empty-state">
-        <div class="empty-icon">⌁</div>
+      <section id="emptyState" class="tnx-empty">
+        <div class="tnx-empty-icon">☰</div>
         <strong>ابحث عن عضو</strong>
-        <span>مثال: <b>/profile?user=haneen48</b></span>
+        <span>اكتب اسم المستخدم أو افتح رابط مباشر مثل <b>/profile?user=haneen48</b></span>
       </section>
 
-      <section id="profileContent" class="profile-content hidden">
-        <section id="steamCard" class="steam-card"></section>
+      <section id="profileContent" class="tnx-profile hidden">
+        <section id="profileHero" class="tnx-profile-hero"></section>
 
-        <div class="layout-grid">
-          <main class="main-column">
-            <section class="panel showcase-panel">
-              <div class="panel-head">
-                <div>
-                  <span>FEATURED SHOWCASE</span>
-                  <h2>واجهة العضو</h2>
-                </div>
+        <section class="tnx-profile-body">
+          <main class="tnx-profile-main">
+            <section class="tnx-module tnx-showcase-module">
+              <div class="tnx-module-title">
+                <span>FEATURED SHOWCASE</span>
+                <h2>واجهة العضو</h2>
               </div>
 
-              <div id="featuredShowcase" class="featured-showcase"></div>
+              <div id="featuredShowcase" class="tnx-featured-showcase"></div>
             </section>
 
-            <section class="panel">
-              <div class="panel-head row">
+            <section class="tnx-module">
+              <div class="tnx-module-title tnx-row-title">
                 <div>
-                  <span>INVENTORY</span>
+                  <span>ITEM INVENTORY</span>
                   <h2>الحقيبة</h2>
                 </div>
 
-                <div class="small-counter">
-                  <strong id="inventoryTypeCount">0</strong>
+                <div class="tnx-count-pill">
+                  <strong id="inventoryCount">0</strong>
                   <small>نوع</small>
                 </div>
               </div>
 
-              <div class="filter-strip" id="inventoryFilters">
+              <div class="tnx-filter-bar" id="inventoryFilters">
                 <button type="button" class="is-active" data-filter="all">الكل</button>
-                <button type="button" data-filter="rare">نادر</button>
-                <button type="button" data-filter="box">صناديق</button>
-                <button type="button" data-filter="license">رخص</button>
-                <button type="button" data-filter="resource">موارد</button>
+                <button type="button" data-filter="rare">النادر</button>
+                <button type="button" data-filter="box">الصناديق</button>
+                <button type="button" data-filter="license">الرخص</button>
+                <button type="button" data-filter="resource">الموارد</button>
                 <button type="button" data-filter="usable">استخدام</button>
               </div>
 
-              <div id="inventoryGrid" class="inventory-grid"></div>
+              <div id="inventoryGrid" class="tnx-inventory-grid"></div>
 
-              <div id="inventoryEmpty" class="mini-empty hidden">
+              <div id="inventoryEmpty" class="tnx-mini-empty hidden">
                 <strong>ما فيه أغراض ظاهرة</strong>
-                <span>الحقيبة فاضية أو الفلتر الحالي ما طلع نتائج.</span>
+                <span>الحقيبة فاضية أو الفلتر الحالي ما طلع شيء.</span>
               </div>
             </section>
 
-            <section class="panel">
-              <div class="panel-head">
+            <section class="tnx-module">
+              <div class="tnx-module-title tnx-row-title">
                 <div>
                   <span>BADGE COLLECTION</span>
                   <h2>مجموعة البادجات</h2>
                 </div>
+
+                <div class="tnx-count-pill">
+                  <strong id="badgeCount">0</strong>
+                  <small>بادج</small>
+                </div>
               </div>
 
-              <div id="badgeCollection" class="badge-collection"></div>
+              <div id="badgeGrid" class="tnx-badge-grid"></div>
             </section>
           </main>
 
-          <aside class="side-column">
-            <section class="panel side-panel">
-              <div class="panel-head">
-                <div>
-                  <span>PROFILE STATS</span>
-                  <h2>الإحصائيات</h2>
-                </div>
+          <aside class="tnx-profile-side">
+            <section class="tnx-module">
+              <div class="tnx-module-title">
+                <span>PROFILE DATA</span>
+                <h2>البيانات</h2>
               </div>
 
-              <div id="statsList" class="stats-list"></div>
+              <div id="statsList" class="tnx-stats-list"></div>
             </section>
 
-            <section class="panel side-panel">
-              <div class="panel-head">
-                <div>
-                  <span>RAREST ITEMS</span>
-                  <h2>أندر الأغراض</h2>
-                </div>
+            <section class="tnx-module">
+              <div class="tnx-module-title">
+                <span>RARE ITEMS</span>
+                <h2>أندر الأغراض</h2>
               </div>
 
-              <div id="rareList" class="rare-list"></div>
+              <div id="rareList" class="tnx-rare-list"></div>
             </section>
 
-            <section class="panel side-panel">
-              <div class="panel-head">
-                <div>
-                  <span>ACTIONS</span>
-                  <h2>روابط</h2>
-                </div>
+            <section class="tnx-module">
+              <div class="tnx-module-title">
+                <span>PROFILE LINKS</span>
+                <h2>روابط</h2>
               </div>
 
-              <div class="action-list">
+              <div class="tnx-actions">
                 <a id="badgesLink" href="/badges">بطاقة البادجات</a>
                 <button id="copyProfileLink" type="button">نسخ رابط البروفايل</button>
               </div>
             </section>
           </aside>
-        </div>
+        </section>
       </section>
     </section>
 
-    <button id="backToTop" class="back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
+    <button id="backToTop" class="tnx-back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
   </main>
 
   <style is:global>
     html {
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 218, 106, 0.38) rgba(0, 0, 0, 0.3);
+      scrollbar-color: rgba(255, 218, 106, 0.38) rgba(0, 0, 0, 0.35);
     }
 
     html::-webkit-scrollbar {
@@ -164,356 +154,350 @@ const metadata = {
     html::-webkit-scrollbar-thumb {
       border: 2px solid rgba(0, 0, 0, 0.35);
       border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255, 218, 106, 0.78), rgba(194, 146, 0, 0.5));
+      background: linear-gradient(180deg, rgba(255, 218, 106, 0.78), rgba(194, 146, 0, 0.52));
     }
 
     .hidden {
       display: none !important;
     }
 
-    .steam-profile-page {
+    .tnx-steam-page {
       position: relative;
       min-height: 100vh;
       overflow: hidden;
-      background: #07050b;
-      color: #fff;
+      background: #05070c;
+      color: #ffffff;
       font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    .page-bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      background:
-        radial-gradient(circle at 16% 12%, rgba(255, 218, 106, 0.16), transparent 30%),
-        radial-gradient(circle at 85% 10%, rgba(124, 58, 237, 0.14), transparent 30%),
-        radial-gradient(circle at 52% 90%, rgba(194, 146, 0, 0.14), transparent 36%),
-        linear-gradient(135deg, #07050b 0%, #0a0b10 46%, #130c05 100%);
-      animation: bgBreathe 10s ease-in-out infinite;
-    }
-
-    @keyframes bgBreathe {
-      0%, 100% { transform: scale(1); filter: brightness(1) saturate(1); }
-      50% { transform: scale(1.018); filter: brightness(1.06) saturate(1.12); }
-    }
-
-    .page-noise {
+    .tnx-page-bg {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      opacity: 0.07;
+      background:
+        radial-gradient(circle at 16% 8%, rgba(255, 218, 106, 0.16), transparent 30%),
+        radial-gradient(circle at 82% 13%, rgba(76, 120, 255, 0.13), transparent 30%),
+        radial-gradient(circle at 52% 92%, rgba(194, 146, 0, 0.13), transparent 34%),
+        linear-gradient(135deg, #05070c 0%, #09111d 48%, #120905 100%);
+      animation: tnxBgBreath 10s ease-in-out infinite;
+    }
+
+    @keyframes tnxBgBreath {
+      0%, 100% { transform: scale(1); filter: brightness(1) saturate(1); }
+      50% { transform: scale(1.018); filter: brightness(1.06) saturate(1.1); }
+    }
+
+    .tnx-page-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.055;
       background-image:
         linear-gradient(rgba(255, 218, 106, 0.45) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 218, 106, 0.45) 1px, transparent 1px);
-      background-size: 58px 58px;
-      mask-image: radial-gradient(circle at center, black 0%, transparent 72%);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 75%);
     }
 
-    .profile-shell {
+    .tnx-shell {
       position: relative;
       z-index: 1;
-      width: min(100%, 1280px);
-      margin: 0 auto;
-      padding: 6.25rem 1rem 5rem;
+      width: min(100%, 1250px);
+      margin-inline: auto;
+      padding: 6.4rem 1rem 5rem;
     }
 
-    .profile-top {
+    .tnx-page-head {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(330px, 440px);
+      grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
       gap: 1rem;
       align-items: end;
       margin-bottom: 1rem;
     }
 
-    .eyebrow {
+    .tnx-kicker {
       display: inline-flex;
       align-items: center;
-      gap: 0.55rem;
-      border: 1px solid rgba(255, 218, 106, 0.3);
+      width: fit-content;
+      border: 1px solid rgba(255, 218, 106, 0.27);
       border-radius: 999px;
-      background: rgba(0, 0, 0, 0.38);
+      background: rgba(0, 0, 0, 0.34);
       color: #ffda6a;
       padding: 0.55rem 0.9rem;
       font-size: 0.74rem;
       font-weight: 950;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.14em;
       backdrop-filter: blur(14px);
     }
 
-    .eyebrow span {
-      width: 0.48rem;
-      height: 0.48rem;
-      border-radius: 999px;
-      background: #ffda6a;
-      box-shadow: 0 0 14px #ffda6a;
-    }
-
-    .profile-top h1 {
+    .tnx-head-copy h1 {
       margin: 0.9rem 0 0;
-      background: linear-gradient(90deg, #fff1a8, #ffda6a 42%, #c29200);
+      background: linear-gradient(90deg, #fff1a8, #ffda6a 44%, #c29200);
       background-clip: text;
       color: transparent;
-      font-size: clamp(3rem, 7vw, 6.5rem);
+      font-size: clamp(3.05rem, 7vw, 6.2rem);
       font-weight: 950;
       line-height: 0.92;
       letter-spacing: -0.055em;
     }
 
-    .profile-top p {
-      max-width: 680px;
+    .tnx-head-copy p {
+      max-width: 720px;
       margin: 1rem 0 0;
-      color: rgb(209, 213, 219);
+      color: rgba(226, 232, 240, 0.84);
       font-size: 1rem;
-      font-weight: 780;
+      font-weight: 760;
       line-height: 1.8;
     }
 
-    .search-card {
+    .tnx-search-panel {
       position: relative;
-      border: 1px solid rgba(255, 218, 106, 0.18);
-      border-radius: 1.4rem;
+      border: 1px solid rgba(255, 218, 106, 0.17);
+      border-radius: 1.35rem;
       background:
-        radial-gradient(circle at top right, rgba(255, 218, 106, 0.08), transparent 42%),
-        rgba(7, 5, 11, 0.76);
-      padding: 0.85rem;
+        radial-gradient(circle at top right, rgba(255, 218, 106, 0.08), transparent 44%),
+        rgba(8, 12, 18, 0.76);
+      padding: 0.8rem;
       box-shadow: 0 22px 58px rgba(0, 0, 0, 0.36);
       backdrop-filter: blur(16px);
     }
 
-    .search-box {
+    .tnx-search-box {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr) auto;
       gap: 0.7rem;
       align-items: center;
       border: 1px solid rgba(255, 218, 106, 0.18);
       border-radius: 1rem;
-      background: rgba(0, 0, 0, 0.32);
+      background: rgba(0, 0, 0, 0.34);
       padding: 0.75rem;
     }
 
-    .search-box span {
+    .tnx-search-box span {
       color: #ffda6a;
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-weight: 950;
     }
 
-    .search-box input {
+    .tnx-search-box input {
       width: 100%;
       border: 0;
       outline: 0;
       background: transparent;
       color: #fff;
-      font-size: 0.95rem;
+      font-size: 0.96rem;
       font-weight: 850;
     }
 
-    .search-box button {
+    .tnx-search-box button {
       display: grid;
       place-items: center;
-      width: 2rem;
-      height: 2rem;
+      width: 2.05rem;
+      height: 2.05rem;
       border: 1px solid rgba(255, 218, 106, 0.2);
       border-radius: 999px;
       background: rgba(255, 218, 106, 0.08);
       color: #ffda6a;
-      font-size: 1.15rem;
+      font-size: 1.16rem;
       font-weight: 950;
       cursor: pointer;
     }
 
-    .profile-results {
+    .tnx-search-results {
       display: grid;
       gap: 0.55rem;
       margin-top: 0.65rem;
     }
 
-    .profile-result {
+    .tnx-result {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr);
       gap: 0.75rem;
       align-items: center;
-      border: 1px solid rgba(255, 218, 106, 0.14);
-      border-radius: 1rem;
+      border: 1px solid rgba(255, 218, 106, 0.13);
+      border-radius: 0.95rem;
       background: rgba(0, 0, 0, 0.34);
-      padding: 0.68rem;
       color: white;
+      padding: 0.68rem;
       text-align: right;
       cursor: pointer;
-      transition: 180ms ease;
+      transition: 170ms ease;
     }
 
-    .profile-result:hover {
+    .tnx-result:hover {
       transform: translateY(-2px);
       border-color: rgba(255, 218, 106, 0.48);
       background: rgba(255, 218, 106, 0.08);
     }
 
-    .profile-result img {
-      width: 42px;
-      height: 42px;
+    .tnx-result img {
+      width: 44px;
+      height: 44px;
       border-radius: 0.85rem;
       object-fit: cover;
-      border: 1px solid rgba(255, 218, 106, 0.28);
+      border: 1px solid rgba(255, 218, 106, 0.25);
     }
 
-    .profile-result strong {
+    .tnx-result strong {
       display: block;
-      color: #f7e6ac;
-      font-size: 0.92rem;
-      font-weight: 950;
       overflow: hidden;
+      color: #f7e6ac;
+      font-size: 0.95rem;
+      font-weight: 950;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .profile-result span {
+    .tnx-result span {
       display: block;
-      margin-top: 0.14rem;
-      color: rgb(156, 163, 175);
-      font-size: 0.72rem;
+      margin-top: 0.12rem;
+      color: rgb(148, 163, 184);
+      font-size: 0.73rem;
       font-weight: 850;
       direction: ltr;
       text-align: right;
     }
 
-    .empty-state,
-    .mini-empty {
+    .tnx-empty,
+    .tnx-mini-empty {
       display: grid;
       place-items: center;
       gap: 0.45rem;
-      border: 1px solid rgba(255, 218, 106, 0.16);
-      border-radius: 1.6rem;
+      min-height: 230px;
+      border: 1px solid rgba(255, 218, 106, 0.15);
+      border-radius: 1.55rem;
       background:
         radial-gradient(circle at top, rgba(255, 218, 106, 0.08), transparent 44%),
-        rgba(7, 5, 11, 0.76);
+        rgba(8, 12, 18, 0.78);
       padding: 2rem;
-      min-height: 230px;
       text-align: center;
       box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
       backdrop-filter: blur(16px);
     }
 
-    .mini-empty {
-      min-height: 170px;
-      margin-top: 0.85rem;
+    .tnx-mini-empty {
+      min-height: 160px;
+      margin-top: 0.75rem;
+      box-shadow: none;
     }
 
-    .empty-icon {
+    .tnx-empty-icon {
       display: grid;
       place-items: center;
       width: 4rem;
       height: 4rem;
+      border: 1px solid rgba(255, 218, 106, 0.22);
       border-radius: 1.25rem;
-      border: 1px solid rgba(255, 218, 106, 0.24);
       background: rgba(255, 218, 106, 0.06);
       color: #ffda6a;
-      font-size: 1.8rem;
+      font-size: 1.7rem;
       font-weight: 950;
-      margin-bottom: 0.35rem;
     }
 
-    .empty-state strong,
-    .mini-empty strong {
+    .tnx-empty strong,
+    .tnx-mini-empty strong {
       color: #ffda6a;
       font-size: 1.35rem;
       font-weight: 950;
     }
 
-    .empty-state span,
-    .mini-empty span {
-      color: rgb(156, 163, 175);
+    .tnx-empty span,
+    .tnx-mini-empty span {
+      color: rgb(148, 163, 184);
       font-size: 0.9rem;
       font-weight: 800;
-      line-height: 1.7;
+      line-height: 1.75;
     }
 
-    .empty-state b {
+    .tnx-empty b {
       color: #f7e6ac;
       direction: ltr;
       unicode-bidi: embed;
     }
 
-    .profile-content {
+    .tnx-profile {
       display: grid;
       gap: 1rem;
     }
 
-    .steam-card {
+    /* Steam-like top card */
+    .tnx-profile-hero {
       position: relative;
-      min-height: 430px;
       overflow: hidden;
-      border: 1px solid rgba(255, 218, 106, 0.24);
-      border-radius: 2rem;
-      background: rgba(7, 5, 11, 0.76);
+      min-height: 438px;
+      border: 1px solid rgba(255, 218, 106, 0.22);
+      border-radius: 1.55rem;
+      background: rgba(8, 12, 18, 0.8);
       box-shadow:
         0 30px 90px rgba(0, 0, 0, 0.54),
         inset 0 0 34px rgba(255, 218, 106, 0.025);
       backdrop-filter: blur(18px);
     }
 
-    .steam-cover {
+    .tnx-cover {
       position: absolute;
       inset: 0;
       background-position: center;
       background-size: cover;
       transform: scale(1.02);
-      filter: saturate(1.06) contrast(1.04);
+      filter: saturate(1.05) contrast(1.05);
     }
 
-    .steam-cover::after {
+    .tnx-cover::after {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(to bottom, rgba(0, 0, 0, 0.18), rgba(7, 5, 11, 0.92) 72%, rgba(7, 5, 11, 0.98)),
-        radial-gradient(circle at 18% 28%, rgba(var(--accent-rgb), 0.28), transparent 38%),
-        radial-gradient(circle at 82% 18%, rgba(255, 218, 106, 0.12), transparent 38%);
+        linear-gradient(to bottom, rgba(0,0,0,0.08), rgba(5, 8, 13, 0.5) 48%, rgba(5, 8, 13, 0.94) 100%),
+        linear-gradient(to left, rgba(var(--accent-rgb), 0.24), transparent 38%),
+        radial-gradient(circle at top left, rgba(255, 218, 106, 0.14), transparent 40%);
     }
 
-    .steam-profile-inner {
+    .tnx-hero-inner {
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: 190px minmax(0, 1fr) 280px;
-      gap: 1.2rem;
+      grid-template-columns: 184px minmax(0, 1fr) 290px;
+      gap: 1.25rem;
       align-items: end;
-      min-height: 430px;
+      min-height: 438px;
       padding: 1.35rem;
     }
 
-    .avatar-block {
+    .tnx-avatar-zone {
       display: grid;
       justify-items: center;
       gap: 0.8rem;
     }
 
-    .avatar-frame {
+    .tnx-avatar-frame {
       position: relative;
-      width: 170px;
-      height: 170px;
-      border-radius: 1.55rem;
-      padding: 6px;
+      width: 168px;
+      height: 168px;
+      border-radius: 1.15rem;
+      padding: 5px;
       background:
-        linear-gradient(135deg, rgba(255, 218, 106, 0.95), rgba(var(--accent-rgb), 0.98), rgba(255, 255, 255, 0.22));
+        linear-gradient(135deg, rgba(255,218,106,0.95), rgba(var(--accent-rgb),0.9), rgba(255,255,255,0.18));
       box-shadow:
-        0 24px 46px rgba(0, 0, 0, 0.48),
-        0 0 26px rgba(var(--accent-rgb), 0.28);
+        0 24px 46px rgba(0,0,0,0.5),
+        0 0 26px rgba(var(--accent-rgb),0.28);
     }
 
-    .avatar-frame img {
+    .tnx-avatar-frame img {
+      display: block;
       width: 100%;
       height: 100%;
-      border-radius: 1.22rem;
+      border-radius: 0.9rem;
       object-fit: cover;
-      display: block;
       background: #111;
     }
 
-    .online-dot {
+    .tnx-status-dot {
       position: absolute;
-      right: 0.65rem;
-      bottom: 0.65rem;
+      right: 0.6rem;
+      bottom: 0.6rem;
       width: 1rem;
       height: 1rem;
       border: 3px solid #101014;
@@ -522,12 +506,12 @@ const metadata = {
       box-shadow: 0 0 14px rgba(52, 211, 153, 0.75);
     }
 
-    .level-pill {
+    .tnx-level {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 5.4rem;
-      border: 1px solid rgba(255, 218, 106, 0.26);
+      min-width: 5.8rem;
+      border: 1px solid rgba(255, 218, 106, 0.24);
       border-radius: 999px;
       background: rgba(0, 0, 0, 0.55);
       color: #ffda6a;
@@ -538,38 +522,38 @@ const metadata = {
       backdrop-filter: blur(12px);
     }
 
-    .profile-identity {
+    .tnx-identity {
       min-width: 0;
       padding-bottom: 0.25rem;
     }
 
-    .profile-identity h2 {
+    .tnx-identity h2 {
       margin: 0;
+      overflow: hidden;
       color: #fff;
-      font-size: clamp(2.4rem, 5vw, 5rem);
+      font-size: clamp(2.5rem, 5vw, 5rem);
       font-weight: 950;
       line-height: 0.95;
       letter-spacing: -0.045em;
-      text-shadow: 0 5px 20px rgba(0, 0, 0, 0.75);
-      overflow: hidden;
       text-overflow: ellipsis;
+      text-shadow: 0 5px 20px rgba(0, 0, 0, 0.75);
       white-space: nowrap;
     }
 
-    .profile-login {
+    .tnx-login {
       margin: 0.65rem 0 0;
-      color: rgb(209, 213, 219);
+      color: rgba(226, 232, 240, 0.84);
       font-size: 0.94rem;
       font-weight: 850;
       direction: ltr;
       text-align: right;
     }
 
-    .job-pill {
+    .tnx-job {
       display: inline-flex;
       align-items: center;
       gap: 0.55rem;
-      margin-top: 0.9rem;
+      margin-top: 0.85rem;
       border: 1px solid rgba(255, 218, 106, 0.24);
       border-radius: 999px;
       background: rgba(0, 0, 0, 0.45);
@@ -580,47 +564,47 @@ const metadata = {
       backdrop-filter: blur(12px);
     }
 
-    .job-pill iconify-icon {
+    .tnx-job iconify-icon {
       color: #ffda6a;
-      font-size: 1.22rem;
+      font-size: 1.2rem;
     }
 
-    .mini-showcase {
+    .tnx-mini-badges {
       display: flex;
       flex-wrap: wrap;
       gap: 0.55rem;
       margin-top: 1rem;
     }
 
-    .mini-badge {
+    .tnx-mini-badge {
       display: grid;
       place-items: center;
       width: 48px;
       height: 48px;
-      border: 1px solid rgba(255, 218, 106, 0.14);
-      border-radius: 0.85rem;
+      border: 1px solid rgba(255, 218, 106, 0.13);
+      border-radius: 0.82rem;
       background: rgba(0, 0, 0, 0.42);
       backdrop-filter: blur(10px);
     }
 
-    .mini-badge img {
+    .tnx-mini-badge img {
       width: 36px;
       height: 36px;
       object-fit: contain;
       filter: drop-shadow(0 7px 12px rgba(0, 0, 0, 0.5));
     }
 
-    .profile-wallet {
+    .tnx-wallet {
       display: grid;
       gap: 0.75rem;
       align-self: end;
     }
 
-    .wallet-card {
+    .tnx-wallet-card {
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(255, 218, 106, 0.16);
-      border-radius: 1.2rem;
+      border-radius: 1.12rem;
       background:
         radial-gradient(circle at top right, rgba(255, 218, 106, 0.12), transparent 44%),
         rgba(0, 0, 0, 0.48);
@@ -628,14 +612,14 @@ const metadata = {
       backdrop-filter: blur(14px);
     }
 
-    .wallet-card span {
+    .tnx-wallet-card span {
       display: block;
-      color: rgb(156, 163, 175);
+      color: rgb(148, 163, 184);
       font-size: 0.75rem;
       font-weight: 900;
     }
 
-    .wallet-card strong {
+    .tnx-wallet-card strong {
       display: block;
       margin-top: 0.35rem;
       color: #ffda6a;
@@ -646,44 +630,44 @@ const metadata = {
       text-shadow: 0 0 14px rgba(255, 218, 106, 0.28);
     }
 
-    .layout-grid {
+    .tnx-profile-body {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 340px;
       gap: 1rem;
       align-items: start;
     }
 
-    .main-column,
-    .side-column {
+    .tnx-profile-main,
+    .tnx-profile-side {
       display: grid;
       gap: 1rem;
     }
 
-    .panel {
-      border: 1px solid rgba(255, 218, 106, 0.17);
-      border-radius: 1.55rem;
+    .tnx-module {
+      border: 1px solid rgba(255, 218, 106, 0.16);
+      border-radius: 1.4rem;
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
-        rgba(7, 5, 11, 0.78);
+        rgba(8, 12, 18, 0.78);
       box-shadow:
-        0 24px 70px rgba(0, 0, 0, 0.38),
+        0 24px 70px rgba(0, 0, 0, 0.36),
         inset 0 0 22px rgba(255, 218, 106, 0.022);
       padding: 1.05rem;
       backdrop-filter: blur(16px);
     }
 
-    .panel-head {
-      margin-bottom: 1rem;
+    .tnx-module-title {
+      margin-bottom: 0.95rem;
     }
 
-    .panel-head.row {
+    .tnx-row-title {
       display: flex;
-      align-items: start;
       justify-content: space-between;
+      align-items: start;
       gap: 1rem;
     }
 
-    .panel-head span {
+    .tnx-module-title span {
       display: block;
       color: #c29200;
       font-size: 0.72rem;
@@ -691,93 +675,89 @@ const metadata = {
       letter-spacing: 0.13em;
     }
 
-    .panel-head h2 {
+    .tnx-module-title h2 {
       margin: 0.3rem 0 0;
       color: #f7e6ac;
-      font-size: 1.5rem;
+      font-size: 1.48rem;
       font-weight: 950;
       line-height: 1.15;
     }
 
-    .small-counter {
+    .tnx-count-pill {
       display: grid;
       place-items: center;
       min-width: 82px;
-      border: 1px solid rgba(255, 218, 106, 0.18);
-      border-radius: 1rem;
+      border: 1px solid rgba(255, 218, 106, 0.17);
+      border-radius: 0.95rem;
       background: rgba(255, 218, 106, 0.06);
-      padding: 0.65rem;
+      padding: 0.62rem;
     }
 
-    .small-counter strong {
+    .tnx-count-pill strong {
       color: #ffda6a;
-      font-size: 1.25rem;
+      font-size: 1.24rem;
       font-weight: 950;
       line-height: 1;
     }
 
-    .small-counter small {
-      color: rgb(156, 163, 175);
+    .tnx-count-pill small {
+      margin-top: 0.22rem;
+      color: rgb(148, 163, 184);
       font-size: 0.68rem;
       font-weight: 850;
-      margin-top: 0.25rem;
     }
 
-    .featured-showcase {
+    .tnx-featured-showcase {
       display: grid;
       grid-template-columns: 1.1fr 1fr;
       gap: 0.85rem;
     }
 
-    .big-feature-card,
-    .showcase-stack {
-      min-height: 230px;
-    }
-
-    .big-feature-card {
+    .tnx-big-item {
       position: relative;
       overflow: hidden;
-      border: 1px solid rgba(255, 218, 106, 0.22);
-      border-radius: 1.25rem;
+      min-height: 235px;
+      border: 1px solid rgba(255, 218, 106, 0.2);
+      border-radius: 1.15rem;
       background:
         radial-gradient(circle at top right, rgba(255, 218, 106, 0.13), transparent 46%),
-        rgba(0, 0, 0, 0.36);
+        rgba(0, 0, 0, 0.34);
       padding: 1rem;
     }
 
-    .big-feature-icon {
+    .tnx-big-icon {
       display: grid;
       place-items: center;
       width: 4.8rem;
       height: 4.8rem;
-      border: 1px solid rgba(255, 218, 106, 0.24);
-      border-radius: 1.35rem;
+      border: 1px solid rgba(255, 218, 106, 0.23);
+      border-radius: 1.25rem;
       background: rgba(255, 218, 106, 0.08);
       color: #ffda6a;
       font-size: 2.2rem;
       margin-bottom: 1rem;
     }
 
-    .big-feature-card h3 {
+    .tnx-big-item h3 {
       margin: 0;
       color: white;
-      font-size: 1.55rem;
+      font-size: 1.5rem;
       font-weight: 950;
-      line-height: 1.15;
+      line-height: 1.18;
     }
 
-    .big-feature-card p {
+    .tnx-big-item p {
       margin: 0.6rem 0 0;
-      color: rgb(156, 163, 175);
-      font-size: 0.86rem;
+      color: rgb(148, 163, 184);
+      font-size: 0.85rem;
       font-weight: 800;
       line-height: 1.65;
     }
 
-    .big-feature-card strong {
+    .tnx-big-item strong {
       display: inline-flex;
       margin-top: 0.9rem;
-      border: 1px solid rgba(255, 218, 106, 0.2);
+      border: 1px solid rgba(255, 218, 106, 0.19);
       border-radius: 999px;
       background: rgba(0, 0, 0, 0.36);
       color: #ffda6a;
@@ -787,104 +767,104 @@ const metadata = {
       direction: ltr;
     }
 
-    .showcase-stack {
+    .tnx-showcase-list {
       display: grid;
-      gap: 0.65rem;
+      gap: 0.62rem;
     }
 
-    .showcase-row {
+    .tnx-showcase-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 0.75rem;
-      border: 1px solid rgba(255, 218, 106, 0.13);
-      border-radius: 1.05rem;
+      border: 1px solid rgba(255, 218, 106, 0.12);
+      border-radius: 1rem;
       background: rgba(0, 0, 0, 0.3);
-      padding: 0.75rem;
+      padding: 0.72rem;
     }
 
-    .showcase-row div {
+    .tnx-showcase-row div {
       min-width: 0;
     }
 
-    .showcase-row strong {
+    .tnx-showcase-row strong {
       display: block;
-      color: #f7e6ac;
-      font-size: 0.9rem;
-      font-weight: 950;
       overflow: hidden;
+      color: #f7e6ac;
+      font-size: 0.88rem;
+      font-weight: 950;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .showcase-row span {
+    .tnx-showcase-row span {
       display: block;
-      color: rgb(156, 163, 175);
-      font-size: 0.72rem;
+      margin-top: 0.18rem;
+      color: rgb(148, 163, 184);
+      font-size: 0.7rem;
       font-weight: 800;
-      margin-top: 0.2rem;
     }
 
-    .showcase-row b {
+    .tnx-showcase-row b {
       display: grid;
       place-items: center;
       min-width: 2.6rem;
-      height: 2.4rem;
-      border-radius: 0.8rem;
+      height: 2.35rem;
+      border-radius: 0.78rem;
       background: rgba(255, 218, 106, 0.08);
       color: #ffda6a;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 950;
       direction: ltr;
     }
 
-    .filter-strip {
+    .tnx-filter-bar {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
-      margin-bottom: 0.95rem;
+      margin-bottom: 0.9rem;
     }
 
-    .filter-strip button {
+    .tnx-filter-bar button {
       border: 1px solid rgba(255, 218, 106, 0.2);
-      border-radius: 0.85rem;
+      border-radius: 0.82rem;
       background: rgba(255, 218, 106, 0.07);
       color: #f7e6ac;
       padding: 0.55rem 0.75rem;
       font-size: 0.78rem;
       font-weight: 950;
       cursor: pointer;
-      transition: 180ms ease;
+      transition: 170ms ease;
     }
 
-    .filter-strip button:hover,
-    .filter-strip button.is-active {
+    .tnx-filter-bar button:hover,
+    .tnx-filter-bar button.is-active {
       transform: translateY(-1px);
-      border-color: rgba(255, 218, 106, 0.55);
+      border-color: rgba(255, 218, 106, 0.52);
       background: rgba(255, 218, 106, 0.14);
       color: #ffda6a;
     }
 
-    .inventory-grid {
+    .tnx-inventory-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
-      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fill, minmax(134px, 1fr));
+      gap: 0.72rem;
     }
 
-    .inventory-item {
+    .tnx-slot {
       position: relative;
       overflow: hidden;
-      min-height: 168px;
-      border: 1px solid rgba(255, 218, 106, 0.13);
-      border-radius: 1.08rem;
+      min-height: 158px;
+      border: 1px solid rgba(255, 218, 106, 0.12);
+      border-radius: 1rem;
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
         rgba(0, 0, 0, 0.34);
-      padding: 0.82rem;
-      transition: 200ms ease;
+      padding: 0.78rem;
+      transition: 190ms ease;
     }
 
-    .inventory-item::before {
+    .tnx-slot::before {
       content: "";
       position: absolute;
       inset: 0;
@@ -892,176 +872,176 @@ const metadata = {
       pointer-events: none;
     }
 
-    .inventory-item:hover {
+    .tnx-slot:hover {
       transform: translateY(-3px) scale(1.012);
       border-color: rgba(255, 218, 106, 0.46);
       box-shadow: 0 18px 36px rgba(0, 0, 0, 0.36), 0 0 22px rgba(255, 218, 106, 0.1);
     }
 
-    .inventory-item.is-rare {
-      border-color: rgba(255, 218, 106, 0.34);
+    .tnx-slot.is-rare {
+      border-color: rgba(255, 218, 106, 0.32);
       box-shadow: inset 0 0 28px rgba(255, 218, 106, 0.03);
     }
 
-    .item-icon {
+    .tnx-slot-icon {
       position: relative;
       z-index: 1;
       display: grid;
       place-items: center;
       width: 3rem;
       height: 3rem;
-      border: 1px solid rgba(255, 218, 106, 0.2);
-      border-radius: 1rem;
+      border: 1px solid rgba(255, 218, 106, 0.19);
+      border-radius: 0.95rem;
       background: rgba(255, 218, 106, 0.08);
       color: #ffda6a;
-      font-size: 1.45rem;
-      margin-bottom: 0.75rem;
+      font-size: 1.42rem;
+      margin-bottom: 0.72rem;
     }
 
-    .inventory-item h3 {
+    .tnx-slot h3 {
       position: relative;
       z-index: 1;
       margin: 0;
       color: #fff;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 950;
       line-height: 1.25;
     }
 
-    .inventory-item p {
+    .tnx-slot p {
       position: relative;
       z-index: 1;
-      margin: 0.4rem 0 0;
-      color: rgb(156, 163, 175);
-      font-size: 0.72rem;
-      font-weight: 800;
-      line-height: 1.5;
       display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
       overflow: hidden;
+      margin: 0.38rem 0 0;
+      color: rgb(148, 163, 184);
+      font-size: 0.7rem;
+      font-weight: 800;
+      line-height: 1.45;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
     }
 
-    .qty {
+    .tnx-slot-qty {
       position: absolute;
-      top: 0.7rem;
-      left: 0.7rem;
+      top: 0.68rem;
+      left: 0.68rem;
       z-index: 2;
       display: grid;
       place-items: center;
-      min-width: 2.15rem;
-      height: 2.15rem;
+      min-width: 2.1rem;
+      height: 2.1rem;
       border: 1px solid rgba(255, 218, 106, 0.24);
       border-radius: 999px;
       background: rgba(0, 0, 0, 0.56);
       color: #ffda6a;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 950;
       direction: ltr;
     }
 
-    .item-tags {
+    .tnx-slot-tags {
       position: relative;
       z-index: 1;
       display: flex;
       flex-wrap: wrap;
-      gap: 0.32rem;
-      margin-top: 0.75rem;
+      gap: 0.3rem;
+      margin-top: 0.72rem;
     }
 
-    .item-tags span {
+    .tnx-slot-tags span {
       border: 1px solid rgba(255, 218, 106, 0.11);
       border-radius: 999px;
       background: rgba(255, 218, 106, 0.055);
       color: #f7e6ac;
-      padding: 0.25rem 0.42rem;
-      font-size: 0.6rem;
+      padding: 0.24rem 0.4rem;
+      font-size: 0.58rem;
       font-weight: 900;
     }
 
-    .badge-collection {
+    .tnx-badge-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
-      gap: 0.65rem;
+      grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+      gap: 0.62rem;
     }
 
-    .badge-tile {
+    .tnx-badge-tile {
       display: grid;
       place-items: center;
-      gap: 0.48rem;
-      min-height: 112px;
+      gap: 0.45rem;
+      min-height: 106px;
       border: 1px solid rgba(255, 218, 106, 0.12);
-      border-radius: 1rem;
+      border-radius: 0.92rem;
       background: rgba(0, 0, 0, 0.26);
-      padding: 0.65rem;
+      padding: 0.62rem;
       text-align: center;
     }
 
-    .badge-tile img {
-      width: 56px;
-      height: 56px;
+    .tnx-badge-tile img {
+      width: 52px;
+      height: 52px;
       object-fit: contain;
       filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.42));
     }
 
-    .badge-tile span {
-      color: rgb(229, 231, 235);
-      font-size: 0.65rem;
+    .tnx-badge-tile span {
+      color: rgb(226, 232, 240);
+      font-size: 0.62rem;
       font-weight: 850;
-      line-height: 1.35;
+      line-height: 1.32;
     }
 
-    .stats-list,
-    .rare-list,
-    .action-list {
+    .tnx-stats-list,
+    .tnx-rare-list,
+    .tnx-actions {
       display: grid;
-      gap: 0.65rem;
+      gap: 0.62rem;
     }
 
-    .stat-row,
-    .rare-row {
+    .tnx-stat-row,
+    .tnx-rare-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 0.75rem;
       border: 1px solid rgba(255, 218, 106, 0.12);
-      border-radius: 1rem;
+      border-radius: 0.95rem;
       background: rgba(0, 0, 0, 0.28);
-      padding: 0.82rem;
+      padding: 0.78rem;
     }
 
-    .stat-row span {
-      color: rgb(156, 163, 175);
-      font-size: 0.78rem;
+    .tnx-stat-row span {
+      color: rgb(148, 163, 184);
+      font-size: 0.76rem;
       font-weight: 850;
     }
 
-    .stat-row strong {
+    .tnx-stat-row strong {
       color: #ffda6a;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 950;
       direction: ltr;
     }
 
-    .rare-row strong {
-      color: #f7e6ac;
-      font-size: 0.84rem;
-      font-weight: 950;
+    .tnx-rare-row strong {
       min-width: 0;
       overflow: hidden;
+      color: #f7e6ac;
+      font-size: 0.82rem;
+      font-weight: 950;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .rare-row span {
+    .tnx-rare-row span {
       color: #ffda6a;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 950;
       direction: ltr;
     }
 
-    .action-list a,
-    .action-list button {
+    .tnx-actions a,
+    .tnx-actions button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -1069,24 +1049,24 @@ const metadata = {
       border-radius: 0.95rem;
       background: rgba(255, 218, 106, 0.08);
       color: #f7e6ac;
-      padding: 0.8rem 0.85rem;
+      padding: 0.78rem 0.85rem;
       font-size: 0.82rem;
       font-weight: 950;
       text-decoration: none;
       cursor: pointer;
-      transition: 180ms ease;
+      transition: 170ms ease;
     }
 
-    .action-list a:hover,
-    .action-list button:hover,
-    .action-list button.is-copied {
+    .tnx-actions a:hover,
+    .tnx-actions button:hover,
+    .tnx-actions button.is-copied {
       transform: translateY(-2px);
-      border-color: rgba(255, 218, 106, 0.55);
+      border-color: rgba(255, 218, 106, 0.52);
       background: rgba(255, 218, 106, 0.14);
       color: #ffda6a;
     }
 
-    .back-top {
+    .tnx-back-top {
       position: fixed;
       left: 1.25rem;
       bottom: 1.25rem;
@@ -1097,117 +1077,114 @@ const metadata = {
       height: 3.05rem;
       border: 1px solid rgba(255, 218, 106, 0.42);
       border-radius: 999px;
-      background: rgba(7, 5, 11, 0.9);
+      background: rgba(7, 10, 16, 0.92);
       color: #ffda6a;
       font-size: 1.35rem;
       font-weight: 950;
       cursor: pointer;
       box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 0 22px rgba(255, 218, 106, 0.12);
-      backdrop-filter: blur(14px);
       opacity: 0;
-      transform: translateY(16px) scale(0.92);
       pointer-events: none;
+      transform: translateY(16px) scale(0.92);
       transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+      backdrop-filter: blur(14px);
     }
 
-    .back-top.is-visible {
+    .tnx-back-top.is-visible {
       opacity: 1;
-      transform: translateY(0) scale(1);
       pointer-events: auto;
+      transform: translateY(0) scale(1);
     }
 
-    @media (max-width: 1080px) {
-      .profile-top,
-      .layout-grid {
+    @media (max-width: 1100px) {
+      .tnx-page-head,
+      .tnx-profile-body {
         grid-template-columns: 1fr;
       }
 
-      .steam-profile-inner {
-        grid-template-columns: 170px minmax(0, 1fr);
+      .tnx-hero-inner {
+        grid-template-columns: 180px minmax(0, 1fr);
       }
 
-      .profile-wallet {
+      .tnx-wallet {
         grid-column: 1 / -1;
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .side-column {
+      .tnx-profile-side {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .side-column .panel:last-child {
+      .tnx-profile-side .tnx-module:last-child {
         grid-column: 1 / -1;
       }
     }
 
     @media (max-width: 760px) {
-      .profile-shell {
-        padding-top: 5.5rem;
+      .tnx-shell {
+        padding-top: 5.4rem;
       }
 
-      .profile-top h1 {
-        font-size: 3.15rem;
+      .tnx-head-copy h1 {
+        font-size: 3.1rem;
       }
 
-      .steam-profile-inner {
+      .tnx-profile-hero {
+        min-height: auto;
+      }
+
+      .tnx-hero-inner {
         grid-template-columns: 1fr;
         justify-items: center;
-        text-align: center;
+        min-height: auto;
         padding-top: 6rem;
-      }
-
-      .profile-identity h2 {
-        white-space: normal;
-        font-size: 2.4rem;
-      }
-
-      .profile-login {
         text-align: center;
       }
 
-      .mini-showcase {
-        justify-content: center;
-      }
-
-      .profile-wallet,
-      .featured-showcase,
-      .side-column {
-        grid-template-columns: 1fr;
-      }
-
-      .steam-card {
-        min-height: auto;
-      }
-
-      .steam-profile-inner {
-        min-height: auto;
-      }
-
-      .steam-cover {
+      .tnx-cover {
         height: 100%;
       }
 
-      .panel-head.row {
+      .tnx-identity h2 {
+        white-space: normal;
+        font-size: 2.45rem;
+      }
+
+      .tnx-login {
+        text-align: center;
+      }
+
+      .tnx-mini-badges {
+        justify-content: center;
+      }
+
+      .tnx-wallet,
+      .tnx-featured-showcase,
+      .tnx-profile-side {
+        grid-template-columns: 1fr;
+      }
+
+      .tnx-row-title {
         flex-direction: column;
       }
 
-      .small-counter {
+      .tnx-count-pill {
         width: 100%;
       }
     }
 
     @media (max-width: 520px) {
-      .inventory-grid {
+      .tnx-inventory-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .inventory-item {
-        min-height: 154px;
+      .tnx-slot {
+        min-height: 150px;
       }
     }
 
     @media (max-width: 420px) {
-      .inventory-grid {
+      .tnx-inventory-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -1215,7 +1192,7 @@ const metadata = {
 
   <script is:inline data-reinit>
     ;(() => {
-      const cleanupKey = '__tnxSteamProfileCleanup'
+      const cleanupKey = '__tnxSteamProfileV3Cleanup'
 
       if (window[cleanupKey]) {
         window[cleanupKey]()
@@ -1255,12 +1232,13 @@ const metadata = {
       const profileResults = document.getElementById('profileResults')
       const emptyState = document.getElementById('emptyState')
       const profileContent = document.getElementById('profileContent')
-      const steamCard = document.getElementById('steamCard')
+      const profileHero = document.getElementById('profileHero')
       const featuredShowcase = document.getElementById('featuredShowcase')
       const inventoryGrid = document.getElementById('inventoryGrid')
       const inventoryEmpty = document.getElementById('inventoryEmpty')
-      const inventoryTypeCount = document.getElementById('inventoryTypeCount')
-      const badgeCollection = document.getElementById('badgeCollection')
+      const inventoryCount = document.getElementById('inventoryCount')
+      const badgeCount = document.getElementById('badgeCount')
+      const badgeGrid = document.getElementById('badgeGrid')
       const statsList = document.getElementById('statsList')
       const rareList = document.getElementById('rareList')
       const badgesLink = document.getElementById('badgesLink')
@@ -1339,8 +1317,8 @@ const metadata = {
 
       function hexToRgb(hex) {
         const clean = safeColor(hex).replace('#', '')
-        const value = parseInt(clean, 16)
-        return [(value >> 16) & 255, (value >> 8) & 255, value & 255].join(', ')
+        const number = parseInt(clean, 16)
+        return [(number >> 16) & 255, (number >> 8) & 255, number & 255].join(', ')
       }
 
       function displayName(user) {
@@ -1369,18 +1347,18 @@ const metadata = {
 
       function itemQty(item) {
         const raw = item?.quantity ?? item?.qty ?? item?.count ?? item?.amount ?? item?.Value ?? 1
-        const n = Number(raw)
-        return Number.isFinite(n) && n > 0 ? n : 1
+        const number = Number(raw)
+        return Number.isFinite(number) && number > 0 ? number : 1
       }
 
       function getDetails(name) {
-        const k = key(name)
-        return state.items.find((item) => key(item.name || item.itemName || item.title) === k) || null
+        const itemKey = key(name)
+        return state.items.find((item) => key(item.name || item.itemName || item.title) === itemKey) || null
       }
 
       function getMeta(name, details) {
-        const k = key(name)
-        const hard = Object.entries(ITEM_META).find(([metaName]) => key(metaName) === k)?.[1] || null
+        const itemKey = key(name)
+        const hard = Object.entries(ITEM_META).find(([metaName]) => key(metaName) === itemKey)?.[1] || null
         const type = normalize(details?.category || details?.type || '')
         const rarity = normalize(details?.rarity || '')
 
@@ -1402,16 +1380,16 @@ const metadata = {
         }) || null
       }
 
-      function inventoryItems(user) {
-        const inv = findInventory(user)
-        if (!inv) return []
-        if (Array.isArray(inv.items)) return inv.items
-        if (Array.isArray(inv.inventory)) return inv.inventory
+      function rawInventory(user) {
+        const inventory = findInventory(user)
+        if (!inventory) return []
+        if (Array.isArray(inventory.items)) return inventory.items
+        if (Array.isArray(inventory.inventory)) return inventory.inventory
         return []
       }
 
       function enrichedInventory(user) {
-        return inventoryItems(user)
+        return rawInventory(user)
           .map((entry) => {
             const name = itemName(entry)
             const qty = itemQty(entry)
@@ -1422,7 +1400,7 @@ const metadata = {
 
             return { name, qty, details, meta, description, price }
           })
-          .filter((item) => item.name)
+          .filter((entry) => entry.name)
       }
 
       function filteredInventory(user) {
@@ -1433,47 +1411,13 @@ const metadata = {
         return items.filter((item) => item.meta.type === state.filter)
       }
 
-      function profileUrl(user) {
-        const url = new URL(window.location.href)
-        url.searchParams.set('user', loginName(user))
-        url.hash = ''
-        return url.toString()
-      }
-
-      function updateQuery(user) {
-        const url = new URL(window.location.href)
-        url.searchParams.set('user', loginName(user))
-        url.hash = ''
-        history.replaceState(null, '', `${url.pathname}${url.search}`)
-      }
-
-      async function copyText(text, button, done = 'تم النسخ') {
-        if (!button) return
-        const old = button.textContent
-
-        try {
-          await navigator.clipboard.writeText(text)
-          button.textContent = done
-          button.classList.add('is-copied')
-          addTimer(window.setTimeout(() => {
-            button.textContent = old
-            button.classList.remove('is-copied')
-          }, 1000))
-        } catch {
-          button.textContent = text
-          addTimer(window.setTimeout(() => {
-            button.textContent = old
-          }, 1300))
-        }
-      }
-
       async function loadJson(url, fallback) {
         try {
-          const res = await fetch(`${url}?v=${Date.now()}`, { cache: 'no-store' })
-          if (!res.ok) throw new Error(`${url} failed`)
-          return await res.json()
-        } catch (err) {
-          console.error(err)
+          const response = await fetch(`${url}?v=${Date.now()}`, { cache: 'no-store' })
+          if (!response.ok) throw new Error(`${url} failed`)
+          return await response.json()
+        } catch (error) {
+          console.error(error)
           return fallback
         }
       }
@@ -1490,21 +1434,55 @@ const metadata = {
         state.items = Array.isArray(itemsPayload) ? itemsPayload : Array.isArray(itemsPayload?.items) ? itemsPayload.items : []
       }
 
-      function renderSearchResults(query) {
+      function profileLink(user) {
+        const url = new URL(window.location.href)
+        url.searchParams.set('user', loginName(user))
+        url.hash = ''
+        return url.toString()
+      }
+
+      function updateQuery(user) {
+        const url = new URL(window.location.href)
+        url.searchParams.set('user', loginName(user))
+        url.hash = ''
+        history.replaceState(null, '', `${url.pathname}${url.search}`)
+      }
+
+      async function copyText(value, button, doneText = 'تم النسخ') {
+        if (!button) return
+        const oldText = button.textContent
+
+        try {
+          await navigator.clipboard.writeText(value)
+          button.textContent = doneText
+          button.classList.add('is-copied')
+          addTimer(window.setTimeout(() => {
+            button.textContent = oldText
+            button.classList.remove('is-copied')
+          }, 1000))
+        } catch {
+          button.textContent = value
+          addTimer(window.setTimeout(() => {
+            button.textContent = oldText
+          }, 1400))
+        }
+      }
+
+      function renderSearchResults(value) {
         if (!profileResults) return
 
         profileResults.innerHTML = ''
+        const query = normalize(value)
 
-        const q = normalize(query)
-        if (!q) return
+        if (!query) return
 
         const matches = state.users
-          .filter((user) => normalize(displayName(user)).includes(q) || normalize(loginName(user)).includes(q))
+          .filter((user) => normalize(displayName(user)).includes(query) || normalize(loginName(user)).includes(query))
           .slice(0, 10)
 
-        if (matches.length === 0) {
+        if (!matches.length) {
           profileResults.innerHTML = `
-            <div class="mini-empty">
+            <div class="tnx-mini-empty">
               <strong>ما فيه نتائج</strong>
               <span>تأكد من اسم المستخدم.</span>
             </div>
@@ -1518,7 +1496,7 @@ const metadata = {
           const avatar = safeUrl(user.profileImageUrl || user.avatar || user.ProfileImageUrl)
 
           return `
-            <button type="button" class="profile-result" data-result-index="${index}">
+            <button type="button" class="tnx-result" data-index="${index}">
               <img src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />
               <div>
                 <strong>${esc(name)}</strong>
@@ -1528,10 +1506,11 @@ const metadata = {
           `
         }).join('')
 
-        profileResults.querySelectorAll('[data-result-index]').forEach((button) => {
+        profileResults.querySelectorAll('[data-index]').forEach((button) => {
           button.addEventListener('click', () => {
-            const user = matches[Number(button.dataset.resultIndex)]
+            const user = matches[Number(button.dataset.index)]
             if (!user) return
+
             if (profileSearch) profileSearch.value = ''
             profileResults.innerHTML = ''
             updateQuery(user)
@@ -1540,7 +1519,13 @@ const metadata = {
         })
       }
 
-      function renderSteamCard(user) {
+      function getShownBadges(user, limit = 7) {
+        const badges = Array.isArray(user.badges) ? user.badges : []
+        const equipped = badges.filter((badge) => badge.equipped).slice(0, limit)
+        return equipped.length ? equipped : badges.slice(0, limit)
+      }
+
+      function renderHero(user) {
         const name = displayName(user)
         const login = loginName(user)
         const avatar = safeUrl(user.profileImageUrl || user.avatar || user.ProfileImageUrl)
@@ -1552,56 +1537,54 @@ const metadata = {
         const jobName = user.jobName || 'Citizen'
         const jobId = user.jobId || 'tier1_Citizen'
         const jobIcon = JOB_ICONS[jobId] || 'mdi:account'
-        const badges = Array.isArray(user.badges) ? user.badges : []
-        const equipped = badges.filter((badge) => badge.equipped).slice(0, 7)
-        const shownBadges = equipped.length ? equipped : badges.slice(0, 7)
+        const shownBadges = getShownBadges(user, 7)
 
-        steamCard.innerHTML = `
-          <div class="steam-cover" style="background-image: ${cssUrl(banner)}; background-color: ${color};"></div>
+        profileHero.innerHTML = `
+          <div class="tnx-cover" style="--accent-rgb: ${hexToRgb(color)}; background-image: ${cssUrl(banner)}; background-color: ${color};"></div>
 
-          <div class="steam-profile-inner" style="--accent-rgb: ${hexToRgb(color)};">
-            <div class="avatar-block">
-              <div class="avatar-frame">
+          <div class="tnx-hero-inner" style="--accent-rgb: ${hexToRgb(color)};">
+            <div class="tnx-avatar-zone">
+              <div class="tnx-avatar-frame">
                 <img src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />
-                <span class="online-dot"></span>
+                <span class="tnx-status-dot"></span>
               </div>
 
-              <div class="level-pill">LEVEL ${formatNumber(level)}</div>
+              <div class="tnx-level">LEVEL ${formatNumber(level)}</div>
             </div>
 
-            <div class="profile-identity">
+            <div class="tnx-identity">
               <h2 title="${esc(name)}">${esc(name)}</h2>
-              <p class="profile-login">${esc(login)}</p>
+              <p class="tnx-login">${esc(login)}</p>
 
-              <div class="job-pill">
+              <div class="tnx-job">
                 <iconify-icon icon="${esc(jobIcon)}"></iconify-icon>
                 <span>${esc(jobName)}</span>
               </div>
 
-              <div class="mini-showcase">
+              <div class="tnx-mini-badges">
                 ${
                   shownBadges.length
                     ? shownBadges.map((badge) => {
                         const badgeName = getBadgeName(badge)
-                        const img = getBadgeImage(badge)
+                        const image = getBadgeImage(badge)
                         return `
-                          <div class="mini-badge" title="${esc(badgeName)}">
-                            <img src="${esc(img)}" alt="${esc(badgeName)}" loading="lazy" />
+                          <div class="tnx-mini-badge" title="${esc(badgeName)}">
+                            <img src="${esc(image)}" alt="${esc(badgeName)}" loading="lazy" />
                           </div>
                         `
                       }).join('')
-                    : '<div class="mini-badge">—</div>'
+                    : '<div class="tnx-mini-badge">—</div>'
                 }
               </div>
             </div>
 
-            <div class="profile-wallet">
-              <div class="wallet-card">
+            <div class="tnx-wallet">
+              <div class="tnx-wallet-card">
                 <span>النقاط</span>
                 <strong>${formatNumber(points)}</strong>
               </div>
 
-              <div class="wallet-card">
+              <div class="tnx-wallet-card">
                 <span>الذهب</span>
                 <strong>${formatNumber(gold)}</strong>
               </div>
@@ -1612,50 +1595,49 @@ const metadata = {
 
       function renderFeatured(user) {
         const items = enrichedInventory(user)
-        const rare = [...items]
           .sort((a, b) => {
             const rank = { legendary: 4, rare: 3, uncommon: 2, common: 1 }
             return (rank[b.meta.rarity] || 0) - (rank[a.meta.rarity] || 0) || b.qty - a.qty
           })
 
-        const main = rare[0]
-        const stack = rare.slice(1, 5)
+        const main = items[0]
+        const rest = items.slice(1, 5)
 
         if (!main) {
           featuredShowcase.innerHTML = `
-            <div class="mini-empty">
-              <strong>ما فيه واجهة أغراض</strong>
-              <span>الحقيبة فاضية أو لم يتم تصدير user_inventory.json بعد.</span>
+            <div class="tnx-mini-empty">
+              <strong>ما فيه أغراض للعرض</strong>
+              <span>شغّل تصدير الحقيبة أو تأكد من user_inventory.json.</span>
             </div>
           `
           return
         }
 
         featuredShowcase.innerHTML = `
-          <article class="big-feature-card">
-            <div class="big-feature-icon">${esc(main.meta.icon)}</div>
+          <article class="tnx-big-item">
+            <div class="tnx-big-icon">${esc(main.meta.icon)}</div>
             <h3>${esc(main.name)}</h3>
             <p>${esc(main.description)}</p>
             <strong>x${formatNumber(main.qty)}</strong>
           </article>
 
-          <div class="showcase-stack">
+          <div class="tnx-showcase-list">
             ${
-              stack.length
-                ? stack.map((item) => `
-                    <div class="showcase-row">
-                      <div>
-                        <strong>${esc(item.meta.icon)} ${esc(item.name)}</strong>
-                        <span>${esc(item.meta.rarity)} · ${esc(item.meta.type)}</span>
-                      </div>
-                      <b>x${formatNumber(item.qty)}</b>
+              rest.length
+                ? rest.map((item) => `
+                  <div class="tnx-showcase-row">
+                    <div>
+                      <strong>${esc(item.meta.icon)} ${esc(item.name)}</strong>
+                      <span>${esc(item.meta.rarity)} · ${esc(item.meta.type)}</span>
                     </div>
-                  `).join('')
+                    <b>x${formatNumber(item.qty)}</b>
+                  </div>
+                `).join('')
                 : `
-                  <div class="showcase-row">
+                  <div class="tnx-showcase-row">
                     <div>
                       <strong>لا توجد أغراض إضافية</strong>
-                      <span>سيظهر هنا المزيد عند وجود أغراض.</span>
+                      <span>بتظهر هنا إذا صار عنده أغراض أكثر.</span>
                     </div>
                     <b>—</b>
                   </div>
@@ -1666,10 +1648,10 @@ const metadata = {
       }
 
       function renderInventory(user) {
-        const allItems = enrichedInventory(user)
+        const all = enrichedInventory(user)
         const items = filteredInventory(user)
 
-        if (inventoryTypeCount) inventoryTypeCount.textContent = String(allItems.length)
+        if (inventoryCount) inventoryCount.textContent = String(all.length)
 
         filterButtons.forEach((button) => {
           button.classList.toggle('is-active', button.dataset.filter === state.filter)
@@ -1680,15 +1662,14 @@ const metadata = {
 
         inventoryGrid.innerHTML = items.map((item) => {
           const rare = ['legendary', 'rare'].includes(item.meta.rarity) || item.meta.type === 'featured'
-          return `
-            <article class="inventory-item${rare ? ' is-rare' : ''}">
-              <span class="qty">x${formatNumber(item.qty)}</span>
-              <div class="item-icon">${esc(item.meta.icon)}</div>
 
+          return `
+            <article class="tnx-slot${rare ? ' is-rare' : ''}">
+              <span class="tnx-slot-qty">x${formatNumber(item.qty)}</span>
+              <div class="tnx-slot-icon">${esc(item.meta.icon)}</div>
               <h3>${esc(item.name)}</h3>
               <p>${esc(item.description)}</p>
-
-              <div class="item-tags">
+              <div class="tnx-slot-tags">
                 <span>${esc(item.meta.type)}</span>
                 <span>${esc(item.meta.rarity)}</span>
                 ${item.price ? `<span>${formatNumber(item.price)} نقطة</span>` : ''}
@@ -1701,9 +1682,11 @@ const metadata = {
       function renderBadges(user) {
         const badges = Array.isArray(user.badges) ? user.badges : []
 
+        if (badgeCount) badgeCount.textContent = String(badges.length)
+
         if (!badges.length) {
-          badgeCollection.innerHTML = `
-            <div class="mini-empty">
+          badgeGrid.innerHTML = `
+            <div class="tnx-mini-empty">
               <strong>ما فيه بادجات</strong>
               <span>ما تم العثور على بادجات لهذا العضو.</span>
             </div>
@@ -1711,13 +1694,14 @@ const metadata = {
           return
         }
 
-        badgeCollection.innerHTML = badges.slice(0, 36).map((badge) => {
-          const name = getBadgeName(badge)
-          const img = getBadgeImage(badge)
+        badgeGrid.innerHTML = badges.slice(0, 42).map((badge) => {
+          const badgeName = getBadgeName(badge)
+          const image = getBadgeImage(badge)
+
           return `
-            <div class="badge-tile">
-              <img src="${esc(img)}" alt="${esc(name)}" loading="lazy" />
-              <span>${esc(name)}</span>
+            <div class="tnx-badge-tile">
+              <img src="${esc(image)}" alt="${esc(badgeName)}" loading="lazy" />
+              <span>${esc(badgeName)}</span>
             </div>
           `
         }).join('')
@@ -1731,27 +1715,27 @@ const metadata = {
         const rareCount = items.filter((item) => ['legendary', 'rare'].includes(item.meta.rarity) || item.meta.type === 'featured').length
 
         statsList.innerHTML = `
-          <div class="stat-row">
+          <div class="tnx-stat-row">
             <span>عدد البادجات</span>
             <strong>${formatNumber(badges.length)}</strong>
           </div>
 
-          <div class="stat-row">
+          <div class="tnx-stat-row">
             <span>بادجات الواجهة</span>
             <strong>${formatNumber(equipped)}</strong>
           </div>
 
-          <div class="stat-row">
+          <div class="tnx-stat-row">
             <span>أنواع الأغراض</span>
             <strong>${formatNumber(items.length)}</strong>
           </div>
 
-          <div class="stat-row">
+          <div class="tnx-stat-row">
             <span>إجمالي الكميات</span>
             <strong>${formatNumber(totalQty)}</strong>
           </div>
 
-          <div class="stat-row">
+          <div class="tnx-stat-row">
             <span>أغراض نادرة</span>
             <strong>${formatNumber(rareCount)}</strong>
           </div>
@@ -1765,16 +1749,16 @@ const metadata = {
 
         if (!items.length) {
           rareList.innerHTML = `
-            <div class="mini-empty">
-              <strong>ما فيه أغراض نادرة</strong>
-              <span>بتظهر هنا إذا صار عنده أغراض نادرة.</span>
+            <div class="tnx-mini-empty">
+              <strong>ما فيه نادر</strong>
+              <span>الأغراض النادرة بتظهر هنا.</span>
             </div>
           `
           return
         }
 
         rareList.innerHTML = items.map((item) => `
-          <div class="rare-row">
+          <div class="tnx-rare-row">
             <strong>${esc(item.meta.icon)} ${esc(item.name)}</strong>
             <span>x${formatNumber(item.qty)}</span>
           </div>
@@ -1786,7 +1770,7 @@ const metadata = {
         emptyState?.classList.add('hidden')
         profileContent?.classList.remove('hidden')
 
-        renderSteamCard(user)
+        renderHero(user)
         renderFeatured(user)
         renderInventory(user)
         renderBadges(user)
@@ -1794,23 +1778,27 @@ const metadata = {
         renderRare(user)
 
         const login = loginName(user)
-        if (badgesLink) badgesLink.href = `/badges?user=${encodeURIComponent(login)}`
+
+        if (badgesLink) {
+          badgesLink.href = `/badges?user=${encodeURIComponent(login)}`
+        }
       }
 
       function openFromQuery() {
         const params = new URLSearchParams(window.location.search)
         const raw = params.get('user')
+
         if (!raw) return false
 
-        const q = normalize(raw)
+        const query = normalize(raw)
 
-        let user = state.users.find((entry) => normalize(loginName(entry)) === q)
-        if (!user) user = state.users.find((entry) => normalize(displayName(entry)) === q)
-        if (!user) user = state.users.find((entry) => normalize(loginName(entry)).includes(q) || normalize(displayName(entry)).includes(q))
+        let user = state.users.find((entry) => normalize(loginName(entry)) === query)
+        if (!user) user = state.users.find((entry) => normalize(displayName(entry)) === query)
+        if (!user) user = state.users.find((entry) => normalize(loginName(entry)).includes(query) || normalize(displayName(entry)).includes(query))
 
         if (!user) {
           emptyState.innerHTML = `
-            <div class="empty-icon">!</div>
+            <div class="tnx-empty-icon">!</div>
             <strong>ما لقيت العضو</strong>
             <span>تأكد أنه موجود في <b>user_badges.json</b>.</span>
           `
@@ -1845,7 +1833,7 @@ const metadata = {
 
       addListener(copyProfileLink, 'click', () => {
         if (!state.activeUser) return
-        copyText(profileUrl(state.activeUser), copyProfileLink, 'تم نسخ الرابط')
+        copyText(profileLink(state.activeUser), copyProfileLink, 'تم نسخ الرابط')
       })
 
       addListener(backToTop, 'click', () => {
