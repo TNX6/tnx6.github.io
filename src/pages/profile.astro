@@ -1881,6 +1881,8 @@ const metadata = {
       }
 
       function totalBadgeXp(badges) {
+        // Badge XP يعتمد على البادجات الحالية فقط.
+        // إذا العضو باع/أهدى بادج وانحذف من user_badges.json، ينقص XP تلقائيًا.
         return (Array.isArray(badges) ? badges : []).reduce((sum, badge) => sum + badgeXp(badge), 0)
       }
 
@@ -2033,12 +2035,11 @@ const metadata = {
 
       function levelScore(user) {
         const badges = Array.isArray(user.badges) ? user.badges : []
-        const pointsScore = pointsXp(user)
         const watchScore = watchMinutes(user) * WATCH_MINUTE_WEIGHT
         const loginScore = dailyLoginXp(user)
         const badgesScore = totalBadgeXp(badges)
 
-        return Math.floor(pointsScore + watchScore + loginScore + badgesScore)
+        return Math.floor(watchScore + loginScore + badgesScore)
       }
 
       function calculateLevel(user) {
@@ -2060,7 +2061,6 @@ const metadata = {
           percent: required > 0 ? Math.min(100, Math.round((remaining / required) * 100)) : 0,
           mode: 'XP',
           score,
-          pointsScore: pointsXp(user),
           watchScore: watchMinutes(user) * WATCH_MINUTE_WEIGHT,
           dailyLoginScore: dailyLoginXp(user),
           dailyLoginCount: dailyLoginCount(user),
@@ -2189,7 +2189,7 @@ const metadata = {
 
         setText('levelNumber', level.level)
         setText('levelTitle', getLevelTitle(level.level))
-        setText('levelDesc', `النظام يحسب من النقاط وwatchtime وتسجيل الدخول والبادجات. كل 10 نقاط = 1 XP، وكل دقيقة مشاهدة = 150 XP. باقي ${formatNumber(level.requiredXp - level.currentXp)} XP للوصول إلى لفل ${level.level + 1}.`)
+        setText('levelDesc', `النظام يحسب من watchtime وتسجيل الدخول والبادجات فقط. كل دقيقة مشاهدة = 150 XP. باقي ${formatNumber(level.requiredXp - level.currentXp)} XP للوصول إلى لفل ${level.level + 1}.`)
         setText('currentXp', `${formatNumber(level.currentXp)} XP`)
         setText('neededXp', `${formatNumber(level.requiredXp)} XP`)
         if ($('xpFill')) $('xpFill').style.width = level.percent + '%'
@@ -2246,7 +2246,6 @@ const metadata = {
         if (!box) return
 
         const rows = [
-          { label: 'النقاط', value: level.pointsScore },
           { label: 'المشاهدة', value: level.watchScore },
           { label: 'تسجيل الدخول', value: level.dailyLoginScore },
           { label: 'البادجات', value: level.badgeScore },
