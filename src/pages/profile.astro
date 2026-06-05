@@ -1866,11 +1866,11 @@ const metadata = {
 
       function badgeXpValue(rarity) {
         const table = {
-          Common: 250,
-          Rare: 750,
-          Epic: 1500,
-          Legendary: 3000,
-          Mythic: 5000,
+          Common: 500,
+          Rare: 1500,
+          Epic: 4000,
+          Legendary: 8000,
+          Mythic: 15000,
         }
 
         return table[rarity] || table.Common
@@ -1908,7 +1908,8 @@ const metadata = {
                 linear-gradient(135deg, #1a1208, #080808 58%, #1d160b)`
       }
 
-      const WATCH_MINUTE_WEIGHT = 150
+      // ساعة مشاهدة = 3,000 XP، يعني الدقيقة = 50 XP
+      const WATCH_MINUTE_WEIGHT = 50
       const DAILY_LOGIN_XP = 500
 
       function currentPoints(user) {
@@ -2189,7 +2190,7 @@ const metadata = {
 
         setText('levelNumber', level.level)
         setText('levelTitle', getLevelTitle(level.level))
-        setText('levelDesc', `النظام يحسب من watchtime وتسجيل الدخول والبادجات فقط. كل دقيقة مشاهدة = 150 XP. باقي ${formatNumber(level.requiredXp - level.currentXp)} XP للوصول إلى لفل ${level.level + 1}.`)
+        setText('levelDesc', `النظام يحسب من watchtime وتسجيل الدخول والبادجات فقط. كل ساعة مشاهدة = 3,000 XP. باقي ${formatNumber(level.requiredXp - level.currentXp)} XP للوصول إلى لفل ${level.level + 1}.`)
         setText('currentXp', `${formatNumber(level.currentXp)} XP`)
         setText('neededXp', `${formatNumber(level.requiredXp)} XP`)
         if ($('xpFill')) $('xpFill').style.width = level.percent + '%'
