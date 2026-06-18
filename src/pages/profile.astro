@@ -14,15 +14,24 @@ const metadata = {
       <div class="search-card">
         <span class="eyebrow">TNX6 PROFILE</span>
         <h1>بروفايل العضو</h1>
-        <p>ابحث باسم Twitch أو افتح رابط مباشر مثل <b>/profile?user=haneen48</b></p>
+        <p>
+          لازم تسجل دخول عن طريق Twitch عشان تقدر تشوف بروفايلك، بادجاتك، أغراضك، ومستواك في نظام TNX6.
+        </p>
 
-        <div class="search-box">
-          <span>⌕</span>
-          <input id="searchInput" type="search" autocomplete="off" placeholder="اكتب اسم المستخدم..." />
-          <button id="clearSearch" type="button" aria-label="مسح البحث">×</button>
-        </div>
+        <a
+          class="twitch-login-btn"
+          href="https://api.tnx6.xyz/auth/twitch/login"
+          aria-label="تسجيل الدخول عبر Twitch"
+        >
+          <span class="twitch-icon">◐</span>
+          تسجيل الدخول عبر Twitch
+        </a>
 
-        <div id="searchResults" class="search-results"></div>
+        <p class="login-note">
+          تسجيل الدخول يستخدم حسابك في Twitch فقط للتحقق من هويتك داخل الموقع.
+        </p>
+
+        <div id="searchResults" class="search-results" hidden></div>
       </div>
     </section>
 
@@ -1295,6 +1304,52 @@ const metadata = {
         grid-template-columns: 1fr;
       }
     }
+
+    .twitch-login-btn {
+      width: min(100%, 360px);
+      margin: 26px auto 0;
+      min-height: 58px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 18px;
+      border: 1px solid rgba(145, 70, 255, .55);
+      background:
+        radial-gradient(circle at 30% 0%, rgba(255,255,255,.20), transparent 34%),
+        linear-gradient(135deg, #9146ff, #5f22c8);
+      color: #fff;
+      font-weight: 950;
+      letter-spacing: -.02em;
+      box-shadow: 0 18px 50px rgba(145, 70, 255, .22);
+      transition: transform .18s ease, filter .18s ease, border-color .18s ease;
+    }
+
+    .twitch-login-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+      border-color: rgba(255,255,255,.42);
+    }
+
+    .twitch-icon {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.14);
+      font-size: 17px;
+    }
+
+    .login-note {
+      margin: 14px auto 0 !important;
+      max-width: 520px;
+      color: rgba(255,255,255,.48) !important;
+      font-size: .92rem;
+      line-height: 1.8;
+    }
+
   </style>
 
   <script is:inline data-reinit>
