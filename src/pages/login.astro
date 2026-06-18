@@ -1,0 +1,169 @@
+﻿---
+import PageLayout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'تسجيل الدخول | TNX6',
+  description: 'ادخل إلى حساب TNX6 عبر Twitch.',
+};
+---
+
+<PageLayout metadata={metadata}>
+  <section class="relative isolate min-h-[86vh] overflow-hidden px-4 py-16 text-white">
+    <div class="pointer-events-none absolute inset-0 -z-10">
+      <div class="absolute right-[8%] top-10 h-72 w-72 rounded-full bg-yellow-400/20 blur-3xl"></div>
+      <div class="absolute bottom-10 left-[8%] h-80 w-80 rounded-full bg-purple-600/20 blur-3xl"></div>
+      <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-yellow-300/40 to-transparent"></div>
+    </div>
+
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-8 flex justify-end">
+        <a
+          href="/"
+          class="rounded-full border border-white/10 bg-black/35 px-5 py-2 text-sm font-bold text-white/70 backdrop-blur transition hover:border-yellow-300/40 hover:text-yellow-200"
+        >
+          الرجوع للرئيسية
+        </a>
+      </div>
+
+      <div class="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
+        <aside class="order-2 rounded-[2rem] border border-white/10 bg-black/45 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl lg:order-1">
+          <div class="flex h-full flex-col justify-between gap-8">
+            <div>
+              <div class="mb-6 flex items-center justify-between border-b border-white/10 pb-5">
+                <span class="rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
+                  جاهز
+                </span>
+                <p class="text-sm font-bold text-white/45">TNX6 ACCOUNT</p>
+              </div>
+
+              <div class="space-y-4 text-right">
+                <div class="rounded-3xl border border-yellow-300/15 bg-yellow-300/[0.06] p-5">
+                  <div class="mb-3 flex items-center justify-end gap-3">
+                    <h2 class="text-xl font-black text-yellow-200">تسجيل دخول آمن</h2>
+                    <span class="grid h-10 w-10 place-items-center rounded-2xl bg-yellow-300/15 text-yellow-200">01</span>
+                  </div>
+                  <p class="text-sm leading-7 text-white/55">
+                    الدخول يتم عن طريق Twitch OAuth والبيانات الحساسة محفوظة في الـ Backend، مو داخل الموقع.
+                  </p>
+                </div>
+
+                <div class="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+                  <div class="mb-3 flex items-center justify-end gap-3">
+                    <h2 class="text-xl font-black text-white">لوحة حسابك</h2>
+                    <span class="grid h-10 w-10 place-items-center rounded-2xl bg-white/10 text-white/80">02</span>
+                  </div>
+                  <p class="text-sm leading-7 text-white/50">
+                    بعد الدخول بتشوف حسابك وصورتك وبياناتك، وبعدها نضيف الأغراض والبادجات.
+                  </p>
+                </div>
+
+                <div class="rounded-3xl border border-white/10 bg-white/[0.04] p-5 opacity-80">
+                  <div class="mb-3 flex items-center justify-end gap-3">
+                    <h2 class="text-xl font-black text-white">البيع والمقايضة</h2>
+                    <span class="grid h-10 w-10 place-items-center rounded-2xl bg-white/10 text-white/80">03</span>
+                  </div>
+                  <p class="text-sm leading-7 text-white/50">
+                    هذه بتجي لاحقًا بعد ما نربط الأغراض بطريقة تمنع التلاعب والتكرار.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="rounded-3xl border border-white/10 bg-black/30 p-5 text-right">
+              <p class="mb-2 text-xs font-bold text-white/35">ملاحظة</p>
+              <p class="text-sm leading-7 text-white/55">
+                الموقع ما يتحكم بحسابك في Twitch. نستخدم تسجيل الدخول فقط عشان نعرف هويتك داخل نظام TNX6.
+              </p>
+            </div>
+          </div>
+        </aside>
+
+        <main class="order-1 rounded-[2.25rem] border border-yellow-300/20 bg-black/55 p-7 shadow-2xl shadow-black/40 backdrop-blur-xl md:p-10 lg:order-2">
+          <div class="flex min-h-[560px] flex-col justify-between text-right">
+            <div>
+              <div class="mb-8 inline-flex items-center gap-2 rounded-full border border-yellow-300/25 bg-yellow-300/10 px-4 py-2 text-sm font-bold text-yellow-100">
+                <span class="h-2 w-2 rounded-full bg-yellow-300 shadow-[0_0_18px_rgba(250,204,21,0.9)]"></span>
+                بوابة حساب TNX6
+              </div>
+
+              <h1 class="max-w-3xl text-5xl font-black leading-[1.15] tracking-tight md:text-7xl">
+                ادخل بحسابك
+                <span class="block bg-gradient-to-l from-yellow-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent">
+                  وخل النظام يعرفك
+                </span>
+              </h1>
+
+              <p class="mt-6 max-w-2xl text-lg leading-9 text-white/62">
+                هذه بداية لوحة الحساب. بعد التثبيت بنضيف التحكم بالأغراض، تثبيت البادجات، ثم البيع والمقايضة بشكل آمن.
+              </p>
+
+              <div id="loginNotice" class="mt-6 hidden rounded-3xl border px-5 py-4 text-sm"></div>
+            </div>
+
+            <div class="mt-10">
+              <div class="mb-5 grid gap-3 sm:grid-cols-3">
+                <div class="rounded-3xl border border-white/10 bg-white/[0.04] p-4 text-right">
+                  <p class="text-2xl font-black text-yellow-200">OAuth</p>
+                  <p class="mt-1 text-xs text-white/45">دخول Twitch</p>
+                </div>
+
+                <div class="rounded-3xl border border-white/10 bg-white/[0.04] p-4 text-right">
+                  <p class="text-2xl font-black text-yellow-200">Session</p>
+                  <p class="mt-1 text-xs text-white/45">جلسة محمية</p>
+                </div>
+
+                <div class="rounded-3xl border border-white/10 bg-white/[0.04] p-4 text-right">
+                  <p class="text-2xl font-black text-yellow-200">D1</p>
+                  <p class="mt-1 text-xs text-white/45">قاعدة بيانات</p>
+                </div>
+              </div>
+
+              <a
+                href="https://tnx6-api.ddxdx240.workers.dev/auth/twitch/login"
+                class="group flex w-full items-center justify-center gap-3 rounded-3xl bg-[#9146FF] px-7 py-5 text-lg font-black text-white shadow-2xl shadow-purple-950/40 transition hover:-translate-y-0.5 hover:bg-[#7b36dd]"
+              >
+                <span class="transition group-hover:scale-105">تسجيل الدخول عبر Twitch</span>
+                <span class="grid h-9 w-9 place-items-center rounded-2xl bg-white/15">↗</span>
+              </a>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script is:inline data-reinit>
+      (() => {
+        const notice = document.getElementById('loginNotice');
+        if (!notice) return;
+
+        const params = new URLSearchParams(window.location.search);
+        const error = params.get('error');
+        const logout = params.get('logout');
+
+        const messages = {
+          twitch_denied: 'تم إلغاء تسجيل الدخول من Twitch.',
+          missing_code: 'رجوع Twitch ناقص. جرّب تسجيل الدخول مرة ثانية.',
+          missing_state: 'انتهت صلاحية محاولة الدخول. جرّب مرة ثانية.',
+          invalid_state: 'فشل التحقق الأمني من محاولة الدخول.',
+          bad_state_signature: 'فشل توقيع الحماية. جرّب مرة ثانية.',
+          token_failed: 'فشل أخذ توكن Twitch. تأكد من إعدادات التطبيق.',
+          user_failed: 'فشل جلب بيانات حساب Twitch.',
+          db_user_failed: 'فشل حفظ المستخدم في قاعدة البيانات.',
+        };
+
+        if (error) {
+          notice.className = 'mt-6 rounded-3xl border border-red-400/30 bg-red-500/10 px-5 py-4 text-sm text-red-100';
+          notice.textContent = messages[error] || 'صار خطأ غير معروف أثناء تسجيل الدخول.';
+          notice.classList.remove('hidden');
+          return;
+        }
+
+        if (logout === 'success') {
+          notice.className = 'mt-6 rounded-3xl border border-emerald-400/30 bg-emerald-500/10 px-5 py-4 text-sm text-emerald-100';
+          notice.textContent = 'تم تسجيل الخروج.';
+          notice.classList.remove('hidden');
+        }
+      })();
+    </script>
+  </section>
+</PageLayout>
