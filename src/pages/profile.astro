@@ -2401,10 +2401,60 @@ const metadata = {
         ) || null
       }
 
-      function openFromQuery() {
+      async function getLoggedInUser() {
+        try {
+          const res = await fetch('https://api.tnx6.xyz/api/me', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+          })
+
+          if (!res.ok) return null
+
+          const data = await res.json().catch(() => null)
+          return data?.authenticated && data?.user ? data.user : null
+        } catch {
+          return null
+        }
+      }
+
+      function userFromAuth(authUser) {
+        if (!authUser) return null
+
+        const login = String(authUser.login || '').trim()
+        const twitchId = String(authUser.twitchId || authUser.id || '').trim()
+        const name = String(authUser.displayName || login || 'مستخدم Twitch').trim()
+        const avatar = String(authUser.profileImageUrl || '').trim()
+
+        return {
+          id: twitchId,
+          userId: twitchId,
+          twitchId,
+          userLogin: login,
+          login,
+          userName: name,
+          displayName: name,
+          profileImageUrl: avatar,
+          avatar,
+          bio: 'هذا ملفك الشخصي في نظام TNX6. من هنا بتشوف مستواك، أغراضك، بادجاتك، والبريد.',
+        }
+      }
+
+      async function openFromQuery() {
         const raw = new URLSearchParams(location.search).get('user')
 
         if (!raw) {
+          const authUser = await getLoggedInUser()
+
+          if (authUser?.login) {
+            const user = findUser(authUser.login) || userFromAuth(authUser)
+
+            if (user) {
+              renderProfile(user)
+              return
+            }
+          }
+
           $('searchView')?.classList.remove('hidden')
           $('profileView')?.classList.add('hidden')
           $('notFoundView')?.classList.add('hidden')
@@ -2508,7 +2558,7 @@ const metadata = {
         watchtime: normalizeLeaderboardData(leaderboardPayload, 'watchtime'),
       }
 
-      openFromQuery()
+      await openFromQuery()
     })()
   </script>
 </Layout>
