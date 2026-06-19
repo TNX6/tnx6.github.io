@@ -267,6 +267,23 @@ const nav = [
       width: min(88vw, 250px);
     }
   }
+
+  /* Auth header visibility guard */
+  #tnx-login-btn[data-auth-hidden="true"],
+  #tnx-user-btn[data-auth-hidden="true"] {
+    display: none !important;
+  }
+
+  #tnx-login-btn[data-auth-visible="true"] {
+    display: inline-flex !important;
+  }
+
+  #tnx-user-btn[data-auth-visible="true"] {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
 </style>
 
 <header dir="rtl" class="top-0 z-40 relative w-full bg-[#0a0a0c]/95 border-b border-[#c6a44f]/30 shadow-[0_0_15px_rgba(198,164,79,0.3)] backdrop-blur-md">
@@ -353,7 +370,7 @@ const nav = [
   </div>
 </header>
 
-<script is:inline data-reinit>
+<script is:inline data-reinit data-astro-rerun>
   ;(() => {
     const cleanupKey = '__tnxHeaderCleanup'
     if (window[cleanupKey]) window[cleanupKey]()
@@ -441,8 +458,20 @@ const nav = [
     }
 
     function setLoggedOut() {
-      loginBtn?.classList.remove('hidden')
-      userBtn?.classList.add('hidden')
+      if (loginBtn) {
+        loginBtn.classList.remove('hidden')
+        loginBtn.dataset.authHidden = 'false'
+        loginBtn.dataset.authVisible = 'true'
+        loginBtn.style.display = 'inline-flex'
+      }
+
+      if (userBtn) {
+        userBtn.classList.add('hidden')
+        userBtn.dataset.authHidden = 'true'
+        userBtn.dataset.authVisible = 'false'
+        userBtn.style.display = 'none'
+      }
+
       closeUserMenu()
     }
 
@@ -451,8 +480,19 @@ const nav = [
       const name = String(user.displayName || login || 'مستخدم Twitch').trim()
       const image = String(user.profileImageUrl || '').trim()
 
-      loginBtn?.classList.add('hidden')
-      userBtn?.classList.remove('hidden')
+      if (loginBtn) {
+        loginBtn.classList.add('hidden')
+        loginBtn.dataset.authHidden = 'true'
+        loginBtn.dataset.authVisible = 'false'
+        loginBtn.style.display = 'none'
+      }
+
+      if (userBtn) {
+        userBtn.classList.remove('hidden')
+        userBtn.dataset.authHidden = 'false'
+        userBtn.dataset.authVisible = 'true'
+        userBtn.style.display = 'inline-flex'
+      }
 
       if (avatar) avatar.src = image
       if (menuAvatar) menuAvatar.src = image
