@@ -1743,6 +1743,33 @@ const metadata = {
       }
     }
 
+
+    /* Force logged account tools visibility */
+    #accountTools.account-tools {
+      width: min(100% - 32px, 1180px);
+      margin: 26px auto 14px;
+      padding: 14px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 223, 138, .18);
+      background:
+        linear-gradient(135deg, rgba(255, 223, 138, .08), rgba(145, 70, 255, .06)),
+        rgba(12, 12, 14, .72);
+      box-shadow: 0 18px 48px rgba(0,0,0,.34);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    #accountTools.account-tools.hidden {
+      display: none !important;
+    }
+
+    #accountTools.account-tools:not(.hidden) {
+      display: flex !important;
+    }
+
   </style>
 
   <script is:inline data-reinit>
@@ -3072,4 +3099,91 @@ const metadata = {
       await openFromQuery()
     })()
   </script>
+
+  <script is:inline>
+    ;(() => {
+      const API_BASE = 'https://api.tnx6.xyz'
+
+      function el(id) {
+        return document.getElementById(id)
+      }
+
+      function profileUrl(login) {
+        const url = new URL('/profile', window.location.origin)
+        if (login) url.searchParams.set('user', login)
+        return url.toString()
+      }
+
+      async function getMe() {
+        try {
+          const res = await fetch(API_BASE + '/api/me', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+          })
+
+          if (!res.ok) return null
+          return await res.json()
+        } catch {
+          return null
+        }
+      }
+
+      async function showLoggedAccountTools() {
+        const box = el('accountTools')
+        if (!box) return
+
+        const data = await getMe()
+        if (!data?.authenticated || !data?.user) return
+
+        const user = data.user
+        const login = String(user.login || '').trim()
+        const display = login ? '@' + login : '@---'
+        const url = profileUrl(login)
+
+        const handle = el('accountHandle')
+        if (handle) handle.textContent = display
+
+        const publicLink = el('accountPublicLink')
+        if (publicLink) publicLink.href = url
+
+        box.classList.remove('hidden')
+        box.style.display = 'flex'
+      }
+
+      document.addEventListener('click', async (event) => {
+        const copyBtn = event.target.closest?.('#accountCopyLink')
+        if (copyBtn) {
+          const link = el('accountPublicLink')?.href || window.location.href
+          const old = copyBtn.textContent
+
+          try {
+            await navigator.clipboard.writeText(link)
+            copyBtn.textContent = 'تم النسخ'
+            window.setTimeout(() => { copyBtn.textContent = old }, 1200)
+          } catch {
+            copyBtn.textContent = link
+          }
+        }
+
+        const logoutBtn = event.target.closest?.('#accountLogout')
+        if (logoutBtn) {
+          try {
+            await fetch(API_BASE + '/auth/logout', {
+              method: 'POST',
+              credentials: 'include',
+            })
+          } catch {}
+
+          window.location.href = '/profile'
+        }
+      })
+
+      showLoggedAccountTools()
+      window.setTimeout(showLoggedAccountTools, 800)
+      window.setTimeout(showLoggedAccountTools, 1800)
+      window.addEventListener('pageshow', showLoggedAccountTools)
+    })()
+  </script>
+
 </Layout>
