@@ -2866,9 +2866,9 @@ const metadata = {
 
       function showAccountTools(user, authUser) {
         const box = $('accountTools')
-        if (!box || !isOwnProfile(user, authUser)) return
+        if (!box || !authUser) return
 
-        const login = userLogin(user) || authUser.login || ''
+        const login = authUser.login || userLogin(user) || ''
         const publicUrl = new URL(location.origin + location.pathname)
         publicUrl.searchParams.set('user', login)
 
