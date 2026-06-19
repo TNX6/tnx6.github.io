@@ -2169,7 +2169,7 @@ const metadata = {
     }
 
 
-    /* Clean XP avatar ring + simplified level card */
+    /* TNX level clean system */
     .profile-head .avatar-wrap {
       position: relative !important;
       isolation: isolate !important;
@@ -2187,14 +2187,14 @@ const metadata = {
           from -90deg,
           #ffdf8a 0deg,
           #d7a84f calc(var(--avatar-xp-percent, 0) * 3.6deg),
-          rgba(255,255,255,.07) calc(var(--avatar-xp-percent, 0) * 3.6deg),
-          rgba(255,255,255,.07) 360deg
+          rgba(255,255,255,.075) calc(var(--avatar-xp-percent, 0) * 3.6deg),
+          rgba(255,255,255,.075) 360deg
         ) !important;
       box-shadow:
-        0 0 24px rgba(215,168,79,.18),
-        inset 0 0 0 1px rgba(255,255,255,.045) !important;
+        0 0 22px rgba(215,168,79,.16),
+        inset 0 0 0 1px rgba(255,255,255,.04) !important;
       animation: none !important;
-      transition: filter .25s ease, box-shadow .25s ease;
+      transition: filter .22s ease, box-shadow .22s ease;
     }
 
     .profile-head .avatar {
@@ -2204,230 +2204,34 @@ const metadata = {
 
     .avatar-level-pill {
       position: absolute !important;
-      left: -10px !important;
-      bottom: -10px !important;
-      z-index: 6 !important;
-      min-width: 76px;
-      height: 38px;
-      padding: 0 13px;
-      display: inline-flex !important;
-      align-items: center;
-      justify-content: center;
-      border-radius: 14px;
-      border: 1px solid rgba(255,218,106,.60);
-      background: rgba(7,7,9,.97);
-      color: #ffdf8a;
-      font-size: .95rem;
-      font-weight: 950;
-      line-height: 1;
-      direction: ltr;
-      box-shadow:
-        0 12px 28px rgba(0,0,0,.40),
-        0 0 18px rgba(255,218,106,.20);
-    }
-
-    .level-card {
-      padding: 28px 30px !important;
-      min-height: auto !important;
-    }
-
-    .level-card .level-main {
-      display: block !important;
-      width: 100% !important;
-    }
-
-    .level-card .level-badge,
-    .level-card .level-badge *,
-    .level-card .xp-text,
-    .level-card .xp-breakdown,
-    .level-card #xpBreakdown {
-      display: none !important;
-    }
-
-    .level-card .level-info {
-      width: 100% !important;
-      display: grid !important;
-      grid-template-columns: 1fr auto;
-      grid-template-areas:
-        "xp title"
-        "bar bar";
-      align-items: center;
-      gap: 22px 18px;
-      padding: 0 !important;
-    }
-
-    .level-card #levelTitle {
-      grid-area: title !important;
-      justify-self: start !important;
-      text-align: right !important;
-      font-size: clamp(1.55rem, 1.9vw, 2.15rem) !important;
-      line-height: 1.08 !important;
-      letter-spacing: 0 !important;
-      margin: 0 !important;
-    }
-
-    #levelProgressInline {
-      grid-area: xp;
-      color: rgba(255,255,255,.74);
-      font-size: clamp(1rem, 1.35vw, 1.35rem);
-      font-weight: 900;
-      direction: ltr;
-      text-align: left;
-      white-space: nowrap;
-    }
-
-    .level-card .xp-bar {
-      grid-area: bar;
-      width: 100% !important;
-      height: 17px !important;
-      border-radius: 999px !important;
-      background: rgba(255,255,255,.10) !important;
-      overflow: hidden !important;
-      margin: 0 !important;
-      border: 1px solid rgba(255,255,255,.06) !important;
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.025),
-        inset 0 8px 18px rgba(0,0,0,.18) !important;
-    }
-
-    .level-card .xp-fill {
-      height: 100% !important;
-      border-radius: 999px !important;
-      background: linear-gradient(90deg, #8b5e21 0%, #c08a32 45%, #f0c85f 100%) !important;
-      box-shadow:
-        0 0 22px rgba(255,207,95,.20),
-        inset 0 1px 0 rgba(255,255,255,.20) !important;
-      transition: width .45s ease !important;
-    }
-
-    @media (max-width: 720px) {
-      .level-card .level-info {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-          "title"
-          "xp"
-          "bar";
-        gap: 12px;
-      }
-
-      #levelProgressInline {
-        text-align: right;
-        font-size: .95rem;
-      }
-
-      .avatar-level-pill {
-        left: -7px !important;
-        bottom: -8px !important;
-        min-width: 68px;
-        height: 34px;
-        font-size: .86rem;
-      }
-    }
-
-
-    /* Fix final level card alignment */
-    .level-card {
-      position: relative !important;
-      padding: 28px 30px 30px !important;
-    }
-
-    .level-card .level-info {
-      display: block !important;
-      position: relative !important;
-      width: 100% !important;
-      padding: 0 !important;
-    }
-
-    .level-card #levelTitle {
-      display: block !important;
-      margin: 0 0 26px 0 !important;
-      max-width: calc(100% - 260px) !important;
-      color: #d7a84f !important;
-      font-size: clamp(1.65rem, 2vw, 2.15rem) !important;
-      font-weight: 950 !important;
-      line-height: 1.15 !important;
-      letter-spacing: -.04em !important;
-      text-align: right !important;
-      white-space: nowrap !important;
-    }
-
-    #levelProgressInline {
-      position: absolute !important;
-      top: 8px !important;
-      left: 0 !important;
-      color: rgba(255,255,255,.72) !important;
-      font-size: clamp(1rem, 1.25vw, 1.22rem) !important;
-      font-weight: 900 !important;
-      direction: ltr !important;
-      text-align: left !important;
-      white-space: nowrap !important;
-    }
-
-    .level-card .xp-bar {
-      width: 100% !important;
-      height: 16px !important;
-      margin: 0 !important;
-    }
-
-    .level-card .level-badge,
-    .level-card .level-badge *,
-    .level-card .xp-text,
-    .level-card #xpBreakdown,
-    .level-card .xp-breakdown,
-    .level-card [data-level-percent] {
-      display: none !important;
-    }
-
-    @media (max-width: 720px) {
-      .level-card #levelTitle {
-        max-width: 100% !important;
-        margin-bottom: 10px !important;
-        white-space: normal !important;
-      }
-
-      #levelProgressInline {
-        position: static !important;
-        display: block !important;
-        margin-bottom: 16px !important;
-        text-align: right !important;
-      }
-    }
-
-
-    /* Final visual polish for level section */
-    .level-card #levelTitle {
-      font-size: clamp(1.45rem, 1.75vw, 1.95rem) !important;
-      letter-spacing: -.03em !important;
-    }
-
-    #levelProgressInline {
-      top: 6px !important;
-      font-size: clamp(.95rem, 1.1vw, 1.1rem) !important;
-      opacity: .88 !important;
-    }
-
-    .level-card {
-      padding: 26px 30px 28px !important;
-    }
-
-    .level-card .xp-bar {
-      height: 14px !important;
-    }
-
-    .avatar-level-pill {
-      min-width: 68px !important;
-      height: 34px !important;
-      font-size: .86rem !important;
-      left: -6px !important;
+      left: -5px !important;
       bottom: -7px !important;
+      z-index: 6 !important;
+      min-width: 62px !important;
+      height: 31px !important;
+      padding: 0 11px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
       border-radius: 12px !important;
+      border: 1px solid rgba(255,218,106,.52) !important;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015)),
+        rgba(7,7,9,.97) !important;
+      color: #ffdf8a !important;
+      font-size: .82rem !important;
+      font-weight: 950 !important;
+      line-height: 1 !important;
+      letter-spacing: .015em !important;
+      direction: ltr !important;
+      box-shadow:
+        0 10px 24px rgba(0,0,0,.42),
+        0 0 14px rgba(255,218,106,.16) !important;
     }
 
-
-    /* Premium final level card polish */
     .level-card {
-      padding: 24px 28px 26px !important;
-      min-height: 150px !important;
+      min-height: 132px !important;
+      padding: 22px 28px 24px !important;
       display: flex !important;
       align-items: center !important;
       background:
@@ -2445,24 +2249,25 @@ const metadata = {
     .level-card .level-info {
       width: 100% !important;
       display: grid !important;
-      grid-template-columns: auto 1fr;
+      grid-template-columns: 1fr auto !important;
       grid-template-areas:
-        "xp title"
-        "bar bar";
+        "title xp"
+        "bar bar" !important;
       align-items: center !important;
-      gap: 22px 18px !important;
+      gap: 20px 18px !important;
       padding: 0 !important;
     }
 
     .level-card #levelTitle {
       grid-area: title !important;
       display: block !important;
+      justify-self: start !important;
       margin: 0 !important;
       color: #d7a84f !important;
-      font-size: clamp(1.45rem, 1.75vw, 2rem) !important;
+      font-size: clamp(1.25rem, 1.45vw, 1.65rem) !important;
       font-weight: 950 !important;
       line-height: 1.1 !important;
-      letter-spacing: -.035em !important;
+      letter-spacing: 0 !important;
       text-align: right !important;
       white-space: nowrap !important;
       text-shadow: 0 12px 30px rgba(215,168,79,.08) !important;
@@ -2470,29 +2275,29 @@ const metadata = {
 
     #levelProgressInline {
       grid-area: xp !important;
-      position: static !important;
+      justify-self: end !important;
+      min-height: 22px !important;
+      padding: 0 10px !important;
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
-      min-height: 36px !important;
-      padding: 0 14px !important;
       border-radius: 999px !important;
-      border: 1px solid rgba(255,255,255,.075) !important;
-      background: rgba(0,0,0,.24) !important;
-      color: rgba(255,255,255,.70) !important;
-      font-size: clamp(.88rem, 1vw, 1rem) !important;
-      font-weight: 900 !important;
+      border: 1px solid rgba(255,255,255,.06) !important;
+      background: rgba(0,0,0,.34) !important;
+      color: rgba(255,255,255,.82) !important;
+      font-size: clamp(.72rem, .78vw, .82rem) !important;
+      font-weight: 800 !important;
+      line-height: 1 !important;
       direction: ltr !important;
-      text-align: left !important;
       white-space: nowrap !important;
-      opacity: 1 !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04) !important;
     }
 
     .level-card .xp-bar {
       grid-area: bar !important;
       width: 100% !important;
-      height: 15px !important;
-      margin: 2px 0 0 !important;
+      height: 14px !important;
+      margin: 0 !important;
       border-radius: 999px !important;
       background: rgba(255,255,255,.095) !important;
       border: 1px solid rgba(255,255,255,.055) !important;
@@ -2510,6 +2315,26 @@ const metadata = {
       box-shadow:
         0 0 22px rgba(255,207,95,.22),
         inset 0 1px 0 rgba(255,255,255,.22) !important;
+      transition: width .45s ease !important;
+      position: relative !important;
+      overflow: hidden !important;
+    }
+
+    .level-card .xp-fill::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
+      animation: tnxXpShine 3.2s ease-in-out infinite;
+    }
+
+    @keyframes tnxXpShine {
+      0% { left: -100%; }
+      16% { left: 100%; }
+      100% { left: 100%; }
     }
 
     .level-card .level-badge,
@@ -2521,30 +2346,40 @@ const metadata = {
       display: none !important;
     }
 
-    .avatar-level-pill {
-      left: -5px !important;
-      bottom: -8px !important;
-      min-width: 64px !important;
-      height: 32px !important;
-      padding: 0 11px !important;
-      border-radius: 12px !important;
-      font-size: .84rem !important;
-      font-weight: 950 !important;
-      letter-spacing: .015em !important;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015)),
-        rgba(7,7,9,.97) !important;
-      border-color: rgba(255,218,106,.52) !important;
-      box-shadow:
-        0 10px 24px rgba(0,0,0,.42),
-        0 0 14px rgba(255,218,106,.16) !important;
+    .tnx-confetti-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      overflow: hidden;
     }
 
-    #avatarRing.avatar-ring {
-      inset: -6px !important;
-      box-shadow:
-        0 0 22px rgba(215,168,79,.16),
-        inset 0 0 0 1px rgba(255,255,255,.04) !important;
+    .tnx-confetti-piece {
+      position: absolute;
+      top: -16px;
+      width: 8px;
+      height: 14px;
+      border-radius: 3px;
+      opacity: .95;
+      background: linear-gradient(180deg, #fff2a8, #d7a84f);
+      box-shadow: 0 0 12px rgba(255,218,106,.25);
+      animation: tnxConfettiFall var(--fall-duration, 2.8s) cubic-bezier(.2,.7,.25,1) forwards;
+    }
+
+    .tnx-confetti-piece:nth-child(4n) {
+      background: rgba(145,70,255,.9);
+    }
+
+    @keyframes tnxConfettiFall {
+      0% {
+        transform: translate3d(0, -20px, 0) rotate(0deg);
+        opacity: 0;
+      }
+      8% { opacity: 1; }
+      100% {
+        transform: translate3d(var(--fall-x, 0px), calc(100vh + 90px), 0) rotate(var(--fall-rotate, 620deg));
+        opacity: 0;
+      }
     }
 
     @media (max-width: 720px) {
@@ -2564,76 +2399,27 @@ const metadata = {
 
       .level-card #levelTitle {
         white-space: normal !important;
-        font-size: 1.55rem !important;
       }
 
       #levelProgressInline {
         width: fit-content !important;
         justify-self: end !important;
       }
+
+      .avatar-level-pill {
+        left: -5px !important;
+        bottom: -6px !important;
+        min-width: 58px !important;
+        height: 29px !important;
+        font-size: .78rem !important;
+      }
     }
 
-
-    /* Elite final level spacing */
-    .level-card {
-      min-height: 132px !important;
-      padding: 22px 28px 24px !important;
-    }
-
-    .level-card .level-info {
-      grid-template-columns: 1fr auto !important;
-      grid-template-areas:
-        "title xp"
-        "bar bar" !important;
-      gap: 20px 18px !important;
-    }
-
-    .level-card #levelTitle {
-      grid-area: title !important;
-      justify-self: start !important;
-      font-size: clamp(1.8rem, 2.25vw, 2.45rem) !important;
-      text-align: right !important;
-    }
-
-    #levelProgressInline {
-      grid-area: xp !important;
-      justify-self: end !important;
-      min-height: 34px !important;
-      padding: 0 16px !important;
-      font-size: clamp(.9rem, 1.05vw, 1.02rem) !important;
-      color: rgba(255,255,255,.76) !important;
-      background: rgba(0,0,0,.28) !important;
-      border-color: rgba(255,255,255,.07) !important;
-    }
-
-    .level-card .xp-bar {
-      height: 14px !important;
-      margin-top: 0 !important;
-    }
-
-    .avatar-level-pill {
-      min-width: 62px !important;
-      height: 31px !important;
-      font-size: .82rem !important;
-    }
-
-
-    /* ABSOLUTE FINAL level title size override */
-    .level-card #levelTitle,
-    .level-card .level-info #levelTitle,
-    #profileView .level-card #levelTitle {
-      font-size: clamp(1.25rem, 1.45vw, 1.65rem) !important;
-      line-height: 1.1 !important;
-      letter-spacing: 0 !important;
-      margin: 0 !important;
-      font-weight: 950 !important;
-    }
-
-    #levelProgressInline {
-      min-height: 22px !important;
-      padding: 0 10px !important;
-      font-size: clamp(.72rem, .78vw, .82rem) !important;
-      font-weight: 800 !important;
+    @media (prefers-reduced-motion: reduce) {
+      .level-card .xp-fill::after,
+      .tnx-confetti-piece {
+        animation: none !important;
+      }
     }
 
   </style>
@@ -3966,276 +3752,10 @@ const metadata = {
     })()
   </script>
 
-  <script is:inline>
-    ;(() => {
-      const API_BASE = 'https://api.tnx6.xyz'
-
-      function el(id) {
-        return document.getElementById(id)
-      }
-
-      function profileUrl(login) {
-        const url = new URL('/profile', window.location.origin)
-        if (login) url.searchParams.set('user', login)
-        return url.toString()
-      }
-
-      async function getMe() {
-        try {
-          const res = await fetch(API_BASE + '/api/me', {
-            method: 'GET',
-            credentials: 'include',
-            cache: 'no-store',
-          })
-
-          if (!res.ok) return null
-          return await res.json()
-        } catch {
-          return null
-        }
-      }
-
-      async function showLoggedAccountTools() {
-        const box = el('accountTools')
-        if (!box) return
-
-        const data = await getMe()
-        if (!data?.authenticated || !data?.user) return
-
-        const user = data.user
-        const login = String(user.login || '').trim()
-        const display = login ? '@' + login : '@---'
-        const url = profileUrl(login)
-
-        const handle = el('accountHandle')
-        if (handle) handle.textContent = display
-
-        const publicLink = el('accountPublicLink')
-        if (publicLink) publicLink.href = url
-
-        box.classList.remove('hidden')
-        box.style.display = 'flex'
-      }
-
-      document.addEventListener('click', async (event) => {
-        const copyBtn = event.target.closest?.('#accountCopyLink')
-        if (copyBtn) {
-          const link = el('accountPublicLink')?.href || window.location.href
-          const old = copyBtn.textContent
-
-          try {
-            await navigator.clipboard.writeText(link)
-            copyBtn.textContent = 'تم النسخ'
-            window.setTimeout(() => { copyBtn.textContent = old }, 1200)
-          } catch {
-            copyBtn.textContent = link
-          }
-        }
-
-        const logoutBtn = event.target.closest?.('#accountLogout')
-        if (logoutBtn) {
-          try {
-            await fetch(API_BASE + '/auth/logout', {
-              method: 'POST',
-              credentials: 'include',
-            })
-          } catch {}
-
-          window.location.href = '/profile'
-        }
-      })
-
-      showLoggedAccountTools()
-      window.setTimeout(showLoggedAccountTools, 800)
-      window.setTimeout(showLoggedAccountTools, 1800)
-      window.addEventListener('pageshow', showLoggedAccountTools)
-    })()
-  </script>
-
 
   <script is:inline>
     ;(() => {
-      const API_BASE = 'https://api.tnx6.xyz'
-
-      const $id = (id) => document.getElementById(id)
-
-      async function getCurrentUser() {
-        try {
-          const res = await fetch(API_BASE + '/api/me', {
-            method: 'GET',
-            credentials: 'include',
-            cache: 'no-store',
-          })
-
-          if (!res.ok) return null
-
-          const data = await res.json()
-          return data?.authenticated && data?.user ? data.user : null
-        } catch {
-          return null
-        }
-      }
-
-      function publicProfileUrl(login) {
-        const url = new URL('/profile', window.location.origin)
-        if (login) url.searchParams.set('user', login)
-        return url.toString()
-      }
-
-      async function initProfileAccountMenu() {
-        const box = $id('profileAccountMenu')
-        const handle = $id('profileAccountHandle')
-        const publicLink = $id('profileAccountPublicLink')
-
-        if (!box) return
-
-        const user = await getCurrentUser()
-        if (!user) return
-
-        const login = String(user.login || '').trim()
-
-        if (handle) handle.textContent = login ? '@' + login : '@---'
-        if (publicLink) publicLink.href = publicProfileUrl(login)
-
-        box.classList.remove('hidden')
-      }
-
-      document.addEventListener('click', async (event) => {
-        const toggle = event.target.closest?.('#profileAccountToggle')
-        const dropdown = $id('profileAccountDropdown')
-
-        if (toggle && dropdown) {
-          const isHidden = dropdown.classList.contains('hidden')
-          dropdown.classList.toggle('hidden', !isHidden)
-          toggle.setAttribute('aria-expanded', String(isHidden))
-          return
-        }
-
-        const logout = event.target.closest?.('#profileAccountLogout')
-        if (logout) {
-          try {
-            await fetch(API_BASE + '/auth/logout', {
-              method: 'POST',
-              credentials: 'include',
-            })
-          } catch {}
-
-          window.location.href = '/profile'
-          return
-        }
-
-        if (dropdown && !event.target.closest?.('#profileAccountMenu')) {
-          dropdown.classList.add('hidden')
-          $id('profileAccountToggle')?.setAttribute('aria-expanded', 'false')
-        }
-      })
-
-      initProfileAccountMenu()
-      window.setTimeout(initProfileAccountMenu, 900)
-      window.addEventListener('pageshow', initProfileAccountMenu)
-    })()
-  </script>
-
-
-  <script is:inline>
-    ;(() => {
-      const cleanupKey = '__tnxProfilePolishCleanup'
-      if (window[cleanupKey]) window[cleanupKey]()
-
-      const timers = []
-      const observers = []
-      const $ = (id) => document.getElementById(id)
-
-      function isVisible(el) {
-        return Boolean(el && !el.classList.contains('hidden'))
-      }
-
-      function updateSkeleton() {
-        const skeleton = $('profileSkeleton')
-        if (!skeleton) return
-
-        const loaded =
-          isVisible($('profileView')) ||
-          isVisible($('searchView')) ||
-          isVisible($('notFoundView'))
-
-        skeleton.classList.toggle('is-hidden', loaded)
-      }
-
-      function applyLegendaryGlow() {
-        const inventory = $('inventory')
-        if (!inventory) return
-
-        const candidates = Array.from(inventory.querySelectorAll('button, article, [data-item], .item, .inventory-item, .inventory-card, div'))
-
-        candidates.forEach((node) => {
-          if (!(node instanceof HTMLElement)) return
-
-          const text = (node.textContent || '').toLowerCase()
-          const rarity =
-            (node.dataset?.rarity || node.getAttribute('data-rarity') || '').toLowerCase()
-
-          const isLegendary =
-            rarity.includes('legendary') ||
-            rarity.includes('أسطوري') ||
-            text.includes('legendary') ||
-            text.includes('أسطوري')
-
-          if (!isLegendary) return
-
-          const card =
-            node.closest('button, article, [data-item], .item, .inventory-item, .inventory-card') || node
-
-          if (card instanceof HTMLElement) {
-            card.classList.add('legendary-glow')
-          }
-        })
-      }
-
-      function setupObservers() {
-        const profile = $('profileView')
-        const search = $('searchView')
-        const notFound = $('notFoundView')
-        const inventory = $('inventory')
-
-        ;[profile, search, notFound].forEach((target) => {
-          if (!target) return
-          const obs = new MutationObserver(updateSkeleton)
-          obs.observe(target, { attributes: true, attributeFilter: ['class'] })
-          observers.push(obs)
-        })
-
-        if (inventory) {
-          const obs = new MutationObserver(applyLegendaryGlow)
-          obs.observe(inventory, { childList: true, subtree: true })
-          observers.push(obs)
-        }
-      }
-
-      setupObservers()
-      updateSkeleton()
-      applyLegendaryGlow()
-
-      ;[120, 450, 900, 1600, 2600].forEach((ms) => {
-        timers.push(window.setTimeout(() => {
-          updateSkeleton()
-          applyLegendaryGlow()
-        }, ms))
-      })
-
-      window[cleanupKey] = () => {
-        timers.forEach((id) => window.clearTimeout(id))
-        observers.forEach((obs) => obs.disconnect())
-        timers.length = 0
-        observers.length = 0
-      }
-    })()
-  </script>
-
-
-  <script is:inline>
-    ;(() => {
-      const cleanupKey = '__tnxCleanXpAvatarLevel'
+      const cleanupKey = '__tnxCleanLevelSystem'
       if (window[cleanupKey]) window[cleanupKey]()
 
       const timers = []
@@ -4270,14 +3790,67 @@ const metadata = {
           el.id = 'levelProgressInline'
 
           const title = $('levelTitle')
-          if (title) levelInfo.insertBefore(el, title)
+          if (title) levelInfo.insertBefore(el, title.nextSibling)
           else levelInfo.prepend(el)
         }
 
         return el
       }
 
-      function syncLevelUI() {
+      function getLoginKey() {
+        const handle = String($('handle')?.textContent || '')
+          .replace('@', '')
+          .trim()
+          .toLowerCase()
+
+        return handle || 'current'
+      }
+
+      function burstConfetti() {
+        if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+
+        const layer = document.createElement('div')
+        layer.className = 'tnx-confetti-layer'
+        document.body.appendChild(layer)
+
+        for (let i = 0; i < 85; i += 1) {
+          const piece = document.createElement('span')
+          piece.className = 'tnx-confetti-piece'
+
+          const left = Math.random() * 100
+          const x = (Math.random() - .5) * 520
+          const rotate = (Math.random() > .5 ? 1 : -1) * (420 + Math.random() * 720)
+          const duration = 2.2 + Math.random() * 1.45
+          const delay = Math.random() * .25
+
+          piece.style.left = left + 'vw'
+          piece.style.setProperty('--fall-x', x.toFixed(0) + 'px')
+          piece.style.setProperty('--fall-rotate', rotate.toFixed(0) + 'deg')
+          piece.style.setProperty('--fall-duration', duration.toFixed(2) + 's')
+          piece.style.animationDelay = delay.toFixed(2) + 's'
+
+          layer.appendChild(piece)
+        }
+
+        timers.push(window.setTimeout(() => layer.remove(), 4500))
+      }
+
+      function maybeLevelUp(level) {
+        if (!level) return
+
+        const key = 'tnx_last_seen_level_' + getLoginKey()
+        const previous = Number(localStorage.getItem(key) || '0')
+
+        if (previous > 0 && level > previous) {
+          burstConfetti()
+        }
+
+        if (level >= previous) {
+          localStorage.setItem(key, String(level))
+        }
+      }
+
+      function syncLevel() {
         const level = Math.floor(toNumber($('levelNumber')?.textContent || '1')) || 1
         const current = toNumber($('currentXp')?.textContent || '0')
         const needed = toNumber($('neededXp')?.textContent || '0')
@@ -4297,13 +3870,15 @@ const metadata = {
 
         const fill = $('xpFill')
         if (fill) fill.style.width = percent + '%'
+
+        maybeLevelUp(level)
       }
 
-      ;['levelNumber', 'currentXp', 'neededXp', 'xpFill'].forEach((id) => {
+      ;['levelNumber', 'currentXp', 'neededXp', 'xpFill', 'handle'].forEach((id) => {
         const el = $(id)
         if (!el) return
 
-        const obs = new MutationObserver(syncLevelUI)
+        const obs = new MutationObserver(syncLevel)
         obs.observe(el, {
           childList: true,
           subtree: true,
@@ -4314,14 +3889,14 @@ const metadata = {
         observers.push(obs)
       })
 
-      ;[80, 240, 600, 1200, 2200, 3600].forEach((ms) => {
-        timers.push(window.setTimeout(syncLevelUI, ms))
+      ;[60, 180, 420, 900, 1500, 2600].forEach((ms) => {
+        timers.push(window.setTimeout(syncLevel, ms))
       })
 
-      window.addEventListener('pageshow', syncLevelUI)
-      document.addEventListener('astro:page-load', syncLevelUI)
+      window.addEventListener('pageshow', syncLevel)
+      document.addEventListener('astro:page-load', syncLevel)
 
-      syncLevelUI()
+      syncLevel()
 
       window[cleanupKey] = () => {
         observers.forEach((obs) => obs.disconnect())
