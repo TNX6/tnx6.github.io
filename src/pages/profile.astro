@@ -176,7 +176,35 @@ const metadata = {
           </aside>
         </div>
       </section>
-</section>
+
+      <section class="actions-row">
+        
+        <div id="profileAccountMenu" class="profile-account-menu hidden">
+          <button id="profileAccountToggle" class="profile-account-toggle" type="button" aria-expanded="false">
+            إدارة الحساب
+            <span>▾</span>
+          </button>
+
+          <div id="profileAccountDropdown" class="profile-account-dropdown hidden">
+            <div class="profile-account-mini-status">
+              <span class="profile-account-dot"></span>
+              <div>
+                <strong>متصل عبر Twitch</strong>
+                <small id="profileAccountHandle">@---</small>
+              </div>
+            </div>
+
+            <a id="profileAccountPublicLink" href="/profile" class="profile-account-menu-item">
+              فتح صفحتي العامة
+            </a>
+
+            <button id="profileAccountLogout" type="button" class="profile-account-menu-item danger">
+              تسجيل الخروج
+            </button>
+          </div>
+        </div>
+      </section>
+    </section>
 
     <div class="modal-backdrop" id="mailModal" aria-hidden="true">
       <div class="mail-modal">
@@ -1625,6 +1653,291 @@ const metadata = {
     }
 
 
+    /* Logged account tools */
+    .account-tools {
+      width: min(100% - 32px, 1180px);
+      margin: 26px auto 14px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 223, 138, .18);
+      background:
+        linear-gradient(135deg, rgba(255, 223, 138, .08), rgba(145, 70, 255, .06)),
+        rgba(12, 12, 14, .72);
+      box-shadow: 0 18px 48px rgba(0,0,0,.34);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .account-tools.hidden {
+      display: none !important;
+    }
+
+    .account-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: #62f5a3;
+      box-shadow: 0 0 18px rgba(98, 245, 163, .75);
+      flex: 0 0 auto;
+    }
+
+    .account-status strong {
+      display: block;
+      color: rgba(255,255,255,.92);
+      font-weight: 950;
+      font-size: .95rem;
+      line-height: 1.4;
+    }
+
+    .account-status span:not(.status-dot) {
+      display: block;
+      color: rgba(255,223,138,.82);
+      font-weight: 800;
+      font-size: .86rem;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .account-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .account-action {
+      min-height: 42px;
+      padding: 0 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.055);
+      color: rgba(255,255,255,.86);
+      font-weight: 900;
+      font-size: .86rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease;
+    }
+
+    .account-action:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.09);
+      border-color: rgba(255,223,138,.22);
+    }
+
+    .account-action.logout {
+      color: #ffb4b4;
+      border-color: rgba(255, 80, 80, .22);
+      background: rgba(255, 50, 50, .065);
+    }
+
+    .account-action.logout:hover {
+      border-color: rgba(255, 120, 120, .36);
+      background: rgba(255, 50, 50, .11);
+    }
+
+    @media (max-width: 760px) {
+      .account-tools {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .account-actions {
+        justify-content: stretch;
+      }
+
+      .account-action {
+        flex: 1 1 auto;
+      }
+    }
+
+
+    /* Force logged account tools visibility */
+    #accountTools.account-tools {
+      width: min(100% - 32px, 1180px);
+      margin: 26px auto 14px;
+      padding: 14px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 223, 138, .18);
+      background:
+        linear-gradient(135deg, rgba(255, 223, 138, .08), rgba(145, 70, 255, .06)),
+        rgba(12, 12, 14, .72);
+      box-shadow: 0 18px 48px rgba(0,0,0,.34);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    #accountTools.account-tools.hidden {
+      display: none !important;
+    }
+
+    #accountTools.account-tools:not(.hidden) {
+      display: flex !important;
+    }
+
+
+    /* Profile account dropdown */
+    .profile-account-menu {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .profile-account-menu.hidden {
+      display: none !important;
+    }
+
+    .profile-account-toggle {
+      min-height: 52px;
+      padding: 0 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 223, 138, .22);
+      background:
+        linear-gradient(135deg, rgba(255, 223, 138, .10), rgba(145, 70, 255, .06)),
+        rgba(12, 12, 14, .76);
+      color: rgba(255, 239, 194, .94);
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow: 0 14px 34px rgba(0,0,0,.26);
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .profile-account-toggle:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 223, 138, .36);
+      background:
+        linear-gradient(135deg, rgba(255, 223, 138, .14), rgba(145, 70, 255, .08)),
+        rgba(18, 18, 22, .82);
+    }
+
+    .profile-account-dropdown {
+      position: absolute;
+      bottom: calc(100% + 12px);
+      left: 0;
+      width: 260px;
+      padding: 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(14, 14, 18, .96);
+      box-shadow: 0 24px 70px rgba(0,0,0,.54);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 40;
+    }
+
+    .profile-account-dropdown.hidden {
+      display: none !important;
+    }
+
+    .profile-account-mini-status {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 10px 10px 12px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      text-align: right;
+    }
+
+    .profile-account-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #62f5a3;
+      box-shadow: 0 0 16px rgba(98,245,163,.75);
+      flex: 0 0 auto;
+    }
+
+    .profile-account-mini-status strong {
+      display: block;
+      color: rgba(255,255,255,.92);
+      font-size: .9rem;
+      font-weight: 950;
+    }
+
+    .profile-account-mini-status small {
+      display: block;
+      margin-top: 2px;
+      color: rgba(255,223,138,.82);
+      direction: ltr;
+      font-size: .82rem;
+      font-weight: 850;
+    }
+
+    .profile-account-menu-item {
+      width: 100%;
+      min-height: 44px;
+      padding: 0 13px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      border-radius: 13px;
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,.84);
+      font-weight: 900;
+      font-size: .9rem;
+      text-decoration: none;
+      cursor: pointer;
+      text-align: right;
+    }
+
+    .profile-account-menu-item:hover {
+      background: rgba(255,255,255,.07);
+    }
+
+    .profile-account-menu-item.danger {
+      color: #ffb4b4;
+    }
+
+    .profile-account-menu-item.danger:hover {
+      background: rgba(255, 60, 60, .10);
+    }
+
+    @media (max-width: 560px) {
+      .profile-account-menu,
+      .profile-account-toggle {
+        width: 100%;
+      }
+
+      .profile-account-dropdown {
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(92vw, 280px);
+      }
+    }
+
+
+    /* Hide deprecated profile account controls */
+    #accountTools,
+    #profileAccountMenu {
+      display: none !important;
+    }
+
+
     /* Profile polish: skeleton, smooth modals, legendary glow */
     .profile-skeleton {
       width: min(100% - 32px, 1180px);
@@ -2118,7 +2431,1335 @@ const metadata = {
       display: none !important;
     }
 
-  </style>
+  </style>
+
+  <script is:inline data-astro-rerun data-reinit>
+    ;(async () => {
+      const cleanupKey = '__tnxCleanProfileCleanup'
+      if (window[cleanupKey]) window[cleanupKey]()
+
+      const listeners = []
+      const timers = []
+
+      function addListener(target, event, handler, options) {
+        if (!target) return
+        target.addEventListener(event, handler, options)
+        listeners.push(() => target.removeEventListener(event, handler, options))
+      }
+
+      function addTimer(id) {
+        timers.push(id)
+        return id
+      }
+
+      window[cleanupKey] = () => {
+        listeners.forEach((cleanup) => cleanup())
+        timers.forEach((timer) => window.clearTimeout(timer))
+      }
+
+      const state = {
+        users: [],
+        inventories: [],
+        mailboxes: [],
+        profiles: [],
+        items: [],
+        leaderboards: {
+          points: [],
+          gold: [],
+          watchtime: [],
+        },
+        activeUser: null,
+      }
+
+      const rarityColors = {
+        Common: '#b8b8b8',
+        Rare: '#5ba7ff',
+        Epic: '#b36bff',
+        Legendary: '#ffdf8a',
+        Mythic: '#ff5d5d',
+        status: '#c084fc',
+        attacks: '#ff5d5d',
+        pvp: '#fb923c',
+        luck: '#ffdf8a',
+        boxes: '#7CFFB2',
+        permits: '#5ba7ff',
+        resources: '#b8b8b8',
+        rare: '#ffdf8a',
+        economy: '#d7a84f',
+      }
+
+      const HARD_ITEMS = {
+        vip: { icon: '👑', rarity: 'Legendary', cat: 'status' },
+        'vip+': { icon: '👑', rarity: 'Legendary', cat: 'status' },
+        crown: { icon: '👑', rarity: 'Legendary', cat: 'rare' },
+        'ملك': { icon: '👑', rarity: 'Legendary', cat: 'rare' },
+        'نيوك': { icon: '💣', rarity: 'Mythic', cat: 'attacks' },
+        'محامي': { icon: '⚖️', rarity: 'Rare', cat: 'status' },
+        'رخصة محامي': { icon: '⚖️', rarity: 'Rare', cat: 'status' },
+        'عريف الفصل': { icon: '🎖️', rarity: 'Rare', cat: 'status' },
+        'البريد': { icon: '✉️', rarity: 'Rare', cat: 'economy' },
+        'سمعة': { icon: '🔥', rarity: 'Common', cat: 'economy' },
+        'عملة الجرأة': { icon: '🪙', rarity: 'Common', cat: 'luck' },
+        'صندوق': { icon: '🎁', rarity: 'Common', cat: 'boxes' },
+        'صندوق نادر': { icon: '🎁', rarity: 'Epic', cat: 'boxes' },
+        'صندوق السمعة': { icon: '🎁', rarity: 'Epic', cat: 'boxes' },
+        'خشب': { icon: '🪵', rarity: 'Common', cat: 'resources' },
+        'حديد': { icon: '⛓️', rarity: 'Common', cat: 'resources' },
+        'ذهب': { icon: '🪙', rarity: 'Legendary', cat: 'rare' },
+        'تغيير العنوان': { icon: '✍️', rarity: 'Rare', cat: 'attacks' },
+        'تغير العنوان': { icon: '✍️', rarity: 'Rare', cat: 'attacks' },
+        'تغيير العنوان مطور': { icon: '✍️', rarity: 'Epic', cat: 'attacks' },
+        'أقول لا يكثر': { icon: '🚫', rarity: 'Rare', cat: 'pvp' },
+        'اقول لا يكثر': { icon: '🚫', rarity: 'Rare', cat: 'pvp' },
+        'تجميد الشاشة': { icon: '❄️', rarity: 'Mythic', cat: 'attacks' },
+      }
+
+      const $ = (id) => document.getElementById(id)
+
+      function setText(id, value) {
+        const el = $(id)
+        if (el) el.textContent = value
+      }
+
+      function esc(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;')
+      }
+
+      function normalize(value) {
+        return String(value || '')
+          .toLowerCase()
+          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[أإآ]/g, 'ا')
+          .replace(/ة/g, 'ه')
+          .replace(/ى/g, 'ي')
+          .replace(/\s+/g, ' ')
+          .trim()
+      }
+
+      function key(value) {
+        return normalize(value).replace(/\s+/g, '')
+      }
+
+      function num(value) {
+        if (value === null || value === undefined || value === '') return 0
+
+        if (typeof value === 'number') {
+          return Number.isFinite(value) ? value : 0
+        }
+
+        const cleaned = String(value)
+          .replace(/,/g, '')
+          .replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+          .replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+          .trim()
+
+        const direct = Number(cleaned)
+        if (Number.isFinite(direct)) return direct
+
+        const match = cleaned.match(/-?\d+(?:\.\d+)?/)
+        if (!match) return 0
+
+        const parsed = Number(match[0])
+        return Number.isFinite(parsed) ? parsed : 0
+      }
+
+      function formatNumber(value) {
+        return num(value).toLocaleString('en-US')
+      }
+
+      function safeUrl(value) {
+        const url = String(value || '').trim()
+        return /^https?:\/\//i.test(url) || url.startsWith('/') ? url : ''
+      }
+
+      function get(source, names, fallback = '') {
+        if (!source) return fallback
+
+        for (const name of names) {
+          if (source[name] !== undefined && source[name] !== null && source[name] !== '') return source[name]
+        }
+
+        const keys = Object.keys(source)
+        for (const name of names) {
+          const wanted = String(name).toLowerCase()
+          const foundKey = keys.find((key) => String(key).toLowerCase() === wanted)
+
+          if (foundKey && source[foundKey] !== undefined && source[foundKey] !== null && source[foundKey] !== '') {
+            return source[foundKey]
+          }
+        }
+
+        return fallback
+      }
+
+      function deepGet(source, names, fallback = '') {
+        const direct = get(source, names, null)
+        if (direct !== null && direct !== undefined && direct !== '') return direct
+
+        const wanted = names.map((name) => String(name).toLowerCase())
+        const seen = new Set()
+
+        function walk(value, depth) {
+          if (!value || depth > 5) return null
+
+          if (seen.has(value)) return null
+          if (typeof value === 'object') seen.add(value)
+
+          if (Array.isArray(value)) {
+            for (const entry of value) {
+              if (entry && typeof entry === 'object') {
+                const entryName = get(entry, ['name', 'key', 'varName', 'variableName', 'id'], '')
+                const entryValue = get(entry, ['value', 'Value', 'val', 'data'], '')
+
+                if (entryName && wanted.includes(String(entryName).toLowerCase()) && entryValue !== '') {
+                  return entryValue
+                }
+              }
+
+              const nested = walk(entry, depth + 1)
+              if (nested !== null && nested !== undefined && nested !== '') return nested
+            }
+
+            return null
+          }
+
+          if (typeof value === 'object') {
+            const keys = Object.keys(value)
+
+            for (const name of wanted) {
+              const foundKey = keys.find((key) => String(key).toLowerCase() === name)
+              if (foundKey && value[foundKey] !== undefined && value[foundKey] !== null && value[foundKey] !== '') {
+                return value[foundKey]
+              }
+            }
+
+            for (const key of keys) {
+              const nested = walk(value[key], depth + 1)
+              if (nested !== null && nested !== undefined && nested !== '') return nested
+            }
+          }
+
+          return null
+        }
+
+        const found = walk(source, 0)
+        return found !== null && found !== undefined && found !== '' ? found : fallback
+      }
+
+      function userLogin(user) {
+        return String(get(user, ['userLogin', 'UserLogin', 'login', 'userName'], '')).trim()
+      }
+
+      function userName(user) {
+        return String(get(user, ['userName', 'UserName', 'displayName', 'userLogin'], '')).trim()
+      }
+
+      function userId(user) {
+        return String(get(user, ['userId', 'UserId', 'id'], '')).trim()
+      }
+
+      function matchUser(entry, user) {
+        const id = userId(user)
+        const login = normalize(userLogin(user))
+        const name = normalize(userName(user))
+        const entryId = String(get(entry, ['userId', 'UserId', 'id'], '')).trim()
+        const entryLogin = normalize(get(entry, ['userLogin', 'UserLogin', 'login'], ''))
+        const entryName = normalize(get(entry, ['userName', 'UserName', 'displayName'], ''))
+
+        return (
+          (id && entryId && id === entryId) ||
+          (login && entryLogin && login === entryLogin) ||
+          (login && entryName && login === entryName) ||
+          (name && entryLogin && name === entryLogin) ||
+          (name && entryName && name === entryName)
+        )
+      }
+
+      function findRecord(collection, user) {
+        return collection.find((entry) => matchUser(entry, user)) || null
+      }
+
+      function leaderboardEntryName(entry) {
+        return String(get(entry, [
+          '__name',
+          'UserName',
+          'userName',
+          'displayName',
+          'name',
+          'username',
+          'Name'
+        ], '')).trim()
+      }
+
+      function leaderboardEntryLogin(entry) {
+        return String(get(entry, [
+          '__login',
+          'UserLogin',
+          'userLogin',
+          'login',
+          'username',
+          'Login'
+        ], '')).trim()
+      }
+
+      function leaderboardEntryId(entry) {
+        return String(get(entry, [
+          'userId',
+          'UserId',
+          'id',
+          'Id',
+          '__id'
+        ], '')).trim()
+      }
+
+      function leaderboardEntryValue(entry) {
+        return get(entry, [
+          '__value',
+          'Value',
+          'value',
+          'score',
+          'Score',
+          'points',
+          'Points',
+          'total',
+          'Total',
+          'amount',
+          'Amount',
+          'watchtime',
+          'Watchtime'
+        ], 0)
+      }
+
+      function normalizeLeaderboardData(data, boardId) {
+        const source = Array.isArray(data?.[boardId]) ? data[boardId] : []
+
+        return source
+          .map((entry, index) => {
+            const name = leaderboardEntryName(entry)
+            const login = leaderboardEntryLogin(entry)
+            const id = leaderboardEntryId(entry)
+            const value = leaderboardEntryValue(entry)
+
+            return {
+              raw: entry,
+              boardId,
+              id,
+              name,
+              login,
+              value,
+              number: num(value),
+              rank: index + 1,
+            }
+          })
+          .filter((entry) => entry.name || entry.login || entry.id)
+          .sort((a, b) => b.number - a.number)
+          .map((entry, index) => ({
+            ...entry,
+            rank: index + 1,
+          }))
+      }
+
+      function findLeaderboardEntry(boardId, user) {
+        const board = state.leaderboards?.[boardId] || []
+        const id = userId(user)
+        const login = normalize(userLogin(user))
+        const name = normalize(userName(user))
+
+        if (id) {
+          const byId = board.find((entry) => entry.id && String(entry.id) === String(id))
+          if (byId) return byId
+        }
+
+        if (login) {
+          const byLogin = board.find((entry) => normalize(entry.login) === login)
+          if (byLogin) return byLogin
+        }
+
+        if (name) {
+          const byName = board.find((entry) => normalize(entry.name) === name)
+          if (byName) return byName
+        }
+
+        return null
+      }
+
+      function formatWatchtimeFromMinutes(minutes) {
+        const total = Math.floor(num(minutes))
+
+        if (total <= 0) return '0 يوم'
+
+        const days = total / 1440
+
+        if (days < 1) {
+          return `${days.toFixed(2)} يوم`
+        }
+
+        if (days < 10) {
+          return `${days.toFixed(1)} يوم`
+        }
+
+        return `${Math.floor(days).toLocaleString('en-US')} يوم`
+      }
+
+      function applyLeaderboardMetrics(user) {
+        const merged = { ...user }
+
+        const pointsEntry = findLeaderboardEntry('points', merged)
+        if (pointsEntry) {
+          merged.points = num(pointsEntry.value)
+          merged.totalPoints = num(pointsEntry.value)
+          merged.rank = `#${pointsEntry.rank}`
+        }
+
+        const goldEntry = findLeaderboardEntry('gold', merged)
+        if (goldEntry) {
+          merged.gold = num(goldEntry.value)
+        }
+
+        const watchtimeEntry = findLeaderboardEntry('watchtime', merged)
+        if (watchtimeEntry) {
+          const rawValue = leaderboardEntryValue(watchtimeEntry.raw)
+          const minutes = num(rawValue)
+
+          merged.watchtime = rawValue
+          merged.watchMinutes = minutes
+          merged.watchtimeMinutes = minutes
+          merged.watchtimeText = formatWatchtimeFromMinutes(minutes)
+          merged.watchtimeRank = `#${watchtimeEntry.rank}`
+        }
+
+        return merged
+      }
+
+      function mergeUser(user) {
+        const profile = findRecord(state.profiles, user) || {}
+        const inv = findRecord(state.inventories, user) || {}
+        const mail = findRecord(state.mailboxes, user) || {}
+        const merged = { ...user, ...profile }
+
+        merged.inventory = Array.isArray(profile.inventory)
+          ? profile.inventory
+          : Array.isArray(inv.items)
+            ? inv.items
+            : Array.isArray(inv.inventory)
+              ? inv.inventory
+              : Array.isArray(user.inventory)
+                ? user.inventory
+                : []
+
+        merged.mailbox = Array.isArray(profile.mailbox)
+          ? profile.mailbox
+          : Array.isArray(mail.messages)
+            ? mail.messages
+            : Array.isArray(mail.mailbox)
+              ? mail.mailbox
+              : Array.isArray(user.mailbox)
+                ? user.mailbox
+                : []
+
+        return applyLeaderboardMetrics(merged)
+      }
+
+      function itemName(entry) {
+        return String(get(entry, ['name', 'itemName', 'item', 'Name', 'key'], '')).trim()
+      }
+
+      function itemQty(entry) {
+        return Math.max(1, num(get(entry, ['quantity', 'qty', 'amount', 'count', 'Value'], 1)))
+      }
+
+      function catalogItem(name) {
+        const itemKey = key(name)
+        return state.items.find((item) => key(get(item, ['name', 'itemName', 'title'], '')) === itemKey) || null
+      }
+
+      function itemMeta(name) {
+        const itemKey = key(name)
+        const hard = Object.entries(HARD_ITEMS).find(([hardName]) => key(hardName) === itemKey)?.[1]
+        if (hard) return hard
+
+        const item = catalogItem(name)
+        if (!item) return { icon: '📦', rarity: 'Common', cat: 'economy' }
+
+        return {
+          icon: get(item, ['icon', 'emoji'], '📦'),
+          rarity: get(item, ['rarity'], 'Common'),
+          cat: get(item, ['category', 'type', 'cat'], 'economy'),
+        }
+      }
+
+      function inventoryItems(user) {
+        return (Array.isArray(user.inventory) ? user.inventory : [])
+          .map((entry) => {
+            const name = itemName(entry)
+            const meta = itemMeta(name)
+            const details = catalogItem(name)
+
+            return {
+              name,
+              qty: itemQty(entry),
+              icon: meta.icon || '📦',
+              rarity: meta.rarity || 'Common',
+              cat: meta.cat || 'economy',
+              description: get(details, ['description', 'desc', 'how'], 'غرض من حقيبة العضو.'),
+            }
+          })
+          .filter((item) => item.name)
+      }
+
+      function badgeName(badge) {
+        return String(get(badge, ['name', 'badgeName', 'title', 'value1'], '')).trim()
+      }
+
+      function badgeImage(badge) {
+        return safeUrl(get(badge, ['url', 'image', 'badgeUrl', 'value2'], ''))
+      }
+
+      function badgeRarity(badge) {
+        const explicit = normalize(get(badge, ['rarity', 'tier', 'badgeRarity', 'type'], ''))
+        if (explicit) {
+          if (explicit.includes('mythic') || explicit.includes('اسطوري') || explicit.includes('أسطوري')) return 'Mythic'
+          if (explicit.includes('legendary') || explicit.includes('legend')) return 'Legendary'
+          if (explicit.includes('epic')) return 'Epic'
+          if (explicit.includes('rare')) return 'Rare'
+          if (explicit.includes('common')) return 'Common'
+        }
+
+        const name = normalize(badgeName(badge))
+
+        if (
+          name.includes('vip') ||
+          name.includes('king') ||
+          name.includes('ملك') ||
+          name.includes('3m') ||
+          name.includes('1m') ||
+          name.includes('1000q') ||
+          name.includes('100d') ||
+          name.includes('500k')
+        ) return 'Legendary'
+
+        if (
+          name.includes('250k') ||
+          name.includes('600q') ||
+          name.includes('60d') ||
+          name.includes('500q')
+        ) return 'Epic'
+
+        if (
+          name.includes('100k') ||
+          name.includes('300q') ||
+          name.includes('30d') ||
+          name.includes('law') ||
+          name.includes('محامي')
+        ) return 'Rare'
+
+        return 'Common'
+      }
+
+      function badgeXpValue(rarity) {
+        const table = {
+          Common: 500,
+          Rare: 1500,
+          Epic: 4000,
+          Legendary: 8000,
+          Mythic: 15000,
+        }
+
+        return table[rarity] || table.Common
+      }
+
+      function badgeXp(badge) {
+        return badgeXpValue(badgeRarity(badge))
+      }
+
+      function totalBadgeXp(badges) {
+        // Badge XP يعتمد على البادجات الحالية فقط.
+        // إذا العضو باع/أهدى بادج وانحذف من user_badges.json، ينقص XP تلقائيًا.
+        return (Array.isArray(badges) ? badges : []).reduce((sum, badge) => sum + badgeXp(badge), 0)
+      }
+
+      function fallbackAvatar(name) {
+        const letter = encodeURIComponent((name || 'U').charAt(0).toUpperCase())
+        return `data:image/svg+xml;utf8,
+        <svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'>
+          <defs>
+            <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+              <stop stop-color='%23ffdf8a'/>
+              <stop offset='1' stop-color='%23613f13'/>
+            </linearGradient>
+          </defs>
+          <rect width='300' height='300' rx='58' fill='%23090909'/>
+          <circle cx='150' cy='132' r='70' fill='url(%23g)' opacity='.95'/>
+          <text x='150' y='168' font-size='92' text-anchor='middle' font-family='Arial' font-weight='900' fill='%23100b04'>${letter}</text>
+          <rect x='60' y='222' width='180' height='22' rx='11' fill='%23ffdf8a' opacity='.22'/>
+        </svg>`
+      }
+
+      function fallbackCover() {
+        return `radial-gradient(circle at 50% 20%, rgba(255,223,138,.24), transparent 35%),
+                linear-gradient(135deg, #1a1208, #080808 58%, #1d160b)`
+      }
+
+      // XP sources: watchtime + daily login + currently owned badges.
+      // Watchtime: 1 hour = 3,000 XP, so 1 minute = 50 XP.
+      const WATCH_MINUTE_WEIGHT = 50
+      const DAILY_LOGIN_XP = 500
+
+      function currentPoints(user) {
+        return num(deepGet(user, ['points', 'totalPoints', 'balance', 'loyaltyPoints'], 0))
+      }
+
+
+      function watchSeconds(user) {
+        const watchtimeValue = deepGet(user, [
+          'watchtime',
+          'Watchtime',
+          'watchTime',
+          'WatchTime',
+          'twitchWatchtime',
+          'twitch_watchtime'
+        ], '')
+
+        if (watchtimeValue !== '') {
+          const parsedWatchtime = parseWatchtimeText(watchtimeValue)
+          if (parsedWatchtime > 0) return parsedWatchtime
+        }
+
+        const directSeconds = num(deepGet(user, [
+          'watchSeconds',
+          'watchtimeSeconds',
+          'watchTimeSeconds',
+          'totalWatchSeconds',
+          'totalWatchtimeSeconds'
+        ], 0))
+
+        if (directSeconds > 0) return directSeconds
+
+        const directMinutes = num(deepGet(user, [
+          'watchMinutes',
+          'watchtimeMinutes',
+          'watchTimeMinutes',
+          'totalWatchMinutes',
+          'totalWatchtimeMinutes'
+        ], 0))
+
+        if (directMinutes > 0) return directMinutes * 60
+
+        const directHours = num(deepGet(user, [
+          'watchHours',
+          'watchtimeHours',
+          'watchTimeHours',
+          'totalWatchHours',
+          'totalWatchtimeHours'
+        ], 0))
+
+        if (directHours > 0) return directHours * 3600
+
+        return parseWatchtimeText(deepGet(user, [
+          'watchtimeText',
+          'watchTimeText',
+          'watchTime',
+          'totalWatchtime',
+          'totalWatchTime'
+        ], ''))
+      }
+
+      function parseWatchtimeText(value) {
+        const text = String(value || '').toLowerCase().trim()
+        if (!text) return 0
+
+        const clockMatch = text.match(/^(\d+):(\d{1,2})(?::(\d{1,2}))?$/)
+        if (clockMatch) {
+          const first = Number(clockMatch[1])
+          const second = Number(clockMatch[2])
+          const third = Number(clockMatch[3] || 0)
+
+          if (clockMatch[3] !== undefined) return (first * 3600) + (second * 60) + third
+          return (first * 60) + second
+        }
+
+        let seconds = 0
+
+        const dayMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:d|day|days|يوم|ايام|أيام)/)
+        const hourMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:h|hr|hrs|hour|hours|ساعة|ساعه)/)
+        const minuteMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:m|min|mins|minute|minutes|دقيقة|دقيقه)/)
+        const secondMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:s|sec|secs|second|seconds|ثانية|ثانيه)/)
+
+        if (dayMatch) seconds += Number(dayMatch[1]) * 86400
+        if (hourMatch) seconds += Number(hourMatch[1]) * 3600
+        if (minuteMatch) seconds += Number(minuteMatch[1]) * 60
+        if (secondMatch) seconds += Number(secondMatch[1])
+
+        if (seconds > 0) return seconds
+
+        const plainNumber = Number(text.replace(/,/g, ''))
+        if (Number.isFinite(plainNumber) && plainNumber > 0) {
+          return plainNumber * 60
+        }
+
+        return 0
+      }
+
+      function watchMinutes(user) {
+        return Math.floor(watchSeconds(user) / 60)
+      }
+
+      function levelScore(user) {
+        const badges = Array.isArray(user.badges) ? user.badges : []
+        const watchScore = watchMinutes(user) * WATCH_MINUTE_WEIGHT
+        const loginScore = dailyLoginXp(user)
+        const badgesScore = totalBadgeXp(badges)
+
+        return Math.floor(watchScore + loginScore + badgesScore)
+      }
+
+      function calculateLevel(user) {
+        const score = levelScore(user)
+        let level = 1
+        let remaining = score
+        let required = getRequiredXp(level)
+
+        while (remaining >= required && level < 250) {
+          remaining -= required
+          level++
+          required = getRequiredXp(level)
+        }
+
+        return {
+          level,
+          currentXp: remaining,
+          requiredXp: required,
+          percent: required > 0 ? Math.min(100, Math.round((remaining / required) * 100)) : 0,
+          mode: 'XP',
+          score,
+          watchScore: watchMinutes(user) * WATCH_MINUTE_WEIGHT,
+          dailyLoginScore: dailyLoginXp(user),
+          dailyLoginCount: dailyLoginCount(user),
+          badgeScore: totalBadgeXp(Array.isArray(user.badges) ? user.badges : []),
+          watchMinutes: watchMinutes(user),
+        }
+      }
+
+      function getRequiredXp(level) {
+        return Math.floor(10000 * Math.pow(level, 1.17) + (level * 2500))
+      }
+
+      function getLevelTitle(level) {
+        if (level >= 50) return 'أسطورة المجلس'
+        if (level >= 35) return 'عضو نخبة'
+        if (level >= 20) return 'ثقيل بالمجلس'
+        if (level >= 10) return 'عضو فعّال'
+        if (level >= 5) return 'عضو معروف'
+        return 'عضو جديد'
+      }
+
+      function levelRankFor(user) {
+        const rows = state.users
+          .map((rawUser) => {
+            const merged = mergeUser(rawUser)
+            const levelData = calculateLevel(merged)
+
+            return {
+              user: merged,
+              level: levelData.level,
+              score: levelData.score,
+              points: currentPoints(merged),
+              name: userName(merged) || userLogin(merged),
+            }
+          })
+          .filter((row) => userId(row.user) || userLogin(row.user) || userName(row.user))
+          .sort((a, b) => {
+            if (b.level !== a.level) return b.level - a.level
+            if (b.score !== a.score) return b.score - a.score
+            if (b.points !== a.points) return b.points - a.points
+            return String(a.name).localeCompare(String(b.name))
+          })
+
+        const index = rows.findIndex((row) => matchUser(row.user, user))
+        return index >= 0 ? index + 1 : null
+      }
+
+      function rankFor(user) {
+        const rank = levelRankFor(user)
+        return rank ? `#${rank}` : '—'
+      }
+
+      function messagesFor(user) {
+        return get(user, ['messages', 'messageCount', 'chatMessages'], 0)
+      }
+
+      function dailyLoginCount(user) {
+        return num(deepGet(user, [
+          'dailyLogin',
+          'dailyLogins',
+          'daily_login',
+          'daily_logins',
+          'dailyCheckIns',
+          'dailyCheckins',
+          'checkins',
+          'checkIns',
+          'attendance',
+          'loginCount',
+          'login_count',
+          'daily',
+          'streak'
+        ], 0))
+      }
+
+      function dailyLoginXp(user) {
+        return dailyLoginCount(user) * DAILY_LOGIN_XP
+      }
+
+      function checkinsFor(user) {
+        return dailyLoginCount(user)
+      }
+
+      function chipsFor(user, level, badges, inventory) {
+        const chips = []
+
+        const job = get(user, ['jobName'], '')
+        if (job) chips.push(job)
+
+        if (level >= 20) chips.push('ثقيل بالمجلس')
+        else if (level >= 10) chips.push('متفاعل')
+        else if (level >= 5) chips.push('عضو معروف')
+
+        if (badges.length >= 10) chips.push('صاحب بادجات')
+        if (inventory.some((item) => normalize(item.name).includes('vip'))) chips.unshift('VIP')
+        if (!chips.length) chips.push('عضو')
+
+        return chips.slice(0, 5)
+      }
+
+      function renderProfile(rawUser) {
+        const user = mergeUser(rawUser)
+        state.activeUser = user
+
+        $('searchView')?.classList.add('hidden')
+        $('notFoundView')?.classList.add('hidden')
+        $('profileView')?.classList.remove('hidden')
+
+        const login = userLogin(user)
+        const name = userName(user) || login
+        const avatar = safeUrl(get(user, ['profileImageUrl', 'avatar', 'ProfileImageUrl'], '')) || fallbackAvatar(name)
+        const cover = safeUrl(get(user, ['bannerImage', 'banner', 'backgroundImage'], ''))
+        const badges = Array.isArray(user.badges) ? user.badges : []
+        const inventory = inventoryItems(user)
+        const mail = mailItems(user)
+        const level = calculateLevel(user)
+        const bio = get(user, ['bio'], 'ملف العضو يعرض المستوى، الحقيبة، البادجات، والبريد في صفحة واحدة بشكل واضح.')
+
+        document.documentElement.style.setProperty('--cover-image', cover ? `url("${cover}")` : fallbackCover())
+
+        if ($('avatar')) $('avatar').src = avatar
+        if ($('onlineDot')) $('onlineDot').style.display = get(user, ['online', 'isOnline'], false) ? 'block' : 'none'
+
+        setText('displayName', name)
+        setText('handle', '@' + login)
+        setText('bio', bio)
+
+        setText('levelNumber', level.level)
+        setText('levelTitle', getLevelTitle(level.level))
+        setText('currentXp', `${formatNumber(level.currentXp)} XP`)
+        setText('neededXp', `${formatNumber(level.requiredXp)} XP`)
+        if ($('xpFill')) $('xpFill').style.width = level.percent + '%'
+        renderXpBreakdown(level)
+        applyAvatarFrame(level.level)
+
+        setText('rank', rankFor(user))
+        setText('messages', formatNumber(messagesFor(user)))
+        setText('checkins', formatNumber(checkinsFor(user)))
+        setText('points', formatNumber(currentPoints(user)))
+
+        setText('inventoryCount', `${inventory.length} ${inventory.length === 1 ? 'غرض' : 'أغراض'}`)
+        setText('badgesCount', `${badges.length} مفتوحة`)
+        setText('mailCount', mail.length)
+
+        if ($('badgesPageLink')) $('badgesPageLink').href = `/badges?user=${encodeURIComponent(login)}`
+
+        renderChips(chipsFor(user, level.level, badges, inventory))
+        renderInventory(inventory)
+        renderBadges(badges)
+        renderMail(mail)
+      }
+
+      function renderChips(chips) {
+        const box = $('chips')
+        if (!box) return
+
+        box.innerHTML = chips.map((chip, index) => `
+          <span class="chip${index === 0 ? ' gold' : ''}">${esc(chip)}</span>
+        `).join('')
+      }
+
+      function applyAvatarFrame(level) {
+        const wrap = document.querySelector('.avatar-wrap')
+        if (!wrap) return
+
+        wrap.classList.remove(
+          'level-frame-basic',
+          'level-frame-gold',
+          'level-frame-animated',
+          'level-frame-legendary',
+          'level-frame-special'
+        )
+
+        if (level >= 50) wrap.classList.add('level-frame-special')
+        else if (level >= 35) wrap.classList.add('level-frame-legendary')
+        else if (level >= 20) wrap.classList.add('level-frame-animated')
+        else if (level >= 10) wrap.classList.add('level-frame-gold')
+        else wrap.classList.add('level-frame-basic')
+      }
+
+      function renderXpBreakdown(level) {
+        const box = $('xpBreakdown')
+        if (!box) return
+
+        const rows = [
+          { label: 'المشاهدة', value: level.watchScore },
+          { label: 'تسجيل الدخول', value: level.dailyLoginScore },
+          { label: 'البادجات', value: level.badgeScore },
+          { label: 'المجموع', value: level.score, total: true },
+        ]
+
+        box.innerHTML = rows.map((row) => `
+          <div class="xp-source${row.total ? ' total' : ''}">
+            <span>${esc(row.label)}</span>
+            <strong>${formatNumber(row.value)} XP</strong>
+          </div>
+        `).join('')
+      }
+
+      function renderInventory(items) {
+        const box = $('inventory')
+        if (!box) return
+
+        if (!items.length) {
+          box.innerHTML = `<div class="empty">الحقيبة فاضية.</div>`
+          return
+        }
+
+        const sorted = [...items].sort((a, b) => b.qty - a.qty || a.name.localeCompare(b.name))
+
+        box.innerHTML = sorted.map((item, index) => {
+          const color = rarityColors[item.rarity] || rarityColors[item.cat] || '#ffffff'
+          return `
+            <button class="item" type="button" data-item-index="${index}" style="--rarity-color:${color}">
+              <div class="item-icon">${esc(item.icon)}</div>
+              <div>
+                <h3 class="item-name">${esc(item.name)}</h3>
+                <div class="item-meta">
+                  <span class="qty">x${formatNumber(item.qty)}</span>
+                  <span>${esc(item.rarity || item.cat || 'Item')}</span>
+                </div>
+              </div>
+            </button>
+          `
+        }).join('')
+
+        box.querySelectorAll('[data-item-index]').forEach((button) => {
+          addListener(button, 'click', () => {
+            const item = sorted[Number(button.dataset.itemIndex)]
+            if (item) openItemModal(item)
+          })
+        })
+      }
+
+      function renderBadges(badges) {
+        const box = $('badges')
+        if (!box) return
+
+        if (!badges.length) {
+          box.innerHTML = `<div class="empty">ما فيه بادجات ظاهرة.</div>`
+          return
+        }
+
+        box.innerHTML = badges.slice(0, 15).map((badge) => {
+          const name = badgeName(badge)
+          const image = badgeImage(badge)
+
+          const rarity = badgeRarity(badge)
+          const xp = badgeXp(badge)
+
+          return `
+            <div class="badge" title="${esc(name)} - ${esc(rarity)} - ${formatNumber(xp)} XP">
+              ${image ? `<img src="${esc(image)}" alt="${esc(name)}" loading="lazy" />` : `<div class="badge-icon">🏅</div>`}
+              <div class="badge-name">${esc(name)}</div>
+            </div>
+          `
+        }).join('')
+      }
+
+      function mailItems(user) {
+        const mail = Array.isArray(user.mailbox) ? [...user.mailbox] : []
+        return mail.sort((a, b) => new Date(get(b, ['date', 'createdAt'], 0)) - new Date(get(a, ['date', 'createdAt'], 0)))
+      }
+
+      function renderMail(mail) {
+        const box = $('mailList')
+        if (!box) return
+
+        if (!mail.length) {
+          box.innerHTML = `<div class="empty">ما عندك رسائل.</div>`
+          return
+        }
+
+        box.innerHTML = mail.map((message) => {
+          const from = get(message, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], 'النظام')
+          const text = get(message, ['message', 'text'], '')
+          return `
+            <div class="mail-message">
+              <strong>${esc(from)}</strong>
+              <p>${esc(text)}</p>
+            </div>
+          `
+        }).join('')
+      }
+
+      function openMail() {
+        $('mailModal')?.classList.add('show')
+        $('mailModal')?.setAttribute('aria-hidden', 'false')
+      }
+
+      function closeMail() {
+        $('mailModal')?.classList.remove('show')
+        $('mailModal')?.setAttribute('aria-hidden', 'true')
+      }
+
+      function commandItemName(name) {
+        const text = String(name || '').trim()
+        return text.includes(' ') ? `"${text}"` : text
+      }
+
+      function itemActionHint(action, item) {
+        const itemName = commandItemName(item.name)
+
+        if (action === 'use') {
+          return `استخدم الغرض من الشات بالأمر: <code>!use ${esc(itemName)}</code>`
+        }
+
+        if (action === 'gift') {
+          return `إهداء الغرض من الشات: <code>!gift username ${esc(itemName)}</code>`
+        }
+
+        if (action === 'sell') {
+          return `بيع الغرض من الشات: <code>!sell ${esc(itemName)}</code>`
+        }
+
+        if (action === 'market') {
+          return `عرض الغرض في السوق يحتاج أمر السوق عند تفعيله: <code>!market ${esc(itemName)}</code>`
+        }
+
+        return 'استخدم الأوامر من الشات.'
+      }
+
+      function openItemModal(item) {
+        const modal = document.createElement('div')
+        modal.className = 'modal-backdrop show'
+        modal.innerHTML = `
+          <div class="item-modal">
+            <div class="modal-head">
+              <h3>${esc(item.name)}</h3>
+              <button class="close-btn" type="button" data-close-item>×</button>
+            </div>
+            <div class="mail-list">
+              <div class="mail-message">
+                <strong>${esc(item.icon)} x${formatNumber(item.qty)}</strong>
+                <p>${esc(item.description)}</p>
+              </div>
+            </div>
+            <div class="item-actions">
+              <button class="item-action-btn" type="button" data-item-action="use">استخدام</button>
+              <button class="item-action-btn" type="button" data-item-action="gift">إهداء</button>
+              <button class="item-action-btn" type="button" data-item-action="sell">بيع</button>
+              <button class="item-action-btn" type="button" data-item-action="market">عرض في السوق</button>
+            </div>
+            <div class="item-command-hint" data-item-hint>
+              اختر العملية فوق. التنفيذ حاليًا من الشات حتى نربط الصفحة بأكشنات Streamer.bot.
+            </div>
+          </div>
+        `
+
+        document.body.appendChild(modal)
+
+        const close = () => modal.remove()
+        addListener(modal, 'click', (event) => {
+          if (event.target === modal) close()
+        })
+        addListener(modal.querySelector('[data-close-item]'), 'click', close)
+
+        modal.querySelectorAll('[data-item-action]').forEach((button) => {
+          addListener(button, 'click', () => {
+            const hint = modal.querySelector('[data-item-hint]')
+            if (hint) hint.innerHTML = itemActionHint(button.dataset.itemAction, item)
+          })
+        })
+      }
+
+      function renderSearch(query) {
+        const target = $('searchResults')
+        if (!target) return
+
+        const q = normalize(query)
+        target.innerHTML = ''
+        if (!q) return
+
+        const matches = state.users.filter((user) =>
+          normalize(userName(user)).includes(q) || normalize(userLogin(user)).includes(q)
+        ).slice(0, 10)
+
+        target.innerHTML = matches.map((user) => {
+          const login = userLogin(user)
+          const name = userName(user) || login
+          const avatar = safeUrl(get(user, ['profileImageUrl', 'avatar', 'ProfileImageUrl'], '')) || fallbackAvatar(name)
+
+          return `
+            <button type="button" class="search-result" data-login="${esc(login)}">
+              <img src="${esc(avatar)}" alt="${esc(name)}" loading="lazy" />
+              <div>
+                <strong>${esc(name)}</strong>
+                <span>@${esc(login)}</span>
+              </div>
+            </button>
+          `
+        }).join('')
+      }
+
+      function findUser(login) {
+        const target = normalize(login)
+        return state.users.find((user) =>
+          normalize(userLogin(user)) === target || normalize(userName(user)) === target
+        ) || null
+      }
+
+
+      function isOwnProfile(user, authUser) {
+        if (!user || !authUser) return false
+
+        const profileLogin = normalize(userLogin(user))
+        const authLogin = normalize(authUser.login)
+        const profileId = String(userId(user) || get(user, ['twitchId'], '')).trim()
+        const authId = String(authUser.twitchId || authUser.id || '').trim()
+
+        return Boolean(
+          (profileLogin && authLogin && profileLogin === authLogin) ||
+          (profileId && authId && profileId === authId)
+        )
+      }
+
+      function showAccountTools(user, authUser) {
+        const box = $('accountTools')
+        if (!box || !authUser) return
+
+        const login = authUser.login || userLogin(user) || ''
+        const publicUrl = new URL(location.origin + location.pathname)
+        publicUrl.searchParams.set('user', login)
+
+        const handle = $('accountHandle')
+        if (handle) handle.textContent = login ? '@' + login : '@---'
+
+        const publicLink = $('accountPublicLink')
+        if (publicLink) publicLink.href = publicUrl.toString()
+
+        box.classList.remove('hidden')
+      }
+
+      function hideAccountTools() {
+        $('accountTools')?.classList.add('hidden')
+      }
+
+      async function logoutAccount() {
+        try {
+          await fetch('https://api.tnx6.xyz/auth/logout', {
+            method: 'POST',
+            credentials: 'include',
+          })
+        } catch {}
+
+        location.href = '/profile'
+      }
+
+      async function getLoggedInUser() {
+        try {
+          const res = await fetch('https://api.tnx6.xyz/api/me', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+          })
+
+          if (!res.ok) return null
+
+          const data = await res.json().catch(() => null)
+          return data?.authenticated && data?.user ? data.user : null
+        } catch {
+          return null
+        }
+      }
+
+      function userFromAuth(authUser) {
+        if (!authUser) return null
+
+        const login = String(authUser.login || '').trim()
+        const twitchId = String(authUser.twitchId || authUser.id || '').trim()
+        const name = String(authUser.displayName || login || 'مستخدم Twitch').trim()
+        const avatar = String(authUser.profileImageUrl || '').trim()
+
+        return {
+          id: twitchId,
+          userId: twitchId,
+          twitchId,
+          userLogin: login,
+          login,
+          userName: name,
+          displayName: name,
+          profileImageUrl: avatar,
+          avatar,
+          bio: 'هذا ملفك الشخصي في نظام TNX6. من هنا بتشوف مستواك، أغراضك، بادجاتك، والبريد.',
+        }
+      }
+
+      async function openFromQuery() {
+        const raw = new URLSearchParams(location.search).get('user')
+
+        if (!raw) {
+          const authUser = await getLoggedInUser()
+
+          if (authUser?.login) {
+            const user = findUser(authUser.login) || userFromAuth(authUser)
+
+            if (user) {
+              renderProfile(user)
+              return
+            }
+          }
+
+          $('searchView')?.classList.remove('hidden')
+          $('profileView')?.classList.add('hidden')
+          $('notFoundView')?.classList.add('hidden')
+          return
+        }
+
+        const user = findUser(raw)
+
+        if (!user) {
+          $('searchView')?.classList.add('hidden')
+          $('profileView')?.classList.add('hidden')
+          $('notFoundView')?.classList.remove('hidden')
+          return
+        }
+
+        renderProfile(user)
+      }
+
+      function profileLink(user) {
+        const url = new URL(location.href)
+        url.searchParams.set('user', userLogin(user))
+        url.hash = ''
+        return url.toString()
+      }
+
+      async function loadJson(url, fallback) {
+        try {
+          const res = await fetch(`${url}?v=${Date.now()}`, { cache: 'no-store' })
+          if (!res.ok) return fallback
+          return await res.json()
+        } catch {
+          return fallback
+        }
+      }
+
+      addListener($('searchInput'), 'input', (event) => renderSearch(event.target.value))
+
+      addListener($('clearSearch'), 'click', () => {
+        if (!$('searchInput') || !$('searchResults')) return
+        $('searchInput').value = ''
+        $('searchResults').innerHTML = ''
+        $('searchInput').focus()
+      })
+
+      addListener($('searchResults'), 'click', (event) => {
+        const button = event.target.closest('[data-login]')
+        if (!button) return
+        const user = findUser(button.dataset.login)
+        if (!user) return
+
+        history.replaceState(null, '', profileLink(user))
+        renderProfile(user)
+      })
+
+      addListener($('openMailButton'), 'click', openMail)
+      addListener($('closeMailButton'), 'click', closeMail)
+
+      addListener($('mailModal'), 'click', (event) => {
+        if (event.target === $('mailModal')) closeMail()
+      })
+
+      addListener($('copyLink'), 'click', async (event) => {
+        if (!state.activeUser) return
+
+        const button = event.currentTarget
+        const old = button.textContent
+
+        try {
+          await navigator.clipboard.writeText(profileLink(state.activeUser))
+          button.textContent = 'تم النسخ'
+          addTimer(window.setTimeout(() => { button.textContent = old }, 1200))
+        } catch {
+          button.textContent = profileLink(state.activeUser)
+        }
+      })
+
+      addListener($('accountCopyLink'), 'click', async (event) => {
+        const link = $('accountPublicLink')?.href || location.href
+        const button = event.currentTarget
+        const old = button.textContent
+
+        try {
+          await navigator.clipboard.writeText(link)
+          button.textContent = 'تم النسخ'
+          addTimer(window.setTimeout(() => { button.textContent = old }, 1200))
+        } catch {
+          button.textContent = link
+        }
+      })
+
+      addListener($('accountLogout'), 'click', logoutAccount)
+
+      addListener($('backToTop'), 'click', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
+
+      addListener(window, 'scroll', () => {
+        $('backToTop')?.classList.toggle('is-visible', window.scrollY > 420)
+      }, { passive: true })
+
+      const [users, inventories, mailboxes, profiles, itemPayload, leaderboardPayload] = await Promise.all([
+        loadJson('/api/user_badges.json', []),
+        loadJson('/api/user_inventory.json', []),
+        loadJson('/api/user_mailbox.json', []),
+        loadJson('/api/user_profile.json', []),
+        loadJson('/api/items.json', { items: [] }),
+        loadJson('/api/leaderboard_data.json', {}),
+      ])
+
+      state.users = Array.isArray(users) ? users : []
+      state.inventories = Array.isArray(inventories) ? inventories : []
+      state.mailboxes = Array.isArray(mailboxes) ? mailboxes : []
+      state.profiles = Array.isArray(profiles) ? profiles : []
+      state.items = Array.isArray(itemPayload) ? itemPayload : Array.isArray(itemPayload.items) ? itemPayload.items : []
+
+      state.leaderboards = {
+        points: normalizeLeaderboardData(leaderboardPayload, 'points'),
+        gold: normalizeLeaderboardData(leaderboardPayload, 'gold'),
+        watchtime: normalizeLeaderboardData(leaderboardPayload, 'watchtime'),
+      }
+
+      await openFromQuery()
+    })()
+  </script>
 
 
   <script is:inline data-astro-rerun>
