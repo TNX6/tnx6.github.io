@@ -84,6 +84,8 @@ const metadata = {
                 <span class="handle" id="handle">---</span>
               </div>
 
+              <div id="featuredBadges" class="profile-featured-badges hidden" aria-label="بادجات العضو المميزة"></div>
+
               <p class="bio" id="bio">---</p>
 
               <div class="chips" id="chips"></div>
@@ -2431,6 +2433,121 @@ const metadata = {
       display: none !important;
     }
 
+
+    /* Discord-style featured badges */
+    .profile-featured-badges {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 7px;
+      margin: 2px 0 12px;
+      min-height: 34px;
+      flex-wrap: wrap;
+    }
+
+    .profile-featured-badges.hidden {
+      display: none !important;
+    }
+
+    .featured-mini-badge {
+      position: relative;
+      width: 31px;
+      height: 31px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 223, 138, .22);
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255, 223, 138, .14), transparent 42%),
+        rgba(0, 0, 0, .34);
+      color: rgba(255, 239, 196, .94);
+      box-shadow:
+        0 10px 22px rgba(0, 0, 0, .28),
+        inset 0 1px 0 rgba(255,255,255,.04);
+      cursor: default;
+      transition:
+        transform .16s ease,
+        border-color .16s ease,
+        background .16s ease,
+        box-shadow .16s ease;
+    }
+
+    .featured-mini-badge:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 223, 138, .46);
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255, 223, 138, .22), transparent 45%),
+        rgba(255, 255, 255, .06);
+      box-shadow:
+        0 14px 30px rgba(0, 0, 0, .34),
+        0 0 18px rgba(255, 223, 138, .12);
+    }
+
+    .featured-mini-badge img {
+      width: 21px;
+      height: 21px;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 5px 10px rgba(0,0,0,.35));
+    }
+
+    .featured-mini-badge span {
+      font-size: 16px;
+      line-height: 1;
+      filter: drop-shadow(0 5px 10px rgba(0,0,0,.35));
+    }
+
+    .featured-mini-badge::after {
+      content: attr(data-tip);
+      position: absolute;
+      right: 50%;
+      bottom: calc(100% + 9px);
+      transform: translateX(50%) translateY(4px);
+      width: max-content;
+      max-width: 210px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(8, 8, 11, .96);
+      color: rgba(255,255,255,.9);
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.35;
+      text-align: center;
+      white-space: nowrap;
+      box-shadow: 0 16px 36px rgba(0,0,0,.45);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .14s ease, transform .14s ease;
+      z-index: 20;
+    }
+
+    .featured-mini-badge:hover::after {
+      opacity: 1;
+      transform: translateX(50%) translateY(0);
+    }
+
+    .featured-mini-badge.rarity-mythic,
+    .featured-mini-badge.rarity-legendary {
+      border-color: rgba(255, 223, 138, .36);
+      box-shadow:
+        0 10px 24px rgba(0,0,0,.30),
+        0 0 18px rgba(255, 223, 138, .14);
+    }
+
+    .featured-mini-badge.rarity-mythic {
+      border-color: rgba(255, 93, 93, .38);
+      box-shadow:
+        0 10px 24px rgba(0,0,0,.30),
+        0 0 18px rgba(255, 93, 93, .12);
+    }
+
+    @media (max-width: 940px) {
+      .profile-featured-badges {
+        justify-content: center;
+      }
+    }
+
   </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -3971,6 +4088,140 @@ const metadata = {
       document.addEventListener('astro:page-load', syncSkeleton)
 
       syncSkeleton()
+
+      window[cleanupKey] = () => {
+        observers.forEach((obs) => obs.disconnect())
+        timers.forEach((id) => window.clearTimeout(id))
+        observers.length = 0
+        timers.length = 0
+      }
+    })()
+  </script>
+
+
+  <script is:inline data-astro-rerun>
+    ;(() => {
+      const cleanupKey = '__tnxFeaturedMiniBadges'
+      if (window[cleanupKey]) window[cleanupKey]()
+
+      const timers = []
+      const observers = []
+      const $ = (id) => document.getElementById(id)
+
+      function scoreBadge(label) {
+        const text = String(label || '').toLowerCase()
+
+        if (text.includes('king') || text.includes('ملك')) return 1000
+        if (text.includes('vip')) return 950
+        if (text.includes('law') || text.includes('محامي') || text.includes('قانون')) return 900
+        if (text.includes('mythic')) return 850
+        if (text.includes('legendary')) return 800
+        if (text.includes('1000q') || text.includes('1000')) return 760
+        if (text.includes('1m') || text.includes('مليون')) return 740
+        if (text.includes('500k')) return 720
+        if (text.includes('150') || text.includes('100')) return 650
+        if (text.includes('60') || text.includes('30') || text.includes('15')) return 520
+
+        return 100
+      }
+
+      function rarityFromText(label) {
+        const text = String(label || '').toLowerCase()
+        if (text.includes('mythic') || text.includes('أسطوري') || text.includes('اسطوري')) return 'mythic'
+        if (text.includes('legendary') || text.includes('vip') || text.includes('king') || text.includes('ملك')) return 'legendary'
+        if (text.includes('epic')) return 'epic'
+        if (text.includes('rare')) return 'rare'
+        return 'common'
+      }
+
+      function extractBadgeData(node) {
+        const name =
+          node.querySelector?.('.badge-name')?.textContent?.trim() ||
+          node.getAttribute?.('title') ||
+          node.getAttribute?.('aria-label') ||
+          node.textContent?.trim() ||
+          'بادج'
+
+        const img = node.querySelector?.('img')
+        const icon = node.querySelector?.('.badge-icon')?.textContent?.trim()
+
+        return {
+          name,
+          imgSrc: img?.getAttribute('src') || '',
+          imgAlt: img?.getAttribute('alt') || name,
+          icon: icon || '',
+          score: scoreBadge(name),
+          rarity: rarityFromText(name),
+        }
+      }
+
+      function makeMiniBadge(data) {
+        const el = document.createElement('span')
+        el.className = 'featured-mini-badge rarity-' + data.rarity
+        el.setAttribute('data-tip', data.name)
+        el.setAttribute('aria-label', data.name)
+
+        if (data.imgSrc) {
+          const img = document.createElement('img')
+          img.src = data.imgSrc
+          img.alt = data.imgAlt || data.name
+          img.loading = 'lazy'
+          el.appendChild(img)
+        } else {
+          const span = document.createElement('span')
+          span.textContent = data.icon || '✦'
+          el.appendChild(span)
+        }
+
+        return el
+      }
+
+      function syncFeaturedBadges() {
+        const target = $('featuredBadges')
+        const badgesBox = $('badges')
+
+        if (!target || !badgesBox) return
+
+        const badges = Array
+          .from(badgesBox.querySelectorAll('.badge'))
+          .map(extractBadgeData)
+          .filter((badge) => badge.name && badge.name !== 'بادج')
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 5)
+
+        target.innerHTML = ''
+
+        if (!badges.length) {
+          target.classList.add('hidden')
+          return
+        }
+
+        badges.forEach((badge) => target.appendChild(makeMiniBadge(badge)))
+        target.classList.remove('hidden')
+      }
+
+      function setup() {
+        syncFeaturedBadges()
+
+        const badgesBox = $('badges')
+        if (badgesBox && !badgesBox.dataset.featuredObserved) {
+          badgesBox.dataset.featuredObserved = 'true'
+
+          const obs = new MutationObserver(syncFeaturedBadges)
+          obs.observe(badgesBox, { childList: true, subtree: true })
+          observers.push(obs)
+        }
+      }
+
+      ;[80, 240, 600, 1200, 2200].forEach((ms) => {
+        timers.push(window.setTimeout(setup, ms))
+      })
+
+      window.addEventListener('pageshow', setup)
+      document.addEventListener('astro:page-load', setup)
+      document.addEventListener('astro:after-swap', setup)
+
+      setup()
 
       window[cleanupKey] = () => {
         observers.forEach((obs) => obs.disconnect())
