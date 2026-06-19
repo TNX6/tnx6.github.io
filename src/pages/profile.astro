@@ -72,9 +72,10 @@ const metadata = {
         <div class="cover" id="cover">
           <div class="profile-head">
             <div class="avatar-wrap">
-              <div class="avatar-ring"></div>
+              <div class="avatar-ring" id="avatarRing"></div>
               <img class="avatar" id="avatar" alt="Profile Avatar" />
               <span class="online-dot" id="onlineDot"></span>
+              <span class="avatar-level-pill" id="avatarLevelBadge">LVL 1</span>
             </div>
 
             <div class="identity">
@@ -2167,6 +2168,163 @@ const metadata = {
       }
     }
 
+
+    /* Clean XP avatar ring + simplified level card */
+    .profile-head .avatar-wrap {
+      position: relative !important;
+      isolation: isolate !important;
+      overflow: visible !important;
+    }
+
+    #avatarRing.avatar-ring {
+      position: absolute !important;
+      inset: -6px !important;
+      border-radius: 34px !important;
+      z-index: 0 !important;
+      pointer-events: none !important;
+      background:
+        conic-gradient(
+          from -90deg,
+          #ffdf8a 0deg,
+          #d7a84f calc(var(--avatar-xp-percent, 0) * 3.6deg),
+          rgba(255,255,255,.07) calc(var(--avatar-xp-percent, 0) * 3.6deg),
+          rgba(255,255,255,.07) 360deg
+        ) !important;
+      box-shadow:
+        0 0 24px rgba(215,168,79,.18),
+        inset 0 0 0 1px rgba(255,255,255,.045) !important;
+      animation: none !important;
+      transition: filter .25s ease, box-shadow .25s ease;
+    }
+
+    .profile-head .avatar {
+      position: relative !important;
+      z-index: 1 !important;
+    }
+
+    .avatar-level-pill {
+      position: absolute !important;
+      left: -10px !important;
+      bottom: -10px !important;
+      z-index: 6 !important;
+      min-width: 76px;
+      height: 38px;
+      padding: 0 13px;
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      border: 1px solid rgba(255,218,106,.60);
+      background: rgba(7,7,9,.97);
+      color: #ffdf8a;
+      font-size: .95rem;
+      font-weight: 950;
+      line-height: 1;
+      direction: ltr;
+      box-shadow:
+        0 12px 28px rgba(0,0,0,.40),
+        0 0 18px rgba(255,218,106,.20);
+    }
+
+    .level-card {
+      padding: 28px 30px !important;
+      min-height: auto !important;
+    }
+
+    .level-card .level-main {
+      display: block !important;
+      width: 100% !important;
+    }
+
+    .level-card .level-badge,
+    .level-card .level-badge *,
+    .level-card .xp-text,
+    .level-card .xp-breakdown,
+    .level-card #xpBreakdown {
+      display: none !important;
+    }
+
+    .level-card .level-info {
+      width: 100% !important;
+      display: grid !important;
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        "xp title"
+        "bar bar";
+      align-items: center;
+      gap: 22px 18px;
+      padding: 0 !important;
+    }
+
+    .level-card #levelTitle {
+      grid-area: title;
+      margin: 0 !important;
+      color: #d7a84f !important;
+      font-size: clamp(1.75rem, 2.35vw, 2.45rem) !important;
+      font-weight: 950 !important;
+      line-height: 1.1 !important;
+      letter-spacing: -.04em;
+      text-align: right !important;
+    }
+
+    #levelProgressInline {
+      grid-area: xp;
+      color: rgba(255,255,255,.74);
+      font-size: clamp(1rem, 1.35vw, 1.35rem);
+      font-weight: 900;
+      direction: ltr;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .level-card .xp-bar {
+      grid-area: bar;
+      width: 100% !important;
+      height: 17px !important;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,.10) !important;
+      overflow: hidden !important;
+      margin: 0 !important;
+      border: 1px solid rgba(255,255,255,.06) !important;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.025),
+        inset 0 8px 18px rgba(0,0,0,.18) !important;
+    }
+
+    .level-card .xp-fill {
+      height: 100% !important;
+      border-radius: 999px !important;
+      background: linear-gradient(90deg, #8b5e21 0%, #c08a32 45%, #f0c85f 100%) !important;
+      box-shadow:
+        0 0 22px rgba(255,207,95,.20),
+        inset 0 1px 0 rgba(255,255,255,.20) !important;
+      transition: width .45s ease !important;
+    }
+
+    @media (max-width: 720px) {
+      .level-card .level-info {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "title"
+          "xp"
+          "bar";
+        gap: 12px;
+      }
+
+      #levelProgressInline {
+        text-align: right;
+        font-size: .95rem;
+      }
+
+      .avatar-level-pill {
+        left: -7px !important;
+        bottom: -8px !important;
+        min-width: 68px;
+        height: 34px;
+        font-size: .86rem;
+      }
+    }
+
   </style>
 
   <script is:inline data-reinit>
@@ -3759,6 +3917,106 @@ const metadata = {
         observers.forEach((obs) => obs.disconnect())
         timers.length = 0
         observers.length = 0
+      }
+    })()
+  </script>
+
+
+  <script is:inline>
+    ;(() => {
+      const cleanupKey = '__tnxCleanXpAvatarLevel'
+      if (window[cleanupKey]) window[cleanupKey]()
+
+      const timers = []
+      const observers = []
+      const $ = (id) => document.getElementById(id)
+
+      function toNumber(value) {
+        const cleaned = String(value ?? '')
+          .replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+          .replace(/,/g, '')
+          .replace(/[^0-9.]/g, '')
+
+        const n = Number(cleaned)
+        return Number.isFinite(n) ? n : 0
+      }
+
+      function fmt(value) {
+        return new Intl.NumberFormat('en-US').format(Math.floor(value || 0))
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value))
+      }
+
+      function ensureProgressText() {
+        const levelInfo = document.querySelector('.level-card .level-info')
+        if (!levelInfo) return null
+
+        let el = $('levelProgressInline')
+        if (!el) {
+          el = document.createElement('div')
+          el.id = 'levelProgressInline'
+
+          const title = $('levelTitle')
+          if (title) levelInfo.insertBefore(el, title)
+          else levelInfo.prepend(el)
+        }
+
+        return el
+      }
+
+      function syncLevelUI() {
+        const level = Math.floor(toNumber($('levelNumber')?.textContent || '1')) || 1
+        const current = toNumber($('currentXp')?.textContent || '0')
+        const needed = toNumber($('neededXp')?.textContent || '0')
+        const percent = needed > 0 ? clamp((current / needed) * 100, 0, 100) : 0
+
+        const title = $('levelTitle')
+        if (title) title.textContent = 'تقدم المستوى'
+
+        const badge = $('avatarLevelBadge')
+        if (badge) badge.textContent = 'LVL ' + level
+
+        const progress = ensureProgressText()
+        if (progress) progress.textContent = 'XP ' + fmt(current) + ' / ' + fmt(needed)
+
+        const ring = $('avatarRing')
+        if (ring) ring.style.setProperty('--avatar-xp-percent', percent.toFixed(2))
+
+        const fill = $('xpFill')
+        if (fill) fill.style.width = percent + '%'
+      }
+
+      ;['levelNumber', 'currentXp', 'neededXp', 'xpFill'].forEach((id) => {
+        const el = $(id)
+        if (!el) return
+
+        const obs = new MutationObserver(syncLevelUI)
+        obs.observe(el, {
+          childList: true,
+          subtree: true,
+          characterData: true,
+          attributes: true,
+          attributeFilter: ['style', 'class'],
+        })
+        observers.push(obs)
+      })
+
+      ;[80, 240, 600, 1200, 2200, 3600].forEach((ms) => {
+        timers.push(window.setTimeout(syncLevelUI, ms))
+      })
+
+      window.addEventListener('pageshow', syncLevelUI)
+      document.addEventListener('astro:page-load', syncLevelUI)
+
+      syncLevelUI()
+
+      window[cleanupKey] = () => {
+        observers.forEach((obs) => obs.disconnect())
+        timers.forEach((id) => window.clearTimeout(id))
+        observers.length = 0
+        timers.length = 0
       }
     })()
   </script>
