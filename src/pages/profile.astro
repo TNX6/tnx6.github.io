@@ -11,10 +11,15 @@ const metadata = {
 <Layout metadata={metadata}>
   <main class="tnx-profile-page" dir="rtl">
     <section id="searchView" class="profile-search hidden">
-      <div class="search-card">
+      <div class="login-glow-orb login-orb-1"></div>
+      <div class="login-glow-orb login-orb-2"></div>
+
+      <div class="search-card profile-login-card">
         <span class="eyebrow">TNX6 PROFILE</span>
+
         <h1>بروفايل العضو</h1>
-        <p>
+
+        <p class="login-description">
           لازم تسجل دخول عن طريق Twitch عشان تقدر تشوف بروفايلك، بادجاتك، أغراضك، ومستواك في نظام TNX6.
         </p>
 
@@ -23,7 +28,11 @@ const metadata = {
           href="https://api.tnx6.xyz/auth/twitch/login"
           aria-label="تسجيل الدخول عبر Twitch"
         >
-          <span class="twitch-icon">◐</span>
+          <span class="twitch-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/>
+            </svg>
+          </span>
           تسجيل الدخول عبر Twitch
         </a>
 
@@ -1348,6 +1357,209 @@ const metadata = {
       color: rgba(255,255,255,.48) !important;
       font-size: .92rem;
       line-height: 1.8;
+    }
+
+
+    /* Login prompt design */
+    .profile-search {
+      position: relative;
+      isolation: isolate;
+      min-height: 72vh;
+      overflow: hidden;
+    }
+
+    .profile-search .profile-login-card {
+      width: min(100%, 620px);
+      margin-inline: auto;
+      padding: 48px 32px;
+      border-radius: 28px;
+      text-align: center;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.018)),
+        rgba(20, 20, 25, .72);
+      border: 1px solid rgba(255, 255, 255, .085);
+      box-shadow:
+        0 26px 60px rgba(0, 0, 0, .48),
+        inset 0 1px 0 rgba(255,255,255,.06);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .profile-search .profile-login-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
+      pointer-events: none;
+    }
+
+    .profile-search .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      padding: 7px 17px;
+      border-radius: 999px;
+      border: 1px solid rgba(215, 168, 79, .32);
+      background: rgba(215, 168, 79, .07);
+      color: #d7a84f;
+      font-size: .74rem;
+      font-weight: 950;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      box-shadow: 0 0 22px rgba(215, 168, 79, .10);
+    }
+
+    .profile-search .profile-login-card h1 {
+      margin: 0 0 14px;
+      font-size: clamp(2.15rem, 6vw, 4.2rem);
+      line-height: 1.05;
+      font-weight: 950;
+      letter-spacing: -.06em;
+      color: #fff;
+      background: linear-gradient(180deg, #fff 0%, #d7d7d7 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 18px 42px rgba(0,0,0,.34);
+    }
+
+    .login-description {
+      max-width: 520px;
+      margin: 0 auto 30px !important;
+      color: rgba(255,255,255,.60) !important;
+      font-size: 1.02rem;
+      line-height: 1.9;
+      font-weight: 750;
+    }
+
+    .twitch-login-btn {
+      width: min(100%, 380px);
+      min-height: 58px;
+      margin: 0 auto;
+      padding: 15px 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border-radius: 17px;
+      border: 0;
+      background: linear-gradient(135deg, #a970ff 0%, #9146ff 52%, #772ce8 100%);
+      color: #fff;
+      font-size: 1.06rem;
+      font-weight: 950;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 14px 34px rgba(145, 70, 255, .34),
+        inset 0 0 0 1px rgba(255,255,255,.12);
+      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+    }
+
+    .twitch-login-btn::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: -120%;
+      width: 90%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+      transform: skewX(-18deg);
+      transition: right .55s ease;
+    }
+
+    .twitch-login-btn:hover {
+      transform: translateY(-3px);
+      filter: brightness(1.08);
+      box-shadow:
+        0 22px 44px rgba(145, 70, 255, .44),
+        inset 0 0 0 1px rgba(255,255,255,.18);
+    }
+
+    .twitch-login-btn:hover::after {
+      right: 130%;
+    }
+
+    .twitch-login-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .twitch-icon {
+      width: 31px;
+      height: 31px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      background: rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.14);
+      flex: 0 0 auto;
+    }
+
+    .twitch-icon svg {
+      width: 19px;
+      height: 19px;
+      fill: #fff;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,.22));
+    }
+
+    .login-note {
+      max-width: 500px;
+      margin: 22px auto 0 !important;
+      color: rgba(255,255,255,.46) !important;
+      font-size: .9rem;
+      line-height: 1.8;
+      font-weight: 650;
+    }
+
+    .login-glow-orb {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(72px);
+      opacity: .34;
+      z-index: -1;
+      pointer-events: none;
+      animation: loginFloat 10s infinite ease-in-out;
+    }
+
+    .login-orb-1 {
+      width: 280px;
+      height: 280px;
+      background: #9146ff;
+      top: 40px;
+      left: calc(50% - 430px);
+    }
+
+    .login-orb-2 {
+      width: 240px;
+      height: 240px;
+      background: #d7a84f;
+      bottom: 60px;
+      right: calc(50% - 420px);
+      animation-delay: 2s;
+    }
+
+    @keyframes loginFloat {
+      0%, 100% { transform: translate3d(0, 0, 0); }
+      50% { transform: translate3d(18px, 26px, 0); }
+    }
+
+    @media (max-width: 560px) {
+      .profile-search .profile-login-card {
+        padding: 36px 20px;
+        border-radius: 24px;
+      }
+
+      .login-description {
+        font-size: .95rem;
+      }
+
+      .twitch-login-btn {
+        min-height: 56px;
+        font-size: 1rem;
+      }
     }
 
   </style>
