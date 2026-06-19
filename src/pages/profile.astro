@@ -99,25 +99,31 @@ const metadata = {
 
         <div class="content">
           <div class="main-stack">
-            <section class="card level-card simple-level-card">
-              <div class="simple-level-head">
-                <h2 class="simple-level-title">تقدم المستوى</h2>
-                <div class="simple-level-xp" id="levelProgressText">XP 0 / 0</div>
-              </div>
-
-              <div class="simple-xp-track">
-                <div class="xp-fill simple-xp-fill" id="xpFill"></div>
-              </div>
-
-              <div class="simple-level-hidden" aria-hidden="true">
-                <strong id="levelNumber">1</strong>
-                <h2 id="levelTitle">عضو جديد</h2>
-                <div class="xp-text">
-                  <span id="currentXp">0</span>
-                  <span id="neededXp">0</span>
+            <section class="card level-card">
+              <div class="level-main">
+                <div class="level-badge">
+                  <div>
+                    <span>LEVEL</span>
+                    <strong id="levelNumber">1</strong>
+                  </div>
                 </div>
-                <div class="xp-breakdown" id="xpBreakdown"></div>
+
+                <div class="level-info">
+                  <h2 id="levelTitle">عضو جديد</h2>
+
+                  <div class="xp-bar">
+                    <div class="xp-fill" id="xpFill"></div>
+                  </div>
+
+                  <div class="xp-text">
+                    <span id="currentXp">0</span>
+                    <span id="neededXp">0</span>
+                  </div>
+
+                  <div class="xp-breakdown" id="xpBreakdown"></div>
+                </div>
               </div>
+
             </section>
 
             <section class="card">
@@ -4243,85 +4249,6 @@ const metadata = {
         timers.forEach((id) => clearTimeout(id));
       };
     })();
-  </script>
-
-
-  <script is:inline>
-    ;(() => {
-      const cleanupKey = '__tnxExactSimpleLevelCleanup'
-      if (window[cleanupKey]) window[cleanupKey]()
-
-      const observers = []
-      const timers = []
-      const $ = (id) => document.getElementById(id)
-
-      function toNumber(value) {
-        const cleaned = String(value ?? '')
-          .replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
-          .replace(/,/g, '')
-          .replace(/[^0-9.]/g, '')
-
-        const n = Number(cleaned)
-        return Number.isFinite(n) ? n : 0
-      }
-
-      function fmt(value) {
-        return new Intl.NumberFormat('en-US').format(Math.floor(value || 0))
-      }
-
-      function clamp(value, min, max) {
-        return Math.max(min, Math.min(max, value))
-      }
-
-      function syncExactLevel() {
-        const level = toNumber($('levelNumber')?.textContent || '1') || 1
-        const current = toNumber($('currentXp')?.textContent || '0')
-        const needed = toNumber($('neededXp')?.textContent || '0')
-
-        const avatarBadge = $('avatarLevelBadge')
-        if (avatarBadge) avatarBadge.textContent = 'LVL ' + level
-
-        const progressText = $('levelProgressText')
-        if (progressText) progressText.textContent = 'XP ' + fmt(current) + ' / ' + fmt(needed)
-
-        const fill = $('xpFill')
-        if (fill) {
-          const percent = needed > 0 ? clamp((current / needed) * 100, 0, 100) : 0
-          fill.style.width = percent + '%'
-        }
-      }
-
-      ;['levelNumber', 'currentXp', 'neededXp', 'xpFill'].forEach((id) => {
-        const el = $(id)
-        if (!el) return
-
-        const obs = new MutationObserver(syncExactLevel)
-        obs.observe(el, {
-          childList: true,
-          subtree: true,
-          characterData: true,
-          attributes: true,
-          attributeFilter: ['style', 'class'],
-        })
-        observers.push(obs)
-      })
-
-      ;[80, 260, 700, 1300, 2200, 3600].forEach((ms) => {
-        timers.push(window.setTimeout(syncExactLevel, ms))
-      })
-
-      window.addEventListener('pageshow', syncExactLevel)
-      document.addEventListener('astro:page-load', syncExactLevel)
-
-      syncExactLevel()
-
-      window[cleanupKey] = () => {
-        observers.forEach((obs) => obs.disconnect())
-        timers.forEach((id) => window.clearTimeout(id))
-        observers.length = 0
-        timers.length = 0
-      }
-    })()
   </script>
 
 </Layout>
