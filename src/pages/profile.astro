@@ -2548,6 +2548,110 @@ const metadata = {
       }
     }
 
+
+    /* Final featured badges: inventory + official Twitch roles */
+    .profile-featured-badges {
+      display: flex;
+      align-items: center;
+      gap: 7px !important;
+      margin: 2px 0 12px;
+      min-height: 34px;
+      flex-wrap: wrap;
+    }
+
+    .profile-featured-badges.hidden {
+      display: none !important;
+    }
+
+    .featured-mini-badge {
+      position: relative;
+      width: 31px !important;
+      height: 31px !important;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 223, 138, .25);
+      background: rgba(0, 0, 0, .34);
+      color: rgba(255, 239, 196, .95);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, .28);
+      cursor: default;
+      transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+    }
+
+    .featured-mini-badge:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 223, 138, .50);
+      box-shadow: 0 14px 30px rgba(0,0,0,.34), 0 0 18px rgba(255,223,138,.12);
+    }
+
+    .featured-mini-badge img {
+      width: 21px;
+      height: 21px;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 5px 10px rgba(0,0,0,.35));
+    }
+
+    .featured-mini-badge span {
+      font-size: 15px;
+      font-weight: 1000;
+      line-height: 1;
+      filter: drop-shadow(0 5px 10px rgba(0,0,0,.35));
+    }
+
+    .featured-mini-badge::after {
+      content: attr(data-tip);
+      position: absolute;
+      right: 50%;
+      bottom: calc(100% + 9px);
+      transform: translateX(50%) translateY(4px);
+      width: max-content;
+      padding: 7px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(8,8,11,.96);
+      color: rgba(255,255,255,.9);
+      font-size: 12px;
+      font-weight: 850;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .14s ease, transform .14s ease;
+      z-index: 40;
+    }
+
+    .featured-mini-badge:hover::after {
+      opacity: 1;
+      transform: translateX(50%) translateY(0);
+    }
+
+    .featured-mini-badge.role-mod {
+      border-color: rgba(0,173,118,.58) !important;
+      background: rgba(7,42,32,.68) !important;
+      color: #72ffd1 !important;
+      box-shadow: 0 10px 22px rgba(0,0,0,.28), 0 0 18px rgba(0,173,118,.18) !important;
+    }
+
+    .featured-mini-badge.role-vip {
+      border-color: rgba(145,70,255,.62) !important;
+      background: rgba(30,18,52,.70) !important;
+      color: #d8c2ff !important;
+      box-shadow: 0 10px 22px rgba(0,0,0,.28), 0 0 18px rgba(145,70,255,.22) !important;
+    }
+
+    .featured-mini-badge.role-vip span,
+    .featured-mini-badge.role-mod span {
+      font-size: 8px !important;
+      letter-spacing: .04em;
+      direction: ltr;
+    }
+
+    @media (max-width: 940px) {
+      .profile-featured-badges {
+        justify-content: center;
+      }
+    }
+
   </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -4230,6 +4334,206 @@ const metadata = {
         timers.length = 0
       }
     })()
+  </script>
+
+
+  <script is:inline data-astro-rerun>
+    ;(() => {
+      const cleanupKey = '__tnxFeaturedBadgesFinal';
+      if (window[cleanupKey]) window[cleanupKey]();
+
+      if (window.__tnxFeaturedMiniBadges) {
+        try { window.__tnxFeaturedMiniBadges(); } catch {}
+      }
+
+      const API_BASE = 'https://api.tnx6.xyz';
+      const timers = [];
+      const observers = [];
+
+      const $ = (id) => document.getElementById(id);
+      const clean = (v) => String(v || '').replace(/\s+/g, ' ').trim();
+
+      function scoreBadge(label) {
+        const text = String(label || '').toLowerCase();
+
+        if (text.includes('king') || text.includes('ملك')) return 1000;
+        if (text.includes('vip')) return 950;
+        if (text.includes('law') || text.includes('محامي') || text.includes('قانون')) return 900;
+        if (text.includes('mythic')) return 850;
+        if (text.includes('legendary')) return 800;
+        if (text.includes('1000q') || text.includes('1000')) return 760;
+        if (text.includes('1m') || text.includes('مليون')) return 740;
+        if (text.includes('500k')) return 720;
+        if (text.includes('250k')) return 700;
+        if (text.includes('100k')) return 680;
+        if (text.includes('600q') || text.includes('600')) return 660;
+        if (text.includes('300q') || text.includes('300')) return 640;
+        if (text.includes('150q') || text.includes('150')) return 620;
+        if (text.includes('50q') || text.includes('50')) return 600;
+        return 100;
+      }
+
+      function extractBadge(node) {
+        const name =
+          clean(node.querySelector?.('.badge-name')?.textContent) ||
+          clean(node.getAttribute?.('title')) ||
+          clean(node.getAttribute?.('aria-label')) ||
+          clean(node.textContent) ||
+          'بادج';
+
+        const img = node.querySelector?.('img');
+        const icon = clean(node.querySelector?.('.badge-icon')?.textContent);
+
+        return {
+          type: 'inventory',
+          name,
+          imgSrc: img?.getAttribute('src') || '',
+          imgAlt: img?.getAttribute('alt') || name,
+          icon: icon || '✦',
+          score: scoreBadge(name),
+        };
+      }
+
+      async function getMe() {
+        try {
+          const res = await fetch(API_BASE + '/api/me', { credentials: 'include' });
+          const data = await res.json();
+
+          if (data?.authenticated && data?.user?.twitchId) {
+            return data.user;
+          }
+        } catch {}
+
+        return null;
+      }
+
+      async function getRoles() {
+        const me = await getMe();
+
+        if (!me?.twitchId) {
+          return { moderator: false, vip: false };
+        }
+
+        try {
+          const url = new URL(API_BASE + '/api/twitch/roles');
+          url.searchParams.set('user_id', me.twitchId);
+
+          const res = await fetch(url.toString(), { credentials: 'include' });
+          const data = await res.json();
+
+          if (!data?.ok || !data?.available || !data?.roles) {
+            return { moderator: false, vip: false };
+          }
+
+          return {
+            moderator: Boolean(data.roles.moderator),
+            vip: Boolean(data.roles.vip),
+          };
+        } catch {
+          return { moderator: false, vip: false };
+        }
+      }
+
+      function roleBadges(roles) {
+        const arr = [];
+
+        if (roles.moderator) {
+          arr.push({
+            type: 'role',
+            role: 'mod',
+            name: 'Twitch Moderator',
+            icon: 'MOD',
+          });
+        }
+
+        if (roles.vip) {
+          arr.push({
+            type: 'role',
+            role: 'vip',
+            name: 'Twitch VIP',
+            icon: 'VIP',
+          });
+        }
+
+        return arr;
+      }
+
+      function makeBadge(data) {
+        const el = document.createElement('span');
+        el.className = 'featured-mini-badge' + (data.role ? ' role-' + data.role : '');
+        el.setAttribute('data-tip', data.name);
+        el.setAttribute('aria-label', data.name);
+
+        if (data.imgSrc && data.type === 'inventory') {
+          const img = document.createElement('img');
+          img.src = data.imgSrc;
+          img.alt = data.imgAlt || data.name;
+          img.loading = 'lazy';
+          el.appendChild(img);
+        } else {
+          const span = document.createElement('span');
+          span.textContent = data.icon || '✦';
+          el.appendChild(span);
+        }
+
+        return el;
+      }
+
+      async function renderFeaturedBadges() {
+        const target = $('featuredBadges');
+        const badgesBox = $('badges');
+
+        if (!target || !badgesBox) return;
+
+        const inventory = Array
+          .from(badgesBox.querySelectorAll('.badge'))
+          .map(extractBadge)
+          .filter((badge) => badge.name && badge.name !== 'بادج')
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 3);
+
+        const roles = await getRoles();
+        const finalBadges = [...inventory, ...roleBadges(roles)];
+
+        target.innerHTML = '';
+
+        if (!finalBadges.length) {
+          target.classList.add('hidden');
+          return;
+        }
+
+        finalBadges.forEach((badge) => target.appendChild(makeBadge(badge)));
+        target.classList.remove('hidden');
+      }
+
+      function setup() {
+        renderFeaturedBadges();
+
+        const badgesBox = $('badges');
+        if (badgesBox && !badgesBox.dataset.finalFeaturedObserved) {
+          badgesBox.dataset.finalFeaturedObserved = 'true';
+
+          const obs = new MutationObserver(renderFeaturedBadges);
+          obs.observe(badgesBox, { childList: true, subtree: true });
+          observers.push(obs);
+        }
+      }
+
+      [120, 450, 900, 1700, 2800].forEach((ms) => {
+        timers.push(window.setTimeout(setup, ms));
+      });
+
+      window.addEventListener('pageshow', setup);
+      document.addEventListener('astro:page-load', setup);
+      document.addEventListener('astro:after-swap', setup);
+
+      setup();
+
+      window[cleanupKey] = () => {
+        observers.forEach((obs) => obs.disconnect());
+        timers.forEach((id) => window.clearTimeout(id));
+      };
+    })();
   </script>
 
 </Layout>
