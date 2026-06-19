@@ -2433,7 +2433,7 @@ const metadata = {
 
   </style>
 
-  <script is:inline data-reinit>
+  <script is:inline data-astro-rerun data-reinit>
     ;(async () => {
       const cleanupKey = '__tnxCleanProfileCleanup'
       if (window[cleanupKey]) window[cleanupKey]()
@@ -3762,7 +3762,7 @@ const metadata = {
   </script>
 
 
-  <script is:inline>
+  <script is:inline data-astro-rerun>
     ;(() => {
       const cleanupKey = '__tnxCleanLevelSystem'
       if (window[cleanupKey]) window[cleanupKey]()
@@ -3863,6 +3863,11 @@ const metadata = {
         const level = Math.floor(toNumber($('levelNumber')?.textContent || '1')) || 1
         const current = toNumber($('currentXp')?.textContent || '0')
         const needed = toNumber($('neededXp')?.textContent || '0')
+        if (needed <= 0 && current <= 0) {
+          timers.push(window.setTimeout(syncLevel, 250))
+          return
+        }
+
         const percent = needed > 0 ? clamp((current / needed) * 100, 0, 100) : 0
 
         const title = $('levelTitle')
@@ -3904,6 +3909,7 @@ const metadata = {
 
       window.addEventListener('pageshow', syncLevel)
       document.addEventListener('astro:page-load', syncLevel)
+      document.addEventListener('astro:after-swap', syncLevel)
 
       syncLevel()
 
@@ -3917,7 +3923,7 @@ const metadata = {
   </script>
 
 
-  <script is:inline>
+  <script is:inline data-astro-rerun>
     ;(() => {
       const cleanupKey = '__tnxFinalSkeletonFix'
       if (window[cleanupKey]) window[cleanupKey]()
