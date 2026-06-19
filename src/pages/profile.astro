@@ -2574,6 +2574,50 @@ const metadata = {
       }
     }
 
+
+    /* Elite final level spacing */
+    .level-card {
+      min-height: 132px !important;
+      padding: 22px 28px 24px !important;
+    }
+
+    .level-card .level-info {
+      grid-template-columns: 1fr auto !important;
+      grid-template-areas:
+        "title xp"
+        "bar bar" !important;
+      gap: 20px 18px !important;
+    }
+
+    .level-card #levelTitle {
+      grid-area: title !important;
+      justify-self: start !important;
+      font-size: clamp(1.8rem, 2.25vw, 2.45rem) !important;
+      text-align: right !important;
+    }
+
+    #levelProgressInline {
+      grid-area: xp !important;
+      justify-self: end !important;
+      min-height: 34px !important;
+      padding: 0 16px !important;
+      font-size: clamp(.9rem, 1.05vw, 1.02rem) !important;
+      color: rgba(255,255,255,.76) !important;
+      background: rgba(0,0,0,.28) !important;
+      border-color: rgba(255,255,255,.07) !important;
+    }
+
+    .level-card .xp-bar {
+      height: 14px !important;
+      margin-top: 0 !important;
+    }
+
+    .avatar-level-pill {
+      min-width: 62px !important;
+      height: 31px !important;
+      font-size: .82rem !important;
+    }
+
   </style>
 
   <script is:inline data-reinit>
