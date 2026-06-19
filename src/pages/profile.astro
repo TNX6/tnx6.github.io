@@ -47,28 +47,6 @@ const metadata = {
     </section>
 
     <section id="profileView" class="profile-page hidden">
-      
-      <section id="accountTools" class="account-tools hidden" aria-label="أدوات الحساب">
-        <div class="account-status">
-          <span class="status-dot"></span>
-          <div>
-            <strong>متصل عبر Twitch</strong>
-            <span id="accountHandle">---</span>
-          </div>
-        </div>
-
-        <div class="account-actions">
-          <a id="accountPublicLink" href="/profile" class="account-action">
-            فتح رابط صفحتك
-          </a>
-          <button id="accountCopyLink" type="button" class="account-action">
-            نسخ الرابط
-          </button>
-          <button id="accountLogout" type="button" class="account-action logout">
-            تسجيل الخروج
-          </button>
-        </div>
-      </section>
 <section class="profile-shell">
         <div class="cover" id="cover">
           <div class="profile-head">
@@ -179,7 +157,31 @@ const metadata = {
 
       <section class="actions-row">
         <a id="badgesPageLink" href="/badges">فتح بطاقة البادجات</a>
-        <button id="copyLink" type="button">نسخ رابط البروفايل</button>
+        
+        <div id="profileAccountMenu" class="profile-account-menu hidden">
+          <button id="profileAccountToggle" class="profile-account-toggle" type="button" aria-expanded="false">
+            إدارة الحساب
+            <span>▾</span>
+          </button>
+
+          <div id="profileAccountDropdown" class="profile-account-dropdown hidden">
+            <div class="profile-account-mini-status">
+              <span class="profile-account-dot"></span>
+              <div>
+                <strong>متصل عبر Twitch</strong>
+                <small id="profileAccountHandle">@---</small>
+              </div>
+            </div>
+
+            <a id="profileAccountPublicLink" href="/profile" class="profile-account-menu-item">
+              فتح صفحتي العامة
+            </a>
+
+            <button id="profileAccountLogout" type="button" class="profile-account-menu-item danger">
+              تسجيل الخروج
+            </button>
+          </div>
+        </div>
       </section>
     </section>
 
@@ -1770,6 +1772,143 @@ const metadata = {
       display: flex !important;
     }
 
+
+    /* Profile account dropdown */
+    .profile-account-menu {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .profile-account-menu.hidden {
+      display: none !important;
+    }
+
+    .profile-account-toggle {
+      min-height: 52px;
+      padding: 0 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 223, 138, .22);
+      background:
+        linear-gradient(135deg, rgba(255, 223, 138, .10), rgba(145, 70, 255, .06)),
+        rgba(12, 12, 14, .76);
+      color: rgba(255, 239, 194, .94);
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow: 0 14px 34px rgba(0,0,0,.26);
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .profile-account-toggle:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 223, 138, .36);
+      background:
+        linear-gradient(135deg, rgba(255, 223, 138, .14), rgba(145, 70, 255, .08)),
+        rgba(18, 18, 22, .82);
+    }
+
+    .profile-account-dropdown {
+      position: absolute;
+      bottom: calc(100% + 12px);
+      left: 0;
+      width: 260px;
+      padding: 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(14, 14, 18, .96);
+      box-shadow: 0 24px 70px rgba(0,0,0,.54);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 40;
+    }
+
+    .profile-account-dropdown.hidden {
+      display: none !important;
+    }
+
+    .profile-account-mini-status {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 10px 10px 12px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      text-align: right;
+    }
+
+    .profile-account-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #62f5a3;
+      box-shadow: 0 0 16px rgba(98,245,163,.75);
+      flex: 0 0 auto;
+    }
+
+    .profile-account-mini-status strong {
+      display: block;
+      color: rgba(255,255,255,.92);
+      font-size: .9rem;
+      font-weight: 950;
+    }
+
+    .profile-account-mini-status small {
+      display: block;
+      margin-top: 2px;
+      color: rgba(255,223,138,.82);
+      direction: ltr;
+      font-size: .82rem;
+      font-weight: 850;
+    }
+
+    .profile-account-menu-item {
+      width: 100%;
+      min-height: 44px;
+      padding: 0 13px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      border-radius: 13px;
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,.84);
+      font-weight: 900;
+      font-size: .9rem;
+      text-decoration: none;
+      cursor: pointer;
+      text-align: right;
+    }
+
+    .profile-account-menu-item:hover {
+      background: rgba(255,255,255,.07);
+    }
+
+    .profile-account-menu-item.danger {
+      color: #ffb4b4;
+    }
+
+    .profile-account-menu-item.danger:hover {
+      background: rgba(255, 60, 60, .10);
+    }
+
+    @media (max-width: 560px) {
+      .profile-account-menu,
+      .profile-account-toggle {
+        width: 100%;
+      }
+
+      .profile-account-dropdown {
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(92vw, 280px);
+      }
+    }
+
   </style>
 
   <script is:inline data-reinit>
@@ -3183,6 +3322,90 @@ const metadata = {
       window.setTimeout(showLoggedAccountTools, 800)
       window.setTimeout(showLoggedAccountTools, 1800)
       window.addEventListener('pageshow', showLoggedAccountTools)
+    })()
+  </script>
+
+
+  <script is:inline>
+    ;(() => {
+      const API_BASE = 'https://api.tnx6.xyz'
+
+      const $id = (id) => document.getElementById(id)
+
+      async function getCurrentUser() {
+        try {
+          const res = await fetch(API_BASE + '/api/me', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+          })
+
+          if (!res.ok) return null
+
+          const data = await res.json()
+          return data?.authenticated && data?.user ? data.user : null
+        } catch {
+          return null
+        }
+      }
+
+      function publicProfileUrl(login) {
+        const url = new URL('/profile', window.location.origin)
+        if (login) url.searchParams.set('user', login)
+        return url.toString()
+      }
+
+      async function initProfileAccountMenu() {
+        const box = $id('profileAccountMenu')
+        const handle = $id('profileAccountHandle')
+        const publicLink = $id('profileAccountPublicLink')
+
+        if (!box) return
+
+        const user = await getCurrentUser()
+        if (!user) return
+
+        const login = String(user.login || '').trim()
+
+        if (handle) handle.textContent = login ? '@' + login : '@---'
+        if (publicLink) publicLink.href = publicProfileUrl(login)
+
+        box.classList.remove('hidden')
+      }
+
+      document.addEventListener('click', async (event) => {
+        const toggle = event.target.closest?.('#profileAccountToggle')
+        const dropdown = $id('profileAccountDropdown')
+
+        if (toggle && dropdown) {
+          const isHidden = dropdown.classList.contains('hidden')
+          dropdown.classList.toggle('hidden', !isHidden)
+          toggle.setAttribute('aria-expanded', String(isHidden))
+          return
+        }
+
+        const logout = event.target.closest?.('#profileAccountLogout')
+        if (logout) {
+          try {
+            await fetch(API_BASE + '/auth/logout', {
+              method: 'POST',
+              credentials: 'include',
+            })
+          } catch {}
+
+          window.location.href = '/profile'
+          return
+        }
+
+        if (dropdown && !event.target.closest?.('#profileAccountMenu')) {
+          dropdown.classList.add('hidden')
+          $id('profileAccountToggle')?.setAttribute('aria-expanded', 'false')
+        }
+      })
+
+      initProfileAccountMenu()
+      window.setTimeout(initProfileAccountMenu, 900)
+      window.addEventListener('pageshow', initProfileAccountMenu)
     })()
   </script>
 
