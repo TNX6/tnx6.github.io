@@ -2422,6 +2422,15 @@ const metadata = {
       }
     }
 
+
+    /* Final skeleton visibility fix */
+    #profileSkeleton.is-hidden,
+    .tnx-profile-page:has(#profileView:not(.hidden)) #profileSkeleton,
+    .tnx-profile-page:has(#searchView:not(.hidden)) #profileSkeleton,
+    .tnx-profile-page:has(#notFoundView:not(.hidden)) #profileSkeleton {
+      display: none !important;
+    }
+
   </style>
 
   <script is:inline data-reinit>
@@ -3897,6 +3906,65 @@ const metadata = {
       document.addEventListener('astro:page-load', syncLevel)
 
       syncLevel()
+
+      window[cleanupKey] = () => {
+        observers.forEach((obs) => obs.disconnect())
+        timers.forEach((id) => window.clearTimeout(id))
+        observers.length = 0
+        timers.length = 0
+      }
+    })()
+  </script>
+
+
+  <script is:inline>
+    ;(() => {
+      const cleanupKey = '__tnxFinalSkeletonFix'
+      if (window[cleanupKey]) window[cleanupKey]()
+
+      const observers = []
+      const timers = []
+      const $ = (id) => document.getElementById(id)
+
+      function visible(id) {
+        const el = $(id)
+        return Boolean(el && !el.classList.contains('hidden'))
+      }
+
+      function syncSkeleton() {
+        const skeleton = $('profileSkeleton')
+        if (!skeleton) return
+
+        const shouldHide =
+          visible('profileView') ||
+          visible('searchView') ||
+          visible('notFoundView')
+
+        skeleton.classList.toggle('is-hidden', shouldHide)
+        skeleton.style.display = shouldHide ? 'none' : ''
+      }
+
+      ;['profileView', 'searchView', 'notFoundView'].forEach((id) => {
+        const el = $(id)
+        if (!el) return
+
+        const obs = new MutationObserver(syncSkeleton)
+        obs.observe(el, {
+          attributes: true,
+          attributeFilter: ['class'],
+        })
+
+        observers.push(obs)
+      })
+
+      ;[0, 80, 200, 500, 1000, 1800, 2800].forEach((ms) => {
+        timers.push(window.setTimeout(syncSkeleton, ms))
+      })
+
+      window.addEventListener('pageshow', syncSkeleton)
+      document.addEventListener('astro:page-load', syncSkeleton)
+
+      syncSkeleton()
 
       window[cleanupKey] = () => {
         observers.forEach((obs) => obs.disconnect())
