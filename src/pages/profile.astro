@@ -2167,6 +2167,136 @@ const metadata = {
       }
     }
 
+
+    /* XP circular progress + level up confetti */
+    .level-badge {
+      position: relative;
+      isolation: isolate;
+      overflow: visible !important;
+      --level-progress: 0;
+    }
+
+    .level-badge::before {
+      content: "";
+      position: absolute;
+      inset: -10px;
+      border-radius: 34px;
+      z-index: -1;
+      background:
+        conic-gradient(
+          from -90deg,
+          rgba(255, 218, 106, .95) calc(var(--level-progress) * 1%),
+          rgba(255, 255, 255, .08) 0
+        );
+      filter: drop-shadow(0 0 18px rgba(255, 205, 86, .22));
+      transition: background .45s ease;
+    }
+
+    .level-badge::after {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      border-radius: 28px;
+      z-index: -1;
+      background: rgba(9, 9, 11, .96);
+      border: 1px solid rgba(255, 223, 138, .10);
+    }
+
+    .level-badge [data-level-percent] {
+      position: absolute;
+      left: 50%;
+      bottom: -30px;
+      transform: translateX(-50%);
+      min-width: 58px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 223, 138, .18);
+      background: rgba(0, 0, 0, .56);
+      color: rgba(255, 239, 196, .90);
+      font-size: .72rem;
+      font-weight: 950;
+      text-align: center;
+      box-shadow: 0 10px 24px rgba(0,0,0,.24);
+      pointer-events: none;
+    }
+
+    .level-badge.level-pulse {
+      animation: levelPulse .85s ease both;
+    }
+
+    @keyframes levelPulse {
+      0% { transform: scale(1); }
+      38% { transform: scale(1.07); }
+      100% { transform: scale(1); }
+    }
+
+    .tnx-confetti-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .tnx-confetti-piece {
+      position: absolute;
+      top: -16px;
+      width: 9px;
+      height: 15px;
+      border-radius: 3px;
+      opacity: .95;
+      background: linear-gradient(180deg, #fff2a8, #d7a84f);
+      box-shadow: 0 0 12px rgba(255, 218, 106, .28);
+      animation: tnxConfettiFall var(--fall-duration, 2.8s) cubic-bezier(.2,.7,.25,1) forwards;
+    }
+
+    .tnx-confetti-piece:nth-child(3n) {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #ffda6a;
+    }
+
+    .tnx-confetti-piece:nth-child(4n) {
+      background: linear-gradient(180deg, #ffe8a3, #b9842d);
+    }
+
+    .tnx-confetti-piece:nth-child(5n) {
+      background: rgba(145, 70, 255, .92);
+      box-shadow: 0 0 12px rgba(145, 70, 255, .22);
+    }
+
+    @keyframes tnxConfettiFall {
+      0% {
+        transform: translate3d(0, -20px, 0) rotate(0deg);
+        opacity: 0;
+      }
+      8% {
+        opacity: 1;
+      }
+      100% {
+        transform:
+          translate3d(
+            var(--fall-x, 0px),
+            calc(100vh + 90px),
+            0
+          )
+          rotate(var(--fall-rotate, 620deg));
+        opacity: 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .level-badge.level-pulse,
+      .tnx-confetti-piece {
+        animation: none !important;
+      }
+
+      .tnx-confetti-layer {
+        display: none !important;
+      }
+    }
+
   </style>
 
   <script is:inline data-reinit>
@@ -3753,6 +3883,174 @@ const metadata = {
           applyLegendaryGlow()
         }, ms))
       })
+
+      window[cleanupKey] = () => {
+        timers.forEach((id) => window.clearTimeout(id))
+        observers.forEach((obs) => obs.disconnect())
+        timers.length = 0
+        observers.length = 0
+      }
+    })()
+  </script>
+
+
+  <script is:inline>
+    ;(() => {
+      const cleanupKey = '__tnxLevelEffectsCleanup'
+      if (window[cleanupKey]) window[cleanupKey]()
+
+      const timers = []
+      const observers = []
+      const $ = (id) => document.getElementById(id)
+
+      function parseNumber(value) {
+        const cleaned = String(value || '')
+          .replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+          .replace(/[^0-9.]/g, '')
+
+        const n = Number(cleaned)
+        return Number.isFinite(n) ? n : 0
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value))
+      }
+
+      function getLoginKey() {
+        const handle = String($('handle')?.textContent || '')
+          .replace('@', '')
+          .trim()
+          .toLowerCase()
+
+        return handle || 'current'
+      }
+
+      function getCurrentLevel() {
+        return Math.floor(parseNumber($('levelNumber')?.textContent || '0'))
+      }
+
+      function calculateProgress() {
+        const fill = $('xpFill')
+        const current = parseNumber($('currentXp')?.textContent || '')
+        const needed = parseNumber($('neededXp')?.textContent || '')
+
+        if (needed > 0) {
+          return clamp((current / needed) * 100, 0, 100)
+        }
+
+        const width = fill?.style?.width || ''
+        if (width.includes('%')) {
+          return clamp(parseNumber(width), 0, 100)
+        }
+
+        return 0
+      }
+
+      function ensurePercentLabel(badge) {
+        let label = badge.querySelector('[data-level-percent]')
+        if (!label) {
+          label = document.createElement('span')
+          label.setAttribute('data-level-percent', '')
+          badge.appendChild(label)
+        }
+        return label
+      }
+
+      function updateLevelCircle() {
+        const badge = document.querySelector('.level-badge')
+        if (!badge) return
+
+        const progress = calculateProgress()
+        badge.style.setProperty('--level-progress', String(progress.toFixed(1)))
+
+        const label = ensurePercentLabel(badge)
+        label.textContent = Math.round(progress) + '%'
+      }
+
+      function burstConfetti() {
+        if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+
+        const layer = document.createElement('div')
+        layer.className = 'tnx-confetti-layer'
+        document.body.appendChild(layer)
+
+        const count = 95
+
+        for (let i = 0; i < count; i += 1) {
+          const piece = document.createElement('span')
+          piece.className = 'tnx-confetti-piece'
+
+          const left = Math.random() * 100
+          const x = (Math.random() - .5) * 520
+          const rotate = (Math.random() > .5 ? 1 : -1) * (420 + Math.random() * 720)
+          const duration = 2.25 + Math.random() * 1.55
+          const delay = Math.random() * .28
+
+          piece.style.left = left + 'vw'
+          piece.style.setProperty('--fall-x', x.toFixed(0) + 'px')
+          piece.style.setProperty('--fall-rotate', rotate.toFixed(0) + 'deg')
+          piece.style.setProperty('--fall-duration', duration.toFixed(2) + 's')
+          piece.style.animationDelay = delay.toFixed(2) + 's'
+
+          layer.appendChild(piece)
+        }
+
+        timers.push(window.setTimeout(() => layer.remove(), 4700))
+      }
+
+      function maybeTriggerLevelUp() {
+        const level = getCurrentLevel()
+        if (!level) return
+
+        const key = 'tnx_last_seen_level_' + getLoginKey()
+        const previous = Number(localStorage.getItem(key) || '0')
+
+        if (previous > 0 && level > previous) {
+          const badge = document.querySelector('.level-badge')
+          badge?.classList.add('level-pulse')
+          timers.push(window.setTimeout(() => badge?.classList.remove('level-pulse'), 900))
+          burstConfetti()
+        }
+
+        if (level >= previous) {
+          localStorage.setItem(key, String(level))
+        }
+      }
+
+      function runLevelEffects() {
+        updateLevelCircle()
+        maybeTriggerLevelUp()
+      }
+
+      function observeLevelChanges() {
+        const targets = [
+          $('levelNumber'),
+          $('currentXp'),
+          $('neededXp'),
+          $('xpFill'),
+          $('handle'),
+        ].filter(Boolean)
+
+        targets.forEach((target) => {
+          const obs = new MutationObserver(runLevelEffects)
+          obs.observe(target, {
+            childList: true,
+            subtree: true,
+            characterData: true,
+            attributes: true,
+            attributeFilter: ['style', 'class'],
+          })
+          observers.push(obs)
+        })
+      }
+
+      observeLevelChanges()
+
+      ;[120, 420, 900, 1600, 2600].forEach((ms) => {
+        timers.push(window.setTimeout(runLevelEffects, ms))
+      })
+
+      window.addEventListener('pageshow', runLevelEffects)
 
       window[cleanupKey] = () => {
         timers.forEach((id) => window.clearTimeout(id))
