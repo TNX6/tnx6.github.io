@@ -2617,6 +2617,25 @@ const metadata = {
       font-size: .82rem !important;
     }
 
+
+    /* ABSOLUTE FINAL level title size override */
+    .level-card #levelTitle,
+    .level-card .level-info #levelTitle,
+    #profileView .level-card #levelTitle {
+      font-size: clamp(1.25rem, 1.45vw, 1.65rem) !important;
+      line-height: 1.1 !important;
+      letter-spacing: 0 !important;
+      margin: 0 !important;
+      font-weight: 950 !important;
+    }
+
+    #levelProgressInline {
+      min-height: 22px !important;
+      padding: 0 10px !important;
+      font-size: clamp(.72rem, .78vw, .82rem) !important;
+      font-weight: 800 !important;
+    }
+
   </style>
 
   <script is:inline data-reinit>
