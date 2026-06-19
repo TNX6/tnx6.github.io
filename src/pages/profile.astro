@@ -47,7 +47,29 @@ const metadata = {
     </section>
 
     <section id="profileView" class="profile-page hidden">
-      <section class="profile-shell">
+      
+      <section id="accountTools" class="account-tools hidden" aria-label="أدوات الحساب">
+        <div class="account-status">
+          <span class="status-dot"></span>
+          <div>
+            <strong>متصل عبر Twitch</strong>
+            <span id="accountHandle">---</span>
+          </div>
+        </div>
+
+        <div class="account-actions">
+          <a id="accountPublicLink" href="/profile" class="account-action">
+            فتح رابط صفحتك
+          </a>
+          <button id="accountCopyLink" type="button" class="account-action">
+            نسخ الرابط
+          </button>
+          <button id="accountLogout" type="button" class="account-action logout">
+            تسجيل الخروج
+          </button>
+        </div>
+      </section>
+<section class="profile-shell">
         <div class="cover" id="cover">
           <div class="profile-head">
             <div class="avatar-wrap">
