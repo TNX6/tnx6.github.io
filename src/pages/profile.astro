@@ -11,10 +11,7 @@ const metadata = {
 <Layout metadata={metadata}>
   <main class="tnx-profile-page" dir="rtl">
     <section id="searchView" class="profile-search hidden">
-      <div class="login-glow-orb login-orb-1"></div>
-      <div class="login-glow-orb login-orb-2"></div>
-
-      <div class="search-card profile-login-card">
+<div class="search-card profile-login-card">
         <span class="eyebrow">TNX6 PROFILE</span>
 
         <h1>حسابك في الموقع</h1>
@@ -1569,6 +1566,45 @@ const metadata = {
       padding-bottom: .14em;
       margin-bottom: 8px;
       overflow: visible;
+    }
+
+
+    /* Smooth login background glow without clipped orbs */
+    .profile-search {
+      overflow: visible !important;
+    }
+
+    .login-glow-orb,
+    .login-orb-1,
+    .login-orb-2 {
+      display: none !important;
+    }
+
+    .profile-search::before {
+      content: "";
+      position: fixed;
+      inset: -20%;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(145, 70, 255, .16), transparent 34%),
+        radial-gradient(circle at 78% 82%, rgba(215, 168, 79, .13), transparent 36%);
+      filter: blur(18px);
+      opacity: .9;
+    }
+
+    .profile-search::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: radial-gradient(circle at center, black, transparent 75%);
+      opacity: .45;
     }
 
   </style>
