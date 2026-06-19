@@ -4394,6 +4394,41 @@ const metadata = {
         };
       }
 
+      function getProfileLogin() {
+        const candidates = [
+          $('handle'),
+          $('login'),
+          $('username'),
+          document.querySelector('[data-login]'),
+          document.querySelector('[data-user-login]'),
+          document.querySelector('[id*="handle"]'),
+          document.querySelector('[id*="login"]'),
+        ].filter(Boolean);
+
+        for (const el of candidates) {
+          const fromData = el?.dataset?.login || el?.dataset?.userLogin || '';
+          const raw = clean(fromData || el?.textContent || '');
+          const login = raw.replace(/^@+/, '').trim().toLowerCase();
+
+          if (
+            login &&
+            login !== '---' &&
+            /^[a-z0-9_]{3,25}$/.test(login)
+          ) {
+            return login;
+          }
+        }
+
+        const profileText = clean(
+          document.querySelector('main')?.innerText ||
+          document.body?.innerText ||
+          ''
+        );
+
+        const match = profileText.match(/@([a-zA-Z0-9_]{3,25})/);
+        return match?.[1]?.toLowerCase() || '';
+      }
+
       async function getMe() {
         try {
           const res = await fetch(API_BASE + '/api/me', { credentials: 'include' });
@@ -4408,18 +4443,27 @@ const metadata = {
       }
 
       async function getRoles() {
+        const profileLogin = getProfileLogin();
         const me = await getMe();
 
-        if (!me?.twitchId) {
+        const url = new URL(API_BASE + '/api/twitch/roles');
+
+        if (profileLogin) {
+          url.searchParams.set('login', profileLogin);
+        } else if (me?.twitchId) {
+          url.searchParams.set('user_id', me.twitchId);
+        } else {
           return { moderator: false, vip: false };
         }
 
         try {
-          const url = new URL(API_BASE + '/api/twitch/roles');
-          url.searchParams.set('user_id', me.twitchId);
-
           const res = await fetch(url.toString(), { credentials: 'include' });
           const data = await res.json();
+
+          console.log('[TNX Profile Roles]', {
+            profileLogin,
+            response: data,
+          });
 
           if (!data?.ok || !data?.available || !data?.roles) {
             return { moderator: false, vip: false };
