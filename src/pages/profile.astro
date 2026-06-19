@@ -10,6 +10,27 @@ const metadata = {
 
 <Layout metadata={metadata}>
   <main class="tnx-profile-page" dir="rtl">
+    <section id="profileSkeleton" class="profile-skeleton" aria-label="جاري تحميل البروفايل">
+      <div class="skeleton-shell">
+        <div class="skeleton-cover"></div>
+
+        <div class="skeleton-head">
+          <div class="skeleton-avatar skeleton-pulse"></div>
+
+          <div class="skeleton-lines">
+            <div class="skeleton-line skeleton-name skeleton-pulse"></div>
+            <div class="skeleton-line skeleton-handle skeleton-pulse"></div>
+            <div class="skeleton-line skeleton-bio skeleton-pulse"></div>
+          </div>
+        </div>
+
+        <div class="skeleton-grid">
+          <div class="skeleton-card skeleton-pulse"></div>
+          <div class="skeleton-card skeleton-pulse"></div>
+          <div class="skeleton-card skeleton-pulse"></div>
+        </div>
+      </div>
+    </section>
     <section id="searchView" class="profile-search hidden">
 <div class="search-card profile-login-card">
         <span class="eyebrow">TNX6 PROFILE</span>
@@ -1915,6 +1936,237 @@ const metadata = {
       display: none !important;
     }
 
+
+    /* Profile polish: skeleton, smooth modals, legendary glow */
+    .profile-skeleton {
+      width: min(100% - 32px, 1180px);
+      margin: 26px auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .profile-skeleton.is-hidden {
+      display: none !important;
+    }
+
+    .skeleton-shell {
+      overflow: hidden;
+      border-radius: 32px;
+      border: 1px solid rgba(255,255,255,.08);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.018)),
+        rgba(12,12,15,.72);
+      box-shadow: 0 24px 70px rgba(0,0,0,.38);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .skeleton-cover {
+      height: 190px;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(255,223,138,.16), transparent 38%),
+        radial-gradient(circle at 82% 80%, rgba(145,70,255,.14), transparent 42%),
+        linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    .skeleton-head {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 0 28px 28px;
+      margin-top: -52px;
+    }
+
+    .skeleton-avatar {
+      width: 118px;
+      height: 118px;
+      border-radius: 28px;
+      border: 4px solid rgba(8,8,8,.96);
+      background: rgba(255,255,255,.08);
+      flex: 0 0 auto;
+    }
+
+    .skeleton-lines {
+      width: min(100%, 560px);
+      display: grid;
+      gap: 12px;
+      padding-top: 54px;
+    }
+
+    .skeleton-line {
+      height: 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+    }
+
+    .skeleton-name {
+      width: 46%;
+      height: 28px;
+    }
+
+    .skeleton-handle {
+      width: 26%;
+    }
+
+    .skeleton-bio {
+      width: 72%;
+    }
+
+    .skeleton-grid {
+      display: grid;
+      grid-template-columns: 1.35fr .65fr;
+      gap: 18px;
+      padding: 0 28px 28px;
+    }
+
+    .skeleton-card {
+      min-height: 150px;
+      border-radius: 24px;
+      background: rgba(255,255,255,.055);
+      border: 1px solid rgba(255,255,255,.055);
+    }
+
+    .skeleton-card:first-child {
+      min-height: 210px;
+    }
+
+    .skeleton-card:nth-child(3) {
+      grid-column: 1 / -1;
+      min-height: 110px;
+    }
+
+    .skeleton-pulse {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skeleton-pulse::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(100%);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent);
+      animation: skeletonPulse 1.35s infinite;
+    }
+
+    @keyframes skeletonPulse {
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
+    @keyframes modalSoftSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(.985);
+        filter: blur(5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes modalBackdropFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    #mailModal:not(.hidden),
+    .mail-modal:not(.hidden),
+    .item-modal:not(.hidden),
+    [data-item-modal]:not(.hidden),
+    [data-modal]:not(.hidden) {
+      animation: modalBackdropFade .18s ease both;
+    }
+
+    #mailModal:not(.hidden) > *,
+    .mail-modal:not(.hidden) > *,
+    .item-modal:not(.hidden) > *,
+    [data-item-modal]:not(.hidden) > *,
+    [data-modal]:not(.hidden) > * {
+      animation: modalSoftSlideIn .28s cubic-bezier(.22, .9, .25, 1) both;
+      will-change: transform, opacity, filter;
+    }
+
+    .legendary-glow {
+      position: relative;
+      border-color: rgba(255, 213, 106, .48) !important;
+      box-shadow:
+        0 0 0 1px rgba(255, 213, 106, .16),
+        0 0 22px rgba(255, 183, 66, .18),
+        inset 0 0 18px rgba(255, 213, 106, .055) !important;
+      animation: legendaryPulse 2.25s ease-in-out infinite;
+    }
+
+    .legendary-glow::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255, 223, 138, .18), transparent 45%),
+        linear-gradient(135deg, rgba(255, 223, 138, .10), transparent 55%);
+      opacity: .72;
+      mix-blend-mode: screen;
+    }
+
+    @keyframes legendaryPulse {
+      0%, 100% {
+        box-shadow:
+          0 0 0 1px rgba(255, 213, 106, .12),
+          0 0 18px rgba(255, 183, 66, .15),
+          inset 0 0 16px rgba(255, 213, 106, .05);
+      }
+      50% {
+        box-shadow:
+          0 0 0 1px rgba(255, 213, 106, .30),
+          0 0 34px rgba(255, 183, 66, .34),
+          inset 0 0 22px rgba(255, 213, 106, .10);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .skeleton-head {
+        align-items: flex-start;
+        padding-inline: 20px;
+      }
+
+      .skeleton-avatar {
+        width: 92px;
+        height: 92px;
+        border-radius: 22px;
+      }
+
+      .skeleton-lines {
+        padding-top: 45px;
+      }
+
+      .skeleton-grid {
+        grid-template-columns: 1fr;
+        padding-inline: 20px;
+      }
+
+      .skeleton-card:nth-child(3) {
+        grid-column: auto;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .skeleton-pulse::after,
+      .legendary-glow,
+      #mailModal:not(.hidden) > *,
+      .mail-modal:not(.hidden) > *,
+      .item-modal:not(.hidden) > *,
+      [data-item-modal]:not(.hidden) > *,
+      [data-modal]:not(.hidden) > * {
+        animation: none !important;
+      }
+    }
+
   </style>
 
   <script is:inline data-reinit>
@@ -3412,6 +3664,102 @@ const metadata = {
       initProfileAccountMenu()
       window.setTimeout(initProfileAccountMenu, 900)
       window.addEventListener('pageshow', initProfileAccountMenu)
+    })()
+  </script>
+
+
+  <script is:inline>
+    ;(() => {
+      const cleanupKey = '__tnxProfilePolishCleanup'
+      if (window[cleanupKey]) window[cleanupKey]()
+
+      const timers = []
+      const observers = []
+      const $ = (id) => document.getElementById(id)
+
+      function isVisible(el) {
+        return Boolean(el && !el.classList.contains('hidden'))
+      }
+
+      function updateSkeleton() {
+        const skeleton = $('profileSkeleton')
+        if (!skeleton) return
+
+        const loaded =
+          isVisible($('profileView')) ||
+          isVisible($('searchView')) ||
+          isVisible($('notFoundView'))
+
+        skeleton.classList.toggle('is-hidden', loaded)
+      }
+
+      function applyLegendaryGlow() {
+        const inventory = $('inventory')
+        if (!inventory) return
+
+        const candidates = Array.from(inventory.querySelectorAll('button, article, [data-item], .item, .inventory-item, .inventory-card, div'))
+
+        candidates.forEach((node) => {
+          if (!(node instanceof HTMLElement)) return
+
+          const text = (node.textContent || '').toLowerCase()
+          const rarity =
+            (node.dataset?.rarity || node.getAttribute('data-rarity') || '').toLowerCase()
+
+          const isLegendary =
+            rarity.includes('legendary') ||
+            rarity.includes('أسطوري') ||
+            text.includes('legendary') ||
+            text.includes('أسطوري')
+
+          if (!isLegendary) return
+
+          const card =
+            node.closest('button, article, [data-item], .item, .inventory-item, .inventory-card') || node
+
+          if (card instanceof HTMLElement) {
+            card.classList.add('legendary-glow')
+          }
+        })
+      }
+
+      function setupObservers() {
+        const profile = $('profileView')
+        const search = $('searchView')
+        const notFound = $('notFoundView')
+        const inventory = $('inventory')
+
+        ;[profile, search, notFound].forEach((target) => {
+          if (!target) return
+          const obs = new MutationObserver(updateSkeleton)
+          obs.observe(target, { attributes: true, attributeFilter: ['class'] })
+          observers.push(obs)
+        })
+
+        if (inventory) {
+          const obs = new MutationObserver(applyLegendaryGlow)
+          obs.observe(inventory, { childList: true, subtree: true })
+          observers.push(obs)
+        }
+      }
+
+      setupObservers()
+      updateSkeleton()
+      applyLegendaryGlow()
+
+      ;[120, 450, 900, 1600, 2600].forEach((ms) => {
+        timers.push(window.setTimeout(() => {
+          updateSkeleton()
+          applyLegendaryGlow()
+        }, ms))
+      })
+
+      window[cleanupKey] = () => {
+        timers.forEach((id) => window.clearTimeout(id))
+        observers.forEach((obs) => obs.disconnect())
+        timers.length = 0
+        observers.length = 0
+      }
     })()
   </script>
 
