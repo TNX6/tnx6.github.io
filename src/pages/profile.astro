@@ -3367,219 +3367,17 @@ const metadata = {
 
   
 
-    /* Clean classic profile badges section */
-    #profileBadgeEnhanceToolbar {
-      margin: 8px 0 18px !important;
-      padding: 0 !important;
-      border: 0 !important;
-      background: transparent !important;
-      box-shadow: none !important;
-    }
 
-    #profileBadgeEnhanceToolbar .profile-badges-toolbar-title,
-    #profileBadgeEnhanceToolbar .profile-badges-toolbar-count,
-    #profileBadgeEnhanceCount {
+    /* Disable experimental profile badge section UI */
+    #profileBadgeEnhanceToolbar,
+    .profile-badge-showmore-wrap,
+    #profileBadgeShowMore {
       display: none !important;
     }
 
-    #profileBadgeEnhanceFilters,
-    .profile-badges-v2-filters,
-    .profile-badges-filters {
-      display: flex !important;
-      align-items: center !important;
-      justify-content: flex-start !important;
-      gap: 8px !important;
-      flex-wrap: nowrap !important;
-      overflow-x: auto !important;
-      scrollbar-width: none !important;
-      padding: 0 0 4px !important;
-      margin: 0 !important;
-    }
-
-    #profileBadgeEnhanceFilters::-webkit-scrollbar,
-    .profile-badges-v2-filters::-webkit-scrollbar,
-    .profile-badges-filters::-webkit-scrollbar {
-      display: none !important;
-    }
-
-    .profile-badge-v2-filter,
-    .profile-badge-filter {
-      flex: 0 0 auto !important;
-      height: 34px !important;
-      min-width: 58px !important;
-      padding: 0 14px !important;
-      border-radius: 999px !important;
-      border: 1px solid rgba(216,161,47,.22) !important;
-      background: rgba(255,255,255,.025) !important;
-      color: rgba(255,255,255,.72) !important;
-      font: inherit !important;
-      font-size: 12px !important;
-      font-weight: 900 !important;
-      cursor: pointer !important;
-      box-shadow: none !important;
-      transition: transform .16s ease, border-color .16s ease, background .16s ease, color .16s ease !important;
-    }
-
-    .profile-badge-v2-filter:hover,
-    .profile-badge-filter:hover {
-      transform: translateY(-1px) !important;
-      border-color: rgba(216,161,47,.48) !important;
-      background: rgba(216,161,47,.06) !important;
-      color: #fff !important;
-    }
-
-    .profile-badge-v2-filter.is-active,
-    .profile-badge-filter.is-active {
-      border-color: rgba(216,161,47,.75) !important;
-      background: rgba(216,161,47,.13) !important;
-      color: #f2cf75 !important;
-    }
-
-    #badges.tnx-profile-badges-grid {
-      display: flex !important;
-      flex-wrap: wrap !important;
-      align-items: flex-start !important;
-      justify-content: center !important;
-      gap: 12px !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      min-height: 0 !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card {
-      flex: 0 0 88px !important;
-      width: 88px !important;
-      max-width: 88px !important;
-      height: 86px !important;
-      min-height: 86px !important;
-      padding: 9px 7px 8px !important;
-      border-radius: 18px !important;
-      border: 1px solid rgba(255,255,255,.08) !important;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(255,255,255,.04), transparent 48%),
-        rgba(255,255,255,.035) !important;
-      box-shadow: none !important;
-      overflow: hidden !important;
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      justify-content: center !important;
-      gap: 6px !important;
-      transform: none !important;
-      transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card:hover {
-      transform: translateY(-3px) !important;
-      border-color: rgba(216,161,47,.32) !important;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(216,161,47,.06), transparent 48%),
-        rgba(255,255,255,.045) !important;
-      box-shadow: 0 12px 26px rgba(0,0,0,.22) !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card.is-featured {
-      border-color: rgba(255,255,255,.09) !important;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(216,161,47,.045), transparent 48%),
-        rgba(255,255,255,.04) !important;
-      box-shadow: none !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card::before,
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card::after,
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card.is-featured::before,
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card.is-featured::after {
-      display: none !important;
-      content: none !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card .badge-icon,
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card [class*="icon"] {
-      width: 42px !important;
-      height: 42px !important;
-      margin: 0 auto !important;
-      display: grid !important;
-      place-items: center !important;
-      border-radius: 14px !important;
-      background: transparent !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card img {
-      width: 42px !important;
-      height: 42px !important;
-      max-width: 42px !important;
-      max-height: 42px !important;
-      object-fit: contain !important;
-      display: block !important;
-      margin: 0 auto !important;
-      transition: transform .16s ease, filter .16s ease !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card:hover img {
-      transform: scale(1.06) !important;
-      filter: drop-shadow(0 8px 14px rgba(0,0,0,.26)) !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card .badge-name,
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card strong,
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card b {
-      display: block !important;
-      max-width: 74px !important;
-      margin: 0 auto !important;
-      color: rgba(255,255,255,.88) !important;
-      font-size: 12px !important;
-      font-weight: 1000 !important;
-      line-height: 1.1 !important;
-      text-align: center !important;
-      white-space: nowrap !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-    }
-
-    .tnx-badge-hidden-by-filter {
-      display: none !important;
-    }
-
-    .profile-badge-showmore-wrap {
-      display: flex !important;
-      justify-content: center !important;
-      margin-top: 14px !important;
-    }
-
-    .profile-badge-showmore {
-      height: 34px !important;
-      border-radius: 999px !important;
-      border: 1px solid rgba(216,161,47,.24) !important;
-      background: rgba(255,255,255,.025) !important;
-      color: #efd37c !important;
-      padding: 0 16px !important;
-      font: inherit !important;
-      font-size: 12px !important;
-      font-weight: 1000 !important;
-      cursor: pointer !important;
-    }
-
-    @media (max-width: 640px) {
-      #badges.tnx-profile-badges-grid {
-        gap: 10px !important;
-      }
-
-      #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card {
-        flex-basis: 82px !important;
-        width: 82px !important;
-        max-width: 82px !important;
-        height: 82px !important;
-        min-height: 82px !important;
-        border-radius: 16px !important;
-      }
-
-      #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card img {
-        width: 38px !important;
-        height: 38px !important;
-        max-width: 38px !important;
-        max-height: 38px !important;
-      }
+    #badges .badge.tnx-profile-badge-card,
+    #badges .badge.is-featured {
+      all: revert-layer;
     }
 
 </style>
@@ -5140,5 +4938,5 @@ const metadata = {
   
 
 
-  <script src="/js/profile-badge-modal-test.js?v=19" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=20" defer data-astro-rerun></script>
 </Layout>

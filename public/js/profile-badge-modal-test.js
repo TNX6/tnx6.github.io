@@ -696,79 +696,31 @@
     const box = $("badges");
     if (!box) return;
 
-    const nodes = Array.from(box.querySelectorAll(".badge"));
-    if (!nodes.length) return;
-
-    ensureBadgesToolbar(box);
-    ensureShowMoreButton(box);
-
-    box.classList.add("tnx-profile-badges-grid");
-
-    const items = nodes
-      .map(readBadgeNode)
-      .filter((item) => item.key && item.key !== "بادج");
-
-    items.forEach((item) => {
-      item.node.classList.add("tnx-profile-badge-card");
-      item.node.classList.toggle("is-featured", item.isFeatured);
-      item.node.dataset.category = item.category;
-      item.node.dataset.categoryLabel = item.category;
-      item.node.dataset.badgeName = item.name;
-    });
-
-    const sorted = items.slice().sort((a, b) => {
-      if (a.isFeatured && !b.isFeatured) return -1;
-      if (!a.isFeatured && b.isFeatured) return 1;
-
-      const order = {
-        "الأسئلة": 1,
-        "الحضور": 2,
-        "النقاط": 3,
-        "خاصة": 4,
-        "عام": 5
-      };
-
-      const ac = order[a.category] || 99;
-      const bc = order[b.category] || 99;
-
-      if (ac !== bc) return ac - bc;
-      return a.name.localeCompare(b.name, "ar");
-    });
-
-    sorted.forEach((item) => {
-      box.appendChild(item.node);
-    });
-
-    const filtered = sorted.filter((item) => {
-      if (badgeSectionState.filter === "الكل") return true;
-      if (badgeSectionState.filter === "المميزة") return item.isFeatured;
-      return item.category === badgeSectionState.filter;
-    });
-
-    const limit = 8;
-    const visible = badgeSectionState.expanded ? filtered : filtered.slice(0, limit);
-    const visibleSet = new Set(visible.map((item) => item.node));
-
-    box.classList.toggle("tnx-profile-badges-few", visible.length > 0 && visible.length <= 3);
-
-    sorted.forEach((item) => {
-      item.node.classList.toggle("tnx-badge-hidden-by-filter", !visibleSet.has(item.node));
-    });
-
-    const count = $("profileBadgeEnhanceCount");
-    if (count) {
-      const featuredCount = sorted.filter((item) => item.isFeatured).length;
-      count.textContent = `${filtered.length} بادج • ${featuredCount} مميزة`;
-    }
+    $("profileBadgeEnhanceToolbar")?.remove();
 
     const showMore = $("profileBadgeShowMore");
     if (showMore) {
-      const shouldShow = filtered.length > limit;
-      showMore.classList.toggle("hidden", !shouldShow);
-      showMore.textContent = badgeSectionState.expanded ? "عرض أقل" : "عرض الكل";
+      const wrap = showMore.closest(".profile-badge-showmore-wrap");
+      if (wrap) wrap.remove();
+      else showMore.remove();
     }
 
-    updateBadgeFilterButtons();
+    box.classList.remove(
+      "tnx-profile-badges-grid",
+      "tnx-profile-badges-few"
+    );
+
+    box.querySelectorAll(".badge").forEach((node) => {
+      node.classList.remove(
+        "tnx-profile-badge-card",
+        "is-featured",
+        "tnx-badge-hidden-by-filter"
+      );
+
+      node.removeAttribute("data-category");
+      node.removeAttribute("data-category-label");
+      node.removeAttribute("data-badge-name");
+    });
   }
 
 
