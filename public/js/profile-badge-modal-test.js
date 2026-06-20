@@ -113,6 +113,15 @@
     }
   }
 
+  function scheduleSavedRenderLock() {
+    [250, 800, 1600, 3000, 5200, 8000].forEach((ms) => {
+      setTimeout(() => {
+        renderTop();
+        forcePlusVisible();
+      }, ms);
+    });
+  }
+
   function renderTop() {
     const target = $("featuredBadges");
     if (!target) return;
@@ -251,6 +260,7 @@
 
       selected = Array.isArray(data.badges) ? data.badges.map(clean).slice(0, 3) : selected.slice(0, 3);
       renderTop();
+      scheduleSavedRenderLock();
       setState("تم حفظ الاختيار.");
       setTimeout(closeModal, 500);
     } catch {
@@ -281,6 +291,7 @@
     });
 
     renderTop();
+    scheduleSavedRenderLock();
 
     [500, 1200, 2500, 4500, 7000].forEach((ms) => {
       setTimeout(forcePlusVisible, ms);
