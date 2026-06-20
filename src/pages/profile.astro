@@ -3827,6 +3827,252 @@ const metadata = {
       }
     }
 
+
+    /* Profile badges redesign v2 */
+    #profileBadgeEnhanceToolbar.profile-badges-v2-toolbar {
+      margin: 10px 0 18px !important;
+      padding: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .profile-badges-v2-filters {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      overflow-x: auto !important;
+      flex-wrap: nowrap !important;
+      scrollbar-width: none !important;
+      padding: 2px 0 4px !important;
+    }
+
+    .profile-badges-v2-filters::-webkit-scrollbar {
+      display: none !important;
+    }
+
+    .profile-badge-v2-filter,
+    .profile-badge-filter {
+      flex: 0 0 auto !important;
+      height: 34px !important;
+      min-width: 58px !important;
+      border-radius: 999px !important;
+      border: 1px solid rgba(216,161,47,.20) !important;
+      background: rgba(255,255,255,.025) !important;
+      color: rgba(255,255,255,.70) !important;
+      padding: 0 14px !important;
+      font: inherit !important;
+      font-size: 12px !important;
+      font-weight: 900 !important;
+      cursor: pointer !important;
+      box-shadow: none !important;
+      transition:
+        background .16s ease,
+        color .16s ease,
+        border-color .16s ease,
+        transform .16s ease !important;
+    }
+
+    .profile-badge-v2-filter:hover,
+    .profile-badge-filter:hover {
+      transform: translateY(-1px) !important;
+      color: #fff !important;
+      border-color: rgba(216,161,47,.45) !important;
+      background: rgba(216,161,47,.06) !important;
+    }
+
+    .profile-badge-v2-filter.is-active,
+    .profile-badge-filter.is-active {
+      border-color: rgba(216,161,47,.78) !important;
+      background: rgba(216,161,47,.14) !important;
+      color: #f2cf75 !important;
+    }
+
+    .profile-badges-toolbar-title,
+    .profile-badges-toolbar-count,
+    #profileBadgeEnhanceCount {
+      display: none !important;
+    }
+
+    #badges.tnx-profile-badges-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(112px, 128px)) !important;
+      justify-content: center !important;
+      align-items: start !important;
+      gap: 12px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 0 !important;
+    }
+
+    #badges.tnx-profile-badges-grid.tnx-profile-badges-few {
+      justify-content: center !important;
+      min-height: 0 !important;
+    }
+
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card {
+      width: 124px !important;
+      max-width: 124px !important;
+      min-height: 132px !important;
+      padding: 13px 10px 30px !important;
+      border-radius: 18px !important;
+      border: 1px solid rgba(255,255,255,.075) !important;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,255,255,.035), transparent 46%),
+        rgba(11, 12, 15, .80) !important;
+      box-shadow: none !important;
+      overflow: hidden !important;
+      transform: none !important;
+      animation: profileBadgeV2In .18s ease both !important;
+      transition:
+        transform .16s ease,
+        border-color .16s ease,
+        background .16s ease,
+        box-shadow .16s ease !important;
+    }
+
+    @keyframes profileBadgeV2In {
+      from {
+        opacity: 0;
+        transform: translateY(4px) scale(.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card:hover {
+      transform: translateY(-3px) !important;
+      border-color: rgba(216,161,47,.32) !important;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(216,161,47,.055), transparent 46%),
+        rgba(13, 14, 18, .90) !important;
+      box-shadow: 0 12px 28px rgba(0,0,0,.24) !important;
+    }
+
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card.is-featured {
+      border-color: rgba(216,161,47,.45) !important;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(216,161,47,.08), transparent 45%),
+        rgba(12, 13, 16, .88) !important;
+      box-shadow:
+        0 0 0 1px rgba(216,161,47,.06) inset,
+        0 12px 30px rgba(0,0,0,.22) !important;
+    }
+
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card.is-featured::before {
+      content: "مميز" !important;
+      position: absolute !important;
+      top: 8px !important;
+      left: 8px !important;
+      width: auto !important;
+      height: 20px !important;
+      min-width: 42px !important;
+      padding: 0 8px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-radius: 999px !important;
+      background: rgba(216,161,47,.16) !important;
+      border: 1px solid rgba(216,161,47,.35) !important;
+      color: #f0d384 !important;
+      font-size: 10px !important;
+      font-weight: 1000 !important;
+      line-height: 1 !important;
+      z-index: 5 !important;
+      box-shadow: none !important;
+    }
+
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card::after {
+      content: attr(data-category-label) !important;
+      position: absolute !important;
+      left: 50% !important;
+      bottom: 8px !important;
+      transform: translateX(-50%) !important;
+      border-radius: 999px !important;
+      border: 1px solid rgba(255,255,255,.075) !important;
+      background: rgba(255,255,255,.030) !important;
+      color: rgba(255,255,255,.56) !important;
+      padding: 4px 9px !important;
+      font-size: 10px !important;
+      font-weight: 900 !important;
+      white-space: nowrap !important;
+      pointer-events: none !important;
+    }
+
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card[data-category="النقاط"]::after {
+      border-color: rgba(216,161,47,.22) !important;
+      background: rgba(216,161,47,.075) !important;
+      color: #e5c46c !important;
+    }
+
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card[data-category="الأسئلة"]::after {
+      border-color: rgba(96,165,250,.20) !important;
+      background: rgba(96,165,250,.065) !important;
+      color: #9fc9ff !important;
+    }
+
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card[data-category="الحضور"]::after {
+      border-color: rgba(52,211,153,.20) !important;
+      background: rgba(52,211,153,.065) !important;
+      color: #95e7c8 !important;
+    }
+
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card img {
+      width: 50px !important;
+      height: 50px !important;
+      object-fit: contain !important;
+      transition: transform .16s ease, filter .16s ease !important;
+    }
+
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card:hover img {
+      transform: scale(1.06) !important;
+      filter: drop-shadow(0 8px 14px rgba(0,0,0,.24)) !important;
+    }
+
+    .tnx-badge-hidden-by-filter {
+      display: none !important;
+    }
+
+    .profile-badge-showmore-wrap {
+      display: flex !important;
+      justify-content: center !important;
+      margin-top: 14px !important;
+    }
+
+    .profile-badge-showmore {
+      height: 34px !important;
+      border-radius: 999px !important;
+      border: 1px solid rgba(216,161,47,.24) !important;
+      background: rgba(255,255,255,.025) !important;
+      color: #efd37c !important;
+      padding: 0 16px !important;
+      font: inherit !important;
+      font-size: 12px !important;
+      font-weight: 1000 !important;
+      cursor: pointer !important;
+    }
+
+    @media (max-width: 640px) {
+      #badges.tnx-profile-badges-grid {
+        grid-template-columns: repeat(3, minmax(96px, 1fr)) !important;
+        gap: 10px !important;
+      }
+
+      #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card {
+        width: auto !important;
+        max-width: none !important;
+        min-height: 126px !important;
+        border-radius: 16px !important;
+      }
+
+      #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card img {
+        width: 44px !important;
+        height: 44px !important;
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -5385,5 +5631,5 @@ const metadata = {
   
 
 
-  <script src="/js/profile-badge-modal-test.js?v=15" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=17" defer data-astro-rerun></script>
 </Layout>

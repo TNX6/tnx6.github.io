@@ -113,7 +113,6 @@
     const text = raw.toLowerCase();
     const upper = raw.toUpperCase();
 
-    // النقاط أولاً، عشان 250K ما تنحسب أسئلة بسبب رقم 50
     if (
       /(^|[^A-Z0-9])(100K|250K|500K|1M)([^A-Z0-9]|$)/.test(upper) ||
       upper.includes("100K") ||
@@ -612,13 +611,23 @@
 
     const img = node.querySelector?.("img");
 
+    const normalizeBadgeCompare = (value) => {
+      return clean(value)
+        .replace(/الأسئلة|الاسئلة|النقاط|الحضور|خاصة|عام/g, "")
+        .replace(/\s+/g, "")
+        .toUpperCase();
+    };
+
+    const selectedSet = new Set(selected.map(normalizeBadgeCompare));
+    const isFeatured = selectedSet.has(normalizeBadgeCompare(name));
+
     return {
       node,
       key: name,
       name,
       img: img?.getAttribute("src") || "",
       category: badgeCategory(name),
-      isFeatured: selected.includes(name)
+      isFeatured
     };
   }
 
@@ -631,12 +640,9 @@
       box.parentElement?.insertBefore(toolbar, box);
     }
 
-    toolbar.className = "profile-badges-toolbar profile-badges-toolbar-compact";
+    toolbar.className = "profile-badges-v2-toolbar";
     toolbar.innerHTML = `
-      <div class="profile-badges-toolbar-main compact">
-        <div class="profile-badges-filters" id="profileBadgeEnhanceFilters"></div>
-        <div id="profileBadgeEnhanceCount" class="profile-badges-toolbar-count">0 بادج</div>
-      </div>
+      <div class="profile-badges-v2-filters" id="profileBadgeEnhanceFilters"></div>
     `;
 
     const filters = $("profileBadgeEnhanceFilters");
@@ -645,7 +651,7 @@
     badgeSectionFilters.forEach((filter) => {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "profile-badge-filter";
+      btn.className = "profile-badge-v2-filter";
       btn.dataset.filter = filter;
       btn.textContent = filter;
 
