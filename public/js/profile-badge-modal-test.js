@@ -2,12 +2,117 @@
   const KEY = "__tnxFeaturedBadgeModalTest";
   if (window[KEY]?.cleanup) window[KEY].cleanup();
 
+  const API = "https://api.tnx6.xyz";
   const timeouts = [];
   const cleanups = [];
+
   let selected = [];
+  let isOwner = false;
+  let profileLogin = "";
 
   const $ = (id) => document.getElementById(id);
   const clean = (v) => String(v || "").replace(/\s+/g, " ").trim();
+
+  function getProfileLogin() {
+    const candidates = [
+      $("handle"),
+      $("login"),
+      $("username"),
+      document.querySelector("[data-login]"),
+      document.querySelector("[data-user-login"]),
+    ].filter(Boolean);
+
+    for (const el of candidates) {
+      const raw = clean(el.dataset?.login || el.dataset?.userLogin || el.textContent || "");
+      const login = raw.replace(/^@+/, "").toLowerCase();
+
+      if (/^[a-z0-9_]{3,25}$/.test(login)) return login;
+    }
+
+    const text = clean(document.querySelector("main")?.innerText || document.body?.innerText || "");
+    const match = text.match(/@([a-zA-Z0-9_]{3,25})/);
+
+    return match?.[1]?.toLowerCase() || "";
+  }
+
+  async function getMe() {
+    try {
+      const res = await fetch(API + "/api/me", {
+        credentials: "include",
+        cache: "no-store",
+      });
+
+      const data = await res.json();
+      return data?.authenticated ? data.user : null;
+    } catch {
+      return null;
+    }
+  }
+
+  async function loadSavedBadges(login) {
+    if (!login) return [];
+
+    try {
+      const url = new URL(API + "/api/profile/featured-badges");
+      url.searchParams.set("login", login);
+
+      const res = await fetch(url.toString(), {
+        credentials: "include",
+        cache: "no-store",
+      });
+
+      const data = await res.json();
+
+      return Array.isArray(data?.badges)
+        ? data.badges.map((x) => clean(x)).filter(Boolean).slice(0, 3)
+        : [];
+    } catch {
+      return [];
+    }
+  }
+
+  async function saveSelectedBadges() {
+    const saveBtn = $("featuredBadgeModalSave");
+
+    try {
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = "جاري الحفظ...";
+      }
+
+      const res = await fetch(API + "/api/me/featured-badges", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          badges: selected.slice(0, 3),
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok || !data?.ok) {
+        throw new Error(data?.error || "save_failed");
+      }
+
+      selected = Array.isArray(data.badges)
+        ? data.badges.map((x) => clean(x)).filter(Boolean).slice(0, 3)
+        : selected.slice(0, 3);
+
+      renderTopSavedBadges();
+      setState("تم حفظ الاختيار.");
+      window.setTimeout(closeModal, 500);
+    } catch {
+      setState("فشل حفظ البادجات. جرّب مرة ثانية.");
+    } finally {
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = "حفظ الاختيار";
+      }
+    }
+  }
 
   function getInventoryBadges() {
     const box = $("badges");
@@ -33,6 +138,75 @@
       .filter((badge) => badge.key && badge.key !== "بادج");
   }
 
+  function makeMiniBadge(badge) {
+    const el = document.createElement("span");
+    el.className = "featured-mini-badge";
+    el.setAttribute("data-tip", badge.name);
+    el.setAttribute("aria-label", badge.name);
+
+    if (badge.img) {
+      const img = document.createElement("img");
+      img.src = badge.img;
+      img.alt = badge.name;
+      img.loading = "lazy";
+      el.appendChild(img);
+    } else {
+      const span = document.createElement("span");
+      span.textContent = "✦";
+      el.appendChild(span);
+    }
+
+    return el;
+  }
+
+  function makePlusButton() {
+    const btn = document.createElement("button");
+    btn.id = "featuredBadgePlusTest";
+    btn.type = "button";
+    btn.className = "featured-badge-plus-test";
+    btn.textContent = "+";
+    btn.title = "اختيار البادجات";
+    btn.setAttribute("aria-label", "اختيار البادجات");
+
+    btn.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      openModal();
+    });
+
+    return btn;
+  }
+
+  function renderTopSavedBadges() {
+    const target = $("featuredBadges");
+    if (!target) return;
+
+    const inventory = getInventoryBadges();
+    const map = new Map(inventory.map((badge) => [badge.key, badge]));
+
+    const chosen = selected
+      .map((key) => map.get(key))
+      .filter(Boolean)
+      .slice(0, 3);
+
+    if (!chosen.length && !isOwner) return;
+
+    const roleNodes = Array
+      .from(target.querySelectorAll(".role-mod, .role-vip"))
+      .map((el) => el.cloneNode(true));
+
+    target.innerHTML = "";
+
+    chosen.forEach((badge) => target.appendChild(makeMiniBadge(badge)));
+    roleNodes.forEach((node) => target.appendChild(node));
+
+    if (isOwner) {
+      target.appendChild(makePlusButton());
+    }
+
+    target.classList.remove("hidden");
+  }
+
   function makeModal() {
     if ($("featuredBadgeModalTest")) return;
 
@@ -56,8 +230,8 @@
         <div id="featuredBadgeModalGrid" class="featured-badge-modal-grid"></div>
 
         <div class="featured-badge-modal-actions">
-          <button id="featuredBadgeModalSave" class="featured-badge-modal-save" type="button" disabled>
-            حفظ الاختيار لاحقًا
+          <button id="featuredBadgeModalSave" class="featured-badge-modal-save" type="button">
+            حفظ الاختيار
           </button>
         </div>
       </div>
@@ -65,13 +239,11 @@
 
     document.body.appendChild(modal);
 
-    const close = () => {
-      modal.classList.add("hidden");
-      modal.setAttribute("aria-hidden", "true");
-    };
+    const close = () => closeModal();
 
     modal.querySelector(".featured-badge-modal-backdrop")?.addEventListener("click", close);
     modal.querySelector(".featured-badge-modal-close")?.addEventListener("click", close);
+    $("featuredBadgeModalSave")?.addEventListener("click", saveSelectedBadges);
   }
 
   function setState(message) {
@@ -141,6 +313,8 @@
   }
 
   function openModal() {
+    if (!isOwner) return;
+
     makeModal();
     renderPicker();
 
@@ -149,36 +323,34 @@
     modal?.setAttribute("aria-hidden", "false");
   }
 
-  function addPlusButton() {
-    const target = $("featuredBadges");
-    if (!target) return;
-    if ($("featuredBadgePlusTest")) return;
+  function closeModal() {
+    const modal = $("featuredBadgeModalTest");
+    modal?.classList.add("hidden");
+    modal?.setAttribute("aria-hidden", "true");
+  }
 
-    const btn = document.createElement("button");
-    btn.id = "featuredBadgePlusTest";
-    btn.type = "button";
-    btn.className = "featured-badge-plus-test";
-    btn.textContent = "+";
-    btn.title = "اختيار البادجات";
-    btn.setAttribute("aria-label", "اختيار البادجات");
+  async function setup() {
+    profileLogin = getProfileLogin();
+    if (!profileLogin) return;
 
-    btn.addEventListener("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      openModal();
-    });
+    const [me, saved] = await Promise.all([
+      getMe(),
+      loadSavedBadges(profileLogin),
+    ]);
 
-    target.appendChild(btn);
-    target.classList.remove("hidden");
+    isOwner = Boolean(me?.login && String(me.login).toLowerCase() === profileLogin);
+    selected = saved.slice(0, 3);
+
+    renderTopSavedBadges();
   }
 
   [1800, 3200, 5000].forEach((ms) => {
-    const id = window.setTimeout(addPlusButton, ms);
+    const id = window.setTimeout(setup, ms);
     timeouts.push(id);
   });
 
   const onPageShow = () => {
-    const id = window.setTimeout(addPlusButton, 1800);
+    const id = window.setTimeout(setup, 1800);
     timeouts.push(id);
   };
 
