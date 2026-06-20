@@ -260,6 +260,8 @@
 
         <div id="featuredBadgeCategories" class="featured-badge-categories"></div>
 
+        <div id="featuredBadgeSelectedStrip" class="featured-badge-selected-strip"></div>
+
         <div id="featuredBadgeModalGrid" class="featured-badge-modal-grid"></div>
 
         <div class="featured-badge-modal-actions">
@@ -328,6 +330,66 @@
     return badges;
   }
 
+  function renderSelectedStrip() {
+    const strip = $("featuredBadgeSelectedStrip");
+    if (!strip) return;
+
+    const inventory = getInventory();
+    const map = new Map(inventory.map((badge) => [badge.key, badge]));
+
+    strip.innerHTML = "";
+
+    if (!selected.length) {
+      const empty = document.createElement("div");
+      empty.className = "featured-badge-selected-empty";
+      empty.textContent = "ما اخترت أي بادج بعد.";
+      strip.appendChild(empty);
+      return;
+    }
+
+    selected.slice(0, 3).forEach((key) => {
+      const badge = map.get(key);
+      if (!badge) return;
+
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "featured-badge-selected-chip";
+      chip.title = "إزالة " + badge.name;
+
+      const icon = document.createElement("span");
+      icon.className = "featured-badge-selected-icon";
+
+      if (badge.img) {
+        const img = document.createElement("img");
+        img.src = badge.img;
+        img.alt = badge.name;
+        img.loading = "lazy";
+        icon.appendChild(img);
+      } else {
+        icon.textContent = "✦";
+      }
+
+      const label = document.createElement("span");
+      label.className = "featured-badge-selected-label";
+      label.textContent = badge.name;
+
+      const remove = document.createElement("span");
+      remove.className = "featured-badge-selected-remove";
+      remove.textContent = "×";
+
+      chip.appendChild(icon);
+      chip.appendChild(label);
+      chip.appendChild(remove);
+
+      chip.addEventListener("click", () => {
+        selected = selected.filter((item) => item !== key);
+        renderPicker();
+      });
+
+      strip.appendChild(chip);
+    });
+  }
+
   function renderPicker() {
     const grid = $("featuredBadgeModalGrid");
     if (!grid) return;
@@ -336,6 +398,7 @@
     grid.innerHTML = "";
 
     setState(`اختر حتى 3 بادجات من مخزونك. المختار: ${selected.length}/3`);
+    renderSelectedStrip();
 
     if (!badges.length) {
       const empty = document.createElement("div");
@@ -425,6 +488,25 @@
     modal?.setAttribute("aria-hidden", "true");
   }
 
+  function showFeaturedToast(message) {
+    let toast = $("featuredBadgeToast");
+
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "featuredBadgeToast";
+      toast.className = "featured-badge-toast";
+      document.body.appendChild(toast);
+    }
+
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    window.clearTimeout(toast.__hideTimer);
+    toast.__hideTimer = window.setTimeout(() => {
+      toast.classList.remove("show");
+    }, 2200);
+  }
+
   async function saveSelection() {
     const saveBtn = $("featuredBadgeModalSave");
 
@@ -451,6 +533,7 @@
 
       renderTop();
       setState("تم حفظ الاختيار.");
+      showFeaturedToast("تم حفظ البادجات");
       setTimeout(closeModal, 500);
     } catch {
       setState("فشل حفظ البادجات. جرّب مرة ثانية.");

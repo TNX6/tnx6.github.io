@@ -3221,6 +3221,150 @@ const metadata = {
       }
     }
 
+
+    /* Featured badge picker selected strip and motion */
+    .featured-badge-selected-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 12px 24px 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .featured-badge-selected-strip::-webkit-scrollbar {
+      display: none;
+    }
+
+    .featured-badge-selected-empty {
+      color: rgba(255,255,255,.42);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 8px 0;
+    }
+
+    .featured-badge-selected-chip {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(232, 168, 56, .30);
+      background: rgba(232, 168, 56, .08);
+      color: rgba(255,255,255,.9);
+      padding: 5px 8px 5px 10px;
+      cursor: pointer;
+      animation: selectedChipIn .18s ease both;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+
+    .featured-badge-selected-chip:hover {
+      transform: translateY(-1px);
+      border-color: rgba(232, 168, 56, .58);
+      background: rgba(232, 168, 56, .13);
+    }
+
+    @keyframes selectedChipIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px) scale(.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .featured-badge-selected-icon {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: rgba(0,0,0,.25);
+      font-size: 12px;
+    }
+
+    .featured-badge-selected-icon img {
+      width: 19px;
+      height: 19px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .featured-badge-selected-label {
+      max-width: 94px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .featured-badge-selected-remove {
+      width: 17px;
+      height: 17px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: rgba(248, 113, 113, .16);
+      color: #ffb4b4;
+      font-size: 13px;
+      font-weight: 1000;
+      line-height: 1;
+    }
+
+    .featured-badge-option {
+      will-change: transform;
+    }
+
+    .featured-badge-option.selected {
+      animation: badgeSelectedPop .18s ease both;
+    }
+
+    @keyframes badgeSelectedPop {
+      0% {
+        transform: scale(.98);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .featured-badge-modal-test:not(.hidden) .featured-badge-modal-backdrop {
+      animation: featuredBackdropIn .22s ease both;
+    }
+
+    @keyframes featuredBackdropIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .featured-badge-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      z-index: 10000;
+      transform: translateX(-50%) translateY(14px) scale(.96);
+      opacity: 0;
+      pointer-events: none;
+      border-radius: 999px;
+      border: 1px solid rgba(232,168,56,.24);
+      background: rgba(18, 18, 22, .96);
+      color: rgba(255,255,255,.92);
+      padding: 11px 18px;
+      font-size: 13px;
+      font-weight: 900;
+      box-shadow: 0 18px 50px rgba(0,0,0,.45);
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    .featured-badge-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+
   </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -4779,5 +4923,5 @@ const metadata = {
   
 
 
-  <script src="/js/profile-badge-modal-test.js?v=8" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=9" defer data-astro-rerun></script>
 </Layout>
