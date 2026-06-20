@@ -113,7 +113,7 @@
     const text = raw.toLowerCase();
     const upper = raw.toUpperCase();
 
-    // النقاط لازم تكون قبل الأسئلة لأن 250K فيها 50
+    // النقاط أولاً، عشان 250K ما تنحسب أسئلة بسبب رقم 50
     if (
       /(^|[^A-Z0-9])(100K|250K|500K|1M)([^A-Z0-9]|$)/.test(upper) ||
       upper.includes("100K") ||
@@ -624,43 +624,40 @@
   }
 
   function ensureBadgesToolbar(box) {
-    if ($("profileBadgeEnhanceToolbar")) return;
+    let toolbar = $("profileBadgeEnhanceToolbar");
 
-    const toolbar = document.createElement("div");
-    toolbar.id = "profileBadgeEnhanceToolbar";
-    toolbar.className = "profile-badges-toolbar";
+    if (!toolbar) {
+      toolbar = document.createElement("div");
+      toolbar.id = "profileBadgeEnhanceToolbar";
+      box.parentElement?.insertBefore(toolbar, box);
+    }
 
+    toolbar.className = "profile-badges-toolbar profile-badges-toolbar-compact";
     toolbar.innerHTML = `
-      <div class="profile-badges-toolbar-main">
-        <div>
-          <div class="profile-badges-toolbar-title">البادجات</div>
-          <div id="profileBadgeEnhanceCount" class="profile-badges-toolbar-count">0 بادج</div>
-        </div>
-
+      <div class="profile-badges-toolbar-main compact">
         <div class="profile-badges-filters" id="profileBadgeEnhanceFilters"></div>
+        <div id="profileBadgeEnhanceCount" class="profile-badges-toolbar-count">0 بادج</div>
       </div>
     `;
 
-    box.parentElement?.insertBefore(toolbar, box);
-
     const filters = $("profileBadgeEnhanceFilters");
-    if (filters) {
-      badgeSectionFilters.forEach((filter) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "profile-badge-filter";
-        btn.dataset.filter = filter;
-        btn.textContent = filter;
+    if (!filters) return;
 
-        btn.addEventListener("click", () => {
-          badgeSectionState.filter = filter;
-          badgeSectionState.expanded = false;
-          enhanceBadgesSection();
-        });
+    badgeSectionFilters.forEach((filter) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "profile-badge-filter";
+      btn.dataset.filter = filter;
+      btn.textContent = filter;
 
-        filters.appendChild(btn);
+      btn.addEventListener("click", () => {
+        badgeSectionState.filter = filter;
+        badgeSectionState.expanded = false;
+        enhanceBadgesSection();
       });
-    }
+
+      filters.appendChild(btn);
+    });
   }
 
   function ensureShowMoreButton(box) {
