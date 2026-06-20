@@ -109,22 +109,64 @@
   }
 
   function badgeCategory(name) {
-    const text = String(name || "").toLowerCase();
+    const raw = String(name || "").trim();
+    const text = raw.toLowerCase();
+    const upper = raw.toUpperCase();
 
-    if (text.includes("q") || text.includes("سؤال") || text.includes("50") || text.includes("150") || text.includes("300") || text.includes("600") || text.includes("1000")) {
-      return "الأسئلة";
-    }
-
-    if (text.includes("k") || text.includes("1m") || text.includes("مليون") || text.includes("نقاط")) {
+    // النقاط لازم تكون قبل الأسئلة لأن 250K فيها 50
+    if (
+      /(^|[^A-Z0-9])(100K|250K|500K|1M)([^A-Z0-9]|$)/.test(upper) ||
+      upper.includes("100K") ||
+      upper.includes("250K") ||
+      upper.includes("500K") ||
+      upper.includes("1M") ||
+      text.includes("نقطة") ||
+      text.includes("نقاط") ||
+      text.includes("gold")
+    ) {
       return "النقاط";
     }
 
-    if (text.includes("d") || text.includes("15") || text.includes("30") || text.includes("60")) {
+    if (
+      /(^|[^A-Z0-9])(50Q|150Q|300Q|600Q|1000Q)([^A-Z0-9]|$)/.test(upper) ||
+      upper.includes("50Q") ||
+      upper.includes("150Q") ||
+      upper.includes("300Q") ||
+      upper.includes("600Q") ||
+      upper.includes("1000Q") ||
+      text.includes("سؤال") ||
+      text.includes("أسئلة") ||
+      text.includes("اسئلة") ||
+      text.includes("إجابة") ||
+      text.includes("اجابة")
+    ) {
+      return "الأسئلة";
+    }
+
+    if (
+      /(^|[^A-Z0-9])(15D|30D|60D|100D|150D)([^A-Z0-9]|$)/.test(upper) ||
+      upper.includes("15D") ||
+      upper.includes("30D") ||
+      upper.includes("60D") ||
+      upper.includes("100D") ||
+      upper.includes("150D") ||
+      text.includes("حضور") ||
+      text.includes("يوم") ||
+      text.includes("ستريك")
+    ) {
       return "الحضور";
     }
 
-    if (text.includes("vip") || text.includes("king") || text.includes("ملك") || text.includes("law") || text.includes("محامي")) {
-      return "خاص";
+    if (
+      text.includes("vip") ||
+      text.includes("king") ||
+      text.includes("ملك") ||
+      text.includes("law") ||
+      text.includes("محامي") ||
+      text.includes("قاضي") ||
+      text.includes("خاص")
+    ) {
+      return "خاصة";
     }
 
     return "عام";
@@ -532,6 +574,7 @@
         : selected.slice(0, 3);
 
       renderTop();
+      enhanceBadgesSection();
       setState("تم حفظ الاختيار.");
       showFeaturedToast("تم حفظ البادجات");
       setTimeout(closeModal, 500);
@@ -544,6 +587,186 @@
       }
     }
   }
+
+
+  const badgeSectionState = {
+    filter: "الكل",
+    expanded: false
+  };
+
+  const badgeSectionFilters = [
+    "الكل",
+    "المميزة",
+    "الأسئلة",
+    "الحضور",
+    "النقاط",
+    "خاصة",
+    "عام"
+  ];
+
+  function readBadgeNode(node) {
+    const name =
+      clean(node.querySelector?.(".badge-name")?.textContent) ||
+      clean(node.getAttribute?.("title")) ||
+      clean(node.getAttribute?.("aria-label")) ||
+      clean(node.textContent);
+
+    const img = node.querySelector?.("img");
+
+    return {
+      node,
+      key: name,
+      name,
+      img: img?.getAttribute("src") || "",
+      category: badgeCategory(name),
+      isFeatured: selected.includes(name)
+    };
+  }
+
+  function ensureBadgesToolbar(box) {
+    if ($("profileBadgeEnhanceToolbar")) return;
+
+    const toolbar = document.createElement("div");
+    toolbar.id = "profileBadgeEnhanceToolbar";
+    toolbar.className = "profile-badges-toolbar";
+
+    toolbar.innerHTML = `
+      <div class="profile-badges-toolbar-main">
+        <div>
+          <div class="profile-badges-toolbar-title">البادجات</div>
+          <div id="profileBadgeEnhanceCount" class="profile-badges-toolbar-count">0 بادج</div>
+        </div>
+
+        <div class="profile-badges-filters" id="profileBadgeEnhanceFilters"></div>
+      </div>
+    `;
+
+    box.parentElement?.insertBefore(toolbar, box);
+
+    const filters = $("profileBadgeEnhanceFilters");
+    if (filters) {
+      badgeSectionFilters.forEach((filter) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "profile-badge-filter";
+        btn.dataset.filter = filter;
+        btn.textContent = filter;
+
+        btn.addEventListener("click", () => {
+          badgeSectionState.filter = filter;
+          badgeSectionState.expanded = false;
+          enhanceBadgesSection();
+        });
+
+        filters.appendChild(btn);
+      });
+    }
+  }
+
+  function ensureShowMoreButton(box) {
+    if ($("profileBadgeShowMore")) return;
+
+    const wrap = document.createElement("div");
+    wrap.className = "profile-badge-showmore-wrap";
+
+    const btn = document.createElement("button");
+    btn.id = "profileBadgeShowMore";
+    btn.type = "button";
+    btn.className = "profile-badge-showmore";
+    btn.textContent = "عرض الكل";
+
+    btn.addEventListener("click", () => {
+      badgeSectionState.expanded = !badgeSectionState.expanded;
+      enhanceBadgesSection();
+    });
+
+    wrap.appendChild(btn);
+    box.parentElement?.insertBefore(wrap, box.nextSibling);
+  }
+
+  function updateBadgeFilterButtons() {
+    document.querySelectorAll(".profile-badge-filter").forEach((btn) => {
+      btn.classList.toggle("is-active", btn.dataset.filter === badgeSectionState.filter);
+    });
+  }
+
+  function enhanceBadgesSection() {
+    const box = $("badges");
+    if (!box) return;
+
+    const nodes = Array.from(box.querySelectorAll(".badge"));
+    if (!nodes.length) return;
+
+    ensureBadgesToolbar(box);
+    ensureShowMoreButton(box);
+
+    box.classList.add("tnx-profile-badges-grid");
+
+    const items = nodes
+      .map(readBadgeNode)
+      .filter((item) => item.key && item.key !== "بادج");
+
+    items.forEach((item) => {
+      item.node.classList.add("tnx-profile-badge-card");
+      item.node.classList.toggle("is-featured", item.isFeatured);
+      item.node.dataset.category = item.category;
+      item.node.dataset.categoryLabel = item.category;
+      item.node.dataset.badgeName = item.name;
+    });
+
+    const sorted = items.slice().sort((a, b) => {
+      if (a.isFeatured && !b.isFeatured) return -1;
+      if (!a.isFeatured && b.isFeatured) return 1;
+
+      const order = {
+        "الأسئلة": 1,
+        "الحضور": 2,
+        "النقاط": 3,
+        "خاصة": 4,
+        "عام": 5
+      };
+
+      const ac = order[a.category] || 99;
+      const bc = order[b.category] || 99;
+
+      if (ac !== bc) return ac - bc;
+      return a.name.localeCompare(b.name, "ar");
+    });
+
+    sorted.forEach((item) => {
+      box.appendChild(item.node);
+    });
+
+    const filtered = sorted.filter((item) => {
+      if (badgeSectionState.filter === "الكل") return true;
+      if (badgeSectionState.filter === "المميزة") return item.isFeatured;
+      return item.category === badgeSectionState.filter;
+    });
+
+    const limit = 8;
+    const visible = badgeSectionState.expanded ? filtered : filtered.slice(0, limit);
+    const visibleSet = new Set(visible.map((item) => item.node));
+
+    sorted.forEach((item) => {
+      item.node.classList.toggle("tnx-badge-hidden-by-filter", !visibleSet.has(item.node));
+    });
+
+    const count = $("profileBadgeEnhanceCount");
+    if (count) {
+      const featuredCount = sorted.filter((item) => item.isFeatured).length;
+      count.textContent = `${filtered.length} بادج • ${featuredCount} مميزة`;
+    }
+
+    const showMore = $("profileBadgeShowMore");
+    if (showMore) {
+      const shouldShow = filtered.length > limit;
+      showMore.classList.toggle("hidden", !shouldShow);
+      showMore.textContent = badgeSectionState.expanded ? "عرض أقل" : "عرض الكل";
+    }
+
+    updateBadgeFilterButtons();
+  }
+
 
   async function setup() {
     const me = await getMe();
@@ -562,6 +785,7 @@
     roles = loadedRoles;
 
     renderTop();
+      enhanceBadgesSection();
   }
 
   [900, 1800, 3200].forEach((ms) => {
