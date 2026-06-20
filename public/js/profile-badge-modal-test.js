@@ -340,18 +340,34 @@
   }
 
   async function setup() {
-    profileLogin = getProfileLogin();
+    const me = await getMe();
+
+    profileLogin = getProfileLogin() || String(me?.login || "").toLowerCase();
     if (!profileLogin) return;
 
-    const [me, saved] = await Promise.all([
-      getMe(),
-      loadSavedBadges(profileLogin),
-    ]);
+    isOwner = Boolean(
+      me?.login &&
+      String(me.login).toLowerCase() === profileLogin
+    );
 
-    isOwner = Boolean(me?.login && String(me.login).toLowerCase() === profileLogin);
-    selected = saved.slice(0, 3);
+    selected = await loadSavedBadges(profileLogin);
+    selected = selected.slice(0, 3);
 
     renderTopSavedBadges();
+
+    // حماية إضافية: لو السكربت القديم مسح الزر، رجعه لصاحب البروفايل
+    const target = $("featuredBadges");
+    if (isOwner && target && !$("featuredBadgePlusTest")) {
+      target.appendChild(makePlusButton());
+      target.classList.remove("hidden");
+    }
+
+    console.log("[TNX Featured Badges]", {
+      profileLogin,
+      me: me?.login,
+      isOwner,
+      selected,
+    });
   }
 
   [1800, 3200, 5000].forEach((ms) => {
