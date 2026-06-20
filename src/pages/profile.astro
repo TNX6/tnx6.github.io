@@ -2652,47 +2652,6 @@ const metadata = {
       }
     }
 
-
-    /* Safe selectable featured badges */
-    .badge-pin-enabled {
-      position: relative;
-    }
-
-    .badge-pin-btn {
-      position: absolute;
-      top: 7px;
-      left: 7px;
-      z-index: 8;
-      border: 1px solid rgba(255, 223, 138, .28);
-      background: rgba(0, 0, 0, .62);
-      color: rgba(255, 239, 196, .94);
-      border-radius: 999px;
-      padding: 4px 8px;
-      font-size: 10px;
-      font-weight: 900;
-      cursor: pointer;
-      opacity: 0;
-      transform: translateY(-2px);
-      transition: .15s ease;
-    }
-
-    .badge-pin-enabled:hover .badge-pin-btn,
-    .badge-pin-btn.active {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .badge-pin-btn.active {
-      border-color: rgba(255, 216, 105, .66);
-      background: rgba(213, 169, 55, .24);
-      color: #ffe39a;
-    }
-
-    .badge-pinned {
-      outline: 1px solid rgba(255, 216, 105, .38);
-      box-shadow: 0 0 22px rgba(255, 216, 105, .12);
-    }
-
   </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -4621,5 +4580,4 @@ const metadata = {
     })();
   </script>
 
-  <script src="/js/profile-featured-picker-safe.js" defer data-astro-rerun></script>
 </Layout>
