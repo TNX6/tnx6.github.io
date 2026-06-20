@@ -3738,6 +3738,47 @@ const metadata = {
       }
     }
 
+
+    /* Badge section alignment polish */
+    .profile-badges-toolbar.profile-badges-toolbar-compact {
+      margin: 8px 0 20px !important;
+    }
+
+    .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-filters {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      flex-wrap: nowrap !important;
+      gap: 9px !important;
+      overflow-x: auto !important;
+      scrollbar-width: none !important;
+      padding-bottom: 2px !important;
+    }
+
+    .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-filters::-webkit-scrollbar {
+      display: none !important;
+    }
+
+    #badges.tnx-profile-badges-grid.tnx-profile-badges-few {
+      justify-content: center !important;
+    }
+
+    #badges.tnx-profile-badges-grid.tnx-profile-badges-few .badge.tnx-profile-badge-card {
+      width: 164px !important;
+      max-width: 164px !important;
+    }
+
+    @media (max-width: 640px) {
+      #badges.tnx-profile-badges-grid.tnx-profile-badges-few {
+        justify-content: center !important;
+      }
+
+      #badges.tnx-profile-badges-grid.tnx-profile-badges-few .badge.tnx-profile-badge-card {
+        width: 160px !important;
+        max-width: 160px !important;
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -5296,5 +5337,5 @@ const metadata = {
   
 
 
-  <script src="/js/profile-badge-modal-test.js?v=13" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=14" defer data-astro-rerun></script>
 </Layout>

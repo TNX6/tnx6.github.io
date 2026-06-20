@@ -600,8 +600,7 @@
     "الأسئلة",
     "الحضور",
     "النقاط",
-    "خاصة",
-    "عام"
+    "خاصة"
   ];
 
   function readBadgeNode(node) {
@@ -743,6 +742,8 @@
     const limit = 8;
     const visible = badgeSectionState.expanded ? filtered : filtered.slice(0, limit);
     const visibleSet = new Set(visible.map((item) => item.node));
+
+    box.classList.toggle("tnx-profile-badges-few", visible.length > 0 && visible.length <= 3);
 
     sorted.forEach((item) => {
       item.node.classList.toggle("tnx-badge-hidden-by-filter", !visibleSet.has(item.node));
