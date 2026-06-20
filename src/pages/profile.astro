@@ -2731,6 +2731,83 @@ const metadata = {
       cursor: pointer;
     }
 
+
+    /* Featured badge modal picker grid */
+    .featured-badge-modal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+      gap: 12px;
+      max-height: 420px;
+      overflow: auto;
+      padding: 2px;
+    }
+
+    .featured-badge-option {
+      min-height: 106px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.035);
+      color: rgba(255,255,255,.92);
+      padding: 10px 8px;
+      cursor: pointer;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+    }
+
+    .featured-badge-option:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,223,138,.35);
+      background: rgba(255,255,255,.055);
+    }
+
+    .featured-badge-option.selected {
+      border-color: rgba(255,223,138,.76);
+      background: rgba(255,223,138,.10);
+      box-shadow: 0 0 22px rgba(255,223,138,.14);
+    }
+
+    .featured-badge-option-icon {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 8px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: rgba(0,0,0,.24);
+      font-size: 22px;
+    }
+
+    .featured-badge-option-icon img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .featured-badge-option-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .featured-badge-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    .featured-badge-modal-save {
+      min-width: 140px;
+      border: 0;
+      border-radius: 16px;
+      padding: 12px 18px;
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.55);
+      font-weight: 1000;
+      cursor: not-allowed;
+    }
+
   </style>
 
   <script is:inline data-astro-rerun data-reinit>
