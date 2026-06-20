@@ -2890,6 +2890,337 @@ const metadata = {
         0 0 24px rgba(255,223,138,.28) !important;
     }
 
+
+    /* Bottom sheet featured badge picker */
+    #featuredBadgePlusTest.featured-badge-plus-test {
+      width: 34px !important;
+      height: 34px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-radius: 999px !important;
+      border: 2px dashed rgba(255, 223, 138, .48) !important;
+      background: rgba(18, 18, 22, .9) !important;
+      cursor: pointer !important;
+      box-shadow: 0 0 18px rgba(255, 223, 138, .12) !important;
+    }
+
+    #featuredBadgePlusTest .featured-badge-plus-inner {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #d8a12f, #f0cf73);
+      color: #090909;
+      font-size: 15px;
+      font-weight: 1000;
+      line-height: 1;
+    }
+
+    #featuredBadgePlusTest:hover {
+      transform: translateY(-2px) scale(1.06);
+      border-color: rgba(255, 223, 138, .9) !important;
+    }
+
+    .featured-badge-modal-test {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .featured-badge-modal-test.hidden {
+      display: none !important;
+    }
+
+    .featured-badge-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      border: 0;
+      background: rgba(0,0,0,.74);
+      backdrop-filter: blur(10px);
+    }
+
+    .featured-badge-modal-panel {
+      position: relative;
+      z-index: 1;
+      width: min(560px, 100vw);
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      border-radius: 24px 24px 0 0;
+      border: 1px solid rgba(255,255,255,.08);
+      background:
+        radial-gradient(circle at 80% 0%, rgba(216,161,47,.10), transparent 38%),
+        rgba(20, 23, 31, .98);
+      box-shadow: 0 -24px 80px rgba(0,0,0,.58);
+      direction: rtl;
+      overflow: hidden;
+      animation: featuredSheetIn .32s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    @keyframes featuredSheetIn {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .featured-badge-modal-handle {
+      width: 42px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.18);
+      margin: 12px auto 0;
+      flex: 0 0 auto;
+    }
+
+    .featured-badge-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px 24px 0;
+    }
+
+    .featured-badge-modal-head h3 {
+      margin: 0;
+      color: #f5f0e6;
+      font-size: 20px;
+      font-weight: 1000;
+    }
+
+    .featured-badge-modal-head p {
+      margin: 6px 0 0;
+      color: rgba(255,255,255,.62);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .featured-badge-counter {
+      color: #e8b84f;
+      background: rgba(232, 168, 56, .10);
+      border: 1px solid rgba(232, 168, 56, .22);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .featured-badge-search {
+      margin: 16px 24px 0;
+      position: relative;
+    }
+
+    .featured-badge-search span {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,.35);
+      font-weight: 900;
+    }
+
+    .featured-badge-search input {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: #fff;
+      border-radius: 14px;
+      padding: 12px 40px 12px 16px;
+      outline: 0;
+      font: inherit;
+      font-weight: 700;
+    }
+
+    .featured-badge-search input:focus {
+      border-color: rgba(232,168,56,.65);
+      box-shadow: 0 0 0 3px rgba(232,168,56,.14);
+    }
+
+    .featured-badge-categories {
+      display: flex;
+      gap: 8px;
+      padding: 14px 24px 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .featured-badge-categories::-webkit-scrollbar {
+      display: none;
+    }
+
+    .featured-badge-cat {
+      flex: 0 0 auto;
+      border: 1px solid rgba(255,255,255,.08);
+      background: transparent;
+      color: rgba(255,255,255,.62);
+      border-radius: 999px;
+      padding: 7px 15px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .featured-badge-cat.active {
+      border-color: #d8a12f;
+      background: #d8a12f;
+      color: #0d0f14;
+    }
+
+    .featured-badge-modal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 18px 24px;
+      overflow-y: auto;
+      align-content: start;
+    }
+
+    .featured-badge-option {
+      position: relative;
+      min-height: 122px;
+      border-radius: 16px;
+      border: 1.5px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.92);
+      padding: 14px 8px 12px;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+      overflow: hidden;
+    }
+
+    .featured-badge-option:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+    }
+
+    .featured-badge-option.selected {
+      border-color: rgba(232,168,56,.88);
+      background: rgba(232,168,56,.10);
+      box-shadow: 0 0 22px rgba(232,168,56,.16);
+    }
+
+    .featured-badge-check {
+      position: absolute;
+      top: 7px;
+      left: 7px;
+      width: 21px;
+      height: 21px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: #e8a838;
+      color: #0d0f14;
+      font-size: 12px;
+      font-weight: 1000;
+      transform: scale(0);
+      transition: transform .18s ease;
+    }
+
+    .featured-badge-option.selected .featured-badge-check {
+      transform: scale(1);
+    }
+
+    .featured-badge-option-icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 9px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.22);
+      font-size: 22px;
+    }
+
+    .featured-badge-option-icon img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .featured-badge-option-label {
+      display: block;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .featured-badge-option-desc {
+      display: block;
+      margin-top: 4px;
+      text-align: center;
+      color: rgba(255,255,255,.38);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .featured-badge-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: rgba(255,255,255,.45);
+      padding: 34px 10px;
+      font-weight: 800;
+    }
+
+    .featured-badge-modal-actions {
+      display: flex;
+      gap: 10px;
+      padding: 14px 24px 24px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      flex: 0 0 auto;
+    }
+
+    .featured-badge-cancel,
+    .featured-badge-modal-save {
+      border-radius: 14px;
+      padding: 13px 18px;
+      font: inherit;
+      font-weight: 1000;
+      cursor: pointer;
+    }
+
+    .featured-badge-cancel {
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.68);
+    }
+
+    .featured-badge-modal-save {
+      flex: 1;
+      border: 0;
+      background: linear-gradient(135deg, #d8a12f, #f0cf73) !important;
+      color: #0d0f14 !important;
+      box-shadow: 0 10px 28px rgba(232,168,56,.18);
+    }
+
+    .featured-badge-modal-save:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 640px) {
+      .featured-badge-modal-panel {
+        width: 100vw;
+        max-height: 92vh;
+      }
+
+      .featured-badge-modal-grid {
+        padding: 14px 20px;
+        gap: 8px;
+      }
+
+      .featured-badge-option {
+        min-height: 112px;
+      }
+    }
+
   </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -4448,5 +4779,5 @@ const metadata = {
   
 
 
-  <script src="/js/profile-badge-modal-test.js?v=7" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=8" defer data-astro-rerun></script>
 </Layout>

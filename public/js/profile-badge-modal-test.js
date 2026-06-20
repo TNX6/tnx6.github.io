@@ -1,7 +1,6 @@
-
-(() => {
+﻿(() => {
   const API = "https://api.tnx6.xyz";
-  const KEY = "__tnxFeaturedBadgeControllerV7";
+  const KEY = "__tnxFeaturedBadgeControllerV8";
 
   if (window[KEY]?.cleanup) window[KEY].cleanup();
 
@@ -10,6 +9,8 @@
   let roles = { moderator: false, vip: false };
   let isOwner = false;
   let profileLogin = "";
+  let activeCategory = "الكل";
+  let searchQuery = "";
 
   const $ = (id) => document.getElementById(id);
   const clean = (v) => String(v || "").replace(/\s+/g, " ").trim();
@@ -26,22 +27,16 @@
     for (const el of candidates) {
       const raw = clean(el.dataset?.login || el.dataset?.userLogin || el.textContent || "");
       const login = raw.replace(/^@+/, "").toLowerCase();
-
       if (/^[a-z0-9_]{3,25}$/.test(login)) return login;
     }
 
-    const text = clean(document.body.innerText || "");
-    const match = text.match(/@([a-zA-Z0-9_]{3,25})/);
+    const match = clean(document.body.innerText || "").match(/@([a-zA-Z0-9_]{3,25})/);
     return match?.[1]?.toLowerCase() || "";
   }
 
   async function getMe() {
     try {
-      const res = await fetch(API + "/api/me", {
-        credentials: "include",
-        cache: "no-store"
-      });
-
+      const res = await fetch(API + "/api/me", { credentials: "include", cache: "no-store" });
       const data = await res.json();
       return data?.authenticated ? data.user : null;
     } catch {
@@ -56,11 +51,7 @@
       const url = new URL(API + "/api/profile/featured-badges");
       url.searchParams.set("login", login);
 
-      const res = await fetch(url.toString(), {
-        credentials: "include",
-        cache: "no-store"
-      });
-
+      const res = await fetch(url.toString(), { credentials: "include", cache: "no-store" });
       const data = await res.json();
 
       return Array.isArray(data?.badges)
@@ -78,11 +69,7 @@
       const url = new URL(API + "/api/twitch/roles");
       url.searchParams.set("login", login);
 
-      const res = await fetch(url.toString(), {
-        credentials: "include",
-        cache: "no-store"
-      });
-
+      const res = await fetch(url.toString(), { credentials: "include", cache: "no-store" });
       const data = await res.json();
 
       if (!data?.ok || !data?.available || !data?.roles) {
@@ -121,6 +108,28 @@
     return 100;
   }
 
+  function badgeCategory(name) {
+    const text = String(name || "").toLowerCase();
+
+    if (text.includes("q") || text.includes("سؤال") || text.includes("50") || text.includes("150") || text.includes("300") || text.includes("600") || text.includes("1000")) {
+      return "الأسئلة";
+    }
+
+    if (text.includes("k") || text.includes("1m") || text.includes("مليون") || text.includes("نقاط")) {
+      return "النقاط";
+    }
+
+    if (text.includes("d") || text.includes("15") || text.includes("30") || text.includes("60")) {
+      return "الحضور";
+    }
+
+    if (text.includes("vip") || text.includes("king") || text.includes("ملك") || text.includes("law") || text.includes("محامي")) {
+      return "خاص";
+    }
+
+    return "عام";
+  }
+
   function getInventory() {
     const box = $("badges");
     if (!box) return [];
@@ -140,10 +149,25 @@
           key: name,
           name,
           img: img?.getAttribute("src") || "",
-          score: scoreBadge(name)
+          score: scoreBadge(name),
+          category: badgeCategory(name)
         };
       })
       .filter((badge) => badge.key && badge.key !== "بادج");
+  }
+
+  function getRoleBadges() {
+    const arr = [];
+
+    if (roles.moderator) {
+      arr.push({ type: "role", role: "mod", key: "__mod", name: "Twitch Moderator", icon: "MOD" });
+    }
+
+    if (roles.vip) {
+      arr.push({ type: "role", role: "vip", key: "__vip", name: "Twitch VIP", icon: "VIP" });
+    }
+
+    return arr;
   }
 
   function makeMiniBadge(badge) {
@@ -172,7 +196,7 @@
     btn.id = "featuredBadgePlusTest";
     btn.type = "button";
     btn.className = "featured-badge-plus-test";
-    btn.textContent = "+";
+    btn.innerHTML = '<span class="featured-badge-plus-inner">+</span>';
     btn.title = "اختيار البادجات";
     btn.setAttribute("aria-label", "اختيار البادجات");
 
@@ -183,32 +207,6 @@
     });
 
     return btn;
-  }
-
-  function getRoleBadges() {
-    const arr = [];
-
-    if (roles.moderator) {
-      arr.push({
-        type: "role",
-        role: "mod",
-        key: "__mod",
-        name: "Twitch Moderator",
-        icon: "MOD"
-      });
-    }
-
-    if (roles.vip) {
-      arr.push({
-        type: "role",
-        role: "vip",
-        key: "__vip",
-        name: "Twitch VIP",
-        icon: "VIP"
-      });
-    }
-
-    return arr;
   }
 
   function renderTop() {
@@ -222,20 +220,13 @@
       ? selected.map((key) => map.get(key)).filter(Boolean).slice(0, 3)
       : inventory.slice().sort((a, b) => b.score - a.score).slice(0, 3);
 
-    const finalBadges = [
-      ...picked,
-      ...getRoleBadges()
-    ];
+    const finalBadges = [...picked, ...getRoleBadges()];
 
     target.innerHTML = "";
 
-    finalBadges.forEach((badge) => {
-      target.appendChild(makeMiniBadge(badge));
-    });
+    finalBadges.forEach((badge) => target.appendChild(makeMiniBadge(badge)));
 
-    if (isOwner) {
-      target.appendChild(makePlusButton());
-    }
+    if (isOwner) target.appendChild(makePlusButton());
 
     target.classList.remove("hidden");
   }
@@ -251,21 +242,29 @@
       <button class="featured-badge-modal-backdrop" type="button" aria-label="إغلاق"></button>
 
       <div class="featured-badge-modal-panel" role="dialog" aria-modal="true">
+        <div class="featured-badge-modal-handle"></div>
+
         <div class="featured-badge-modal-head">
           <div>
             <h3>اختيار البادجات</h3>
             <p id="featuredBadgeModalState">اختر حتى 3 بادجات من مخزونك.</p>
           </div>
 
-          <button class="featured-badge-modal-close" type="button" aria-label="إغلاق">×</button>
+          <span id="featuredBadgeCounter" class="featured-badge-counter">0 / 3</span>
         </div>
+
+        <div class="featured-badge-search">
+          <span>⌕</span>
+          <input id="featuredBadgeSearch" type="text" placeholder="ابحث عن بادج..." autocomplete="off">
+        </div>
+
+        <div id="featuredBadgeCategories" class="featured-badge-categories"></div>
 
         <div id="featuredBadgeModalGrid" class="featured-badge-modal-grid"></div>
 
         <div class="featured-badge-modal-actions">
-          <button id="featuredBadgeModalSave" class="featured-badge-modal-save" type="button">
-            حفظ الاختيار
-          </button>
+          <button id="featuredBadgeCancel" class="featured-badge-cancel" type="button">إلغاء</button>
+          <button id="featuredBadgeModalSave" class="featured-badge-modal-save" type="button">حفظ الاختيار</button>
         </div>
       </div>
     `;
@@ -273,34 +272,88 @@
     document.body.appendChild(modal);
 
     modal.querySelector(".featured-badge-modal-backdrop")?.addEventListener("click", closeModal);
-    modal.querySelector(".featured-badge-modal-close")?.addEventListener("click", closeModal);
+    $("featuredBadgeCancel")?.addEventListener("click", closeModal);
+    $("featuredBadgeSearch")?.addEventListener("input", (event) => {
+      searchQuery = event.target.value || "";
+      renderPicker();
+    });
     $("featuredBadgeModalSave")?.addEventListener("click", saveSelection);
   }
 
   function setState(message) {
     const state = $("featuredBadgeModalState");
     if (state) state.textContent = message;
+
+    const counter = $("featuredBadgeCounter");
+    if (counter) counter.textContent = `${selected.length} / 3`;
+  }
+
+  function renderCategories() {
+    const row = $("featuredBadgeCategories");
+    if (!row) return;
+
+    const inventory = getInventory();
+    const categories = ["الكل", ...Array.from(new Set(inventory.map((b) => b.category)))];
+
+    row.innerHTML = "";
+
+    categories.forEach((cat) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "featured-badge-cat" + (cat === activeCategory ? " active" : "");
+      btn.textContent = cat;
+
+      btn.addEventListener("click", () => {
+        activeCategory = cat;
+        renderCategories();
+        renderPicker();
+      });
+
+      row.appendChild(btn);
+    });
+  }
+
+  function filteredInventory() {
+    let badges = getInventory();
+
+    if (activeCategory !== "الكل") {
+      badges = badges.filter((badge) => badge.category === activeCategory);
+    }
+
+    const q = clean(searchQuery).toLowerCase();
+    if (q) {
+      badges = badges.filter((badge) => badge.name.toLowerCase().includes(q));
+    }
+
+    return badges;
   }
 
   function renderPicker() {
     const grid = $("featuredBadgeModalGrid");
     if (!grid) return;
 
-    const badges = getInventory();
+    const badges = filteredInventory();
     grid.innerHTML = "";
 
+    setState(`اختر حتى 3 بادجات من مخزونك. المختار: ${selected.length}/3`);
+
     if (!badges.length) {
-      setState("ما عندك بادجات قابلة للاختيار حاليًا.");
+      const empty = document.createElement("div");
+      empty.className = "featured-badge-empty";
+      empty.textContent = "لا توجد بادجات مطابقة.";
+      grid.appendChild(empty);
       return;
     }
-
-    setState(`اختر حتى 3 بادجات من مخزونك. المختار: ${selected.length}/3`);
 
     badges.forEach((badge) => {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "featured-badge-option";
       btn.classList.toggle("selected", selected.includes(badge.key));
+
+      const check = document.createElement("span");
+      check.className = "featured-badge-check";
+      check.textContent = "✓";
 
       const icon = document.createElement("span");
       icon.className = "featured-badge-option-icon";
@@ -319,8 +372,14 @@
       label.className = "featured-badge-option-label";
       label.textContent = badge.name;
 
+      const category = document.createElement("span");
+      category.className = "featured-badge-option-desc";
+      category.textContent = badge.category;
+
+      btn.appendChild(check);
       btn.appendChild(icon);
       btn.appendChild(label);
+      btn.appendChild(category);
 
       btn.addEventListener("click", () => {
         if (selected.includes(badge.key)) {
@@ -344,7 +403,15 @@
   function openModal() {
     if (!isOwner) return;
 
+    activeCategory = "الكل";
+    searchQuery = "";
+
     ensureModal();
+
+    const search = $("featuredBadgeSearch");
+    if (search) search.value = "";
+
+    renderCategories();
     renderPicker();
 
     const modal = $("featuredBadgeModalTest");
@@ -370,19 +437,13 @@
       const res = await fetch(API + "/api/me/featured-badges", {
         method: "POST",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          badges: selected.slice(0, 3)
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ badges: selected.slice(0, 3) })
       });
 
       const data = await res.json().catch(() => null);
 
-      if (!res.ok || !data?.ok) {
-        throw new Error(data?.error || "save_failed");
-      }
+      if (!res.ok || !data?.ok) throw new Error(data?.error || "save_failed");
 
       selected = Array.isArray(data.badges)
         ? data.badges.map(clean).filter(Boolean).slice(0, 3)
@@ -416,14 +477,6 @@
 
     selected = saved.slice(0, 3);
     roles = loadedRoles;
-
-    console.log("[TNX Featured Single Controller]", {
-      profileLogin,
-      me: me?.login,
-      isOwner,
-      selected,
-      roles
-    });
 
     renderTop();
   }
