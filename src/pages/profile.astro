@@ -2652,6 +2652,85 @@ const metadata = {
       }
     }
 
+
+    /* Featured badge modal test */
+    .featured-badge-plus-test {
+      width: 31px;
+      height: 31px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 1px dashed rgba(255, 223, 138, .6);
+      background: rgba(0, 0, 0, .34);
+      color: #ffe39a;
+      font-size: 20px;
+      font-weight: 1000;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(0,0,0,.28);
+    }
+
+    .featured-badge-modal-test {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+    }
+
+    .featured-badge-modal-test.hidden {
+      display: none !important;
+    }
+
+    .featured-badge-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      border: 0;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(8px);
+    }
+
+    .featured-badge-modal-panel {
+      position: relative;
+      width: min(620px, calc(100vw - 28px));
+      margin: 70px auto 0;
+      padding: 20px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 223, 138, .2);
+      background: rgba(18, 18, 22, .98);
+      box-shadow: 0 30px 90px rgba(0,0,0,.55);
+      direction: rtl;
+    }
+
+    .featured-badge-modal-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .featured-badge-modal-head h3 {
+      margin: 0;
+      color: #f5f0e6;
+      font-size: 22px;
+      font-weight: 1000;
+    }
+
+    .featured-badge-modal-head p,
+    .featured-badge-modal-empty {
+      color: rgba(255,255,255,.68);
+      font-weight: 700;
+    }
+
+    .featured-badge-modal-close {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
   </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -4580,4 +4659,5 @@ const metadata = {
     })();
   </script>
 
+  <script src="/js/profile-badge-modal-test.js?v=1" defer data-astro-rerun></script>
 </Layout>
