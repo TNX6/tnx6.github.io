@@ -3366,488 +3366,39 @@ const metadata = {
     }
 
   
-    /* Enhanced profile badges section */
-    .profile-badges-toolbar {
-      margin: 0 0 16px;
-      padding: 16px;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.075);
-      background:
-        radial-gradient(circle at 90% 0%, rgba(216,161,47,.10), transparent 36%),
-        rgba(255,255,255,.025);
-      box-shadow: 0 16px 40px rgba(0,0,0,.18);
+
+    /* Clean classic profile badges section */
+    #profileBadgeEnhanceToolbar {
+      margin: 8px 0 18px !important;
+      padding: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
     }
 
-    .profile-badges-toolbar-main {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
+    #profileBadgeEnhanceToolbar .profile-badges-toolbar-title,
+    #profileBadgeEnhanceToolbar .profile-badges-toolbar-count,
+    #profileBadgeEnhanceCount {
+      display: none !important;
     }
 
-    .profile-badges-toolbar-title {
-      color: #f4efe7;
-      font-size: 18px;
-      font-weight: 1000;
-      line-height: 1.2;
-    }
-
-    .profile-badges-toolbar-count {
-      margin-top: 6px;
-      color: rgba(255,255,255,.52);
-      font-size: 12px;
-      font-weight: 800;
-    }
-
+    #profileBadgeEnhanceFilters,
+    .profile-badges-v2-filters,
     .profile-badges-filters {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .profile-badge-filter {
-      border: 1px solid rgba(216,161,47,.18);
-      background: rgba(255,255,255,.035);
-      color: rgba(255,255,255,.70);
-      border-radius: 999px;
-      padding: 7px 12px;
-      font: inherit;
-      font-size: 12px;
-      font-weight: 900;
-      cursor: pointer;
-      transition:
-        transform .16s ease,
-        border-color .16s ease,
-        background .16s ease,
-        color .16s ease,
-        box-shadow .16s ease;
-    }
-
-    .profile-badge-filter:hover {
-      transform: translateY(-1px);
-      border-color: rgba(216,161,47,.45);
-      color: #fff;
-    }
-
-    .profile-badge-filter.is-active {
-      border-color: rgba(216,161,47,.72);
-      background: rgba(216,161,47,.16);
-      color: #f3d47d;
-      box-shadow: 0 0 18px rgba(216,161,47,.10);
-    }
-
-    #badges.tnx-profile-badges-grid {
-      display: grid !important;
-      grid-template-columns: repeat(auto-fill, minmax(138px, 1fr)) !important;
-      gap: 14px !important;
-      align-items: stretch !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card {
-      position: relative !important;
-      min-height: 164px !important;
-      border-radius: 22px !important;
-      border: 1px solid rgba(255,255,255,.075) !important;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012)),
-        rgba(14,14,17,.88) !important;
-      box-shadow: 0 12px 28px rgba(0,0,0,.18) !important;
-      overflow: hidden !important;
-      transition:
-        transform .18s ease,
-        border-color .18s ease,
-        box-shadow .18s ease,
-        background .18s ease !important;
-      animation: profileBadgeCardIn .22s ease both;
-    }
-
-    @keyframes profileBadgeCardIn {
-      from {
-        opacity: 0;
-        transform: translateY(6px) scale(.98);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card:hover {
-      transform: translateY(-4px) !important;
-      border-color: rgba(216,161,47,.38) !important;
-      box-shadow:
-        0 16px 34px rgba(0,0,0,.30),
-        0 0 24px rgba(216,161,47,.06) !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card.is-featured {
-      border-color: rgba(216,161,47,.78) !important;
-      box-shadow:
-        0 0 0 1px rgba(216,161,47,.12) inset,
-        0 0 24px rgba(216,161,47,.12),
-        0 16px 34px rgba(0,0,0,.24) !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card.is-featured::before {
-      content: "✓";
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 25px;
-      height: 25px;
-      border-radius: 999px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, #d8a12f, #f0cf73);
-      color: #111;
-      font-size: 13px;
-      font-weight: 1000;
-      z-index: 3;
-      box-shadow: 0 0 16px rgba(216,161,47,.24);
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card::after {
-      content: attr(data-category-label);
-      position: absolute;
-      left: 50%;
-      bottom: 10px;
-      transform: translateX(-50%);
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.035);
-      color: rgba(255,255,255,.58);
-      padding: 4px 10px;
-      font-size: 11px;
-      font-weight: 900;
-      white-space: nowrap;
-      pointer-events: none;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card[data-category="النقاط"]::after {
-      border-color: rgba(232,168,56,.24);
-      background: rgba(232,168,56,.08);
-      color: #e8c46a;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card[data-category="الأسئلة"]::after {
-      border-color: rgba(96,165,250,.22);
-      background: rgba(96,165,250,.07);
-      color: #9bc7ff;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card[data-category="الحضور"]::after {
-      border-color: rgba(52,211,153,.22);
-      background: rgba(52,211,153,.07);
-      color: #8ee8c5;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card img {
-      transition: transform .18s ease, filter .18s ease !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card:hover img {
-      transform: scale(1.08) !important;
-      filter: drop-shadow(0 8px 18px rgba(0,0,0,.28)) !important;
-    }
-
-    .tnx-badge-hidden-by-filter {
-      display: none !important;
-    }
-
-    .profile-badge-showmore-wrap {
-      display: flex;
-      justify-content: center;
-      margin-top: 16px;
-    }
-
-    .profile-badge-showmore {
-      border: 1px solid rgba(216,161,47,.25);
-      background: rgba(255,255,255,.035);
-      color: #efd37c;
-      border-radius: 999px;
-      padding: 10px 18px;
-      font: inherit;
-      font-size: 13px;
-      font-weight: 1000;
-      cursor: pointer;
-      transition:
-        transform .16s ease,
-        background .16s ease,
-        border-color .16s ease;
-    }
-
-    .profile-badge-showmore:hover {
-      transform: translateY(-1px);
-      border-color: rgba(216,161,47,.50);
-      background: rgba(216,161,47,.08);
-    }
-
-    @media (max-width: 640px) {
-      #badges.tnx-profile-badges-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 12px !important;
-      }
-
-      .profile-badges-toolbar {
-        padding: 14px;
-      }
-
-      .profile-badges-filters {
-        justify-content: flex-start;
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        width: 100%;
-        scrollbar-width: none;
-      }
-
-      .profile-badges-filters::-webkit-scrollbar {
-        display: none;
-      }
-    }
-
-
-    /* Final compact profile badges toolbar fix */
-    .profile-badges-toolbar-title {
-      display: none !important;
-    }
-
-    .profile-badges-toolbar.profile-badges-toolbar-compact {
-      margin: 0 0 18px !important;
-      padding: 0 !important;
-      border: 0 !important;
-      border-radius: 0 !important;
-      background: transparent !important;
-      box-shadow: none !important;
-    }
-
-    .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-toolbar-main.compact {
-      display: flex !important;
-      align-items: center !important;
-      justify-content: space-between !important;
-      gap: 12px !important;
-      flex-wrap: wrap !important;
-      padding: 0 !important;
-      background: transparent !important;
-      border: 0 !important;
-    }
-
-    .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-filters {
       display: flex !important;
       align-items: center !important;
       justify-content: flex-start !important;
       gap: 8px !important;
-      flex-wrap: wrap !important;
-      flex: 1 1 auto !important;
-      order: 1 !important;
-    }
-
-    .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-toolbar-count {
+      flex-wrap: nowrap !important;
+      overflow-x: auto !important;
+      scrollbar-width: none !important;
+      padding: 0 0 4px !important;
       margin: 0 !important;
-      order: 2 !important;
-      color: rgba(255,255,255,.48) !important;
-      font-size: 12px !important;
-      font-weight: 900 !important;
-      white-space: nowrap !important;
     }
 
-    #badges.tnx-profile-badges-grid {
-      margin-top: 10px !important;
-      grid-template-columns: repeat(auto-fill, minmax(132px, 164px)) !important;
-      justify-content: flex-start !important;
-      gap: 14px !important;
-    }
-
-    @media (max-width: 640px) {
-      .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-filters {
-        width: 100% !important;
-        overflow-x: auto !important;
-        flex-wrap: nowrap !important;
-        scrollbar-width: none !important;
-      }
-
-      .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-filters::-webkit-scrollbar {
-        display: none !important;
-      }
-
-      .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-toolbar-count {
-        width: 100% !important;
-        order: 1 !important;
-      }
-
-      .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-filters {
-        order: 2 !important;
-      }
-
-      #badges.tnx-profile-badges-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      }
-    }
-
-
-    /* Final badge section visual cleanup */
-    .profile-badges-toolbar.profile-badges-toolbar-compact {
-      margin: 8px 0 22px !important;
-    }
-
-    .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-toolbar-count {
-      display: none !important;
-    }
-
-    .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-filters {
-      justify-content: flex-start !important;
-      gap: 9px !important;
-    }
-
-    .profile-badge-filter {
-      padding: 8px 14px !important;
-      min-width: 0 !important;
-      line-height: 1 !important;
-    }
-
-    #badges.tnx-profile-badges-grid {
-      margin-top: 0 !important;
-      padding-top: 0 !important;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 164px)) !important;
-      gap: 16px !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card {
-      min-height: 160px !important;
-      border-radius: 20px !important;
-    }
-
-    @media (max-width: 640px) {
-      .profile-badges-toolbar.profile-badges-toolbar-compact {
-        margin-top: 10px !important;
-        margin-bottom: 18px !important;
-      }
-
-      .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-filters {
-        justify-content: flex-start !important;
-        overflow-x: auto !important;
-        flex-wrap: nowrap !important;
-        padding-bottom: 2px !important;
-      }
-
-      #badges.tnx-profile-badges-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 12px !important;
-      }
-    }
-
-
-    /* Badge section alignment polish */
-    .profile-badges-toolbar.profile-badges-toolbar-compact {
-      margin: 8px 0 20px !important;
-    }
-
-    .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-filters {
-      display: flex !important;
-      align-items: center !important;
-      justify-content: flex-start !important;
-      flex-wrap: nowrap !important;
-      gap: 9px !important;
-      overflow-x: auto !important;
-      scrollbar-width: none !important;
-      padding-bottom: 2px !important;
-    }
-
-    .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-filters::-webkit-scrollbar {
-      display: none !important;
-    }
-
-    #badges.tnx-profile-badges-grid.tnx-profile-badges-few {
-      justify-content: center !important;
-    }
-
-    #badges.tnx-profile-badges-grid.tnx-profile-badges-few .badge.tnx-profile-badge-card {
-      width: 164px !important;
-      max-width: 164px !important;
-    }
-
-    @media (max-width: 640px) {
-      #badges.tnx-profile-badges-grid.tnx-profile-badges-few {
-        justify-content: center !important;
-      }
-
-      #badges.tnx-profile-badges-grid.tnx-profile-badges-few .badge.tnx-profile-badge-card {
-        width: 160px !important;
-        max-width: 160px !important;
-      }
-    }
-
-
-    /* Final profile badges compact polish */
-    .profile-badges-toolbar.profile-badges-toolbar-compact {
-      margin: 4px 0 16px !important;
-    }
-
-    #badges.tnx-profile-badges-grid {
-      margin-top: 0 !important;
-      padding-bottom: 2px !important;
-    }
-
-    #badges.tnx-profile-badges-grid.tnx-profile-badges-few {
-      min-height: 178px !important;
-      align-items: start !important;
-      justify-content: center !important;
-    }
-
-    #badges.tnx-profile-badges-grid.tnx-profile-badges-few .badge.tnx-profile-badge-card {
-      width: 166px !important;
-      max-width: 166px !important;
-      min-height: 150px !important;
-      padding-top: 12px !important;
-      padding-bottom: 32px !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card::after {
-      bottom: 9px !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card.is-featured::before {
-      top: 9px !important;
-      left: 9px !important;
-      width: 24px !important;
-      height: 24px !important;
-    }
-
-    @media (max-width: 640px) {
-      #badges.tnx-profile-badges-grid.tnx-profile-badges-few {
-        min-height: 170px !important;
-      }
-
-      #badges.tnx-profile-badges-grid.tnx-profile-badges-few .badge.tnx-profile-badge-card {
-        width: 158px !important;
-        max-width: 158px !important;
-        min-height: 146px !important;
-      }
-    }
-
-
-    /* Profile badges redesign v2 */
-    #profileBadgeEnhanceToolbar.profile-badges-v2-toolbar {
-      margin: 10px 0 18px !important;
-      padding: 0 !important;
-      border: 0 !important;
-      background: transparent !important;
-      box-shadow: none !important;
-    }
-
-    .profile-badges-v2-filters {
-      display: flex !important;
-      align-items: center !important;
-      gap: 8px !important;
-      overflow-x: auto !important;
-      flex-wrap: nowrap !important;
-      scrollbar-width: none !important;
-      padding: 2px 0 4px !important;
-    }
-
-    .profile-badges-v2-filters::-webkit-scrollbar {
+    #profileBadgeEnhanceFilters::-webkit-scrollbar,
+    .profile-badges-v2-filters::-webkit-scrollbar,
+    .profile-badges-filters::-webkit-scrollbar {
       display: none !important;
     }
 
@@ -3856,179 +3407,134 @@ const metadata = {
       flex: 0 0 auto !important;
       height: 34px !important;
       min-width: 58px !important;
-      border-radius: 999px !important;
-      border: 1px solid rgba(216,161,47,.20) !important;
-      background: rgba(255,255,255,.025) !important;
-      color: rgba(255,255,255,.70) !important;
       padding: 0 14px !important;
+      border-radius: 999px !important;
+      border: 1px solid rgba(216,161,47,.22) !important;
+      background: rgba(255,255,255,.025) !important;
+      color: rgba(255,255,255,.72) !important;
       font: inherit !important;
       font-size: 12px !important;
       font-weight: 900 !important;
       cursor: pointer !important;
       box-shadow: none !important;
-      transition:
-        background .16s ease,
-        color .16s ease,
-        border-color .16s ease,
-        transform .16s ease !important;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease, color .16s ease !important;
     }
 
     .profile-badge-v2-filter:hover,
     .profile-badge-filter:hover {
       transform: translateY(-1px) !important;
-      color: #fff !important;
-      border-color: rgba(216,161,47,.45) !important;
+      border-color: rgba(216,161,47,.48) !important;
       background: rgba(216,161,47,.06) !important;
+      color: #fff !important;
     }
 
     .profile-badge-v2-filter.is-active,
     .profile-badge-filter.is-active {
-      border-color: rgba(216,161,47,.78) !important;
-      background: rgba(216,161,47,.14) !important;
+      border-color: rgba(216,161,47,.75) !important;
+      background: rgba(216,161,47,.13) !important;
       color: #f2cf75 !important;
     }
 
-    .profile-badges-toolbar-title,
-    .profile-badges-toolbar-count,
-    #profileBadgeEnhanceCount {
-      display: none !important;
-    }
-
     #badges.tnx-profile-badges-grid {
-      display: grid !important;
-      grid-template-columns: repeat(auto-fill, minmax(112px, 128px)) !important;
+      display: flex !important;
+      flex-wrap: wrap !important;
+      align-items: flex-start !important;
       justify-content: center !important;
-      align-items: start !important;
       gap: 12px !important;
       margin: 0 !important;
       padding: 0 !important;
       min-height: 0 !important;
     }
 
-    #badges.tnx-profile-badges-grid.tnx-profile-badges-few {
-      justify-content: center !important;
-      min-height: 0 !important;
-    }
-
     #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card {
-      width: 124px !important;
-      max-width: 124px !important;
-      min-height: 132px !important;
-      padding: 13px 10px 30px !important;
+      flex: 0 0 88px !important;
+      width: 88px !important;
+      max-width: 88px !important;
+      height: 86px !important;
+      min-height: 86px !important;
+      padding: 9px 7px 8px !important;
       border-radius: 18px !important;
-      border: 1px solid rgba(255,255,255,.075) !important;
+      border: 1px solid rgba(255,255,255,.08) !important;
       background:
-        radial-gradient(circle at 50% 0%, rgba(255,255,255,.035), transparent 46%),
-        rgba(11, 12, 15, .80) !important;
+        radial-gradient(circle at 50% 0%, rgba(255,255,255,.04), transparent 48%),
+        rgba(255,255,255,.035) !important;
       box-shadow: none !important;
       overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 6px !important;
       transform: none !important;
-      animation: profileBadgeV2In .18s ease both !important;
-      transition:
-        transform .16s ease,
-        border-color .16s ease,
-        background .16s ease,
-        box-shadow .16s ease !important;
-    }
-
-    @keyframes profileBadgeV2In {
-      from {
-        opacity: 0;
-        transform: translateY(4px) scale(.985);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease !important;
     }
 
     #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card:hover {
       transform: translateY(-3px) !important;
       border-color: rgba(216,161,47,.32) !important;
       background:
-        radial-gradient(circle at 50% 0%, rgba(216,161,47,.055), transparent 46%),
-        rgba(13, 14, 18, .90) !important;
-      box-shadow: 0 12px 28px rgba(0,0,0,.24) !important;
+        radial-gradient(circle at 50% 0%, rgba(216,161,47,.06), transparent 48%),
+        rgba(255,255,255,.045) !important;
+      box-shadow: 0 12px 26px rgba(0,0,0,.22) !important;
     }
 
     #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card.is-featured {
-      border-color: rgba(216,161,47,.45) !important;
+      border-color: rgba(255,255,255,.09) !important;
       background:
-        radial-gradient(circle at 50% 0%, rgba(216,161,47,.08), transparent 45%),
-        rgba(12, 13, 16, .88) !important;
-      box-shadow:
-        0 0 0 1px rgba(216,161,47,.06) inset,
-        0 12px 30px rgba(0,0,0,.22) !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card.is-featured::before {
-      content: "مميز" !important;
-      position: absolute !important;
-      top: 8px !important;
-      left: 8px !important;
-      width: auto !important;
-      height: 20px !important;
-      min-width: 42px !important;
-      padding: 0 8px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      border-radius: 999px !important;
-      background: rgba(216,161,47,.16) !important;
-      border: 1px solid rgba(216,161,47,.35) !important;
-      color: #f0d384 !important;
-      font-size: 10px !important;
-      font-weight: 1000 !important;
-      line-height: 1 !important;
-      z-index: 5 !important;
+        radial-gradient(circle at 50% 0%, rgba(216,161,47,.045), transparent 48%),
+        rgba(255,255,255,.04) !important;
       box-shadow: none !important;
     }
 
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card::after {
-      content: attr(data-category-label) !important;
-      position: absolute !important;
-      left: 50% !important;
-      bottom: 8px !important;
-      transform: translateX(-50%) !important;
-      border-radius: 999px !important;
-      border: 1px solid rgba(255,255,255,.075) !important;
-      background: rgba(255,255,255,.030) !important;
-      color: rgba(255,255,255,.56) !important;
-      padding: 4px 9px !important;
-      font-size: 10px !important;
-      font-weight: 900 !important;
-      white-space: nowrap !important;
-      pointer-events: none !important;
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card::before,
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card::after,
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card.is-featured::before,
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card.is-featured::after {
+      display: none !important;
+      content: none !important;
     }
 
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card[data-category="النقاط"]::after {
-      border-color: rgba(216,161,47,.22) !important;
-      background: rgba(216,161,47,.075) !important;
-      color: #e5c46c !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card[data-category="الأسئلة"]::after {
-      border-color: rgba(96,165,250,.20) !important;
-      background: rgba(96,165,250,.065) !important;
-      color: #9fc9ff !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card[data-category="الحضور"]::after {
-      border-color: rgba(52,211,153,.20) !important;
-      background: rgba(52,211,153,.065) !important;
-      color: #95e7c8 !important;
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card .badge-icon,
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card [class*="icon"] {
+      width: 42px !important;
+      height: 42px !important;
+      margin: 0 auto !important;
+      display: grid !important;
+      place-items: center !important;
+      border-radius: 14px !important;
+      background: transparent !important;
     }
 
     #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card img {
-      width: 50px !important;
-      height: 50px !important;
+      width: 42px !important;
+      height: 42px !important;
+      max-width: 42px !important;
+      max-height: 42px !important;
       object-fit: contain !important;
+      display: block !important;
+      margin: 0 auto !important;
       transition: transform .16s ease, filter .16s ease !important;
     }
 
     #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card:hover img {
       transform: scale(1.06) !important;
-      filter: drop-shadow(0 8px 14px rgba(0,0,0,.24)) !important;
+      filter: drop-shadow(0 8px 14px rgba(0,0,0,.26)) !important;
+    }
+
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card .badge-name,
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card strong,
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card b {
+      display: block !important;
+      max-width: 74px !important;
+      margin: 0 auto !important;
+      color: rgba(255,255,255,.88) !important;
+      font-size: 12px !important;
+      font-weight: 1000 !important;
+      line-height: 1.1 !important;
+      text-align: center !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
     }
 
     .tnx-badge-hidden-by-filter {
@@ -4056,121 +3562,11 @@ const metadata = {
 
     @media (max-width: 640px) {
       #badges.tnx-profile-badges-grid {
-        grid-template-columns: repeat(3, minmax(96px, 1fr)) !important;
         gap: 10px !important;
       }
 
       #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card {
-        width: auto !important;
-        max-width: none !important;
-        min-height: 126px !important;
-        border-radius: 16px !important;
-      }
-
-      #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card img {
-        width: 44px !important;
-        height: 44px !important;
-      }
-    }
-
-
-    /* Restore classic compact badge card look */
-    #badges.tnx-profile-badges-grid {
-      display: grid !important;
-      grid-template-columns: repeat(auto-fill, minmax(88px, 92px)) !important;
-      justify-content: center !important;
-      align-items: start !important;
-      gap: 12px !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      min-height: 0 !important;
-    }
-
-    #badges.tnx-profile-badges-grid.tnx-profile-badges-few {
-      justify-content: center !important;
-      min-height: 0 !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card {
-      width: 88px !important;
-      max-width: 88px !important;
-      min-height: 86px !important;
-      height: 86px !important;
-      padding: 10px 8px 8px !important;
-      border-radius: 18px !important;
-      border: 1px solid rgba(255,255,255,.075) !important;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(255,255,255,.035), transparent 48%),
-        rgba(255,255,255,.035) !important;
-      box-shadow: none !important;
-      overflow: hidden !important;
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      justify-content: center !important;
-      gap: 6px !important;
-      transition:
-        transform .16s ease,
-        border-color .16s ease,
-        background .16s ease,
-        box-shadow .16s ease !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card:hover {
-      transform: translateY(-3px) !important;
-      border-color: rgba(216,161,47,.30) !important;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(216,161,47,.06), transparent 48%),
-        rgba(255,255,255,.045) !important;
-      box-shadow: 0 12px 26px rgba(0,0,0,.22) !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card.is-featured {
-      border-color: rgba(255,255,255,.09) !important;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(216,161,47,.045), transparent 48%),
-        rgba(255,255,255,.04) !important;
-      box-shadow: none !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card.is-featured::before,
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card::after {
-      display: none !important;
-      content: none !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card img {
-      width: 42px !important;
-      height: 42px !important;
-      object-fit: contain !important;
-      display: block !important;
-      margin: 0 auto !important;
-      transition: transform .16s ease, filter .16s ease !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card:hover img {
-      transform: scale(1.06) !important;
-      filter: drop-shadow(0 8px 14px rgba(0,0,0,.26)) !important;
-    }
-
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card .badge-name,
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card strong,
-    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card b {
-      font-size: 12px !important;
-      font-weight: 1000 !important;
-      line-height: 1.1 !important;
-      color: rgba(255,255,255,.88) !important;
-      margin: 0 !important;
-      text-align: center !important;
-    }
-
-    @media (max-width: 640px) {
-      #badges.tnx-profile-badges-grid {
-        grid-template-columns: repeat(3, minmax(78px, 88px)) !important;
-        gap: 10px !important;
-      }
-
-      #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card {
+        flex-basis: 82px !important;
         width: 82px !important;
         max-width: 82px !important;
         height: 82px !important;
@@ -4181,6 +3577,8 @@ const metadata = {
       #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card img {
         width: 38px !important;
         height: 38px !important;
+        max-width: 38px !important;
+        max-height: 38px !important;
       }
     }
 
@@ -5742,5 +5140,5 @@ const metadata = {
   
 
 
-  <script src="/js/profile-badge-modal-test.js?v=18" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=19" defer data-astro-rerun></script>
 </Layout>

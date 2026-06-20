@@ -687,7 +687,7 @@
   }
 
   function updateBadgeFilterButtons() {
-    document.querySelectorAll(".profile-badge-filter").forEach((btn) => {
+    document.querySelectorAll(".profile-badge-filter, .profile-badge-v2-filter").forEach((btn) => {
       btn.classList.toggle("is-active", btn.dataset.filter === badgeSectionState.filter);
     });
   }
