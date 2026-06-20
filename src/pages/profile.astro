@@ -3380,6 +3380,161 @@ const metadata = {
       all: revert-layer;
     }
 
+
+    /* Prototype-inspired clean badge section v21 */
+    #profileBadgeEnhanceToolbar,
+    .profile-badge-showmore-wrap,
+    #profileBadgeShowMore {
+      display: none !important;
+    }
+
+    #badges {
+      padding: 18px 20px 20px !important;
+      display: grid !important;
+      grid-template-columns: repeat(5, 1fr) !important;
+      gap: 12px !important;
+      align-items: start !important;
+      justify-content: stretch !important;
+    }
+
+    #badges .badge {
+      aspect-ratio: 1 / 1 !important;
+      min-height: 86px !important;
+      width: auto !important;
+      max-width: none !important;
+      height: auto !important;
+      padding: 0 !important;
+      border-radius: 22px !important;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255,223,138,.14), transparent 42%),
+        rgba(255,255,255,.045) !important;
+      border: 1px solid rgba(255,255,255,.08) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-direction: column !important;
+      gap: 7px !important;
+      position: relative !important;
+      overflow: hidden !important;
+      box-shadow: none !important;
+      transform: none !important;
+      transition:
+        transform .18s ease,
+        border-color .18s ease,
+        background .18s ease,
+        box-shadow .18s ease !important;
+    }
+
+    #badges .badge:hover {
+      transform: translateY(-3px) !important;
+      border-color: rgba(255,223,138,.25) !important;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255,223,138,.18), transparent 42%),
+        rgba(255,255,255,.055) !important;
+      box-shadow: 0 12px 26px rgba(0,0,0,.22) !important;
+    }
+
+    #badges .badge::before,
+    #badges .badge::after {
+      display: none !important;
+      content: none !important;
+    }
+
+    #badges .badge img {
+      width: 52px !important;
+      height: 52px !important;
+      max-width: 52px !important;
+      max-height: 52px !important;
+      object-fit: contain !important;
+      display: block !important;
+      margin: 0 !important;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,.35)) !important;
+      transition: transform .18s ease, filter .18s ease !important;
+    }
+
+    #badges .badge:hover img {
+      transform: scale(1.06) !important;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,.42)) !important;
+    }
+
+    #badges .badge .badge-icon,
+    #badges .badge [class*="icon"] {
+      font-size: 28px !important;
+      width: auto !important;
+      height: auto !important;
+      margin: 0 !important;
+      background: transparent !important;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,.35)) !important;
+    }
+
+    #badges .badge .badge-name,
+    #badges .badge strong,
+    #badges .badge b {
+      display: block !important;
+      max-width: 82px !important;
+      margin: 0 !important;
+      color: rgba(244,240,232,.78) !important;
+      font-size: 11px !important;
+      font-weight: 900 !important;
+      line-height: 1.25 !important;
+      text-align: center !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    #badges .badge.tnx-profile-badge-card,
+    #badges .badge.is-featured {
+      all: unset;
+      aspect-ratio: 1 / 1 !important;
+      min-height: 86px !important;
+      border-radius: 22px !important;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255,223,138,.14), transparent 42%),
+        rgba(255,255,255,.045) !important;
+      border: 1px solid rgba(255,255,255,.08) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-direction: column !important;
+      gap: 7px !important;
+      position: relative !important;
+      overflow: hidden !important;
+      cursor: default !important;
+      box-sizing: border-box !important;
+    }
+
+    @media (max-width: 940px) {
+      #badges {
+        grid-template-columns: repeat(4, 1fr) !important;
+      }
+    }
+
+    @media (max-width: 560px) {
+      #badges {
+        grid-template-columns: repeat(3, 1fr) !important;
+        padding: 14px 16px 16px !important;
+        gap: 10px !important;
+      }
+
+      #badges .badge {
+        min-height: 78px !important;
+        border-radius: 18px !important;
+      }
+
+      #badges .badge img {
+        width: 44px !important;
+        height: 44px !important;
+        max-width: 44px !important;
+        max-height: 44px !important;
+      }
+
+      #badges .badge .badge-icon,
+      #badges .badge [class*="icon"] {
+        font-size: 24px !important;
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -4938,5 +5093,5 @@ const metadata = {
   
 
 
-  <script src="/js/profile-badge-modal-test.js?v=20" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=21" defer data-astro-rerun></script>
 </Layout>
