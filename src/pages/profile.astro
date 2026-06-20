@@ -3686,6 +3686,58 @@ const metadata = {
       }
     }
 
+
+    /* Final badge section visual cleanup */
+    .profile-badges-toolbar.profile-badges-toolbar-compact {
+      margin: 8px 0 22px !important;
+    }
+
+    .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-toolbar-count {
+      display: none !important;
+    }
+
+    .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-filters {
+      justify-content: flex-start !important;
+      gap: 9px !important;
+    }
+
+    .profile-badge-filter {
+      padding: 8px 14px !important;
+      min-width: 0 !important;
+      line-height: 1 !important;
+    }
+
+    #badges.tnx-profile-badges-grid {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 164px)) !important;
+      gap: 16px !important;
+    }
+
+    #badges.tnx-profile-badges-grid .badge.tnx-profile-badge-card {
+      min-height: 160px !important;
+      border-radius: 20px !important;
+    }
+
+    @media (max-width: 640px) {
+      .profile-badges-toolbar.profile-badges-toolbar-compact {
+        margin-top: 10px !important;
+        margin-bottom: 18px !important;
+      }
+
+      .profile-badges-toolbar.profile-badges-toolbar-compact .profile-badges-filters {
+        justify-content: flex-start !important;
+        overflow-x: auto !important;
+        flex-wrap: nowrap !important;
+        padding-bottom: 2px !important;
+      }
+
+      #badges.tnx-profile-badges-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -5244,5 +5296,5 @@ const metadata = {
   
 
 
-  <script src="/js/profile-badge-modal-test.js?v=12" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=13" defer data-astro-rerun></script>
 </Layout>
