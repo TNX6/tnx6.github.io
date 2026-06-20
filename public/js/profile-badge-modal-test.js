@@ -95,9 +95,22 @@
     btn.type = "button";
     btn.className = "featured-badge-plus-test";
     btn.textContent = "+";
+    btn.style.display = "inline-grid";
+    btn.style.opacity = "1";
+    btn.style.visibility = "visible";
     btn.title = "اختيار البادجات";
     btn.addEventListener("click", openModal);
     return btn;
+  }
+
+  function forcePlusVisible() {
+    const target = $("featuredBadges");
+    if (!target || !isOwner) return;
+
+    if (!$("featuredBadgePlusTest")) {
+      target.appendChild(makePlus());
+      target.classList.remove("hidden");
+    }
   }
 
   function renderTop() {
@@ -268,6 +281,10 @@
     });
 
     renderTop();
+
+    [500, 1200, 2500, 4500, 7000].forEach((ms) => {
+      setTimeout(forcePlusVisible, ms);
+    });
   }
 
   setTimeout(setup, 1600);

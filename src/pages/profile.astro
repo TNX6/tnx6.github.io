@@ -2853,6 +2853,43 @@ const metadata = {
         0 0 20px rgba(255,223,138,.20) !important;
     }
 
+
+    /* Force visible featured badge plus */
+    #featuredBadgePlusTest.featured-badge-plus-test {
+      width: 34px !important;
+      height: 34px !important;
+      min-width: 34px !important;
+      min-height: 34px !important;
+      display: inline-grid !important;
+      place-items: center !important;
+      border-radius: 999px !important;
+      border: 1px dashed rgba(255, 223, 138, .82) !important;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255, 223, 138, .20), transparent 46%),
+        rgba(0, 0, 0, .52) !important;
+      color: #ffe39a !important;
+      font-size: 22px !important;
+      font-weight: 1000 !important;
+      line-height: 1 !important;
+      cursor: pointer !important;
+      position: relative !important;
+      z-index: 50 !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      box-shadow:
+        0 10px 22px rgba(0,0,0,.30),
+        0 0 18px rgba(255,223,138,.18) !important;
+      transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease !important;
+    }
+
+    #featuredBadgePlusTest.featured-badge-plus-test:hover {
+      transform: translateY(-2px) scale(1.05) !important;
+      border-color: rgba(255, 223, 138, 1) !important;
+      box-shadow:
+        0 14px 30px rgba(0,0,0,.36),
+        0 0 24px rgba(255,223,138,.28) !important;
+    }
+
   </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -4781,5 +4818,5 @@ const metadata = {
     })();
   </script>
 
-  <script src="/js/profile-badge-modal-test.js?v=4" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=5" defer data-astro-rerun></script>
 </Layout>
