@@ -246,6 +246,15 @@
     $("featuredBadgeModalSave")?.addEventListener("click", saveSelectedBadges);
   }
 
+  function enableSaveButton() {
+    const saveBtn = $("featuredBadgeModalSave");
+    if (!saveBtn) return;
+
+    saveBtn.disabled = false;
+    saveBtn.removeAttribute("disabled");
+    saveBtn.style.pointerEvents = "auto";
+  }
+
   function setState(message) {
     const state = $("featuredBadgeModalState");
     if (state) state.textContent = message;
@@ -316,6 +325,7 @@
     if (!isOwner) return;
 
     makeModal();
+    enableSaveButton();
     renderPicker();
 
     const modal = $("featuredBadgeModalTest");
