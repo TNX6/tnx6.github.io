@@ -255,19 +255,33 @@
     if (!target) return;
 
     const inventory = getInventory();
+    const hasInventoryBadges = inventory.length > 0;
     const map = new Map(inventory.map((badge) => [badge.key, badge]));
 
     const picked = selected.length
       ? selected.map((key) => map.get(key)).filter(Boolean).slice(0, 3)
       : inventory.slice().sort((a, b) => b.score - a.score).slice(0, 3);
 
-    const finalBadges = [...picked, ...getRoleBadges()];
+    const finalBadges = [
+      ...picked,
+      ...getRoleBadges()
+    ];
 
     target.innerHTML = "";
 
-    finalBadges.forEach((badge) => target.appendChild(makeMiniBadge(badge)));
+    if (!finalBadges.length && !hasInventoryBadges) {
+      target.classList.add("hidden");
+      return;
+    }
 
-    if (isOwner) target.appendChild(makePlusButton());
+    finalBadges.forEach((badge) => {
+      target.appendChild(makeMiniBadge(badge));
+    });
+
+    // لا يظهر زر + إلا إذا صاحب البروفايل عنده بادجات يقدر يختار منها
+    if (isOwner && hasInventoryBadges) {
+      target.appendChild(makePlusButton());
+    }
 
     target.classList.remove("hidden");
   }
@@ -506,6 +520,16 @@
 
   function openModal() {
     if (!isOwner) return;
+
+    const inventory = getInventory();
+
+    if (!inventory.length) {
+      if (typeof showFeaturedToast === "function") {
+        showFeaturedToast("ما عندك بادجات للاختيار");
+      }
+
+      return;
+    }
 
     activeCategory = "الكل";
     searchQuery = "";
