@@ -173,12 +173,15 @@ const metadata = {
                 <span class="rank-label">النقاط</span>
                 <span class="rank-value" id="points">---</span>
               </div>
-              <div class="rank-row next-badge-summary-row" id="nextBadgeMiniRow">
+              <button class="rank-row next-badge-summary-toggle" id="nextBadgeMiniToggle" type="button" aria-expanded="false" aria-controls="nextBadgeMiniBox">
                 <span class="rank-label">البادج القادم</span>
-                <span class="rank-value next-badge-mini-value" id="nextBadgeMiniValue">---</span>
-              </div>
+                <span class="rank-value next-badge-mini-value">
+                  <span id="nextBadgeMiniValue">---</span>
+                  <span class="next-badge-mini-arrow" aria-hidden="true">⌄</span>
+                </span>
+              </button>
 
-              <div class="next-badge-mini-box" id="nextBadgeMiniBox">
+              <div class="next-badge-mini-box" id="nextBadgeMiniBox" hidden>
                 <div class="next-badge-mini-meta">
                   <span id="nextBadgeMiniMeta">---</span>
                   <b id="nextBadgeMiniPercent">0%</b>
@@ -4832,6 +4835,138 @@ const metadata = {
       margin-top: 0 !important;
     }
 
+
+    /* Collapsible next badge summary */
+    .next-badge-summary-toggle {
+      width: 100% !important;
+      appearance: none !important;
+      border: 0 !important;
+      background: transparent !important;
+      cursor: pointer !important;
+      font: inherit !important;
+      text-align: inherit !important;
+      margin-top: 0 !important;
+      padding-top: 12px !important;
+      padding-bottom: 12px !important;
+      border-top: 1px solid rgba(255,255,255,.07) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 12px !important;
+    }
+
+    .next-badge-summary-toggle:hover .rank-label,
+    .next-badge-summary-toggle:hover .next-badge-mini-value {
+      color: #ffda6a !important;
+    }
+
+    .next-badge-mini-value {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 7px !important;
+      color: #ffda6a !important;
+      font-size: 15px !important;
+      font-weight: 1000 !important;
+      direction: ltr !important;
+      unicode-bidi: plaintext !important;
+    }
+
+    .next-badge-mini-arrow {
+      display: inline-grid !important;
+      place-items: center !important;
+      width: 18px !important;
+      height: 18px !important;
+      border-radius: 999px !important;
+      border: 1px solid rgba(255,223,138,.18) !important;
+      background: rgba(215,168,79,.07) !important;
+      color: rgba(255,223,138,.88) !important;
+      font-size: 13px !important;
+      line-height: 1 !important;
+      transition: transform .16s ease !important;
+    }
+
+    .next-badge-summary-toggle.is-open .next-badge-mini-arrow {
+      transform: rotate(180deg) !important;
+    }
+
+    .next-badge-mini-box[hidden] {
+      display: none !important;
+    }
+
+    .next-badge-mini-box {
+      margin-top: -2px !important;
+      padding: 0 0 12px !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      display: grid !important;
+      gap: 7px !important;
+      animation: nextBadgeMiniDrop .16s ease-out both !important;
+    }
+
+    @keyframes nextBadgeMiniDrop {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .next-badge-mini-meta {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 12px !important;
+      margin: 0 !important;
+    }
+
+    .next-badge-mini-meta span {
+      color: rgba(255,255,255,.55) !important;
+      font-size: 11.5px !important;
+      font-weight: 850 !important;
+      line-height: 1.45 !important;
+      text-align: right !important;
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: unset !important;
+    }
+
+    .next-badge-mini-meta b {
+      min-width: 40px !important;
+      color: #ffda6a !important;
+      font-size: 11.5px !important;
+      font-weight: 1000 !important;
+      text-align: left !important;
+      direction: ltr !important;
+    }
+
+    .next-badge-mini-track {
+      height: 5px !important;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,.075) !important;
+      overflow: hidden !important;
+    }
+
+    .next-badge-mini-fill {
+      height: 100% !important;
+      border-radius: inherit !important;
+      background: linear-gradient(90deg, rgba(142,107,0,.95), #ffda6a) !important;
+      box-shadow: none !important;
+    }
+
+    .next-badge-mini-box small {
+      display: block !important;
+      margin-top: 0 !important;
+      color: rgba(255,255,255,.36) !important;
+      font-size: 11px !important;
+      font-weight: 800 !important;
+      line-height: 1.35 !important;
+      text-align: right !important;
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -5723,9 +5858,28 @@ const metadata = {
         })[0];
       }
 
+      function setupNextBadgeToggle() {
+        const toggle = $("nextBadgeMiniToggle");
+        const box = $("nextBadgeMiniBox");
+
+        if (!toggle || !box || toggle.dataset.bound === "1") return;
+
+        toggle.dataset.bound = "1";
+
+        toggle.addEventListener("click", () => {
+          const willOpen = box.hidden;
+
+          box.hidden = !willOpen;
+          toggle.setAttribute("aria-expanded", willOpen ? "true" : "false");
+          toggle.classList.toggle("is-open", willOpen);
+        });
+      }
+
       function renderNextBadge(user, badges = []) {
         const box = $("nextBadgeMiniBox");
         if (!box) return;
+
+        setupNextBadgeToggle();
 
         const next = pickNextBadge(user, badges);
 
