@@ -11,6 +11,14 @@
   let profileLogin = "";
   let activeCategory = "الكل";
   let searchQuery = "";
+  let featuredPickerFrame = 0;
+
+  function scheduleRenderPicker() {
+    window.cancelAnimationFrame(featuredPickerFrame);
+    featuredPickerFrame = window.requestAnimationFrame(() => {
+      renderPicker();
+    });
+  }
 
   const $ = (id) => document.getElementById(id);
   const clean = (v) => String(v || "").replace(/\s+/g, " ").trim();

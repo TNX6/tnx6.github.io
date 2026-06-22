@@ -3699,6 +3699,92 @@ const metadata = {
       }
     }
 
+
+    /* Desktop badge picker performance mode */
+    @media (min-width: 820px) {
+      .featured-badge-modal-backdrop {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: rgba(0,0,0,.64) !important;
+      }
+
+      .featured-badge-modal-panel {
+        box-shadow: 0 24px 70px rgba(0,0,0,.54) !important;
+        animation: desktopBadgeModalFastIn .16s ease-out both !important;
+        transform: translateZ(0) !important;
+      }
+
+      @keyframes desktopBadgeModalFastIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .featured-badge-modal-grid {
+        contain: content !important;
+      }
+
+      .featured-badge-option {
+        transition:
+          transform .12s ease,
+          border-color .12s ease,
+          background .12s ease !important;
+        box-shadow: none !important;
+        will-change: auto !important;
+      }
+
+      .featured-badge-option:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: none !important;
+      }
+
+      .featured-badge-option.selected {
+        box-shadow: none !important;
+        background: rgba(215,168,79,.075) !important;
+      }
+
+      .featured-badge-option.selected::before {
+        display: none !important;
+        content: none !important;
+      }
+
+      .featured-badge-option-icon,
+      .featured-badge-option-icon img {
+        transition: none !important;
+        filter: none !important;
+      }
+
+      .featured-badge-option:hover .featured-badge-option-icon {
+        transform: none !important;
+      }
+
+      .featured-badge-selected-chip,
+      .featured-badge-cat,
+      .featured-badge-cancel,
+      .featured-badge-modal-save {
+        transition:
+          background .12s ease,
+          border-color .12s ease,
+          color .12s ease,
+          opacity .12s ease !important;
+        box-shadow: none !important;
+      }
+
+      .featured-badge-modal-save:hover {
+        transform: none !important;
+        box-shadow: none !important;
+      }
+
+      .featured-badge-check {
+        transition: transform .14s ease !important;
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -5257,5 +5343,5 @@ const metadata = {
   
 
 
-  <script src="/js/profile-badge-modal-test.js?v=24" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=25" defer data-astro-rerun></script>
 </Layout>
