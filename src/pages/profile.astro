@@ -149,6 +149,38 @@ const metadata = {
               <div class="badges" id="badges"></div>
             </section>
 
+
+            <section class="card next-badge-card" id="nextBadgeCard">
+              <div class="card-header">
+                <h2 class="card-title">البادج القادم</h2>
+                <span class="card-subtitle" id="nextBadgeType">Next Badge</span>
+              </div>
+
+              <div class="next-badge-body">
+                <div class="next-badge-icon" id="nextBadgeIcon">⬟</div>
+
+                <div class="next-badge-info">
+                  <div class="next-badge-topline">
+                    <strong id="nextBadgeName">---</strong>
+                    <span id="nextBadgeRarity">---</span>
+                  </div>
+
+                  <p id="nextBadgeHow">---</p>
+
+                  <div class="next-badge-progress-row">
+                    <span id="nextBadgeCurrent">0</span>
+                    <span id="nextBadgePercent">0%</span>
+                  </div>
+
+                  <div class="next-badge-track">
+                    <div id="nextBadgeFill" class="next-badge-fill"></div>
+                  </div>
+
+                  <small id="nextBadgeRemain">---</small>
+                </div>
+              </div>
+            </section>
+
             <section class="card rank-card">
               <div class="card-header rank-header">
                 <h2 class="card-title">ملخص العضو</h2>
@@ -4167,6 +4199,139 @@ const metadata = {
       }
     }
 
+
+    /* Next badge card */
+    .next-badge-card {
+      overflow: hidden;
+    }
+
+    .next-badge-body {
+      display: grid;
+      grid-template-columns: 86px minmax(0, 1fr);
+      gap: 14px;
+      align-items: center;
+    }
+
+    .next-badge-icon {
+      width: 86px;
+      height: 86px;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 223, 138, .16);
+      background:
+        radial-gradient(circle at 50% 25%, rgba(255, 223, 138, .20), transparent 64%),
+        rgba(255,255,255,.04);
+      color: #ffd98a;
+      font-size: 36px;
+      font-weight: 1000;
+      box-shadow: inset 0 0 18px rgba(255,223,138,.045);
+    }
+
+    .next-badge-info {
+      min-width: 0;
+    }
+
+    .next-badge-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .next-badge-topline strong {
+      color: #fff;
+      font-size: 21px;
+      font-weight: 1000;
+      line-height: 1.15;
+      direction: ltr;
+      unicode-bidi: plaintext;
+    }
+
+    .next-badge-topline span {
+      flex: 0 0 auto;
+      border: 1px solid rgba(255, 223, 138, .20);
+      border-radius: 999px;
+      background: rgba(215,168,79,.10);
+      color: rgba(255,223,138,.92);
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 1000;
+    }
+
+    .next-badge-info p {
+      margin: 0 0 12px;
+      color: rgba(255,255,255,.56);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.65;
+    }
+
+    .next-badge-progress-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 7px;
+      color: rgba(255,255,255,.62);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .next-badge-track {
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.065);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.045);
+    }
+
+    .next-badge-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #b48900, #ffda6a, #fff2ad);
+      box-shadow: 0 0 16px rgba(255,218,106,.38);
+      transition: width .45s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .next-badge-info small {
+      display: block;
+      margin-top: 8px;
+      color: rgba(255,255,255,.42);
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.55;
+    }
+
+    .next-badge-card.is-done .next-badge-icon {
+      color: rgb(167, 243, 208);
+      border-color: rgba(52, 211, 153, .28);
+      background: rgba(52, 211, 153, .09);
+    }
+
+    .next-badge-card.is-ready .next-badge-topline span {
+      color: rgb(167, 243, 208);
+      border-color: rgba(52, 211, 153, .28);
+      background: rgba(52, 211, 153, .10);
+    }
+
+    @media (max-width: 560px) {
+      .next-badge-body {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .next-badge-icon {
+        margin-inline: auto;
+      }
+
+      .next-badge-topline {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -4972,6 +5137,149 @@ const metadata = {
         return chips.slice(0, 5)
       }
 
+
+      /* Next badge card */
+      function nextBadgeClean(value) {
+        return String(value || "").trim().replace(/\s+/g, " ");
+      }
+
+      function nextBadgeKey(value) {
+        return nextBadgeClean(value)
+          .toLowerCase()
+          .split(/\s*-\s*/)[0]
+          .replace(/\s+/g, "")
+          .replace(/[^a-z0-9\u0600-\u06ff]/g, "");
+      }
+
+      function ownedBadgeKeySet(badges = []) {
+        return new Set(
+          badges
+            .map((badge) => {
+              if (typeof badge === "string") return badge;
+              return badge?.name || badge?.title || badge?.key || badge?.badge || "";
+            })
+            .map(nextBadgeKey)
+            .filter(Boolean)
+        );
+      }
+
+      function nextBadgeMeta(name) {
+        if (typeof window.TNX_GET_BADGE_META === "function") {
+          return window.TNX_GET_BADGE_META(name);
+        }
+
+        return {
+          title: name,
+          category: "عام",
+          rarity: "عادي",
+          how: "يتم الحصول عليه من التفاعل داخل المجتمع",
+        };
+      }
+
+      function buildNextBadgeCandidates(user, badges = []) {
+        const points = currentPoints(user);
+        const checkins = checkinsFor(user);
+
+        return [
+          { name: "100K", type: "النقاط", current: points, target: 100000, unit: "نقطة" },
+          { name: "250K", type: "النقاط", current: points, target: 250000, unit: "نقطة" },
+          { name: "500K", type: "النقاط", current: points, target: 500000, unit: "نقطة" },
+          { name: "1M", type: "النقاط", current: points, target: 1000000, unit: "نقطة" },
+
+          { name: "15D", type: "الحضور", current: checkins, target: 15, unit: "يوم" },
+          { name: "30D", type: "الحضور", current: checkins, target: 30, unit: "يوم" },
+          { name: "60D", type: "الحضور", current: checkins, target: 60, unit: "يوم" },
+          { name: "100D", type: "الحضور", current: checkins, target: 100, unit: "يوم" },
+          { name: "150D", type: "الحضور", current: checkins, target: 150, unit: "يوم" },
+        ].map((badge) => {
+          const meta = nextBadgeMeta(badge.name);
+          const percent = badge.target > 0
+            ? Math.max(0, Math.min(100, Math.floor((badge.current / badge.target) * 100)))
+            : 0;
+
+          return {
+            ...badge,
+            meta,
+            percent,
+            remaining: Math.max(0, badge.target - badge.current),
+            owned: ownedBadgeKeySet(badges).has(nextBadgeKey(badge.name)),
+          };
+        });
+      }
+
+      function pickNextBadge(user, badges = []) {
+        const candidates = buildNextBadgeCandidates(user, badges)
+          .filter((badge) => !badge.owned);
+
+        if (!candidates.length) return null;
+
+        return candidates.sort((a, b) => {
+          const aReady = a.current >= a.target ? 1 : 0;
+          const bReady = b.current >= b.target ? 1 : 0;
+
+          if (aReady !== bReady) return bReady - aReady;
+          if (a.percent !== b.percent) return b.percent - a.percent;
+          return a.target - b.target;
+        })[0];
+      }
+
+      function renderNextBadge(user, badges = []) {
+        const card = $("nextBadgeCard");
+        if (!card) return;
+
+        const next = pickNextBadge(user, badges);
+
+        if (!next) {
+          card.classList.add("is-done");
+          card.classList.remove("is-ready");
+
+          setText("nextBadgeType", "مكتمل");
+          setText("nextBadgeName", "كل البادجات الأساسية مفتوحة");
+          setText("nextBadgeRarity", "مكتمل");
+          setText("nextBadgeHow", "فتحت بادجات النقاط والحضور الأساسية.");
+          setText("nextBadgeCurrent", "100%");
+          setText("nextBadgePercent", "100%");
+          setText("nextBadgeRemain", "ما بقي شيء في المسارات الأساسية الحالية.");
+
+          const icon = $("nextBadgeIcon");
+          if (icon) icon.textContent = "✓";
+
+          const fill = $("nextBadgeFill");
+          if (fill) fill.style.width = "100%";
+
+          return;
+        }
+
+        const meta = next.meta || {};
+        const isReady = next.current >= next.target;
+
+        card.classList.toggle("is-ready", isReady);
+        card.classList.remove("is-done");
+
+        setText("nextBadgeType", next.type);
+        setText("nextBadgeName", meta.title || next.name);
+        setText("nextBadgeRarity", isReady ? "جاهز للفتح" : (meta.rarity || "عادي"));
+        setText("nextBadgeHow", meta.how || "يتم الحصول عليه من التفاعل داخل المجتمع");
+        setText(
+          "nextBadgeCurrent",
+          formatNumber(Math.min(next.current, next.target)) + " / " + formatNumber(next.target) + " " + next.unit
+        );
+        setText("nextBadgePercent", next.percent + "%");
+
+        setText(
+          "nextBadgeRemain",
+          isReady
+            ? "أنت مستوفي شرط هذا البادج."
+            : "متبقي " + formatNumber(next.remaining) + " " + next.unit
+        );
+
+        const icon = $("nextBadgeIcon");
+        if (icon) icon.textContent = next.type === "النقاط" ? "K" : "D";
+
+        const fill = $("nextBadgeFill");
+        if (fill) fill.style.width = next.percent + "%";
+      }
+
       function renderProfile(rawUser) {
         const user = mergeUser(rawUser)
         state.activeUser = user
@@ -5014,6 +5322,7 @@ const metadata = {
 
         setText('inventoryCount', `${inventory.length} ${inventory.length === 1 ? 'غرض' : 'أغراض'}`)
         setText('badgesCount', `${badges.length} مفتوحة`)
+        renderNextBadge(user, badges)
         setText('mailCount', mail.length)
 
         if ($('badgesPageLink')) $('badgesPageLink').href = `/badges?user=${encodeURIComponent(login)}`
