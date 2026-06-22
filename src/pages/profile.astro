@@ -3785,6 +3785,74 @@ const metadata = {
       }
     }
 
+
+    /* Badge picker max selection feedback */
+    .featured-badge-option.locked {
+      opacity: .58 !important;
+      cursor: not-allowed !important;
+      pointer-events: auto !important;
+    }
+
+    .featured-badge-option.locked:hover {
+      transform: none !important;
+      border-color: rgba(248, 113, 113, .30) !important;
+      background: rgba(248, 113, 113, .045) !important;
+    }
+
+    .featured-badge-option.limit-hit {
+      opacity: 1 !important;
+      border-color: rgba(248, 113, 113, .95) !important;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(248, 113, 113, .18), transparent 62%),
+        rgba(248, 113, 113, .12) !important;
+      box-shadow:
+        0 0 0 1px rgba(248, 113, 113, .24) inset,
+        0 0 22px rgba(248, 113, 113, .18) !important;
+      animation: badgeLimitHit .34s ease both !important;
+    }
+
+    .featured-badge-option.limit-hit .featured-badge-option-desc {
+      color: #ffb4b4 !important;
+    }
+
+    .featured-badge-option.limit-hit::after {
+      content: "الحد 3";
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: rgba(248, 113, 113, .20);
+      border: 1px solid rgba(248, 113, 113, .42);
+      color: #ffb4b4;
+      font-size: 10px;
+      font-weight: 1000;
+      line-height: 1;
+      z-index: 4;
+    }
+
+    @keyframes badgeLimitHit {
+      0% { transform: translateX(0); }
+      22% { transform: translateX(-4px); }
+      44% { transform: translateX(4px); }
+      66% { transform: translateX(-2px); }
+      100% { transform: translateX(0); }
+    }
+
+    @media (min-width: 820px) {
+      .featured-badge-option.limit-hit {
+        animation: badgeLimitHitDesktop .26s ease both !important;
+      }
+
+      @keyframes badgeLimitHitDesktop {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(-3px); }
+        50% { transform: translateX(3px); }
+        75% { transform: translateX(-1px); }
+        100% { transform: translateX(0); }
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -5343,5 +5411,5 @@ const metadata = {
   
 
 
-  <script src="/js/profile-badge-modal-test.js?v=25" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=26" defer data-astro-rerun></script>
 </Layout>

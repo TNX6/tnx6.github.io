@@ -516,6 +516,15 @@
         } else {
           if (selected.length >= 3) {
             setState("تقدر تختار 3 بادجات فقط.");
+
+            btn.classList.remove("limit-hit");
+            void btn.offsetWidth;
+            btn.classList.add("limit-hit");
+
+            window.setTimeout(() => {
+              btn.classList.remove("limit-hit");
+            }, 650);
+
             return;
           }
 
