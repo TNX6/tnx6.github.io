@@ -4706,6 +4706,86 @@ const metadata = {
       }
     }
 
+
+    /* Final inline next badge summary */
+    .next-badge-summary-row {
+      margin-top: 0 !important;
+      padding-top: 12px !important;
+      border-top: 1px solid rgba(255,255,255,.07) !important;
+      padding-bottom: 4px !important;
+    }
+
+    .next-badge-mini-value {
+      color: #ffda6a !important;
+      font-size: 15px !important;
+      font-weight: 1000 !important;
+      direction: ltr !important;
+      unicode-bidi: plaintext !important;
+    }
+
+    .next-badge-mini-box {
+      margin-top: 0 !important;
+      padding: 0 0 2px !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+    }
+
+    .next-badge-mini-meta {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      align-items: center !important;
+      gap: 10px !important;
+      margin: 0 0 6px !important;
+    }
+
+    .next-badge-mini-meta span {
+      color: rgba(255,255,255,.56) !important;
+      font-size: 11.5px !important;
+      font-weight: 850 !important;
+      line-height: 1.4 !important;
+      text-align: right !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    .next-badge-mini-meta b {
+      color: #ffda6a !important;
+      font-size: 11.5px !important;
+      font-weight: 1000 !important;
+      direction: ltr !important;
+    }
+
+    .next-badge-mini-track {
+      height: 5px !important;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,.075) !important;
+      overflow: hidden !important;
+    }
+
+    .next-badge-mini-fill {
+      height: 100% !important;
+      border-radius: inherit !important;
+      background: linear-gradient(90deg, rgba(142,107,0,.95), #ffda6a) !important;
+      box-shadow: none !important;
+    }
+
+    .next-badge-mini-box small {
+      display: block !important;
+      margin-top: 6px !important;
+      color: rgba(255,255,255,.36) !important;
+      font-size: 11px !important;
+      font-weight: 800 !important;
+      line-height: 1.35 !important;
+      text-align: right !important;
+    }
+
+    .next-badge-mini-box.is-ready {
+      background: transparent !important;
+      border: 0 !important;
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
