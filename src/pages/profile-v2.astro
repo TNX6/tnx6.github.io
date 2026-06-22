@@ -9,7 +9,7 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <main class="tnx-profile-page profile-v2" dir="rtl">
+  <main class="tnx-profile-page profile-v2-page" dir="rtl">
     <section id="profileSkeleton" class="profile-skeleton" aria-label="جاري تحميل البروفايل">
       <div class="skeleton-shell">
         <div class="skeleton-cover"></div>
@@ -67,166 +67,164 @@ const metadata = {
       <span>تأكد من الاسم أو من ملفات الـ API.</span>
     </section>
 
-    <section id="profileView" class="profile-page hidden">
-<section class="profile-shell">
-        <div class="cover" id="cover">
-          <div class="profile-head">
-            <div class="avatar-wrap">
-              <div class="avatar-ring" id="avatarRing"></div>
-              <img class="avatar" id="avatar" alt="Profile Avatar" />
-              <span class="online-dot" id="onlineDot"></span>
-              <span class="avatar-level-pill" id="avatarLevelBadge">LVL 1</span>
-            </div>
+    
+        <section id="profileView" class="profile-page profile-v2-layout hidden">
+          <section class="profile-v2-shell">
+            <div class="v2-cover" id="cover">
+              <canvas id="coverCanvas" class="v2-cover-canvas"></canvas>
 
-            <div class="identity">
-              <div class="name-row">
-                <h1 class="display-name" id="displayName">---</h1>
-                <span class="handle" id="handle">---</span>
-              </div>
-
-              <div id="featuredBadges" class="profile-featured-badges hidden" aria-label="بادجات العضو المميزة"></div>
-
-              <p class="bio" id="bio">---</p>
-
-              <div class="chips" id="chips"></div>
-            </div>
-
-            <div class="mail-area">
-              <button class="mail-btn" type="button" id="openMailButton">
+              <button class="v2-mail-btn" type="button" id="openMailButton">
                 البريد
                 <span class="mail-count" id="mailCount">0</span>
               </button>
+
+              <div class="v2-profile-head">
+                <div class="avatar-wrap v2-avatar-wrap" id="avatarWrap">
+                  <div class="avatar-ring" id="avatarRing"></div>
+                  <img class="avatar" id="avatar" alt="Profile Avatar" />
+                  <span class="online-dot" id="onlineDot"></span>
+                  <span class="avatar-level-pill" id="avatarLevelBadge">LVL 1</span>
+                </div>
+
+                <div class="v2-identity">
+                  <div class="v2-name-row">
+                    <h1 class="display-name" id="displayName">---</h1>
+                    <span class="handle" id="handle">---</span>
+                  </div>
+
+                  <div id="featuredBadges" class="profile-featured-badges hidden" aria-label="بادجات العضو المميزة"></div>
+
+                  <p class="bio" id="bio">---</p>
+                  <div class="chips" id="chips"></div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="content">
-          <div class="main-stack">
-            <section class="card level-card">
-              <div class="level-main">
-                <div class="level-badge">
-                  <div>
-                    <span>LEVEL</span>
-                    <strong id="levelNumber">1</strong>
-                  </div>
+            <div class="v2-stats-strip">
+              <div class="v2-stat-item">
+                <span class="stat-value" id="rank">---</span>
+                <span class="stat-label">الرتبة</span>
+              </div>
+
+              <div class="v2-stat-item">
+                <span class="stat-value" id="messages">---</span>
+                <span class="stat-label">رسالة</span>
+              </div>
+
+              <div class="v2-stat-item">
+                <span class="stat-value" id="checkins">---</span>
+                <span class="stat-label">دخول يومي</span>
+              </div>
+
+              <div class="v2-stat-item">
+                <span class="stat-value" id="points">---</span>
+                <span class="stat-label">نقطة</span>
+              </div>
+            </div>
+
+            <section class="v2-level-section">
+              <span class="v2-level-watermark" id="levelWatermark">1</span>
+
+              <div class="v2-level-info">
+                <h2 id="levelTitle">تقدم المستوى</h2>
+
+                <div class="v2-xp-bar">
+                  <div class="v2-xp-fill" id="xpFill"></div>
                 </div>
 
-                <div class="level-info">
-                  <h2 id="levelTitle">عضو جديد</h2>
+                <div class="v2-xp-text">
+                  <span id="currentXp">0 XP</span>
+                  <span id="neededXp">0 XP</span>
+                </div>
 
-                  <div class="xp-bar">
-                    <div class="xp-fill" id="xpFill"></div>
-                  </div>
+                <div class="v2-xp-breakdown" id="xpBreakdown"></div>
+              </div>
 
-                  <div class="xp-text">
-                    <span id="currentXp">0</span>
-                    <span id="neededXp">0</span>
-                  </div>
+              <div class="v2-level-ring-wrap">
+                <svg class="v2-level-ring-svg" viewBox="0 0 110 110" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="ringGradV2" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#d4af37"/>
+                      <stop offset="100%" stop-color="#f0d060"/>
+                    </linearGradient>
+                  </defs>
+                  <circle class="v2-level-ring-bg" cx="55" cy="55" r="48"/>
+                  <circle class="v2-level-ring-fill" id="levelRingFill" cx="55" cy="55" r="48" stroke-dasharray="301.6" stroke-dashoffset="301.6"/>
+                </svg>
 
-                  <div class="xp-breakdown" id="xpBreakdown"></div>
+                <div class="v2-level-ring-center">
+                  <span>LEVEL</span>
+                  <strong id="levelNumber">1</strong>
                 </div>
               </div>
-
             </section>
 
-            <section class="card">
-              <div class="card-header">
-                <h2 class="card-title">الحقيبة</h2>
-                <span class="card-subtitle" id="inventoryCount">0 غرض</span>
+            <div class="v2-content">
+              <div class="v2-main-stack">
+                <section class="card v2-card">
+                  <div class="card-header">
+                    <h2 class="card-title">الحقيبة</h2>
+                    <span class="card-subtitle" id="inventoryCount">0 غرض</span>
+                  </div>
+
+                  <div class="inventory" id="inventory"></div>
+                </section>
               </div>
 
-              <div class="inventory" id="inventory"></div>
-            </section>
-          </div>
+              <aside class="v2-side-stack">
+                <section class="card v2-card">
+                  <div class="card-header">
+                    <h2 class="card-title">البادجات</h2>
+                    <span class="card-subtitle" id="badgesCount">0 مفتوحة</span>
+                  </div>
 
-          <aside class="side-stack">
-            <section class="card">
-              <div class="card-header">
-                <h2 class="card-title">البادجات</h2>
-                <span class="card-subtitle" id="badgesCount">0 مفتوحة</span>
-              </div>
+                  <div class="badges" id="badges"></div>
+                </section>
 
-              <div class="badges" id="badges"></div>
-            </section>
-<section class="card rank-card">
-              <div class="card-header rank-header">
-                <h2 class="card-title">ملخص العضو</h2>
-                <span class="card-subtitle">Profile Summary</span>
-              </div>
+                <section class="card v2-card next-badge-card-v2" id="nextBadgeMiniBox">
+                  <div class="v2-next-head">
+                    <h2>البادج القادم</h2>
+                    <span id="nextBadgeMiniPercent">0%</span>
+                  </div>
 
-              <div class="rank-row">
-                <span class="rank-label">رتبة الليفل</span>
-                <span class="rank-value" id="rank">---</span>
-              </div>
+                  <strong class="v2-next-name" id="nextBadgeMiniValue">---</strong>
 
-              <div class="rank-row">
-                <span class="rank-label">عدد الرسائل</span>
-                <span class="rank-value" id="messages">---</span>
-              </div>
+                  <div class="v2-next-track">
+                    <div class="v2-next-fill" id="nextBadgeMiniFill"></div>
+                  </div>
 
-              <div class="rank-row">
-                <span class="rank-label">تسجيل الدخول اليومي</span>
-                <span class="rank-value" id="checkins">---</span>
-              </div>
+                  <div class="v2-next-meta">
+                    <span id="nextBadgeMiniRemain">---</span>
+                    <b id="nextBadgeMiniMeta">---</b>
+                  </div>
+                </section>
+              </aside>
+            </div>
+          </section>
 
-              <div class="rank-row">
-                <span class="rank-label">النقاط</span>
-                <span class="rank-value" id="points">---</span>
-              </div>
-              <button class="rank-row next-badge-summary-toggle" id="nextBadgeMiniToggle" type="button" aria-expanded="false" aria-controls="nextBadgeMiniBox">
-                <span class="rank-label">البادج القادم</span>
-                <span class="rank-value next-badge-mini-value">
-                  <span id="nextBadgeMiniValue">---</span>
-                  <span class="next-badge-mini-arrow" aria-hidden="true">⌄</span>
-                </span>
+          <section class="actions-row v2-actions-row">
+            <div id="profileAccountMenu" class="profile-account-menu hidden">
+              <button id="profileAccountToggle" class="profile-account-toggle" type="button" aria-expanded="false">
+                إدارة الحساب
+                <span>▾</span>
               </button>
 
-              <div class="next-badge-mini-box" id="nextBadgeMiniBox" hidden>
-                <div class="next-badge-mini-meta">
-                  <span id="nextBadgeMiniMeta">---</span>
-                  <b id="nextBadgeMiniPercent">0%</b>
+              <div id="profileAccountDropdown" class="profile-account-dropdown hidden">
+                <div class="profile-account-mini-status">
+                  <span class="profile-account-dot"></span>
+                  <div>
+                    <strong>متصل عبر Twitch</strong>
+                    <small id="profileAccountHandle">@---</small>
+                  </div>
                 </div>
 
-                <div class="next-badge-mini-track">
-                  <div class="next-badge-mini-fill" id="nextBadgeMiniFill"></div>
-                </div>
-
-                <small id="nextBadgeMiniRemain">---</small>
-              </div>
-
-            </section>
-          </aside>
-        </div>
-      </section>
-
-      <section class="actions-row">
-        
-        <div id="profileAccountMenu" class="profile-account-menu hidden">
-          <button id="profileAccountToggle" class="profile-account-toggle" type="button" aria-expanded="false">
-            إدارة الحساب
-            <span>▾</span>
-          </button>
-
-          <div id="profileAccountDropdown" class="profile-account-dropdown hidden">
-            <div class="profile-account-mini-status">
-              <span class="profile-account-dot"></span>
-              <div>
-                <strong>متصل عبر Twitch</strong>
-                <small id="profileAccountHandle">@---</small>
+                <a id="profileAccountPublicLink" href="/profile" class="profile-account-menu-item">فتح صفحتي العامة</a>
+                <button id="profileAccountLogout" type="button" class="profile-account-menu-item danger">تسجيل الخروج</button>
               </div>
             </div>
+          </section>
+        </section>
 
-            <a id="profileAccountPublicLink" href="/profile" class="profile-account-menu-item">
-              فتح صفحتي العامة
-            </a>
-
-            <button id="profileAccountLogout" type="button" class="profile-account-menu-item danger">
-              تسجيل الخروج
-            </button>
-          </div>
-        </div>
-      </section>
-    </section>
 
     <div class="modal-backdrop" id="mailModal" aria-hidden="true">
       <div class="mail-modal">
@@ -5143,20 +5141,16 @@ const metadata = {
     }
 
 
-    /* Profile V2 prototype-inspired layout */
-    .profile-v2,
-    body:has(.profile-v2) {
-      background: #060608 !important;
-    }
-
-    .profile-v2 {
+    /* Real Profile V2 layout */
+    .profile-v2-page {
       position: relative;
       min-height: 100vh;
       color: #ede8df;
+      background: #060608 !important;
       overflow-x: hidden;
     }
 
-    .profile-v2::before {
+    .profile-v2-page::before {
       content: "";
       position: fixed;
       inset: 0;
@@ -5167,7 +5161,7 @@ const metadata = {
         radial-gradient(ellipse 30% 30% at 85% 100%, rgba(155,109,255,.035), transparent 70%);
     }
 
-    .profile-v2::after {
+    .profile-v2-page::after {
       content: "";
       position: fixed;
       inset: 0;
@@ -5181,44 +5175,36 @@ const metadata = {
       mask-image: radial-gradient(ellipse 62% 50% at 50% 20%, black, transparent);
     }
 
-    .profile-v2 .profile-shell,
-    .profile-v2 .profile-card,
-    .profile-v2 .profile-container,
-    .profile-v2 .profile-content {
+    .profile-v2-layout {
       position: relative;
       z-index: 1;
+      width: min(1060px, calc(100% - 32px));
+      margin: 28px auto;
     }
 
-    .profile-v2 .profile-shell,
-    .profile-v2 .profile-card,
-    .profile-v2 .profile-container {
-      width: min(1060px, calc(100% - 32px)) !important;
-      margin: 28px auto !important;
-      border-radius: 26px !important;
-      border: 1px solid rgba(255,255,255,.055) !important;
-      background: rgba(255,255,255,.018) !important;
-      box-shadow: 0 16px 50px rgba(0,0,0,.40) !important;
-      overflow: hidden !important;
+    .profile-v2-shell {
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,.055);
+      background: rgba(255,255,255,.018);
+      box-shadow: 0 16px 50px rgba(0,0,0,.40);
+      overflow: hidden;
     }
 
-    .profile-v2 .profile-header,
-    .profile-v2 .hero,
-    .profile-v2 .profile-hero {
-      position: relative !important;
-      min-height: 260px !important;
-      padding: 24px !important;
-      display: flex !important;
-      align-items: flex-end !important;
+    .v2-cover {
+      position: relative;
+      min-height: 260px;
+      padding: 24px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
       background:
         linear-gradient(to top, #060608 0%, rgba(6,6,8,.30) 55%, rgba(6,6,8,.60)),
         radial-gradient(ellipse 70% 50% at 50% 50%, rgba(212,175,55,.07), transparent 62%),
-        linear-gradient(145deg, #0c0a06, #060608 55%, #0a0810) !important;
-      border-bottom: 1px solid rgba(255,255,255,.055) !important;
+        linear-gradient(145deg, #0c0a06, #060608 55%, #0a0810);
+      border-bottom: 1px solid rgba(255,255,255,.055);
     }
 
-    .profile-v2 .profile-header::after,
-    .profile-v2 .hero::after,
-    .profile-v2 .profile-hero::after {
+    .v2-cover::after {
       content: "";
       position: absolute;
       inset-inline: 0;
@@ -5226,104 +5212,360 @@ const metadata = {
       height: 95px;
       background: linear-gradient(to top, #060608, transparent);
       pointer-events: none;
+      z-index: 1;
     }
 
-    .profile-v2 .avatar,
-    .profile-v2 .profile-avatar img,
-    .profile-v2 #avatar {
-      border-radius: 24px !important;
+    .v2-cover-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: .55;
+      z-index: 0;
+    }
+
+    .v2-mail-btn {
+      position: absolute;
+      right: 24px;
+      bottom: 28px;
+      z-index: 3;
+      min-width: 126px;
+      min-height: 48px;
+      border: 0;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f0d060, #d4af37);
+      color: #060608;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 1000;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(212,175,55,.20);
+    }
+
+    .v2-profile-head {
+      position: relative;
+      z-index: 3;
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 20px;
+      align-items: end;
+      padding-right: 170px;
+    }
+
+    .v2-avatar-wrap {
+      width: 128px !important;
+      height: 128px !important;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .v2-avatar-wrap .avatar-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 30px;
+      background: conic-gradient(from 0deg, #3d2a0a, #f0d060, #6b4a10, #f0d060, #3d2a0a);
+      z-index: 0;
+    }
+
+    .v2-avatar-wrap .avatar,
+    .v2-avatar-wrap #avatar {
+      position: relative;
+      z-index: 1;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover;
+      border-radius: 26px !important;
       border: 3px solid #060608 !important;
-      box-shadow: 0 0 0 4px rgba(212,175,55,.30), 0 18px 40px rgba(0,0,0,.38) !important;
+      background: #111;
+      display: block;
     }
 
-    .profile-v2 #displayName,
-    .profile-v2 .display-name,
-    .profile-v2 .profile-name {
+    .v2-avatar-wrap .online-dot {
+      position: absolute;
+      bottom: 5px;
+      left: 5px;
+      z-index: 4;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 3px solid #060608;
+      background: #5ef5a0;
+      box-shadow: 0 0 12px rgba(94,245,160,.5);
+    }
+
+    .v2-avatar-wrap .avatar-level-pill {
+      position: absolute;
+      bottom: -7px;
+      right: -7px;
+      z-index: 4;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(212,175,55,.28);
+      background: rgba(10,10,14,.92);
+      color: #d4af37;
+      font-size: 10px;
+      font-weight: 1000;
+      backdrop-filter: blur(6px);
+    }
+
+    .v2-identity {
+      min-width: 0;
+    }
+
+    .v2-name-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 7px;
+    }
+
+    .v2-name-row .display-name {
       color: #fff !important;
-      font-size: clamp(28px, 4vw, 46px) !important;
+      font-size: clamp(30px, 4vw, 46px) !important;
       font-weight: 1000 !important;
-      letter-spacing: -.03em !important;
+      letter-spacing: -.035em !important;
       line-height: 1 !important;
+      margin: 0;
     }
 
-    .profile-v2 #handle,
-    .profile-v2 .handle,
-    .profile-v2 .username {
-      display: inline-flex !important;
-      align-items: center !important;
-      min-height: 28px !important;
-      padding: 0 12px !important;
-      border-radius: 999px !important;
-      border: 1px solid rgba(212,175,55,.24) !important;
-      background: rgba(212,175,55,.055) !important;
-      color: #d4af37 !important;
-      font-size: 12px !important;
-      font-weight: 900 !important;
+    .v2-name-row .handle {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(212,175,55,.24);
+      background: rgba(212,175,55,.055);
+      color: #d4af37;
+      font-size: 12px;
+      font-weight: 900;
+      direction: ltr;
     }
 
-    .profile-v2 #bio,
-    .profile-v2 .bio {
-      color: rgba(237,232,223,.54) !important;
-      font-size: 14px !important;
-      line-height: 1.8 !important;
-      font-weight: 650 !important;
+    .profile-featured-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin: 0 0 8px;
     }
 
-    .profile-v2 .stats,
-    .profile-v2 .profile-stats,
-    .profile-v2 .summary-grid {
-      display: grid !important;
-      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-      gap: 0 !important;
-      border-bottom: 1px solid rgba(255,255,255,.055) !important;
-      background: rgba(255,255,255,.006) !important;
+    .v2-identity .bio {
+      max-width: 580px;
+      margin: 0;
+      color: rgba(237,232,223,.54);
+      font-size: 14px;
+      line-height: 1.8;
+      font-weight: 700;
     }
 
-    .profile-v2 .stat,
-    .profile-v2 .stat-card,
-    .profile-v2 .summary-item {
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      justify-content: center !important;
-      gap: 4px !important;
-      min-height: 74px !important;
-      padding: 18px 12px !important;
-      border: 0 !important;
-      background: transparent !important;
-      box-shadow: none !important;
+    .v2-identity .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 12px;
     }
 
-    .profile-v2 .stat-value,
-    .profile-v2 .summary-value,
-    .profile-v2 #points,
-    .profile-v2 #messages,
-    .profile-v2 #checkins,
-    .profile-v2 #rank {
+    .v2-identity .chip {
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.055);
+      background: rgba(255,255,255,.018);
+      color: rgba(237,232,223,.50);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .v2-identity .chip.gold {
+      border-color: rgba(212,175,55,.20);
+      background: rgba(212,175,55,.075);
+      color: #f0d060;
+    }
+
+    .v2-stats-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border-bottom: 1px solid rgba(255,255,255,.055);
+      background: rgba(255,255,255,.006);
+    }
+
+    .v2-stat-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 74px;
+      padding: 18px 12px;
+      gap: 5px;
+    }
+
+    .v2-stat-item:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 26%;
+      width: 1px;
+      height: 48%;
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,.055), transparent);
+    }
+
+    .v2-stat-item .stat-value {
       color: #fff !important;
       font-size: 20px !important;
       font-weight: 1000 !important;
       line-height: 1 !important;
     }
 
-    .profile-v2 .stat-label,
-    .profile-v2 .summary-label,
-    .profile-v2 .rank-label {
-      color: rgba(237,232,223,.36) !important;
+    .v2-stat-item .stat-label {
+      color: rgba(237,232,223,.34) !important;
       font-size: 11px !important;
       font-weight: 800 !important;
     }
 
-    .profile-v2 .content,
-    .profile-v2 .profile-main,
-    .profile-v2 .cards-grid {
-      display: grid !important;
-      grid-template-columns: 1fr .86fr !important;
-      gap: 14px !important;
-      padding: 16px !important;
+    .v2-level-section {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      padding: 28px;
+      border-bottom: 1px solid rgba(255,255,255,.055);
+      overflow: hidden;
     }
 
-    .profile-v2 .card {
+    .v2-level-watermark {
+      position: absolute;
+      left: -10px;
+      bottom: -22px;
+      font-size: 160px;
+      font-weight: 1000;
+      line-height: 1;
+      color: rgba(212,175,55,.035);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .v2-level-info {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .v2-level-info h2 {
+      margin: 0 0 14px;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 1000;
+    }
+
+    .v2-xp-bar {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.045);
+      overflow: hidden;
+    }
+
+    .v2-xp-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #d4af37, #f0d060);
+      box-shadow: 0 0 12px rgba(212,175,55,.22);
+      transition: width 1s cubic-bezier(.25, 1, .5, 1);
+    }
+
+    .v2-xp-text {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      color: rgba(237,232,223,.30);
+      font-size: 11px;
+      font-weight: 800;
+      direction: ltr;
+    }
+
+    .v2-xp-breakdown {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .v2-xp-breakdown > * {
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.045);
+      background: rgba(255,255,255,.014);
+    }
+
+    .v2-level-ring-wrap {
+      position: relative;
+      z-index: 1;
+      width: 110px;
+      height: 110px;
+      flex: 0 0 auto;
+    }
+
+    .v2-level-ring-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .v2-level-ring-bg {
+      fill: none;
+      stroke: rgba(255,255,255,.045);
+      stroke-width: 5;
+    }
+
+    .v2-level-ring-fill {
+      fill: none;
+      stroke: url(#ringGradV2);
+      stroke-width: 5;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1.2s cubic-bezier(.25,1,.5,1);
+    }
+
+    .v2-level-ring-center {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      align-content: center;
+    }
+
+    .v2-level-ring-center span {
+      color: rgba(237,232,223,.26);
+      font-size: 9px;
+      font-weight: 1000;
+      letter-spacing: .12em;
+    }
+
+    .v2-level-ring-center strong {
+      color: #f0d060;
+      font-size: 36px;
+      font-weight: 1000;
+      line-height: 1;
+    }
+
+    .v2-content {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr .86fr;
+      gap: 14px;
+    }
+
+    .v2-main-stack,
+    .v2-side-stack {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .v2-card {
       border-radius: 18px !important;
       border: 1px solid transparent !important;
       background: rgba(255,255,255,.014) !important;
@@ -5331,11 +5573,11 @@ const metadata = {
       overflow: hidden !important;
     }
 
-    .profile-v2 .card:hover {
+    .v2-card:hover {
       border-color: rgba(255,255,255,.055) !important;
     }
 
-    .profile-v2 .card-header {
+    .v2-card .card-header {
       padding: 16px 18px 0 !important;
       display: flex !important;
       align-items: center !important;
@@ -5344,36 +5586,33 @@ const metadata = {
       border: 0 !important;
     }
 
-    .profile-v2 .card-title {
+    .v2-card .card-title {
       color: #fff !important;
       font-size: 14px !important;
-      font-weight: 950 !important;
+      font-weight: 1000 !important;
     }
 
-    .profile-v2 .card-subtitle {
+    .v2-card .card-subtitle {
       color: rgba(237,232,223,.30) !important;
       font-size: 11px !important;
-      font-weight: 750 !important;
+      font-weight: 800 !important;
     }
 
-    .profile-v2 #inventory,
-    .profile-v2 .inventory {
+    .profile-v2-layout #inventory {
       padding: 14px 18px 18px !important;
       display: grid !important;
       grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
       gap: 9px !important;
     }
 
-    .profile-v2 #badges,
-    .profile-v2 .badges {
+    .profile-v2-layout #badges {
       padding: 14px 18px 18px !important;
       display: grid !important;
       grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
       gap: 8px !important;
     }
 
-    .profile-v2 #badges .badge,
-    .profile-v2 .badge {
+    .profile-v2-layout #badges .badge {
       aspect-ratio: 1 !important;
       min-height: 72px !important;
       border-radius: 14px !important;
@@ -5382,96 +5621,169 @@ const metadata = {
       transition: transform .18s ease, border-color .18s ease, background .18s ease !important;
     }
 
-    .profile-v2 #badges .badge:hover,
-    .profile-v2 .badge:hover {
+    .profile-v2-layout #badges .badge:hover {
       transform: translateY(-2px) !important;
       border-color: rgba(212,175,55,.22) !important;
       background: rgba(255,255,255,.028) !important;
     }
 
-    .profile-v2 .next-badge-card {
+    .next-badge-card-v2 {
       display: block !important;
       padding: 18px !important;
-      border-radius: 18px !important;
-      border: 1px solid transparent !important;
-      background: rgba(255,255,255,.014) !important;
     }
 
-    .profile-v2 .next-badge-summary-toggle,
-    .profile-v2 .next-badge-mini-box {
-      display: none !important;
+    .v2-next-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      gap: 10px;
     }
 
-    .profile-v2 .next-badge-card .card-header,
-    .profile-v2 .next-badge-header {
-      display: flex !important;
-      justify-content: space-between !important;
-      align-items: center !important;
-      margin-bottom: 14px !important;
-      padding: 0 !important;
+    .v2-next-head h2 {
+      margin: 0;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 1000;
     }
 
-    .profile-v2 .next-badge-name,
-    .profile-v2 #nextBadgeName {
-      display: block !important;
-      color: #d4af37 !important;
-      font-size: 13px !important;
-      font-weight: 900 !important;
-      margin-bottom: 10px !important;
+    .v2-next-head span {
+      color: rgba(237,232,223,.30);
+      font-size: 11px;
+      font-weight: 800;
     }
 
-    .profile-v2 .next-badge-track,
-    .profile-v2 .next-badge-mini-track {
-      height: 6px !important;
-      border-radius: 999px !important;
-      background: rgba(255,255,255,.045) !important;
-      overflow: hidden !important;
+    .v2-next-name {
+      display: block;
+      color: #d4af37;
+      font-size: 13px;
+      font-weight: 1000;
+      margin-bottom: 10px;
+      direction: ltr;
+      unicode-bidi: plaintext;
     }
 
-    .profile-v2 .next-badge-fill,
-    .profile-v2 .next-badge-mini-fill {
-      height: 100% !important;
-      border-radius: inherit !important;
-      background: linear-gradient(90deg, #d4af37, #f0d060) !important;
-      box-shadow: 0 0 8px rgba(212,175,55,.18) !important;
+    .v2-next-track {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.045);
+      overflow: hidden;
+    }
+
+    .v2-next-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #d4af37, #f0d060);
+      box-shadow: 0 0 8px rgba(212,175,55,.18);
+    }
+
+    .v2-next-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 8px;
+      color: rgba(237,232,223,.30);
+      font-size: 10.5px;
+      font-weight: 750;
+    }
+
+    .v2-next-meta b {
+      color: #d4af37;
+      font-weight: 1000;
+    }
+
+    .v2-actions-row {
+      margin-top: 14px;
     }
 
     @media (max-width: 940px) {
-      .profile-v2 .content,
-      .profile-v2 .profile-main,
-      .profile-v2 .cards-grid {
-        grid-template-columns: 1fr !important;
+      .v2-profile-head {
+        grid-template-columns: 1fr;
+        padding-right: 0;
+        text-align: center;
       }
 
-      .profile-v2 .stats,
-      .profile-v2 .profile-stats,
-      .profile-v2 .summary-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      .v2-avatar-wrap {
+        margin: 0 auto;
+      }
+
+      .v2-name-row,
+      .profile-featured-badges,
+      .v2-identity .chips {
+        justify-content: center;
+      }
+
+      .v2-mail-btn {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        margin-bottom: 20px;
+      }
+
+      .v2-cover {
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .v2-content {
+        grid-template-columns: 1fr;
+      }
+
+      .v2-stats-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .v2-level-section {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .v2-level-ring-wrap {
+        order: -1;
+      }
+
+      .v2-xp-breakdown {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
     @media (max-width: 600px) {
-      .profile-v2 .profile-shell,
-      .profile-v2 .profile-card,
-      .profile-v2 .profile-container {
-        width: calc(100% - 16px) !important;
-        margin: 8px auto !important;
+      .profile-v2-layout {
+        width: calc(100% - 16px);
+        margin: 8px auto;
       }
 
-      .profile-v2 .content,
-      .profile-v2 .profile-main,
-      .profile-v2 .cards-grid {
-        padding: 10px !important;
+      .v2-cover {
+        min-height: 300px;
+        padding: 14px;
       }
 
-      .profile-v2 #inventory,
-      .profile-v2 .inventory {
+      .v2-content {
+        padding: 10px;
+      }
+
+      .profile-v2-layout #inventory {
         grid-template-columns: 1fr !important;
       }
 
-      .profile-v2 #badges,
-      .profile-v2 .badges {
+      .profile-v2-layout #badges {
         grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      }
+
+      .v2-level-ring-wrap {
+        width: 92px;
+        height: 92px;
+      }
+
+      .v2-level-ring-center strong {
+        font-size: 28px;
+      }
+
+      .v2-level-watermark {
+        font-size: 100px;
       }
     }
 
