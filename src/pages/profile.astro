@@ -3535,6 +3535,170 @@ const metadata = {
       }
     }
 
+
+    /* Desktop badge picker modal, mobile keeps bottom sheet */
+    @media (min-width: 820px) {
+      .featured-badge-modal-test {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 34px !important;
+      }
+
+      .featured-badge-modal-test.hidden {
+        display: none !important;
+      }
+
+      .featured-badge-modal-backdrop {
+        background:
+          radial-gradient(circle at 50% 20%, rgba(215,168,79,.12), transparent 34%),
+          rgba(0,0,0,.70) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+      }
+
+      .featured-badge-modal-panel {
+        position: relative !important;
+        inset: auto !important;
+        right: auto !important;
+        left: auto !important;
+        bottom: auto !important;
+        width: min(860px, calc(100vw - 72px)) !important;
+        max-width: 860px !important;
+        height: auto !important;
+        max-height: min(760px, calc(100vh - 80px)) !important;
+        border-radius: 30px !important;
+        border: 1px solid rgba(255,223,138,.16) !important;
+        background:
+          radial-gradient(circle at 80% 0%, rgba(215,168,79,.13), transparent 34%),
+          linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.025)),
+          rgba(10,10,14,.98) !important;
+        box-shadow:
+          0 34px 100px rgba(0,0,0,.62),
+          0 0 0 1px rgba(255,255,255,.035) inset !important;
+        overflow: hidden !important;
+        animation: desktopBadgeModalIn .24s cubic-bezier(.22, 1, .36, 1) both !important;
+      }
+
+      @keyframes desktopBadgeModalIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px) scale(.975);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .featured-badge-modal-handle {
+        display: none !important;
+      }
+
+      .featured-badge-modal-head {
+        padding: 24px 28px 0 !important;
+        align-items: center !important;
+      }
+
+      .featured-badge-modal-head h3 {
+        font-size: 22px !important;
+      }
+
+      .featured-badge-modal-head p {
+        font-size: 13px !important;
+      }
+
+      .featured-badge-counter {
+        padding: 7px 16px !important;
+        font-size: 13px !important;
+      }
+
+      .featured-badge-search {
+        margin: 18px 28px 0 !important;
+      }
+
+      .featured-badge-search input {
+        height: 46px !important;
+        border-radius: 16px !important;
+      }
+
+      .featured-badge-categories {
+        padding: 14px 28px 0 !important;
+      }
+
+      .featured-badge-cat {
+        height: 32px !important;
+        padding: 0 17px !important;
+      }
+
+      .featured-badge-selected-strip {
+        padding: 14px 28px 0 !important;
+        min-height: 42px !important;
+      }
+
+      .featured-badge-modal-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+        padding: 18px 28px !important;
+        max-height: 430px !important;
+      }
+
+      .featured-badge-option {
+        min-height: 128px !important;
+        border-radius: 20px !important;
+        padding: 16px 10px 14px !important;
+      }
+
+      .featured-badge-option-icon {
+        width: 54px !important;
+        height: 54px !important;
+        border-radius: 16px !important;
+      }
+
+      .featured-badge-option-icon img {
+        width: 40px !important;
+        height: 40px !important;
+      }
+
+      .featured-badge-option-label {
+        font-size: 12.5px !important;
+      }
+
+      .featured-badge-option-desc {
+        font-size: 10.5px !important;
+      }
+
+      .featured-badge-modal-actions {
+        padding: 16px 28px 24px !important;
+        gap: 12px !important;
+      }
+
+      .featured-badge-cancel,
+      .featured-badge-modal-save {
+        height: 46px !important;
+        border-radius: 16px !important;
+      }
+
+      .featured-badge-cancel {
+        min-width: 132px !important;
+      }
+
+      .featured-badge-modal-save {
+        flex: 1 !important;
+      }
+    }
+
+    @media (min-width: 1180px) {
+      .featured-badge-modal-panel {
+        width: 920px !important;
+        max-width: 920px !important;
+      }
+
+      .featured-badge-modal-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -5093,5 +5257,5 @@ const metadata = {
   
 
 
-  <script src="/js/profile-badge-modal-test.js?v=22" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=23" defer data-astro-rerun></script>
 </Layout>
