@@ -258,9 +258,11 @@
     const hasInventoryBadges = inventory.length > 0;
     const map = new Map(inventory.map((badge) => [badge.key, badge]));
 
-    const picked = selected.length
-      ? selected.map((key) => map.get(key)).filter(Boolean).slice(0, 3)
-      : inventory.slice().sort((a, b) => b.score - a.score).slice(0, 3);
+    // لا نعرض أي بادج تلقائيًا إذا selected فاضي
+    const picked = selected
+      .map((key) => map.get(key))
+      .filter(Boolean)
+      .slice(0, 3);
 
     const finalBadges = [
       ...picked,
@@ -269,7 +271,8 @@
 
     target.innerHTML = "";
 
-    if (!finalBadges.length && !hasInventoryBadges) {
+    // إذا ما فيه بادجات مختارة ولا MOD/VIP ولا زر اختيار، نخفي السطر كامل
+    if (!finalBadges.length && !(isOwner && hasInventoryBadges)) {
       target.classList.add("hidden");
       return;
     }
@@ -278,7 +281,7 @@
       target.appendChild(makeMiniBadge(badge));
     });
 
-    // لا يظهر زر + إلا إذا صاحب البروفايل عنده بادجات يقدر يختار منها
+    // زر + يبقى ظاهر لصاحب البروفايل إذا عنده بادجات يقدر يختار منها
     if (isOwner && hasInventoryBadges) {
       target.appendChild(makePlusButton());
     }
