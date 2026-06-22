@@ -112,17 +112,82 @@
     return match ? match[1] + " XP" : "";
   }
 
+  function parseRarity(value) {
+    const text = cleanBadgeName(value).toLowerCase();
+
+    if (/legendary|أسطوري|اسطوري|mythic/.test(text)) return "أسطوري";
+    if (/epic|ملحمي/.test(text)) return "ملحمي";
+    if (/rare|نادر/.test(text)) return "نادر";
+    if (/uncommon|مميز/.test(text)) return "مميز";
+    if (/common|عادي/.test(text)) return "عادي";
+
+    return "";
+  }
+
+  function guessCategoryKey(value) {
+    const title = badgeTitle(value).toLowerCase();
+
+    if (/^(100k|250k|500k|1m)$/.test(title)) return "points";
+    if (/^(50q|150q|300q|600q|1000q)$/.test(title)) return "quiz";
+    if (/^(15d|30d|60d|100d|150d)$/.test(title)) return "attendance";
+    if (/vip|mod|king|ملك/.test(title)) return "status";
+    if (/law|محامي|قاضي/.test(title)) return "law";
+
+    return "عام";
+  }
+
+  function pointsRequirement(title) {
+    const key = String(title || "").toLowerCase();
+
+    const map = {
+      "100k": "امتلاك 100,000 نقطة",
+      "250k": "امتلاك 250,000 نقطة",
+      "500k": "امتلاك 500,000 نقطة",
+      "1m": "امتلاك 1,000,000 نقطة"
+    };
+
+    return map[key] || "";
+  }
+
+  function guessHow(value, categoryKey) {
+    const title = badgeTitle(value);
+    const lower = title.toLowerCase();
+
+    const points = pointsRequirement(title);
+    if (points) return points;
+
+    const qMatch = lower.match(/^(50|150|300|600|1000)q$/);
+    if (qMatch) return "الإجابة على " + qMatch[1] + " سؤال بشكل صحيح";
+
+    const dMatch = lower.match(/^(15|30|60|100|150)d$/);
+    if (dMatch) return "تسجيل الحضور لمدة " + dMatch[1] + " يوم";
+
+    if (/vip/i.test(lower)) return "الحصول على VIP في قناة Twitch";
+    if (/mod/i.test(lower)) return "الحصول على Moderator في قناة Twitch";
+    if (/king|ملك/i.test(lower)) return "يفتح من نظام King of Channel Points";
+    if (/law|محامي|قاضي/i.test(lower)) return "يفتح من نظام المحكمة أو الأدوار القانونية";
+
+    if (categoryKey === "points") return "يتم الحصول عليه من خلال جمع النقاط";
+    if (categoryKey === "quiz") return "يتم الحصول عليه من خلال إجابات الكويز";
+    if (categoryKey === "attendance") return "يتم الحصول عليه من خلال الحضور";
+    if (categoryKey === "status") return "بادج مكانة داخل المجتمع";
+    if (categoryKey === "law") return "بادج مرتبط بنظام المحكمة";
+
+    return "يتم الحصول عليه من التفاعل داخل المجتمع";
+  }
+
   function normalizeBadgeMeta(meta, fallbackName) {
     const title = cleanBadgeName(meta?.title || badgeTitle(fallbackName) || "بادج");
-    const categoryKey = meta?.category || "عام";
+    const guessedCategoryKey = guessCategoryKey(fallbackName);
+    const categoryKey = meta?.category || guessedCategoryKey;
     const category = CATEGORY_LABELS[categoryKey] || categoryKey || "عام";
 
     return {
       title,
       category,
       categoryKey,
-      how: meta?.how || "يتم الحصول عليه من التفاعل داخل المجتمع",
-      rarity: meta?.rarity || "",
+      how: meta?.how || guessHow(fallbackName, categoryKey),
+      rarity: meta?.rarity || parseRarity(fallbackName) || "عادي",
       duration: meta?.duration || "",
       difficulty: meta?.difficulty || "",
       xp: meta?.xp || parseXp(fallbackName)
