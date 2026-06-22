@@ -793,6 +793,223 @@
     }
   }
 
+
+  /* Badge details modal */
+  function badgeDetailCategory(name, fallback = "") {
+    const cleanFallback = clean(fallback);
+    if (cleanFallback) return cleanFallback;
+    if (typeof badgeCategory === "function") return badgeCategory(name);
+    return "عام";
+  }
+
+  function badgeDetailRarity(name, category) {
+    const text = clean([name, category].join(" ")).toLowerCase();
+    if (/1m|1000q|king|ملك|vip|mod/.test(text)) return "أسطوري";
+    if (/500k|600q|150d|law|قاضي|محامي/.test(text)) return "نادر جدًا";
+    if (/250k|300q|100d/.test(text)) return "نادر";
+    if (/100k|150q|60d/.test(text)) return "مميز";
+    return "عادي";
+  }
+
+  function badgeDetailHowToGet(name, category) {
+    const text = clean(name);
+    const lower = text.toLowerCase();
+
+    const pointsMatch = lower.match(/(100k|250k|500k|1m)/i);
+    if (pointsMatch) {
+      const map = {
+        "100k": "امتلاك 100,000 نقطة",
+        "250k": "امتلاك 250,000 نقطة",
+        "500k": "امتلاك 500,000 نقطة",
+        "1m": "امتلاك 1,000,000 نقطة"
+      };
+      return map[pointsMatch[1].toLowerCase()] || "الوصول لعدد نقاط محدد";
+    }
+
+    const qMatch = lower.match(/(50|150|300|600|1000)q/i);
+    if (qMatch) return "الإجابة على " + qMatch[1] + " سؤال بشكل صحيح";
+
+    const dMatch = lower.match(/(15|30|60|100|150)d/i);
+    if (dMatch) return "الحضور أو الحفاظ على التفاعل لمدة " + dMatch[1] + " يوم";
+
+    if (/vip/i.test(lower)) return "بادج رسمي يظهر حسب حالة VIP في قناة Twitch";
+    if (/mod/i.test(lower)) return "بادج رسمي يظهر حسب حالة Moderator في قناة Twitch";
+    if (/king|ملك/i.test(lower)) return "بادج خاص مرتبط بنظام الأدوار أو الإنجازات";
+    if (/law|محامي|قاضي/i.test(lower)) return "بادج خاص مرتبط بنظام المحكمة أو الأدوار القانونية";
+
+    if (category === "النقاط") return "يتم الحصول عليه من خلال جمع النقاط";
+    if (category === "الأسئلة") return "يتم الحصول عليه من خلال الإجابة على الأسئلة";
+    if (category === "الحضور") return "يتم الحصول عليه من خلال الحضور والتفاعل";
+    if (category === "خاصة") return "بادج خاص يتم منحه حسب النظام أو الفعاليات";
+
+    return "يتم الحصول عليه من التفاعل داخل المجتمع";
+  }
+
+  function ensureBadgeDetailModal() {
+    if ($("badgeDetailModal")) return;
+
+    const modal = document.createElement("div");
+    modal.id = "badgeDetailModal";
+    modal.className = "badge-detail-modal hidden";
+
+    modal.innerHTML = [
+      '<button class="badge-detail-backdrop" type="button" aria-label="إغلاق"></button>',
+      '<div class="badge-detail-panel" role="dialog" aria-modal="true">',
+        '<button id="badgeDetailClose" class="badge-detail-close" type="button" aria-label="إغلاق">×</button>',
+        '<div class="badge-detail-icon" id="badgeDetailIcon">✦</div>',
+        '<div class="badge-detail-content">',
+          '<span id="badgeDetailCategory" class="badge-detail-category">عام</span>',
+          '<h3 id="badgeDetailTitle">اسم البادج</h3>',
+          '<p id="badgeDetailHow">طريقة الحصول</p>',
+          '<div class="badge-detail-meta">',
+            '<div><span>الحالة</span><strong id="badgeDetailOwned">مملوك</strong></div>',
+            '<div><span>الندرة</span><strong id="badgeDetailRarity">عادي</strong></div>',
+          '</div>',
+        '</div>',
+      '</div>'
+    ].join("");
+
+    document.body.appendChild(modal);
+
+    modal.querySelector(".badge-detail-backdrop")?.addEventListener("click", closeBadgeDetail);
+    $("badgeDetailClose")?.addEventListener("click", closeBadgeDetail);
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeBadgeDetail();
+    });
+  }
+
+  function closeBadgeDetail() {
+    const modal = $("badgeDetailModal");
+    modal?.classList.add("hidden");
+    modal?.setAttribute("aria-hidden", "true");
+  }
+
+  function openBadgeDetail(rawBadge = {}, owned = true) {
+    ensureBadgeDetailModal();
+
+    const name = clean(rawBadge.name || rawBadge.key || "بادج");
+    const category = badgeDetailCategory(name, rawBadge.category || "");
+    const img = rawBadge.img || "";
+
+    const icon = $("badgeDetailIcon");
+    if (icon) {
+      icon.innerHTML = "";
+
+      if (img) {
+        const image = document.createElement("img");
+        image.src = img;
+        image.alt = name;
+        image.loading = "lazy";
+        icon.appendChild(image);
+      } else {
+        icon.textContent = "✦";
+      }
+    }
+
+    $("badgeDetailTitle").textContent = name;
+    $("badgeDetailCategory").textContent = category;
+    $("badgeDetailHow").textContent = badgeDetailHowToGet(name, category);
+    $("badgeDetailOwned").textContent = owned ? "مملوك" : "غير مملوك";
+    $("badgeDetailRarity").textContent = badgeDetailRarity(name, category);
+
+    const modal = $("badgeDetailModal");
+    modal?.classList.remove("hidden");
+    modal?.setAttribute("aria-hidden", "false");
+  }
+
+  function badgeFromElement(element) {
+    if (!element) return null;
+
+    const name = clean(
+      element.getAttribute("data-badge-name") ||
+      element.getAttribute("title") ||
+      element.getAttribute("aria-label") ||
+      element.querySelector?.(".badge-name")?.textContent ||
+      element.querySelector?.(".featured-badge-option-label")?.textContent ||
+      element.textContent ||
+      ""
+    )
+      .replace(/^اختيار\s*البادجات$/i, "")
+      .replace(/^تفاصيل\s*البادج$/i, "")
+      .replace(/^i$/i, "")
+      .replace(/^\+$/, "");
+
+    if (!name) return null;
+
+    const category = clean(
+      element.getAttribute("data-badge-category") ||
+      element.querySelector?.(".featured-badge-option-desc")?.textContent ||
+      ""
+    );
+
+    return {
+      key: name,
+      name,
+      category: badgeDetailCategory(name, category),
+      img: element.querySelector?.("img")?.src || ""
+    };
+  }
+
+  function decorateBadgeOptionsForDetails() {
+    const grid = $("featuredBadgeModalGrid");
+    if (!grid) return;
+
+    grid.querySelectorAll(".featured-badge-option").forEach((card) => {
+      if (card.querySelector(".featured-badge-info")) return;
+
+      const info = document.createElement("button");
+      info.type = "button";
+      info.className = "featured-badge-info";
+      info.textContent = "i";
+      info.title = "تفاصيل البادج";
+      info.setAttribute("aria-label", "تفاصيل البادج");
+
+      info.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const badge = badgeFromElement(card);
+        if (badge) openBadgeDetail(badge, true);
+      });
+
+      card.appendChild(info);
+    });
+  }
+
+  function setupBadgeDetailDelegation() {
+    if (window.__tnxBadgeDetailDelegation) return;
+    window.__tnxBadgeDetailDelegation = true;
+
+    document.addEventListener("click", (event) => {
+      if (event.target.closest(".featured-badge-info")) return;
+      if (event.target.closest(".featured-badge-add")) return;
+      if (event.target.closest("[aria-label='اختيار البادجات']")) return;
+
+      const item = event.target.closest("#featuredBadges > *:not(.featured-badge-add), #badges .badge");
+      if (!item) return;
+
+      const badge = badgeFromElement(item);
+      if (!badge) return;
+
+      event.preventDefault();
+      openBadgeDetail(badge, true);
+    });
+  }
+
+  if (!window.__tnxBadgeDetailRenderWrapped) {
+    window.__tnxBadgeDetailRenderWrapped = true;
+
+    const originalRenderPickerForDetails = renderPicker;
+    renderPicker = function () {
+      originalRenderPickerForDetails();
+      decorateBadgeOptionsForDetails();
+    };
+  }
+
+  setupBadgeDetailDelegation();
+
+
   async function setup() {
     const me = await getMe();
 

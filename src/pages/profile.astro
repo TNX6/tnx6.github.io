@@ -3979,6 +3979,168 @@ const metadata = {
       }
     }
 
+
+    /* Badge details modal */
+    .badge-detail-modal.hidden {
+      display: none !important;
+    }
+
+    .badge-detail-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .badge-detail-backdrop {
+      position: absolute;
+      inset: 0;
+      border: 0;
+      background: rgba(0,0,0,.66);
+      cursor: pointer;
+    }
+
+    .badge-detail-panel {
+      position: relative;
+      width: min(420px, calc(100vw - 34px));
+      border-radius: 28px;
+      border: 1px solid rgba(255,223,138,.16);
+      background: radial-gradient(circle at 50% 0%, rgba(215,168,79,.15), transparent 38%), linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025)), rgba(12,12,16,.98);
+      box-shadow: 0 30px 90px rgba(0,0,0,.62);
+      padding: 26px;
+      text-align: center;
+      overflow: hidden;
+      animation: badgeDetailIn .18s ease-out both;
+    }
+
+    @keyframes badgeDetailIn {
+      from { opacity: 0; transform: translateY(8px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .badge-detail-close {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.045);
+      color: rgba(255,255,255,.72);
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .badge-detail-icon {
+      width: 92px;
+      height: 92px;
+      margin: 4px auto 16px;
+      border-radius: 26px;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 50% 25%, rgba(255,223,138,.28), transparent 62%), rgba(255,255,255,.045);
+      border: 1px solid rgba(255,223,138,.16);
+      color: #ffd98a;
+      font-size: 40px;
+    }
+
+    .badge-detail-icon img {
+      width: 68px;
+      height: 68px;
+      object-fit: contain;
+    }
+
+    .badge-detail-category {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 26px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: rgba(215,168,79,.10);
+      border: 1px solid rgba(215,168,79,.20);
+      color: rgba(255,223,138,.90);
+      font-size: 12px;
+      font-weight: 1000;
+    }
+
+    .badge-detail-content h3 {
+      margin: 12px 0 7px;
+      color: #fff;
+      font-size: 24px;
+      font-weight: 1000;
+    }
+
+    .badge-detail-content p {
+      margin: 0 auto 18px;
+      max-width: 320px;
+      color: rgba(255,255,255,.62);
+      font-size: 13px;
+      line-height: 1.8;
+      font-weight: 700;
+    }
+
+    .badge-detail-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .badge-detail-meta div {
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.035);
+      padding: 12px 10px;
+    }
+
+    .badge-detail-meta span {
+      display: block;
+      color: rgba(255,255,255,.42);
+      font-size: 11px;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .badge-detail-meta strong {
+      display: block;
+      color: rgba(255,255,255,.84);
+      font-size: 13px;
+      font-weight: 1000;
+    }
+
+    .featured-badge-info {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.28);
+      color: rgba(255,255,255,.72);
+      font-size: 12px;
+      font-weight: 1000;
+      font-style: italic;
+      line-height: 1;
+      cursor: pointer;
+      z-index: 5;
+    }
+
+    .featured-badge-info:hover {
+      color: #ffd98a;
+      border-color: rgba(255,223,138,.32);
+      background: rgba(215,168,79,.12);
+    }
+
+    #featuredBadges > *:not(.featured-badge-add),
+    #badges .badge {
+      cursor: pointer;
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -5537,5 +5699,5 @@ const metadata = {
   
 
 
-  <script src="/js/profile-badge-modal-test.js?v=27" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=28" defer data-astro-rerun></script>
 </Layout>
