@@ -148,40 +148,7 @@ const metadata = {
 
               <div class="badges" id="badges"></div>
             </section>
-
-
-            <section class="card next-badge-card" id="nextBadgeCard">
-              <div class="card-header">
-                <h2 class="card-title">البادج القادم</h2>
-                <span class="card-subtitle" id="nextBadgeType">Next Badge</span>
-              </div>
-
-              <div class="next-badge-body">
-                <div class="next-badge-icon" id="nextBadgeIcon">⬟</div>
-
-                <div class="next-badge-info">
-                  <div class="next-badge-topline">
-                    <strong id="nextBadgeName">---</strong>
-                    <span id="nextBadgeRarity">---</span>
-                  </div>
-
-                  <p id="nextBadgeHow">---</p>
-
-                  <div class="next-badge-progress-row">
-                    <span id="nextBadgeCurrent">0</span>
-                    <span id="nextBadgePercent">0%</span>
-                  </div>
-
-                  <div class="next-badge-track">
-                    <div id="nextBadgeFill" class="next-badge-fill"></div>
-                  </div>
-
-                  <small id="nextBadgeRemain">---</small>
-                </div>
-              </div>
-            </section>
-
-            <section class="card rank-card">
+<section class="card rank-card">
               <div class="card-header rank-header">
                 <h2 class="card-title">ملخص العضو</h2>
                 <span class="card-subtitle">Profile Summary</span>
@@ -206,6 +173,24 @@ const metadata = {
                 <span class="rank-label">النقاط</span>
                 <span class="rank-value" id="points">---</span>
               </div>
+              <div class="rank-row next-badge-summary-row" id="nextBadgeMiniRow">
+                <span class="rank-label">البادج القادم</span>
+                <span class="rank-value next-badge-mini-value" id="nextBadgeMiniValue">---</span>
+              </div>
+
+              <div class="next-badge-mini-box" id="nextBadgeMiniBox">
+                <div class="next-badge-mini-meta">
+                  <span id="nextBadgeMiniMeta">---</span>
+                  <b id="nextBadgeMiniPercent">0%</b>
+                </div>
+
+                <div class="next-badge-mini-track">
+                  <div class="next-badge-mini-fill" id="nextBadgeMiniFill"></div>
+                </div>
+
+                <small id="nextBadgeMiniRemain">---</small>
+              </div>
+
             </section>
           </aside>
         </div>
@@ -4626,6 +4611,101 @@ const metadata = {
       }
     }
 
+
+    /* Next badge inside summary */
+    .next-badge-card {
+      display: none !important;
+    }
+
+    .next-badge-summary-row {
+      margin-top: 4px !important;
+      padding-top: 12px !important;
+      border-top: 1px solid rgba(255,255,255,.07) !important;
+    }
+
+    .next-badge-mini-value {
+      direction: ltr;
+      unicode-bidi: plaintext;
+      color: #ffda6a !important;
+      font-weight: 1000 !important;
+    }
+
+    .next-badge-mini-box {
+      margin-top: 8px;
+      padding: 10px 12px 11px;
+      border: 1px solid rgba(255,223,138,.12);
+      border-radius: 14px;
+      background: rgba(255,255,255,.025);
+    }
+
+    .next-badge-mini-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 7px;
+    }
+
+    .next-badge-mini-meta span {
+      min-width: 0;
+      color: rgba(255,255,255,.62);
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .next-badge-mini-meta b {
+      flex: 0 0 auto;
+      color: #ffda6a;
+      font-size: 12px;
+      font-weight: 1000;
+      direction: ltr;
+    }
+
+    .next-badge-mini-track {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      overflow: hidden;
+    }
+
+    .next-badge-mini-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #7d6100, #ffda6a);
+      transition: width .45s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .next-badge-mini-box small {
+      display: block;
+      margin-top: 7px;
+      color: rgba(255,255,255,.42);
+      font-size: 11.5px;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .next-badge-mini-box.is-ready {
+      border-color: rgba(52,211,153,.22);
+      background: rgba(52,211,153,.045);
+    }
+
+    .next-badge-mini-box.is-ready .next-badge-mini-meta b,
+    .next-badge-mini-box.is-done .next-badge-mini-meta b {
+      color: rgb(167,243,208);
+    }
+
+    @media (max-width: 560px) {
+      .next-badge-mini-meta {
+        align-items: flex-start;
+      }
+
+      .next-badge-mini-meta span {
+        font-size: 11.5px;
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -5518,59 +5598,45 @@ const metadata = {
       }
 
       function renderNextBadge(user, badges = []) {
-        const card = $("nextBadgeCard");
-        if (!card) return;
+        const box = $("nextBadgeMiniBox");
+        if (!box) return;
 
         const next = pickNextBadge(user, badges);
 
         if (!next) {
-          card.classList.add("is-done");
-          card.classList.remove("is-ready");
+          box.classList.add("is-done");
+          box.classList.remove("is-ready");
 
-          setText("nextBadgeType", "مكتمل");
-          setText("nextBadgeName", "كل البادجات الأساسية مفتوحة");
-          setText("nextBadgeRarity", "مكتمل");
-          setText("nextBadgeHow", "فتحت بادجات النقاط والحضور الأساسية.");
-          setText("nextBadgeCurrent", "100%");
-          setText("nextBadgePercent", "100%");
-          setText("nextBadgeRemain", "ما بقي شيء في المسارات الأساسية الحالية.");
+          setText("nextBadgeMiniValue", "مكتمل");
+          setText("nextBadgeMiniMeta", "كل بادجات النقاط والحضور الأساسية مفتوحة");
+          setText("nextBadgeMiniPercent", "100%");
+          setText("nextBadgeMiniRemain", "ما بقي شيء في المسارات الأساسية الحالية.");
 
-          const icon = $("nextBadgeIcon");
-          if (icon) icon.textContent = "✓";
-
-          const fill = $("nextBadgeFill");
+          const fill = $("nextBadgeMiniFill");
           if (fill) fill.style.width = "100%";
 
           return;
         }
 
-        const meta = next.meta || {};
         const isReady = next.current >= next.target;
 
-        card.classList.toggle("is-ready", isReady);
-        card.classList.remove("is-done");
+        box.classList.toggle("is-ready", isReady);
+        box.classList.remove("is-done");
 
-        setText("nextBadgeType", "أقرب هدف");
-        setText("nextBadgeName", next.name);
-        setText("nextBadgeRarity", isReady ? "جاهز" : next.percent + "%");
-        setText("nextBadgeHow", next.name + " · " + next.type);
+        setText("nextBadgeMiniValue", next.name);
         setText(
-          "nextBadgeCurrent",
-          formatNumber(Math.min(next.current, next.target)) + " / " + formatNumber(next.target) + " " + next.unit
+          "nextBadgeMiniMeta",
+          next.type + " · " + formatNumber(Math.min(next.current, next.target)) + " / " + formatNumber(next.target) + " " + next.unit
         );
-        setText("nextBadgePercent", next.percent + "%");
-
+        setText("nextBadgeMiniPercent", next.percent + "%");
         setText(
-          "nextBadgeRemain",
+          "nextBadgeMiniRemain",
           isReady
             ? "أنت مستوفي شرط هذا البادج."
             : "متبقي " + formatNumber(next.remaining) + " " + next.unit
         );
 
-        const icon = $("nextBadgeIcon");
-        if (icon) icon.textContent = next.type === "النقاط" ? "K" : "D";
-
-        const fill = $("nextBadgeFill");
+        const fill = $("nextBadgeMiniFill");
         if (fill) fill.style.width = next.percent + "%";
       }
 
