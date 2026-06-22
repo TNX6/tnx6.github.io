@@ -5856,6 +5856,106 @@ const metadata = {
       }
     }
 
+
+    /* Profile V2 right aligned identity and fixed XP labels */
+    .profile-v2-layout .v2-cover {
+      position: relative !important;
+    }
+
+    .profile-v2-layout .v2-profile-head {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      width: min(720px, calc(100% - 190px)) !important;
+      max-width: 720px !important;
+      margin-right: 0 !important;
+      margin-left: auto !important;
+      padding-right: 0 !important;
+      gap: 18px !important;
+      text-align: right !important;
+      transform: translateY(14px) !important;
+    }
+
+    .profile-v2-layout .v2-avatar-wrap {
+      flex: 0 0 auto !important;
+    }
+
+    .profile-v2-layout .v2-identity {
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+      text-align: right !important;
+    }
+
+    .profile-v2-layout .v2-name-row {
+      justify-content: flex-start !important;
+      text-align: right !important;
+    }
+
+    .profile-v2-layout .v2-identity .bio {
+      margin-right: 0 !important;
+      margin-left: auto !important;
+      text-align: right !important;
+    }
+
+    .profile-v2-layout .v2-identity .chips,
+    .profile-v2-layout .profile-featured-badges {
+      justify-content: flex-start !important;
+    }
+
+    .profile-v2-layout .v2-mail-btn {
+      left: 28px !important;
+      right: auto !important;
+    }
+
+    .profile-v2-layout .v2-xp-text {
+      direction: ltr !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      width: 100% !important;
+    }
+
+    .profile-v2-layout #neededXp {
+      order: 1 !important;
+      text-align: left !important;
+      direction: ltr !important;
+    }
+
+    .profile-v2-layout #currentXp {
+      order: 2 !important;
+      text-align: right !important;
+      direction: ltr !important;
+    }
+
+    @media (max-width: 940px) {
+      .profile-v2-layout .v2-profile-head {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        transform: none !important;
+        flex-direction: column !important;
+        text-align: center !important;
+      }
+
+      .profile-v2-layout .v2-identity,
+      .profile-v2-layout .v2-identity .bio {
+        text-align: center !important;
+        margin-inline: auto !important;
+      }
+
+      .profile-v2-layout .v2-name-row,
+      .profile-v2-layout .v2-identity .chips,
+      .profile-v2-layout .profile-featured-badges {
+        justify-content: center !important;
+      }
+
+      .profile-v2-layout .v2-mail-btn {
+        left: auto !important;
+        right: auto !important;
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
