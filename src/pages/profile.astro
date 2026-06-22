@@ -4480,6 +4480,152 @@ const metadata = {
       }
     }
 
+
+    /* Final minimal next badge card */
+    .next-badge-card {
+      padding: 16px 18px !important;
+      border-radius: 20px !important;
+      background: rgba(11, 11, 15, .88) !important;
+      border: 1px solid rgba(255,255,255,.075) !important;
+      box-shadow: none !important;
+    }
+
+    .next-badge-card .card-header {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 12px !important;
+      margin: 0 0 12px !important;
+      padding: 0 !important;
+      border: 0 !important;
+    }
+
+    .next-badge-card .card-title {
+      margin: 0 !important;
+      color: rgba(255,255,255,.88) !important;
+      font-size: 15px !important;
+      font-weight: 950 !important;
+      line-height: 1 !important;
+    }
+
+    .next-badge-card .card-subtitle {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      min-height: 24px !important;
+      border-radius: 999px !important;
+      padding: 0 10px !important;
+      border: 1px solid rgba(255,223,138,.18) !important;
+      background: rgba(215,168,79,.075) !important;
+      color: rgba(255,223,138,.88) !important;
+      font-size: 11px !important;
+      font-weight: 950 !important;
+    }
+
+    .next-badge-body {
+      display: block !important;
+    }
+
+    .next-badge-icon {
+      display: none !important;
+    }
+
+    .next-badge-info {
+      display: grid !important;
+      gap: 8px !important;
+    }
+
+    .next-badge-topline {
+      display: flex !important;
+      align-items: baseline !important;
+      justify-content: space-between !important;
+      gap: 12px !important;
+      margin: 0 !important;
+    }
+
+    .next-badge-topline strong {
+      color: #fff !important;
+      font-size: 22px !important;
+      font-weight: 1000 !important;
+      line-height: 1 !important;
+      letter-spacing: -.03em !important;
+      direction: ltr !important;
+      unicode-bidi: plaintext !important;
+    }
+
+    .next-badge-topline span {
+      border: 0 !important;
+      background: transparent !important;
+      color: #ffda6a !important;
+      padding: 0 !important;
+      font-size: 14px !important;
+      font-weight: 1000 !important;
+      min-width: auto !important;
+    }
+
+    .next-badge-info p {
+      margin: -2px 0 2px !important;
+      color: rgba(255,255,255,.48) !important;
+      font-size: 12px !important;
+      font-weight: 850 !important;
+      line-height: 1.4 !important;
+      direction: ltr !important;
+      text-align: right !important;
+    }
+
+    .next-badge-progress-row {
+      display: block !important;
+      margin: 0 !important;
+      direction: ltr !important;
+    }
+
+    #nextBadgeCurrent {
+      display: block !important;
+      color: rgba(255,255,255,.70) !important;
+      font-size: 12px !important;
+      font-weight: 900 !important;
+      text-align: right !important;
+      margin-bottom: 6px !important;
+    }
+
+    #nextBadgePercent {
+      display: none !important;
+    }
+
+    .next-badge-track {
+      height: 7px !important;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,.07) !important;
+      border: 0 !important;
+      overflow: hidden !important;
+    }
+
+    .next-badge-fill {
+      height: 100% !important;
+      border-radius: inherit !important;
+      background: linear-gradient(90deg, #7d6100, #ffda6a) !important;
+      box-shadow: none !important;
+    }
+
+    .next-badge-info small {
+      margin: 0 !important;
+      color: rgba(255,255,255,.40) !important;
+      font-size: 12px !important;
+      font-weight: 850 !important;
+      line-height: 1.4 !important;
+      text-align: right !important;
+    }
+
+    @media (max-width: 560px) {
+      .next-badge-card {
+        padding: 15px !important;
+      }
+
+      .next-badge-topline strong {
+        font-size: 20px !important;
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -5404,10 +5550,10 @@ const metadata = {
         card.classList.toggle("is-ready", isReady);
         card.classList.remove("is-done");
 
-        setText("nextBadgeType", next.type);
+        setText("nextBadgeType", "أقرب هدف");
         setText("nextBadgeName", next.name);
-        setText("nextBadgeRarity", isReady ? "جاهز للفتح" : (meta.rarity || "عادي"));
-        setText("nextBadgeHow", meta.how || "يتم الحصول عليه من التفاعل داخل المجتمع");
+        setText("nextBadgeRarity", isReady ? "جاهز" : next.percent + "%");
+        setText("nextBadgeHow", next.name + " · " + next.type);
         setText(
           "nextBadgeCurrent",
           formatNumber(Math.min(next.current, next.target)) + " / " + formatNumber(next.target) + " " + next.unit
