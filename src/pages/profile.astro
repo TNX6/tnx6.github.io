@@ -3853,6 +3853,132 @@ const metadata = {
       }
     }
 
+
+    /* Badge picker UX upgrades */
+    .featured-badge-modal-head {
+      position: relative !important;
+    }
+
+    .featured-badge-role-note {
+      display: block;
+      margin-top: 4px;
+      color: rgba(255,223,138,.62);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .featured-badge-counter.is-full {
+      background: rgba(215,168,79,.92) !important;
+      border-color: rgba(215,168,79,.92) !important;
+      color: #0a0a0a !important;
+    }
+
+    .featured-badge-modal-x {
+      display: none;
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.045);
+      color: rgba(255,255,255,.76);
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      z-index: 3;
+      transition: background .14s ease, color .14s ease, border-color .14s ease;
+    }
+
+    .featured-badge-modal-x:hover {
+      background: rgba(248,113,113,.12);
+      border-color: rgba(248,113,113,.26);
+      color: #ffb4b4;
+    }
+
+    .featured-badge-selected-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 22px 0;
+      color: rgba(255,255,255,.56);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .featured-badge-clear {
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.035);
+      color: rgba(255,255,255,.62);
+      border-radius: 999px;
+      padding: 5px 11px;
+      font: inherit;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: background .14s ease, border-color .14s ease, color .14s ease, opacity .14s ease;
+    }
+
+    .featured-badge-clear:hover:not(:disabled) {
+      background: rgba(248,113,113,.10);
+      border-color: rgba(248,113,113,.26);
+      color: #ffb4b4;
+    }
+
+    .featured-badge-clear:disabled {
+      opacity: .38;
+      cursor: not-allowed;
+    }
+
+    .featured-badge-modal-save:disabled {
+      opacity: .46 !important;
+      cursor: not-allowed !important;
+      filter: none !important;
+      box-shadow: none !important;
+    }
+
+    .featured-badge-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 38px 20px;
+      color: rgba(255,255,255,.42);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .featured-badge-empty strong {
+      display: block;
+      color: rgba(255,255,255,.74);
+      font-size: 15px;
+      margin-bottom: 7px;
+    }
+
+    .featured-badge-empty span {
+      display: block;
+      color: rgba(255,255,255,.42);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .featured-badge-option.selected {
+      order: -1;
+    }
+
+    @media (min-width: 820px) {
+      .featured-badge-modal-x {
+        display: grid !important;
+        place-items: center !important;
+      }
+
+      .featured-badge-selected-head {
+        padding-left: 28px !important;
+        padding-right: 28px !important;
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -5411,5 +5537,5 @@ const metadata = {
   
 
 
-  <script src="/js/profile-badge-modal-test.js?v=26" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=27" defer data-astro-rerun></script>
 </Layout>

@@ -11,6 +11,7 @@
   let profileLogin = "";
   let activeCategory = "الكل";
   let searchQuery = "";
+  let selectionBaseline = "";
   let featuredPickerFrame = 0;
 
   function scheduleRenderPicker() {
@@ -304,56 +305,166 @@
     modal.id = "featuredBadgeModalTest";
     modal.className = "featured-badge-modal-test hidden";
 
-    modal.innerHTML = `
-      <button class="featured-badge-modal-backdrop" type="button" aria-label="إغلاق"></button>
+    modal.innerHTML = [
+      '<button class="featured-badge-modal-backdrop" type="button" aria-label="إغلاق"></button>',
+      '<div class="featured-badge-modal-panel" role="dialog" aria-modal="true">',
+        '<div class="featured-badge-modal-handle"></div>',
 
-      <div class="featured-badge-modal-panel" role="dialog" aria-modal="true">
-        <div class="featured-badge-modal-handle"></div>
+        '<button id="featuredBadgeCloseX" class="featured-badge-modal-x" type="button" aria-label="إغلاق">×</button>',
 
-        <div class="featured-badge-modal-head">
-          <div>
-            <h3>اختيار البادجات</h3>
-            <p id="featuredBadgeModalState">اختر حتى 3 بادجات من مخزونك.</p>
-          </div>
+        '<div class="featured-badge-modal-head">',
+          '<div>',
+            '<h3>اختيار البادجات</h3>',
+            '<p id="featuredBadgeModalState">',
+              '<span id="featuredBadgeStateText">اختر حتى 3 بادجات من مخزونك.</span>',
+              '<span class="featured-badge-role-note">MOD / VIP لا تُحسب من الحد 3</span>',
+            '</p>',
+          '</div>',
+          '<span id="featuredBadgeCounter" class="featured-badge-counter">0 / 3</span>',
+        '</div>',
 
-          <span id="featuredBadgeCounter" class="featured-badge-counter">0 / 3</span>
-        </div>
+        '<div class="featured-badge-search">',
+          '<span>⌕</span>',
+          '<input id="featuredBadgeSearch" type="text" placeholder="ابحث عن بادج..." autocomplete="off">',
+        '</div>',
 
-        <div class="featured-badge-search">
-          <span>⌕</span>
-          <input id="featuredBadgeSearch" type="text" placeholder="ابحث عن بادج..." autocomplete="off">
-        </div>
+        '<div id="featuredBadgeCategories" class="featured-badge-categories"></div>',
 
-        <div id="featuredBadgeCategories" class="featured-badge-categories"></div>
+        '<div class="featured-badge-selected-head">',
+          '<span>المختارة الآن</span>',
+          '<button id="featuredBadgeClear" class="featured-badge-clear" type="button">مسح الاختيار</button>',
+        '</div>',
 
-        <div id="featuredBadgeSelectedStrip" class="featured-badge-selected-strip"></div>
+        '<div id="featuredBadgeSelectedStrip" class="featured-badge-selected-strip"></div>',
 
-        <div id="featuredBadgeModalGrid" class="featured-badge-modal-grid"></div>
+        '<div id="featuredBadgeModalGrid" class="featured-badge-modal-grid"></div>',
 
-        <div class="featured-badge-modal-actions">
-          <button id="featuredBadgeCancel" class="featured-badge-cancel" type="button">إلغاء</button>
-          <button id="featuredBadgeModalSave" class="featured-badge-modal-save" type="button">حفظ الاختيار</button>
-        </div>
-      </div>
-    `;
+        '<div class="featured-badge-modal-actions">',
+          '<button id="featuredBadgeCancel" class="featured-badge-cancel" type="button">إلغاء</button>',
+          '<button id="featuredBadgeModalSave" class="featured-badge-modal-save" type="button">حفظ الاختيار</button>',
+        '</div>',
+      '</div>'
+    ].join("");
 
     document.body.appendChild(modal);
 
     modal.querySelector(".featured-badge-modal-backdrop")?.addEventListener("click", closeModal);
+    $("featuredBadgeCloseX")?.addEventListener("click", closeModal);
     $("featuredBadgeCancel")?.addEventListener("click", closeModal);
+
+    $("featuredBadgeClear")?.addEventListener("click", () => {
+      selected = [];
+
+      if (typeof scheduleRenderPicker === "function") {
+        scheduleRenderPicker();
+      } else {
+        renderPicker();
+      }
+    });
+
     $("featuredBadgeSearch")?.addEventListener("input", (event) => {
       searchQuery = event.target.value || "";
-      renderPicker();
+
+      if (typeof scheduleRenderPicker === "function") {
+        scheduleRenderPicker();
+      } else {
+        renderPicker();
+      }
     });
+
     $("featuredBadgeModalSave")?.addEventListener("click", saveSelection);
   }
 
   function setState(message) {
-    const state = $("featuredBadgeModalState");
+    const state = $("featuredBadgeStateText") || $("featuredBadgeModalState");
     if (state) state.textContent = message;
 
     const counter = $("featuredBadgeCounter");
-    if (counter) counter.textContent = `${selected.length} / 3`;
+    if (counter) {
+      counter.textContent = selected.length + " / 3";
+      counter.classList.toggle("is-full", selected.length >= 3);
+    }
+
+    updateSaveButton();
+  }
+
+  function selectionKey(list = selected) {
+    return list.slice(0, 3).join("\u001f");
+  }
+
+  function isSelectionDirty() {
+    return selectionKey() !== selectionBaseline;
+  }
+
+  function updateSaveButton() {
+    const saveBtn = $("featuredBadgeModalSave");
+    const clearBtn = $("featuredBadgeClear");
+
+    if (saveBtn) {
+      const dirty = isSelectionDirty();
+      saveBtn.disabled = !dirty;
+      saveBtn.textContent = dirty ? "حفظ الاختيار" : "لا توجد تغييرات";
+    }
+
+    if (clearBtn) {
+      clearBtn.disabled = selected.length === 0;
+    }
+  }
+
+  function normalizeSearchText(value) {
+    return clean(value)
+      .toLowerCase()
+      .replace(/[إأآا]/g, "ا")
+      .replace(/[ة]/g, "ه")
+      .replace(/\s+/g, " ");
+  }
+
+  function badgeSearchHaystack(badge) {
+    const categoryAliases = {
+      "النقاط": "النقاط نقاط نقطة gold ذهب عملات كوينز coins 100k 250k 500k 1m",
+      "الأسئلة": "الأسئلة الاسئلة اسئله سؤال اساله quiz q اجابه اجابات",
+      "الحضور": "الحضور حضور يوم ايام ستريك streak daily d",
+      "خاصة": "خاصة خاص vip mod king law ملك محامي قاضي",
+      "عام": "عام"
+    };
+
+    return normalizeSearchText([
+      badge.name,
+      badge.key,
+      badge.category,
+      categoryAliases[badge.category] || ""
+    ].join(" "));
+  }
+
+  function badgeCategoryOrder(category) {
+    const order = {
+      "خاصة": 1,
+      "النقاط": 2,
+      "الأسئلة": 3,
+      "الحضور": 4,
+      "عام": 5
+    };
+
+    return order[category] || 99;
+  }
+
+  function sortPickerBadges(badges) {
+    return badges.slice().sort((a, b) => {
+      const aPicked = selected.includes(a.key);
+      const bPicked = selected.includes(b.key);
+
+      if (aPicked && !bPicked) return -1;
+      if (!aPicked && bPicked) return 1;
+
+      const categoryDiff = badgeCategoryOrder(a.category) - badgeCategoryOrder(b.category);
+      if (categoryDiff !== 0) return categoryDiff;
+
+      if ((b.score || 0) !== (a.score || 0)) {
+        return (b.score || 0) - (a.score || 0);
+      }
+
+      return a.name.localeCompare(b.name, "ar");
+    });
   }
 
   function renderCategories() {
@@ -374,7 +485,12 @@
       btn.addEventListener("click", () => {
         activeCategory = cat;
         renderCategories();
-        renderPicker();
+
+        if (typeof scheduleRenderPicker === "function") {
+          scheduleRenderPicker();
+        } else {
+          renderPicker();
+        }
       });
 
       row.appendChild(btn);
@@ -388,9 +504,10 @@
       badges = badges.filter((badge) => badge.category === activeCategory);
     }
 
-    const q = clean(searchQuery).toLowerCase();
+    const q = normalizeSearchText(searchQuery);
+
     if (q) {
-      badges = badges.filter((badge) => badge.name.toLowerCase().includes(q));
+      badges = badges.filter((badge) => badgeSearchHaystack(badge).includes(q));
     }
 
     return badges;
@@ -404,6 +521,11 @@
     const map = new Map(inventory.map((badge) => [badge.key, badge]));
 
     strip.innerHTML = "";
+
+    const clearBtn = $("featuredBadgeClear");
+    if (clearBtn) {
+      clearBtn.disabled = selected.length === 0;
+    }
 
     if (!selected.length) {
       const empty = document.createElement("div");
@@ -449,7 +571,12 @@
 
       chip.addEventListener("click", () => {
         selected = selected.filter((item) => item !== key);
-        renderPicker();
+
+        if (typeof scheduleRenderPicker === "function") {
+          scheduleRenderPicker();
+        } else {
+          renderPicker();
+        }
       });
 
       strip.appendChild(chip);
@@ -460,25 +587,43 @@
     const grid = $("featuredBadgeModalGrid");
     if (!grid) return;
 
-    const badges = filteredInventory();
+    const inventory = getInventory();
+    const badges = sortPickerBadges(filteredInventory());
+
     grid.innerHTML = "";
 
-    setState(`اختر حتى 3 بادجات من مخزونك. المختار: ${selected.length}/3`);
+    setState("اختر حتى 3 بادجات من مخزونك. المختار: " + selected.length + "/3");
     renderSelectedStrip();
+    updateSaveButton();
+
+    if (!inventory.length) {
+      const empty = document.createElement("div");
+      empty.className = "featured-badge-empty";
+      empty.innerHTML = '<strong>ما عندك بادجات حاليًا</strong><span>اجمع البادجات من التفاعل، الأسئلة، والحضور.</span>';
+      grid.appendChild(empty);
+      return;
+    }
 
     if (!badges.length) {
       const empty = document.createElement("div");
       empty.className = "featured-badge-empty";
-      empty.textContent = "لا توجد بادجات مطابقة.";
+      empty.innerHTML = '<strong>لا توجد بادجات مطابقة</strong><span>جرّب البحث باسم البادج أو القسم مثل: نقاط، أسئلة، حضور.</span>';
       grid.appendChild(empty);
       return;
     }
 
     badges.forEach((badge) => {
+      const isPicked = selected.includes(badge.key);
+      const isLocked = selected.length >= 3 && !isPicked;
+
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "featured-badge-option";
-      btn.classList.toggle("selected", selected.includes(badge.key));
+      btn.className = "featured-badge-option" + (isPicked ? " selected" : "") + (isLocked ? " locked" : "");
+      btn.setAttribute("aria-pressed", isPicked ? "true" : "false");
+
+      if (isLocked) {
+        btn.setAttribute("aria-disabled", "true");
+      }
 
       const check = document.createElement("span");
       check.className = "featured-badge-check";
@@ -531,7 +676,11 @@
           selected.push(badge.key);
         }
 
-        renderPicker();
+        if (typeof scheduleRenderPicker === "function") {
+          scheduleRenderPicker();
+        } else {
+          renderPicker();
+        }
       });
 
       grid.appendChild(btn);
@@ -553,6 +702,7 @@
 
     activeCategory = "الكل";
     searchQuery = "";
+    selectionBaseline = selectionKey(selected);
 
     ensureModal();
 
@@ -561,10 +711,17 @@
 
     renderCategories();
     renderPicker();
+    updateSaveButton();
 
     const modal = $("featuredBadgeModalTest");
     modal?.classList.remove("hidden");
     modal?.setAttribute("aria-hidden", "false");
+
+    window.setTimeout(() => {
+      if (window.innerWidth >= 820) {
+        $("featuredBadgeSearch")?.focus();
+      }
+    }, 80);
   }
 
   function closeModal() {
@@ -595,6 +752,11 @@
   async function saveSelection() {
     const saveBtn = $("featuredBadgeModalSave");
 
+    if (!isSelectionDirty()) {
+      updateSaveButton();
+      return;
+    }
+
     try {
       if (saveBtn) {
         saveBtn.disabled = true;
@@ -616,157 +778,20 @@
         ? data.badges.map(clean).filter(Boolean).slice(0, 3)
         : selected.slice(0, 3);
 
+      selectionBaseline = selectionKey(selected);
+
       renderTop();
-      enhanceBadgesSection();
       setState("تم حفظ الاختيار.");
-      showFeaturedToast("تم حفظ البادجات");
+      showFeaturedToast("تم حفظ البادجات ✓");
+      updateSaveButton();
+
       setTimeout(closeModal, 500);
     } catch {
       setState("فشل حفظ البادجات. جرّب مرة ثانية.");
     } finally {
-      if (saveBtn) {
-        saveBtn.disabled = false;
-        saveBtn.textContent = "حفظ الاختيار";
-      }
+      updateSaveButton();
     }
   }
-
-
-  const badgeSectionState = {
-    filter: "الكل",
-    expanded: false
-  };
-
-  const badgeSectionFilters = [
-    "الكل",
-    "المميزة",
-    "الأسئلة",
-    "الحضور",
-    "النقاط",
-    "خاصة"
-  ];
-
-  function readBadgeNode(node) {
-    const name =
-      clean(node.querySelector?.(".badge-name")?.textContent) ||
-      clean(node.getAttribute?.("title")) ||
-      clean(node.getAttribute?.("aria-label")) ||
-      clean(node.textContent);
-
-    const img = node.querySelector?.("img");
-
-    const normalizeBadgeCompare = (value) => {
-      return clean(value)
-        .replace(/الأسئلة|الاسئلة|النقاط|الحضور|خاصة|عام/g, "")
-        .replace(/\s+/g, "")
-        .toUpperCase();
-    };
-
-    const selectedSet = new Set(selected.map(normalizeBadgeCompare));
-    const isFeatured = selectedSet.has(normalizeBadgeCompare(name));
-
-    return {
-      node,
-      key: name,
-      name,
-      img: img?.getAttribute("src") || "",
-      category: badgeCategory(name),
-      isFeatured
-    };
-  }
-
-  function ensureBadgesToolbar(box) {
-    let toolbar = $("profileBadgeEnhanceToolbar");
-
-    if (!toolbar) {
-      toolbar = document.createElement("div");
-      toolbar.id = "profileBadgeEnhanceToolbar";
-      box.parentElement?.insertBefore(toolbar, box);
-    }
-
-    toolbar.className = "profile-badges-v2-toolbar";
-    toolbar.innerHTML = `
-      <div class="profile-badges-v2-filters" id="profileBadgeEnhanceFilters"></div>
-    `;
-
-    const filters = $("profileBadgeEnhanceFilters");
-    if (!filters) return;
-
-    badgeSectionFilters.forEach((filter) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "profile-badge-v2-filter";
-      btn.dataset.filter = filter;
-      btn.textContent = filter;
-
-      btn.addEventListener("click", () => {
-        badgeSectionState.filter = filter;
-        badgeSectionState.expanded = false;
-        enhanceBadgesSection();
-      });
-
-      filters.appendChild(btn);
-    });
-  }
-
-  function ensureShowMoreButton(box) {
-    if ($("profileBadgeShowMore")) return;
-
-    const wrap = document.createElement("div");
-    wrap.className = "profile-badge-showmore-wrap";
-
-    const btn = document.createElement("button");
-    btn.id = "profileBadgeShowMore";
-    btn.type = "button";
-    btn.className = "profile-badge-showmore";
-    btn.textContent = "عرض الكل";
-
-    btn.addEventListener("click", () => {
-      badgeSectionState.expanded = !badgeSectionState.expanded;
-      enhanceBadgesSection();
-    });
-
-    wrap.appendChild(btn);
-    box.parentElement?.insertBefore(wrap, box.nextSibling);
-  }
-
-  function updateBadgeFilterButtons() {
-    document.querySelectorAll(".profile-badge-filter, .profile-badge-v2-filter").forEach((btn) => {
-      btn.classList.toggle("is-active", btn.dataset.filter === badgeSectionState.filter);
-    });
-  }
-
-  function enhanceBadgesSection() {
-    const box = $("badges");
-    if (!box) return;
-
-    $("profileBadgeEnhanceToolbar")?.remove();
-
-    const showMore = $("profileBadgeShowMore");
-    if (showMore) {
-      const wrap = showMore.closest(".profile-badge-showmore-wrap");
-      if (wrap) wrap.remove();
-      else showMore.remove();
-    }
-
-    box.classList.remove(
-      "tnx-profile-badges-grid",
-      "tnx-profile-badges-few"
-    );
-
-    box.querySelectorAll(".badge").forEach((node) => {
-      node.classList.remove(
-        "tnx-profile-badge-card",
-        "is-featured",
-        "tnx-badge-hidden-by-filter"
-      );
-
-      node.removeAttribute("data-category");
-      node.removeAttribute("data-category-label");
-      node.removeAttribute("data-badge-name");
-    });
-  }
-
 
   async function setup() {
     const me = await getMe();
