@@ -5787,6 +5787,75 @@ const metadata = {
       }
     }
 
+
+    /* Profile V2 corrections: mail, avatar level, XP direction */
+    .profile-v2-layout .v2-mail-btn {
+      left: 28px !important;
+      right: auto !important;
+      bottom: 34px !important;
+    }
+
+    .profile-v2-layout .v2-avatar-wrap {
+      margin-bottom: 12px !important;
+    }
+
+    .profile-v2-layout .v2-avatar-wrap .avatar-level-pill,
+    .profile-v2-layout .avatar-level-pill {
+      left: 10px !important;
+      right: 10px !important;
+      bottom: -12px !important;
+      width: auto !important;
+      height: 24px !important;
+      min-height: 24px !important;
+      padding: 0 8px !important;
+      border-radius: 8px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: rgba(10,10,14,.94) !important;
+      border: 1px solid rgba(212,175,55,.36) !important;
+      color: #f0d060 !important;
+      font-size: 10.5px !important;
+      font-weight: 1000 !important;
+      line-height: 1 !important;
+      letter-spacing: .04em !important;
+      box-shadow: 0 8px 18px rgba(0,0,0,.35) !important;
+      transform: none !important;
+    }
+
+    .profile-v2-layout .v2-avatar-wrap .avatar,
+    .profile-v2-layout .v2-avatar-wrap #avatar {
+      border-radius: 24px !important;
+    }
+
+    .profile-v2-layout .v2-xp-text {
+      direction: ltr !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      width: 100% !important;
+    }
+
+    .profile-v2-layout #currentXp {
+      order: 1 !important;
+      text-align: left !important;
+      direction: ltr !important;
+    }
+
+    .profile-v2-layout #neededXp {
+      order: 2 !important;
+      text-align: right !important;
+      direction: ltr !important;
+    }
+
+    @media (max-width: 940px) {
+      .profile-v2-layout .v2-mail-btn {
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
