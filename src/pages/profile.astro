@@ -4141,6 +4141,32 @@ const metadata = {
       cursor: pointer;
     }
 
+
+    /* Clean badge detail title/meta */
+    .badge-detail-meta {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .badge-detail-meta.has-xp {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+
+    #badgeDetailXpBox[hidden] {
+      display: none !important;
+    }
+
+    #badgeDetailTitle {
+      direction: ltr;
+      unicode-bidi: plaintext;
+      letter-spacing: -.02em;
+    }
+
+    @media (max-width: 460px) {
+      .badge-detail-meta.has-xp {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -5699,5 +5725,5 @@ const metadata = {
   
 
 
-  <script src="/js/profile-badge-modal-test.js?v=28" defer data-astro-rerun></script>
+  <script src="/js/profile-badge-modal-test.js?v=29" defer data-astro-rerun></script>
 </Layout>

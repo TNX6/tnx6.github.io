@@ -802,13 +802,49 @@
     return "عام";
   }
 
+  function badgeDetailParts(rawName) {
+    const raw = clean(rawName).replace(/\s+/g, " ");
+    const chunks = raw.split(/\s*-\s*/).map(clean).filter(Boolean);
+
+    const title = chunks[0] || raw || "بادج";
+    let rarity = "";
+    let xp = "";
+
+    chunks.slice(1).forEach((chunk) => {
+      const xpMatch = chunk.match(/([\d,]+)\s*XP/i);
+      if (xpMatch) {
+        xp = xpMatch[1] + " XP";
+        return;
+      }
+
+      const lower = chunk.toLowerCase();
+
+      if (/legendary|اسطوري|أسطوري/.test(lower)) rarity = "أسطوري";
+      else if (/mythic|mythical/.test(lower)) rarity = "أسطوري";
+      else if (/epic|ملحمي/.test(lower)) rarity = "ملحمي";
+      else if (/rare|نادر/.test(lower)) rarity = "نادر";
+      else if (/uncommon|مميز/.test(lower)) rarity = "مميز";
+      else if (/common|عادي/.test(lower)) rarity = "عادي";
+    });
+
+    return { raw, title, rarity, xp };
+  }
+
   function badgeDetailRarity(name, category) {
+    const parts = badgeDetailParts(name);
+    if (parts.rarity) return parts.rarity;
+
     const text = clean([name, category].join(" ")).toLowerCase();
+
     if (/1m|1000q|king|ملك|vip|mod/.test(text)) return "أسطوري";
     if (/500k|600q|150d|law|قاضي|محامي/.test(text)) return "نادر جدًا";
     if (/250k|300q|100d/.test(text)) return "نادر";
     if (/100k|150q|60d/.test(text)) return "مميز";
     return "عادي";
+  }
+
+  function badgeDetailXp(name) {
+    return badgeDetailParts(name).xp;
   }
 
   function badgeDetailHowToGet(name, category) {
@@ -861,9 +897,10 @@
           '<span id="badgeDetailCategory" class="badge-detail-category">عام</span>',
           '<h3 id="badgeDetailTitle">اسم البادج</h3>',
           '<p id="badgeDetailHow">طريقة الحصول</p>',
-          '<div class="badge-detail-meta">',
+          '<div id="badgeDetailMeta" class="badge-detail-meta">',
             '<div><span>الحالة</span><strong id="badgeDetailOwned">مملوك</strong></div>',
             '<div><span>الندرة</span><strong id="badgeDetailRarity">عادي</strong></div>',
+            '<div id="badgeDetailXpBox"><span>XP</span><strong id="badgeDetailXp">—</strong></div>',
           '</div>',
         '</div>',
       '</div>'
@@ -888,9 +925,12 @@
   function openBadgeDetail(rawBadge = {}, owned = true) {
     ensureBadgeDetailModal();
 
-    const name = clean(rawBadge.name || rawBadge.key || "بادج");
-    const category = badgeDetailCategory(name, rawBadge.category || "");
+    const rawName = clean(rawBadge.name || rawBadge.key || "بادج");
+    const parts = badgeDetailParts(rawName);
+    const name = parts.title;
+    const category = badgeDetailCategory(rawName, rawBadge.category || "");
     const img = rawBadge.img || "";
+    const xp = badgeDetailXp(rawName);
 
     const icon = $("badgeDetailIcon");
     if (icon) {
@@ -909,9 +949,17 @@
 
     $("badgeDetailTitle").textContent = name;
     $("badgeDetailCategory").textContent = category;
-    $("badgeDetailHow").textContent = badgeDetailHowToGet(name, category);
+    $("badgeDetailHow").textContent = badgeDetailHowToGet(rawName, category);
     $("badgeDetailOwned").textContent = owned ? "مملوك" : "غير مملوك";
-    $("badgeDetailRarity").textContent = badgeDetailRarity(name, category);
+    $("badgeDetailRarity").textContent = badgeDetailRarity(rawName, category);
+
+    const xpEl = $("badgeDetailXp");
+    const xpBox = $("badgeDetailXpBox");
+    const meta = $("badgeDetailMeta");
+
+    if (xpEl) xpEl.textContent = xp || "—";
+    if (xpBox) xpBox.hidden = !xp;
+    if (meta) meta.classList.toggle("has-xp", Boolean(xp));
 
     const modal = $("badgeDetailModal");
     modal?.classList.remove("hidden");
