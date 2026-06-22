@@ -4967,6 +4967,68 @@ const metadata = {
       text-align: right !important;
     }
 
+
+    /* Clean collapsible next badge toggle */
+    .next-badge-summary-toggle {
+      outline: none !important;
+      box-shadow: none !important;
+      border-left: 0 !important;
+      border-right: 0 !important;
+      border-bottom: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    .next-badge-summary-toggle:focus,
+    .next-badge-summary-toggle:focus-visible,
+    .next-badge-summary-toggle:active {
+      outline: none !important;
+      box-shadow: none !important;
+      background: transparent !important;
+    }
+
+    .next-badge-summary-toggle:hover {
+      background: transparent !important;
+    }
+
+    .next-badge-summary-toggle .rank-label {
+      color: rgba(255,255,255,.55) !important;
+    }
+
+    .next-badge-mini-value {
+      gap: 8px !important;
+    }
+
+    .next-badge-mini-arrow {
+      width: auto !important;
+      height: auto !important;
+      border: 0 !important;
+      background: transparent !important;
+      color: rgba(255,223,138,.70) !important;
+      font-size: 14px !important;
+      transform: translateY(1px) !important;
+    }
+
+    .next-badge-summary-toggle.is-open .next-badge-mini-arrow {
+      transform: translateY(1px) rotate(180deg) !important;
+    }
+
+    .next-badge-mini-box {
+      margin-top: -2px !important;
+      padding-top: 10px !important;
+      border-top: 1px solid rgba(255,255,255,.075) !important;
+    }
+
+    .next-badge-mini-meta {
+      padding-top: 0 !important;
+    }
+
+    .next-badge-mini-meta span {
+      color: rgba(255,255,255,.50) !important;
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
