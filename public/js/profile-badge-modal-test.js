@@ -795,10 +795,25 @@
 
 
   /* Badge details modal */
+  function badgeDetailSharedMeta(name) {
+    if (typeof window.TNX_GET_BADGE_META === "function") {
+      return window.TNX_GET_BADGE_META(name);
+    }
+
+    return null;
+  }
+
   function badgeDetailCategory(name, fallback = "") {
+    const shared = badgeDetailSharedMeta(name);
+    if (shared?.category) return shared.category;
+
     const cleanFallback = clean(fallback);
     if (cleanFallback) return cleanFallback;
-    if (typeof badgeCategory === "function") return badgeCategory(name);
+
+    if (typeof badgeCategory === "function") {
+      return badgeCategory(name);
+    }
+
     return "عام";
   }
 
@@ -831,6 +846,9 @@
   }
 
   function badgeDetailRarity(name, category) {
+    const shared = badgeDetailSharedMeta(name);
+    if (shared?.rarity) return shared.rarity;
+
     const parts = badgeDetailParts(name);
     if (parts.rarity) return parts.rarity;
 
@@ -844,10 +862,16 @@
   }
 
   function badgeDetailXp(name) {
+    const shared = badgeDetailSharedMeta(name);
+    if (shared?.xp) return shared.xp;
+
     return badgeDetailParts(name).xp;
   }
 
   function badgeDetailHowToGet(name, category) {
+    const shared = badgeDetailSharedMeta(name);
+    if (shared?.how) return shared.how;
+
     const text = clean(name);
     const lower = text.toLowerCase();
 
