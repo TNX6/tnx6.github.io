@@ -1,5 +1,5 @@
 // Auto-generated from src/pages/badges.astro
-// Do not edit manually. Edit badges.astro source blocks, then regenerate.
+// Do not edit manually.
 
 (function () {
   const BADGE_META = {
@@ -29,7 +29,7 @@
         'BEST FOLLOWER': { title: 'أفضل متابع', category: 'awards', how: 'بادج تكريمي لأفضل متابع في المجتمع.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص' },
         'BEST SUP': { title: 'أفضل داعم', category: 'awards', how: 'بادج تكريمي لأفضل داعم في المجتمع.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص' },
         'Best Dessert': { title: 'أفضل Dessert', category: 'awards', how: 'بادج تكريمي لأفضل حلا.', rarity: 'جائزة', duration: 'دائم', difficulty: 'خاص' },
-      }
+      };
 
   const BADGE_PATHS = [
         {
@@ -71,99 +71,19 @@
             { name: '1000Q', value: 1000 },
           ],
         },
-      ]
+      ];
 
-      const JOB_ICONS = window.JOB_ICONS || {
-        tier1_Citizen: 'mdi:account',
-        tier3_Merchant: 'mdi:store',
-      }
-
-      window.JOB_ICONS = JOB_ICONS
-
-      const state = {
-        badges: [],
-        users: [],
-        filter: 'all',
-        search: '',
-        selectedBadgeName: '',
-        currentUser: null,
-        vaultPage: 1,
-      }
-
-      const badgeGrid = document.getElementById('badgeGrid')
-      const badgeEmpty = document.getElementById('badgeEmpty')
-      const badgeSearch = document.getElementById('badgeSearch')
-      const clearBadgeSearch = document.getElementById('clearBadgeSearch')
-      const badgeFocusPanel = document.getElementById('badgeFocusPanel')
-      const filterButtons = Array.from(document.querySelectorAll('[data-badge-filter]'))
-      const guideButtons = Array.from(document.querySelectorAll('[data-guide-filter]'))
-      const backToTop = document.getElementById('backToTop')
-
-      const statTotalBadges = document.getElementById('statTotalBadges')
-      const statCategories = document.getElementById('statCategories')
-      const statRareBadges = document.getElementById('statRareBadges')
-
-      const userSearch = document.getElementById('userSearch')
-      const clearUserSearch = document.getElementById('clearUserSearch')
-      const userResults = document.getElementById('userResults')
-      const userCardContainer = document.getElementById('userCardContainer')
-
-      // تعريف تقنية الكشف عن النزول (Intersection Observer) مع تنظيفه عند التنقل بين الصفحات
-      const revealTargets = Array.from(document.querySelectorAll('.tnx-reveal'))
-      let revealObserver = null
-
-      if ('IntersectionObserver' in window) {
-        revealObserver = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('is-visible')
-              revealObserver?.unobserve(entry.target)
-            }
-          })
-        }, { threshold: 0.1 })
-
-        revealTargets.forEach((el) => revealObserver.observe(el))
-        listeners.push(() => revealObserver?.disconnect())
-      } else {
-        revealTargets.forEach((el) => el.classList.add('is-visible'))
-      }
-
-      function esc(value) {
-        return String(value ?? '')
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#039;')
-      }
-
-      function safeUrl(value) {
-        const url = String(value || '').trim()
-        if (!/^https?:\/\//i.test(url) && !url.startsWith('/')) return ''
-        return url.replace(/["'()\\]/g, '')
-      }
-
-      function cssUrl(value) {
-        const url = safeUrl(value)
-        if (!url) return 'none'
-        return `url('${url}')`
-      }
-
-      function safeColor(value, fallback = '#423fff') {
-        const color = String(value || '').trim()
-        return /^#[0-9a-fA-F]{6}$/.test(color) ? color : fallback
-      }
-
-      function normalize(value) {
-        return String(value || '')
-          .toLowerCase()
-          .replace(/[ًٌٍَُِّْـ]/g, '')
-          .replace(/[أإآ]/g, 'ا')
-          .replace(/ة/g, 'ه')
-          .replace(/ى/g, 'ي')
-          .replace(/\s+/g, ' ')
-          .trim()
-      }
+  const CATEGORY_LABELS = {
+    points: "النقاط",
+    quiz: "الكويز",
+    attendance: "الحضور",
+    status: "المكانة",
+    law: "المحكمة",
+    awards: "الجوائز",
+    special: "خاص",
+    general: "عام",
+    عام: "عام"
+  };
 
   function cleanBadgeName(value) {
     return String(value || "")
@@ -178,22 +98,34 @@
       .replace(/[^a-z0-9\u0600-\u06ff]/g, "");
   }
 
-  function badgeTitleKey(value) {
+  function badgeTitle(value) {
     const raw = cleanBadgeName(value);
-    const first = raw.split(/\s*-\s*/)[0] || raw;
-    return badgeKey(first);
+    return raw.split(/\s*-\s*/)[0] || raw;
+  }
+
+  function badgeTitleKey(value) {
+    return badgeKey(badgeTitle(value));
+  }
+
+  function parseXp(value) {
+    const match = cleanBadgeName(value).match(/([\d,]+)\s*XP/i);
+    return match ? match[1] + " XP" : "";
   }
 
   function normalizeBadgeMeta(meta, fallbackName) {
-    const title = cleanBadgeName(meta?.title || fallbackName || "بادج");
+    const title = cleanBadgeName(meta?.title || badgeTitle(fallbackName) || "بادج");
+    const categoryKey = meta?.category || "عام";
+    const category = CATEGORY_LABELS[categoryKey] || categoryKey || "عام";
+
     return {
       title,
-      category: meta?.category || "عام",
+      category,
+      categoryKey,
       how: meta?.how || "يتم الحصول عليه من التفاعل داخل المجتمع",
-      rarity: meta?.rarity || "عادي",
+      rarity: meta?.rarity || "",
       duration: meta?.duration || "",
       difficulty: meta?.difficulty || "",
-      xp: meta?.xp || ""
+      xp: meta?.xp || parseXp(fallbackName)
     };
   }
 
@@ -209,7 +141,7 @@
       BADGE_META[raw.toLowerCase()] ||
       null;
 
-    return normalizeBadgeMeta(meta, raw.split(/\s*-\s*/)[0] || raw);
+    return normalizeBadgeMeta(meta, raw);
   }
 
   window.TNX_BADGE_META = BADGE_META;

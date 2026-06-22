@@ -1082,6 +1082,10 @@
   setupBadgeDetailDelegation();
 
 
+  function enhanceBadgesSection() {
+    return;
+  }
+
   async function setup() {
     const me = await getMe();
 
