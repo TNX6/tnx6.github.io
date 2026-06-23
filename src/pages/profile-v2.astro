@@ -7649,6 +7649,7 @@ const metadata = {
 
       function itemSellPrice(meta) {
         const value = Math.max(0, Math.floor(Number(meta?.value || 0)))
+        const apiItemName = String(meta?.text || meta?.name || name).trim() || name
         return Math.max(1, Math.floor(value * 0.5))
       }
 
@@ -7858,7 +7859,7 @@ const metadata = {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                itemName: name,
+                itemName: apiItemName,
                 quantity: qty,
               }),
             })
