@@ -6543,7 +6543,40 @@ const metadata = {
       }
     }
 
-  </style>
+  
+  .inventory-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+
+  .inventory-page-btn {
+    border: 1px solid rgba(234, 210, 123, .28);
+    background: rgba(255,255,255,.06);
+    color: #f4e7b0;
+    border-radius: 12px;
+    padding: 9px 14px;
+    cursor: pointer;
+    font-weight: 800;
+  }
+
+  .inventory-page-btn:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+  }
+
+  .inventory-page-info {
+    color: rgba(255,255,255,.75);
+    font-size: 13px;
+    font-weight: 800;
+    min-width: 92px;
+    text-align: center;
+  }
+</style>
 
   <script is:inline data-astro-rerun data-reinit>
     ;(async () => {
@@ -7815,6 +7848,98 @@ const metadata = {
       }
 
 
+
+      const INVENTORY_PAGE_SIZE = 6;
+      let inventoryCurrentPage = 1;
+      let inventoryCurrentKey = "";
+
+      function getInventoryPaginationKey() {
+        try {
+          if (typeof activeInventoryReservationKey === 'function') {
+            return activeInventoryReservationKey() || "";
+          }
+        } catch {}
+
+        try {
+          const viewedId = String(userId(state.activeUser) || get(state.activeUser, ['twitchId', 'twitch_id'], '') || '').trim();
+          const viewedLogin = String(userLogin(state.activeUser) || get(state.activeUser, ['login', 'userLogin'], '') || '').trim().toLowerCase();
+          return viewedId || viewedLogin || "";
+        } catch {
+          return "";
+        }
+      }
+
+      function applyInventoryPagination() {
+        const box = $('inventory');
+
+        if (!box) {
+          return;
+        }
+
+        box.querySelectorAll('.inventory-pagination').forEach((el) => el.remove());
+
+        const cards = [...box.querySelectorAll('.item')];
+
+        if (!cards.length) {
+          return;
+        }
+
+        const key = getInventoryPaginationKey();
+
+        if (key !== inventoryCurrentKey) {
+          inventoryCurrentKey = key;
+          inventoryCurrentPage = 1;
+        }
+
+        const totalPages = Math.max(1, Math.ceil(cards.length / INVENTORY_PAGE_SIZE));
+        inventoryCurrentPage = Math.max(1, Math.min(inventoryCurrentPage, totalPages));
+
+        const start = (inventoryCurrentPage - 1) * INVENTORY_PAGE_SIZE;
+        const end = start + INVENTORY_PAGE_SIZE;
+
+        cards.forEach((card, index) => {
+          card.style.display = index >= start && index < end ? '' : 'none';
+        });
+
+        if (cards.length <= INVENTORY_PAGE_SIZE) {
+          return;
+        }
+
+        const controls = document.createElement('div');
+        controls.className = 'inventory-pagination';
+        controls.innerHTML = `
+          <button type="button" class="inventory-page-btn" data-inventory-page="prev" ${inventoryCurrentPage <= 1 ? 'disabled' : ''}>السابق</button>
+          <span class="inventory-page-info">صفحة ${formatNumber(inventoryCurrentPage)} / ${formatNumber(totalPages)}</span>
+          <button type="button" class="inventory-page-btn" data-inventory-page="next" ${inventoryCurrentPage >= totalPages ? 'disabled' : ''}>التالي</button>
+        `;
+
+        const handler = (event) => {
+          const button = event.target.closest('[data-inventory-page]');
+
+          if (!button || button.disabled) {
+            return;
+          }
+
+          const direction = button.dataset.inventoryPage;
+
+          if (direction === 'prev') {
+            inventoryCurrentPage -= 1;
+          } else if (direction === 'next') {
+            inventoryCurrentPage += 1;
+          }
+
+          applyInventoryPagination();
+        };
+
+        if (typeof addListener === 'function') {
+          addListener(controls, 'click', handler);
+        } else {
+          controls.addEventListener('click', handler);
+        }
+
+        box.appendChild(controls);
+      }
+
       function updateInventoryItemDomAfterSell(soldName, quantity) {
         const box = $('inventory');
 
@@ -8084,10 +8209,12 @@ const metadata = {
                 enhanceInventorySellButtons(items);
               } else {
                 updateInventoryItemDomAfterSell(name, qty);
+              requestAnimationFrame(() => applyInventoryPagination());
               }
             } catch (uiError) {
               console.warn('Sell request succeeded, but local inventory UI update failed:', uiError);
               updateInventoryItemDomAfterSell(name, qty);
+              requestAnimationFrame(() => applyInventoryPagination());
             }
 
             submit.textContent = 'تم التسجيل'
