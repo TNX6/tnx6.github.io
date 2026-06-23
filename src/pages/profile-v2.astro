@@ -5956,6 +5956,67 @@ const metadata = {
       }
     }
 
+
+    /* Profile V2 final clean banner */
+    .profile-v2-layout .v2-cover {
+      position: relative !important;
+      isolation: isolate !important;
+      overflow: hidden !important;
+      min-height: 270px !important;
+      padding: 30px 34px !important;
+      border-bottom: 1px solid rgba(255,255,255,.055) !important;
+
+      background:
+        linear-gradient(to top, rgba(6,6,8,1) 0%, rgba(6,6,8,.30) 54%, rgba(6,6,8,.18) 100%),
+        linear-gradient(90deg, rgba(0,0,0,.68) 0%, rgba(0,0,0,.20) 46%, rgba(0,0,0,.68) 100%),
+        var(--cover-image),
+        radial-gradient(circle at center, #292014, #070707 65%) !important;
+
+      background-size: cover, cover, cover, cover !important;
+      background-position: center center, center center, center center, center center !important;
+      background-repeat: no-repeat !important;
+    }
+
+    .profile-v2-layout .v2-cover::before {
+      display: none !important;
+      content: none !important;
+      background: none !important;
+    }
+
+    .profile-v2-layout .v2-cover::after {
+      content: "" !important;
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 1 !important;
+      pointer-events: none !important;
+      background:
+        linear-gradient(to top, rgba(6,6,8,.86) 0%, rgba(6,6,8,.10) 56%, transparent 100%),
+        radial-gradient(circle at 78% 55%, rgba(255,223,138,.12), transparent 34%) !important;
+    }
+
+    .profile-v2-layout .v2-cover-canvas {
+      display: none !important;
+    }
+
+    .profile-v2-layout .v2-profile-head,
+    .profile-v2-layout .v2-mail-btn {
+      position: relative !important;
+      z-index: 3 !important;
+    }
+
+    .profile-v2-layout .v2-profile-head {
+      transform: translateY(8px) !important;
+    }
+
+    .profile-v2-layout .v2-name-row .display-name {
+      text-shadow: 0 8px 26px rgba(0,0,0,.62) !important;
+    }
+
+    .profile-v2-layout .v2-identity .bio {
+      color: rgba(255,255,255,.68) !important;
+      text-shadow: 0 4px 16px rgba(0,0,0,.58) !important;
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
