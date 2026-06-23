@@ -7649,7 +7649,6 @@ const metadata = {
 
       function itemSellPrice(meta) {
         const value = Math.max(0, Math.floor(Number(meta?.value || 0)))
-        const apiItemName = String(meta?.text || meta?.name || name).trim() || name
         return Math.max(1, Math.floor(value * 0.5))
       }
 
@@ -7768,6 +7767,7 @@ const metadata = {
 
       function openInventorySellModal(item, meta) {
         const name = String(item.name || '').trim()
+        const apiItemName = String(meta?.text || meta?.name || name).trim() || name
         const owned = Math.max(1, Math.floor(Number(item.qty || item.quantity || 1)))
         const priceEach = itemSellPrice(meta)
         const value = Math.max(0, Math.floor(Number(meta?.value || 0)))
