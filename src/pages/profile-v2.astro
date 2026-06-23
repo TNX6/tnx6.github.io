@@ -7630,7 +7630,7 @@ const metadata = {
         `).join('')
       }
 
-      function renderInventory(items) {
+      function renderInventoryRaw(items) {
         const box = $('inventory')
         if (!box) return
 
@@ -7664,6 +7664,86 @@ const metadata = {
           })
         })
       }
+
+      const INVENTORY_PAGE_SIZE_V2 = 6;
+      let inventoryPageV2 = 1;
+      let inventoryPageKeyV2 = "";
+
+      function getInventoryPageKeyV2() {
+        try {
+          const viewedId = String(userId(state.activeUser) || get(state.activeUser, ['twitchId', 'twitch_id'], '') || '').trim();
+          const viewedLogin = String(userLogin(state.activeUser) || get(state.activeUser, ['login', 'userLogin'], '') || '').trim().toLowerCase();
+          return viewedId || viewedLogin || "";
+        } catch {
+          return "";
+        }
+      }
+
+      function renderInventoryPaginationV2(totalItems, totalPages) {
+        const box = $('inventory');
+
+        if (!box) return;
+
+        box.querySelectorAll('.inventory-pagination, .inventory-pagination-v2').forEach((el) => el.remove());
+
+        if (totalItems <= INVENTORY_PAGE_SIZE_V2) return;
+
+        const controls = document.createElement('div');
+        controls.className = 'inventory-pagination-v2';
+        controls.innerHTML = `
+          <button type="button" class="inventory-page-btn" data-inventory-page-v2="prev" ${inventoryPageV2 <= 1 ? 'disabled' : ''}>السابق</button>
+          <span class="inventory-page-info">صفحة ${formatNumber(inventoryPageV2)} / ${formatNumber(totalPages)}</span>
+          <button type="button" class="inventory-page-btn" data-inventory-page-v2="next" ${inventoryPageV2 >= totalPages ? 'disabled' : ''}>التالي</button>
+        `;
+
+        const handler = (event) => {
+          const button = event.target.closest('[data-inventory-page-v2]');
+          if (!button || button.disabled) return;
+
+          const direction = button.dataset.inventoryPageV2;
+
+          if (direction === 'prev') {
+            inventoryPageV2 -= 1;
+          } else if (direction === 'next') {
+            inventoryPageV2 += 1;
+          }
+
+          renderInventory(window.__tnxInventoryFullList || []);
+        };
+
+        if (typeof addListener === 'function') {
+          addListener(controls, 'click', handler);
+        } else {
+          controls.addEventListener('click', handler);
+        }
+
+        box.appendChild(controls);
+      }
+
+      function renderInventory(items) {
+        const list = Array.isArray(items) ? items : [];
+        window.__tnxInventoryFullList = list;
+
+        const key = getInventoryPageKeyV2();
+
+        if (key !== inventoryPageKeyV2) {
+          inventoryPageKeyV2 = key;
+          inventoryPageV2 = 1;
+        }
+
+        const totalPages = Math.max(1, Math.ceil(list.length / INVENTORY_PAGE_SIZE_V2));
+        inventoryPageV2 = Math.max(1, Math.min(inventoryPageV2, totalPages));
+
+        const start = (inventoryPageV2 - 1) * INVENTORY_PAGE_SIZE_V2;
+        const pageItems = list.slice(start, start + INVENTORY_PAGE_SIZE_V2);
+
+        renderInventoryRaw(pageItems);
+
+        requestAnimationFrame(() => {
+          renderInventoryPaginationV2(list.length, totalPages);
+        });
+      }
+
 
 
 
