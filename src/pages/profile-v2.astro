@@ -5956,6 +5956,120 @@ const metadata = {
       }
     }
 
+
+    /* Profile V2 scale and width polish */
+    .profile-v2-layout {
+      width: min(1180px, calc(100% - 56px)) !important;
+      margin: 34px auto 80px !important;
+    }
+
+    .profile-v2-shell {
+      border-radius: 28px !important;
+    }
+
+    .profile-v2-layout .v2-cover {
+      min-height: 260px !important;
+      padding: 30px 34px 30px !important;
+    }
+
+    .profile-v2-layout .v2-profile-head {
+      width: min(780px, calc(100% - 200px)) !important;
+      max-width: 780px !important;
+      gap: 22px !important;
+    }
+
+    .profile-v2-layout .v2-avatar-wrap {
+      width: 132px !important;
+      height: 132px !important;
+    }
+
+    .profile-v2-layout .v2-name-row .display-name {
+      font-size: clamp(40px, 4.5vw, 58px) !important;
+    }
+
+    .profile-v2-layout .v2-identity .bio {
+      font-size: 15px !important;
+      max-width: 680px !important;
+    }
+
+    .profile-v2-layout .v2-mail-btn {
+      left: 34px !important;
+      min-width: 146px !important;
+      min-height: 54px !important;
+      font-size: 15px !important;
+    }
+
+    .profile-v2-layout .v2-stat-item {
+      min-height: 82px !important;
+    }
+
+    .profile-v2-layout .v2-stat-item .stat-value {
+      font-size: 23px !important;
+    }
+
+    .profile-v2-layout .v2-level-section {
+      padding: 34px 38px !important;
+      gap: 34px !important;
+    }
+
+    .profile-v2-layout .v2-level-info h2 {
+      font-size: 28px !important;
+    }
+
+    .profile-v2-layout .v2-level-ring-wrap {
+      width: 124px !important;
+      height: 124px !important;
+    }
+
+    .profile-v2-layout .v2-content {
+      padding: 22px !important;
+      gap: 20px !important;
+    }
+
+    .profile-v2-layout .v2-main-stack,
+    .profile-v2-layout .v2-side-stack {
+      gap: 18px !important;
+    }
+
+    .profile-v2-layout .v2-card {
+      border-radius: 20px !important;
+    }
+
+    .profile-v2-layout .v2-card .card-header {
+      padding: 18px 20px 0 !important;
+    }
+
+    .profile-v2-layout .v2-card .card-title {
+      font-size: 16px !important;
+    }
+
+    .profile-v2-layout #inventory {
+      padding: 16px 20px 20px !important;
+      gap: 12px !important;
+    }
+
+    .profile-v2-layout #badges {
+      padding: 16px 20px 20px !important;
+      gap: 10px !important;
+    }
+
+    @media (max-width: 940px) {
+      .profile-v2-layout {
+        width: min(100% - 24px, 760px) !important;
+        margin: 18px auto 60px !important;
+      }
+
+      .profile-v2-layout .v2-profile-head {
+        width: 100% !important;
+        max-width: none !important;
+      }
+
+      .profile-v2-layout .v2-avatar-wrap {
+        width: 118px !important;
+        height: 118px !important;
+      }
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
