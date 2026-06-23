@@ -8096,9 +8096,24 @@ const metadata = {
               try {
                 close();
               } catch {}
+
+              try {
+                document
+                  .querySelectorAll('.item-detail-modal, .inventory-item-modal, .profile-item-modal, .item-modal, .modal-backdrop, .modal-overlay')
+                  .forEach((el) => {
+                    if (
+                      el.textContent?.includes('استخدام') ||
+                      el.textContent?.includes('إهداء') ||
+                      el.textContent?.includes('عرض في السوق') ||
+                      el.textContent?.includes('بيع')
+                    ) {
+                      el.remove();
+                    }
+                  });
+              } catch {}
             };
 
-            setTimeout(closeInventorySellModalAfterSuccess, 500)
+            setTimeout(closeInventorySellModalAfterSuccess, 100)
           } catch (error) {
             msg.className = 'inventory-sell-message err'
 
