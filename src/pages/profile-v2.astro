@@ -7746,6 +7746,74 @@ const metadata = {
         return null;
       }
 
+
+      function activeInventoryReservationKey() {
+        const viewedId = String(userId(state.activeUser) || get(state.activeUser, ['twitchId', 'twitch_id'], '') || '').trim();
+        const viewedLogin = String(userLogin(state.activeUser) || get(state.activeUser, ['login', 'userLogin'], '') || '').trim().toLowerCase();
+
+        return viewedId || viewedLogin || '';
+      }
+
+      async function fetchInventorySellReservations() {
+        const viewedId = String(userId(state.activeUser) || get(state.activeUser, ['twitchId', 'twitch_id'], '') || '').trim();
+        const viewedLogin = String(userLogin(state.activeUser) || get(state.activeUser, ['login', 'userLogin'], '') || '').trim().toLowerCase();
+
+        const params = new URLSearchParams();
+
+        if (viewedId) {
+          params.set('twitchId', viewedId);
+        } else if (viewedLogin) {
+          params.set('login', viewedLogin);
+        } else {
+          return [];
+        }
+
+        try {
+          const res = await fetch(TNX_API_ORIGIN + '/api/inventory/sell-reservations?' + params.toString(), {
+            credentials: 'include',
+          });
+
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok || !data.ok) {
+            return [];
+          }
+
+          return Array.isArray(data.reservations) ? data.reservations : [];
+        } catch {
+          return [];
+        }
+      }
+
+      async function applyRemoteSellReservationsToInventory(items) {
+        if (!Array.isArray(items) || !items.length) {
+          return false;
+        }
+
+        const reservations = await fetchInventorySellReservations();
+
+        if (!reservations.length) {
+          return false;
+        }
+
+        let changed = false;
+
+        for (const reservation of reservations) {
+          const itemName = String(reservation.itemName || '').trim();
+          const quantity = Math.max(0, Math.floor(Number(reservation.quantity || 0)));
+
+          if (!itemName || quantity <= 0) {
+            continue;
+          }
+
+          if (applyLocalSellToInventory(items, itemName, quantity)) {
+            changed = true;
+          }
+        }
+
+        return changed;
+      }
+
       function applyLocalSellToInventory(items, soldName, quantity) {
         const wanted = compactInventoryName(soldName);
         const amount = Math.max(1, Math.floor(Number(quantity || 1)));
