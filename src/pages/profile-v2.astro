@@ -71,6 +71,8 @@ const metadata = {
         <section id="profileView" class="profile-page profile-v2-layout hidden">
           <section class="profile-v2-shell">
             <div class="v2-cover" id="cover">
+              <div class="v2-cover-bg" aria-hidden="true"></div>
+              <div class="v2-cover-shade" aria-hidden="true"></div>
               <canvas id="coverCanvas" class="v2-cover-canvas"></canvas>
 
               <button class="v2-mail-btn" type="button" id="openMailButton">
@@ -6015,6 +6017,73 @@ const metadata = {
     .profile-v2-layout .v2-identity .bio {
       color: rgba(255,255,255,.68) !important;
       text-shadow: 0 4px 16px rgba(0,0,0,.58) !important;
+    }
+
+
+    /* Profile V2 isolated banner layer */
+    .profile-v2-layout .v2-cover {
+      position: relative !important;
+      isolation: isolate !important;
+      overflow: hidden !important;
+      min-height: 270px !important;
+      padding: 30px 34px !important;
+      background: #060608 !important;
+      border-bottom: 1px solid rgba(255,255,255,.055) !important;
+    }
+
+    .profile-v2-layout .v2-cover::before,
+    .profile-v2-layout .v2-cover::after {
+      display: none !important;
+      content: none !important;
+      background: none !important;
+    }
+
+    .profile-v2-layout .v2-cover-bg {
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 0 !important;
+      pointer-events: none !important;
+      background-image: var(--cover-image) !important;
+      background-size: cover !important;
+      background-position: center center !important;
+      background-repeat: no-repeat !important;
+      opacity: .72 !important;
+      filter: brightness(.72) saturate(.92) contrast(1.03) !important;
+      transform: scale(1.01) !important;
+    }
+
+    .profile-v2-layout .v2-cover-shade {
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 1 !important;
+      pointer-events: none !important;
+      background:
+        linear-gradient(to top, #060608 0%, rgba(6,6,8,.30) 48%, rgba(6,6,8,.16) 100%),
+        linear-gradient(90deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.18) 46%, rgba(0,0,0,.68) 100%),
+        radial-gradient(circle at 78% 55%, rgba(255,223,138,.10), transparent 34%) !important;
+    }
+
+    .profile-v2-layout .v2-cover-canvas {
+      display: none !important;
+    }
+
+    .profile-v2-layout .v2-profile-head,
+    .profile-v2-layout .v2-mail-btn {
+      position: relative !important;
+      z-index: 3 !important;
+    }
+
+    .profile-v2-layout .v2-profile-head {
+      transform: translateY(8px) !important;
+    }
+
+    .profile-v2-layout .v2-name-row .display-name {
+      text-shadow: 0 8px 26px rgba(0,0,0,.72) !important;
+    }
+
+    .profile-v2-layout .v2-identity .bio {
+      color: rgba(255,255,255,.72) !important;
+      text-shadow: 0 4px 16px rgba(0,0,0,.70) !important;
     }
 
 </style>
