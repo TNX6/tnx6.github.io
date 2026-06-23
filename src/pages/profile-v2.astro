@@ -6070,6 +6070,26 @@ const metadata = {
       }
     }
 
+
+    /* Profile V2 uses original cover variable */
+    .profile-v2-layout .v2-cover {
+      background:
+        linear-gradient(to top, rgba(6,6,8,1), rgba(6,6,8,.22) 55%, rgba(6,6,8,.58)),
+        linear-gradient(90deg, rgba(0,0,0,.34), rgba(0,0,0,.62)),
+        var(--cover-image),
+        radial-gradient(circle at center, #292014, #070707 65%) !important;
+      background-size: cover !important;
+      background-position: center center !important;
+      background-repeat: no-repeat !important;
+    }
+
+    .profile-v2-layout .v2-cover::after {
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.72), transparent 52%, rgba(0,0,0,.30)),
+        linear-gradient(to top, rgba(6,6,8,.82), transparent 58%),
+        radial-gradient(circle at 50% 100%, rgba(215,168,79,.14), transparent 36%) !important;
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
