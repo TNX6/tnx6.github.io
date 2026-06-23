@@ -6071,49 +6071,30 @@ const metadata = {
     }
 
 
-    /* Profile V2 uses original cover variable */
-    .profile-v2-layout .v2-cover {
-      background:
-        linear-gradient(to top, rgba(6,6,8,1), rgba(6,6,8,.22) 55%, rgba(6,6,8,.58)),
-        linear-gradient(90deg, rgba(0,0,0,.34), rgba(0,0,0,.62)),
-        var(--cover-image),
-        radial-gradient(circle at center, #292014, #070707 65%) !important;
-      background-size: cover !important;
-      background-position: center center !important;
-      background-repeat: no-repeat !important;
-    }
-
-    .profile-v2-layout .v2-cover::after {
-      background:
-        linear-gradient(90deg, rgba(0,0,0,.72), transparent 52%, rgba(0,0,0,.30)),
-        linear-gradient(to top, rgba(6,6,8,.82), transparent 58%),
-        radial-gradient(circle at 50% 100%, rgba(215,168,79,.14), transparent 36%) !important;
-    }
 
 
-    /* Profile V2 controlled banner layer */
+    /* Profile V2 banner clean single source */
     .profile-v2-layout .v2-cover {
       position: relative !important;
       isolation: isolate !important;
       overflow: hidden !important;
       min-height: 270px !important;
-      background: #060608 !important;
+      padding: 30px 34px !important;
+      background:
+        linear-gradient(to top, rgba(6,6,8,1) 0%, rgba(6,6,8,.22) 50%, rgba(6,6,8,.12) 100%),
+        linear-gradient(90deg, rgba(0,0,0,.58) 0%, rgba(0,0,0,.16) 45%, rgba(0,0,0,.62) 100%),
+        var(--cover-image),
+        radial-gradient(circle at center, #292014, #070707 65%) !important;
+      background-size: cover, cover, cover, cover !important;
+      background-position: center, center, center 48%, center !important;
+      background-repeat: no-repeat !important;
       border-bottom: 1px solid rgba(255,255,255,.055) !important;
     }
 
     .profile-v2-layout .v2-cover::before {
-      content: "" !important;
-      position: absolute !important;
-      inset: 0 !important;
-      z-index: 0 !important;
-      pointer-events: none !important;
-      background-image: var(--cover-image) !important;
-      background-size: cover !important;
-      background-position: center 42% !important;
-      background-repeat: no-repeat !important;
-      opacity: .42 !important;
-      filter: brightness(.58) saturate(.78) contrast(1.05) !important;
-      transform: scale(1.025) !important;
+      display: none !important;
+      content: none !important;
+      background: none !important;
     }
 
     .profile-v2-layout .v2-cover::after {
@@ -6123,54 +6104,22 @@ const metadata = {
       z-index: 1 !important;
       pointer-events: none !important;
       background:
-        linear-gradient(to bottom, rgba(6,6,8,.36) 0%, rgba(6,6,8,.58) 48%, #060608 100%),
-        linear-gradient(90deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.24) 42%, rgba(0,0,0,.76) 100%),
-        radial-gradient(circle at 78% 54%, rgba(255,223,138,.12), transparent 34%) !important;
+        linear-gradient(to top, rgba(6,6,8,.78) 0%, rgba(6,6,8,.18) 48%, transparent 82%),
+        radial-gradient(circle at 78% 55%, rgba(255,223,138,.10), transparent 34%) !important;
+    }
+
+    .profile-v2-layout .v2-cover-canvas {
+      display: none !important;
+    }
+
+    .profile-v2-layout .v2-profile-head,
+    .profile-v2-layout .v2-mail-btn {
+      position: relative !important;
+      z-index: 3 !important;
     }
 
     .profile-v2-layout .v2-profile-head {
-      position: relative !important;
-      z-index: 3 !important;
-      transform: translateY(10px) !important;
-    }
-
-    .profile-v2-layout .v2-mail-btn {
-      position: absolute !important;
-      z-index: 3 !important;
-      left: 34px !important;
-      right: auto !important;
-      bottom: 36px !important;
-    }
-
-    .profile-v2-layout .v2-name-row .display-name {
-      text-shadow: 0 8px 24px rgba(0,0,0,.55) !important;
-    }
-
-    .profile-v2-layout .v2-identity .bio {
-      color: rgba(255,255,255,.66) !important;
-      text-shadow: 0 4px 16px rgba(0,0,0,.55) !important;
-    }
-
-    .profile-v2-layout .v2-name-row .handle,
-    .profile-v2-layout .v2-identity .chip {
-      backdrop-filter: blur(10px) !important;
-    }
-
-    @media (max-width: 940px) {
-      .profile-v2-layout .v2-cover {
-        min-height: 310px !important;
-      }
-
-      .profile-v2-layout .v2-profile-head {
-        transform: none !important;
-      }
-
-      .profile-v2-layout .v2-mail-btn {
-        position: relative !important;
-        left: auto !important;
-        right: auto !important;
-        bottom: auto !important;
-      }
+      transform: translateY(8px) !important;
     }
 
 </style>
