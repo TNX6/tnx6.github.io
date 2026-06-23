@@ -8021,9 +8021,13 @@ const metadata = {
               ? 'تم تسجيل الطلب. Streamer.bot شغال وبيتنفذ قريب.'
               : 'تم تسجيل الطلب Pending. بيتنفذ أول ما تشغل Streamer.bot.'
 
-            applyLocalSellToInventory(items, name, qty);
-            renderInventory(items);
-            enhanceInventorySellButtons(items);
+            try {
+              applyLocalSellToInventory(items, name, qty);
+              renderInventory(items);
+              enhanceInventorySellButtons(items);
+            } catch (uiError) {
+              console.warn('Sell request succeeded, but local inventory UI update failed:', uiError);
+            }
 
             submit.textContent = 'تم التسجيل'
           } catch (error) {
