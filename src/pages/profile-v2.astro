@@ -7814,6 +7814,61 @@ const metadata = {
         return changed;
       }
 
+
+      function updateInventoryItemDomAfterSell(soldName, quantity) {
+        const box = $('inventory');
+
+        if (!box) {
+          return false;
+        }
+
+        const wanted = compactInventoryName(soldName);
+        const amount = Math.max(1, Math.floor(Number(quantity || 1)));
+        let changed = false;
+
+        box.querySelectorAll('[data-sell-item]').forEach((button) => {
+          const buttonName = button.dataset.sellItem || '';
+
+          if (compactInventoryName(buttonName) !== wanted) {
+            return;
+          }
+
+          const current = Math.max(0, Math.floor(Number(button.dataset.sellQty || 0)));
+          const next = Math.max(0, current - amount);
+          const card = button.closest('.item');
+
+          if (next <= 0) {
+            if (card) {
+              card.remove();
+              changed = true;
+            }
+
+            return;
+          }
+
+          button.dataset.sellQty = String(next);
+
+          const row = button.closest('.inventory-sell-row');
+          if (row) {
+            const priceText = row.querySelector('.inventory-sell-price');
+            if (priceText) {
+              const meta = findCatalogItemByName(buttonName);
+              const price = meta && !isSaleDisabled(meta) ? itemSellPrice(meta) : 0;
+              priceText.textContent = 'بيع: ' + formatNumber(price) + ' نقطة';
+            }
+          }
+
+          changed = true;
+        });
+
+        if (!box.querySelector('.item')) {
+          box.innerHTML = '<div class="empty">ما عنده أغراض في الحقيبة.</div>';
+          changed = true;
+        }
+
+        return changed;
+      }
+
       function applyLocalSellToInventory(items, soldName, quantity) {
         const wanted = compactInventoryName(soldName);
         const amount = Math.max(1, Math.floor(Number(quantity || 1)));
@@ -8022,11 +8077,17 @@ const metadata = {
               : 'تم تسجيل الطلب Pending. بيتنفذ أول ما تشغل Streamer.bot.'
 
             try {
-              applyLocalSellToInventory(items, name, qty);
-              renderInventory(items);
-              enhanceInventorySellButtons(items);
+              const localChanged = applyLocalSellToInventory(items, name, qty);
+
+              if (localChanged) {
+                renderInventory(items);
+                enhanceInventorySellButtons(items);
+              } else {
+                updateInventoryItemDomAfterSell(name, qty);
+              }
             } catch (uiError) {
               console.warn('Sell request succeeded, but local inventory UI update failed:', uiError);
+              updateInventoryItemDomAfterSell(name, qty);
             }
 
             submit.textContent = 'تم التسجيل'
