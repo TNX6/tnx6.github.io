@@ -6173,6 +6173,49 @@ const metadata = {
       }
     }
 
+
+    /* Fix V2 banner top gap */
+    .profile-v2-layout .v2-cover {
+      position: relative !important;
+      isolation: isolate !important;
+      overflow: hidden !important;
+      min-height: 270px !important;
+      background:
+        linear-gradient(to top, #060608 0%, rgba(6,6,8,.34) 52%, rgba(6,6,8,.38) 100%),
+        linear-gradient(90deg, rgba(0,0,0,.58) 0%, rgba(0,0,0,.22) 44%, rgba(0,0,0,.66) 100%),
+        var(--cover-image),
+        radial-gradient(circle at center, #292014, #070707 65%) !important;
+      background-size: cover, cover, cover, cover !important;
+      background-position: center, center, center top, center !important;
+      background-repeat: no-repeat !important;
+      border-bottom: 1px solid rgba(255,255,255,.055) !important;
+    }
+
+    .profile-v2-layout .v2-cover::before {
+      display: none !important;
+      content: none !important;
+    }
+
+    .profile-v2-layout .v2-cover::after {
+      content: "" !important;
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 1 !important;
+      pointer-events: none !important;
+      background:
+        linear-gradient(to top, rgba(6,6,8,.82), transparent 56%),
+        radial-gradient(circle at 78% 55%, rgba(255,223,138,.10), transparent 34%) !important;
+    }
+
+    .profile-v2-layout .v2-profile-head {
+      position: relative !important;
+      z-index: 3 !important;
+    }
+
+    .profile-v2-layout .v2-mail-btn {
+      z-index: 3 !important;
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
