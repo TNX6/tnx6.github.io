@@ -6070,6 +6070,32 @@ const metadata = {
       }
     }
 
+
+    /* Profile V2 real cover image */
+    .profile-v2-layout .v2-cover.has-v2-real-cover {
+      background:
+        linear-gradient(to top, #060608 0%, rgba(6,6,8,.30) 50%, rgba(6,6,8,.68) 100%),
+        linear-gradient(90deg, rgba(6,6,8,.18), rgba(6,6,8,.60)),
+        var(--v2-cover-url) center center / cover no-repeat !important;
+    }
+
+    .profile-v2-layout .v2-cover.has-v2-real-cover::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 58% at 70% 48%, transparent 0%, rgba(0,0,0,.18) 55%, rgba(0,0,0,.58) 100%),
+        linear-gradient(to top, rgba(6,6,8,.84), transparent 58%);
+    }
+
+    .profile-v2-layout .v2-cover.has-v2-real-cover .v2-profile-head,
+    .profile-v2-layout .v2-cover.has-v2-real-cover .v2-mail-btn {
+      position: relative;
+      z-index: 3;
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -7023,9 +7049,118 @@ const metadata = {
         if (fill) fill.style.width = next.percent + "%";
       }
 
+
+      /* Safe Profile V2 cover render */
+      function getV2CoverCandidate(user) {
+        const paths = [
+          ["cover"],
+          ["coverUrl"],
+          ["coverURL"],
+          ["coverImage"],
+          ["cover_image"],
+          ["cover_url"],
+          ["coverImageUrl"],
+          ["cover_image_url"],
+
+          ["banner"],
+          ["bannerUrl"],
+          ["bannerURL"],
+          ["bannerImage"],
+          ["banner_image"],
+          ["banner_url"],
+          ["bannerImageUrl"],
+          ["banner_image_url"],
+
+          ["background"],
+          ["backgroundUrl"],
+          ["backgroundURL"],
+          ["backgroundImage"],
+          ["background_image"],
+          ["background_url"],
+          ["backgroundImageUrl"],
+          ["background_image_url"],
+
+          ["profile", "cover"],
+          ["profile", "coverUrl"],
+          ["profile", "banner"],
+          ["profile", "bannerUrl"],
+          ["profile", "background"],
+          ["profile", "backgroundUrl"],
+
+          ["customization", "cover"],
+          ["customization", "coverUrl"],
+          ["customization", "banner"],
+          ["customization", "bannerUrl"],
+          ["customization", "background"],
+          ["customization", "backgroundUrl"],
+
+          ["cosmetics", "cover"],
+          ["cosmetics", "coverUrl"],
+          ["cosmetics", "banner"],
+          ["cosmetics", "bannerUrl"],
+          ["cosmetics", "background"],
+          ["cosmetics", "backgroundUrl"]
+        ];
+
+        for (const path of paths) {
+          let cur = user;
+
+          for (const key of path) {
+            if (!cur || typeof cur !== "object") {
+              cur = "";
+              break;
+            }
+
+            cur = cur[key];
+          }
+
+          if (cur && typeof cur === "object") {
+            cur = cur.url || cur.src || cur.href || cur.image || "";
+          }
+
+          const url = String(cur || "").trim();
+
+          if (
+            url &&
+            (
+              /^https?:\/\//i.test(url) ||
+              /^\//.test(url) ||
+              /^data:image\//i.test(url)
+            )
+          ) {
+            return { url, path: path.join(".") };
+          }
+        }
+
+        return { url: "", path: "" };
+      }
+
+      function renderV2Cover(user) {
+        try {
+          const cover = $("cover");
+          if (!cover) return;
+
+          const found = getV2CoverCandidate(user);
+          window.__tnxV2CoverDebug = found;
+
+          if (!found.url) {
+            cover.classList.remove("has-v2-real-cover");
+            cover.style.removeProperty("--v2-cover-url");
+            return;
+          }
+
+          const safeUrl = found.url.replace(/\\/g, "\\\\").replace(/"/g, "\\"");
+          cover.style.setProperty("--v2-cover-url", 'url("' + safeUrl + '")');
+          cover.classList.add("has-v2-real-cover");
+        } catch (error) {
+          console.warn("V2 cover render skipped:", error);
+        }
+      }
+
       function renderProfile(rawUser) {
         const user = mergeUser(rawUser)
         state.activeUser = user
+        renderV2Cover(user);
 
         $('searchView')?.classList.add('hidden')
         $('notFoundView')?.classList.add('hidden')
