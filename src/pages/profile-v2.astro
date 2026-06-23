@@ -6216,6 +6216,55 @@ const metadata = {
       z-index: 3 !important;
     }
 
+
+    /* FINAL PROFILE V2 BANNER - single source */
+    .profile-v2-layout .v2-cover {
+      position: relative !important;
+      isolation: isolate !important;
+      overflow: hidden !important;
+      min-height: 270px !important;
+      padding: 30px 34px !important;
+      background:
+        linear-gradient(to top, rgba(7,7,7,1) 0%, rgba(7,7,7,.18) 55%, rgba(7,7,7,.32) 100%),
+        var(--cover-image),
+        radial-gradient(circle at center, #292014, #070707 65%) !important;
+      background-size: cover, cover, cover !important;
+      background-position: center center, center center, center center !important;
+      background-repeat: no-repeat !important;
+      border-bottom: 1px solid rgba(255,255,255,.055) !important;
+    }
+
+    .profile-v2-layout .v2-cover::before {
+      display: none !important;
+      content: none !important;
+      background: none !important;
+    }
+
+    .profile-v2-layout .v2-cover::after {
+      content: "" !important;
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 1 !important;
+      pointer-events: none !important;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.72), transparent 50%, rgba(0,0,0,.32)),
+        radial-gradient(circle at 50% 100%, rgba(215,168,79,.16), transparent 35%) !important;
+    }
+
+    .profile-v2-layout .v2-cover-canvas {
+      display: none !important;
+    }
+
+    .profile-v2-layout .v2-profile-head,
+    .profile-v2-layout .v2-mail-btn {
+      position: relative !important;
+      z-index: 3 !important;
+    }
+
+    .profile-v2-layout .v2-profile-head {
+      transform: translateY(8px) !important;
+    }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
