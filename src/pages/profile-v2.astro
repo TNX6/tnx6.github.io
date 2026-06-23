@@ -6288,7 +6288,262 @@ const metadata = {
       }
     }
 
-</style>
+
+    /* Profile V2 inventory sell UI */
+    .profile-v2-layout .item {
+      padding-bottom: 54px !important;
+    }
+
+    .profile-v2-layout .inventory-sell-row {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      z-index: 3;
+    }
+
+    .profile-v2-layout .inventory-sell-price {
+      min-width: 0;
+      color: rgba(255,255,255,.55);
+      font-size: 11px;
+      font-weight: 850;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .profile-v2-layout .inventory-sell-btn {
+      min-height: 29px;
+      padding: 0 12px;
+      border: 1px solid rgba(255, 223, 138, .35);
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
+        rgba(215,168,79,.13);
+      color: #ffdf8a;
+      font-size: 12px;
+      font-weight: 1000;
+      cursor: pointer;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease, opacity .14s ease;
+    }
+
+    .profile-v2-layout .inventory-sell-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 223, 138, .62);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04)),
+        rgba(215,168,79,.20);
+    }
+
+    .profile-v2-layout .inventory-sell-btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .inventory-sell-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(0,0,0,.70);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .inventory-sell-box {
+      width: min(520px, 100%);
+      border-radius: 28px;
+      border: 1px solid rgba(255, 223, 138, .20);
+      background:
+        radial-gradient(circle at 80% 0%, rgba(215,168,79,.14), transparent 36%),
+        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025)),
+        rgba(10,10,14,.98);
+      box-shadow: 0 34px 100px rgba(0,0,0,.62);
+      overflow: hidden;
+      direction: rtl;
+    }
+
+    .inventory-sell-head {
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .inventory-sell-head h3 {
+      margin: 0;
+      color: #ffdf8a;
+      font-size: 22px;
+      font-weight: 1000;
+    }
+
+    .inventory-sell-close {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .inventory-sell-body {
+      padding: 20px;
+    }
+
+    .inventory-sell-name {
+      margin: 0 0 8px;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 1000;
+    }
+
+    .inventory-sell-note {
+      margin: 0 0 16px;
+      color: rgba(255,255,255,.58);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .inventory-sell-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .inventory-sell-stat {
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.045);
+    }
+
+    .inventory-sell-stat span {
+      display: block;
+      margin-bottom: 6px;
+      color: rgba(255,255,255,.48);
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .inventory-sell-stat strong {
+      display: block;
+      color: #ffdf8a;
+      font-size: 15px;
+      font-weight: 1000;
+    }
+
+    .inventory-sell-qty {
+      display: grid;
+      gap: 8px;
+      margin: 14px 0 18px;
+    }
+
+    .inventory-sell-qty label {
+      color: rgba(255,255,255,.75);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .inventory-sell-qty input {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 223, 138, .20);
+      background: rgba(0,0,0,.34);
+      color: #fff;
+      padding: 0 14px;
+      font-size: 18px;
+      font-weight: 1000;
+      outline: none;
+    }
+
+    .inventory-sell-total {
+      margin-bottom: 16px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 223, 138, .16);
+      background: rgba(215,168,79,.08);
+      color: rgba(255,255,255,.78);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .inventory-sell-total strong {
+      color: #ffdf8a;
+      font-size: 17px;
+      font-weight: 1000;
+    }
+
+    .inventory-sell-message {
+      min-height: 24px;
+      margin-bottom: 14px;
+      color: rgba(255,255,255,.72);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .inventory-sell-message.ok {
+      color: #7CFFB2;
+    }
+
+    .inventory-sell-message.err {
+      color: #ff9b9b;
+    }
+
+    .inventory-sell-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .inventory-sell-actions button {
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 15px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.86);
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .inventory-sell-actions .primary {
+      border-color: rgba(255, 223, 138, .32);
+      background: linear-gradient(135deg, #ffdf8a, #d7a84f);
+      color: #15100a;
+    }
+
+    .inventory-sell-actions button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    @media (max-width: 560px) {
+      .inventory-sell-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .inventory-sell-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+      }
+    }
+
+  </style>
 
   <script is:inline data-astro-rerun data-reinit>
     ;(async () => {
@@ -7290,6 +7545,7 @@ const metadata = {
 
         renderChips(chipsFor(user, level.level, badges, inventory))
         renderInventory(inventory)
+        enhanceInventorySellButtons(inventory)
         renderBadges(badges)
         renderMail(mail)
       }
@@ -7375,6 +7631,274 @@ const metadata = {
           })
         })
       }
+
+
+
+      /* INVENTORY SELL UI FUNCTIONS */
+      const TNX_API_ORIGIN = 'https://api.tnx6.xyz'
+
+      function findCatalogItemByName(name) {
+        const target = String(name || '').trim()
+        const normalizedTarget = normalize(target)
+
+        return (state.items || []).find((item) => {
+          const text = String(item.text || item.name || '').trim()
+          return text === target || normalize(text) === normalizedTarget
+        }) || null
+      }
+
+      function itemSellPrice(meta) {
+        const value = Math.max(0, Math.floor(Number(meta?.value || 0)))
+        return Math.max(1, Math.floor(value * 0.5))
+      }
+
+      function isSaleDisabled(meta) {
+        if (!meta) return true
+        return meta.excludeSale === true || meta.excludeSale === 1 || String(meta.excludeSale).toLowerCase() === 'true'
+      }
+
+      async function getCurrentAccount() {
+        if (state.currentAccountLoaded) return state.currentAccount || null
+        state.currentAccountLoaded = true
+
+        try {
+          const res = await fetch(TNX_API_ORIGIN + '/api/me', {
+            credentials: 'include',
+            cache: 'no-store',
+          })
+
+          if (!res.ok) return null
+
+          const data = await res.json()
+          state.currentAccount = data?.user || null
+          return state.currentAccount
+        } catch {
+          return null
+        }
+      }
+
+      function accountMatchesViewedUser(account) {
+        if (!account || !state.activeUser) return false
+
+        const accountLogin = normalize(account.login || account.displayName || '')
+        const viewedLogin = normalize(userLogin(state.activeUser) || userName(state.activeUser) || '')
+
+        const accountId = String(account.twitchId || account.twitch_id || account.id || '')
+        const viewedId = String(userId(state.activeUser) || get(state.activeUser, ['twitchId', 'twitch_id'], '') || '')
+
+        return Boolean(
+          (accountId && viewedId && accountId === viewedId) ||
+          (accountLogin && viewedLogin && accountLogin === viewedLogin)
+        )
+      }
+
+      function sortedInventoryForSell(items) {
+        return [...(items || [])].sort((a, b) =>
+          Number(b.qty || b.quantity || 0) - Number(a.qty || a.quantity || 0) ||
+          String(a.name || '').localeCompare(String(b.name || ''))
+        )
+      }
+
+      function setupInventorySellHandler() {
+        const box = $('inventory')
+        if (!box || box.dataset.sellHandlerReady === '1') return
+
+        box.dataset.sellHandlerReady = '1'
+
+        addListener(box, 'click', (event) => {
+          const button = event.target.closest('[data-sell-item]')
+          if (!button) return
+
+          event.preventDefault()
+          event.stopPropagation()
+
+          const name = button.dataset.sellItem || ''
+          const qty = Math.max(1, Math.floor(Number(button.dataset.sellQty || 1)))
+          const item = { name, qty }
+          const meta = findCatalogItemByName(name)
+
+          openInventorySellModal(item, meta)
+        })
+      }
+
+      async function enhanceInventorySellButtons(items) {
+        const box = $('inventory')
+        if (!box || !items?.length) return
+
+        setupInventorySellHandler()
+
+        const account = await getCurrentAccount()
+        const canSell = accountMatchesViewedUser(account)
+
+        box.querySelectorAll('.inventory-sell-row').forEach((row) => row.remove())
+
+        if (!canSell) return
+
+        const sorted = sortedInventoryForSell(items)
+        const cards = [...box.querySelectorAll('.item')]
+
+        cards.forEach((card, index) => {
+          const item = sorted[index]
+          if (!item) return
+
+          const name = String(item.name || '').trim()
+          const qty = Math.max(0, Math.floor(Number(item.qty || item.quantity || 0)))
+          const meta = findCatalogItemByName(name)
+          const disabled = !meta || isSaleDisabled(meta) || qty <= 0
+          const price = meta && !isSaleDisabled(meta) ? itemSellPrice(meta) : 0
+
+          const row = document.createElement('div')
+          row.className = 'inventory-sell-row'
+
+          row.innerHTML = `
+            <span class="inventory-sell-price">${disabled ? 'غير قابل للبيع' : 'بيع: ' + formatNumber(price) + ' نقطة'}</span>
+            <button
+              type="button"
+              class="inventory-sell-btn"
+              data-sell-item="${esc(name)}"
+              data-sell-qty="${esc(qty)}"
+              ${disabled ? 'disabled' : ''}
+            >بيع</button>
+          `
+
+          card.appendChild(row)
+        })
+      }
+
+      function openInventorySellModal(item, meta) {
+        const name = String(item.name || '').trim()
+        const owned = Math.max(1, Math.floor(Number(item.qty || item.quantity || 1)))
+        const priceEach = itemSellPrice(meta)
+        const value = Math.max(0, Math.floor(Number(meta?.value || 0)))
+
+        const modal = document.createElement('div')
+        modal.className = 'inventory-sell-modal'
+        modal.innerHTML = `
+          <div class="inventory-sell-box" role="dialog" aria-modal="true">
+            <div class="inventory-sell-head">
+              <h3>بيع الغرض</h3>
+              <button class="inventory-sell-close" type="button" data-sell-close>×</button>
+            </div>
+
+            <div class="inventory-sell-body">
+              <p class="inventory-sell-name">${esc(name)}</p>
+              <p class="inventory-sell-note">
+                البيع يسجل كطلب في النظام. إذا Streamer.bot شغال بيتنفذ قريب، وإذا مقفل يبقى Pending لين تشغله.
+              </p>
+
+              <div class="inventory-sell-grid">
+                <div class="inventory-sell-stat">
+                  <span>المتوفر</span>
+                  <strong>${formatNumber(owned)}</strong>
+                </div>
+                <div class="inventory-sell-stat">
+                  <span>قيمة الغرض</span>
+                  <strong>${formatNumber(value)}</strong>
+                </div>
+                <div class="inventory-sell-stat">
+                  <span>سعر البيع</span>
+                  <strong>${formatNumber(priceEach)}</strong>
+                </div>
+              </div>
+
+              <div class="inventory-sell-qty">
+                <label for="inventorySellQty">الكمية</label>
+                <input id="inventorySellQty" type="number" min="1" max="${owned}" value="1" inputmode="numeric" />
+              </div>
+
+              <div class="inventory-sell-total">
+                الإجمالي: <strong data-sell-total>${formatNumber(priceEach)}</strong> نقطة
+              </div>
+
+              <div class="inventory-sell-message" data-sell-message></div>
+
+              <div class="inventory-sell-actions">
+                <button type="button" data-sell-close>إلغاء</button>
+                <button type="button" class="primary" data-sell-submit>تأكيد البيع</button>
+              </div>
+            </div>
+          </div>
+        `
+
+        const close = () => modal.remove()
+        const qtyInput = modal.querySelector('#inventorySellQty')
+        const total = modal.querySelector('[data-sell-total]')
+        const msg = modal.querySelector('[data-sell-message]')
+        const submit = modal.querySelector('[data-sell-submit]')
+
+        const updateTotal = () => {
+          const qty = Math.max(1, Math.min(owned, Math.floor(Number(qtyInput.value || 1))))
+          qtyInput.value = String(qty)
+          total.textContent = formatNumber(qty * priceEach)
+        }
+
+        addListener(qtyInput, 'input', updateTotal)
+
+        modal.querySelectorAll('[data-sell-close]').forEach((button) => {
+          addListener(button, 'click', close)
+        })
+
+        addListener(modal, 'click', (event) => {
+          if (event.target === modal) close()
+        })
+
+        addListener(submit, 'click', async () => {
+          const qty = Math.max(1, Math.min(owned, Math.floor(Number(qtyInput.value || 1))))
+
+          submit.disabled = true
+          qtyInput.disabled = true
+          msg.className = 'inventory-sell-message'
+          msg.textContent = 'جاري تسجيل طلب البيع...'
+
+          try {
+            const res = await fetch(TNX_API_ORIGIN + '/api/me/inventory/sell', {
+              method: 'POST',
+              credentials: 'include',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                itemName: name,
+                quantity: qty,
+              }),
+            })
+
+            const data = await res.json().catch(() => ({}))
+
+            if (!res.ok || !data.ok) {
+              throw new Error(data.error || 'sell_failed')
+            }
+
+            msg.className = 'inventory-sell-message ok'
+            msg.textContent = data.botOnline
+              ? 'تم تسجيل الطلب. Streamer.bot شغال وبيتنفذ قريب.'
+              : 'تم تسجيل الطلب Pending. بيتنفذ أول ما تشغل Streamer.bot.'
+
+            submit.textContent = 'تم التسجيل'
+          } catch (error) {
+            msg.className = 'inventory-sell-message err'
+
+            const code = String(error?.message || '')
+
+            if (code === 'Unauthorized') {
+              msg.textContent = 'لازم تسجل دخولك بتويتش قبل البيع.'
+            } else if (code === 'Item sale is disabled') {
+              msg.textContent = 'هذا الغرض غير قابل للبيع.'
+            } else if (code === 'Not enough quantity') {
+              msg.textContent = 'الكمية غير كافية.'
+            } else {
+              msg.textContent = 'تعذر تسجيل البيع. جرّب بعد قليل.'
+            }
+
+            submit.disabled = false
+            qtyInput.disabled = false
+          }
+        })
+
+        document.body.appendChild(modal)
+        qtyInput.focus()
+      }
+
 
       function renderBadges(badges) {
         const box = $('badges')
