@@ -7699,7 +7699,85 @@ const metadata = {
         )
       }
 
-      function setupInventorySellHandler() {
+
+      function readInventoryItemQuantity(item) {
+        const raw = item?.qty ?? item?.quantity ?? item?.count ?? 0;
+        const value = Math.floor(Number(raw || 0));
+        return Number.isFinite(value) ? Math.max(0, value) : 0;
+      }
+
+      function writeInventoryItemQuantity(item, quantity) {
+        const next = Math.max(0, Math.floor(Number(quantity || 0)));
+
+        if (Object.prototype.hasOwnProperty.call(item, "qty")) {
+          item.qty = next;
+        }
+
+        if (Object.prototype.hasOwnProperty.call(item, "quantity")) {
+          item.quantity = next;
+        }
+
+        if (
+          !Object.prototype.hasOwnProperty.call(item, "qty") &&
+          !Object.prototype.hasOwnProperty.call(item, "quantity")
+        ) {
+          item.quantity = next;
+        }
+      }
+
+      function compactInventoryName(value) {
+        return String(value || "")
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, "");
+      }
+
+      function findInventoryItemByName(items, name) {
+        const wanted = compactInventoryName(name);
+
+        for (const item of items || []) {
+          const itemName = item?.name ?? item?.text ?? item?.itemName ?? "";
+
+          if (compactInventoryName(itemName) === wanted) {
+            return item;
+          }
+        }
+
+        return null;
+      }
+
+      function applyLocalSellToInventory(items, soldName, quantity) {
+        const wanted = compactInventoryName(soldName);
+        const amount = Math.max(1, Math.floor(Number(quantity || 1)));
+
+        if (!Array.isArray(items)) {
+          return false;
+        }
+
+        for (let i = 0; i < items.length; i += 1) {
+          const item = items[i];
+          const itemName = item?.name ?? item?.text ?? item?.itemName ?? "";
+
+          if (compactInventoryName(itemName) !== wanted) {
+            continue;
+          }
+
+          const current = readInventoryItemQuantity(item);
+          const next = Math.max(0, current - amount);
+
+          if (next <= 0) {
+            items.splice(i, 1);
+          } else {
+            writeInventoryItemQuantity(item, next);
+          }
+
+          return true;
+        }
+
+        return false;
+      }
+
+      function setupInventorySellHandler(items) {
         const box = $('inventory')
         if (!box || box.dataset.sellHandlerReady === '1') return
 
@@ -7725,7 +7803,7 @@ const metadata = {
         const box = $('inventory')
         if (!box || !items?.length) return
 
-        setupInventorySellHandler()
+        setupInventorySellHandler(items)
 
         const account = await getCurrentAccount()
         const canSell = accountMatchesViewedUser(account)
@@ -7765,7 +7843,7 @@ const metadata = {
         })
       }
 
-      function openInventorySellModal(item, meta) {
+      function openInventorySellModal(item, meta, items) {
         const name = String(item.name || '').trim()
         const apiItemName = String(meta?.text || meta?.name || name).trim() || name
         const owned = Math.max(1, Math.floor(Number(item.qty || item.quantity || 1)))
@@ -7874,6 +7952,10 @@ const metadata = {
             msg.textContent = data.botOnline
               ? 'تم تسجيل الطلب. Streamer.bot شغال وبيتنفذ قريب.'
               : 'تم تسجيل الطلب Pending. بيتنفذ أول ما تشغل Streamer.bot.'
+
+            applyLocalSellToInventory(items, name, qty);
+            renderInventory(items);
+            enhanceInventorySellButtons(items);
 
             submit.textContent = 'تم التسجيل'
           } catch (error) {
