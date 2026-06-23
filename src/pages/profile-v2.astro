@@ -8091,6 +8091,14 @@ const metadata = {
             }
 
             submit.textContent = 'تم التسجيل'
+
+            const closeInventorySellModalAfterSuccess = () => {
+              try {
+                close();
+              } catch {}
+            };
+
+            setTimeout(closeInventorySellModalAfterSuccess, 500)
           } catch (error) {
             msg.className = 'inventory-sell-message err'
 
