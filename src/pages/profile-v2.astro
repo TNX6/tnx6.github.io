@@ -9886,298 +9886,19 @@ const metadata = {
 
   <script is:inline src="/data/badge-meta.js?v=3"></script>
   <script src="/js/profile-badge-modal-test.js?v=31" defer data-astro-rerun>
-      /* Sell reservations inventory filter */
-      (function () {
-        if (window.__tnxSellReservationFilterInstalled) return;
-        window.__tnxSellReservationFilterInstalled = true;
-
-        const API_ORIGIN_FILTER = 'https://api.tnx6.xyz';
-
-        function cleanSellName(value) {
-          return String(value || '').trim().replace(/\s+/g, ' ').toLowerCase();
-        }
-
-        function getItemNameForSellFilter(item) {
-          return String(item?.name || item?.text || item?.itemName || item?.item_name || '').trim();
-        }
-
-        function getItemQtyForSellFilter(item) {
-          return Math.max(1, Math.floor(Number(item?.qty ?? item?.quantity ?? item?.count ?? 1)));
-        }
-
-        async function getSellFilterLogin() {
-          const params = new URLSearchParams(location.search);
-          const direct = params.get('user') || params.get('channel') || params.get('profile');
-
-          if (direct && direct !== 'success') {
-            return String(direct).trim().toLowerCase();
-          }
-
-          try {
-            const res = await fetch(API_ORIGIN_FILTER + '/api/me', {
-              credentials: 'include',
-              cache: 'no-store',
-            });
-
-            const data = await res.json();
-
-            return String(data?.user?.login || '').trim().toLowerCase();
-          } catch {
-            return '';
-          }
-        }
-
-        function rowsFromSellReservationResponse(data) {
-          if (Array.isArray(data?.reservations)) return data.reservations;
-          if (Array.isArray(data?.items)) return data.items;
-          if (Array.isArray(data?.results)) return data.results;
-          if (Array.isArray(data?.requests)) return data.requests;
-          return [];
-        }
-
-        function buildReservedSellMap(rows) {
-          const map = new Map();
-
-          for (const row of rows) {
-            const status = String(row.status || '').toLowerCase();
-
-            if (!['completed', 'pending', 'processing'].includes(status)) {
-              continue;
-            }
-
-            const name = cleanSellName(row.itemName || row.item_name || row.name);
-            const qty = Math.max(0, Math.floor(Number(row.quantity || row.qty || 0)));
-
-            if (!name || qty <= 0) continue;
-
-            map.set(name, (map.get(name) || 0) + qty);
-          }
-
-          return map;
-        }
-
-        function applySellReservationsToList(items, reservedMap) {
-          let changed = false;
-
-          const output = [];
-
-          for (const item of items || []) {
-            const name = getItemNameForSellFilter(item);
-            const key = cleanSellName(name);
-            const reserved = reservedMap.get(key) || 0;
-            const qty = getItemQtyForSellFilter(item);
-
-            if (reserved <= 0) {
-              output.push(item);
-              continue;
-            }
-
-            const remaining = qty - reserved;
-            changed = true;
-
-            if (remaining <= 0) {
-              continue;
-            }
-
-            const copy = { ...item };
-
-            if ('qty' in copy) copy.qty = remaining;
-            if ('quantity' in copy) copy.quantity = remaining;
-            if (!('qty' in copy) && !('quantity' in copy)) copy.qty = remaining;
-
-            output.push(copy);
-          }
-
-          return { changed, items: output };
-        }
-
-        let running = false;
-        let lastKey = '';
-
-        async function runSellReservationFilter() {
-          if (running) return;
-          if (window.__tnxSellReservationApplying) return;
-          if (typeof renderInventory !== 'function') return;
-          if (!Array.isArray(window.__tnxInventoryFullList)) return;
-
-          running = true;
-
-          try {
-            const login = await getSellFilterLogin();
-            if (!login) return;
-
-            const res = await fetch(API_ORIGIN_FILTER + '/api/inventory/sell-reservations?login=' + encodeURIComponent(login), {
-              cache: 'no-store',
-            });
-
-            const data = await res.json().catch(() => ({}));
-            if (!res.ok || !data.ok) return;
-
-            const rows = rowsFromSellReservationResponse(data);
-            const reservedMap = buildReservedSellMap(rows);
-            const key = JSON.stringify(Array.from(reservedMap.entries()).sort());
-
-            if (!reservedMap.size) return;
-
-            const result = applySellReservationsToList(window.__tnxInventoryFullList, reservedMap);
-
-            if (!result.changed) return;
-
-            lastKey = key;
-            window.__tnxSellReservationApplying = true;
-
-            try {
-              window.__tnxInventoryFullList = result.items;
-              renderInventory(result.items);
-            } finally {
-              window.__tnxSellReservationApplying = false;
-            }
-          } finally {
-            running = false;
-          }
-        }
-
-        setTimeout(runSellReservationFilter, 600);
-        setTimeout(runSellReservationFilter, 1800);
-        setInterval(runSellReservationFilter, 5000);
-      })();
-
-
-      /* Hide sold reserved item cards */
-      (function () {
-        if (window.__tnxHideSoldReservedItems) return;
-        window.__tnxHideSoldReservedItems = true;
-
-        const API = "https://api.tnx6.xyz";
-        let soldNames = new Set();
-
-        function norm(v) {
-          return String(v || "").trim().replace(/\s+/g, " ").toLowerCase();
-        }
-
-        function getLogin() {
-          const p = new URLSearchParams(location.search);
-          return norm(p.get("login") || p.get("user") || "tnx_6");
-        }
-
-        async function loadSoldReservations() {
-          const login = getLogin();
-
-          const res = await fetch(API + "/api/inventory/sell-reservations?login=" + encodeURIComponent(login), {
-            cache: "no-store"
-          });
-
-          const data = await res.json().catch(() => ({}));
-          const rows = Array.isArray(data.reservations) ? data.reservations : [];
-
-          soldNames = new Set();
-
-          for (const row of rows) {
-            const status = norm(row.status);
-
-            if (status !== "completed" && status !== "pending" && status !== "processing") continue;
-
-            const name = norm(row.itemName || row.item_name || row.name);
-
-            if (name) soldNames.add(name);
-          }
-
-          hideSoldCards();
-        }
-
-        function hideSoldCards() {
-          document.querySelectorAll("#inventory .item").forEach((card) => {
-            const name = norm(card.dataset.itemName || card.querySelector(".item-name")?.textContent);
-
-            if (soldNames.has(name)) {
-              card.remove();
-            }
-          });
-        }
-
-        setTimeout(loadSoldReservations, 300);
-        setTimeout(loadSoldReservations, 1200);
-        setInterval(loadSoldReservations, 5000);
-
-        new MutationObserver(hideSoldCards).observe(document.body, {
-          childList: true,
-          subtree: true
-        });
-      })();
-
 </script>
 </Layout>
 
 
-<script is:inline>
-/* FORCE_HIDE_SOLD_RESERVED_ITEMS_V2 */
-window.__tnxHideSoldReservedItems = true;
-
-(function () {
-  const API = "https://api.tnx6.xyz";
-  let soldNames = new Set();
-
-  function norm(v) {
-    return String(v || "").trim().replace(/\s+/g, " ").toLowerCase();
-  }
-
-  function getLogin() {
-    const p = new URLSearchParams(location.search);
-    return norm(p.get("login") || p.get("user") || "tnx_6");
-  }
-
-  function hideSoldCards() {
-    document.querySelectorAll("#inventory .item").forEach((card) => {
-      const name = norm(card.dataset.itemName || card.querySelector(".item-name")?.textContent);
-      if (soldNames.has(name)) card.remove();
-    });
-  }
-
-  async function refreshSoldList() {
-    try {
-      const login = getLogin();
-      const res = await fetch(API + "/api/inventory/sell-reservations?login=" + encodeURIComponent(login), {
-        cache: "no-store"
-      });
-
-      const data = await res.json();
-      const rows = Array.isArray(data.reservations) ? data.reservations : [];
-
-      soldNames = new Set();
-
-      for (const row of rows) {
-        const status = norm(row.status);
-        if (status !== "completed" && status !== "pending" && status !== "processing") continue;
-
-        const name = norm(row.itemName || row.item_name || row.name);
-        if (name) soldNames.add(name);
-      }
-
-      hideSoldCards();
-    } catch (e) {}
-  }
-
-  refreshSoldList();
-  setTimeout(refreshSoldList, 500);
-  setTimeout(refreshSoldList, 1500);
-  setInterval(refreshSoldList, 5000);
-
-  new MutationObserver(hideSoldCards).observe(document.body, {
-    childList: true,
-    subtree: true
-  });
-})();
-</script>
-
 
 
 <script is:inline>
-/* FORCE_HIDE_SOLD_RESERVED_ITEMS_V3 */
-window.__tnxHideSoldReservedItemsV3 = true;
+/* SAFE_SOLD_RESERVED_ITEMS_FILTER_V4 */
+window.__tnxSafeSoldReservedItemsV4 = true;
 
 (function () {
   const API = "https://api.tnx6.xyz";
-  let soldNames = [];
+  let reserved = new Map();
 
   function norm(v) {
     return String(v || "")
@@ -10193,108 +9914,105 @@ window.__tnxHideSoldReservedItemsV3 = true;
     return norm(p.get("login") || p.get("user") || "tnx_6");
   }
 
-  function rowsFromResponse(data) {
-    if (Array.isArray(data?.reservations)) return data.reservations;
-    if (Array.isArray(data?.items)) return data.items;
-    if (Array.isArray(data?.results)) return data.results;
-    if (Array.isArray(data?.requests)) return data.requests;
-    return [];
-  }
-
   function rowName(row) {
-    return norm(
-      row?.itemName ||
-      row?.item_name ||
-      row?.name ||
-      row?.item ||
-      row?.text ||
-      row?.title
-    );
+    return norm(row.itemName || row.item_name || row.name || row.item || row.text || row.title);
   }
 
-  function rowStatus(row) {
-    return norm(row?.status || "completed");
+  function rowQty(row) {
+    return Math.max(0, Math.floor(Number(row.quantity || row.qty || 0)));
   }
 
   function cardName(card) {
     return norm(
-      card.dataset?.itemName ||
-      card.dataset?.name ||
+      card.dataset.itemName ||
+      card.dataset.name ||
       card.querySelector(".item-name")?.textContent ||
-      card.querySelector("[data-item-name]")?.getAttribute("data-item-name") ||
-      card.textContent
+      ""
     );
   }
 
-  function cardCandidates() {
-    const inventory = document.querySelector("#inventory");
-    if (!inventory) return [];
+  function cardQty(card) {
+    const raw =
+      card.dataset.itemQty ||
+      card.dataset.qty ||
+      card.querySelector(".qty")?.textContent ||
+      "1";
 
-    const list = Array.from(inventory.querySelectorAll(".item, [data-item-name], button, article, li"));
-    if (list.length) return list;
-
-    return Array.from(inventory.children);
+    const n = String(raw).replace(/[^0-9]/g, "");
+    return Math.max(1, Math.floor(Number(n || 1)));
   }
 
-  function hideSoldCards() {
-    const cards = cardCandidates();
+  function setCardQty(card, qty) {
+    card.dataset.itemQty = String(qty);
 
-    for (const card of cards) {
-      if (!card || card.classList?.contains("inventory-pagination-v2")) continue;
-
-      const cName = cardName(card);
-      if (!cName) continue;
-
-      for (const sold of soldNames) {
-        if (!sold) continue;
-
-        if (cName === sold || cName.includes(sold) || sold.includes(cName)) {
-          card.remove();
-          break;
-        }
-      }
+    const q = card.querySelector(".qty");
+    if (q) {
+      const old = q.textContent || "";
+      q.textContent = old.includes("x") || old.includes("×") ? "x" + qty : String(qty);
     }
   }
 
-  async function refreshSoldList() {
+  async function loadReserved() {
     try {
       const login = getLogin();
-
       const res = await fetch(API + "/api/inventory/sell-reservations?login=" + encodeURIComponent(login), {
         cache: "no-store"
       });
 
       const data = await res.json().catch(() => ({}));
-      const rows = rowsFromResponse(data);
+      const rows = Array.isArray(data.reservations) ? data.reservations : [];
 
-      soldNames = [];
+      reserved = new Map();
 
       for (const row of rows) {
-        const status = rowStatus(row);
+        const status = norm(row.status);
 
         if (status !== "completed" && status !== "pending" && status !== "processing") continue;
 
         const name = rowName(row);
-        if (name) soldNames.push(name);
+        const qty = rowQty(row);
+
+        if (!name || qty <= 0) continue;
+
+        reserved.set(name, (reserved.get(name) || 0) + qty);
       }
 
-      window.__tnxSoldReservationNamesV3 = soldNames;
-      hideSoldCards();
+      window.__tnxReservedSoldItemsV4 = Array.from(reserved.entries());
+
+      applyFilter();
     } catch (e) {
-      window.__tnxSoldReservationErrorV3 = String(e?.message || e);
+      window.__tnxReservedSoldItemsErrorV4 = String(e && e.message ? e.message : e);
     }
   }
 
-  window.__tnxForceHideSoldCardsV3 = hideSoldCards;
-  window.__tnxRefreshSoldReservationsV3 = refreshSoldList;
+  function applyFilter() {
+    document.querySelectorAll("#inventory .item").forEach((card) => {
+      const name = cardName(card);
+      if (!name) return;
 
-  refreshSoldList();
-  setTimeout(refreshSoldList, 300);
-  setTimeout(refreshSoldList, 1000);
-  setTimeout(refreshSoldList, 2500);
-  setInterval(refreshSoldList, 5000);
+      const soldQty = reserved.get(name) || 0;
+      if (soldQty <= 0) return;
 
-  new MutationObserver(hideSoldCards).observe(document.body, {
+      const qty = cardQty(card);
+      const remaining = qty - soldQty;
+
+      if (remaining <= 0) {
+        card.remove();
+      } else {
+        setCardQty(card, remaining);
+      }
+    });
+  }
+
+  window.__tnxRefreshSoldReservedItemsV4 = loadReserved;
+  window.__tnxApplySoldReservedItemsV4 = applyFilter;
+
+  loadReserved();
+  setTimeout(loadReserved, 500);
+  setTimeout(loadReserved, 1500);
+  setInterval(loadReserved, 5000);
+
+  new MutationObserver(applyFilter).observe(document.body, {
     childList: true,
     subtree: true
   });
