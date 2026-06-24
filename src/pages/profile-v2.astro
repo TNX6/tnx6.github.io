@@ -6922,6 +6922,100 @@ const metadata = {
     }
   }
 
+
+  /* Item modal polish compact */
+
+  .item-detail-v3-status {
+    display: none !important;
+  }
+
+  .item-detail-v3-box {
+    width: min(540px, calc(100vw - 28px)) !important;
+    border-radius: 28px !important;
+    border: 1px solid rgba(240, 208, 96, .20) !important;
+    background:
+      radial-gradient(circle at 85% 0%, rgba(240, 208, 96, .14), transparent 36%),
+      linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
+      rgba(13, 13, 17, .98) !important;
+    box-shadow: 0 34px 110px rgba(0,0,0,.74) !important;
+  }
+
+  .item-detail-v3-head {
+    padding: 18px 20px !important;
+    border-bottom: 1px solid rgba(255,255,255,.08) !important;
+  }
+
+  .item-detail-v3-head h3 {
+    font-size: 21px !important;
+    font-weight: 1000 !important;
+    color: #fff !important;
+  }
+
+  .item-detail-v3-close {
+    border-radius: 14px !important;
+    background: rgba(255,255,255,.07) !important;
+    border: 1px solid rgba(255,255,255,.10) !important;
+  }
+
+  .item-detail-v3-close:hover {
+    background: rgba(255,80,80,.14) !important;
+    border-color: rgba(255,80,80,.32) !important;
+    color: #ff8b8b !important;
+  }
+
+  .item-detail-v3-hero {
+    grid-template-columns: 82px minmax(0, 1fr) !important;
+    padding: 16px !important;
+    border-radius: 24px !important;
+    border: 1px solid rgba(240,208,96,.18) !important;
+    background:
+      radial-gradient(circle at 92% 10%, rgba(240,208,96,.18), transparent 42%),
+      linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+      rgba(0,0,0,.24) !important;
+  }
+
+  .item-detail-v3-icon {
+    width: 82px !important;
+    height: 82px !important;
+    border-radius: 23px !important;
+    font-size: 38px !important;
+  }
+
+  .item-detail-v3-title strong {
+    font-size: 23px !important;
+    color: #fff !important;
+  }
+
+  .item-detail-v3-action[data-v3-action="use"] {
+    background: linear-gradient(135deg, rgba(240,208,96,.22), rgba(212,175,55,.08)) !important;
+    border-color: rgba(240,208,96,.34) !important;
+    color: #f0d060 !important;
+  }
+
+  .item-detail-v3-action[data-v3-action="gift"] {
+    background: linear-gradient(135deg, rgba(145,70,255,.18), rgba(145,70,255,.06)) !important;
+    border-color: rgba(145,70,255,.30) !important;
+    color: #c9b0ff !important;
+  }
+
+  .item-detail-v3-action[data-v3-action="market"] {
+    background: linear-gradient(135deg, rgba(80,170,255,.15), rgba(80,170,255,.045)) !important;
+    border-color: rgba(80,170,255,.24) !important;
+    color: #9dd0ff !important;
+  }
+
+  .item-detail-v3-action[data-v3-action="sell"] {
+    background: linear-gradient(135deg, #ff5f5f, #b91c1c) !important;
+    border-color: rgba(255, 95, 95, .55) !important;
+    color: #fff !important;
+    box-shadow: 0 12px 32px rgba(185, 28, 28, .25) !important;
+  }
+
+  .item-detail-v3-action:hover:not(:disabled) {
+    transform: translateY(-1px) !important;
+    filter: brightness(1.06) !important;
+  }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
