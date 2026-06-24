@@ -10042,5 +10042,68 @@ const metadata = {
         setInterval(runSellReservationFilter, 5000);
       })();
 
+
+      /* Hide sold reserved item cards */
+      (function () {
+        if (window.__tnxHideSoldReservedItems) return;
+        window.__tnxHideSoldReservedItems = true;
+
+        const API = "https://api.tnx6.xyz";
+        let soldNames = new Set();
+
+        function norm(v) {
+          return String(v || "").trim().replace(/\s+/g, " ").toLowerCase();
+        }
+
+        function getLogin() {
+          const p = new URLSearchParams(location.search);
+          return norm(p.get("login") || p.get("user") || "tnx_6");
+        }
+
+        async function loadSoldReservations() {
+          const login = getLogin();
+
+          const res = await fetch(API + "/api/inventory/sell-reservations?login=" + encodeURIComponent(login), {
+            cache: "no-store"
+          });
+
+          const data = await res.json().catch(() => ({}));
+          const rows = Array.isArray(data.reservations) ? data.reservations : [];
+
+          soldNames = new Set();
+
+          for (const row of rows) {
+            const status = norm(row.status);
+
+            if (status !== "completed" && status !== "pending" && status !== "processing") continue;
+
+            const name = norm(row.itemName || row.item_name || row.name);
+
+            if (name) soldNames.add(name);
+          }
+
+          hideSoldCards();
+        }
+
+        function hideSoldCards() {
+          document.querySelectorAll("#inventory .item").forEach((card) => {
+            const name = norm(card.dataset.itemName || card.querySelector(".item-name")?.textContent);
+
+            if (soldNames.has(name)) {
+              card.remove();
+            }
+          });
+        }
+
+        setTimeout(loadSoldReservations, 300);
+        setTimeout(loadSoldReservations, 1200);
+        setInterval(loadSoldReservations, 5000);
+
+        new MutationObserver(hideSoldCards).observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+      })();
+
 </script>
 </Layout>
