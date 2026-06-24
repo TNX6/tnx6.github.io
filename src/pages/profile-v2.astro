@@ -6636,6 +6636,32 @@ const metadata = {
     position: absolute;
     z-index: 3;
   }
+
+  /* Fix avatar level badge frame cut */
+  #avatarLevelBadge {
+    position: absolute !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: -14px !important;
+    transform: translateX(-50%) !important;
+    z-index: 30 !important;
+    min-width: 92px;
+    text-align: center;
+    isolation: isolate;
+  }
+
+  #avatarLevelBadge::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    bottom: -6px;
+    left: 0;
+    right: 0;
+    background: #05070b;
+    border-radius: 14px;
+    z-index: -1;
+  }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
