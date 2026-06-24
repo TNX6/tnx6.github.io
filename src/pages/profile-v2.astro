@@ -8685,6 +8685,91 @@ const metadata = {
         })
       }
 
+
+      /* Wait for sell completion before UI delete */
+      async function waitForInventorySellDone(requestId, nativeFetch) {
+        const startedAt = Date.now();
+        const timeoutMs = 35000;
+
+        while (Date.now() - startedAt < timeoutMs) {
+          const res = await nativeFetch(
+            TNX_API_ORIGIN + '/api/me/inventory/sell-status?id=' + encodeURIComponent(requestId),
+            {
+              method: 'GET',
+              credentials: 'include',
+              cache: 'no-store',
+            }
+          );
+
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok || !data.ok) {
+            throw new Error(data.error || 'sell_status_failed');
+          }
+
+          const request = data.request || {};
+          const status = String(request.status || '').toLowerCase();
+
+          if (status === 'completed') {
+            return request;
+          }
+
+          if (status === 'rejected') {
+            throw new Error(request.errorMessage || 'sell_rejected');
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 900));
+        }
+
+        throw new Error('sell_timeout');
+      }
+
+      function installInventorySellCompletionGate() {
+        if (window.__tnxInventorySellCompletionGate) return;
+        window.__tnxInventorySellCompletionGate = true;
+
+        const nativeFetch = window.fetch.bind(window);
+
+        window.fetch = async function(input, init) {
+          const url = String(typeof input === 'string' ? input : input?.url || '');
+          const method = String(init?.method || input?.method || 'GET').toUpperCase();
+
+          const isSellRequest =
+            method === 'POST' &&
+            url.includes('/api/me/inventory/sell') &&
+            !url.includes('/sell-status');
+
+          const res = await nativeFetch(input, init);
+
+          if (!isSellRequest || !res.ok) {
+            return res;
+          }
+
+          const data = await res.clone().json().catch(() => ({}));
+
+          if (!data.ok || !data.requestId) {
+            return res;
+          }
+
+          try {
+            await waitForInventorySellDone(data.requestId, nativeFetch);
+            return res;
+          } catch (error) {
+            return new Response(JSON.stringify({
+              ok: false,
+              error: error?.message || 'sell_not_completed'
+            }), {
+              status: 409,
+              headers: {
+                'Content-Type': 'application/json; charset=utf-8'
+              }
+            });
+          }
+        };
+      }
+
+      installInventorySellCompletionGate();
+
       function openInventorySellModal(item, meta, items) {
         const name = String(item.name || '').trim()
         const apiItemName = String(meta?.text || meta?.name || name).trim() || name
