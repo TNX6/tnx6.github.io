@@ -10017,7 +10017,7 @@ const metadata = {
             const reservedMap = buildReservedSellMap(rows);
             const key = JSON.stringify(Array.from(reservedMap.entries()).sort());
 
-            if (!reservedMap.size || key === lastKey) return;
+            if (!reservedMap.size) return;
 
             const result = applySellReservationsToList(window.__tnxInventoryFullList, reservedMap);
 
