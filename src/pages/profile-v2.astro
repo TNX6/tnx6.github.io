@@ -7016,6 +7016,47 @@ const metadata = {
     filter: brightness(1.06) !important;
   }
 
+
+  /* Item modal rarity and sell note */
+
+  .item-detail-v3-chip.rarity-common {
+    color: rgba(255,255,255,.72) !important;
+    border-color: rgba(255,255,255,.16) !important;
+    background: rgba(255,255,255,.055) !important;
+  }
+
+  .item-detail-v3-chip.rarity-rare {
+    color: #8fc7ff !important;
+    border-color: rgba(80,170,255,.38) !important;
+    background: rgba(80,170,255,.10) !important;
+  }
+
+  .item-detail-v3-chip.rarity-epic {
+    color: #c9a7ff !important;
+    border-color: rgba(170,100,255,.40) !important;
+    background: rgba(170,100,255,.11) !important;
+  }
+
+  .item-detail-v3-chip.rarity-legendary {
+    color: #f0d060 !important;
+    border-color: rgba(240,208,96,.44) !important;
+    background: rgba(240,208,96,.13) !important;
+  }
+
+  .item-detail-v3-hint {
+    margin-top: 15px !important;
+    padding: 12px 14px !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(240,208,96,.16) !important;
+    background:
+      linear-gradient(135deg, rgba(240,208,96,.08), rgba(255,255,255,.025)),
+      rgba(0,0,0,.22) !important;
+    color: rgba(255,255,255,.76) !important;
+    font-size: 13px !important;
+    font-weight: 850 !important;
+    line-height: 1.75 !important;
+  }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -8882,6 +8923,17 @@ const metadata = {
         };
       }
 
+
+      function itemDetailRarityClass(value) {
+        const rarity = String(value || '').toLowerCase();
+
+        if (rarity.includes('legend')) return 'rarity-legendary';
+        if (rarity.includes('epic')) return 'rarity-epic';
+        if (rarity.includes('rare')) return 'rarity-rare';
+
+        return 'rarity-common';
+      }
+
       function closeItemDetailModalV3() {
         document.querySelectorAll('.item-detail-v3').forEach((modal) => modal.remove());
       }
@@ -8914,7 +8966,7 @@ const metadata = {
                   <strong>${esc(name)}</strong>
                   <div class="item-detail-v3-meta">
                     <span class="item-detail-v3-chip gold">x${formatNumber(qty)}</span>
-                    <span class="item-detail-v3-chip">${esc(rarity)}</span>
+                    <span class="item-detail-v3-chip ${itemDetailRarityClass(rarity)}">${esc(rarity)}</span>
                     <span class="item-detail-v3-chip">${saleDisabled ? 'غير قابل للبيع' : 'بيع: ' + formatNumber(price) + ' نقطة'}</span>
                   </div>
                 </div>
