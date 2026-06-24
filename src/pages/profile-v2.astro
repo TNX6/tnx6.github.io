@@ -6667,6 +6667,19 @@ const metadata = {
     display: none !important;
   }
 
+
+  /* Start avatar XP frame from level badge */
+  .profile-v2-layout #avatarRing.avatar-ring {
+    background:
+      conic-gradient(
+        from 180deg,
+        #ffdf8a 0deg,
+        #d7a84f calc(var(--avatar-xp-percent, 0) * 3.6deg),
+        rgba(255,255,255,.075) calc(var(--avatar-xp-percent, 0) * 3.6deg),
+        rgba(255,255,255,.075) 360deg
+      ) !important;
+  }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
