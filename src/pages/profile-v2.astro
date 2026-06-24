@@ -9069,6 +9069,107 @@ const metadata = {
 
       installItemDetailModalV3();
 
+      /* Remove item detail after sell modal closes */
+      function removeItemDetailModalsAfterSell() {
+        document.querySelectorAll('.item-detail-v3').forEach((node) => node.remove());
+
+        const nodes = Array.from(document.body.querySelectorAll('div,[role="dialog"]'));
+
+        for (const node of nodes) {
+          const text = String(node.textContent || '');
+
+          const looksLikeItemDetails =
+            text.includes('استخدام') &&
+            text.includes('إهداء') &&
+            text.includes('عرض في السوق');
+
+          if (!looksLikeItemDetails) continue;
+
+          let root = node;
+
+          for (let cur = node; cur && cur !== document.body; cur = cur.parentElement) {
+            const style = window.getComputedStyle(cur);
+
+            if (style.position === 'fixed' || cur.getAttribute('role') === 'dialog') {
+              root = cur;
+            }
+          }
+
+          root.remove();
+        }
+      }
+
+      function modalRootFromNode(node) {
+        let root = node;
+
+        for (let cur = node; cur && cur !== document.body; cur = cur.parentElement) {
+          const style = window.getComputedStyle(cur);
+
+          if (style.position === 'fixed' || cur.getAttribute('role') === 'dialog') {
+            root = cur;
+          }
+        }
+
+        return root;
+      }
+
+      function findSellModalRoot() {
+        const nodes = Array.from(document.body.querySelectorAll('div,[role="dialog"]'));
+
+        for (const node of nodes) {
+          const text = String(node.textContent || '');
+
+          if (!text.includes('بيع')) continue;
+          if (text.includes('استخدام') && text.includes('إهداء')) continue;
+
+          const root = modalRootFromNode(node);
+          const style = window.getComputedStyle(root);
+
+          if (style.position === 'fixed' || root.getAttribute('role') === 'dialog') {
+            return root;
+          }
+        }
+
+        return null;
+      }
+
+      function watchSellModalCloseAndCleanDetails() {
+        let sellRoot = null;
+        const startedAt = Date.now();
+
+        setTimeout(removeItemDetailModalsAfterSell, 0);
+        setTimeout(removeItemDetailModalsAfterSell, 80);
+
+        const timer = setInterval(() => {
+          if (!sellRoot || !document.body.contains(sellRoot)) {
+            sellRoot = findSellModalRoot();
+          }
+
+          removeItemDetailModalsAfterSell();
+
+          if (sellRoot && !document.body.contains(sellRoot)) {
+            setTimeout(removeItemDetailModalsAfterSell, 0);
+            setTimeout(removeItemDetailModalsAfterSell, 80);
+            setTimeout(removeItemDetailModalsAfterSell, 250);
+            clearInterval(timer);
+            return;
+          }
+
+          if (Date.now() - startedAt > 10 * 60 * 1000) {
+            clearInterval(timer);
+          }
+        }, 150);
+      }
+
+      document.addEventListener('click', (event) => {
+        const sellButton = event.target.closest('.item-detail-v3 [data-v3-action="sell"]');
+
+        if (!sellButton) return;
+
+        watchSellModalCloseAndCleanDetails();
+      }, true);
+
+
       /* Kill legacy item modal */
       function killLegacyItemModal() {
         const nodes = Array.from(document.body.querySelectorAll("div"));
