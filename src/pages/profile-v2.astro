@@ -7582,6 +7582,7 @@ const metadata = {
         setText('bio', bio)
 
         setText('levelNumber', level.level)
+        setText('levelWatermark', level.level)
         setText('levelTitle', getLevelTitle(level.level))
         setText('currentXp', `${formatNumber(level.currentXp)} XP`)
         setText('neededXp', `${formatNumber(level.requiredXp)} XP`)
@@ -8896,7 +8897,8 @@ const metadata = {
 
         
         const levelWatermark = $('levelWatermark')
-        if (levelWatermark) levelWatermark.textContent = String(level)const progress = ensureProgressText()
+        if (levelWatermark) levelWatermark.textContent = String(level)
+        const progress = ensureProgressText()
         if (progress) progress.textContent = 'XP ' + fmt(current) + ' / ' + fmt(needed)
 
         const ring = $('avatarRing')
