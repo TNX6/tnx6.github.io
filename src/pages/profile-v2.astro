@@ -6588,6 +6588,19 @@ const metadata = {
     width: 100%;
     justify-self: center;
   }
+
+  #inventory > .inventory-pagination-v2 {
+    grid-column: 1 / -1 !important;
+    justify-self: stretch !important;
+    place-self: auto stretch !important;
+  }
+
+  #inventory.inventory-page-single > .item {
+    grid-column: 1 / -1 !important;
+    justify-self: center !important;
+    margin-inline: auto !important;
+    width: min(100%, 280px) !important;
+  }
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -7702,6 +7715,18 @@ const metadata = {
 
         const controls = document.createElement('div');
         controls.className = 'inventory-pagination-v2';
+
+        controls.style.gridColumn = '1 / -1';
+        controls.style.width = '100%';
+        controls.style.display = 'flex';
+        controls.style.alignItems = 'center';
+        controls.style.justifyContent = 'center';
+        controls.style.gap = '12px';
+        controls.style.margin = '18px auto 0';
+        controls.style.paddingTop = '14px';
+        controls.style.borderTop = '1px solid rgba(255,255,255,.08)';
+        controls.style.direction = 'rtl';
+
         controls.innerHTML = `
           <button type="button" class="inventory-page-btn" data-inventory-page-v2="prev" ${inventoryPageV2 <= 1 ? 'disabled' : ''}>السابق</button>
           <span class="inventory-page-info">صفحة ${formatNumber(inventoryPageV2)} / ${formatNumber(totalPages)}</span>
@@ -7729,8 +7754,7 @@ const metadata = {
           controls.addEventListener('click', handler);
         }
 
-        const parent = box.parentElement || box;
-        parent.insertBefore(controls, box.nextSibling);
+        box.appendChild(controls);
       }
 
       function renderInventory(items) {
