@@ -9894,12 +9894,14 @@ const metadata = {
 
 
 
+
+
 <script is:inline>
-/* INSTANT_SELL_LOCK_V5 */
-window.__tnxInstantSellLockV5 = true;
+/* INSTANT_SELL_LOCK_V6 */
+window.__tnxInstantSellLockV6 = true;
 
 (function () {
-  const LOCK_KEY = "tnx_inventory_sold_locks_v5";
+  const LOCK_KEY = "tnx_inventory_sold_locks_v6";
   const LOCK_TTL = 35 * 60 * 1000;
 
   function norm(v) {
@@ -9911,8 +9913,13 @@ window.__tnxInstantSellLockV5 = true;
       .toLowerCase();
   }
 
-  function now() {
-    return Date.now();
+  function cleanNameText(text) {
+    return String(text || "")
+      .replace(/[\(（]\s*\d+\s*[xX×]\s*[\)）]/g, "")
+      .replace(/[\(（]\s*[xX×]\s*\d+\s*[\)）]/g, "")
+      .replace(/\b\d+\s*[xX×]\b/g, "")
+      .replace(/(?:العدد|عدد|الكمية)\s*[:：]?\s*\d+/g, "")
+      .trim();
   }
 
   function readLocks() {
@@ -9924,7 +9931,7 @@ window.__tnxInstantSellLockV5 = true;
       rows = [];
     }
 
-    rows = rows.filter(x => x && x.itemName && (now() - Number(x.ts || 0)) < LOCK_TTL);
+    rows = rows.filter(x => x && x.itemName && (Date.now() - Number(x.ts || 0)) < LOCK_TTL);
 
     try {
       localStorage.setItem(LOCK_KEY, JSON.stringify(rows));
@@ -9939,40 +9946,6 @@ window.__tnxInstantSellLockV5 = true;
     } catch {}
   }
 
-  function addLock(itemName, quantity) {
-    const name = norm(itemName);
-    const qty = Math.max(1, Math.floor(Number(quantity || 1)));
-
-    if (!name) return;
-
-    const rows = readLocks();
-
-    rows.push({
-      itemName: name,
-      quantity: qty,
-      ts: now()
-    });
-
-    writeLocks(rows);
-    applySoldLocks();
-  }
-
-  function reservedMap() {
-    const map = new Map();
-
-    for (const row of readLocks()) {
-      const name = norm(row.itemName);
-      const qty = Math.max(1, Math.floor(Number(row.quantity || 1)));
-
-      if (!name) continue;
-
-      map.set(name, (map.get(name) || 0) + qty);
-    }
-
-    window.__tnxSoldLocksV5 = Array.from(map.entries());
-    return map;
-  }
-
   function inventoryRoot() {
     return document.querySelector("#inventory");
   }
@@ -9984,19 +9957,35 @@ window.__tnxInstantSellLockV5 = true;
     const found = Array.from(root.querySelectorAll(".item, [data-item-name], .inventory-item, .item-card"));
     if (found.length) return found;
 
-    return Array.from(root.children);
+    return Array.from(root.children || []);
   }
 
   function cardName(card) {
-    return norm(
+    const explicit =
       card.dataset?.itemName ||
       card.dataset?.apiItemName ||
       card.dataset?.name ||
       card.querySelector("[data-item-name]")?.getAttribute("data-item-name") ||
       card.querySelector(".item-name")?.textContent ||
-      card.querySelector(".inventory-item-name")?.textContent ||
-      card.textContent
-    );
+      card.querySelector(".inventory-item-name")?.textContent;
+
+    if (explicit) return norm(explicit);
+
+    return norm(cleanNameText(card.textContent));
+  }
+
+  function qtyFromText(text) {
+    text = String(text || "");
+
+    let m =
+      text.match(/[\(（]\s*(\d+)\s*[xX×]\s*[\)）]/) ||
+      text.match(/[\(（]\s*[xX×]\s*(\d+)\s*[\)）]/) ||
+      text.match(/(?:العدد|عدد|الكمية)\s*[:：]?\s*(\d+)/) ||
+      text.match(/\b(\d+)\s*[xX×]\b/);
+
+    if (m) return Math.max(1, Math.floor(Number(m[1])));
+
+    return 1;
   }
 
   function cardQty(card) {
@@ -10006,63 +9995,150 @@ window.__tnxInstantSellLockV5 = true;
       card.dataset?.quantity ||
       card.querySelector(".qty")?.textContent ||
       card.querySelector(".quantity")?.textContent ||
-      "1";
+      card.querySelector(".item-qty")?.textContent;
 
-    const m = String(raw).match(/\d+/);
-    return Math.max(1, Math.floor(Number(m ? m[0] : 1)));
+    if (raw) {
+      const m = String(raw).match(/\d+/);
+      if (m) return Math.max(1, Math.floor(Number(m[0])));
+    }
+
+    return qtyFromText(card.textContent);
   }
 
   function setCardQty(card, qty) {
+    qty = Math.max(1, Math.floor(Number(qty || 1)));
     card.dataset.itemQty = String(qty);
 
-    const q =
+    const el =
       card.querySelector(".qty") ||
-      card.querySelector(".quantity");
+      card.querySelector(".quantity") ||
+      card.querySelector(".item-qty");
 
-    if (q) {
-      q.textContent = String(qty);
+    if (el) {
+      el.textContent = String(qty);
+      return;
     }
-  }
 
-  function matchSoldName(cardText, soldName) {
-    if (!cardText || !soldName) return false;
-    return cardText === soldName || cardText.includes(soldName);
-  }
+    const walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT);
+    let node;
 
-  function applySoldLocks() {
-    const map = reservedMap();
+    while ((node = walker.nextNode())) {
+      const oldText = node.nodeValue || "";
 
-    for (const card of cards()) {
-      const text = cardName(card);
-      if (!text) continue;
+      if (/[\(（]\s*\d+\s*[xX×]\s*[\)）]/.test(oldText)) {
+        node.nodeValue = oldText.replace(/[\(（]\s*\d+\s*[xX×]\s*[\)）]/, "(" + qty + "x)");
+        return;
+      }
 
-      for (const [soldName, soldQty] of map.entries()) {
-        if (!matchSoldName(text, soldName)) continue;
-
-        const qty = cardQty(card);
-        const remaining = qty - soldQty;
-
-        if (remaining <= 0) {
-          card.remove();
-        } else {
-          setCardQty(card, remaining);
-        }
-
-        break;
+      if (/[\(（]\s*[xX×]\s*\d+\s*[\)）]/.test(oldText)) {
+        node.nodeValue = oldText.replace(/[\(（]\s*[xX×]\s*\d+\s*[\)）]/, "(" + qty + "x)");
+        return;
       }
     }
   }
 
+  function findCardByItemName(itemName) {
+    const name = norm(itemName);
+
+    for (const card of cards()) {
+      const cName = cardName(card);
+      if (cName === name || cName.includes(name)) return card;
+    }
+
+    return null;
+  }
+
+  function addLock(itemName, quantity) {
+    const name = norm(itemName);
+    const qty = Math.max(1, Math.floor(Number(quantity || 1)));
+
+    if (!name) return;
+
+    const card = findCardByItemName(name);
+    const sourceQty = card ? cardQty(card) : qty;
+
+    const rows = readLocks();
+
+    rows.push({
+      itemName: name,
+      quantity: qty,
+      sourceQty: sourceQty,
+      ts: Date.now()
+    });
+
+    writeLocks(rows);
+    applySoldLocks();
+  }
+
+  function applySoldLocks() {
+    const rows = readLocks();
+
+    for (const card of cards()) {
+      if (!card || card.dataset?.tnxPagination === "1") continue;
+
+      const name = cardName(card);
+      if (!name) continue;
+
+      const currentQty = cardQty(card);
+      let soldQty = 0;
+
+      for (const row of rows) {
+        const lockName = norm(row.itemName);
+        if (!lockName) continue;
+
+        const same = name === lockName || name.includes(lockName);
+        if (!same) continue;
+
+        const sourceQty = Math.max(0, Math.floor(Number(row.sourceQty || 0)));
+
+        // إذا GitHub صار محدث والكمية نزلت عن الكمية الأصلية، لا نخصم مرة ثانية
+        if (sourceQty > 0 && currentQty < sourceQty) continue;
+
+        soldQty += Math.max(1, Math.floor(Number(row.quantity || 1)));
+      }
+
+      if (soldQty <= 0) continue;
+
+      const remaining = currentQty - soldQty;
+
+      if (remaining <= 0) {
+        card.remove();
+      } else {
+        setCardQty(card, remaining);
+      }
+    }
+
+    fixInvalidPagination();
+  }
+
+  function fixInvalidPagination() {
+    setTimeout(function () {
+      const text = document.body?.innerText || "";
+      const m = text.match(/صفحة\s*(\d+)\s*\/\s*(\d+)/);
+
+      if (!m) return;
+
+      const current = Number(m[1]);
+      const total = Number(m[2]);
+
+      if (!current || !total || current <= total) return;
+
+      const key = "tnx_inventory_pagination_reload_v6";
+      const last = Number(sessionStorage.getItem(key) || 0);
+
+      if (Date.now() - last < 4000) return;
+
+      sessionStorage.setItem(key, String(Date.now()));
+      location.reload();
+    }, 250);
+  }
+
   function tryReadSellPayload(input, init) {
     const url = typeof input === "string" ? input : String(input?.url || "");
-
     if (!url.includes("/api/me/inventory/sell")) return null;
 
-    let body = init && init.body;
-
-    if (!body) return null;
-
-    if (typeof body !== "string") return null;
+    const body = init && init.body;
+    if (!body || typeof body !== "string") return null;
 
     try {
       const json = JSON.parse(body);
@@ -10082,11 +10158,10 @@ window.__tnxInstantSellLockV5 = true;
     const payload = tryReadSellPayload(input, init);
 
     if (payload && payload.itemName) {
-      // هذا أهم سطر: نحجز الغرض محليًا قبل ما يرجع رد API
       addLock(payload.itemName, payload.quantity);
     }
 
-    return originalFetch.apply(this, arguments).then(async (res) => {
+    return originalFetch.apply(this, arguments).then(async function (res) {
       if (payload && payload.itemName) {
         try {
           const clone = res.clone();
@@ -10101,7 +10176,6 @@ window.__tnxInstantSellLockV5 = true;
             data?.error;
 
           if (failed) {
-            // لو البيع فشل، نحذف القفل ونرجع نحدث الصفحة
             const name = norm(payload.itemName);
             const rows = readLocks().filter(x => norm(x.itemName) !== name);
             writeLocks(rows);
@@ -10111,13 +10185,15 @@ window.__tnxInstantSellLockV5 = true;
 
       setTimeout(applySoldLocks, 100);
       setTimeout(applySoldLocks, 500);
+      setTimeout(applySoldLocks, 1200);
 
       return res;
     });
   };
 
-  window.__tnxApplySoldLocksV5 = applySoldLocks;
-  window.__tnxAddSoldLockV5 = addLock;
+  window.__tnxApplySoldLocksV6 = applySoldLocks;
+  window.__tnxAddSoldLockV6 = addLock;
+  window.__tnxSoldLocksV6 = readLocks;
 
   applySoldLocks();
   setTimeout(applySoldLocks, 300);
