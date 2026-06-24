@@ -6576,6 +6576,18 @@ const metadata = {
     min-width: 92px;
     text-align: center;
   }
+
+  #inventory.inventory-page-single > .item {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: min(100%, 280px);
+  }
+
+  #inventory .inventory-pagination-v2 {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-self: center;
+  }
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -7738,6 +7750,11 @@ const metadata = {
         const pageItems = list.slice(start, start + INVENTORY_PAGE_SIZE_V2);
 
         renderInventoryRaw(pageItems);
+
+        const box = $('inventory');
+        if (box) {
+          box.classList.toggle('inventory-page-single', pageItems.length === 1);
+        }
 
         requestAnimationFrame(() => {
           renderInventoryPaginationV2(list.length, totalPages);
