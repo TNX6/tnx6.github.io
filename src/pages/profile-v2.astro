@@ -7694,11 +7694,11 @@ const metadata = {
       function renderInventoryPaginationV2(totalItems, totalPages) {
         const box = $('inventory');
 
-        if (!box) return;
+        document.querySelectorAll('.inventory-pagination, .inventory-pagination-v2').forEach((el) => el.remove());
 
-        box.querySelectorAll('.inventory-pagination, .inventory-pagination-v2').forEach((el) => el.remove());
-
-        if (totalItems <= INVENTORY_PAGE_SIZE_V2) return;
+        if (!box || totalItems <= INVENTORY_PAGE_SIZE_V2) {
+          return;
+        }
 
         const controls = document.createElement('div');
         controls.className = 'inventory-pagination-v2';
@@ -7729,7 +7729,8 @@ const metadata = {
           controls.addEventListener('click', handler);
         }
 
-        box.appendChild(controls);
+        const parent = box.parentElement || box;
+        parent.insertBefore(controls, box.nextSibling);
       }
 
       function renderInventory(items) {
