@@ -10169,3 +10169,135 @@ window.__tnxHideSoldReservedItems = true;
 })();
 </script>
 
+
+
+<script is:inline>
+/* FORCE_HIDE_SOLD_RESERVED_ITEMS_V3 */
+window.__tnxHideSoldReservedItemsV3 = true;
+
+(function () {
+  const API = "https://api.tnx6.xyz";
+  let soldNames = [];
+
+  function norm(v) {
+    return String(v || "")
+      .trim()
+      .replace(/ـ/g, "")
+      .replace(/[\u064B-\u065F\u0670]/g, "")
+      .replace(/\s+/g, " ")
+      .toLowerCase();
+  }
+
+  function getLogin() {
+    const p = new URLSearchParams(location.search);
+    return norm(p.get("login") || p.get("user") || "tnx_6");
+  }
+
+  function rowsFromResponse(data) {
+    if (Array.isArray(data?.reservations)) return data.reservations;
+    if (Array.isArray(data?.items)) return data.items;
+    if (Array.isArray(data?.results)) return data.results;
+    if (Array.isArray(data?.requests)) return data.requests;
+    return [];
+  }
+
+  function rowName(row) {
+    return norm(
+      row?.itemName ||
+      row?.item_name ||
+      row?.name ||
+      row?.item ||
+      row?.text ||
+      row?.title
+    );
+  }
+
+  function rowStatus(row) {
+    return norm(row?.status || "completed");
+  }
+
+  function cardName(card) {
+    return norm(
+      card.dataset?.itemName ||
+      card.dataset?.name ||
+      card.querySelector(".item-name")?.textContent ||
+      card.querySelector("[data-item-name]")?.getAttribute("data-item-name") ||
+      card.textContent
+    );
+  }
+
+  function cardCandidates() {
+    const inventory = document.querySelector("#inventory");
+    if (!inventory) return [];
+
+    const list = Array.from(inventory.querySelectorAll(".item, [data-item-name], button, article, li"));
+    if (list.length) return list;
+
+    return Array.from(inventory.children);
+  }
+
+  function hideSoldCards() {
+    const cards = cardCandidates();
+
+    for (const card of cards) {
+      if (!card || card.classList?.contains("inventory-pagination-v2")) continue;
+
+      const cName = cardName(card);
+      if (!cName) continue;
+
+      for (const sold of soldNames) {
+        if (!sold) continue;
+
+        if (cName === sold || cName.includes(sold) || sold.includes(cName)) {
+          card.remove();
+          break;
+        }
+      }
+    }
+  }
+
+  async function refreshSoldList() {
+    try {
+      const login = getLogin();
+
+      const res = await fetch(API + "/api/inventory/sell-reservations?login=" + encodeURIComponent(login), {
+        cache: "no-store"
+      });
+
+      const data = await res.json().catch(() => ({}));
+      const rows = rowsFromResponse(data);
+
+      soldNames = [];
+
+      for (const row of rows) {
+        const status = rowStatus(row);
+
+        if (status !== "completed" && status !== "pending" && status !== "processing") continue;
+
+        const name = rowName(row);
+        if (name) soldNames.push(name);
+      }
+
+      window.__tnxSoldReservationNamesV3 = soldNames;
+      hideSoldCards();
+    } catch (e) {
+      window.__tnxSoldReservationErrorV3 = String(e?.message || e);
+    }
+  }
+
+  window.__tnxForceHideSoldCardsV3 = hideSoldCards;
+  window.__tnxRefreshSoldReservationsV3 = refreshSoldList;
+
+  refreshSoldList();
+  setTimeout(refreshSoldList, 300);
+  setTimeout(refreshSoldList, 1000);
+  setTimeout(refreshSoldList, 2500);
+  setInterval(refreshSoldList, 5000);
+
+  new MutationObserver(hideSoldCards).observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+})();
+</script>
+
