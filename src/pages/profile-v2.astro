@@ -6680,6 +6680,258 @@ const metadata = {
       ) !important;
   }
 
+
+  /* Item detail modal v3 */
+  .item-detail-v3 {
+    position: fixed;
+    inset: 0;
+    z-index: 100002;
+    display: grid;
+    place-items: center;
+    padding: 22px;
+    background:
+      radial-gradient(circle at 50% 16%, rgba(255, 218, 106, .10), transparent 34%),
+      rgba(0, 0, 0, .72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .item-detail-v3-box {
+    width: min(560px, calc(100vw - 30px));
+    max-height: min(720px, calc(100vh - 34px));
+    overflow: auto;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 223, 138, .18);
+    background:
+      radial-gradient(circle at 82% 0%, rgba(255, 218, 106, .12), transparent 34%),
+      linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025)),
+      rgba(14,14,18,.98);
+    box-shadow: 0 34px 110px rgba(0,0,0,.72);
+    direction: rtl;
+    color: rgba(255,255,255,.92);
+  }
+
+  .item-detail-v3-head {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    background: rgba(14,14,18,.94);
+    backdrop-filter: blur(10px);
+  }
+
+  .item-detail-v3-head h3 {
+    margin: 0;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 1000;
+    letter-spacing: -.03em;
+  }
+
+  .item-detail-v3-close {
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 14px;
+    background: rgba(255,255,255,.06);
+    color: #fff;
+    font-size: 24px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .item-detail-v3-body {
+    padding: 20px;
+  }
+
+  .item-detail-v3-hero {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border-radius: 24px;
+    border: 1px solid rgba(255,223,138,.16);
+    background:
+      radial-gradient(circle at 88% 12%, rgba(255,223,138,.14), transparent 42%),
+      rgba(255,255,255,.045);
+  }
+
+  .item-detail-v3-icon {
+    width: 76px;
+    height: 76px;
+    border-radius: 22px;
+    display: grid;
+    place-items: center;
+    font-size: 36px;
+    background: rgba(0,0,0,.24);
+    border: 1px solid rgba(255,255,255,.08);
+  }
+
+  .item-detail-v3-title {
+    min-width: 0;
+  }
+
+  .item-detail-v3-title strong {
+    display: block;
+    color: #fff;
+    font-size: 22px;
+    font-weight: 1000;
+    line-height: 1.2;
+  }
+
+  .item-detail-v3-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .item-detail-v3-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,223,138,.16);
+    background: rgba(0,0,0,.22);
+    color: rgba(255,255,255,.72);
+    font-size: 12px;
+    font-weight: 900;
+  }
+
+  .item-detail-v3-chip.gold {
+    color: #f0d060;
+    border-color: rgba(240,208,96,.28);
+    background: rgba(240,208,96,.08);
+  }
+
+  .item-detail-v3-section {
+    margin-top: 16px;
+    padding: 15px;
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(0,0,0,.20);
+  }
+
+  .item-detail-v3-section small {
+    display: block;
+    margin-bottom: 8px;
+    color: rgba(255,255,255,.48);
+    font-size: 12px;
+    font-weight: 950;
+  }
+
+  .item-detail-v3-section p {
+    margin: 0;
+    color: rgba(255,255,255,.78);
+    font-size: 14px;
+    font-weight: 750;
+    line-height: 1.8;
+  }
+
+  .item-detail-v3-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .item-detail-v3-action {
+    min-height: 54px;
+    border-radius: 17px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.055);
+    color: rgba(255,255,255,.88);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 1000;
+    cursor: pointer;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease;
+  }
+
+  .item-detail-v3-action:hover:not(:disabled) {
+    transform: translateY(-1px);
+    border-color: rgba(255,223,138,.28);
+    background: rgba(255,223,138,.08);
+    color: #f0d060;
+  }
+
+  .item-detail-v3-action.primary {
+    border-color: rgba(240,208,96,.34);
+    background:
+      linear-gradient(135deg, rgba(240,208,96,.18), rgba(212,175,55,.07)),
+      rgba(255,255,255,.045);
+    color: #f0d060;
+  }
+
+  .item-detail-v3-action.sell {
+    border-color: rgba(240,208,96,.42);
+    background: linear-gradient(135deg, #f0d060, #d4af37);
+    color: #090909;
+  }
+
+  .item-detail-v3-action:disabled {
+    opacity: .42;
+    cursor: not-allowed;
+  }
+
+  .item-detail-v3-status {
+    margin-top: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,223,138,.14);
+    background: rgba(0,0,0,.26);
+    padding: 12px 13px;
+    color: rgba(255,255,255,.70);
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.75;
+  }
+
+  .item-detail-v3-status strong {
+    color: #f0d060;
+  }
+
+  .item-detail-v3-hint {
+    margin-top: 12px;
+    min-height: 22px;
+    color: rgba(255,255,255,.72);
+    font-size: 13px;
+    font-weight: 850;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 520px) {
+    .item-detail-v3 {
+      padding: 12px;
+    }
+
+    .item-detail-v3-body {
+      padding: 16px;
+    }
+
+    .item-detail-v3-actions {
+      grid-template-columns: 1fr;
+    }
+
+    .item-detail-v3-hero {
+      grid-template-columns: 60px minmax(0, 1fr);
+    }
+
+    .item-detail-v3-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      font-size: 30px;
+    }
+  }
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -7749,7 +8001,16 @@ const metadata = {
         box.innerHTML = sorted.map((item, index) => {
           const color = rarityColors[item.rarity] || rarityColors[item.cat] || '#ffffff'
           return `
-            <button class="item" type="button" data-item-index="${index}" style="--rarity-color:${color}">
+            <button
+              class="item"
+              type="button"
+              data-item-index="${index}"
+              data-item-name="${esc(item.name)}"
+              data-item-qty="${esc(item.qty)}"
+              data-item-icon="${esc(item.icon)}"
+              data-item-rarity="${esc(item.rarity || item.cat || '')}"
+              style="--rarity-color:${color}"
+            >
               <div class="item-icon">${esc(item.icon)}</div>
               <div>
                 <h3 class="item-name">${esc(item.name)}</h3>
@@ -8466,6 +8727,213 @@ const metadata = {
         document.body.appendChild(modal)
         qtyInput.focus()
       }
+
+      function itemMetaForDetail(name) {
+        try {
+          return typeof findCatalogItemByName === 'function' ? findCatalogItemByName(name) : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function itemDetailDescription(item, meta) {
+        const desc = String(meta?.description || meta?.desc || item.description || '').trim();
+
+        if (desc) {
+          return desc;
+        }
+
+        return 'غرض من حقيبة العضو.';
+      }
+
+      function itemDetailIsSaleDisabled(meta) {
+        try {
+          return !meta || (typeof isSaleDisabled === 'function' && isSaleDisabled(meta));
+        } catch {
+          return !meta;
+        }
+      }
+
+      function itemDetailSellPrice(meta) {
+        try {
+          return meta && typeof itemSellPrice === 'function' ? itemSellPrice(meta) : 0;
+        } catch {
+          return 0;
+        }
+      }
+
+      function itemDetailHint(action, item, meta) {
+        const name = String(item.name || 'الغرض');
+        const price = itemDetailSellPrice(meta);
+
+        if (action === 'use') {
+          return 'استخدم هذا الغرض من خلال Streamer.bot حسب نظام الأغراض الحالي.';
+        }
+
+        if (action === 'gift') {
+          return 'الإهداء لاحقًا بيحتاج اختيار العضو المستلم. حالياً نعرض المعلومة فقط.';
+        }
+
+        if (action === 'market') {
+          return 'عرض السوق يحتاج نظام سوق مستقل. حالياً غير مربوط.';
+        }
+
+        if (action === 'sell') {
+          if (itemDetailIsSaleDisabled(meta)) {
+            return 'هذا الغرض غير قابل للبيع.';
+          }
+
+          return 'بيع ' + name + ' يعطيك ' + formatNumber(price) + ' نقطة لكل قطعة.';
+        }
+
+        return 'اختر عملية للغرض.';
+      }
+
+      function readItemFromInventoryCard(card) {
+        return {
+          name: String(card.dataset.itemName || card.querySelector('.item-name')?.textContent || '').trim(),
+          qty: Math.max(1, Math.floor(Number(card.dataset.itemQty || card.querySelector('.qty')?.textContent?.replace(/[^0-9]/g, '') || 1))),
+          icon: String(card.dataset.itemIcon || card.querySelector('.item-icon')?.textContent || '📦').trim() || '📦',
+          rarity: String(card.dataset.itemRarity || '').trim() || 'عام',
+        };
+      }
+
+      function closeItemDetailModalV3() {
+        document.querySelectorAll('.item-detail-v3').forEach((modal) => modal.remove());
+      }
+
+      function openItemDetailModalV3(item) {
+        const name = String(item.name || 'غرض').trim();
+        const meta = itemMetaForDetail(name);
+        const qty = Math.max(1, Math.floor(Number(item.qty || 1)));
+        const rarity = String(meta?.rarity || meta?.cat || item.rarity || 'Common').trim() || 'Common';
+        const icon = String(item.icon || meta?.icon || '📦').trim() || '📦';
+        const desc = itemDetailDescription(item, meta);
+        const price = itemDetailSellPrice(meta);
+        const saleDisabled = itemDetailIsSaleDisabled(meta) || price <= 0;
+
+        closeItemDetailModalV3();
+
+        const modal = document.createElement('div');
+        modal.className = 'item-detail-v3';
+        modal.innerHTML = `
+          <div class="item-detail-v3-box" role="dialog" aria-modal="true">
+            <div class="item-detail-v3-head">
+              <h3>${esc(name)}</h3>
+              <button class="item-detail-v3-close" type="button" data-item-detail-close>×</button>
+            </div>
+
+            <div class="item-detail-v3-body">
+              <div class="item-detail-v3-hero">
+                <div class="item-detail-v3-icon">${esc(icon)}</div>
+                <div class="item-detail-v3-title">
+                  <strong>${esc(name)}</strong>
+                  <div class="item-detail-v3-meta">
+                    <span class="item-detail-v3-chip gold">x${formatNumber(qty)}</span>
+                    <span class="item-detail-v3-chip">${esc(rarity)}</span>
+                    <span class="item-detail-v3-chip">${saleDisabled ? 'غير قابل للبيع' : 'بيع: ' + formatNumber(price) + ' نقطة'}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="item-detail-v3-section">
+                <small>الوصف</small>
+                <p>${esc(desc)}</p>
+              </div>
+
+              <div class="item-detail-v3-actions">
+                <button class="item-detail-v3-action primary" type="button" data-v3-action="use">استخدام</button>
+                <button class="item-detail-v3-action" type="button" data-v3-action="gift">إهداء</button>
+                <button class="item-detail-v3-action sell" type="button" data-v3-action="sell" ${saleDisabled ? 'disabled' : ''}>بيع</button>
+                <button class="item-detail-v3-action" type="button" data-v3-action="market">عرض في السوق</button>
+              </div>
+
+              <div class="item-detail-v3-status">
+                <strong>Streamer.bot</strong>
+                <br />
+                العمليات المرتبطة بالنظام تُسجل وتُنفذ حسب حالة Streamer.bot. إذا كان مقفلًا، الطلب يبقى محفوظًا لين يشتغل.
+              </div>
+
+              <div class="item-detail-v3-hint" data-v3-hint>${esc(itemDetailHint('sell', item, meta))}</div>
+            </div>
+          </div>
+        `;
+
+        const close = () => modal.remove();
+
+        modal.querySelectorAll('[data-item-detail-close]').forEach((button) => {
+          addListener(button, 'click', close);
+        });
+
+        addListener(modal, 'click', (event) => {
+          if (event.target === modal) close();
+        });
+
+        modal.querySelectorAll('[data-v3-action]').forEach((button) => {
+          addListener(button, 'click', () => {
+            const action = button.dataset.v3Action;
+            const hint = modal.querySelector('[data-v3-hint]');
+
+            if (action === 'sell') {
+              if (saleDisabled) {
+                if (hint) hint.textContent = 'هذا الغرض غير قابل للبيع.';
+                return;
+              }
+
+              close();
+
+              try {
+                openInventorySellModal(item, meta, window.__tnxInventoryFullList || []);
+              } catch {
+                openInventorySellModal(item, meta);
+              }
+
+              return;
+            }
+
+            if (hint) {
+              hint.textContent = itemDetailHint(action, item, meta);
+            }
+          });
+        });
+
+        document.body.appendChild(modal);
+      }
+
+      function installItemDetailModalV3() {
+        if (window.__tnxItemDetailModalV3Installed) {
+          return;
+        }
+
+        window.__tnxItemDetailModalV3Installed = true;
+
+        document.addEventListener('click', (event) => {
+          const card = event.target.closest('#inventory .item');
+
+          if (!card) {
+            return;
+          }
+
+          if (event.target.closest('.inventory-sell-btn')) {
+            return;
+          }
+
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+
+          openItemDetailModalV3(readItemFromInventoryCard(card));
+        }, true);
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            closeItemDetailModalV3();
+          }
+        });
+      }
+
+      installItemDetailModalV3();
+
 
 
       function renderBadges(badges) {
