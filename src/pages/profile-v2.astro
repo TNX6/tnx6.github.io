@@ -8894,7 +8894,9 @@ const metadata = {
         const badge = $('avatarLevelBadge')
         if (badge) badge.textContent = 'LVL ' + level
 
-        const progress = ensureProgressText()
+        
+        const levelWatermark = $('levelWatermark')
+        if (levelWatermark) levelWatermark.textContent = String(level)const progress = ensureProgressText()
         if (progress) progress.textContent = 'XP ' + fmt(current) + ' / ' + fmt(needed)
 
         const ring = $('avatarRing')
