@@ -6601,6 +6601,41 @@ const metadata = {
     margin-inline: auto !important;
     width: min(100%, 280px) !important;
   }
+
+  /* Fix level ring layer above watermark */
+  .v2-level-section {
+    isolation: isolate;
+  }
+
+  .v2-level-watermark {
+    z-index: 0 !important;
+  }
+
+  .v2-level-ring-wrap {
+    position: relative !important;
+    z-index: 5 !important;
+    isolation: isolate;
+  }
+
+  .v2-level-ring-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 9px;
+    border-radius: 999px;
+    background: rgba(4, 5, 8, 0.96);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .v2-level-ring-svg {
+    position: relative;
+    z-index: 2;
+  }
+
+  .v2-level-ring-center {
+    position: absolute;
+    z-index: 3;
+  }
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
