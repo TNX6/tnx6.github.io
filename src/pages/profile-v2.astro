@@ -8,499 +8,6 @@ const metadata = {
 }
 ---
 
-<script is:inline>
-/* INSTANT_SELL_LOCK_V7 */
-(function () {
-  if (window.__tnxInstantSellLockV7) return;
-  window.__tnxInstantSellLockV7 = true;
-
-  const LOCK_KEY = "tnx_inventory_sold_locks_v7";
-  const OLD_KEYS = [
-    "tnx_inventory_sold_locks_v6",
-    "tnx_inventory_sold_locks_v5"
-  ];
-
-  const LOCK_TTL = 35 * 60 * 1000;
-
-  function norm(v) {
-    return String(v || "")
-      .trim()
-      .replace(/ـ/g, "")
-      .replace(/[\u064B-\u065F\u0670]/g, "")
-      .replace(/\s+/g, " ")
-      .toLowerCase();
-  }
-
-  function getProfileLogin() {
-    const p = new URLSearchParams(location.search);
-    return norm(p.get("login") || p.get("user") || "tnx_6");
-  }
-
-  function getProfileUserId() {
-    const p = new URLSearchParams(location.search);
-    return String(p.get("userId") || p.get("id") || "558353985").trim();
-  }
-
-  function readKey(key) {
-    try {
-      const rows = JSON.parse(localStorage.getItem(key) || "[]");
-      return Array.isArray(rows) ? rows : [];
-    } catch {
-      return [];
-    }
-  }
-
-  function readLocks() {
-    let rows = [];
-
-    rows = rows.concat(readKey(LOCK_KEY));
-
-    for (const key of OLD_KEYS) {
-      rows = rows.concat(readKey(key));
-    }
-
-    rows = rows.filter(x => x && x.itemName && (Date.now() - Number(x.ts || 0)) < LOCK_TTL);
-
-    try {
-      localStorage.setItem(LOCK_KEY, JSON.stringify(rows));
-    } catch {}
-
-    return rows;
-  }
-
-  function writeLocks(rows) {
-    rows = Array.isArray(rows) ? rows : [];
-
-    try {
-      localStorage.setItem(LOCK_KEY, JSON.stringify(rows));
-    } catch {}
-  }
-
-  function qtyFromText(text) {
-    text = String(text || "");
-
-    const m =
-      text.match(/[\(（]\s*(\d+)\s*[xX×]\s*[\)）]/) ||
-      text.match(/[\(（]\s*[xX×]\s*(\d+)\s*[\)）]/) ||
-      text.match(/(?:العدد|عدد|الكمية)\s*[:：]?\s*(\d+)/) ||
-      text.match(/\b(\d+)\s*[xX×]\b/);
-
-    if (m) return Math.max(1, Math.floor(Number(m[1])));
-
-    return 1;
-  }
-
-  function cleanNameText(text) {
-    return String(text || "")
-      .replace(/[\(（]\s*\d+\s*[xX×]\s*[\)）]/g, "")
-      .replace(/[\(（]\s*[xX×]\s*\d+\s*[\)）]/g, "")
-      .replace(/\b\d+\s*[xX×]\b/g, "")
-      .replace(/(?:العدد|عدد|الكمية)\s*[:：]?\s*\d+/g, "")
-      .trim();
-  }
-
-  function findInventoryUser(data) {
-    if (!Array.isArray(data)) return null;
-
-    const login = getProfileLogin();
-    const userId = getProfileUserId();
-
-    return data.find(u =>
-      norm(u.userLogin) === login ||
-      String(u.userId || "").trim() === userId
-    ) || null;
-  }
-
-  function applyLocksToItems(items) {
-    if (!Array.isArray(items)) return items;
-
-    const locks = readLocks();
-
-    const result = [];
-
-    for (const item of items) {
-      const itemName = norm(item.name || item.itemName || item.item_name);
-      const originalQty = Math.max(1, Math.floor(Number(item.quantity || item.qty || 1)));
-
-      if (!itemName) {
-        result.push(item);
-        continue;
-      }
-
-      let soldQty = 0;
-
-      for (const lock of locks) {
-        const lockName = norm(lock.itemName);
-        if (!lockName) continue;
-
-        const same = itemName === lockName || itemName.includes(lockName) || lockName.includes(itemName);
-        if (!same) continue;
-
-        const sourceQty = Math.max(0, Math.floor(Number(lock.sourceQty || 0)));
-
-        // إذا GitHub صار محدث والكمية نزلت، لا نخصم مرتين
-        if (sourceQty > 0 && originalQty < sourceQty) continue;
-
-        soldQty += Math.max(1, Math.floor(Number(lock.quantity || 1)));
-      }
-
-      const remaining = originalQty - soldQty;
-
-      if (remaining > 0) {
-        result.push(Object.assign({}, item, {
-          quantity: remaining
-        }));
-      }
-    }
-
-    return result;
-  }
-
-  function applyLocksToInventoryData(data) {
-    if (!Array.isArray(data)) return data;
-
-    const user = findInventoryUser(data);
-    if (!user || !Array.isArray(user.items)) return data;
-
-    const cloned = data.map(u => Object.assign({}, u, {
-      items: Array.isArray(u.items) ? u.items.slice() : u.items
-    }));
-
-    const clonedUser = findInventoryUser(cloned);
-    if (!clonedUser || !Array.isArray(clonedUser.items)) return data;
-
-    clonedUser.items = applyLocksToItems(clonedUser.items);
-
-    window.__tnxAdjustedInventoryCountV7 = clonedUser.items.length;
-
-    setTimeout(updateCountAndPaginationText, 50);
-    setTimeout(updateCountAndPaginationText, 300);
-    setTimeout(updateCountAndPaginationText, 1000);
-
-    return cloned;
-  }
-
-  function inventoryRoot() {
-    return document.querySelector("#inventory");
-  }
-
-  function cards() {
-    const root = inventoryRoot();
-    if (!root) return [];
-
-    const found = Array.from(root.querySelectorAll(".item, [data-item-name], .inventory-item, .item-card"));
-    if (found.length) return found;
-
-    return Array.from(root.children || []);
-  }
-
-  function cardName(card) {
-    const explicit =
-      card.dataset?.itemName ||
-      card.dataset?.apiItemName ||
-      card.dataset?.name ||
-      card.querySelector("[data-item-name]")?.getAttribute("data-item-name") ||
-      card.querySelector(".item-name")?.textContent ||
-      card.querySelector(".inventory-item-name")?.textContent;
-
-    if (explicit) return norm(explicit);
-
-    return norm(cleanNameText(card.textContent));
-  }
-
-  function cardQty(card) {
-    const raw =
-      card.dataset?.itemQty ||
-      card.dataset?.qty ||
-      card.dataset?.quantity ||
-      card.querySelector(".qty")?.textContent ||
-      card.querySelector(".quantity")?.textContent ||
-      card.querySelector(".item-qty")?.textContent;
-
-    if (raw) {
-      const m = String(raw).match(/\d+/);
-      if (m) return Math.max(1, Math.floor(Number(m[0])));
-    }
-
-    return qtyFromText(card.textContent);
-  }
-
-  function setCardQty(card, qty) {
-    qty = Math.max(1, Math.floor(Number(qty || 1)));
-    card.dataset.itemQty = String(qty);
-
-    const el =
-      card.querySelector(".qty") ||
-      card.querySelector(".quantity") ||
-      card.querySelector(".item-qty");
-
-    if (el) {
-      el.textContent = String(qty);
-      return;
-    }
-
-    const walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT);
-    let node;
-
-    while ((node = walker.nextNode())) {
-      const oldText = node.nodeValue || "";
-
-      if (/[\(（]\s*\d+\s*[xX×]\s*[\)）]/.test(oldText)) {
-        node.nodeValue = oldText.replace(/[\(（]\s*\d+\s*[xX×]\s*[\)）]/, "(" + qty + "x)");
-        return;
-      }
-
-      if (/[\(（]\s*[xX×]\s*\d+\s*[\)）]/.test(oldText)) {
-        node.nodeValue = oldText.replace(/[\(（]\s*[xX×]\s*\d+\s*[\)）]/, "(" + qty + "x)");
-        return;
-      }
-    }
-  }
-
-  function findCardByItemName(itemName) {
-    const name = norm(itemName);
-
-    for (const card of cards()) {
-      const cName = cardName(card);
-      if (cName === name || cName.includes(name)) return card;
-    }
-
-    return null;
-  }
-
-  function addLock(itemName, quantity) {
-    const name = norm(itemName);
-    const qty = Math.max(1, Math.floor(Number(quantity || 1)));
-
-    if (!name) return;
-
-    const card = findCardByItemName(name);
-    const sourceQty = card ? cardQty(card) : qty;
-
-    const rows = readLocks();
-
-    rows.push({
-      itemName: name,
-      quantity: qty,
-      sourceQty: sourceQty,
-      ts: Date.now()
-    });
-
-    writeLocks(rows);
-    applySoldLocksToDom();
-  }
-
-  function applySoldLocksToDom() {
-    const locks = readLocks();
-
-    for (const card of cards()) {
-      const name = cardName(card);
-      if (!name) continue;
-
-      const currentQty = cardQty(card);
-      let soldQty = 0;
-
-      for (const lock of locks) {
-        const lockName = norm(lock.itemName);
-        if (!lockName) continue;
-
-        const same = name === lockName || name.includes(lockName) || lockName.includes(name);
-        if (!same) continue;
-
-        const sourceQty = Math.max(0, Math.floor(Number(lock.sourceQty || 0)));
-
-        if (sourceQty > 0 && currentQty < sourceQty) continue;
-
-        soldQty += Math.max(1, Math.floor(Number(lock.quantity || 1)));
-      }
-
-      if (soldQty <= 0) continue;
-
-      const remaining = currentQty - soldQty;
-
-      if (remaining <= 0) {
-        card.remove();
-      } else {
-        setCardQty(card, remaining);
-      }
-    }
-
-    updateCountAndPaginationText();
-  }
-
-  function updateCountAndPaginationText() {
-    const count = Number(window.__tnxAdjustedInventoryCountV7);
-
-    if (Number.isFinite(count) && count >= 0) {
-      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-      let node;
-
-      while ((node = walker.nextNode())) {
-        const old = node.nodeValue || "";
-
-        if (/\d+\s*(أغراضي|أغراض|غرض)/.test(old)) {
-          node.nodeValue = old.replace(/\d+\s*(أغراضي|أغراض|غرض)/, count + " $1");
-        }
-      }
-    }
-
-    fixInvalidPagination();
-  }
-
-  function clearInventoryPageState() {
-    for (const storage of [localStorage, sessionStorage]) {
-      const keys = [];
-
-      for (let i = 0; i < storage.length; i++) {
-        keys.push(storage.key(i));
-      }
-
-      for (const key of keys) {
-        if (!key) continue;
-
-        const k = key.toLowerCase();
-
-        if (
-          (k.includes("inventory") || k.includes("profile") || k.includes("حقيبة")) &&
-          (k.includes("page") || k.includes("pagination") || k.includes("صفحة"))
-        ) {
-          try {
-            storage.removeItem(key);
-          } catch {}
-        }
-      }
-    }
-  }
-
-  function fixInvalidPagination() {
-    const text = document.body?.innerText || "";
-    const m = text.match(/صفحة\s*(\d+)\s*\/\s*(\d+)/);
-
-    if (!m) return;
-
-    const current = Number(m[1]);
-    const total = Number(m[2]);
-
-    if (!current || !total || current <= total) return;
-
-    clearInventoryPageState();
-
-    const buttons = Array.from(document.querySelectorAll("button"));
-    const prev = buttons.find(b => (b.textContent || "").includes("السابق"));
-
-    if (prev && !prev.disabled) {
-      prev.click();
-      return;
-    }
-
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-    let node;
-
-    while ((node = walker.nextNode())) {
-      const old = node.nodeValue || "";
-
-      if (/صفحة\s*\d+\s*\/\s*\d+/.test(old)) {
-        node.nodeValue = old.replace(/صفحة\s*\d+\s*\/\s*\d+/, "صفحة 1 / " + total);
-      }
-    }
-  }
-
-  function tryReadSellPayload(input, init) {
-    const url = typeof input === "string" ? input : String(input?.url || "");
-
-    if (!url.includes("/api/me/inventory/sell")) return null;
-
-    const body = init && init.body;
-    if (!body || typeof body !== "string") return null;
-
-    try {
-      const json = JSON.parse(body);
-
-      return {
-        itemName: json.itemName || json.item_name || json.name || json.item,
-        quantity: json.quantity || json.qty || 1
-      };
-    } catch {
-      return null;
-    }
-  }
-
-  const originalFetch = window.fetch;
-
-  window.fetch = function (input, init) {
-    const url = typeof input === "string" ? input : String(input?.url || "");
-
-    const sellPayload = tryReadSellPayload(input, init);
-
-    if (sellPayload && sellPayload.itemName) {
-      addLock(sellPayload.itemName, sellPayload.quantity);
-    }
-
-    return originalFetch.apply(this, arguments).then(async function (res) {
-      if (url.includes("/api/user_inventory.json") || url.includes("user_inventory.json")) {
-        try {
-          const data = await res.clone().json();
-          const fixed = applyLocksToInventoryData(data);
-
-          return new Response(JSON.stringify(fixed), {
-            status: res.status,
-            statusText: res.statusText,
-            headers: {
-              "Content-Type": "application/json"
-            }
-          });
-        } catch {
-          return res;
-        }
-      }
-
-      if (sellPayload && sellPayload.itemName) {
-        try {
-          const data = await res.clone().json().catch(() => null);
-          const status = norm(data?.status);
-
-          const failed =
-            !res.ok ||
-            data?.ok === false ||
-            status === "rejected" ||
-            status === "failed" ||
-            data?.error;
-
-          if (failed) {
-            const name = norm(sellPayload.itemName);
-            const rows = readLocks().filter(x => norm(x.itemName) !== name);
-            writeLocks(rows);
-          }
-        } catch {}
-      }
-
-      setTimeout(applySoldLocksToDom, 100);
-      setTimeout(applySoldLocksToDom, 500);
-      setTimeout(applySoldLocksToDom, 1200);
-
-      return res;
-    });
-  };
-
-  window.__tnxAddSoldLockV7 = addLock;
-  window.__tnxApplySoldLocksV7 = applySoldLocksToDom;
-  window.__tnxSoldLocksV7 = readLocks;
-
-  applySoldLocksToDom();
-  setTimeout(applySoldLocksToDom, 300);
-  setTimeout(applySoldLocksToDom, 1000);
-  setTimeout(applySoldLocksToDom, 2500);
-  setInterval(applySoldLocksToDom, 3000);
-
-  new MutationObserver(applySoldLocksToDom).observe(document.body, {
-    childList: true,
-    subtree: true
-  });
-})();
-</script>
-
-
-
 <Layout metadata={metadata}>
   <main class="tnx-profile-page profile-v2-page" dir="rtl">
     <section id="profileSkeleton" class="profile-skeleton" aria-label="جاري تحميل البروفايل">
@@ -10388,4 +9895,423 @@ const metadata = {
 
 
 
+
+
+
+<script is:inline>
+/* INSTANT_SELL_LOCK_V8 */
+window.__tnxInstantSellLockV8 = true;
+
+(function () {
+  const LOCK_KEY = "tnx_inventory_sold_locks_v8";
+  const LOCK_TTL = 35 * 60 * 1000;
+
+  // تنظيف مفاتيح الإصدارات القديمة لأنها سببت خصم مكرر
+  try {
+    localStorage.removeItem("tnx_inventory_sold_locks_v5");
+    localStorage.removeItem("tnx_inventory_sold_locks_v6");
+    localStorage.removeItem("tnx_inventory_sold_locks_v7");
+  } catch {}
+
+  function norm(v) {
+    return String(v || "")
+      .trim()
+      .replace(/ـ/g, "")
+      .replace(/[\u064B-\u065F\u0670]/g, "")
+      .replace(/\s+/g, " ")
+      .toLowerCase();
+  }
+
+  function readLocks() {
+    let rows = [];
+    try {
+      rows = JSON.parse(localStorage.getItem(LOCK_KEY) || "[]");
+    } catch {
+      rows = [];
+    }
+
+    rows = rows.filter(x => x && x.itemName && Date.now() - Number(x.ts || 0) < LOCK_TTL);
+
+    try {
+      localStorage.setItem(LOCK_KEY, JSON.stringify(rows));
+    } catch {}
+
+    return rows;
+  }
+
+  function writeLocks(rows) {
+    try {
+      localStorage.setItem(LOCK_KEY, JSON.stringify(rows || []));
+    } catch {}
+  }
+
+  function cleanNameText(text) {
+    return String(text || "")
+      .replace(/[\(（]\s*\d+\s*[xX×]\s*[\)）]/g, "")
+      .replace(/[\(（]\s*[xX×]\s*\d+\s*[\)）]/g, "")
+      .replace(/\b\d+\s*[xX×]\b/g, "")
+      .replace(/(?:العدد|عدد|الكمية)\s*[:：]?\s*\d+/g, "")
+      .trim();
+  }
+
+  function qtyFromText(text) {
+    text = String(text || "");
+
+    const m =
+      text.match(/[\(（]\s*(\d+)\s*[xX×]\s*[\)）]/) ||
+      text.match(/[\(（]\s*[xX×]\s*(\d+)\s*[\)）]/) ||
+      text.match(/(?:العدد|عدد|الكمية)\s*[:：]?\s*(\d+)/) ||
+      text.match(/\b(\d+)\s*[xX×]\b/);
+
+    return m ? Math.max(1, Number(m[1])) : 1;
+  }
+
+  function inventoryRoot() {
+    return document.querySelector("#inventory");
+  }
+
+  function cards() {
+    const root = inventoryRoot();
+    if (!root) return [];
+
+    const found = Array.from(root.querySelectorAll(".item, [data-item-name], .inventory-item, .item-card"));
+    return found.length ? found : Array.from(root.children || []);
+  }
+
+  function cardName(card) {
+    const explicit =
+      card.dataset?.itemName ||
+      card.dataset?.apiItemName ||
+      card.dataset?.name ||
+      card.querySelector("[data-item-name]")?.getAttribute("data-item-name") ||
+      card.querySelector(".item-name")?.textContent ||
+      card.querySelector(".inventory-item-name")?.textContent;
+
+    return norm(explicit || cleanNameText(card.textContent));
+  }
+
+  function cardQty(card) {
+    const raw =
+      card.dataset?.itemQty ||
+      card.dataset?.qty ||
+      card.dataset?.quantity ||
+      card.querySelector(".qty")?.textContent ||
+      card.querySelector(".quantity")?.textContent ||
+      card.querySelector(".item-qty")?.textContent;
+
+    if (raw) {
+      const m = String(raw).match(/\d+/);
+      if (m) return Math.max(1, Number(m[0]));
+    }
+
+    return qtyFromText(card.textContent);
+  }
+
+  function setCardQty(card, qty) {
+    qty = Math.max(1, Number(qty || 1));
+    card.dataset.itemQty = String(qty);
+
+    const q = card.querySelector(".qty") || card.querySelector(".quantity") || card.querySelector(".item-qty");
+
+    if (q) {
+      q.textContent = String(qty);
+      return;
+    }
+
+    const walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT);
+    let node;
+
+    while ((node = walker.nextNode())) {
+      const t = node.nodeValue || "";
+
+      if (/[\(（]\s*\d+\s*[xX×]\s*[\)）]/.test(t)) {
+        node.nodeValue = t.replace(/[\(（]\s*\d+\s*[xX×]\s*[\)）]/, "(" + qty + "x)");
+        return;
+      }
+
+      if (/[\(（]\s*[xX×]\s*\d+\s*[\)）]/.test(t)) {
+        node.nodeValue = t.replace(/[\(（]\s*[xX×]\s*\d+\s*[\)）]/, "(" + qty + "x)");
+        return;
+      }
+    }
+  }
+
+  function findCardByName(itemName) {
+    const name = norm(itemName);
+    return cards().find(card => {
+      const cName = cardName(card);
+      return cName === name || cName.includes(name) || name.includes(cName);
+    });
+  }
+
+  function addLock(itemName, quantity) {
+    const name = norm(itemName);
+    const qty = Math.max(1, Number(quantity || 1));
+
+    if (!name) return;
+
+    const card = findCardByName(name);
+    const sourceQty = card ? cardQty(card) : qty;
+
+    const rows = readLocks();
+
+    rows.push({
+      itemName: name,
+      quantity: qty,
+      sourceQty,
+      ts: Date.now()
+    });
+
+    writeLocks(rows);
+    applyLocks();
+    updateInventoryCountFromJson();
+  }
+
+  function applyLocks() {
+    const locks = readLocks();
+
+    for (const card of cards()) {
+      const name = cardName(card);
+      if (!name) continue;
+
+      const currentQty = cardQty(card);
+      let soldQty = 0;
+
+      for (const lock of locks) {
+        const lockName = norm(lock.itemName);
+        if (!lockName) continue;
+
+        const same = name === lockName || name.includes(lockName) || lockName.includes(name);
+        if (!same) continue;
+
+        const sourceQty = Number(lock.sourceQty || 0);
+
+        // إذا GitHub تحدّث ونقصت الكمية، لا نخصم مرتين
+        if (sourceQty > 0 && currentQty < sourceQty) continue;
+
+        soldQty += Math.max(1, Number(lock.quantity || 1));
+      }
+
+      if (soldQty <= 0) continue;
+
+      const remaining = currentQty - soldQty;
+
+      if (remaining <= 0) {
+        card.remove();
+      } else {
+        setCardQty(card, remaining);
+      }
+    }
+
+    fixPagination();
+  }
+
+  function getProfileLogin() {
+    const p = new URLSearchParams(location.search);
+    return norm(p.get("login") || p.get("user") || "tnx_6");
+  }
+
+  function getProfileUserId() {
+    const p = new URLSearchParams(location.search);
+    return String(p.get("userId") || p.get("id") || "558353985").trim();
+  }
+
+  function adjustItems(items) {
+    const locks = readLocks();
+    const result = [];
+
+    for (const item of items || []) {
+      const itemName = norm(item.name || item.itemName || item.item_name);
+      const originalQty = Math.max(1, Number(item.quantity || item.qty || 1));
+
+      let soldQty = 0;
+
+      for (const lock of locks) {
+        const lockName = norm(lock.itemName);
+        const same = itemName === lockName || itemName.includes(lockName) || lockName.includes(itemName);
+        if (!same) continue;
+
+        const sourceQty = Number(lock.sourceQty || 0);
+
+        if (sourceQty > 0 && originalQty < sourceQty) continue;
+
+        soldQty += Math.max(1, Number(lock.quantity || 1));
+      }
+
+      const remaining = originalQty - soldQty;
+
+      if (remaining > 0) result.push(Object.assign({}, item, { quantity: remaining }));
+    }
+
+    return result;
+  }
+
+  async function updateInventoryCountFromJson() {
+    try {
+      const res = await fetch("/api/user_inventory.json?ts=" + Date.now(), { cache: "no-store" });
+      const data = await res.json();
+
+      const login = getProfileLogin();
+      const userId = getProfileUserId();
+
+      const user = Array.isArray(data)
+        ? data.find(u => norm(u.userLogin) === login || String(u.userId || "").trim() === userId)
+        : null;
+
+      if (!user || !Array.isArray(user.items)) return;
+
+      const adjusted = adjustItems(user.items);
+      const count = adjusted.length;
+
+      window.__tnxAdjustedInventoryCountV8 = count;
+
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      let node;
+
+      while ((node = walker.nextNode())) {
+        const old = node.nodeValue || "";
+
+        if (/\d+\s*(أغراضي|أغراض|غرض)/.test(old)) {
+          node.nodeValue = old.replace(/\d+\s*(أغراضي|أغراض|غرض)/, count + " $1");
+        }
+      }
+
+      fixPagination();
+    } catch {}
+  }
+
+  function clearPageState() {
+    for (const storage of [localStorage, sessionStorage]) {
+      const keys = [];
+
+      for (let i = 0; i < storage.length; i++) keys.push(storage.key(i));
+
+      for (const key of keys) {
+        if (!key) continue;
+
+        const k = key.toLowerCase();
+
+        if (
+          (k.includes("inventory") || k.includes("profile") || k.includes("حقيبة")) &&
+          (k.includes("page") || k.includes("pagination") || k.includes("صفحة"))
+        ) {
+          try {
+            storage.removeItem(key);
+          } catch {}
+        }
+      }
+    }
+  }
+
+  function fixPagination() {
+    const text = document.body?.innerText || "";
+    const m = text.match(/صفحة\s*(\d+)\s*\/\s*(\d+)/);
+
+    if (!m) return;
+
+    const current = Number(m[1]);
+    const total = Number(m[2]);
+
+    if (!current || !total || current <= total) return;
+
+    clearPageState();
+
+    const key = "tnx_reload_fix_pagination_v8";
+    const last = Number(sessionStorage.getItem(key) || 0);
+
+    if (Date.now() - last > 4000) {
+      sessionStorage.setItem(key, String(Date.now()));
+      location.reload();
+    }
+  }
+
+  function tryReadSellPayload(input, init) {
+    const url = typeof input === "string" ? input : String(input?.url || "");
+    if (!url.includes("/api/me/inventory/sell")) return null;
+
+    const body = init && init.body;
+    if (!body || typeof body !== "string") return null;
+
+    try {
+      const json = JSON.parse(body);
+
+      return {
+        itemName: json.itemName || json.item_name || json.name || json.item,
+        quantity: json.quantity || json.qty || 1
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  const originalFetch = window.fetch;
+
+  window.fetch = function (input, init) {
+    const payload = tryReadSellPayload(input, init);
+
+    if (payload && payload.itemName) {
+      addLock(payload.itemName, payload.quantity);
+    }
+
+    return originalFetch.apply(this, arguments).then(async function (res) {
+      if (payload && payload.itemName) {
+        try {
+          const data = await res.clone().json().catch(() => null);
+          const status = norm(data?.status);
+
+          const failed =
+            !res.ok ||
+            data?.ok === false ||
+            status === "rejected" ||
+            status === "failed" ||
+            data?.error;
+
+          if (failed) {
+            const name = norm(payload.itemName);
+            writeLocks(readLocks().filter(x => norm(x.itemName) !== name));
+          }
+        } catch {}
+      }
+
+      setTimeout(applyLocks, 100);
+      setTimeout(updateInventoryCountFromJson, 300);
+
+      return res;
+    });
+  };
+
+  function start() {
+    applyLocks();
+    updateInventoryCountFromJson();
+
+    setTimeout(applyLocks, 300);
+    setTimeout(applyLocks, 1000);
+    setTimeout(updateInventoryCountFromJson, 1500);
+
+    setInterval(function () {
+      applyLocks();
+      updateInventoryCountFromJson();
+    }, 4000);
+
+    const target = document.body || document.documentElement;
+
+    if (target) {
+      new MutationObserver(applyLocks).observe(target, {
+        childList: true,
+        subtree: true
+      });
+    }
+  }
+
+  window.__tnxAddSoldLockV8 = addLock;
+  window.__tnxApplySoldLocksV8 = applyLocks;
+  window.__tnxSoldLocksV8 = readLocks;
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
+  }
+})();
+</script>
 
