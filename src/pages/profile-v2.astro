@@ -6872,33 +6872,23 @@ const metadata = {
   }
 
   .item-detail-v3-action.sell {
-    border-color: rgba(240,208,96,.42);
-    background: linear-gradient(135deg, #f0d060, #d4af37);
-    color: #090909;
+    border-color: rgba(255, 80, 80, .42);
+    background: linear-gradient(135deg, #ff6b6b, #d62828);
+    color: #ffffff;
+  }
+
+  .item-detail-v3-action.sell:hover:not(:disabled) {
+    transform: translateY(-1px);
+    border-color: rgba(255, 100, 100, .6);
+    background: linear-gradient(135deg, #ff7b7b, #b91c1c);
+    color: #ffffff;
   }
 
   .item-detail-v3-action:disabled {
     opacity: .42;
     cursor: not-allowed;
   }
-
-  .item-detail-v3-status {
-    margin-top: 16px;
-    border-radius: 18px;
-    border: 1px solid rgba(255,223,138,.14);
-    background: rgba(0,0,0,.26);
-    padding: 12px 13px;
-    color: rgba(255,255,255,.70);
-    font-size: 13px;
-    font-weight: 800;
-    line-height: 1.75;
-  }
-
-  .item-detail-v3-status strong {
-    color: #f0d060;
-  }
-
-  .item-detail-v3-hint {
+.item-detail-v3-hint {
     margin-top: 12px;
     min-height: 22px;
     color: rgba(255,255,255,.72);
@@ -8847,14 +8837,7 @@ const metadata = {
                 <button class="item-detail-v3-action sell" type="button" data-v3-action="sell" ${saleDisabled ? 'disabled' : ''}>بيع</button>
                 <button class="item-detail-v3-action" type="button" data-v3-action="market">عرض في السوق</button>
               </div>
-
-              <div class="item-detail-v3-status">
-                <strong>Streamer.bot</strong>
-                <br />
-                العمليات المرتبطة بالنظام تُسجل وتُنفذ حسب حالة Streamer.bot. إذا كان مقفلًا، الطلب يبقى محفوظًا لين يشتغل.
-              </div>
-
-              <div class="item-detail-v3-hint" data-v3-hint>${esc(itemDetailHint('sell', item, meta))}</div>
+<div class="item-detail-v3-hint" data-v3-hint>${esc(itemDetailHint('sell', item, meta))}</div>
             </div>
           </div>
         `;
