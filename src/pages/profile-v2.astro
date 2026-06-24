@@ -9069,6 +9069,56 @@ const metadata = {
 
       installItemDetailModalV3();
 
+      /* Aggressive legacy item modal remover */
+      function removeLegacyItemDetailModalAggressive() {
+        const nodes = Array.from(document.body.querySelectorAll("div,[role='dialog']"));
+
+        for (const node of nodes) {
+          if (node.classList && node.classList.contains("item-detail-v3")) continue;
+          if (node.closest && node.closest(".item-detail-v3")) continue;
+
+          const text = String(node.textContent || "");
+
+          const isLegacyItemModal =
+            text.includes("استخدام") &&
+            text.includes("إهداء") &&
+            text.includes("عرض في السوق") &&
+            text.includes("Streamer.bot");
+
+          if (!isLegacyItemModal) continue;
+
+          let root = node;
+
+          for (let cur = node; cur && cur !== document.body; cur = cur.parentElement) {
+            const style = window.getComputedStyle(cur);
+
+            if (style.position === "fixed" || cur.getAttribute("role") === "dialog") {
+              root = cur;
+            }
+          }
+
+          root.remove();
+        }
+      }
+
+      document.addEventListener("click", () => {
+        setTimeout(removeLegacyItemDetailModalAggressive, 0);
+        setTimeout(removeLegacyItemDetailModalAggressive, 80);
+        setTimeout(removeLegacyItemDetailModalAggressive, 200);
+        setTimeout(removeLegacyItemDetailModalAggressive, 500);
+      }, true);
+
+      new MutationObserver(() => {
+        removeLegacyItemDetailModalAggressive();
+      }).observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+
+      setInterval(removeLegacyItemDetailModalAggressive, 500);
+      removeLegacyItemDetailModalAggressive();
+
+
       /* Remove item detail after sell modal closes */
       function removeItemDetailModalsAfterSell() {
         document.querySelectorAll('.item-detail-v3').forEach((node) => node.remove());
