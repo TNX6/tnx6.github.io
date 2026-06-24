@@ -9892,13 +9892,15 @@ const metadata = {
 
 
 
+
+
 <script is:inline>
-/* SAFE_SOLD_RESERVED_ITEMS_FILTER_V4 */
-window.__tnxSafeSoldReservedItemsV4 = true;
+/* INSTANT_SELL_LOCK_V5 */
+window.__tnxInstantSellLockV5 = true;
 
 (function () {
-  const API = "https://api.tnx6.xyz";
-  let reserved = new Map();
+  const LOCK_KEY = "tnx_inventory_sold_locks_v5";
+  const LOCK_TTL = 10 * 60 * 1000;
 
   function norm(v) {
     return String(v || "")
@@ -9909,110 +9911,221 @@ window.__tnxSafeSoldReservedItemsV4 = true;
       .toLowerCase();
   }
 
-  function getLogin() {
-    const p = new URLSearchParams(location.search);
-    return norm(p.get("login") || p.get("user") || "tnx_6");
+  function now() {
+    return Date.now();
   }
 
-  function rowName(row) {
-    return norm(row.itemName || row.item_name || row.name || row.item || row.text || row.title);
+  function readLocks() {
+    let rows = [];
+
+    try {
+      rows = JSON.parse(localStorage.getItem(LOCK_KEY) || "[]");
+    } catch {
+      rows = [];
+    }
+
+    rows = rows.filter(x => x && x.itemName && (now() - Number(x.ts || 0)) < LOCK_TTL);
+
+    try {
+      localStorage.setItem(LOCK_KEY, JSON.stringify(rows));
+    } catch {}
+
+    return rows;
   }
 
-  function rowQty(row) {
-    return Math.max(0, Math.floor(Number(row.quantity || row.qty || 0)));
+  function writeLocks(rows) {
+    try {
+      localStorage.setItem(LOCK_KEY, JSON.stringify(rows));
+    } catch {}
+  }
+
+  function addLock(itemName, quantity) {
+    const name = norm(itemName);
+    const qty = Math.max(1, Math.floor(Number(quantity || 1)));
+
+    if (!name) return;
+
+    const rows = readLocks();
+
+    rows.push({
+      itemName: name,
+      quantity: qty,
+      ts: now()
+    });
+
+    writeLocks(rows);
+    applySoldLocks();
+  }
+
+  function reservedMap() {
+    const map = new Map();
+
+    for (const row of readLocks()) {
+      const name = norm(row.itemName);
+      const qty = Math.max(1, Math.floor(Number(row.quantity || 1)));
+
+      if (!name) continue;
+
+      map.set(name, (map.get(name) || 0) + qty);
+    }
+
+    window.__tnxSoldLocksV5 = Array.from(map.entries());
+    return map;
+  }
+
+  function inventoryRoot() {
+    return document.querySelector("#inventory");
+  }
+
+  function cards() {
+    const root = inventoryRoot();
+    if (!root) return [];
+
+    const found = Array.from(root.querySelectorAll(".item, [data-item-name], .inventory-item, .item-card"));
+    if (found.length) return found;
+
+    return Array.from(root.children);
   }
 
   function cardName(card) {
     return norm(
-      card.dataset.itemName ||
-      card.dataset.name ||
+      card.dataset?.itemName ||
+      card.dataset?.apiItemName ||
+      card.dataset?.name ||
+      card.querySelector("[data-item-name]")?.getAttribute("data-item-name") ||
       card.querySelector(".item-name")?.textContent ||
-      ""
+      card.querySelector(".inventory-item-name")?.textContent ||
+      card.textContent
     );
   }
 
   function cardQty(card) {
     const raw =
-      card.dataset.itemQty ||
-      card.dataset.qty ||
+      card.dataset?.itemQty ||
+      card.dataset?.qty ||
+      card.dataset?.quantity ||
       card.querySelector(".qty")?.textContent ||
+      card.querySelector(".quantity")?.textContent ||
       "1";
 
-    const n = String(raw).replace(/[^0-9]/g, "");
-    return Math.max(1, Math.floor(Number(n || 1)));
+    const m = String(raw).match(/\d+/);
+    return Math.max(1, Math.floor(Number(m ? m[0] : 1)));
   }
 
   function setCardQty(card, qty) {
     card.dataset.itemQty = String(qty);
 
-    const q = card.querySelector(".qty");
+    const q =
+      card.querySelector(".qty") ||
+      card.querySelector(".quantity");
+
     if (q) {
-      const old = q.textContent || "";
-      q.textContent = old.includes("x") || old.includes("×") ? "x" + qty : String(qty);
+      q.textContent = String(qty);
     }
   }
 
-  async function loadReserved() {
+  function matchSoldName(cardText, soldName) {
+    if (!cardText || !soldName) return false;
+    return cardText === soldName || cardText.includes(soldName);
+  }
+
+  function applySoldLocks() {
+    const map = reservedMap();
+
+    for (const card of cards()) {
+      const text = cardName(card);
+      if (!text) continue;
+
+      for (const [soldName, soldQty] of map.entries()) {
+        if (!matchSoldName(text, soldName)) continue;
+
+        const qty = cardQty(card);
+        const remaining = qty - soldQty;
+
+        if (remaining <= 0) {
+          card.remove();
+        } else {
+          setCardQty(card, remaining);
+        }
+
+        break;
+      }
+    }
+  }
+
+  function tryReadSellPayload(input, init) {
+    const url = typeof input === "string" ? input : String(input?.url || "");
+
+    if (!url.includes("/api/me/inventory/sell")) return null;
+
+    let body = init && init.body;
+
+    if (!body) return null;
+
+    if (typeof body !== "string") return null;
+
     try {
-      const login = getLogin();
-      const res = await fetch(API + "/api/inventory/sell-reservations?login=" + encodeURIComponent(login), {
-        cache: "no-store"
-      });
+      const json = JSON.parse(body);
 
-      const data = await res.json().catch(() => ({}));
-      const rows = Array.isArray(data.reservations) ? data.reservations : [];
-
-      reserved = new Map();
-
-      for (const row of rows) {
-        const status = norm(row.status);
-
-        if (status !== "completed" && status !== "pending" && status !== "processing") continue;
-
-        const name = rowName(row);
-        const qty = rowQty(row);
-
-        if (!name || qty <= 0) continue;
-
-        reserved.set(name, (reserved.get(name) || 0) + qty);
-      }
-
-      window.__tnxReservedSoldItemsV4 = Array.from(reserved.entries());
-
-      applyFilter();
-    } catch (e) {
-      window.__tnxReservedSoldItemsErrorV4 = String(e && e.message ? e.message : e);
+      return {
+        itemName: json.itemName || json.item_name || json.name || json.item,
+        quantity: json.quantity || json.qty || 1
+      };
+    } catch {
+      return null;
     }
   }
 
-  function applyFilter() {
-    document.querySelectorAll("#inventory .item").forEach((card) => {
-      const name = cardName(card);
-      if (!name) return;
+  const originalFetch = window.fetch;
 
-      const soldQty = reserved.get(name) || 0;
-      if (soldQty <= 0) return;
+  window.fetch = function (input, init) {
+    const payload = tryReadSellPayload(input, init);
 
-      const qty = cardQty(card);
-      const remaining = qty - soldQty;
+    if (payload && payload.itemName) {
+      // هذا أهم سطر: نحجز الغرض محليًا قبل ما يرجع رد API
+      addLock(payload.itemName, payload.quantity);
+    }
 
-      if (remaining <= 0) {
-        card.remove();
-      } else {
-        setCardQty(card, remaining);
+    return originalFetch.apply(this, arguments).then(async (res) => {
+      if (payload && payload.itemName) {
+        try {
+          const clone = res.clone();
+          const data = await clone.json().catch(() => null);
+
+          const status = norm(data?.status);
+          const failed =
+            !res.ok ||
+            data?.ok === false ||
+            status === "rejected" ||
+            status === "failed" ||
+            data?.error;
+
+          if (failed) {
+            // لو البيع فشل، نحذف القفل ونرجع نحدث الصفحة
+            const name = norm(payload.itemName);
+            const rows = readLocks().filter(x => norm(x.itemName) !== name);
+            writeLocks(rows);
+          }
+        } catch {}
       }
+
+      setTimeout(applySoldLocks, 100);
+      setTimeout(applySoldLocks, 500);
+
+      return res;
     });
-  }
+  };
 
-  window.__tnxRefreshSoldReservedItemsV4 = loadReserved;
-  window.__tnxApplySoldReservedItemsV4 = applyFilter;
+  window.__tnxApplySoldLocksV5 = applySoldLocks;
+  window.__tnxAddSoldLockV5 = addLock;
 
-  loadReserved();
-  setTimeout(loadReserved, 500);
-  setTimeout(loadReserved, 1500);
-  setInterval(loadReserved, 5000);
+  applySoldLocks();
+  setTimeout(applySoldLocks, 300);
+  setTimeout(applySoldLocks, 1000);
+  setTimeout(applySoldLocks, 2500);
+  setInterval(applySoldLocks, 3000);
 
-  new MutationObserver(applyFilter).observe(document.body, {
+  new MutationObserver(applySoldLocks).observe(document.body, {
     childList: true,
     subtree: true
   });
