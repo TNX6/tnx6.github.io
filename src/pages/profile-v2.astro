@@ -9069,6 +9069,45 @@ const metadata = {
 
       installItemDetailModalV3();
 
+      /* Kill legacy item modal */
+      function killLegacyItemModal() {
+        const nodes = Array.from(document.body.querySelectorAll("div"));
+
+        for (const node of nodes) {
+          const text = String(node.textContent || "");
+
+          if (!text.includes("Streamer.bot")) continue;
+          if (!text.includes("المتعلقة بالنظام") && !text.includes("مخزونك")) continue;
+
+          let root = node;
+
+          for (let cur = node; cur && cur !== document.body; cur = cur.parentElement) {
+            const style = window.getComputedStyle(cur);
+
+            if (style.position === "fixed" || cur.getAttribute("role") === "dialog") {
+              root = cur;
+            }
+          }
+
+          root.remove();
+        }
+      }
+
+      document.addEventListener("click", () => {
+        setTimeout(killLegacyItemModal, 0);
+        setTimeout(killLegacyItemModal, 80);
+      }, true);
+
+      new MutationObserver(() => {
+        killLegacyItemModal();
+      }).observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+
+      killLegacyItemModal();
+
+
 
 
       function renderBadges(badges) {
