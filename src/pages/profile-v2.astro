@@ -8889,6 +8889,42 @@ const metadata = {
         }
       }
 
+      async function renderInventoryAfterLocalSellV4(soldName, quantity, fallbackItems) {
+        const fullList =
+          Array.isArray(window.__tnxInventoryFullList)
+            ? window.__tnxInventoryFullList
+            : Array.isArray(fallbackItems)
+              ? fallbackItems
+              : []
+
+        const changed = applyLocalSellToInventory(fullList, soldName, quantity)
+
+        if (!changed) {
+          return false
+        }
+
+        // Keep active user inventory in the same shape the D1 endpoint returns.
+        if (state.activeUser) {
+          state.activeUser = {
+            ...state.activeUser,
+            inventory: fullList
+              .map((item) => ({
+                name: String(item.name || item.itemName || item.text || '').trim(),
+                quantity: Math.max(0, Math.floor(Number(item.qty || item.quantity || item.amount || item.count || 0))),
+                itemKey: String(item.itemKey || '').trim(),
+                updatedAt: item.updatedAt || '',
+              }))
+              .filter((item) => item.name && item.quantity > 0),
+          }
+        }
+
+        setInventoryCountFromItems(fullList)
+        renderInventory(fullList)
+        await enhanceInventorySellButtons(fullList)
+
+        return true
+      }
+
       function openInventorySellModal(item, meta, items) {
         const name = String(item.name || '').trim()
         const apiItemName = String(meta?.text || meta?.name || name).trim() || name
@@ -9002,20 +9038,25 @@ const metadata = {
               : 'تم تسجيل الطلب Pending. بيتنفذ أول ما تشغل Streamer.bot.'
 
             try {
-              const localChanged = applyLocalSellToInventory(items, name, qty);
+              const localChanged = await renderInventoryAfterLocalSellV4(name, qty, items)
 
-              if (localChanged) {
-                setInventoryCountFromItems(items);
-                renderInventory(items);
-                enhanceInventorySellButtons(items);
-              } else {
-                updateInventoryItemDomAfterSell(name, qty);
-                requestAnimationFrame(() => applyInventoryPagination());
+              if (!localChanged) {
+                // Fallback only. Normal path rerenders from the full inventory list
+                // so next-page items fill the sold card slot immediately.
+                updateInventoryItemDomAfterSell(name, qty)
+                requestAnimationFrame(() => {
+                  renderInventory(window.__tnxInventoryFullList || items || [])
+                  enhanceInventorySellButtons(window.__tnxInventoryFullList || items || [])
+                })
               }
             } catch (uiError) {
-              console.warn('Sell request succeeded, but local inventory UI update failed:', uiError);
-              updateInventoryItemDomAfterSell(name, qty);
-              requestAnimationFrame(() => applyInventoryPagination());
+              console.warn('Sell request succeeded, but local inventory UI update failed:', uiError)
+
+              updateInventoryItemDomAfterSell(name, qty)
+              requestAnimationFrame(() => {
+                renderInventory(window.__tnxInventoryFullList || items || [])
+                enhanceInventorySellButtons(window.__tnxInventoryFullList || items || [])
+              })
             }
 
             submit.textContent = 'تم التسجيل'
