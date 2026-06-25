@@ -9742,6 +9742,7 @@ const metadata = {
           }
 
           stopInventoryAutoRefresh()
+          stopInventoryLivePollerV3()
           $('searchView')?.classList.remove('hidden')
           $('profileView')?.classList.add('hidden')
           $('notFoundView')?.classList.add('hidden')
@@ -9752,6 +9753,7 @@ const metadata = {
 
         if (!user) {
           stopInventoryAutoRefresh()
+          stopInventoryLivePollerV3()
           $('searchView')?.classList.add('hidden')
           $('profileView')?.classList.add('hidden')
           $('notFoundView')?.classList.remove('hidden')
@@ -9848,7 +9850,7 @@ const metadata = {
       async function renderProfileFromD1(user) {
         const hydratedUser = await userWithD1Inventory(user)
         renderProfile(hydratedUser)
-        startInventoryAutoRefresh()
+        startInventoryLivePollerV3()
       }
 
       function clearD1InventoryCacheForUser(user) {
@@ -9866,141 +9868,202 @@ const metadata = {
         } catch (error) {
           console.warn('Failed to refresh D1 inventory after sell status:', error)
         }
-      }
-      /* TNX_INVENTORY_AUTO_REFRESH_SINGLETON_V2 */
-      const INVENTORY_AUTO_REFRESH_VISIBLE_MS = 5000
-      const INVENTORY_AUTO_REFRESH_HIDDEN_MS = 25000
 
-      function getInventoryAutoRefreshState() {
-        if (!window.__tnxInventoryAutoRefresh) {
-          window.__tnxInventoryAutoRefresh = {
+      /* TNX_INVENTORY_LIVE_POLLER_V3 */
+      const INVENTORY_LIVE_POLL_VISIBLE_MS = 5000
+      const INVENTORY_LIVE_POLL_HIDDEN_MS = 25000
+
+      function getInventoryLivePollerV3() {
+        if (!window.__tnxInventoryLivePollerV3) {
+          window.__tnxInventoryLivePollerV3 = {
             timer: 0,
             running: false,
             lastSignature: '',
+            lastStartedKey: '',
             listenersInstalled: false,
-            lastFetchAt: 0,
           }
         }
 
-        return window.__tnxInventoryAutoRefresh
+        return window.__tnxInventoryLivePollerV3
       }
 
-      function inventoryAutoRefreshSignature(user) {
-        try {
-          return inventoryItems(user)
-            .map((item) => `${normalize(item.name)}:${Math.max(0, Math.floor(Number(item.qty || 0)))}`)
-            .sort()
-            .join('|')
-        } catch {
-          return ''
-        }
+      function inventoryLivePollKey(user) {
+        return d1InventoryCacheKey(user || state.activeUser)
       }
 
-      function inventoryAutoRefreshDelay() {
-        return document.hidden ? INVENTORY_AUTO_REFRESH_HIDDEN_MS : INVENTORY_AUTO_REFRESH_VISIBLE_MS
+      function inventoryLiveSignatureFromItems(items) {
+        if (!Array.isArray(items)) return ''
+
+        return items
+          .map((item) => {
+            const name = normalize(String(item.name || item.itemName || item.itemKey || '').trim())
+            const qty = Math.max(0, Math.floor(Number(item.quantity || item.qty || 0)))
+            return name && qty > 0 ? `${name}:${qty}` : ''
+          })
+          .filter(Boolean)
+          .sort()
+          .join('|')
       }
 
-      function profileIsVisibleForAutoRefresh() {
+      function inventoryLiveSignatureFromUser(user) {
+        return inventoryItems(user)
+          .map((item) => `${normalize(item.name)}:${Math.max(0, Math.floor(Number(item.qty || 0)))}`)
+          .filter(Boolean)
+          .sort()
+          .join('|')
+      }
+
+      function inventoryLivePollDelay() {
+        return document.hidden ? INVENTORY_LIVE_POLL_HIDDEN_MS : INVENTORY_LIVE_POLL_VISIBLE_MS
+      }
+
+      function inventoryLiveProfileIsReady() {
         return Boolean(state.activeUser) && !$('profileView')?.classList.contains('hidden')
       }
 
-      function stopInventoryAutoRefresh() {
-        const auto = getInventoryAutoRefreshState()
+      function stopInventoryLivePollerV3() {
+        const poller = getInventoryLivePollerV3()
 
-        if (auto.timer) {
-          window.clearTimeout(auto.timer)
-          auto.timer = 0
+        if (poller.timer) {
+          window.clearTimeout(poller.timer)
+          poller.timer = 0
         }
       }
 
-      function scheduleInventoryAutoRefresh(immediate = false) {
-        const auto = getInventoryAutoRefreshState()
+      function scheduleInventoryLivePollerV3(delay) {
+        const poller = getInventoryLivePollerV3()
 
-        if (!profileIsVisibleForAutoRefresh()) {
-          stopInventoryAutoRefresh()
-          return
+        if (poller.timer) {
+          window.clearTimeout(poller.timer)
+          poller.timer = 0
         }
 
-        if (auto.timer) {
-          window.clearTimeout(auto.timer)
-          auto.timer = 0
-        }
-
-        const delay = immediate ? 350 : inventoryAutoRefreshDelay()
-
-        auto.timer = window.setTimeout(() => {
-          auto.timer = 0
-          runInventoryAutoRefresh()
+        poller.timer = window.setTimeout(() => {
+          poller.timer = 0
+          runInventoryLivePollerV3()
         }, delay)
       }
 
-      function startInventoryAutoRefresh() {
-        const auto = getInventoryAutoRefreshState()
+      function startInventoryLivePollerV3() {
+        const poller = getInventoryLivePollerV3()
 
-        if (!profileIsVisibleForAutoRefresh()) {
-          stopInventoryAutoRefresh()
+        if (!inventoryLiveProfileIsReady()) {
+          stopInventoryLivePollerV3()
           return
         }
 
-        auto.lastSignature = inventoryAutoRefreshSignature(state.activeUser)
+        const key = inventoryLivePollKey(state.activeUser)
 
-        if (!auto.listenersInstalled) {
-          auto.listenersInstalled = true
+        if (!key) {
+          stopInventoryLivePollerV3()
+          return
+        }
+
+        poller.lastStartedKey = key
+        poller.lastSignature = inventoryLiveSignatureFromUser(state.activeUser)
+
+        if (!poller.listenersInstalled) {
+          poller.listenersInstalled = true
 
           addListener(document, 'visibilitychange', () => {
-            if (!document.hidden) scheduleInventoryAutoRefresh(true)
-            else scheduleInventoryAutoRefresh(false)
+            if (inventoryLiveProfileIsReady()) {
+              scheduleInventoryLivePollerV3(document.hidden ? INVENTORY_LIVE_POLL_HIDDEN_MS : 500)
+            }
           })
 
           addListener(window, 'focus', () => {
-            scheduleInventoryAutoRefresh(true)
+            if (inventoryLiveProfileIsReady()) {
+              scheduleInventoryLivePollerV3(500)
+            }
           })
         }
 
-        scheduleInventoryAutoRefresh(false)
+        scheduleInventoryLivePollerV3(INVENTORY_LIVE_POLL_VISIBLE_MS)
       }
 
-      async function runInventoryAutoRefresh() {
-        const auto = getInventoryAutoRefreshState()
+      function buildD1InventoryUrlForUser(user) {
+        const params = new URLSearchParams()
+        const viewedId = String(userId(user) || get(user, ['twitchId', 'twitch_id'], '') || '').trim()
+        const viewedLogin = String(userLogin(user) || get(user, ['login', 'userLogin'], '') || '').trim().toLowerCase()
 
-        if (!profileIsVisibleForAutoRefresh()) {
-          stopInventoryAutoRefresh()
+        if (viewedId) params.set('twitchId', viewedId)
+        else if (viewedLogin) params.set('login', viewedLogin)
+        else return ''
+
+        return TNX_API_ORIGIN + '/api/profile/inventory?' + params.toString()
+      }
+
+      async function runInventoryLivePollerV3() {
+        const poller = getInventoryLivePollerV3()
+
+        if (!inventoryLiveProfileIsReady()) {
+          stopInventoryLivePollerV3()
           return
         }
 
-        if (auto.running) {
-          scheduleInventoryAutoRefresh(false)
+        if (poller.running) {
+          scheduleInventoryLivePollerV3(inventoryLivePollDelay())
           return
         }
 
-        const now = Date.now()
-        const minGap = document.hidden ? 8000 : 2500
+        const key = inventoryLivePollKey(state.activeUser)
+        const url = buildD1InventoryUrlForUser(state.activeUser)
 
-        if (now - auto.lastFetchAt < minGap) {
-          scheduleInventoryAutoRefresh(false)
+        if (!key || !url) {
+          stopInventoryLivePollerV3()
           return
         }
 
-        auto.running = true
-        auto.lastFetchAt = now
+        poller.running = true
 
         try {
-          const currentUser = state.activeUser
-          clearD1InventoryCacheForUser(currentUser)
+          const res = await fetch(url, { cache: 'no-store' })
+          const data = res.ok ? await res.json().catch(() => null) : null
 
-          const hydratedUser = await userWithD1Inventory(currentUser)
-          const nextSignature = inventoryAutoRefreshSignature(hydratedUser)
+          if (!data?.ok || !Array.isArray(data.items)) {
+            return
+          }
 
-          if (nextSignature !== auto.lastSignature) {
-            auto.lastSignature = nextSignature
-            renderProfile(hydratedUser)
+          const nextSignature = inventoryLiveSignatureFromItems(data.items)
+
+          if (nextSignature !== poller.lastSignature || key !== poller.lastStartedKey) {
+            poller.lastSignature = nextSignature
+            poller.lastStartedKey = key
+
+            const nextInventory = data.items
+              .map((item) => ({
+                name: String(item.name || item.itemName || item.itemKey || '').trim(),
+                quantity: Math.max(0, Math.floor(Number(item.quantity || item.qty || 0))),
+                itemKey: String(item.itemKey || '').trim(),
+                updatedAt: item.updatedAt || '',
+              }))
+              .filter((item) => item.name && item.quantity > 0)
+
+            const nextUser = {
+              ...state.activeUser,
+              inventory: nextInventory,
+              inventorySource: 'd1-live',
+            }
+
+            state.activeUser = nextUser
+
+            const inventory = inventoryItems(nextUser)
+            const badges = Array.isArray(nextUser.badges) ? nextUser.badges : []
+            const level = calculateLevel(nextUser)
+
+            setText('inventoryCount', `${inventory.length} ${inventory.length === 1 ? 'غرض' : 'أغراض'}`)
+            renderChips(chipsFor(nextUser, level.level, badges, inventory))
+            renderInventory(inventory)
+            enhanceInventorySellButtons(inventory)
           }
         } catch (error) {
-          console.warn('Inventory auto refresh failed:', error)
+          console.warn('Inventory live poll failed:', error)
         } finally {
-          auto.running = false
-          scheduleInventoryAutoRefresh(false)
+          poller.running = false
+          scheduleInventoryLivePollerV3(inventoryLivePollDelay())
         }
+      }
+
       }
 
 
