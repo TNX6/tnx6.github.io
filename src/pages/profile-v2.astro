@@ -9868,8 +9868,9 @@ const metadata = {
         } catch (error) {
           console.warn('Failed to refresh D1 inventory after sell status:', error)
         }
+      }
 
-      /* TNX_INVENTORY_LIVE_POLLER_V3 */
+      /* TNX_INVENTORY_LIVE_POLLER_V3_FIXED_SCOPE */
       const INVENTORY_LIVE_POLL_VISIBLE_MS = 5000
       const INVENTORY_LIVE_POLL_HIDDEN_MS = 25000
 
@@ -10063,9 +10064,6 @@ const metadata = {
           scheduleInventoryLivePollerV3(inventoryLivePollDelay())
         }
       }
-
-      }
-
 
       addListener($('searchInput'), 'input', (event) => renderSearch(event.target.value))
 
