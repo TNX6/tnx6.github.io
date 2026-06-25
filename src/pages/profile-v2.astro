@@ -8,416 +8,6 @@ const metadata = {
 }
 ---
 
-<script is:inline>
-/* INSTANT_SELL_LOCK_V9 */
-(function () {
-  if (window.__tnxInstantSellLockV9) return;
-  window.__tnxInstantSellLockV9 = true;
-
-  // نستخدم نفس مفتاح V8 حتى ما تضيع الأقفال الحالية
-  const LOCK_KEY = "tnx_inventory_sold_locks_v8";
-  const LOCK_TTL = 35 * 60 * 1000;
-
-  try {
-    localStorage.removeItem("tnx_inventory_sold_locks_v5");
-    localStorage.removeItem("tnx_inventory_sold_locks_v6");
-    localStorage.removeItem("tnx_inventory_sold_locks_v7");
-  } catch {}
-
-  function norm(v) {
-    return String(v || "")
-      .trim()
-      .replace(/ـ/g, "")
-      .replace(/[\u064B-\u065F\u0670]/g, "")
-      .replace(/\s+/g, " ")
-      .toLowerCase();
-  }
-
-  function getProfileLogin() {
-    const p = new URLSearchParams(location.search);
-    return norm(p.get("login") || p.get("user") || "tnx_6");
-  }
-
-  function getProfileUserId() {
-    const p = new URLSearchParams(location.search);
-    return String(p.get("userId") || p.get("id") || "558353985").trim();
-  }
-
-  function readLocks() {
-    let rows = [];
-    try {
-      rows = JSON.parse(localStorage.getItem(LOCK_KEY) || "[]");
-    } catch {
-      rows = [];
-    }
-
-    rows = rows.filter(x => x && x.itemName && Date.now() - Number(x.ts || 0) < LOCK_TTL);
-
-    try {
-      localStorage.setItem(LOCK_KEY, JSON.stringify(rows));
-    } catch {}
-
-    return rows;
-  }
-
-  function writeLocks(rows) {
-    try {
-      localStorage.setItem(LOCK_KEY, JSON.stringify(rows || []));
-    } catch {}
-  }
-
-  function sameName(a, b) {
-    a = norm(a);
-    b = norm(b);
-    if (!a || !b) return false;
-    return a === b || a.includes(b) || b.includes(a);
-  }
-
-  function patchItems(items) {
-    if (!Array.isArray(items)) return items;
-
-    const locks = readLocks();
-    const out = [];
-
-    for (const item of items) {
-      const name = norm(item.name || item.itemName || item.item_name);
-      const originalQty = Math.max(1, Number(item.quantity || item.qty || 1));
-      let soldQty = 0;
-
-      for (const lock of locks) {
-        if (!sameName(name, lock.itemName)) continue;
-
-        const sourceQty = Number(lock.sourceQty || 0);
-
-        // إذا GitHub تحدّث ونقصت الكمية، لا تخصم مرتين
-        if (sourceQty > 0 && originalQty < sourceQty) continue;
-
-        soldQty += Math.max(1, Number(lock.quantity || 1));
-      }
-
-      const remaining = originalQty - soldQty;
-
-      if (remaining > 0) {
-        out.push(Object.assign({}, item, { quantity: remaining }));
-      }
-    }
-
-    return out;
-  }
-
-  function patchInventoryData(data) {
-    if (!Array.isArray(data)) return data;
-
-    const login = getProfileLogin();
-    const userId = getProfileUserId();
-
-    let adjustedCount = null;
-
-    const patched = data.map(user => {
-      const isTarget =
-        norm(user.userLogin) === login ||
-        String(user.userId || "").trim() === userId;
-
-      if (!isTarget || !Array.isArray(user.items)) return user;
-
-      const newItems = patchItems(user.items);
-      adjustedCount = newItems.length;
-
-      return Object.assign({}, user, { items: newItems });
-    });
-
-    if (adjustedCount !== null) {
-      window.__tnxAdjustedInventoryCountV9 = adjustedCount;
-    }
-
-    return patched;
-  }
-
-  function updateCountText() {
-    const count = Number(window.__tnxAdjustedInventoryCountV9);
-    if (!Number.isFinite(count)) return;
-
-    const walker = document.createTreeWalker(document.body || document.documentElement, NodeFilter.SHOW_TEXT);
-    let node;
-
-    while ((node = walker.nextNode())) {
-      const old = node.nodeValue || "";
-
-      if (/\d+\s*(أغراضي|أغراض|غرض)/.test(old)) {
-        node.nodeValue = old.replace(/\d+\s*(أغراضي|أغراض|غرض)/, count + " $1");
-      }
-    }
-  }
-
-  function cleanNameText(text) {
-    return String(text || "")
-      .replace(/[\(（]\s*\d+\s*[xX×]\s*[\)）]/g, "")
-      .replace(/[\(（]\s*[xX×]\s*\d+\s*[\)）]/g, "")
-      .replace(/\b\d+\s*[xX×]\b/g, "")
-      .replace(/(?:العدد|عدد|الكمية)\s*[:：]?\s*\d+/g, "")
-      .trim();
-  }
-
-  function qtyFromText(text) {
-    text = String(text || "");
-
-    const m =
-      text.match(/[\(（]\s*(\d+)\s*[xX×]\s*[\)）]/) ||
-      text.match(/[\(（]\s*[xX×]\s*(\d+)\s*[\)）]/) ||
-      text.match(/(?:العدد|عدد|الكمية)\s*[:：]?\s*(\d+)/) ||
-      text.match(/\b(\d+)\s*[xX×]\b/);
-
-    return m ? Math.max(1, Number(m[1])) : 1;
-  }
-
-  function inventoryRoot() {
-    return document.querySelector("#inventory");
-  }
-
-  function cards() {
-    const root = inventoryRoot();
-    if (!root) return [];
-
-    const found = Array.from(root.querySelectorAll(".item, [data-item-name], .inventory-item, .item-card"));
-    return found.length ? found : Array.from(root.children || []);
-  }
-
-  function cardName(card) {
-    const explicit =
-      card.dataset?.itemName ||
-      card.dataset?.apiItemName ||
-      card.dataset?.name ||
-      card.querySelector("[data-item-name]")?.getAttribute("data-item-name") ||
-      card.querySelector(".item-name")?.textContent ||
-      card.querySelector(".inventory-item-name")?.textContent;
-
-    return norm(explicit || cleanNameText(card.textContent));
-  }
-
-  function cardQty(card) {
-    const raw =
-      card.dataset?.itemQty ||
-      card.dataset?.qty ||
-      card.dataset?.quantity ||
-      card.querySelector(".qty")?.textContent ||
-      card.querySelector(".quantity")?.textContent ||
-      card.querySelector(".item-qty")?.textContent;
-
-    if (raw) {
-      const m = String(raw).match(/\d+/);
-      if (m) return Math.max(1, Number(m[0]));
-    }
-
-    return qtyFromText(card.textContent);
-  }
-
-  function setCardQty(card, qty) {
-    qty = Math.max(1, Number(qty || 1));
-    card.dataset.itemQty = String(qty);
-
-    const q = card.querySelector(".qty") || card.querySelector(".quantity") || card.querySelector(".item-qty");
-
-    if (q) {
-      q.textContent = String(qty);
-      return;
-    }
-
-    const walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT);
-    let node;
-
-    while ((node = walker.nextNode())) {
-      const t = node.nodeValue || "";
-
-      if (/[\(（]\s*\d+\s*[xX×]\s*[\)）]/.test(t)) {
-        node.nodeValue = t.replace(/[\(（]\s*\d+\s*[xX×]\s*[\)）]/, "(" + qty + "x)");
-        return;
-      }
-
-      if (/[\(（]\s*[xX×]\s*\d+\s*[\)）]/.test(t)) {
-        node.nodeValue = t.replace(/[\(（]\s*[xX×]\s*\d+\s*[\)）]/, "(" + qty + "x)");
-        return;
-      }
-    }
-  }
-
-  function findCardByName(itemName) {
-    return cards().find(card => sameName(cardName(card), itemName));
-  }
-
-  function addLock(itemName, quantity) {
-    const name = norm(itemName);
-    const qty = Math.max(1, Number(quantity || 1));
-    if (!name) return null;
-
-    const card = findCardByName(name);
-    const sourceQty = card ? cardQty(card) : qty;
-    const id = String(Date.now()) + "_" + Math.random().toString(16).slice(2);
-
-    const rows = readLocks();
-
-    rows.push({
-      id,
-      itemName: name,
-      quantity: qty,
-      sourceQty,
-      ts: Date.now()
-    });
-
-    writeLocks(rows);
-
-    setTimeout(applyDomLocks, 50);
-    setTimeout(updateCountText, 100);
-
-    return id;
-  }
-
-  function removeLockById(id) {
-    if (!id) return;
-    writeLocks(readLocks().filter(x => x.id !== id));
-  }
-
-  function applyDomLocks() {
-    const locks = readLocks();
-
-    for (const card of cards()) {
-      const name = cardName(card);
-      const currentQty = cardQty(card);
-      let soldQty = 0;
-
-      for (const lock of locks) {
-        if (!sameName(name, lock.itemName)) continue;
-
-        const sourceQty = Number(lock.sourceQty || 0);
-
-        if (sourceQty > 0 && currentQty < sourceQty) continue;
-
-        soldQty += Math.max(1, Number(lock.quantity || 1));
-      }
-
-      if (soldQty <= 0) continue;
-
-      const remaining = currentQty - soldQty;
-
-      if (remaining <= 0) card.remove();
-      else setCardQty(card, remaining);
-    }
-
-    updateCountText();
-  }
-
-  function requestUrl(input) {
-    return typeof input === "string" ? input : String(input && input.url ? input.url : "");
-  }
-
-  function tryReadSellPayload(input, init) {
-    const url = requestUrl(input);
-    if (!url.includes("/api/me/inventory/sell")) return null;
-
-    const body = init && init.body;
-    if (!body || typeof body !== "string") return null;
-
-    try {
-      const json = JSON.parse(body);
-
-      return {
-        itemName: json.itemName || json.item_name || json.name || json.item,
-        quantity: json.quantity || json.qty || 1
-      };
-    } catch {
-      return null;
-    }
-  }
-
-  const originalFetch = window.fetch;
-
-  window.fetch = function (input, init) {
-    const url = requestUrl(input);
-    const sellPayload = tryReadSellPayload(input, init);
-    const lockId = sellPayload && sellPayload.itemName
-      ? addLock(sellPayload.itemName, sellPayload.quantity)
-      : null;
-
-    return originalFetch.apply(this, arguments).then(async function (res) {
-      if (url.includes("user_inventory.json")) {
-        try {
-          const data = await res.clone().json();
-          const patched = patchInventoryData(data);
-          const headers = new Headers(res.headers);
-
-          headers.delete("content-length");
-          headers.delete("content-encoding");
-          headers.set("content-type", "application/json");
-
-          setTimeout(updateCountText, 50);
-
-          return new Response(JSON.stringify(patched), {
-            status: res.status,
-            statusText: res.statusText,
-            headers
-          });
-        } catch {
-          return res;
-        }
-      }
-
-      if (sellPayload && sellPayload.itemName) {
-        try {
-          const data = await res.clone().json().catch(() => null);
-          const status = norm(data?.status);
-
-          const failed =
-            !res.ok ||
-            data?.ok === false ||
-            status === "rejected" ||
-            status === "failed" ||
-            data?.error;
-
-          if (failed) removeLockById(lockId);
-        } catch {}
-      }
-
-      setTimeout(applyDomLocks, 100);
-      setTimeout(applyDomLocks, 500);
-      setTimeout(updateCountText, 600);
-
-      return res;
-    });
-  };
-
-  function startDom() {
-    applyDomLocks();
-    updateCountText();
-
-    setTimeout(applyDomLocks, 300);
-    setTimeout(applyDomLocks, 1000);
-    setInterval(applyDomLocks, 4000);
-
-    const target = document.body || document.documentElement;
-
-    if (target) {
-      new MutationObserver(function () {
-        applyDomLocks();
-      }).observe(target, {
-        childList: true,
-        subtree: true
-      });
-    }
-  }
-
-  window.__tnxSoldLocksV9 = readLocks;
-  window.__tnxApplySoldLocksV9 = applyDomLocks;
-  window.__tnxAddSoldLockV9 = addLock;
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", startDom);
-  } else {
-    startDom();
-  }
-})();
-</script>
-
-
-
 <Layout metadata={metadata}>
   <main class="tnx-profile-page profile-v2-page" dir="rtl">
     <section id="profileSkeleton" class="profile-skeleton" aria-label="جاري تحميل البروفايل">
@@ -7935,8 +7525,172 @@ const metadata = {
         }
       }
 
+      /* INVENTORY_SELL_LOCK_INTEGRATED_V10 */
+      const INVENTORY_SELL_LOCK_KEY_V10 = 'tnx_inventory_sold_locks_v10';
+      const INVENTORY_SELL_LOCK_TTL_V10 = 35 * 60 * 1000;
+
+      function inventorySellLockScope(user = state.activeUser) {
+        try {
+          const viewedId = String(userId(user) || get(user, ['twitchId', 'twitch_id'], '') || '').trim();
+          const viewedLogin = String(userLogin(user) || get(user, ['login', 'userLogin'], '') || '').trim().toLowerCase();
+          return viewedId || viewedLogin || 'tnx_6';
+        } catch {
+          return 'tnx_6';
+        }
+      }
+
+      function readInventorySellLocksV10() {
+        let rows = [];
+
+        try {
+          const current = JSON.parse(localStorage.getItem(INVENTORY_SELL_LOCK_KEY_V10) || '[]');
+          if (Array.isArray(current)) rows = rows.concat(current);
+        } catch {}
+
+        // Migration from earlier working versions, then remove noisy old versions.
+        for (const legacyKey of ['tnx_inventory_sold_locks_v8', 'tnx_inventory_sold_locks_v9']) {
+          try {
+            const legacy = JSON.parse(localStorage.getItem(legacyKey) || '[]');
+            if (Array.isArray(legacy)) rows = rows.concat(legacy);
+            localStorage.removeItem(legacyKey);
+          } catch {}
+        }
+
+        for (const badKey of [
+          'tnx_inventory_sold_locks_v5',
+          'tnx_inventory_sold_locks_v6',
+          'tnx_inventory_sold_locks_v7',
+        ]) {
+          try { localStorage.removeItem(badKey); } catch {}
+        }
+
+        const seen = new Set();
+        rows = rows
+          .filter((row) => row && row.itemName && (Date.now() - Number(row.ts || 0)) < INVENTORY_SELL_LOCK_TTL_V10)
+          .filter((row) => {
+            const id = String(row.id || `${row.scope || ''}:${row.itemName}:${row.quantity}:${row.ts}`);
+            if (seen.has(id)) return false;
+            seen.add(id);
+            return true;
+          });
+
+        try {
+          localStorage.setItem(INVENTORY_SELL_LOCK_KEY_V10, JSON.stringify(rows));
+        } catch {}
+
+        return rows;
+      }
+
+      function writeInventorySellLocksV10(rows) {
+        try {
+          localStorage.setItem(INVENTORY_SELL_LOCK_KEY_V10, JSON.stringify(Array.isArray(rows) ? rows : []));
+        } catch {}
+      }
+
+      function inventorySellLockName(value) {
+        return key(value);
+      }
+
+      function addInventorySellLock(itemName, quantity, sourceQty, user = state.activeUser) {
+        const name = String(itemName || '').trim();
+        const itemKey = inventorySellLockName(name);
+        const qty = Math.max(1, Math.floor(Number(quantity || 1)));
+
+        if (!itemKey) return '';
+
+        const id = `${Date.now()}_${Math.random().toString(16).slice(2)}`;
+        const rows = readInventorySellLocksV10();
+
+        rows.push({
+          id,
+          scope: inventorySellLockScope(user),
+          itemName: name,
+          itemKey,
+          quantity: qty,
+          sourceQty: Math.max(1, Math.floor(Number(sourceQty || qty))),
+          ts: Date.now(),
+        });
+
+        writeInventorySellLocksV10(rows);
+        return id;
+      }
+
+      function removeInventorySellLock(id) {
+        if (!id) return;
+
+        writeInventorySellLocksV10(
+          readInventorySellLocksV10().filter((row) => row.id !== id)
+        );
+      }
+
+      function sellLocksForInventoryUser(user) {
+        const scope = inventorySellLockScope(user);
+
+        return readInventorySellLocksV10().filter((row) => {
+          if (!row.scope) return true;
+          return String(row.scope) === scope;
+        });
+      }
+
+      function applyInventorySellLocksToEntries(entries, user) {
+        if (!Array.isArray(entries) || !entries.length) return [];
+
+        const locks = sellLocksForInventoryUser(user);
+        if (!locks.length) return entries.slice();
+
+        const adjusted = [];
+
+        for (const entry of entries) {
+          const name = itemName(entry);
+          const entryKey = inventorySellLockName(name);
+          const originalQty = itemQty(entry);
+          let soldQty = 0;
+
+          for (const lock of locks) {
+            const lockKey = String(lock.itemKey || inventorySellLockName(lock.itemName));
+
+            if (!entryKey || !lockKey || entryKey !== lockKey) continue;
+
+            const sourceQty = Math.max(0, Math.floor(Number(lock.sourceQty || 0)));
+
+            // If GitHub already exported the new lower quantity, do not subtract the local lock again.
+            if (sourceQty > 0 && originalQty < sourceQty) continue;
+
+            soldQty += Math.max(1, Math.floor(Number(lock.quantity || 1)));
+          }
+
+          const remaining = originalQty - soldQty;
+
+          if (remaining <= 0) continue;
+
+          if (typeof entry === 'object' && entry !== null) {
+            const clone = { ...entry };
+
+            if ('qty' in clone) clone.qty = remaining;
+            else if ('quantity' in clone) clone.quantity = remaining;
+            else if ('amount' in clone) clone.amount = remaining;
+            else if ('count' in clone) clone.count = remaining;
+            else clone.quantity = remaining;
+
+            adjusted.push(clone);
+          } else {
+            adjusted.push({
+              name,
+              quantity: remaining,
+            });
+          }
+        }
+
+        return adjusted;
+      }
+
+      function setInventoryCountFromItems(items) {
+        const count = Array.isArray(items) ? items.length : 0;
+        setText('inventoryCount', `${count} ${count === 1 ? 'غرض' : 'أغراض'}`);
+      }
+
       function inventoryItems(user) {
-        return (Array.isArray(user.inventory) ? user.inventory : [])
+        return applyInventorySellLocksToEntries(Array.isArray(user.inventory) ? user.inventory : [], user)
           .map((entry) => {
             const name = itemName(entry)
             const meta = itemMeta(name)
@@ -9044,10 +8798,10 @@ const metadata = {
 
           const name = button.dataset.sellItem || ''
           const qty = Math.max(1, Math.floor(Number(button.dataset.sellQty || 1)))
-          const item = { name, qty }
+          const item = findInventoryItemByName(items, name) || { name, qty }
           const meta = findCatalogItemByName(name)
 
-          openInventorySellModal(item, meta)
+          openInventorySellModal(item, meta, items)
         })
       }
 
@@ -9064,15 +8818,14 @@ const metadata = {
 
         if (!canSell) return
 
-        const sorted = sortedInventoryForSell(items)
         const cards = [...box.querySelectorAll('.item')]
 
-        cards.forEach((card, index) => {
-          const item = sorted[index]
-          if (!item) return
+        cards.forEach((card) => {
+          const name = String(card.dataset.itemName || card.querySelector('.item-name')?.textContent || '').trim()
+          const item = findInventoryItemByName(items, name) || { name, qty: Number(card.dataset.itemQty || 0) }
+          if (!item || !name) return
 
-          const name = String(item.name || '').trim()
-          const qty = Math.max(0, Math.floor(Number(item.qty || item.quantity || 0)))
+          const qty = Math.max(0, Math.floor(Number(item.qty || item.quantity || card.dataset.itemQty || 0)))
           const meta = findCatalogItemByName(name)
           const disabled = !meta || isSaleDisabled(meta) || qty <= 0
           const price = meta && !isSaleDisabled(meta) ? itemSellPrice(meta) : 0
@@ -9182,6 +8935,8 @@ const metadata = {
           msg.className = 'inventory-sell-message'
           msg.textContent = 'جاري تسجيل طلب البيع...'
 
+          const localSellLockId = addInventorySellLock(name, qty, owned, state.activeUser);
+
           try {
             const res = await fetch(TNX_API_ORIGIN + '/api/me/inventory/sell', {
               method: 'POST',
@@ -9210,11 +8965,12 @@ const metadata = {
               const localChanged = applyLocalSellToInventory(items, name, qty);
 
               if (localChanged) {
+                setInventoryCountFromItems(items);
                 renderInventory(items);
                 enhanceInventorySellButtons(items);
               } else {
                 updateInventoryItemDomAfterSell(name, qty);
-              requestAnimationFrame(() => applyInventoryPagination());
+                requestAnimationFrame(() => applyInventoryPagination());
               }
             } catch (uiError) {
               console.warn('Sell request succeeded, but local inventory UI update failed:', uiError);
@@ -9247,6 +9003,8 @@ const metadata = {
 
             setTimeout(closeInventorySellModalAfterSuccess, 100)
           } catch (error) {
+            removeInventorySellLock(localSellLockId);
+
             msg.className = 'inventory-sell-message err'
 
             const code = String(error?.message || '')
@@ -10298,7 +10056,6 @@ const metadata = {
   <script src="/js/profile-badge-modal-test.js?v=31" defer data-astro-rerun>
 </script>
 </Layout>
-
 
 
 
