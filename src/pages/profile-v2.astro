@@ -7471,19 +7471,13 @@ const metadata = {
 
       function mergeUser(user) {
         const profile = findRecord(state.profiles, user) || {}
-        const inv = findRecord(state.inventories, user) || {}
         const mail = findRecord(state.mailboxes, user) || {}
         const merged = { ...user, ...profile }
 
-        merged.inventory = Array.isArray(profile.inventory)
-          ? profile.inventory
-          : Array.isArray(inv.items)
-            ? inv.items
-            : Array.isArray(inv.inventory)
-              ? inv.inventory
-              : Array.isArray(user.inventory)
-                ? user.inventory
-                : []
+        // D1 is the only inventory source for profile-v2.
+        // Do not fall back to __REMOVED_OLD_INVENTORY_JSON__ or profile.inventory,
+        // otherwise sold items can reappear from the old static GitHub JSON.
+        merged.inventory = Array.isArray(user.inventory) ? user.inventory : []
 
         merged.mailbox = Array.isArray(profile.mailbox)
           ? profile.mailbox
@@ -7526,6 +7520,7 @@ const metadata = {
         }
       }
 
+      /* PROFILE_INVENTORY_D1_ONLY_V2 */
       /* PROFILE_INVENTORY_D1_SOURCE_V1 */
       /* INVENTORY_SELL_LOCK_INTEGRATED_V10 */
       const INVENTORY_SELL_LOCK_KEY_V10 = 'tnx_inventory_sold_locks_v10';
@@ -9933,9 +9928,8 @@ const metadata = {
         $('backToTop')?.classList.toggle('is-visible', window.scrollY > 420)
       }, { passive: true })
 
-      const [users, inventories, mailboxes, profiles, itemPayload, leaderboardPayload] = await Promise.all([
+      const [users, mailboxes, profiles, itemPayload, leaderboardPayload] = await Promise.all([
         loadJson('/api/user_badges.json', []),
-        loadJson('/api/user_inventory.json', []), // legacy fallback only; D1 is loaded per profile
         loadJson('/api/user_mailbox.json', []),
         loadJson('/api/user_profile.json', []),
         loadJson('/api/items.json', { items: [] }),
@@ -9943,7 +9937,7 @@ const metadata = {
       ])
 
       state.users = Array.isArray(users) ? users : []
-      state.inventories = Array.isArray(inventories) ? inventories : []
+      state.inventories = []
       state.mailboxes = Array.isArray(mailboxes) ? mailboxes : []
       state.profiles = Array.isArray(profiles) ? profiles : []
       state.items = Array.isArray(itemPayload) ? itemPayload : Array.isArray(itemPayload.items) ? itemPayload.items : []
@@ -10193,6 +10187,7 @@ const metadata = {
   <script src="/js/profile-badge-modal-test.js?v=31" defer data-astro-rerun>
 </script>
 </Layout>
+
 
 
 
