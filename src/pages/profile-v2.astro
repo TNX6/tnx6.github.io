@@ -7101,6 +7101,7 @@ const metadata = {
           watchtime: [],
         },
         activeUser: null,
+        d1InventoryCache: {},
       }
 
       const rarityColors = {
@@ -7525,6 +7526,7 @@ const metadata = {
         }
       }
 
+      /* PROFILE_INVENTORY_D1_SOURCE_V1 */
       /* INVENTORY_SELL_LOCK_INTEGRATED_V10 */
       const INVENTORY_SELL_LOCK_KEY_V10 = 'tnx_inventory_sold_locks_v10';
       const INVENTORY_SELL_LOCK_TTL_V10 = 35 * 60 * 1000;
@@ -8849,6 +8851,49 @@ const metadata = {
       }
 
 
+      async function watchInventorySellFinalStatus(requestId, lockId) {
+        const id = String(requestId || '').trim()
+        if (!id) return
+
+        const delays = [1200, 2200, 3500, 5000, 8000, 12000, 16000, 22000, 30000]
+
+        for (const delay of delays) {
+          await new Promise((resolve) => window.setTimeout(resolve, delay))
+
+          try {
+            const res = await fetch(TNX_API_ORIGIN + '/api/me/inventory/sell-status?id=' + encodeURIComponent(id), {
+              credentials: 'include',
+              cache: 'no-store',
+            })
+
+            const data = await res.json().catch(() => ({}))
+
+            if (!res.ok || !data?.ok) {
+              continue
+            }
+
+            const status = String(data.request?.status || data.status || '').toLowerCase()
+
+            if (status === 'completed') {
+              removeInventorySellLock(lockId)
+              await refreshActiveProfileFromD1()
+              return
+            }
+
+            if (status === 'rejected' || status === 'failed') {
+              removeInventorySellLock(lockId)
+              await refreshActiveProfileFromD1()
+
+              const msg = String(data.request?.errorMessage || data.errorMessage || 'تم رفض البيع ورجع الغرض للحقيبة.')
+              console.warn('[Inventory Sell] Rejected:', msg)
+              return
+            }
+          } catch (error) {
+            console.warn('Failed to check sell status:', error)
+          }
+        }
+      }
+
       function openInventorySellModal(item, meta, items) {
         const name = String(item.name || '').trim()
         const apiItemName = String(meta?.text || meta?.name || name).trim() || name
@@ -8980,6 +9025,8 @@ const metadata = {
 
             submit.textContent = 'تم التسجيل'
 
+            watchInventorySellFinalStatus(data.requestId, localSellLockId)
+
             const closeInventorySellModalAfterSuccess = () => {
               try {
                 close();
@@ -9004,6 +9051,7 @@ const metadata = {
             setTimeout(closeInventorySellModalAfterSuccess, 100)
           } catch (error) {
             removeInventorySellLock(localSellLockId);
+            refreshActiveProfileFromD1();
 
             msg.className = 'inventory-sell-message err'
 
@@ -9693,7 +9741,7 @@ const metadata = {
             const user = findUser(authUser.login) || userFromAuth(authUser)
 
             if (user) {
-              renderProfile(user)
+              await renderProfileFromD1(user)
               return
             }
           }
@@ -9713,7 +9761,7 @@ const metadata = {
           return
         }
 
-        renderProfile(user)
+        await renderProfileFromD1(user)
       }
 
       function profileLink(user) {
@@ -9733,6 +9781,95 @@ const metadata = {
         }
       }
 
+      function d1InventoryCacheKey(user) {
+        const viewedId = String(userId(user) || get(user, ['twitchId', 'twitch_id'], '') || '').trim()
+        const viewedLogin = String(userLogin(user) || get(user, ['login', 'userLogin'], '') || '').trim().toLowerCase()
+        return viewedId || viewedLogin || ''
+      }
+
+      async function loadInventoryFromD1(user) {
+        const cacheKey = d1InventoryCacheKey(user)
+        if (!cacheKey) return null
+
+        if (state.d1InventoryCache[cacheKey]) {
+          return state.d1InventoryCache[cacheKey]
+        }
+
+        const params = new URLSearchParams()
+        const viewedId = String(userId(user) || get(user, ['twitchId', 'twitch_id'], '') || '').trim()
+        const viewedLogin = String(userLogin(user) || get(user, ['login', 'userLogin'], '') || '').trim().toLowerCase()
+
+        if (viewedId) params.set('twitchId', viewedId)
+        else if (viewedLogin) params.set('login', viewedLogin)
+        else return null
+
+        try {
+          const res = await fetch(TNX_API_ORIGIN + '/api/profile/inventory?' + params.toString(), {
+            cache: 'no-store',
+          })
+
+          if (!res.ok) return null
+
+          const data = await res.json().catch(() => null)
+
+          if (!data?.ok || !Array.isArray(data.items)) return null
+
+          state.d1InventoryCache[cacheKey] = data
+          return data
+        } catch {
+          return null
+        }
+      }
+
+      async function userWithD1Inventory(user) {
+        const data = await loadInventoryFromD1(user)
+
+        if (!data || !Array.isArray(data.items)) return user
+
+        const d1User = data.user || {}
+
+        return {
+          ...user,
+          twitchId: String(d1User.twitchId || get(user, ['twitchId', 'twitch_id', 'userId', 'id'], '') || ''),
+          userId: String(d1User.twitchId || get(user, ['userId', 'id', 'twitchId', 'twitch_id'], '') || ''),
+          login: String(d1User.login || get(user, ['login', 'userLogin'], '') || ''),
+          userLogin: String(d1User.login || get(user, ['userLogin', 'login'], '') || ''),
+          displayName: String(d1User.displayName || get(user, ['displayName', 'userName'], '') || ''),
+          userName: String(d1User.displayName || get(user, ['userName', 'displayName'], '') || ''),
+          profileImageUrl: String(d1User.profileImageUrl || get(user, ['profileImageUrl', 'avatar'], '') || ''),
+          avatar: String(d1User.profileImageUrl || get(user, ['avatar', 'profileImageUrl'], '') || ''),
+          inventory: data.items.map((item) => ({
+            name: String(item.name || item.itemName || item.itemKey || '').trim(),
+            quantity: Math.max(0, Math.floor(Number(item.quantity || item.qty || 0))),
+            itemKey: String(item.itemKey || '').trim(),
+            updatedAt: item.updatedAt || '',
+          })).filter((item) => item.name && item.quantity > 0),
+          inventorySource: 'd1',
+        }
+      }
+
+      async function renderProfileFromD1(user) {
+        const hydratedUser = await userWithD1Inventory(user)
+        renderProfile(hydratedUser)
+      }
+
+      function clearD1InventoryCacheForUser(user) {
+        try {
+          const cacheKey = d1InventoryCacheKey(user || state.activeUser)
+          if (cacheKey && state.d1InventoryCache) delete state.d1InventoryCache[cacheKey]
+        } catch {}
+      }
+
+      async function refreshActiveProfileFromD1() {
+        try {
+          if (!state.activeUser) return
+          clearD1InventoryCacheForUser(state.activeUser)
+          await renderProfileFromD1(state.activeUser)
+        } catch (error) {
+          console.warn('Failed to refresh D1 inventory after sell status:', error)
+        }
+      }
+
       addListener($('searchInput'), 'input', (event) => renderSearch(event.target.value))
 
       addListener($('clearSearch'), 'click', () => {
@@ -9742,14 +9879,14 @@ const metadata = {
         $('searchInput').focus()
       })
 
-      addListener($('searchResults'), 'click', (event) => {
+      addListener($('searchResults'), 'click', async (event) => {
         const button = event.target.closest('[data-login]')
         if (!button) return
         const user = findUser(button.dataset.login)
         if (!user) return
 
         history.replaceState(null, '', profileLink(user))
-        renderProfile(user)
+        await renderProfileFromD1(user)
       })
 
       addListener($('openMailButton'), 'click', openMail)
@@ -9798,7 +9935,7 @@ const metadata = {
 
       const [users, inventories, mailboxes, profiles, itemPayload, leaderboardPayload] = await Promise.all([
         loadJson('/api/user_badges.json', []),
-        loadJson('/api/user_inventory.json', []),
+        loadJson('/api/user_inventory.json', []), // legacy fallback only; D1 is loaded per profile
         loadJson('/api/user_mailbox.json', []),
         loadJson('/api/user_profile.json', []),
         loadJson('/api/items.json', { items: [] }),
@@ -10056,7 +10193,6 @@ const metadata = {
   <script src="/js/profile-badge-modal-test.js?v=31" defer data-astro-rerun>
 </script>
 </Layout>
-
 
 
 
