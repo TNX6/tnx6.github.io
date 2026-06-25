@@ -9741,6 +9741,7 @@ const metadata = {
             }
           }
 
+          stopInventoryAutoRefresh()
           $('searchView')?.classList.remove('hidden')
           $('profileView')?.classList.add('hidden')
           $('notFoundView')?.classList.add('hidden')
@@ -9750,6 +9751,7 @@ const metadata = {
         const user = findUser(raw)
 
         if (!user) {
+          stopInventoryAutoRefresh()
           $('searchView')?.classList.add('hidden')
           $('profileView')?.classList.add('hidden')
           $('notFoundView')?.classList.remove('hidden')
@@ -9846,6 +9848,7 @@ const metadata = {
       async function renderProfileFromD1(user) {
         const hydratedUser = await userWithD1Inventory(user)
         renderProfile(hydratedUser)
+        startInventoryAutoRefresh()
       }
 
       function clearD1InventoryCacheForUser(user) {
@@ -9864,6 +9867,100 @@ const metadata = {
           console.warn('Failed to refresh D1 inventory after sell status:', error)
         }
       }
+
+      /* TNX_INVENTORY_AUTO_REFRESH_V1 */
+      const INVENTORY_AUTO_REFRESH_VISIBLE_MS = 5000
+      const INVENTORY_AUTO_REFRESH_HIDDEN_MS = 25000
+
+      let inventoryAutoRefreshTimer = 0
+      let inventoryAutoRefreshRunning = false
+      let inventoryAutoRefreshLastSignature = ''
+
+      function inventoryAutoRefreshSignature(user) {
+        try {
+          return inventoryItems(user)
+            .map((item) => `${normalize(item.name)}:${Math.max(0, Math.floor(Number(item.qty || 0)))}`)
+            .sort()
+            .join('|')
+        } catch {
+          return ''
+        }
+      }
+
+      function inventoryAutoRefreshDelay() {
+        return document.hidden ? INVENTORY_AUTO_REFRESH_HIDDEN_MS : INVENTORY_AUTO_REFRESH_VISIBLE_MS
+      }
+
+      function profileIsVisibleForAutoRefresh() {
+        return Boolean(state.activeUser) && !$('profileView')?.classList.contains('hidden')
+      }
+
+      function stopInventoryAutoRefresh() {
+        if (inventoryAutoRefreshTimer) {
+          window.clearTimeout(inventoryAutoRefreshTimer)
+          inventoryAutoRefreshTimer = 0
+        }
+      }
+
+      function scheduleInventoryAutoRefresh(immediate = false) {
+        stopInventoryAutoRefresh()
+
+        if (!profileIsVisibleForAutoRefresh()) return
+
+        const delay = immediate ? 350 : inventoryAutoRefreshDelay()
+
+        inventoryAutoRefreshTimer = window.setTimeout(() => {
+          runInventoryAutoRefresh()
+        }, delay)
+      }
+
+      function startInventoryAutoRefresh() {
+        if (!profileIsVisibleForAutoRefresh()) return
+
+        inventoryAutoRefreshLastSignature = inventoryAutoRefreshSignature(state.activeUser)
+        scheduleInventoryAutoRefresh(false)
+      }
+
+      async function runInventoryAutoRefresh() {
+        if (!profileIsVisibleForAutoRefresh()) {
+          stopInventoryAutoRefresh()
+          return
+        }
+
+        if (inventoryAutoRefreshRunning) {
+          scheduleInventoryAutoRefresh(false)
+          return
+        }
+
+        inventoryAutoRefreshRunning = true
+
+        try {
+          const currentUser = state.activeUser
+          clearD1InventoryCacheForUser(currentUser)
+
+          const hydratedUser = await userWithD1Inventory(currentUser)
+          const nextSignature = inventoryAutoRefreshSignature(hydratedUser)
+
+          if (nextSignature !== inventoryAutoRefreshLastSignature) {
+            inventoryAutoRefreshLastSignature = nextSignature
+            renderProfile(hydratedUser)
+          }
+        } catch (error) {
+          console.warn('Inventory auto refresh failed:', error)
+        } finally {
+          inventoryAutoRefreshRunning = false
+          scheduleInventoryAutoRefresh(false)
+        }
+      }
+
+      addListener(document, 'visibilitychange', () => {
+        if (!document.hidden) scheduleInventoryAutoRefresh(true)
+        else scheduleInventoryAutoRefresh(false)
+      })
+
+      addListener(window, 'focus', () => {
+        scheduleInventoryAutoRefresh(true)
+      })
 
       addListener($('searchInput'), 'input', (event) => renderSearch(event.target.value))
 
@@ -10187,7 +10284,6 @@ const metadata = {
   <script src="/js/profile-badge-modal-test.js?v=31" defer data-astro-rerun>
 </script>
 </Layout>
-
 
 
 
