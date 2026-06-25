@@ -9867,14 +9867,23 @@ const metadata = {
           console.warn('Failed to refresh D1 inventory after sell status:', error)
         }
       }
-
-      /* TNX_INVENTORY_AUTO_REFRESH_V1 */
+      /* TNX_INVENTORY_AUTO_REFRESH_SINGLETON_V2 */
       const INVENTORY_AUTO_REFRESH_VISIBLE_MS = 5000
       const INVENTORY_AUTO_REFRESH_HIDDEN_MS = 25000
 
-      let inventoryAutoRefreshTimer = 0
-      let inventoryAutoRefreshRunning = false
-      let inventoryAutoRefreshLastSignature = ''
+      function getInventoryAutoRefreshState() {
+        if (!window.__tnxInventoryAutoRefresh) {
+          window.__tnxInventoryAutoRefresh = {
+            timer: 0,
+            running: false,
+            lastSignature: '',
+            listenersInstalled: false,
+            lastFetchAt: 0,
+          }
+        }
+
+        return window.__tnxInventoryAutoRefresh
+      }
 
       function inventoryAutoRefreshSignature(user) {
         try {
@@ -9896,43 +9905,84 @@ const metadata = {
       }
 
       function stopInventoryAutoRefresh() {
-        if (inventoryAutoRefreshTimer) {
-          window.clearTimeout(inventoryAutoRefreshTimer)
-          inventoryAutoRefreshTimer = 0
+        const auto = getInventoryAutoRefreshState()
+
+        if (auto.timer) {
+          window.clearTimeout(auto.timer)
+          auto.timer = 0
         }
       }
 
       function scheduleInventoryAutoRefresh(immediate = false) {
-        stopInventoryAutoRefresh()
+        const auto = getInventoryAutoRefreshState()
 
-        if (!profileIsVisibleForAutoRefresh()) return
-
-        const delay = immediate ? 350 : inventoryAutoRefreshDelay()
-
-        inventoryAutoRefreshTimer = window.setTimeout(() => {
-          runInventoryAutoRefresh()
-        }, delay)
-      }
-
-      function startInventoryAutoRefresh() {
-        if (!profileIsVisibleForAutoRefresh()) return
-
-        inventoryAutoRefreshLastSignature = inventoryAutoRefreshSignature(state.activeUser)
-        scheduleInventoryAutoRefresh(false)
-      }
-
-      async function runInventoryAutoRefresh() {
         if (!profileIsVisibleForAutoRefresh()) {
           stopInventoryAutoRefresh()
           return
         }
 
-        if (inventoryAutoRefreshRunning) {
+        if (auto.timer) {
+          window.clearTimeout(auto.timer)
+          auto.timer = 0
+        }
+
+        const delay = immediate ? 350 : inventoryAutoRefreshDelay()
+
+        auto.timer = window.setTimeout(() => {
+          auto.timer = 0
+          runInventoryAutoRefresh()
+        }, delay)
+      }
+
+      function startInventoryAutoRefresh() {
+        const auto = getInventoryAutoRefreshState()
+
+        if (!profileIsVisibleForAutoRefresh()) {
+          stopInventoryAutoRefresh()
+          return
+        }
+
+        auto.lastSignature = inventoryAutoRefreshSignature(state.activeUser)
+
+        if (!auto.listenersInstalled) {
+          auto.listenersInstalled = true
+
+          addListener(document, 'visibilitychange', () => {
+            if (!document.hidden) scheduleInventoryAutoRefresh(true)
+            else scheduleInventoryAutoRefresh(false)
+          })
+
+          addListener(window, 'focus', () => {
+            scheduleInventoryAutoRefresh(true)
+          })
+        }
+
+        scheduleInventoryAutoRefresh(false)
+      }
+
+      async function runInventoryAutoRefresh() {
+        const auto = getInventoryAutoRefreshState()
+
+        if (!profileIsVisibleForAutoRefresh()) {
+          stopInventoryAutoRefresh()
+          return
+        }
+
+        if (auto.running) {
           scheduleInventoryAutoRefresh(false)
           return
         }
 
-        inventoryAutoRefreshRunning = true
+        const now = Date.now()
+        const minGap = document.hidden ? 8000 : 2500
+
+        if (now - auto.lastFetchAt < minGap) {
+          scheduleInventoryAutoRefresh(false)
+          return
+        }
+
+        auto.running = true
+        auto.lastFetchAt = now
 
         try {
           const currentUser = state.activeUser
@@ -9941,26 +9991,18 @@ const metadata = {
           const hydratedUser = await userWithD1Inventory(currentUser)
           const nextSignature = inventoryAutoRefreshSignature(hydratedUser)
 
-          if (nextSignature !== inventoryAutoRefreshLastSignature) {
-            inventoryAutoRefreshLastSignature = nextSignature
+          if (nextSignature !== auto.lastSignature) {
+            auto.lastSignature = nextSignature
             renderProfile(hydratedUser)
           }
         } catch (error) {
           console.warn('Inventory auto refresh failed:', error)
         } finally {
-          inventoryAutoRefreshRunning = false
+          auto.running = false
           scheduleInventoryAutoRefresh(false)
         }
       }
 
-      addListener(document, 'visibilitychange', () => {
-        if (!document.hidden) scheduleInventoryAutoRefresh(true)
-        else scheduleInventoryAutoRefresh(false)
-      })
-
-      addListener(window, 'focus', () => {
-        scheduleInventoryAutoRefresh(true)
-      })
 
       addListener($('searchInput'), 'input', (event) => renderSearch(event.target.value))
 
