@@ -8291,6 +8291,27 @@ const metadata = {
     }
 
 
+    /* OWNER_ONLY_V32 */
+    /* V32 owner-only controls */
+    .tnx-profile-readonly-v32 #openMailButton,
+    .tnx-profile-readonly-v32 .bp29-plus,
+    .tnx-profile-readonly-v32 .profile-featured-badge-add,
+    .tnx-profile-readonly-v32 #featuredBadgePlusTest,
+    .tnx-profile-readonly-v32 [data-featured-badge-add-v22],
+    .tnx-profile-readonly-v32 [data-tnxbp-add-v24] {
+      display: none !important;
+      pointer-events: none !important;
+    }
+
+    .inventory.owner-readonly-v32 .item {
+      cursor: default !important;
+    }
+
+    .inventory.owner-readonly-v32 .item:hover {
+      transform: none !important;
+    }
+
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -9528,6 +9549,7 @@ const metadata = {
         renderBadges(badges)
         renderFeaturedBadgesCleanV29(user)
         renderMail(mail)
+        refreshOwnerOnlyControlsV32(user)
       }
 
       function renderChips(chips) {
@@ -9614,7 +9636,10 @@ const metadata = {
         }).join('')
 
         box.querySelectorAll('[data-item-index]').forEach((button) => {
-          addListener(button, 'click', () => {
+          addListener(button, 'click', async () => {
+            const allowed = await ensureOwnerOnlyActionV32()
+            if (!allowed) return
+
             const item = sorted[Number(button.dataset.itemIndex)]
             if (item) openItemModal(item)
           })
@@ -9786,6 +9811,61 @@ const metadata = {
           (accountId && viewedId && accountId === viewedId) ||
           (accountLogin && viewedLogin && accountLogin === viewedLogin)
         )
+      }
+
+      function setOwnerOnlyControlsV32(canEdit) {
+        const allowed = Boolean(canEdit)
+        window.__tnxCanEditActiveProfileV32 = allowed
+        document.documentElement.classList.toggle('tnx-profile-readonly-v32', !allowed)
+
+        const mailButton = $('openMailButton')
+        if (mailButton) {
+          mailButton.disabled = !allowed
+          mailButton.setAttribute('aria-hidden', allowed ? 'false' : 'true')
+          mailButton.tabIndex = allowed ? 0 : -1
+        }
+
+        const inventory = $('inventory')
+        if (inventory) {
+          inventory.classList.toggle('owner-readonly-v32', !allowed)
+        }
+
+        if (!allowed) {
+          closeMail()
+
+          document
+            .querySelectorAll('.bp29-shell, .bp29-toast, .featured-badge-modal-test, .featured-badge-toast')
+            .forEach((el) => el.remove())
+
+          document
+            .querySelectorAll('.bp29-plus, .profile-featured-badge-add, #featuredBadgePlusTest, [data-featured-badge-add-v22], [data-tnxbp-add-v24]')
+            .forEach((el) => el.remove())
+
+          document
+            .querySelectorAll('.item-modal, .item-detail-modal, .inventory-item-modal, .profile-item-modal')
+            .forEach((modal) => {
+              const backdrop = modal.closest('.modal-backdrop')
+              if (backdrop && backdrop.id !== 'mailModal') backdrop.remove()
+              else modal.remove()
+            })
+        }
+      }
+
+      async function refreshOwnerOnlyControlsV32(user = state.activeUser) {
+        setOwnerOnlyControlsV32(false)
+
+        const account = await getCurrentAccount()
+
+        if (user && state.activeUser !== user) return false
+
+        const allowed = accountMatchesViewedUser(account)
+        setOwnerOnlyControlsV32(allowed)
+        return allowed
+      }
+
+      async function ensureOwnerOnlyActionV32() {
+        if (window.__tnxCanEditActiveProfileV32) return true
+        return await refreshOwnerOnlyControlsV32(state.activeUser)
       }
 
       function sortedInventoryForSell(items) {
@@ -10094,12 +10174,15 @@ const metadata = {
 
         box.dataset.sellHandlerReady = '1'
 
-        addListener(box, 'click', (event) => {
+        addListener(box, 'click', async (event) => {
           const button = event.target.closest('[data-sell-item]')
           if (!button) return
 
           event.preventDefault()
           event.stopPropagation()
+
+          const allowed = await ensureOwnerOnlyActionV32()
+          if (!allowed) return
 
           const name = button.dataset.sellItem || ''
           const qty = Math.max(1, Math.floor(Number(button.dataset.sellQty || 1)))
@@ -11150,9 +11233,13 @@ const metadata = {
           add.className = 'bp29-plus'
           add.setAttribute('aria-label', 'اختيار البادجات')
           add.innerHTML = '<span>+</span>'
-          add.addEventListener('click', (event) => {
+          add.addEventListener('click', async (event) => {
             event.preventDefault()
             event.stopPropagation()
+
+            const allowed = await ensureOwnerOnlyActionV32()
+            if (!allowed) return
+
             openBadgePickerCleanV29(state.activeUser || user)
           })
 
@@ -11178,7 +11265,7 @@ const metadata = {
       }
 
       function openBadgePickerCleanV29(user = state.activeUser) {
-        if (!user) return
+        if (!user || !window.__tnxCanEditActiveProfileV32) return
 
         bp29CleanupOldUi()
 
@@ -11535,6 +11622,8 @@ const metadata = {
       }
 
       function openItemModal(item) {
+        if (!window.__tnxCanEditActiveProfileV32) return
+
         const modal = document.createElement('div')
         modal.className = 'modal-backdrop show'
         modal.innerHTML = `
@@ -12447,7 +12536,14 @@ const metadata = {
         await renderProfileFromD1(user)
       })
 
-      addListener($('openMailButton'), 'click', openMail)
+      addListener($('openMailButton'), 'click', async (event) => {
+        event.preventDefault()
+
+        const allowed = await ensureOwnerOnlyActionV32()
+        if (!allowed) return
+
+        openMail()
+      })
       addListener($('closeMailButton'), 'click', closeMail)
 
       addListener($('mailModal'), 'click', (event) => {
