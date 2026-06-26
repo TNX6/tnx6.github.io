@@ -240,7 +240,9 @@ const metadata = {
     </div>
 
     <button id="backToTop" class="back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
-  </main>
+  
+<!-- TNX_PROFILE_BADGE_PICKER_V24_NO_DUPLICATE_PLUS -->
+</main>
 
   <style is:global>
     :root {
@@ -8240,6 +8242,33 @@ const metadata = {
       }
     }
 
+    /* Badge picker v24 safety: remove old picker flashes and force one plus */
+    .featured-badge-modal-test,
+    .featured-badge-toast {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    #featuredBadgePlusTest,
+    .featured-badge-plus-test,
+    [data-featured-badge-add-v22] {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    #featuredBadges .profile-featured-badge-add {
+      display: inline-grid !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+
+    #featuredBadges .profile-featured-badge-add + .profile-featured-badge-add {
+      display: none !important;
+    }
+
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -11067,6 +11096,12 @@ const metadata = {
         const box = $('featuredBadges')
         if (!box || !user) return
 
+        // v24: prevent the old experimental picker from flashing or opening.
+        document.querySelectorAll('.featured-badge-modal-test, .featured-badge-toast').forEach((el) => el.remove())
+
+        const renderSeq = String(Date.now()) + ':' + Math.random().toString(36).slice(2)
+        box.dataset.tnxbpRenderSeq = renderSeq
+
         const badges = tnxbpBadges(user)
         const selected = tnxbpSelectedBadges(user)
         const roles = badges.filter(tnxbpIsRole)
@@ -11079,6 +11114,12 @@ const metadata = {
         }
 
         box.classList.remove('hidden')
+
+        // Remove any old plus buttons before drawing the current state.
+        box.querySelectorAll(
+          '.profile-featured-badge-add, #featuredBadgePlusTest, .featured-badge-plus-test, [data-featured-badge-add-v22]'
+        ).forEach((el) => el.remove())
+
         box.innerHTML = [
           ...roles.map(tnxbpMiniHtml),
           ...selected.map(tnxbpMiniHtml),
@@ -11086,6 +11127,11 @@ const metadata = {
 
         getCurrentAccount().then((account) => {
           if (!box || state.activeUser !== user) return
+          if (box.dataset.tnxbpRenderSeq !== renderSeq) return
+
+          box.querySelectorAll(
+            '.profile-featured-badge-add, #featuredBadgePlusTest, .featured-badge-plus-test, [data-featured-badge-add-v22]'
+          ).forEach((el) => el.remove())
 
           if (!accountMatchesViewedUser(account)) {
             return
@@ -11094,9 +11140,14 @@ const metadata = {
           const add = document.createElement('button')
           add.type = 'button'
           add.className = 'profile-featured-badge-add'
+          add.setAttribute('data-tnxbp-add-v24', '1')
           add.setAttribute('aria-label', 'اختيار البادجات')
           add.innerHTML = '<span>+</span>'
-          add.addEventListener('click', () => openTnxbpPicker(user))
+          add.addEventListener('click', (event) => {
+            event.preventDefault()
+            event.stopPropagation()
+            openTnxbpPicker(state.activeUser || user)
+          })
           box.appendChild(add)
         }).catch(() => {})
       }
@@ -11121,7 +11172,7 @@ const metadata = {
       function openTnxbpPicker(user = state.activeUser) {
         if (!user) return
 
-        document.querySelector('.tnxbp-shell')?.remove()
+        document.querySelectorAll('.tnxbp-shell, .featured-badge-modal-test, .featured-badge-toast').forEach((el) => el.remove())
 
         const badges = tnxbpBadges(user)
         const selectable = badges.filter((badge) => !tnxbpIsRole(badge))
