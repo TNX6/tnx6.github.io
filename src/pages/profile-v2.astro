@@ -8163,7 +8163,20 @@ const metadata = {
       const DAILY_LOGIN_XP = 500
 
       function currentPoints(user) {
-        return num(deepGet(user, ['points', 'totalPoints', 'balance', 'loyaltyPoints'], 0))
+        const rawPoints = num(deepGet(user, ['points', 'totalPoints', 'balance', 'loyaltyPoints'], 0))
+
+        try {
+          if (typeof getOptimisticEconomyV1 === 'function') {
+            const optimistic = getOptimisticEconomyV1(user || state.activeUser)
+            const optimisticPoints = Math.max(0, Math.floor(Number(optimistic?.points || 0)))
+
+            if (optimisticPoints > rawPoints) {
+              return optimisticPoints
+            }
+          }
+        } catch {}
+
+        return rawPoints
       }
 
 
