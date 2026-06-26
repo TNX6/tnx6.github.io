@@ -7460,6 +7460,7 @@ const metadata = {
         },
         activeUser: null,
         d1InventoryCache: {},
+        d1EconomyCache: {},
       }
 
       const rarityColors = {
@@ -10409,10 +10410,83 @@ const metadata = {
         }
       }
 
+      function d1EconomyCacheKey(user) {
+        return d1InventoryCacheKey(user)
+      }
+
+      async function loadEconomyFromD1(user) {
+        const cacheKey = d1EconomyCacheKey(user)
+        if (!cacheKey) return null
+
+        if (state.d1EconomyCache[cacheKey]) {
+          return state.d1EconomyCache[cacheKey]
+        }
+
+        const params = new URLSearchParams()
+        const viewedId = String(userId(user) || get(user, ['twitchId', 'twitch_id'], '') || '').trim()
+        const viewedLogin = String(userLogin(user) || get(user, ['login', 'userLogin'], '') || '').trim().toLowerCase()
+
+        if (viewedId) params.set('twitchId', viewedId)
+        else if (viewedLogin) params.set('login', viewedLogin)
+        else return null
+
+        try {
+          const res = await fetch(TNX_API_ORIGIN + '/api/profile/economy?' + params.toString(), {
+            cache: 'no-store',
+          })
+
+          if (!res.ok) return null
+
+          const data = await res.json().catch(() => null)
+
+          if (!data?.ok || !data.economy) return null
+
+          state.d1EconomyCache[cacheKey] = data
+          return data
+        } catch {
+          return null
+        }
+      }
+
+      async function userWithD1Economy(user) {
+        const data = await loadEconomyFromD1(user)
+
+        if (!data || !data.economy) return user
+
+        const d1User = data.user || {}
+        const economy = data.economy || {}
+        const points = Math.max(0, Math.floor(Number(economy.points || 0)))
+        const gold = Math.max(0, Math.floor(Number(economy.gold || 0)))
+
+        return {
+          ...user,
+          twitchId: String(d1User.twitchId || get(user, ['twitchId', 'twitch_id', 'userId', 'id'], '') || ''),
+          userId: String(d1User.twitchId || get(user, ['userId', 'id', 'twitchId', 'twitch_id'], '') || ''),
+          login: String(d1User.login || get(user, ['login', 'userLogin'], '') || ''),
+          userLogin: String(d1User.login || get(user, ['userLogin', 'login'], '') || ''),
+          displayName: String(d1User.displayName || get(user, ['displayName', 'userName'], '') || ''),
+          userName: String(d1User.displayName || get(user, ['userName', 'displayName'], '') || ''),
+          profileImageUrl: String(d1User.profileImageUrl || get(user, ['profileImageUrl', 'avatar'], '') || ''),
+          avatar: String(d1User.profileImageUrl || get(user, ['avatar', 'profileImageUrl'], '') || ''),
+          points,
+          totalPoints: points,
+          balance: points,
+          gold,
+          economyUpdatedAt: economy.updatedAt || null,
+          economySource: 'd1',
+        }
+      }
+
+      async function userWithD1ProfileData(user) {
+        const withInventory = await userWithD1Inventory(user)
+        return await userWithD1Economy(withInventory)
+      }
+
       async function renderProfileFromD1(user) {
-        const hydratedUser = await userWithD1Inventory(user)
+        const hydratedUser = await userWithD1ProfileData(user)
         renderProfile(hydratedUser)
         startInventoryLivePollerV3()
+        startEconomyLivePollerV1()
       }
 
       function clearD1InventoryCacheForUser(user) {
@@ -10422,13 +10496,21 @@ const metadata = {
         } catch {}
       }
 
+      function clearD1EconomyCacheForUser(user) {
+        try {
+          const cacheKey = d1EconomyCacheKey(user || state.activeUser)
+          if (cacheKey && state.d1EconomyCache) delete state.d1EconomyCache[cacheKey]
+        } catch {}
+      }
+
       async function refreshActiveProfileFromD1() {
         try {
           if (!state.activeUser) return
           clearD1InventoryCacheForUser(state.activeUser)
+          clearD1EconomyCacheForUser(state.activeUser)
           await renderProfileFromD1(state.activeUser)
         } catch (error) {
-          console.warn('Failed to refresh D1 inventory after sell status:', error)
+          console.warn('Failed to refresh D1 profile data after sell status:', error)
         }
       }
 
@@ -10627,8 +10709,200 @@ const metadata = {
         }
       }
 
-      addListener($('searchInput'), 'input', (event) => renderSearch(event.target.value))
 
+      /* TNX_ECONOMY_LIVE_POLLER_V1 */
+      const ECONOMY_LIVE_POLL_VISIBLE_MS = 5000
+      const ECONOMY_LIVE_POLL_HIDDEN_MS = 25000
+
+      function getEconomyLivePollerV1() {
+        if (!window.__tnxEconomyLivePollerV1) {
+          window.__tnxEconomyLivePollerV1 = {
+            timer: 0,
+            running: false,
+            lastSignature: '',
+            lastStartedKey: '',
+            listenersInstalled: false,
+          }
+        }
+
+        return window.__tnxEconomyLivePollerV1
+      }
+
+      function economyLivePollKey(user) {
+        return d1EconomyCacheKey(user || state.activeUser)
+      }
+
+      function economyLiveSignatureFromData(data) {
+        if (!data?.economy) return ''
+
+        const points = Math.max(0, Math.floor(Number(data.economy.points || 0)))
+        const gold = Math.max(0, Math.floor(Number(data.economy.gold || 0)))
+        const updatedAt = String(data.economy.updatedAt || '')
+
+        return `${points}|${gold}|${updatedAt}`
+      }
+
+      function economyLiveSignatureFromUser(user) {
+        if (!user) return ''
+
+        const points = Math.max(0, Math.floor(Number(currentPoints(user) || 0)))
+        const gold = Math.max(0, Math.floor(Number(get(user, ['gold'], 0) || 0)))
+        const updatedAt = String(get(user, ['economyUpdatedAt'], '') || '')
+
+        return `${points}|${gold}|${updatedAt}`
+      }
+
+      function economyLivePollDelay() {
+        return document.hidden ? ECONOMY_LIVE_POLL_HIDDEN_MS : ECONOMY_LIVE_POLL_VISIBLE_MS
+      }
+
+      function stopEconomyLivePollerV1() {
+        const poller = getEconomyLivePollerV1()
+
+        if (poller.timer) {
+          window.clearTimeout(poller.timer)
+          poller.timer = 0
+        }
+
+        poller.running = false
+        poller.lastStartedKey = ''
+        poller.lastSignature = ''
+      }
+
+      function scheduleEconomyLivePollerV1(delay = ECONOMY_LIVE_POLL_VISIBLE_MS) {
+        const poller = getEconomyLivePollerV1()
+
+        if (poller.timer) {
+          window.clearTimeout(poller.timer)
+        }
+
+        poller.timer = window.setTimeout(runEconomyLivePollerV1, Math.max(500, delay))
+      }
+
+      function economyLiveProfileIsReady() {
+        return Boolean(state.activeUser && $('profileView') && !$('profileView').classList.contains('hidden'))
+      }
+
+      function startEconomyLivePollerV1() {
+        const poller = getEconomyLivePollerV1()
+
+        if (!economyLiveProfileIsReady()) {
+          stopEconomyLivePollerV1()
+          return
+        }
+
+        const key = economyLivePollKey(state.activeUser)
+
+        if (!key) {
+          stopEconomyLivePollerV1()
+          return
+        }
+
+        poller.lastStartedKey = key
+        poller.lastSignature = economyLiveSignatureFromUser(state.activeUser)
+
+        if (!poller.listenersInstalled) {
+          poller.listenersInstalled = true
+
+          addListener(document, 'visibilitychange', () => {
+            if (economyLiveProfileIsReady()) {
+              scheduleEconomyLivePollerV1(document.hidden ? ECONOMY_LIVE_POLL_HIDDEN_MS : 500)
+            }
+          })
+
+          addListener(window, 'focus', () => {
+            if (economyLiveProfileIsReady()) {
+              scheduleEconomyLivePollerV1(500)
+            }
+          })
+        }
+
+        scheduleEconomyLivePollerV1(ECONOMY_LIVE_POLL_VISIBLE_MS)
+      }
+
+      function buildD1EconomyUrlForUser(user) {
+        const params = new URLSearchParams()
+        const viewedId = String(userId(user) || get(user, ['twitchId', 'twitch_id'], '') || '').trim()
+        const viewedLogin = String(userLogin(user) || get(user, ['login', 'userLogin'], '') || '').trim().toLowerCase()
+
+        if (viewedId) params.set('twitchId', viewedId)
+        else if (viewedLogin) params.set('login', viewedLogin)
+        else return ''
+
+        return TNX_API_ORIGIN + '/api/profile/economy?' + params.toString()
+      }
+
+      async function runEconomyLivePollerV1() {
+        const poller = getEconomyLivePollerV1()
+
+        if (!economyLiveProfileIsReady()) {
+          stopEconomyLivePollerV1()
+          return
+        }
+
+        if (poller.running) {
+          scheduleEconomyLivePollerV1(economyLivePollDelay())
+          return
+        }
+
+        const key = economyLivePollKey(state.activeUser)
+        const url = buildD1EconomyUrlForUser(state.activeUser)
+
+        if (!key || !url) {
+          stopEconomyLivePollerV1()
+          return
+        }
+
+        poller.running = true
+
+        try {
+          const res = await fetch(url, { cache: 'no-store' })
+          const data = res.ok ? await res.json().catch(() => null) : null
+
+          if (!data?.ok || !data.economy) {
+            return
+          }
+
+          const nextSignature = economyLiveSignatureFromData(data)
+
+          if (nextSignature !== poller.lastSignature || key !== poller.lastStartedKey) {
+            poller.lastSignature = nextSignature
+            poller.lastStartedKey = key
+
+            const points = Math.max(0, Math.floor(Number(data.economy.points || 0)))
+            const gold = Math.max(0, Math.floor(Number(data.economy.gold || 0)))
+
+            const nextUser = {
+              ...state.activeUser,
+              points,
+              totalPoints: points,
+              balance: points,
+              gold,
+              economyUpdatedAt: data.economy.updatedAt || null,
+              economySource: 'd1-live',
+            }
+
+            state.activeUser = nextUser
+
+            const inventory = inventoryItems(nextUser)
+            const badges = Array.isArray(nextUser.badges) ? nextUser.badges : []
+            const level = calculateLevel(nextUser)
+
+            setText('points', formatNumber(points))
+            setText('rank', rankFor(nextUser))
+            renderChips(chipsFor(nextUser, level.level, badges, inventory))
+            renderNextBadge(nextUser, badges)
+          }
+        } catch (error) {
+          console.warn('Economy live poll failed:', error)
+        } finally {
+          poller.running = false
+          scheduleEconomyLivePollerV1(economyLivePollDelay())
+        }
+      }
+
+
+      addListener($('searchInput'), 'input', (event) => renderSearch(event.target.value))
       addListener($('clearSearch'), 'click', () => {
         if (!$('searchInput') || !$('searchResults')) return
         $('searchInput').value = ''
