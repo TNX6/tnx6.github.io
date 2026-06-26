@@ -9643,7 +9643,6 @@ const metadata = {
             stamp?.classList.add('show')
 
             const localSellTotal = Math.max(0, Math.floor(Number(data.sellTotal || data.sell_total || (qty * priceEach) || 0)))
-            applyLocalEconomyAfterSellV1(localSellTotal)
 
             try {
               const localChanged = await renderInventoryAfterLocalSellV4(name, qty, items)
@@ -9673,6 +9672,14 @@ const metadata = {
               try {
                 close();
               } catch {}
+
+              try {
+                window.requestAnimationFrame(() => {
+                  applyLocalEconomyAfterSellV1(localSellTotal)
+                })
+              } catch {
+                applyLocalEconomyAfterSellV1(localSellTotal)
+              }
 
               try {
                 document
