@@ -10921,6 +10921,11 @@ const metadata = {
             const action = button.dataset.v3Action;
             const hint = modal.querySelector('[data-v3-hint]');
 
+            if (action === 'use') {
+              useInventoryItemFromProfileV1(item, button, hint);
+              return;
+            }
+
             if (action === 'sell') {
               if (saleDisabled) {
                 if (hint) hint.textContent = 'هذا الغرض غير قابل للبيع.';
