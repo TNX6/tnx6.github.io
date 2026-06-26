@@ -9422,11 +9422,50 @@ const metadata = {
         const stamp = modal.querySelector('[data-sell-stamp]')
         const qtyButtons = () => [...modal.querySelectorAll('[data-sell-qty-pick], [data-sell-qty-step]')]
         let selectedQty = 1
+        let displayedPayout = priceEach
+        let payoutAnimationFrame = 0
 
         const clampQty = (value) => {
           const number = Math.floor(Number(value || 1))
           if (!Number.isFinite(number)) return 1
           return Math.max(1, Math.min(owned, number))
+        }
+
+        const animatePayoutTotal = (nextValue) => {
+          const target = Math.max(0, Math.floor(Number(nextValue || 0)))
+
+          if (payoutAnimationFrame) {
+            cancelAnimationFrame(payoutAnimationFrame)
+          }
+
+          const start = Math.max(0, Math.floor(Number(displayedPayout || 0)))
+          const startedAt = performance.now()
+          const duration = 420
+
+          if (start === target) {
+            displayedPayout = target
+            total.textContent = formatNumber(target)
+            return
+          }
+
+          const step = (now) => {
+            const progress = Math.min(1, (now - startedAt) / duration)
+            const eased = 1 - Math.pow(1 - progress, 3)
+            const current = Math.round(start + ((target - start) * eased))
+
+            displayedPayout = current
+            total.textContent = formatNumber(current)
+
+            if (progress < 1) {
+              payoutAnimationFrame = requestAnimationFrame(step)
+            } else {
+              displayedPayout = target
+              total.textContent = formatNumber(target)
+              payoutAnimationFrame = 0
+            }
+          }
+
+          payoutAnimationFrame = requestAnimationFrame(step)
         }
 
         const setQty = (value) => {
@@ -9443,7 +9482,7 @@ const metadata = {
           })
 
           formula.textContent = `${formatNumber(priceEach)} × ${formatNumber(selectedQty)}`
-          total.textContent = formatNumber(selectedQty * priceEach)
+          animatePayoutTotal(selectedQty * priceEach)
         }
 
         addListener(modal, 'click', (event) => {
