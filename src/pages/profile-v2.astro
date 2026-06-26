@@ -7801,18 +7801,10 @@ const metadata = {
       function applyLeaderboardMetrics(user) {
         const merged = { ...user }
 
-        const pointsEntry = findLeaderboardEntry('points', merged)
-        if (pointsEntry) {
-          merged.points = num(pointsEntry.value)
-          merged.totalPoints = num(pointsEntry.value)
-          merged.rank = `#${pointsEntry.rank}`
-        }
-
-        const goldEntry = findLeaderboardEntry('gold', merged)
-        if (goldEntry) {
-          merged.gold = num(goldEntry.value)
-        }
-
+        // Important:
+        // profile-v2 must NOT take points or gold from /api/leaderboard_data.json.
+        // That file can be stale and was causing the profile to jump back to old points.
+        // Points/gold now come from D1 economy only.
         const watchtimeEntry = findLeaderboardEntry('watchtime', merged)
         if (watchtimeEntry) {
           const rawValue = leaderboardEntryValue(watchtimeEntry.raw)
@@ -11112,8 +11104,10 @@ const metadata = {
       state.items = Array.isArray(itemPayload) ? itemPayload : Array.isArray(itemPayload.items) ? itemPayload.items : []
 
       state.leaderboards = {
-        points: normalizeLeaderboardData(leaderboardPayload, 'points'),
-        gold: normalizeLeaderboardData(leaderboardPayload, 'gold'),
+        // Points/gold are intentionally disabled here.
+        // They are read from D1 economy, not from stale leaderboard_data.json.
+        points: [],
+        gold: [],
         watchtime: normalizeLeaderboardData(leaderboardPayload, 'watchtime'),
       }
 
