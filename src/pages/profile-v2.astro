@@ -8291,23 +8291,24 @@ const metadata = {
     }
 
 
-    /* OWNER_ONLY_V35_CANONICAL */
-    .tnx-profile-readonly-v35 #openMailButton,
-    .tnx-profile-readonly-v35 .bp29-plus,
-    .tnx-profile-readonly-v35 .profile-featured-badge-add,
-    .tnx-profile-readonly-v35 #featuredBadgePlusTest,
-    .tnx-profile-readonly-v35 [data-featured-badge-add-v22],
-    .tnx-profile-readonly-v35 [data-tnxbp-add-v24],
-    .tnx-profile-readonly-v35 .inventory-sell-row {
+    /* OWNER_ONLY_V36_URL_FIRST_GUARD */
+    .tnx-profile-readonly-v36 #openMailButton,
+    .tnx-profile-readonly-v36 .bp29-plus,
+    .tnx-profile-readonly-v36 .profile-featured-badge-add,
+    .tnx-profile-readonly-v36 #featuredBadgePlusTest,
+    .tnx-profile-readonly-v36 [data-featured-badge-add-v22],
+    .tnx-profile-readonly-v36 [data-tnxbp-add-v24],
+    .tnx-profile-readonly-v36 .inventory-sell-row {
       display: none !important;
       pointer-events: none !important;
     }
 
-    .tnx-profile-readonly-v35 #inventory .item {
+    .tnx-profile-readonly-v36 #inventory .item {
+      pointer-events: none !important;
       cursor: default !important;
     }
 
-    .tnx-profile-readonly-v35 #inventory .item:hover {
+    .tnx-profile-readonly-v36 #inventory .item:hover {
       transform: none !important;
     }
 
@@ -9549,7 +9550,7 @@ const metadata = {
         renderBadges(badges)
         renderFeaturedBadgesCleanV29(user)
         renderMail(mail)
-        syncOwnerControlsV35(user)
+        syncOwnerControlsV36(user)
       }
 
       function renderChips(chips) {
@@ -9637,9 +9638,9 @@ const metadata = {
 
         box.querySelectorAll('[data-item-index]').forEach((button) => {
           addListener(button, 'click', async () => {
-            const allowed = await isProfileOwnerV35(state.activeUser)
+            const allowed = await isProfileOwnerV36(state.activeUser)
             if (!allowed) {
-              await syncOwnerControlsV35(state.activeUser)
+              await syncOwnerControlsV36(state.activeUser)
               return
             }
 
@@ -10129,9 +10130,9 @@ const metadata = {
           event.preventDefault()
           event.stopPropagation()
 
-          const allowed = await isProfileOwnerV35(state.activeUser)
+          const allowed = await isProfileOwnerV36(state.activeUser)
           if (!allowed) {
-            await syncOwnerControlsV35(state.activeUser)
+            await syncOwnerControlsV36(state.activeUser)
             return
           }
 
@@ -10150,7 +10151,7 @@ const metadata = {
 
         setupInventorySellHandler(items)
 
-        const canSell = await isProfileOwnerV35(state.activeUser)
+        const canSell = await isProfileOwnerV36(state.activeUser)
 
         box.querySelectorAll('.inventory-sell-row').forEach((row) => row.remove())
 
@@ -11172,7 +11173,7 @@ const metadata = {
           ...selected.map(bp29MiniHtml),
         ].join('')
 
-        isProfileOwnerV35(user).then((allowed) => {
+        isProfileOwnerV36(user).then((allowed) => {
           if (!box || state.activeUser !== user) return
           if (!allowed) return
 
@@ -11213,9 +11214,9 @@ const metadata = {
       async function openBadgePickerCleanV29(user = state.activeUser) {
         if (!user) return
 
-        const allowed = await isProfileOwnerV35(user)
+        const allowed = await isProfileOwnerV36(user)
         if (!allowed) {
-          await syncOwnerControlsV35(user)
+          await syncOwnerControlsV36(user)
           return
         }
 
@@ -11574,9 +11575,9 @@ const metadata = {
       }
 
       async function openItemModal(item) {
-        const allowed = await isProfileOwnerV35(state.activeUser)
+        const allowed = await isProfileOwnerV36(state.activeUser)
         if (!allowed) {
-          await syncOwnerControlsV35(state.activeUser)
+          await syncOwnerControlsV36(state.activeUser)
           return
         }
 
@@ -11673,20 +11674,86 @@ const metadata = {
         )
       }
 
-      async function isProfileOwnerV35(user = state.activeUser) {
-        if (!user) return false
+      function requestedProfileTokenV36() {
+        try {
+          return String(new URLSearchParams(location.search).get('user') || '').trim().replace(/^@+/, '')
+        } catch {
+          return ''
+        }
+      }
 
+      function authLoginTokensV36(authUser) {
+        const set = new Set()
+
+        ;[
+          authUser?.login,
+          authUser?.userLogin,
+          authUser?.displayName,
+          authUser?.userName,
+          authUser?.name,
+        ].forEach((value) => {
+          const token = normalize(String(value || '').replace(/^@+/, ''))
+          if (token) set.add(token)
+        })
+
+        return set
+      }
+
+      function authIdTokensV36(authUser) {
+        const set = new Set()
+
+        ;[
+          authUser?.twitchId,
+          authUser?.twitch_id,
+          authUser?.id,
+          authUser?.userId,
+          authUser?.UserId,
+        ].forEach((value) => {
+          const token = String(value || '').trim()
+          if (token) set.add(token)
+        })
+
+        return set
+      }
+
+      function authOwnsRequestedProfileV36(authUser) {
+        if (!authUser) return false
+
+        const requested = requestedProfileTokenV36()
+        if (!requested) return null
+
+        const requestedLogin = normalize(requested)
+        const requestedId = String(requested || '').trim()
+
+        const authLogins = authLoginTokensV36(authUser)
+        const authIds = authIdTokensV36(authUser)
+
+        return Boolean(
+          (requestedId && authIds.has(requestedId)) ||
+          (requestedLogin && authLogins.has(requestedLogin))
+        )
+      }
+
+      async function isProfileOwnerV36(user = state.activeUser) {
         const authUser = await getLoggedInUser()
+        if (!authUser) return false
+
+        const ownsRequested = authOwnsRequestedProfileV36(authUser)
+
+        // أهم نقطة:
+        // إذا الرابط فيه ?user=someone، الملكية تعتمد على someone نفسه، وليس بيانات activeUser بعد الدمج.
+        // هذا يمنع فتح قوائم الحقيبة في بروفايلات الناس.
+        if (ownsRequested !== null) return ownsRequested
+
         return isOwnProfile(user, authUser)
       }
 
-      async function syncOwnerControlsV35(user = state.activeUser) {
-        const allowed = await isProfileOwnerV35(user)
+      async function syncOwnerControlsV36(user = state.activeUser) {
+        const allowed = await isProfileOwnerV36(user)
 
         if (user && state.activeUser !== user) return allowed
 
-        window.__tnxProfileOwnerV35 = allowed
-        document.documentElement.classList.toggle('tnx-profile-readonly-v35', !allowed)
+        document.documentElement.classList.toggle('tnx-profile-readonly-v36', !allowed)
 
         const mailButton = $('openMailButton')
         if (mailButton) {
@@ -11710,6 +11777,12 @@ const metadata = {
           document
             .querySelectorAll('.inventory-sell-row')
             .forEach((el) => el.remove())
+
+          document
+            .querySelectorAll('.modal-backdrop.show')
+            .forEach((modal) => {
+              if (modal.querySelector('.item-modal')) modal.remove()
+            })
         }
 
         return allowed
@@ -12537,9 +12610,9 @@ const metadata = {
       addListener($('openMailButton'), 'click', async (event) => {
         event.preventDefault()
 
-        const allowed = await isProfileOwnerV35(state.activeUser)
+        const allowed = await isProfileOwnerV36(state.activeUser)
         if (!allowed) {
-          await syncOwnerControlsV35(state.activeUser)
+          await syncOwnerControlsV36(state.activeUser)
           return
         }
 
