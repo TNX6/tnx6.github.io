@@ -10937,13 +10937,13 @@ const metadata = {
         const raw = String(badgeName(badge) || '')
         const n = normalize(raw)
 
-        if (/\d+\s*k\b/i.test(raw) || /\d+\s*m\b/i.test(raw) || n.includes('التقاط') || n.includes('صيد')) return 'k'
+        if (/\d+\s*k\b/i.test(raw) || /\d+\s*m\b/i.test(raw) || n.includes('النقاط') || n.includes('صيد')) return 'k'
         return 'q'
       }
 
       function bp29Category(badge) {
         if (bp29IsRole(badge)) return 'ثابت'
-        return bp29Tier(badge) === 'k' ? 'التقاط' : 'الأسئلة'
+        return bp29Tier(badge) === 'k' ? 'النقاط' : 'الأسئلة'
       }
 
       function bp29Fallback(badge) {
@@ -11109,7 +11109,7 @@ const metadata = {
               <div class="bp29-seg" data-bp29-seg>
                 <button class="act" type="button" data-bp29-filter="all">الكل</button>
                 <button type="button" data-bp29-filter="q">الأسئلة</button>
-                <button type="button" data-bp29-filter="k">التقاط</button>
+                <button type="button" data-bp29-filter="k">النقاط</button>
               </div>
             </div>
 
