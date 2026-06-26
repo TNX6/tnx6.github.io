@@ -8291,25 +8291,15 @@ const metadata = {
     }
 
 
-    /* OWNER_ONLY_V33_QUERY_GUARD */
-    /* OWNER_ONLY_V32 */
-    /* V32 owner-only controls */
-    .tnx-profile-readonly-v32 #openMailButton,
-    .tnx-profile-readonly-v32 .bp29-plus,
-    .tnx-profile-readonly-v32 .profile-featured-badge-add,
-    .tnx-profile-readonly-v32 #featuredBadgePlusTest,
-    .tnx-profile-readonly-v32 [data-featured-badge-add-v22],
-    .tnx-profile-readonly-v32 [data-tnxbp-add-v24] {
+    /* OWNER_ONLY_V34_SOFT_GUARD */
+    .tnx-profile-readonly-v34 #openMailButton,
+    .tnx-profile-readonly-v34 .bp29-plus,
+    .tnx-profile-readonly-v34 .profile-featured-badge-add,
+    .tnx-profile-readonly-v34 #featuredBadgePlusTest,
+    .tnx-profile-readonly-v34 [data-featured-badge-add-v22],
+    .tnx-profile-readonly-v34 [data-tnxbp-add-v24] {
       display: none !important;
       pointer-events: none !important;
-    }
-
-    .inventory.owner-readonly-v32 .item {
-      cursor: default !important;
-    }
-
-    .inventory.owner-readonly-v32 .item:hover {
-      transform: none !important;
     }
 
 
@@ -9550,7 +9540,7 @@ const metadata = {
         renderBadges(badges)
         renderFeaturedBadgesCleanV29(user)
         renderMail(mail)
-        refreshOwnerOnlyControlsV32(user)
+        syncOwnerUiV34(user)
       }
 
       function renderChips(chips) {
@@ -9618,7 +9608,6 @@ const metadata = {
               class="item"
               type="button"
               data-item-index="${index}"
-              data-owner-menu="1"
               data-item-name="${esc(item.name)}"
               data-item-qty="${esc(item.qty)}"
               data-item-icon="${esc(item.icon)}"
@@ -9639,7 +9628,7 @@ const metadata = {
 
         box.querySelectorAll('[data-item-index]').forEach((button) => {
           addListener(button, 'click', async () => {
-            const allowed = await ensureOwnerOnlyActionV32()
+            const allowed = await canEditActiveProfileV34()
             if (!allowed) return
 
             const item = sorted[Number(button.dataset.itemIndex)]
@@ -9800,7 +9789,7 @@ const metadata = {
         }
       }
 
-      function requestedProfileTokenV33() {
+      function requestedProfileTokenV34() {
         try {
           return String(new URLSearchParams(location.search).get('user') || '').trim()
         } catch {
@@ -9808,9 +9797,8 @@ const metadata = {
         }
       }
 
-      function accountTokensV33(account) {
-        const tokens = new Set()
-
+      function accountLoginSetV34(account) {
+        const set = new Set()
         ;[
           account?.login,
           account?.displayName,
@@ -9819,15 +9807,13 @@ const metadata = {
           account?.name,
         ].forEach((value) => {
           const token = normalize(value || '')
-          if (token) tokens.add(token)
+          if (token) set.add(token)
         })
-
-        return tokens
+        return set
       }
 
-      function accountIdsV33(account) {
-        const ids = new Set()
-
+      function accountIdSetV34(account) {
+        const set = new Set()
         ;[
           account?.twitchId,
           account?.twitch_id,
@@ -9836,64 +9822,63 @@ const metadata = {
           account?.UserId,
         ].forEach((value) => {
           const token = String(value || '').trim()
-          if (token) ids.add(token)
+          if (token) set.add(token)
         })
-
-        return ids
+        return set
       }
 
-      function accountMatchesViewedUser(account) {
-        if (!account || !state.activeUser) return false
+      function accountMatchesViewedUser(account, user = state.activeUser) {
+        if (!account || !user) return false
 
-        const accountLogins = accountTokensV33(account)
-        const accountIds = accountIdsV33(account)
+        const accountLogins = accountLoginSetV34(account)
+        const accountIds = accountIdSetV34(account)
 
-        const viewedLogin = normalize(userLogin(state.activeUser) || userName(state.activeUser) || '')
-        const viewedName = normalize(userName(state.activeUser) || userLogin(state.activeUser) || '')
-        const viewedId = String(userId(state.activeUser) || get(state.activeUser, ['twitchId', 'twitch_id'], '') || '').trim()
+        const viewedLogin = normalize(userLogin(user) || userName(user) || '')
+        const viewedName = normalize(userName(user) || userLogin(user) || '')
+        const viewedId = String(userId(user) || get(user, ['twitchId', 'twitch_id'], '') || '').trim()
 
-        const requested = requestedProfileTokenV33()
+        const requested = requestedProfileTokenV34()
+        const requestedLogin = normalize(requested)
+        const requestedId = String(requested || '').trim()
 
-        // مهم:
-        // إذا الرابط فيه ?user=someone، لازم هذا الـ someone يطابق الحساب المسجل دخوله.
-        // هذا يمنع الزائر من فتح قوائم بروفايل شخص ثاني حتى لو activeUser صار فيه بيانات.
+        // إذا الرابط محدد ?user=someone، لا نسمح بالتحكم إلا لو someone هو نفس الحساب المسجل.
         if (requested) {
-          const requestedLogin = normalize(requested)
-          const requestedId = String(requested || '').trim()
-          const requestedMatchesAccount =
+          const requestMatchesAccount =
             (requestedId && accountIds.has(requestedId)) ||
             (requestedLogin && accountLogins.has(requestedLogin))
 
-          if (!requestedMatchesAccount) return false
+          if (!requestMatchesAccount) return false
         }
 
         return Boolean(
           (viewedId && accountIds.has(viewedId)) ||
           (viewedLogin && accountLogins.has(viewedLogin)) ||
-          (viewedName && accountLogins.has(viewedName))
+          (viewedName && accountLogins.has(viewedName)) ||
+          (requested && requestedLogin && accountLogins.has(requestedLogin)) ||
+          (requested && requestedId && accountIds.has(requestedId))
         )
       }
 
-      function setOwnerOnlyControlsV32(canEdit) {
-        const allowed = Boolean(canEdit)
-        window.__tnxCanEditActiveProfileV32 = allowed
-        document.documentElement.classList.toggle('tnx-profile-readonly-v32', !allowed)
+      async function canEditActiveProfileV34(user = state.activeUser) {
+        const account = await getCurrentAccount()
+        return accountMatchesViewedUser(account, user)
+      }
+
+      async function syncOwnerUiV34(user = state.activeUser) {
+        const allowed = await canEditActiveProfileV34(user)
+
+        if (user && state.activeUser !== user) return allowed
+
+        document.documentElement.classList.toggle('tnx-profile-readonly-v34', !allowed)
 
         const mailButton = $('openMailButton')
         if (mailButton) {
           mailButton.disabled = !allowed
-          mailButton.setAttribute('aria-hidden', allowed ? 'false' : 'true')
           mailButton.tabIndex = allowed ? 0 : -1
-        }
-
-        const inventory = $('inventory')
-        if (inventory) {
-          inventory.classList.toggle('owner-readonly-v32', !allowed)
+          mailButton.setAttribute('aria-hidden', allowed ? 'false' : 'true')
         }
 
         if (!allowed) {
-          closeMail()
-
           document
             .querySelectorAll('.bp29-shell, .bp29-toast, .featured-badge-modal-test, .featured-badge-toast')
             .forEach((el) => el.remove())
@@ -9901,64 +9886,10 @@ const metadata = {
           document
             .querySelectorAll('.bp29-plus, .profile-featured-badge-add, #featuredBadgePlusTest, [data-featured-badge-add-v22], [data-tnxbp-add-v24]')
             .forEach((el) => el.remove())
-
-          document
-            .querySelectorAll('.item-modal, .item-detail-modal, .inventory-item-modal, .profile-item-modal')
-            .forEach((modal) => {
-              const backdrop = modal.closest('.modal-backdrop')
-              if (backdrop && backdrop.id !== 'mailModal') backdrop.remove()
-              else modal.remove()
-            })
         }
-      }
 
-      async function refreshOwnerOnlyControlsV32(user = state.activeUser) {
-        setOwnerOnlyControlsV32(false)
-
-        const account = await getCurrentAccount()
-
-        if (user && state.activeUser !== user) return false
-
-        const allowed = accountMatchesViewedUser(account)
-        setOwnerOnlyControlsV32(allowed)
         return allowed
       }
-
-      async function ensureOwnerOnlyActionV32() {
-        if (window.__tnxCanEditActiveProfileV32) return true
-        return await refreshOwnerOnlyControlsV32(state.activeUser)
-      }
-
-      function installOwnerOnlyCaptureGuardV33() {
-        if (window.__tnxOwnerOnlyCaptureGuardV33) return
-        window.__tnxOwnerOnlyCaptureGuardV33 = true
-
-        document.addEventListener('click', (event) => {
-          const target = event.target
-
-          const protectedTarget = target?.closest?.(
-            '#inventory [data-item-index], #inventory .item, .inventory-sell-btn, #openMailButton, .bp29-plus, .profile-featured-badge-add, #featuredBadgePlusTest, [data-featured-badge-add-v22], [data-tnxbp-add-v24]'
-          )
-
-          if (!protectedTarget) return
-
-          if (window.__tnxCanEditActiveProfileV32) return
-
-          event.preventDefault()
-          event.stopPropagation()
-          event.stopImmediatePropagation?.()
-
-          document
-            .querySelectorAll('.item-modal, .item-detail-modal, .inventory-item-modal, .profile-item-modal, .bp29-shell, .featured-badge-modal-test')
-            .forEach((el) => {
-              const backdrop = el.closest('.modal-backdrop')
-              if (backdrop && backdrop.id !== 'mailModal') backdrop.remove()
-              else el.remove()
-            })
-        }, true)
-      }
-
-      installOwnerOnlyCaptureGuardV33()
 
       function sortedInventoryForSell(items) {
         return [...(items || [])].sort((a, b) =>
@@ -10273,7 +10204,7 @@ const metadata = {
           event.preventDefault()
           event.stopPropagation()
 
-          const allowed = await ensureOwnerOnlyActionV32()
+          const allowed = await canEditActiveProfileV34()
           if (!allowed) return
 
           const name = button.dataset.sellItem || ''
@@ -11328,11 +11259,7 @@ const metadata = {
           add.addEventListener('click', async (event) => {
             event.preventDefault()
             event.stopPropagation()
-
-            const allowed = await ensureOwnerOnlyActionV32()
-            if (!allowed) return
-
-            openBadgePickerCleanV29(state.activeUser || user)
+            await openBadgePickerCleanV29(state.activeUser || user)
           })
 
           box.appendChild(add)
@@ -11356,8 +11283,11 @@ const metadata = {
         }, 1700)
       }
 
-      function openBadgePickerCleanV29(user = state.activeUser) {
-        if (!user || !window.__tnxCanEditActiveProfileV32) return
+      async function openBadgePickerCleanV29(user = state.activeUser) {
+        if (!user) return
+
+        const allowed = await canEditActiveProfileV34(user)
+        if (!allowed) return
 
         bp29CleanupOldUi()
 
@@ -11714,11 +11644,6 @@ const metadata = {
       }
 
       function openItemModal(item) {
-        if (!window.__tnxCanEditActiveProfileV32) return
-
-        const account = state.currentAccount || null
-        if (!accountMatchesViewedUser(account)) return
-
         const modal = document.createElement('div')
         modal.className = 'modal-backdrop show'
         modal.innerHTML = `
@@ -12634,7 +12559,7 @@ const metadata = {
       addListener($('openMailButton'), 'click', async (event) => {
         event.preventDefault()
 
-        const allowed = await ensureOwnerOnlyActionV32()
+        const allowed = await canEditActiveProfileV34()
         if (!allowed) return
 
         openMail()
