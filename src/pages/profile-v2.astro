@@ -1,8 +1,8 @@
-﻿---
+---
 import Layout from '~/layouts/PageLayout.astro'
 
 const metadata = {
-  title: 'Profile V2 â€” TNX6',
+  title: 'Profile V2 — TNX6',
   ignoreTitleTemplate: true,
   description: 'TNX6 community member profile.',
 }
@@ -10,7 +10,7 @@ const metadata = {
 
 <Layout metadata={metadata}>
   <main class="tnx-profile-page profile-v2-page" dir="rtl">
-    <section id="profileSkeleton" class="profile-skeleton" aria-label="Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¨Ø±ÙˆÙØ§ÙŠÙ„">
+    <section id="profileSkeleton" class="profile-skeleton" aria-label="جاري تحميل البروفايل">
       <div class="skeleton-shell">
         <div class="skeleton-cover"></div>
 
@@ -35,27 +35,27 @@ const metadata = {
 <div class="search-card profile-login-card">
         <span class="eyebrow">TNX6 PROFILE</span>
 
-        <h1>Ø­Ø³Ø§Ø¨Ùƒ ÙÙŠ Ø§Ù„Ù…ÙˆÙ‚Ø¹</h1>
+        <h1>حسابك في الموقع</h1>
 
         <p class="login-description">
-          Ø³Ø¬Ù‘Ù„ Ø¯Ø®ÙˆÙ„Ùƒ Ø¹Ø¨Ø± Twitch Ù„Ù„ÙˆØµÙˆÙ„ Ø¥Ù„Ù‰ Ø¨Ø±ÙˆÙØ§ÙŠÙ„ÙƒØŒ Ø¨Ø§Ø¯Ø¬Ø§ØªÙƒØŒ Ø£ØºØ±Ø§Ø¶ÙƒØŒ ÙˆÙ…Ø³ØªÙˆØ§Ùƒ Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…Ø¬ØªÙ…Ø¹.
+          سجّل دخولك عبر Twitch للوصول إلى بروفايلك، بادجاتك، أغراضك، ومستواك داخل المجتمع.
         </p>
 
         <a
           class="twitch-login-btn"
           href="https://api.tnx6.xyz/auth/twitch/login"
-          aria-label="ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¹Ø¨Ø± Twitch"
+          aria-label="تسجيل الدخول عبر Twitch"
         >
           <span class="twitch-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/>
             </svg>
           </span>
-          ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¹Ø¨Ø± Twitch
+          تسجيل الدخول عبر Twitch
         </a>
 
         <p class="login-note">
-          Ù„Ø§ ÙŠØªÙ… Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø­Ø³Ø§Ø¨Ùƒ Ø¥Ù„Ø§ Ù„Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ù‡ÙˆÙŠØªÙƒ Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹.
+          لا يتم استخدام حسابك إلا للتحقق من هويتك داخل الموقع.
         </p>
 
         <div id="searchResults" class="search-results" hidden></div>
@@ -63,8 +63,8 @@ const metadata = {
     </section>
 
     <section id="notFoundView" class="not-found hidden">
-      <strong>Ù…Ø§ Ù„Ù‚ÙŠØª Ø§Ù„Ø¹Ø¶Ùˆ</strong>
-      <span>ØªØ£ÙƒØ¯ Ù…Ù† Ø§Ù„Ø§Ø³Ù… Ø£Ùˆ Ù…Ù† Ù…Ù„ÙØ§Øª Ø§Ù„Ù€ API.</span>
+      <strong>ما لقيت العضو</strong>
+      <span>تأكد من الاسم أو من ملفات الـ API.</span>
     </section>
 
     
@@ -76,7 +76,7 @@ const metadata = {
               <canvas id="coverCanvas" class="v2-cover-canvas"></canvas>
 
               <button class="v2-mail-btn" type="button" id="openMailButton">
-                Ø§Ù„Ø¨Ø±ÙŠØ¯
+                البريد
                 <span class="mail-count" id="mailCount">0</span>
               </button>
 
@@ -94,7 +94,7 @@ const metadata = {
                     <span class="handle" id="handle">---</span>
                   </div>
 
-                  <div id="featuredBadges" class="profile-featured-badges hidden" aria-label="Ø¨Ø§Ø¯Ø¬Ø§Øª Ø§Ù„Ø¹Ø¶Ùˆ Ø§Ù„Ù…Ù…ÙŠØ²Ø©"></div>
+                  <div id="featuredBadges" class="profile-featured-badges hidden" aria-label="بادجات العضو المميزة"></div>
 
                   <p class="bio" id="bio">---</p>
                   <div class="chips" id="chips"></div>
@@ -105,22 +105,22 @@ const metadata = {
             <div class="v2-stats-strip">
               <div class="v2-stat-item">
                 <span class="stat-value" id="rank">---</span>
-                <span class="stat-label">Ø§Ù„Ø±ØªØ¨Ø©</span>
+                <span class="stat-label">الرتبة</span>
               </div>
 
               <div class="v2-stat-item">
                 <span class="stat-value" id="messages">---</span>
-                <span class="stat-label">Ø±Ø³Ø§Ù„Ø©</span>
+                <span class="stat-label">رسالة</span>
               </div>
 
               <div class="v2-stat-item">
                 <span class="stat-value" id="checkins">---</span>
-                <span class="stat-label">Ø¯Ø®ÙˆÙ„ ÙŠÙˆÙ…ÙŠ</span>
+                <span class="stat-label">دخول يومي</span>
               </div>
 
               <div class="v2-stat-item">
                 <span class="stat-value" id="points">---</span>
-                <span class="stat-label">Ù†Ù‚Ø·Ø©</span>
+                <span class="stat-label">نقطة</span>
               </div>
             </div>
 
@@ -128,7 +128,7 @@ const metadata = {
               <span class="v2-level-watermark" id="levelWatermark">1</span>
 
               <div class="v2-level-info">
-                <h2 id="levelTitle">ØªÙ‚Ø¯Ù… Ø§Ù„Ù…Ø³ØªÙˆÙ‰</h2>
+                <h2 id="levelTitle">تقدم المستوى</h2>
 
                 <div class="v2-xp-bar">
                   <div class="v2-xp-fill" id="xpFill"></div>
@@ -165,8 +165,8 @@ const metadata = {
               <div class="v2-main-stack">
                 <section class="card v2-card">
                   <div class="card-header">
-                    <h2 class="card-title">Ø§Ù„Ø­Ù‚ÙŠØ¨Ø©</h2>
-                    <span class="card-subtitle" id="inventoryCount">0 ØºØ±Ø¶</span>
+                    <h2 class="card-title">الحقيبة</h2>
+                    <span class="card-subtitle" id="inventoryCount">0 غرض</span>
                   </div>
 
                   <div class="inventory" id="inventory"></div>
@@ -176,8 +176,8 @@ const metadata = {
               <aside class="v2-side-stack">
                 <section class="card v2-card">
                   <div class="card-header">
-                    <h2 class="card-title">Ø§Ù„Ø¨Ø§Ø¯Ø¬Ø§Øª</h2>
-                    <span class="card-subtitle" id="badgesCount">0 Ù…ÙØªÙˆØ­Ø©</span>
+                    <h2 class="card-title">البادجات</h2>
+                    <span class="card-subtitle" id="badgesCount">0 مفتوحة</span>
                   </div>
 
                   <div class="badges" id="badges"></div>
@@ -185,7 +185,7 @@ const metadata = {
 
                 <section class="card v2-card next-badge-card-v2" id="nextBadgeMiniBox">
                   <div class="v2-next-head">
-                    <h2>Ø§Ù„Ø¨Ø§Ø¯Ø¬ Ø§Ù„Ù‚Ø§Ø¯Ù…</h2>
+                    <h2>البادج القادم</h2>
                     <span id="nextBadgeMiniPercent">0%</span>
                   </div>
 
@@ -207,21 +207,21 @@ const metadata = {
           <section class="actions-row v2-actions-row">
             <div id="profileAccountMenu" class="profile-account-menu hidden">
               <button id="profileAccountToggle" class="profile-account-toggle" type="button" aria-expanded="false">
-                Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø­Ø³Ø§Ø¨
-                <span>â–¾</span>
+                إدارة الحساب
+                <span>▾</span>
               </button>
 
               <div id="profileAccountDropdown" class="profile-account-dropdown hidden">
                 <div class="profile-account-mini-status">
                   <span class="profile-account-dot"></span>
                   <div>
-                    <strong>Ù…ØªØµÙ„ Ø¹Ø¨Ø± Twitch</strong>
+                    <strong>متصل عبر Twitch</strong>
                     <small id="profileAccountHandle">@---</small>
                   </div>
                 </div>
 
-                <a id="profileAccountPublicLink" href="/profile" class="profile-account-menu-item">ÙØªØ­ ØµÙØ­ØªÙŠ Ø§Ù„Ø¹Ø§Ù…Ø©</a>
-                <button id="profileAccountLogout" type="button" class="profile-account-menu-item danger">ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬</button>
+                <a id="profileAccountPublicLink" href="/profile" class="profile-account-menu-item">فتح صفحتي العامة</a>
+                <button id="profileAccountLogout" type="button" class="profile-account-menu-item danger">تسجيل الخروج</button>
               </div>
             </div>
           </section>
@@ -231,15 +231,15 @@ const metadata = {
     <div class="modal-backdrop" id="mailModal" aria-hidden="true">
       <div class="mail-modal">
         <div class="modal-head">
-          <h3>Ø§Ù„Ø¨Ø±ÙŠØ¯</h3>
-          <button class="close-btn" type="button" id="closeMailButton">Ã—</button>
+          <h3>البريد</h3>
+          <button class="close-btn" type="button" id="closeMailButton">×</button>
         </div>
 
         <div class="mail-list" id="mailList"></div>
       </div>
     </div>
 
-    <button id="backToTop" class="back-top" type="button" aria-label="Ø§Ù„Ø±Ø¬ÙˆØ¹ Ù„Ù„Ø£Ø¹Ù„Ù‰">â†‘</button>
+    <button id="backToTop" class="back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
   
 <!-- TNX_PROFILE_BADGE_PICKER_V24_NO_DUPLICATE_PLUS -->
 </main>
@@ -3838,7 +3838,7 @@ const metadata = {
     }
 
     .featured-badge-option.limit-hit::after {
-      content: "Ø§Ù„Ø­Ø¯ 3";
+      content: "الحد 3";
       position: absolute;
       top: 8px;
       right: 8px;
@@ -7451,7 +7451,7 @@ const metadata = {
     }
 
 
-    /* Badge picker v23 â€” closer to Claude mockup */
+    /* Badge picker v23 — closer to Claude mockup */
     .profile-featured-badges {
       display: inline-flex;
       align-items: center;
@@ -8269,37 +8269,6 @@ const metadata = {
     }
 
 
-    /* Badge picker v25: plus click fix */
-    #featuredBadges #featuredBadgePlusTest,
-    #featuredBadges [data-tnxbp-add-v24],
-    #featuredBadges .profile-featured-badge-add {
-      display: inline-grid !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      pointer-events: auto !important;
-      cursor: pointer !important;
-      position: relative;
-      z-index: 20;
-    }
-
-
-    /* TNXBP_V26_PLUS_CSS */
-    #featuredBadges {
-      --tnxbp-v26-plus-css: 1;
-      position: relative;
-    }
-
-    #featuredBadges #featuredBadgePlusTest,
-    #featuredBadges [data-tnxbp-add-v24],
-    #featuredBadges .profile-featured-badge-add {
-      display: inline-grid !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      pointer-events: auto !important;
-      cursor: pointer !important;
-      position: relative !important;
-      z-index: 999 !important;
-    }
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -8360,29 +8329,29 @@ const metadata = {
       }
 
       const HARD_ITEMS = {
-        vip: { icon: 'ðŸ‘‘', rarity: 'Legendary', cat: 'status' },
-        'vip+': { icon: 'ðŸ‘‘', rarity: 'Legendary', cat: 'status' },
-        crown: { icon: 'ðŸ‘‘', rarity: 'Legendary', cat: 'rare' },
-        'Ù…Ù„Ùƒ': { icon: 'ðŸ‘‘', rarity: 'Legendary', cat: 'rare' },
-        'Ù†ÙŠÙˆÙƒ': { icon: 'ðŸ’£', rarity: 'Mythic', cat: 'attacks' },
-        'Ù…Ø­Ø§Ù…ÙŠ': { icon: 'âš–ï¸', rarity: 'Rare', cat: 'status' },
-        'Ø±Ø®ØµØ© Ù…Ø­Ø§Ù…ÙŠ': { icon: 'âš–ï¸', rarity: 'Rare', cat: 'status' },
-        'Ø¹Ø±ÙŠÙ Ø§Ù„ÙØµÙ„': { icon: 'ðŸŽ–ï¸', rarity: 'Rare', cat: 'status' },
-        'Ø§Ù„Ø¨Ø±ÙŠØ¯': { icon: 'âœ‰ï¸', rarity: 'Rare', cat: 'economy' },
-        'Ø³Ù…Ø¹Ø©': { icon: 'ðŸ”¥', rarity: 'Common', cat: 'economy' },
-        'Ø¹Ù…Ù„Ø© Ø§Ù„Ø¬Ø±Ø£Ø©': { icon: 'ðŸª™', rarity: 'Common', cat: 'luck' },
-        'ØµÙ†Ø¯ÙˆÙ‚': { icon: 'ðŸŽ', rarity: 'Common', cat: 'boxes' },
-        'ØµÙ†Ø¯ÙˆÙ‚ Ù†Ø§Ø¯Ø±': { icon: 'ðŸŽ', rarity: 'Epic', cat: 'boxes' },
-        'ØµÙ†Ø¯ÙˆÙ‚ Ø§Ù„Ø³Ù…Ø¹Ø©': { icon: 'ðŸŽ', rarity: 'Epic', cat: 'boxes' },
-        'Ø®Ø´Ø¨': { icon: 'ðŸªµ', rarity: 'Common', cat: 'resources' },
-        'Ø­Ø¯ÙŠØ¯': { icon: 'â›“ï¸', rarity: 'Common', cat: 'resources' },
-        'Ø°Ù‡Ø¨': { icon: 'ðŸª™', rarity: 'Legendary', cat: 'rare' },
-        'ØªØºÙŠÙŠØ± Ø§Ù„Ø¹Ù†ÙˆØ§Ù†': { icon: 'âœï¸', rarity: 'Rare', cat: 'attacks' },
-        'ØªØºÙŠØ± Ø§Ù„Ø¹Ù†ÙˆØ§Ù†': { icon: 'âœï¸', rarity: 'Rare', cat: 'attacks' },
-        'ØªØºÙŠÙŠØ± Ø§Ù„Ø¹Ù†ÙˆØ§Ù† Ù…Ø·ÙˆØ±': { icon: 'âœï¸', rarity: 'Epic', cat: 'attacks' },
-        'Ø£Ù‚ÙˆÙ„ Ù„Ø§ ÙŠÙƒØ«Ø±': { icon: 'ðŸš«', rarity: 'Rare', cat: 'pvp' },
-        'Ø§Ù‚ÙˆÙ„ Ù„Ø§ ÙŠÙƒØ«Ø±': { icon: 'ðŸš«', rarity: 'Rare', cat: 'pvp' },
-        'ØªØ¬Ù…ÙŠØ¯ Ø§Ù„Ø´Ø§Ø´Ø©': { icon: 'â„ï¸', rarity: 'Mythic', cat: 'attacks' },
+        vip: { icon: '👑', rarity: 'Legendary', cat: 'status' },
+        'vip+': { icon: '👑', rarity: 'Legendary', cat: 'status' },
+        crown: { icon: '👑', rarity: 'Legendary', cat: 'rare' },
+        'ملك': { icon: '👑', rarity: 'Legendary', cat: 'rare' },
+        'نيوك': { icon: '💣', rarity: 'Mythic', cat: 'attacks' },
+        'محامي': { icon: '⚖️', rarity: 'Rare', cat: 'status' },
+        'رخصة محامي': { icon: '⚖️', rarity: 'Rare', cat: 'status' },
+        'عريف الفصل': { icon: '🎖️', rarity: 'Rare', cat: 'status' },
+        'البريد': { icon: '✉️', rarity: 'Rare', cat: 'economy' },
+        'سمعة': { icon: '🔥', rarity: 'Common', cat: 'economy' },
+        'عملة الجرأة': { icon: '🪙', rarity: 'Common', cat: 'luck' },
+        'صندوق': { icon: '🎁', rarity: 'Common', cat: 'boxes' },
+        'صندوق نادر': { icon: '🎁', rarity: 'Epic', cat: 'boxes' },
+        'صندوق السمعة': { icon: '🎁', rarity: 'Epic', cat: 'boxes' },
+        'خشب': { icon: '🪵', rarity: 'Common', cat: 'resources' },
+        'حديد': { icon: '⛓️', rarity: 'Common', cat: 'resources' },
+        'ذهب': { icon: '🪙', rarity: 'Legendary', cat: 'rare' },
+        'تغيير العنوان': { icon: '✍️', rarity: 'Rare', cat: 'attacks' },
+        'تغير العنوان': { icon: '✍️', rarity: 'Rare', cat: 'attacks' },
+        'تغيير العنوان مطور': { icon: '✍️', rarity: 'Epic', cat: 'attacks' },
+        'أقول لا يكثر': { icon: '🚫', rarity: 'Rare', cat: 'pvp' },
+        'اقول لا يكثر': { icon: '🚫', rarity: 'Rare', cat: 'pvp' },
+        'تجميد الشاشة': { icon: '❄️', rarity: 'Mythic', cat: 'attacks' },
       }
 
       const $ = (id) => document.getElementById(id)
@@ -8404,10 +8373,10 @@ const metadata = {
       function normalize(value) {
         return String(value || '')
           .toLowerCase()
-          .replace(/[Ù‹ÙŒÙÙŽÙÙÙ‘Ù’Ù€]/g, '')
-          .replace(/[Ø£Ø¥Ø¢]/g, 'Ø§')
-          .replace(/Ø©/g, 'Ù‡')
-          .replace(/Ù‰/g, 'ÙŠ')
+          .replace(/[ًٌٍَُِّْـ]/g, '')
+          .replace(/[أإآ]/g, 'ا')
+          .replace(/ة/g, 'ه')
+          .replace(/ى/g, 'ي')
           .replace(/\s+/g, ' ')
           .trim()
       }
@@ -8425,8 +8394,8 @@ const metadata = {
 
         const cleaned = String(value)
           .replace(/,/g, '')
-          .replace(/[Ù -Ù©]/g, (d) => 'Ù Ù¡Ù¢Ù£Ù¤Ù¥Ù¦Ù§Ù¨Ù©'.indexOf(d))
-          .replace(/[Û°-Û¹]/g, (d) => 'Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹'.indexOf(d))
+          .replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+          .replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
           .trim()
 
         const direct = Number(cleaned)
@@ -8725,19 +8694,19 @@ const metadata = {
       function formatWatchtimeFromMinutes(minutes) {
         const total = Math.floor(num(minutes))
 
-        if (total <= 0) return '0 ÙŠÙˆÙ…'
+        if (total <= 0) return '0 يوم'
 
         const days = total / 1440
 
         if (days < 1) {
-          return `${days.toFixed(2)} ÙŠÙˆÙ…`
+          return `${days.toFixed(2)} يوم`
         }
 
         if (days < 10) {
-          return `${days.toFixed(1)} ÙŠÙˆÙ…`
+          return `${days.toFixed(1)} يوم`
         }
 
-        return `${Math.floor(days).toLocaleString('en-US')} ÙŠÙˆÙ…`
+        return `${Math.floor(days).toLocaleString('en-US')} يوم`
       }
 
       function applyLeaderboardMetrics(user) {
@@ -8804,10 +8773,10 @@ const metadata = {
         if (hard) return hard
 
         const item = catalogItem(name)
-        if (!item) return { icon: 'ðŸ“¦', rarity: 'Common', cat: 'economy' }
+        if (!item) return { icon: '📦', rarity: 'Common', cat: 'economy' }
 
         return {
-          icon: get(item, ['icon', 'emoji'], 'ðŸ“¦'),
+          icon: get(item, ['icon', 'emoji'], '📦'),
           rarity: get(item, ['rarity'], 'Common'),
           cat: get(item, ['category', 'type', 'cat'], 'economy'),
         }
@@ -8976,7 +8945,7 @@ const metadata = {
 
       function setInventoryCountFromItems(items) {
         const count = Array.isArray(items) ? items.length : 0;
-        setText('inventoryCount', `${count} ${count === 1 ? 'ØºØ±Ø¶' : 'Ø£ØºØ±Ø§Ø¶'}`);
+        setText('inventoryCount', `${count} ${count === 1 ? 'غرض' : 'أغراض'}`);
       }
 
       function inventoryItems(user) {
@@ -8989,10 +8958,10 @@ const metadata = {
             return {
               name,
               qty: itemQty(entry),
-              icon: meta.icon || 'ðŸ“¦',
+              icon: meta.icon || '📦',
               rarity: meta.rarity || 'Common',
               cat: meta.cat || 'economy',
-              description: get(details, ['description', 'desc', 'how'], 'ØºØ±Ø¶ Ù…Ù† Ø­Ù‚ÙŠØ¨Ø© Ø§Ù„Ø¹Ø¶Ùˆ.'),
+              description: get(details, ['description', 'desc', 'how'], 'غرض من حقيبة العضو.'),
             }
           })
           .filter((item) => item.name)
@@ -9009,7 +8978,7 @@ const metadata = {
       function badgeRarity(badge) {
         const explicit = normalize(get(badge, ['rarity', 'tier', 'badgeRarity', 'type'], ''))
         if (explicit) {
-          if (explicit.includes('mythic') || explicit.includes('Ø§Ø³Ø·ÙˆØ±ÙŠ') || explicit.includes('Ø£Ø³Ø·ÙˆØ±ÙŠ')) return 'Mythic'
+          if (explicit.includes('mythic') || explicit.includes('اسطوري') || explicit.includes('أسطوري')) return 'Mythic'
           if (explicit.includes('legendary') || explicit.includes('legend')) return 'Legendary'
           if (explicit.includes('epic')) return 'Epic'
           if (explicit.includes('rare')) return 'Rare'
@@ -9021,7 +8990,7 @@ const metadata = {
         if (
           name.includes('vip') ||
           name.includes('king') ||
-          name.includes('Ù…Ù„Ùƒ') ||
+          name.includes('ملك') ||
           name.includes('3m') ||
           name.includes('1m') ||
           name.includes('1000q') ||
@@ -9041,7 +9010,7 @@ const metadata = {
           name.includes('300q') ||
           name.includes('30d') ||
           name.includes('law') ||
-          name.includes('Ù…Ø­Ø§Ù…ÙŠ')
+          name.includes('محامي')
         ) return 'Rare'
 
         return 'Common'
@@ -9064,8 +9033,8 @@ const metadata = {
       }
 
       function totalBadgeXp(badges) {
-        // Badge XP ÙŠØ¹ØªÙ…Ø¯ Ø¹Ù„Ù‰ Ø§Ù„Ø¨Ø§Ø¯Ø¬Ø§Øª Ø§Ù„Ø­Ø§Ù„ÙŠØ© ÙÙ‚Ø·.
-        // Ø¥Ø°Ø§ Ø§Ù„Ø¹Ø¶Ùˆ Ø¨Ø§Ø¹/Ø£Ù‡Ø¯Ù‰ Ø¨Ø§Ø¯Ø¬ ÙˆØ§Ù†Ø­Ø°Ù Ù…Ù† user_badges.jsonØŒ ÙŠÙ†Ù‚Øµ XP ØªÙ„Ù‚Ø§Ø¦ÙŠÙ‹Ø§.
+        // Badge XP يعتمد على البادجات الحالية فقط.
+        // إذا العضو باع/أهدى بادج وانحذف من user_badges.json، ينقص XP تلقائيًا.
         return (Array.isArray(badges) ? badges : []).reduce((sum, badge) => sum + badgeXp(badge), 0)
       }
 
@@ -9184,10 +9153,10 @@ const metadata = {
 
         let seconds = 0
 
-        const dayMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:d|day|days|ÙŠÙˆÙ…|Ø§ÙŠØ§Ù…|Ø£ÙŠØ§Ù…)/)
-        const hourMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:h|hr|hrs|hour|hours|Ø³Ø§Ø¹Ø©|Ø³Ø§Ø¹Ù‡)/)
-        const minuteMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:m|min|mins|minute|minutes|Ø¯Ù‚ÙŠÙ‚Ø©|Ø¯Ù‚ÙŠÙ‚Ù‡)/)
-        const secondMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:s|sec|secs|second|seconds|Ø«Ø§Ù†ÙŠØ©|Ø«Ø§Ù†ÙŠÙ‡)/)
+        const dayMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:d|day|days|يوم|ايام|أيام)/)
+        const hourMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:h|hr|hrs|hour|hours|ساعة|ساعه)/)
+        const minuteMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:m|min|mins|minute|minutes|دقيقة|دقيقه)/)
+        const secondMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:s|sec|secs|second|seconds|ثانية|ثانيه)/)
 
         if (dayMatch) seconds += Number(dayMatch[1]) * 86400
         if (hourMatch) seconds += Number(hourMatch[1]) * 3600
@@ -9249,12 +9218,12 @@ const metadata = {
       }
 
       function getLevelTitle(level) {
-        if (level >= 50) return 'Ø£Ø³Ø·ÙˆØ±Ø© Ø§Ù„Ù…Ø¬Ù„Ø³'
-        if (level >= 35) return 'Ø¹Ø¶Ùˆ Ù†Ø®Ø¨Ø©'
-        if (level >= 20) return 'Ø«Ù‚ÙŠÙ„ Ø¨Ø§Ù„Ù…Ø¬Ù„Ø³'
-        if (level >= 10) return 'Ø¹Ø¶Ùˆ ÙØ¹Ù‘Ø§Ù„'
-        if (level >= 5) return 'Ø¹Ø¶Ùˆ Ù…Ø¹Ø±ÙˆÙ'
-        return 'Ø¹Ø¶Ùˆ Ø¬Ø¯ÙŠØ¯'
+        if (level >= 50) return 'أسطورة المجلس'
+        if (level >= 35) return 'عضو نخبة'
+        if (level >= 20) return 'ثقيل بالمجلس'
+        if (level >= 10) return 'عضو فعّال'
+        if (level >= 5) return 'عضو معروف'
+        return 'عضو جديد'
       }
 
       function levelRankFor(user) {
@@ -9285,7 +9254,7 @@ const metadata = {
 
       function rankFor(user) {
         const rank = levelRankFor(user)
-        return rank ? `#${rank}` : 'â€”'
+        return rank ? `#${rank}` : '—'
       }
 
       function messagesFor(user) {
@@ -9324,13 +9293,13 @@ const metadata = {
         const job = get(user, ['jobName'], '')
         if (job) chips.push(job)
 
-        if (level >= 20) chips.push('Ø«Ù‚ÙŠÙ„ Ø¨Ø§Ù„Ù…Ø¬Ù„Ø³')
-        else if (level >= 10) chips.push('Ù…ØªÙØ§Ø¹Ù„')
-        else if (level >= 5) chips.push('Ø¹Ø¶Ùˆ Ù…Ø¹Ø±ÙˆÙ')
+        if (level >= 20) chips.push('ثقيل بالمجلس')
+        else if (level >= 10) chips.push('متفاعل')
+        else if (level >= 5) chips.push('عضو معروف')
 
-        if (badges.length >= 10) chips.push('ØµØ§Ø­Ø¨ Ø¨Ø§Ø¯Ø¬Ø§Øª')
+        if (badges.length >= 10) chips.push('صاحب بادجات')
         if (inventory.some((item) => normalize(item.name).includes('vip'))) chips.unshift('VIP')
-        if (!chips.length) chips.push('Ø¹Ø¶Ùˆ')
+        if (!chips.length) chips.push('عضو')
 
         return chips.slice(0, 5)
       }
@@ -9368,9 +9337,9 @@ const metadata = {
 
         return {
           title: name,
-          category: "Ø¹Ø§Ù…",
-          rarity: "Ø¹Ø§Ø¯ÙŠ",
-          how: "ÙŠØªÙ… Ø§Ù„Ø­ØµÙˆÙ„ Ø¹Ù„ÙŠÙ‡ Ù…Ù† Ø§Ù„ØªÙØ§Ø¹Ù„ Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…Ø¬ØªÙ…Ø¹",
+          category: "عام",
+          rarity: "عادي",
+          how: "يتم الحصول عليه من التفاعل داخل المجتمع",
         };
       }
 
@@ -9379,16 +9348,16 @@ const metadata = {
         const checkins = checkinsFor(user);
 
         return [
-          { name: "100K", type: "Ø§Ù„Ù†Ù‚Ø§Ø·", current: points, target: 100000, unit: "Ù†Ù‚Ø·Ø©" },
-          { name: "250K", type: "Ø§Ù„Ù†Ù‚Ø§Ø·", current: points, target: 250000, unit: "Ù†Ù‚Ø·Ø©" },
-          { name: "500K", type: "Ø§Ù„Ù†Ù‚Ø§Ø·", current: points, target: 500000, unit: "Ù†Ù‚Ø·Ø©" },
-          { name: "1M", type: "Ø§Ù„Ù†Ù‚Ø§Ø·", current: points, target: 1000000, unit: "Ù†Ù‚Ø·Ø©" },
+          { name: "100K", type: "النقاط", current: points, target: 100000, unit: "نقطة" },
+          { name: "250K", type: "النقاط", current: points, target: 250000, unit: "نقطة" },
+          { name: "500K", type: "النقاط", current: points, target: 500000, unit: "نقطة" },
+          { name: "1M", type: "النقاط", current: points, target: 1000000, unit: "نقطة" },
 
-          { name: "15D", type: "Ø§Ù„Ø­Ø¶ÙˆØ±", current: checkins, target: 15, unit: "ÙŠÙˆÙ…" },
-          { name: "30D", type: "Ø§Ù„Ø­Ø¶ÙˆØ±", current: checkins, target: 30, unit: "ÙŠÙˆÙ…" },
-          { name: "60D", type: "Ø§Ù„Ø­Ø¶ÙˆØ±", current: checkins, target: 60, unit: "ÙŠÙˆÙ…" },
-          { name: "100D", type: "Ø§Ù„Ø­Ø¶ÙˆØ±", current: checkins, target: 100, unit: "ÙŠÙˆÙ…" },
-          { name: "150D", type: "Ø§Ù„Ø­Ø¶ÙˆØ±", current: checkins, target: 150, unit: "ÙŠÙˆÙ…" },
+          { name: "15D", type: "الحضور", current: checkins, target: 15, unit: "يوم" },
+          { name: "30D", type: "الحضور", current: checkins, target: 30, unit: "يوم" },
+          { name: "60D", type: "الحضور", current: checkins, target: 60, unit: "يوم" },
+          { name: "100D", type: "الحضور", current: checkins, target: 100, unit: "يوم" },
+          { name: "150D", type: "الحضور", current: checkins, target: 150, unit: "يوم" },
         ].map((badge) => {
           const meta = nextBadgeMeta(badge.name);
           const percent = badge.target > 0
@@ -9450,10 +9419,10 @@ const metadata = {
           box.classList.add("is-done");
           box.classList.remove("is-ready");
 
-          setText("nextBadgeMiniValue", "Ù…ÙƒØªÙ…Ù„");
-          setText("nextBadgeMiniMeta", "ÙƒÙ„ Ø¨Ø§Ø¯Ø¬Ø§Øª Ø§Ù„Ù†Ù‚Ø§Ø· ÙˆØ§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ø£Ø³Ø§Ø³ÙŠØ© Ù…ÙØªÙˆØ­Ø©");
+          setText("nextBadgeMiniValue", "مكتمل");
+          setText("nextBadgeMiniMeta", "كل بادجات النقاط والحضور الأساسية مفتوحة");
           setText("nextBadgeMiniPercent", "100%");
-          setText("nextBadgeMiniRemain", "Ù…Ø§ Ø¨Ù‚ÙŠ Ø´ÙŠØ¡ ÙÙŠ Ø§Ù„Ù…Ø³Ø§Ø±Ø§Øª Ø§Ù„Ø£Ø³Ø§Ø³ÙŠØ© Ø§Ù„Ø­Ø§Ù„ÙŠØ©.");
+          setText("nextBadgeMiniRemain", "ما بقي شيء في المسارات الأساسية الحالية.");
 
           const fill = $("nextBadgeMiniFill");
           if (fill) fill.style.width = "100%";
@@ -9469,14 +9438,14 @@ const metadata = {
         setText("nextBadgeMiniValue", next.name);
         setText(
           "nextBadgeMiniMeta",
-          next.type + " Â· " + formatNumber(Math.min(next.current, next.target)) + " / " + formatNumber(next.target) + " " + next.unit
+          next.type + " · " + formatNumber(Math.min(next.current, next.target)) + " / " + formatNumber(next.target) + " " + next.unit
         );
         setText("nextBadgeMiniPercent", next.percent + "%");
         setText(
           "nextBadgeMiniRemain",
           isReady
-            ? "Ø£Ù†Øª Ù…Ø³ØªÙˆÙÙŠ Ø´Ø±Ø· Ù‡Ø°Ø§ Ø§Ù„Ø¨Ø§Ø¯Ø¬."
-            : "Ù…ØªØ¨Ù‚ÙŠ " + formatNumber(next.remaining) + " " + next.unit
+            ? "أنت مستوفي شرط هذا البادج."
+            : "متبقي " + formatNumber(next.remaining) + " " + next.unit
         );
 
         const fill = $("nextBadgeMiniFill");
@@ -9499,7 +9468,7 @@ const metadata = {
         const inventory = inventoryItems(user)
         const mail = mailItems(user)
         const level = calculateLevel(user)
-        const bio = get(user, ['bio'], 'Ù…Ù„Ù Ø§Ù„Ø¹Ø¶Ùˆ ÙŠØ¹Ø±Ø¶ Ø§Ù„Ù…Ø³ØªÙˆÙ‰ØŒ Ø§Ù„Ø­Ù‚ÙŠØ¨Ø©ØŒ Ø§Ù„Ø¨Ø§Ø¯Ø¬Ø§ØªØŒ ÙˆØ§Ù„Ø¨Ø±ÙŠØ¯ ÙÙŠ ØµÙØ­Ø© ÙˆØ§Ø­Ø¯Ø© Ø¨Ø´ÙƒÙ„ ÙˆØ§Ø¶Ø­.')
+        const bio = get(user, ['bio'], 'ملف العضو يعرض المستوى، الحقيبة، البادجات، والبريد في صفحة واحدة بشكل واضح.')
 
         document.documentElement.style.setProperty('--cover-image', cover ? `url("${cover}")` : fallbackCover())
 
@@ -9524,8 +9493,8 @@ const metadata = {
         setText('checkins', formatNumber(checkinsFor(user)))
         setProfilePointsV1(currentPoints(user))
 
-        setText('inventoryCount', `${inventory.length} ${inventory.length === 1 ? 'ØºØ±Ø¶' : 'Ø£ØºØ±Ø§Ø¶'}`)
-        setText('badgesCount', `${badges.length} Ù…ÙØªÙˆØ­Ø©`)
+        setText('inventoryCount', `${inventory.length} ${inventory.length === 1 ? 'غرض' : 'أغراض'}`)
+        setText('badgesCount', `${badges.length} مفتوحة`)
         renderNextBadge(user, badges)
         setText('mailCount', mail.length)
 
@@ -9572,10 +9541,10 @@ const metadata = {
         if (!box) return
 
         const rows = [
-          { label: 'Ø§Ù„Ù…Ø´Ø§Ù‡Ø¯Ø©', value: level.watchScore },
-          { label: 'ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„', value: level.dailyLoginScore },
-          { label: 'Ø§Ù„Ø¨Ø§Ø¯Ø¬Ø§Øª', value: level.badgeScore },
-          { label: 'Ø§Ù„Ù…Ø¬Ù…ÙˆØ¹', value: level.score, total: true },
+          { label: 'المشاهدة', value: level.watchScore },
+          { label: 'تسجيل الدخول', value: level.dailyLoginScore },
+          { label: 'البادجات', value: level.badgeScore },
+          { label: 'المجموع', value: level.score, total: true },
         ]
 
         box.innerHTML = rows.map((row) => `
@@ -9591,7 +9560,7 @@ const metadata = {
         if (!box) return
 
         if (!items.length) {
-          box.innerHTML = `<div class="empty">Ø§Ù„Ø­Ù‚ÙŠØ¨Ø© ÙØ§Ø¶ÙŠØ©.</div>`
+          box.innerHTML = `<div class="empty">الحقيبة فاضية.</div>`
           return
         }
 
@@ -9668,9 +9637,9 @@ const metadata = {
         controls.style.direction = 'rtl';
 
         controls.innerHTML = `
-          <button type="button" class="inventory-page-btn" data-inventory-page-v2="prev" ${inventoryPageV2 <= 1 ? 'disabled' : ''}>Ø§Ù„Ø³Ø§Ø¨Ù‚</button>
-          <span class="inventory-page-info">ØµÙØ­Ø© ${formatNumber(inventoryPageV2)} / ${formatNumber(totalPages)}</span>
-          <button type="button" class="inventory-page-btn" data-inventory-page-v2="next" ${inventoryPageV2 >= totalPages ? 'disabled' : ''}>Ø§Ù„ØªØ§Ù„ÙŠ</button>
+          <button type="button" class="inventory-page-btn" data-inventory-page-v2="prev" ${inventoryPageV2 <= 1 ? 'disabled' : ''}>السابق</button>
+          <span class="inventory-page-info">صفحة ${formatNumber(inventoryPageV2)} / ${formatNumber(totalPages)}</span>
+          <button type="button" class="inventory-page-btn" data-inventory-page-v2="next" ${inventoryPageV2 >= totalPages ? 'disabled' : ''}>التالي</button>
         `;
 
         const handler = (event) => {
@@ -9980,9 +9949,9 @@ const metadata = {
         const controls = document.createElement('div');
         controls.className = 'inventory-pagination';
         controls.innerHTML = `
-          <button type="button" class="inventory-page-btn" data-inventory-page="prev" ${inventoryCurrentPage <= 1 ? 'disabled' : ''}>Ø§Ù„Ø³Ø§Ø¨Ù‚</button>
-          <span class="inventory-page-info">ØµÙØ­Ø© ${formatNumber(inventoryCurrentPage)} / ${formatNumber(totalPages)}</span>
-          <button type="button" class="inventory-page-btn" data-inventory-page="next" ${inventoryCurrentPage >= totalPages ? 'disabled' : ''}>Ø§Ù„ØªØ§Ù„ÙŠ</button>
+          <button type="button" class="inventory-page-btn" data-inventory-page="prev" ${inventoryCurrentPage <= 1 ? 'disabled' : ''}>السابق</button>
+          <span class="inventory-page-info">صفحة ${formatNumber(inventoryCurrentPage)} / ${formatNumber(totalPages)}</span>
+          <button type="button" class="inventory-page-btn" data-inventory-page="next" ${inventoryCurrentPage >= totalPages ? 'disabled' : ''}>التالي</button>
         `;
 
         const handler = (event) => {
@@ -10051,7 +10020,7 @@ const metadata = {
             if (priceText) {
               const meta = findCatalogItemByName(buttonName);
               const price = meta && !isSaleDisabled(meta) ? itemSellPrice(meta) : 0;
-              priceText.textContent = 'Ø¨ÙŠØ¹: ' + formatNumber(price) + ' Ù†Ù‚Ø·Ø©';
+              priceText.textContent = 'بيع: ' + formatNumber(price) + ' نقطة';
             }
           }
 
@@ -10059,7 +10028,7 @@ const metadata = {
         });
 
         if (!box.querySelector('.item')) {
-          box.innerHTML = '<div class="empty">Ù…Ø§ Ø¹Ù†Ø¯Ù‡ Ø£ØºØ±Ø§Ø¶ ÙÙŠ Ø§Ù„Ø­Ù‚ÙŠØ¨Ø©.</div>';
+          box.innerHTML = '<div class="empty">ما عنده أغراض في الحقيبة.</div>';
           changed = true;
         }
 
@@ -10148,14 +10117,14 @@ const metadata = {
           row.className = 'inventory-sell-row'
 
           row.innerHTML = `
-            <span class="inventory-sell-price">${disabled ? 'ØºÙŠØ± Ù‚Ø§Ø¨Ù„ Ù„Ù„Ø¨ÙŠØ¹' : 'Ø¨ÙŠØ¹: ' + formatNumber(price) + ' Ù†Ù‚Ø·Ø©'}</span>
+            <span class="inventory-sell-price">${disabled ? 'غير قابل للبيع' : 'بيع: ' + formatNumber(price) + ' نقطة'}</span>
             <button
               type="button"
               class="inventory-sell-btn"
               data-sell-item="${esc(name)}"
               data-sell-qty="${esc(qty)}"
               ${disabled ? 'disabled' : ''}
-            >Ø¨ÙŠØ¹</button>
+            >بيع</button>
           `
 
           card.appendChild(row)
@@ -10196,7 +10165,7 @@ const metadata = {
               removeInventorySellLock(lockId)
               await refreshActiveProfileFromD1()
 
-              const msg = String(data.request?.errorMessage || data.errorMessage || 'ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø¨ÙŠØ¹ ÙˆØ±Ø¬Ø¹ Ø§Ù„ØºØ±Ø¶ Ù„Ù„Ø­Ù‚ÙŠØ¨Ø©.')
+              const msg = String(data.request?.errorMessage || data.errorMessage || 'تم رفض البيع ورجع الغرض للحقيبة.')
               console.warn('[Inventory Sell] Rejected:', msg)
               return
             }
@@ -10248,7 +10217,7 @@ const metadata = {
         const owned = Math.max(1, Math.floor(Number(item.qty || item.quantity || 1)))
         const priceEach = itemSellPrice(meta)
         const value = Math.max(0, Math.floor(Number(meta?.value || 0)))
-        const itemIcon = String(item.icon || meta?.icon || 'ðŸ‘‘').trim() || 'ðŸ‘‘'
+        const itemIcon = String(item.icon || meta?.icon || '👑').trim() || '👑'
 
         const modal = document.createElement('div')
         modal.className = 'inventory-sell-modal'
@@ -10257,8 +10226,8 @@ const metadata = {
           if (owned <= 1) {
             return `
               <div class="inventory-sell-single">
-                <span>âœ“</span>
-                <span>ÙˆØ­Ø¯Ø© ÙˆØ§Ø­Ø¯Ø© Ù…ØªÙˆÙØ±Ø© â€” Ø¬Ø§Ù‡Ø²Ø© Ù„Ù„Ø¨ÙŠØ¹</span>
+                <span>✓</span>
+                <span>وحدة واحدة متوفرة — جاهزة للبيع</span>
               </div>
             `
           }
@@ -10272,41 +10241,41 @@ const metadata = {
             return `
               <div class="inventory-sell-seg">
                 ${buttons}
-                <button class="inventory-sell-pill all" type="button" data-sell-qty-pick="${owned}">Ø§Ù„ÙƒÙ„</button>
+                <button class="inventory-sell-pill all" type="button" data-sell-qty-pick="${owned}">الكل</button>
               </div>
             `
           }
 
           return `
             <div class="inventory-sell-stepper">
-              <button class="inventory-sell-pill" type="button" data-sell-qty-step="-1" aria-label="Ø¥Ù†Ù‚Ø§Øµ Ø§Ù„ÙƒÙ…ÙŠØ©">âˆ’</button>
+              <button class="inventory-sell-pill" type="button" data-sell-qty-step="-1" aria-label="إنقاص الكمية">−</button>
               <input id="inventorySellQty" type="number" min="1" max="${owned}" value="1" inputmode="numeric" />
-              <button class="inventory-sell-pill" type="button" data-sell-qty-step="1" aria-label="Ø²ÙŠØ§Ø¯Ø© Ø§Ù„ÙƒÙ…ÙŠØ©">+</button>
-              <button class="inventory-sell-pill all" type="button" data-sell-qty-pick="${owned}">Ø§Ù„ÙƒÙ„</button>
+              <button class="inventory-sell-pill" type="button" data-sell-qty-step="1" aria-label="زيادة الكمية">+</button>
+              <button class="inventory-sell-pill all" type="button" data-sell-qty-pick="${owned}">الكل</button>
             </div>
           `
         })()
 
         modal.innerHTML = `
           <div class="inventory-sell-box" role="dialog" aria-modal="true" aria-labelledby="inventorySellTitle">
-            <button class="inventory-sell-close" type="button" data-sell-close aria-label="Ø¥ØºÙ„Ø§Ù‚">Ã—</button>
+            <button class="inventory-sell-close" type="button" data-sell-close aria-label="إغلاق">×</button>
 
             <div class="inventory-sell-stamp" data-sell-stamp aria-hidden="true">
               <div>
-                <div class="big">ØªÙ… Ø§Ù„Ø¨ÙŠØ¹</div>
+                <div class="big">تم البيع</div>
                 <div class="small">REDEEMED</div>
               </div>
             </div>
 
             <div class="inventory-sell-top">
-              <div class="inventory-sell-eyebrow">Ù‚Ø³ÙŠÙ…Ø© Ø¨ÙŠØ¹</div>
+              <div class="inventory-sell-eyebrow">قسيمة بيع</div>
               <div class="inventory-sell-seal" aria-hidden="true">${esc(itemIcon)}</div>
               <h3 class="inventory-sell-name" id="inventorySellTitle">${esc(name)}</h3>
               <p class="inventory-sell-sub">
-                Ù‚Ø§Ø¨Ù„ Ù„Ù„Ø§Ø³ØªØ¨Ø¯Ø§Ù„ Ø¨Ù€ <strong>${formatNumber(priceEach)}</strong> Ù†Ù‚Ø·Ø© Ù„Ù„ÙˆØ­Ø¯Ø©
+                قابل للاستبدال بـ <strong>${formatNumber(priceEach)}</strong> نقطة للوحدة
               </p>
               <div class="inventory-sell-market">
-                <span>Ù‚ÙŠÙ…Ø© Ø§Ù„ØºØ±Ø¶ ÙÙŠ Ø§Ù„Ù…ØªØ¬Ø±</span>
+                <span>قيمة الغرض في المتجر</span>
                 <strong>${formatNumber(value)}</strong>
               </div>
             </div>
@@ -10316,22 +10285,22 @@ const metadata = {
             <div class="inventory-sell-body">
               <div class="inventory-sell-grid">
                 <div class="inventory-sell-stat">
-                  <span>Ø§Ù„Ù…ØªÙˆÙØ±</span>
+                  <span>المتوفر</span>
                   <strong>${formatNumber(owned)}</strong>
                 </div>
                 <div class="inventory-sell-stat">
-                  <span>Ù‚ÙŠÙ…Ø© Ø§Ù„ØºØ±Ø¶</span>
+                  <span>قيمة الغرض</span>
                   <strong>${formatNumber(value)}</strong>
                 </div>
                 <div class="inventory-sell-stat">
-                  <span>Ø³Ø¹Ø± Ø§Ù„Ø¨ÙŠØ¹</span>
+                  <span>سعر البيع</span>
                   <strong>${formatNumber(priceEach)}</strong>
                 </div>
               </div>
 
               <div class="inventory-sell-field-label">
-                <span class="title">Ø§Ø®ØªØ± Ø§Ù„ÙƒÙ…ÙŠØ©</span>
-                <span class="available">Ø§Ù„Ù…ØªÙˆÙØ± Ù„Ø¯ÙŠÙƒ <strong>${formatNumber(owned)}</strong></span>
+                <span class="title">اختر الكمية</span>
+                <span class="available">المتوفر لديك <strong>${formatNumber(owned)}</strong></span>
               </div>
 
               <div class="inventory-sell-qty" data-sell-qty-control>
@@ -10340,20 +10309,20 @@ const metadata = {
 
               <div class="inventory-sell-payout">
                 <div>
-                  <div class="inventory-sell-payout-label">Ø³ØªØ­ØµÙ„ Ø¹Ù„Ù‰</div>
-                  <div class="inventory-sell-formula" data-sell-formula>${formatNumber(priceEach)} Ã— 1</div>
+                  <div class="inventory-sell-payout-label">ستحصل على</div>
+                  <div class="inventory-sell-formula" data-sell-formula>${formatNumber(priceEach)} × 1</div>
                 </div>
                 <div>
                   <div class="inventory-sell-payout-number" data-sell-total>${formatNumber(priceEach)}</div>
-                  <div class="inventory-sell-payout-unit">Ù†Ù‚Ø·Ø©</div>
+                  <div class="inventory-sell-payout-unit">نقطة</div>
                 </div>
               </div>
 
               <div class="inventory-sell-message" data-sell-message></div>
 
               <div class="inventory-sell-actions">
-                <button type="button" data-sell-close>Ø¥Ù„ØºØ§Ø¡</button>
-                <button type="button" class="primary" data-sell-submit>ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø¨ÙŠØ¹</button>
+                <button type="button" data-sell-close>إلغاء</button>
+                <button type="button" class="primary" data-sell-submit>تأكيد البيع</button>
               </div>
             </div>
           </div>
@@ -10427,7 +10396,7 @@ const metadata = {
             button.classList.toggle('is-active', isActive)
           })
 
-          formula.textContent = `${formatNumber(priceEach)} Ã— ${formatNumber(selectedQty)}`
+          formula.textContent = `${formatNumber(priceEach)} × ${formatNumber(selectedQty)}`
           animatePayoutTotal(selectedQty * priceEach)
         }
 
@@ -10464,7 +10433,7 @@ const metadata = {
           qtyButtons().forEach((button) => { button.disabled = true })
           if (qtyInput) qtyInput.disabled = true
           msg.className = 'inventory-sell-message'
-          msg.textContent = 'Ø¬Ø§Ø±ÙŠ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¨ÙŠØ¹...'
+          msg.textContent = 'جاري تسجيل البيع...'
 
           const localSellLockId = addInventorySellLock(name, qty, owned, state.activeUser);
 
@@ -10491,7 +10460,7 @@ const metadata = {
             }
 
             msg.className = 'inventory-sell-message ok'
-            msg.textContent = 'ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¨ÙŠØ¹ Ø¨Ù†Ø¬Ø§Ø­. Ø³ÙŠØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø­Ù‚ÙŠØ¨Ø© Ø®Ù„Ø§Ù„ Ù„Ø­Ø¸Ø§Øª.'
+            msg.textContent = 'تم تسجيل البيع بنجاح. سيتم تحديث الحقيبة خلال لحظات.'
             stamp?.classList.add('show')
 
             const localSellTotal = Math.max(0, Math.floor(Number(data.sellTotal || data.sell_total || (qty * priceEach) || 0)))
@@ -10516,7 +10485,7 @@ const metadata = {
               })
             }
 
-            submit.textContent = 'ØªÙ… Ø§Ù„Ø¨ÙŠØ¹'
+            submit.textContent = 'تم البيع'
 
             watchInventorySellFinalStatus(data.requestId, localSellLockId)
 
@@ -10538,10 +10507,10 @@ const metadata = {
                   .querySelectorAll('.item-detail-modal, .inventory-item-modal, .profile-item-modal, .item-modal, .modal-backdrop, .modal-overlay')
                   .forEach((el) => {
                     if (
-                      el.textContent?.includes('Ø§Ø³ØªØ®Ø¯Ø§Ù…') ||
-                      el.textContent?.includes('Ø¥Ù‡Ø¯Ø§Ø¡') ||
-                      el.textContent?.includes('Ø¹Ø±Ø¶ ÙÙŠ Ø§Ù„Ø³ÙˆÙ‚') ||
-                      el.textContent?.includes('Ø¨ÙŠØ¹')
+                      el.textContent?.includes('استخدام') ||
+                      el.textContent?.includes('إهداء') ||
+                      el.textContent?.includes('عرض في السوق') ||
+                      el.textContent?.includes('بيع')
                     ) {
                       el.remove();
                     }
@@ -10560,19 +10529,19 @@ const metadata = {
             const apiMessage = String(error?.data?.message || '')
 
             if (code === 'Unauthorized') {
-              msg.textContent = 'Ù„Ø§Ø²Ù… ØªØ³Ø¬Ù„ Ø¯Ø®ÙˆÙ„Ùƒ Ø¨ØªÙˆÙŠØªØ´ Ù‚Ø¨Ù„ Ø§Ù„Ø¨ÙŠØ¹.'
+              msg.textContent = 'لازم تسجل دخولك بتويتش قبل البيع.'
             } else if (code === 'Item sale is disabled') {
-              msg.textContent = 'Ù‡Ø°Ø§ Ø§Ù„ØºØ±Ø¶ ØºÙŠØ± Ù‚Ø§Ø¨Ù„ Ù„Ù„Ø¨ÙŠØ¹.'
+              msg.textContent = 'هذا الغرض غير قابل للبيع.'
             } else if (code === 'Not enough quantity') {
-              msg.textContent = 'Ø§Ù„ÙƒÙ…ÙŠØ© ØºÙŠØ± ÙƒØ§ÙÙŠØ©.'
+              msg.textContent = 'الكمية غير كافية.'
             } else if (code === 'sell_unavailable_bridge_offline') {
-              msg.textContent = 'Ø®Ø¯Ù…Ø© Ø§Ù„Ø¨ÙŠØ¹ Ù…Ø¹Ù„Ù‘Ù‚Ø© Ù…Ø¤Ù‚ØªÙ‹Ø§. Ø¬Ø±Ù‘Ø¨ Ø¨Ø¹Ø¯ Ù‚Ù„ÙŠÙ„.'
+              msg.textContent = 'خدمة البيع معلّقة مؤقتًا. جرّب بعد قليل.'
             } else if (code === 'sell_unavailable_streamerbot_offline') {
-              msg.textContent = 'Ø®Ø¯Ù…Ø© Ø§Ù„Ø¨ÙŠØ¹ Ù…Ø¹Ù„Ù‘Ù‚Ø© Ù…Ø¤Ù‚ØªÙ‹Ø§. Ø¬Ø±Ù‘Ø¨ Ø¨Ø¹Ø¯ Ù‚Ù„ÙŠÙ„.'
+              msg.textContent = 'خدمة البيع معلّقة مؤقتًا. جرّب بعد قليل.'
             } else if (apiMessage) {
               msg.textContent = apiMessage
             } else {
-              msg.textContent = 'Ø®Ø¯Ù…Ø© Ø§Ù„Ø¨ÙŠØ¹ Ù…Ø¹Ù„Ù‘Ù‚Ø© Ù…Ø¤Ù‚ØªÙ‹Ø§. Ø¬Ø±Ù‘Ø¨ Ø¨Ø¹Ø¯ Ù‚Ù„ÙŠÙ„.'
+              msg.textContent = 'خدمة البيع معلّقة مؤقتًا. جرّب بعد قليل.'
             }
 
             submit.disabled = false
@@ -10607,7 +10576,7 @@ const metadata = {
           return desc;
         }
 
-        return 'ØºØ±Ø¶ Ù…Ù† Ø­Ù‚ÙŠØ¨Ø© Ø§Ù„Ø¹Ø¶Ùˆ.';
+        return 'غرض من حقيبة العضو.';
       }
 
       function itemDetailIsSaleDisabled(meta) {
@@ -10627,38 +10596,38 @@ const metadata = {
       }
 
       function itemDetailHint(action, item, meta) {
-        const name = String(item.name || 'Ø§Ù„ØºØ±Ø¶');
+        const name = String(item.name || 'الغرض');
         const price = itemDetailSellPrice(meta);
 
         if (action === 'use') {
-          return 'Ø§Ø³ØªØ®Ø¯Ù… Ù‡Ø°Ø§ Ø§Ù„ØºØ±Ø¶ Ù…Ù† Ø®Ù„Ø§Ù„ Streamer.bot Ø­Ø³Ø¨ Ù†Ø¸Ø§Ù… Ø§Ù„Ø£ØºØ±Ø§Ø¶ Ø§Ù„Ø­Ø§Ù„ÙŠ.';
+          return 'استخدم هذا الغرض من خلال Streamer.bot حسب نظام الأغراض الحالي.';
         }
 
         if (action === 'gift') {
-          return 'Ø§Ù„Ø¥Ù‡Ø¯Ø§Ø¡ Ù„Ø§Ø­Ù‚Ù‹Ø§ Ø¨ÙŠØ­ØªØ§Ø¬ Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ø¹Ø¶Ùˆ Ø§Ù„Ù…Ø³ØªÙ„Ù…. Ø­Ø§Ù„ÙŠØ§Ù‹ Ù†Ø¹Ø±Ø¶ Ø§Ù„Ù…Ø¹Ù„ÙˆÙ…Ø© ÙÙ‚Ø·.';
+          return 'الإهداء لاحقًا بيحتاج اختيار العضو المستلم. حالياً نعرض المعلومة فقط.';
         }
 
         if (action === 'market') {
-          return 'Ø¹Ø±Ø¶ Ø§Ù„Ø³ÙˆÙ‚ ÙŠØ­ØªØ§Ø¬ Ù†Ø¸Ø§Ù… Ø³ÙˆÙ‚ Ù…Ø³ØªÙ‚Ù„. Ø­Ø§Ù„ÙŠØ§Ù‹ ØºÙŠØ± Ù…Ø±Ø¨ÙˆØ·.';
+          return 'عرض السوق يحتاج نظام سوق مستقل. حالياً غير مربوط.';
         }
 
         if (action === 'sell') {
           if (itemDetailIsSaleDisabled(meta)) {
-            return 'Ù‡Ø°Ø§ Ø§Ù„ØºØ±Ø¶ ØºÙŠØ± Ù‚Ø§Ø¨Ù„ Ù„Ù„Ø¨ÙŠØ¹.';
+            return 'هذا الغرض غير قابل للبيع.';
           }
 
-          return 'Ø¨ÙŠØ¹ ' + name + ' ÙŠØ¹Ø·ÙŠÙƒ ' + formatNumber(price) + ' Ù†Ù‚Ø·Ø© Ù„ÙƒÙ„ Ù‚Ø·Ø¹Ø©.';
+          return 'بيع ' + name + ' يعطيك ' + formatNumber(price) + ' نقطة لكل قطعة.';
         }
 
-        return 'Ø§Ø®ØªØ± Ø¹Ù…Ù„ÙŠØ© Ù„Ù„ØºØ±Ø¶.';
+        return 'اختر عملية للغرض.';
       }
 
       function readItemFromInventoryCard(card) {
         return {
           name: String(card.dataset.itemName || card.querySelector('.item-name')?.textContent || '').trim(),
           qty: Math.max(1, Math.floor(Number(card.dataset.itemQty || card.querySelector('.qty')?.textContent?.replace(/[^0-9]/g, '') || 1))),
-          icon: String(card.dataset.itemIcon || card.querySelector('.item-icon')?.textContent || 'ðŸ“¦').trim() || 'ðŸ“¦',
-          rarity: String(card.dataset.itemRarity || '').trim() || 'Ø¹Ø§Ù…',
+          icon: String(card.dataset.itemIcon || card.querySelector('.item-icon')?.textContent || '📦').trim() || '📦',
+          rarity: String(card.dataset.itemRarity || '').trim() || 'عام',
         };
       }
 
@@ -10678,11 +10647,11 @@ const metadata = {
       }
 
       function openItemDetailModalV3(item) {
-        const name = String(item.name || 'ØºØ±Ø¶').trim();
+        const name = String(item.name || 'غرض').trim();
         const meta = itemMetaForDetail(name);
         const qty = Math.max(1, Math.floor(Number(item.qty || 1)));
         const rarity = String(meta?.rarity || meta?.cat || item.rarity || 'Common').trim() || 'Common';
-        const icon = String(item.icon || meta?.icon || 'ðŸ“¦').trim() || 'ðŸ“¦';
+        const icon = String(item.icon || meta?.icon || '📦').trim() || '📦';
         const desc = itemDetailDescription(item, meta);
         const price = itemDetailSellPrice(meta);
         const saleDisabled = itemDetailIsSaleDisabled(meta) || price <= 0;
@@ -10695,7 +10664,7 @@ const metadata = {
           <div class="item-detail-v3-box" role="dialog" aria-modal="true">
             <div class="item-detail-v3-head">
               <h3>${esc(name)}</h3>
-              <button class="item-detail-v3-close" type="button" data-item-detail-close>Ã—</button>
+              <button class="item-detail-v3-close" type="button" data-item-detail-close>×</button>
             </div>
 
             <div class="item-detail-v3-body">
@@ -10706,21 +10675,21 @@ const metadata = {
                   <div class="item-detail-v3-meta">
                     <span class="item-detail-v3-chip gold">x${formatNumber(qty)}</span>
                     <span class="item-detail-v3-chip ${itemDetailRarityClass(rarity)}">${esc(rarity)}</span>
-                    <span class="item-detail-v3-chip">${saleDisabled ? 'ØºÙŠØ± Ù‚Ø§Ø¨Ù„ Ù„Ù„Ø¨ÙŠØ¹' : 'Ø¨ÙŠØ¹: ' + formatNumber(price) + ' Ù†Ù‚Ø·Ø©'}</span>
+                    <span class="item-detail-v3-chip">${saleDisabled ? 'غير قابل للبيع' : 'بيع: ' + formatNumber(price) + ' نقطة'}</span>
                   </div>
                 </div>
               </div>
 
               <div class="item-detail-v3-section">
-                <small>Ø§Ù„ÙˆØµÙ</small>
+                <small>الوصف</small>
                 <p>${esc(desc)}</p>
               </div>
 
               <div class="item-detail-v3-actions">
-                <button class="item-detail-v3-action primary" type="button" data-v3-action="use">Ø§Ø³ØªØ®Ø¯Ø§Ù…</button>
-                <button class="item-detail-v3-action" type="button" data-v3-action="gift">Ø¥Ù‡Ø¯Ø§Ø¡</button>
-                <button class="item-detail-v3-action sell" type="button" data-v3-action="sell" ${saleDisabled ? 'disabled' : ''}>Ø¨ÙŠØ¹</button>
-                <button class="item-detail-v3-action" type="button" data-v3-action="market">Ø¹Ø±Ø¶ ÙÙŠ Ø§Ù„Ø³ÙˆÙ‚</button>
+                <button class="item-detail-v3-action primary" type="button" data-v3-action="use">استخدام</button>
+                <button class="item-detail-v3-action" type="button" data-v3-action="gift">إهداء</button>
+                <button class="item-detail-v3-action sell" type="button" data-v3-action="sell" ${saleDisabled ? 'disabled' : ''}>بيع</button>
+                <button class="item-detail-v3-action" type="button" data-v3-action="market">عرض في السوق</button>
               </div>
 <div class="item-detail-v3-hint" data-v3-hint>${esc(itemDetailHint('sell', item, meta))}</div>
             </div>
@@ -10744,7 +10713,7 @@ const metadata = {
 
             if (action === 'sell') {
               if (saleDisabled) {
-                if (hint) hint.textContent = 'Ù‡Ø°Ø§ Ø§Ù„ØºØ±Ø¶ ØºÙŠØ± Ù‚Ø§Ø¨Ù„ Ù„Ù„Ø¨ÙŠØ¹.';
+                if (hint) hint.textContent = 'هذا الغرض غير قابل للبيع.';
                 return;
               }
 
@@ -10813,9 +10782,9 @@ const metadata = {
           const text = String(node.textContent || "");
 
           const isLegacyItemModal =
-            text.includes("Ø§Ø³ØªØ®Ø¯Ø§Ù…") &&
-            text.includes("Ø¥Ù‡Ø¯Ø§Ø¡") &&
-            text.includes("Ø¹Ø±Ø¶ ÙÙŠ Ø§Ù„Ø³ÙˆÙ‚") &&
+            text.includes("استخدام") &&
+            text.includes("إهداء") &&
+            text.includes("عرض في السوق") &&
             text.includes("Streamer.bot");
 
           if (!isLegacyItemModal) continue;
@@ -10862,9 +10831,9 @@ const metadata = {
           const text = String(node.textContent || '');
 
           const looksLikeItemDetails =
-            text.includes('Ø§Ø³ØªØ®Ø¯Ø§Ù…') &&
-            text.includes('Ø¥Ù‡Ø¯Ø§Ø¡') &&
-            text.includes('Ø¹Ø±Ø¶ ÙÙŠ Ø§Ù„Ø³ÙˆÙ‚');
+            text.includes('استخدام') &&
+            text.includes('إهداء') &&
+            text.includes('عرض في السوق');
 
           if (!looksLikeItemDetails) continue;
 
@@ -10902,8 +10871,8 @@ const metadata = {
         for (const node of nodes) {
           const text = String(node.textContent || '');
 
-          if (!text.includes('Ø¨ÙŠØ¹')) continue;
-          if (text.includes('Ø§Ø³ØªØ®Ø¯Ø§Ù…') && text.includes('Ø¥Ù‡Ø¯Ø§Ø¡')) continue;
+          if (!text.includes('بيع')) continue;
+          if (text.includes('استخدام') && text.includes('إهداء')) continue;
 
           const root = modalRootFromNode(node);
           const style = window.getComputedStyle(root);
@@ -10961,7 +10930,7 @@ const metadata = {
           const text = String(node.textContent || "");
 
           if (!text.includes("Streamer.bot")) continue;
-          if (!text.includes("Ø§Ù„Ù…ØªØ¹Ù„Ù‚Ø© Ø¨Ø§Ù„Ù†Ø¸Ø§Ù…") && !text.includes("Ù…Ø®Ø²ÙˆÙ†Ùƒ")) continue;
+          if (!text.includes("المتعلقة بالنظام") && !text.includes("مخزونك")) continue;
 
           let root = node;
 
@@ -10999,7 +10968,7 @@ const metadata = {
         if (!box) return
 
         if (!badges.length) {
-          box.innerHTML = `<div class="empty">Ù…Ø§ ÙÙŠÙ‡ Ø¨Ø§Ø¯Ø¬Ø§Øª Ø¸Ø§Ù‡Ø±Ø©.</div>`
+          box.innerHTML = `<div class="empty">ما فيه بادجات ظاهرة.</div>`
           return
         }
 
@@ -11012,7 +10981,7 @@ const metadata = {
 
           return `
             <div class="badge" title="${esc(name)} - ${esc(rarity)} - ${formatNumber(xp)} XP">
-              ${image ? `<img src="${esc(image)}" alt="${esc(name)}" loading="lazy" />` : `<div class="badge-icon">ðŸ…</div>`}
+              ${image ? `<img src="${esc(image)}" alt="${esc(name)}" loading="lazy" />` : `<div class="badge-icon">🏅</div>`}
               <div class="badge-name">${esc(name)}</div>
             </div>
           `
@@ -11020,7 +10989,7 @@ const metadata = {
       }
 
 
-      /* Badge picker v23 â€” dynamic version of the Claude mockup */
+      /* Badge picker v23 — dynamic version of the Claude mockup */
       const TNXBP_LIMIT = 3
       const TNXBP_STORAGE = 'tnx_featured_badges_v23:'
 
@@ -11040,7 +11009,7 @@ const metadata = {
       function tnxbpShortName(name) {
         const clean = String(name || '').trim()
         if (!clean) return 'BADGE'
-        return clean.length > 18 ? clean.slice(0, 18) + 'â€¦' : clean
+        return clean.length > 18 ? clean.slice(0, 18) + '…' : clean
       }
 
       function tnxbpIsRole(badge) {
@@ -11048,11 +11017,11 @@ const metadata = {
         return (
           n === 'mod' ||
           n.includes('moderator') ||
-          n.includes('Ù…Ø´Ø±Ù') ||
+          n.includes('مشرف') ||
           n === 'vip' ||
           n.includes('vip+') ||
-          n.includes('ÙÙŠ Ø§ÙŠ Ø¨ÙŠ') ||
-          n.includes('ÙÙŠ Ø¢ÙŠ Ø¨ÙŠ')
+          n.includes('في اي بي') ||
+          n.includes('في آي بي')
         )
       }
 
@@ -11062,21 +11031,21 @@ const metadata = {
         const raw = String(badgeName(badge) || '')
         const n = normalize(raw)
 
-        if (/\d+\s*q\b/i.test(raw) || n.includes('Ø³Ø¤Ø§Ù„') || n.includes('quiz')) return 'q'
-        if (/\d+\s*k\b/i.test(raw) || /\d+\s*m\b/i.test(raw) || n.includes('Ø§Ù„ØªÙ‚Ø§Ø·') || n.includes('ØµÙŠØ¯')) return 'k'
+        if (/\d+\s*q\b/i.test(raw) || n.includes('سؤال') || n.includes('quiz')) return 'q'
+        if (/\d+\s*k\b/i.test(raw) || /\d+\s*m\b/i.test(raw) || n.includes('التقاط') || n.includes('صيد')) return 'k'
 
         return 'q'
       }
 
       function tnxbpCat(badge) {
-        if (tnxbpIsRole(badge)) return 'Ø«Ø§Ø¨Øª'
+        if (tnxbpIsRole(badge)) return 'ثابت'
         const tier = tnxbpTier(badge)
-        if (tier === 'k') return 'Ø§Ù„ØªÙ‚Ø§Ø·'
-        return 'Ø§Ù„Ø£Ø³Ø¦Ù„Ø©'
+        if (tier === 'k') return 'التقاط'
+        return 'الأسئلة'
       }
 
       function tnxbpFallback(badge) {
-        if (tnxbpIsRole(badge)) return 'â˜…'
+        if (tnxbpIsRole(badge)) return '★'
         const tier = tnxbpTier(badge)
         return tier === 'k' ? 'K' : 'Q'
       }
@@ -11172,7 +11141,7 @@ const metadata = {
           add.type = 'button'
           add.className = 'profile-featured-badge-add'
           add.setAttribute('data-tnxbp-add-v24', '1')
-          add.setAttribute('aria-label', 'Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ø¨Ø§Ø¯Ø¬Ø§Øª')
+          add.setAttribute('aria-label', 'اختيار البادجات')
           add.innerHTML = '<span>+</span>'
           add.addEventListener('click', (event) => {
             event.preventDefault()
@@ -11200,29 +11169,6 @@ const metadata = {
         }, 1700)
       }
 
-      function installTnxbpPlusClickFixV25() {
-        if (window.__tnxbpPlusClickFixV25) return
-        window.__tnxbpPlusClickFixV25 = true
-
-        document.addEventListener('click', (event) => {
-          const button = event.target?.closest?.(
-            '#featuredBadges .profile-featured-badge-add, #featuredBadges #featuredBadgePlusTest, #featuredBadges [data-tnxbp-add-v24]'
-          )
-
-          if (!button) return
-
-          event.preventDefault()
-          event.stopPropagation()
-          event.stopImmediatePropagation?.()
-
-          document.querySelectorAll('.featured-badge-modal-test, .featured-badge-toast').forEach((el) => el.remove())
-
-          openTnxbpPicker(state.activeUser)
-        }, true)
-      }
-
-      installTnxbpPlusClickFixV25()
-
       function openTnxbpPicker(user = state.activeUser) {
         if (!user) return
 
@@ -11243,18 +11189,18 @@ const metadata = {
         const shell = document.createElement('div')
         shell.className = 'tnxbp-shell'
         shell.setAttribute('role', 'dialog')
-        shell.setAttribute('aria-label', 'Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ø¨Ø§Ø¯Ø¬Ø§Øª')
+        shell.setAttribute('aria-label', 'اختيار البادجات')
 
         shell.innerHTML = `
-          <button class="tnxbp-backdrop" type="button" aria-label="Ø¥ØºÙ„Ø§Ù‚"></button>
+          <button class="tnxbp-backdrop" type="button" aria-label="إغلاق"></button>
           <div class="tnxbp-modal">
             <div class="tnxbp-head">
               <div class="tnxbp-head-top">
                 <div>
-                  <div class="tnxbp-title">Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ø¨Ø§Ø¯Ø¬Ø§Øª</div>
-                  <div class="tnxbp-subtitle">Ø§Ø®ØªØ± Ø­ØªÙ‰ <b>3 Ø¨Ø§Ø¯Ø¬Ø§Øª</b> Ù…Ù† Ù…Ø®Ø²ÙˆÙ†Ùƒ â€” Ø¨Ø§Ø¯Ø¬Ø§Øª <b>MOD / VIP</b> Ù„Ø§ ØªÙØ­Ø³Ø¨ Ù…Ù† Ø§Ù„Ø­Ø¯.</div>
+                  <div class="tnxbp-title">اختيار البادجات</div>
+                  <div class="tnxbp-subtitle">اختر حتى <b>3 بادجات</b> من مخزونك — بادجات <b>MOD / VIP</b> لا تُحسب من الحد.</div>
                 </div>
-                <button class="tnxbp-xbtn" type="button" aria-label="Ø¥ØºÙ„Ø§Ù‚">Ã—</button>
+                <button class="tnxbp-xbtn" type="button" aria-label="إغلاق">×</button>
               </div>
               <div class="tnxbp-counter">
                 <div class="tnxbp-pips" data-pips></div>
@@ -11264,21 +11210,21 @@ const metadata = {
 
             <div class="tnxbp-tools">
               <label class="tnxbp-search">
-                <span class="tnxbp-search-mark">âŒ•</span>
-                <input data-search placeholder="Ø§Ø¨Ø­Ø« Ø¹Ù† Ø¨Ø§Ø¯Ø¬â€¦" autocomplete="off" />
+                <span class="tnxbp-search-mark">⌕</span>
+                <input data-search placeholder="ابحث عن بادج…" autocomplete="off" />
               </label>
 
               <div class="tnxbp-seg" data-seg>
-                <button class="act" type="button" data-filter="all">Ø§Ù„ÙƒÙ„</button>
-                <button type="button" data-filter="q">Ø§Ù„Ø£Ø³Ø¦Ù„Ø©</button>
-                <button type="button" data-filter="k">Ø§Ù„ØªÙ‚Ø§Ø·</button>
+                <button class="act" type="button" data-filter="all">الكل</button>
+                <button type="button" data-filter="q">الأسئلة</button>
+                <button type="button" data-filter="k">التقاط</button>
               </div>
             </div>
 
             <div class="tnxbp-tray" data-tray>
-              <span class="tnxbp-tray-label">Ø§Ù„Ù…Ø®ØªØ§Ø±Ø© Ø§Ù„Ø¢Ù†</span>
+              <span class="tnxbp-tray-label">المختارة الآن</span>
               <div class="tnxbp-chips" data-chips></div>
-              <button class="tnxbp-clear" type="button" data-clear>Ù…Ø³Ø­ Ø§Ù„Ø§Ø®ØªÙŠØ§Ø±</button>
+              <button class="tnxbp-clear" type="button" data-clear>مسح الاختيار</button>
             </div>
 
             <div class="tnxbp-scroller">
@@ -11286,8 +11232,8 @@ const metadata = {
             </div>
 
             <div class="tnxbp-foot">
-              <button class="tnxbp-save" type="button" data-save disabled>Ø§Ø­ÙØ¸ Ø§Ù„Ø§Ø®ØªÙŠØ§Ø±</button>
-              <button class="tnxbp-cancel" type="button" data-cancel>Ø¥Ù„ØºØ§Ø¡</button>
+              <button class="tnxbp-save" type="button" data-save disabled>احفظ الاختيار</button>
+              <button class="tnxbp-cancel" type="button" data-cancel>إلغاء</button>
             </div>
           </div>
         `
@@ -11335,8 +11281,8 @@ const metadata = {
                       aria-pressed="${sel ? 'true' : 'false'}"
                       title="${esc(name)}"
                     >
-                      <span class="tnxbp-info" title="${esc(tnxbpCat(badge))} â€¢ ${esc(name)}">i</span>
-                      <span class="tnxbp-tick">âœ“</span>
+                      <span class="tnxbp-info" title="${esc(tnxbpCat(badge))} • ${esc(name)}">i</span>
+                      <span class="tnxbp-tick">✓</span>
                       <span class="tnxbp-medal">
                         <span class="tnxbp-ring"></span>
                         <span class="tnxbp-core">
@@ -11344,12 +11290,12 @@ const metadata = {
                         </span>
                       </span>
                       <span class="tnxbp-bname">${esc(tnxbpShortName(name))}</span>
-                      <span class="tnxbp-bcat">${esc(role ? 'Ø«Ø§Ø¨Øª ÙˆÙ„Ø§ ÙŠÙØ­Ø³Ø¨' : tnxbpCat(badge))}</span>
-                      <span class="tnxbp-hint">ÙˆØµÙ„Øª Ù„Ù„Ø­Ø¯ Ù£</span>
+                      <span class="tnxbp-bcat">${esc(role ? 'ثابت ولا يُحسب' : tnxbpCat(badge))}</span>
+                      <span class="tnxbp-hint">وصلت للحد ٣</span>
                     </button>
                   `
                 }).join('')
-              : `<div class="tnxbp-empty">Ù…Ø§ ÙÙŠÙ‡ Ø¨Ø§Ø¯Ø¬ Ø¨Ù‡Ø°Ø§ Ø§Ù„Ø§Ø³Ù… â€” Ø¬Ø±Ù‘Ø¨ ÙƒÙ„Ù…Ø© Ø«Ø§Ù†ÙŠØ©.</div>`
+              : `<div class="tnxbp-empty">ما فيه بادج بهذا الاسم — جرّب كلمة ثانية.</div>`
           }
 
           shell.querySelector('[data-pips]').innerHTML = Array.from({ length: TNXBP_LIMIT }, (_, i) =>
@@ -11370,10 +11316,10 @@ const metadata = {
               const image = badgeImage(badge)
               const name = badgeName(badge)
               return `
-                <button class="tnxbp-chip" type="button" data-remove="${esc(key)}" title="Ø¥Ø²Ø§Ù„Ø© ${esc(name)}">
+                <button class="tnxbp-chip" type="button" data-remove="${esc(key)}" title="إزالة ${esc(name)}">
                   <span class="dot">${image ? `<img src="${esc(image)}" alt="" />` : esc(tnxbpFallback(badge))}</span>
                   <code>${esc(tnxbpShortName(name))}</code>
-                  <span class="x">Ã—</span>
+                  <span class="x">×</span>
                 </button>
               `
             }).join('')
@@ -11386,8 +11332,8 @@ const metadata = {
           if (save) {
             save.disabled = !changed()
             save.textContent = !changed()
-              ? (selected.length ? 'Ù„Ø§ ØªÙˆØ¬Ø¯ ØªØºÙŠÙŠØ±Ø§Øª' : 'Ø§Ø­ÙØ¸ Ø§Ù„Ø§Ø®ØªÙŠØ§Ø±')
-              : `Ø§Ø­ÙØ¸ Ø§Ù„Ø§Ø®ØªÙŠØ§Ø± (${selected.length})`
+              ? (selected.length ? 'لا توجد تغييرات' : 'احفظ الاختيار')
+              : `احفظ الاختيار (${selected.length})`
           }
         }
 
@@ -11428,7 +11374,7 @@ const metadata = {
             selected = [...saved]
             renderFeaturedBadgesV23(user)
             close()
-            tnxbpToast(`ØªÙ… Ø­ÙØ¸ ${selected.length} Ø¨Ø§Ø¯Ø¬Ø§Øª âœ“`)
+            tnxbpToast(`تم حفظ ${selected.length} بادجات ✓`)
             return
           }
 
@@ -11436,7 +11382,7 @@ const metadata = {
           if (!option) return
 
           if (option.dataset.role === '1') {
-            tnxbpToast('Ù‡Ø°Ø§ Ø¨Ø§Ø¯Ø¬ Ø«Ø§Ø¨Øª ÙˆÙ„Ø§ ÙŠÙØ­Ø³Ø¨ Ù…Ù† Ø§Ù„Ø­Ø¯')
+            tnxbpToast('هذا بادج ثابت ولا يُحسب من الحد')
             return
           }
 
@@ -11452,7 +11398,7 @@ const metadata = {
             option.classList.remove('limit-hit')
             void option.offsetWidth
             option.classList.add('limit-hit')
-            tnxbpToast('ÙˆØµÙ„Øª Ù„Ù„Ø­Ø¯ Ù£')
+            tnxbpToast('وصلت للحد ٣')
             window.setTimeout(() => option.classList.remove('limit-hit'), 520)
             return
           }
@@ -11484,12 +11430,12 @@ const metadata = {
         if (!box) return
 
         if (!mail.length) {
-          box.innerHTML = `<div class="empty">Ù…Ø§ Ø¹Ù†Ø¯Ùƒ Ø±Ø³Ø§Ø¦Ù„.</div>`
+          box.innerHTML = `<div class="empty">ما عندك رسائل.</div>`
           return
         }
 
         box.innerHTML = mail.map((message) => {
-          const from = get(message, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], 'Ø§Ù„Ù†Ø¸Ø§Ù…')
+          const from = get(message, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], 'النظام')
           const text = get(message, ['message', 'text'], '')
           return `
             <div class="mail-message">
@@ -11519,22 +11465,22 @@ const metadata = {
         const itemName = commandItemName(item.name)
 
         if (action === 'use') {
-          return `Ø§Ø³ØªØ®Ø¯Ù… Ø§Ù„ØºØ±Ø¶ Ù…Ù† Ø§Ù„Ø´Ø§Øª Ø¨Ø§Ù„Ø£Ù…Ø±: <code>!use ${esc(itemName)}</code>`
+          return `استخدم الغرض من الشات بالأمر: <code>!use ${esc(itemName)}</code>`
         }
 
         if (action === 'gift') {
-          return `Ø¥Ù‡Ø¯Ø§Ø¡ Ø§Ù„ØºØ±Ø¶ Ù…Ù† Ø§Ù„Ø´Ø§Øª: <code>!gift username ${esc(itemName)}</code>`
+          return `إهداء الغرض من الشات: <code>!gift username ${esc(itemName)}</code>`
         }
 
         if (action === 'sell') {
-          return `Ø¨ÙŠØ¹ Ø§Ù„ØºØ±Ø¶ Ù…Ù† Ø§Ù„Ø´Ø§Øª: <code>!sell ${esc(itemName)}</code>`
+          return `بيع الغرض من الشات: <code>!sell ${esc(itemName)}</code>`
         }
 
         if (action === 'market') {
-          return `Ø¹Ø±Ø¶ Ø§Ù„ØºØ±Ø¶ ÙÙŠ Ø§Ù„Ø³ÙˆÙ‚ ÙŠØ­ØªØ§Ø¬ Ø£Ù…Ø± Ø§Ù„Ø³ÙˆÙ‚ Ø¹Ù†Ø¯ ØªÙØ¹ÙŠÙ„Ù‡: <code>!market ${esc(itemName)}</code>`
+          return `عرض الغرض في السوق يحتاج أمر السوق عند تفعيله: <code>!market ${esc(itemName)}</code>`
         }
 
-        return 'Ø§Ø³ØªØ®Ø¯Ù… Ø§Ù„Ø£ÙˆØ§Ù…Ø± Ù…Ù† Ø§Ù„Ø´Ø§Øª.'
+        return 'استخدم الأوامر من الشات.'
       }
 
       function openItemModal(item) {
@@ -11544,7 +11490,7 @@ const metadata = {
           <div class="item-modal">
             <div class="modal-head">
               <h3>${esc(item.name)}</h3>
-              <button class="close-btn" type="button" data-close-item>Ã—</button>
+              <button class="close-btn" type="button" data-close-item>×</button>
             </div>
             <div class="mail-list">
               <div class="mail-message">
@@ -11553,13 +11499,13 @@ const metadata = {
               </div>
             </div>
             <div class="item-actions">
-              <button class="item-action-btn" type="button" data-item-action="use">Ø§Ø³ØªØ®Ø¯Ø§Ù…</button>
-              <button class="item-action-btn" type="button" data-item-action="gift">Ø¥Ù‡Ø¯Ø§Ø¡</button>
-              <button class="item-action-btn" type="button" data-item-action="sell">Ø¨ÙŠØ¹</button>
-              <button class="item-action-btn" type="button" data-item-action="market">Ø¹Ø±Ø¶ ÙÙŠ Ø§Ù„Ø³ÙˆÙ‚</button>
+              <button class="item-action-btn" type="button" data-item-action="use">استخدام</button>
+              <button class="item-action-btn" type="button" data-item-action="gift">إهداء</button>
+              <button class="item-action-btn" type="button" data-item-action="sell">بيع</button>
+              <button class="item-action-btn" type="button" data-item-action="market">عرض في السوق</button>
             </div>
             <div class="item-command-hint" data-item-hint>
-              Ø§Ø®ØªØ± Ø§Ù„Ø¹Ù…Ù„ÙŠØ© ÙÙˆÙ‚. Ø§Ù„ØªÙ†ÙÙŠØ° Ø­Ø§Ù„ÙŠÙ‹Ø§ Ù…Ù† Ø§Ù„Ø´Ø§Øª Ø­ØªÙ‰ Ù†Ø±Ø¨Ø· Ø§Ù„ØµÙØ­Ø© Ø¨Ø£ÙƒØ´Ù†Ø§Øª Streamer.bot.
+              اختر العملية فوق. التنفيذ حاليًا من الشات حتى نربط الصفحة بأكشنات Streamer.bot.
             </div>
           </div>
         `
@@ -11685,7 +11631,7 @@ const metadata = {
 
         const login = String(authUser.login || '').trim()
         const twitchId = String(authUser.twitchId || authUser.id || '').trim()
-        const name = String(authUser.displayName || login || 'Ù…Ø³ØªØ®Ø¯Ù… Twitch').trim()
+        const name = String(authUser.displayName || login || 'مستخدم Twitch').trim()
         const avatar = String(authUser.profileImageUrl || '').trim()
 
         return {
@@ -11698,7 +11644,7 @@ const metadata = {
           displayName: name,
           profileImageUrl: avatar,
           avatar,
-          bio: 'Ù‡Ø°Ø§ Ù…Ù„ÙÙƒ Ø§Ù„Ø´Ø®ØµÙŠ ÙÙŠ Ù†Ø¸Ø§Ù… TNX6. Ù…Ù† Ù‡Ù†Ø§ Ø¨ØªØ´ÙˆÙ Ù…Ø³ØªÙˆØ§ÙƒØŒ Ø£ØºØ±Ø§Ø¶ÙƒØŒ Ø¨Ø§Ø¯Ø¬Ø§ØªÙƒØŒ ÙˆØ§Ù„Ø¨Ø±ÙŠØ¯.',
+          bio: 'هذا ملفك الشخصي في نظام TNX6. من هنا بتشوف مستواك، أغراضك، بادجاتك، والبريد.',
         }
       }
 
@@ -12223,7 +12169,7 @@ const metadata = {
             const badges = Array.isArray(nextUser.badges) ? nextUser.badges : []
             const level = calculateLevel(nextUser)
 
-            setText('inventoryCount', `${inventory.length} ${inventory.length === 1 ? 'ØºØ±Ø¶' : 'Ø£ØºØ±Ø§Ø¶'}`)
+            setText('inventoryCount', `${inventory.length} ${inventory.length === 1 ? 'غرض' : 'أغراض'}`)
             renderChips(chipsFor(nextUser, level.level, badges, inventory))
             renderInventory(inventory)
             enhanceInventorySellButtons(inventory)
@@ -12465,7 +12411,7 @@ const metadata = {
 
         try {
           await navigator.clipboard.writeText(profileLink(state.activeUser))
-          button.textContent = 'ØªÙ… Ø§Ù„Ù†Ø³Ø®'
+          button.textContent = 'تم النسخ'
           addTimer(window.setTimeout(() => { button.textContent = old }, 1200))
         } catch {
           button.textContent = profileLink(state.activeUser)
@@ -12479,7 +12425,7 @@ const metadata = {
 
         try {
           await navigator.clipboard.writeText(link)
-          button.textContent = 'ØªÙ… Ø§Ù„Ù†Ø³Ø®'
+          button.textContent = 'تم النسخ'
           addTimer(window.setTimeout(() => { button.textContent = old }, 1200))
         } catch {
           button.textContent = link
@@ -12516,67 +12462,6 @@ const metadata = {
         watchtime: normalizeLeaderboardData(leaderboardPayload, 'watchtime'),
       }
 
-      window.TNXBP_V26_CLICK_PATCH = true
-
-      if (!window.__tnxbpPlusClickFixV26) {
-        window.__tnxbpPlusClickFixV26 = true
-
-        document.addEventListener('click', (event) => {
-          const button = event.target?.closest?.(
-            '#featuredBadges .profile-featured-badge-add, #featuredBadges #featuredBadgePlusTest, #featuredBadges [data-tnxbp-add-v24]'
-          )
-
-          if (!button) return
-
-          event.preventDefault()
-          event.stopPropagation()
-          event.stopImmediatePropagation?.()
-
-          document.querySelectorAll('.featured-badge-modal-test, .featured-badge-toast').forEach((el) => el.remove())
-
-          if (typeof openTnxbpPicker === 'function') {
-            openTnxbpPicker(state.activeUser)
-          }
-        }, true)
-      }
-      window.TNXBP_V27_PLUS_INLINE_PATCH = true
-
-      if (!window.__tnxbpPlusInlineFixV27) {
-        window.__tnxbpPlusInlineFixV27 = true
-
-        const fixTnxbpPlusInlineV27 = () => {
-          document
-            .querySelectorAll('#featuredBadges .profile-featured-badge-add, #featuredBadges #featuredBadgePlusTest, #featuredBadges [data-tnxbp-add-v24]')
-            .forEach((button, index) => {
-              if (index > 0) {
-                button.remove()
-                return
-              }
-
-              button.style.display = 'inline-grid'
-              button.style.visibility = 'visible'
-              button.style.opacity = '1'
-              button.style.pointerEvents = 'auto'
-              button.style.cursor = 'pointer'
-              button.style.position = 'relative'
-              button.style.zIndex = '999'
-
-              button.onclick = (event) => {
-                event.preventDefault()
-                event.stopPropagation()
-
-                document.querySelectorAll('.featured-badge-modal-test, .featured-badge-toast').forEach((el) => el.remove())
-
-                if (typeof openTnxbpPicker === 'function') {
-                  openTnxbpPicker(state.activeUser)
-                }
-              }
-            })
-        }
-
-        fixTnxbpPlusInlineV27()
-        window.setInterval(fixTnxbpPlusInlineV27, 500)
-      }
       await openFromQuery()
     })()
   </script>
@@ -12593,7 +12478,7 @@ const metadata = {
 
       function toNumber(value) {
         const cleaned = String(value ?? '')
-          .replace(/[Ù -Ù©]/g, (d) => 'Ù Ù¡Ù¢Ù£Ù¤Ù¥Ù¦Ù§Ù¨Ù©'.indexOf(d))
+          .replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
           .replace(/,/g, '')
           .replace(/[^0-9.]/g, '')
 
@@ -12691,7 +12576,7 @@ const metadata = {
         const percent = needed > 0 ? clamp((current / needed) * 100, 0, 100) : 0
 
         const title = $('levelTitle')
-        if (title) title.textContent = 'ØªÙ‚Ø¯Ù… Ø§Ù„Ù…Ø³ØªÙˆÙ‰'
+        if (title) title.textContent = 'تقدم المستوى'
 
         const badge = $('avatarLevelBadge')
         if (badge) badge.textContent = 'LVL ' + level
@@ -12816,9 +12701,6 @@ const metadata = {
   <script src="/js/profile-badge-modal-test.js?v=31" defer data-astro-rerun>
 </script>
 </Layout>
-
-
-
 
 
 
