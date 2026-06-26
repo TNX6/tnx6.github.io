@@ -9029,7 +9029,10 @@ const metadata = {
             const data = await res.json().catch(() => ({}))
 
             if (!res.ok || !data.ok) {
-              throw new Error(data.error || 'sell_failed')
+              const sellError = new Error(data.error || 'sell_failed')
+              sellError.data = data
+              sellError.status = res.status
+              throw sellError
             }
 
             msg.className = 'inventory-sell-message ok'
@@ -9092,6 +9095,7 @@ const metadata = {
             msg.className = 'inventory-sell-message err'
 
             const code = String(error?.message || '')
+            const apiMessage = String(error?.data?.message || '')
 
             if (code === 'Unauthorized') {
               msg.textContent = 'لازم تسجل دخولك بتويتش قبل البيع.'
@@ -9099,8 +9103,14 @@ const metadata = {
               msg.textContent = 'هذا الغرض غير قابل للبيع.'
             } else if (code === 'Not enough quantity') {
               msg.textContent = 'الكمية غير كافية.'
+            } else if (code === 'sell_unavailable_bridge_offline') {
+              msg.textContent = 'خدمة البيع معلّقة مؤقتًا. جرّب بعد قليل.'
+            } else if (code === 'sell_unavailable_streamerbot_offline') {
+              msg.textContent = 'خدمة البيع معلّقة مؤقتًا. جرّب بعد قليل.'
+            } else if (apiMessage) {
+              msg.textContent = apiMessage
             } else {
-              msg.textContent = 'تعذر تسجيل البيع. جرّب بعد قليل.'
+              msg.textContent = 'خدمة البيع معلّقة مؤقتًا. جرّب بعد قليل.'
             }
 
             submit.disabled = false
