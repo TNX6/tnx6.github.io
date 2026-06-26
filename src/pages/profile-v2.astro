@@ -10765,6 +10765,97 @@ const metadata = {
         document.querySelectorAll('.item-detail-v3').forEach((modal) => modal.remove());
       }
 
+      async function useInventoryItemFromProfileV1(item, button, hint) {
+        const name = String(item?.name || '').trim();
+        const qty = Math.max(1, Math.floor(Number(item?.qty || 1)));
+
+        if (!name) {
+          if (hint) hint.textContent = 'اسم الغرض غير معروف.';
+          return;
+        }
+
+        const allowed = await isProfileOwnerV36(state.activeUser);
+        if (!allowed) {
+          await syncOwnerControlsV36(state.activeUser);
+          if (hint) hint.textContent = 'ما تقدر تستخدم أغراض حساب غيرك.';
+          return;
+        }
+
+        const oldText = button?.textContent || 'استخدام';
+
+        try {
+          if (button) {
+            button.disabled = true;
+            button.textContent = 'جاري الاستخدام...';
+          }
+
+          if (hint) {
+            hint.textContent = 'جاري إرسال طلب الاستخدام إلى Streamer.bot...';
+          }
+
+          const res = await fetch(TNX_API_ORIGIN + '/api/me/inventory/use', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              itemName: name,
+              quantity: 1,
+            }),
+          });
+
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok || data.ok === false) {
+            const error = String(data.error || data.message || '');
+
+            if (res.status === 401 || error === 'unauthorized') {
+              throw new Error('لازم تسجل دخولك بتويتش قبل استخدام الغرض.');
+            }
+
+            if (res.status === 403 || error === 'forbidden') {
+              throw new Error('ما تقدر تستخدم أغراض حساب غيرك.');
+            }
+
+            if (error === 'item_not_found' || error === 'not_enough_quantity') {
+              throw new Error('الغرض غير موجود في حقيبتك أو الكمية غير كافية.');
+            }
+
+            if (error === 'use_unavailable_bridge_offline' || error === 'use_unavailable_streamerbot_offline') {
+              throw new Error('خدمة الاستخدام معلّقة مؤقتًا. تأكد أن الجسر و Streamer.bot شغالين.');
+            }
+
+            throw new Error(error || `فشل الاستخدام: ${res.status}`);
+          }
+
+          if (button) {
+            button.textContent = 'تم الإرسال';
+          }
+
+          if (hint) {
+            hint.textContent = 'تم إرسال طلب الاستخدام. راقب البث أو الشات للتنفيذ.';
+          }
+
+          setTimeout(() => {
+            if (button) {
+              button.disabled = false;
+              button.textContent = oldText;
+            }
+          }, 1400);
+        } catch (error) {
+          console.error('[Inventory Use] Failed:', error);
+
+          if (button) {
+            button.disabled = false;
+            button.textContent = oldText;
+          }
+
+          if (hint) {
+            hint.textContent = error?.message || 'فشل استخدام الغرض.';
+          }
+        }
+      }
       function openItemDetailModalV3(item) {
         const name = String(item.name || 'غرض').trim();
         const meta = itemMetaForDetail(name);
