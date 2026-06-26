@@ -8313,6 +8313,24 @@ const metadata = {
     }
 
 
+    /* ITEM_MODAL_DISABLED_ACTIONS_V37 */
+    .item-action-btn[disabled],
+    .item-action-btn.is-disabled {
+      opacity: .42 !important;
+      filter: grayscale(1) saturate(.45) !important;
+      cursor: not-allowed !important;
+      pointer-events: none !important;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+
+    .item-action-btn[disabled]:hover,
+    .item-action-btn.is-disabled:hover {
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -9780,6 +9798,51 @@ const metadata = {
       function isSaleDisabled(meta) {
         if (!meta) return true
         return meta.excludeSale === true || meta.excludeSale === 1 || String(meta.excludeSale).toLowerCase() === 'true'
+      }
+
+      function boolFlag(value) {
+        if (value === true || value === 1) return true
+        const text = String(value ?? '').trim().toLowerCase()
+        return text === 'true' || text === 'yes' || text === '1' || text === 'disabled' || text === 'off'
+      }
+
+      function falseFlag(value) {
+        if (value === false || value === 0) return true
+        const text = String(value ?? '').trim().toLowerCase()
+        return text === 'false' || text === 'no' || text === '0' || text === 'enabled' || text === 'on'
+      }
+
+      function isUseDisabled(meta, item = null) {
+        const sources = [meta || {}, item || {}]
+
+        for (const source of sources) {
+          const disabledValue =
+            source.excludeUse ??
+            source.disableUse ??
+            source.disabledUse ??
+            source.noUse ??
+            source.notUsable ??
+            source.isUseDisabled
+
+          if (disabledValue !== undefined && disabledValue !== null && disabledValue !== '') {
+            if (boolFlag(disabledValue)) return true
+            if (falseFlag(disabledValue)) return false
+          }
+
+          const enabledValue =
+            source.canUse ??
+            source.usable ??
+            source.isUsable ??
+            source.allowUse ??
+            source.useEnabled
+
+          if (enabledValue !== undefined && enabledValue !== null && enabledValue !== '') {
+            if (boolFlag(enabledValue)) return false
+            if (falseFlag(enabledValue)) return true
+          }
+        }
+
+        return false
       }
 
       async function getCurrentAccount() {
@@ -11581,6 +11644,10 @@ const metadata = {
           return
         }
 
+        const meta = findCatalogItemByName(item.name)
+        const useDisabled = isUseDisabled(meta, item)
+        const saleDisabled = isSaleDisabled(meta)
+
         const modal = document.createElement('div')
         modal.className = 'modal-backdrop show'
         modal.innerHTML = `
@@ -11596,9 +11663,9 @@ const metadata = {
               </div>
             </div>
             <div class="item-actions">
-              <button class="item-action-btn" type="button" data-item-action="use">استخدام</button>
+              <button class="item-action-btn ${useDisabled ? 'is-disabled' : ''}" type="button" data-item-action="use" ${useDisabled ? 'disabled aria-disabled="true"' : ''}>${useDisabled ? 'لا يمكن استخدامه' : 'استخدام'}</button>
               <button class="item-action-btn" type="button" data-item-action="gift">إهداء</button>
-              <button class="item-action-btn" type="button" data-item-action="sell">بيع</button>
+              <button class="item-action-btn ${saleDisabled ? 'is-disabled' : ''}" type="button" data-item-action="sell" ${saleDisabled ? 'disabled aria-disabled="true"' : ''}>${saleDisabled ? 'لا يباع' : 'بيع'}</button>
               <button class="item-action-btn" type="button" data-item-action="market">عرض في السوق</button>
             </div>
             <div class="item-command-hint" data-item-hint>
@@ -11617,6 +11684,8 @@ const metadata = {
 
         modal.querySelectorAll('[data-item-action]').forEach((button) => {
           addListener(button, 'click', () => {
+            if (button.disabled) return
+
             const hint = modal.querySelector('[data-item-hint]')
             if (hint) hint.innerHTML = itemActionHint(button.dataset.itemAction, item)
           })
