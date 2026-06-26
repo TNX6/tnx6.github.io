@@ -7421,6 +7421,34 @@ const metadata = {
     display: none !important;
   }
 
+    #points {
+      display: inline-block;
+      font-variant-numeric: tabular-nums;
+      will-change: contents, transform;
+    }
+
+    #points.is-points-counting {
+      animation: tnxPointsCountPop .62s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes tnxPointsCountPop {
+      0% {
+        transform: translateY(0) scale(1);
+        text-shadow: none;
+      }
+
+      38% {
+        transform: translateY(-1px) scale(1.045);
+        text-shadow: 0 0 18px rgba(232, 196, 103, .30);
+      }
+
+      100% {
+        transform: translateY(0) scale(1);
+        text-shadow: none;
+      }
+    }
+
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -7563,6 +7591,69 @@ const metadata = {
       function formatNumber(value) {
         return num(value).toLocaleString('en-US')
       }
+
+      function parseDisplayedNumber(value) {
+        const cleaned = String(value || '').replace(/,/g, '')
+        const match = cleaned.match(/-?\d+(?:\.\d+)?/)
+        if (!match) return null
+
+        const parsed = Number(match[0])
+        return Number.isFinite(parsed) ? parsed : null
+      }
+
+      function setProfilePointsV1(value, options = {}) {
+        const el = $('points')
+        if (!el) return
+
+        const target = Math.max(0, Math.floor(Number(value || 0)))
+        const shouldAnimate = options.animate !== false
+        const rawCurrent = parseDisplayedNumber(el.textContent)
+        const current = rawCurrent === null ? target : Math.max(0, Math.floor(Number(rawCurrent || 0)))
+
+        if (!shouldAnimate || rawCurrent === null || target <= current) {
+          if (window.__tnxPointsAnimationFrameV1) {
+            cancelAnimationFrame(window.__tnxPointsAnimationFrameV1)
+            window.__tnxPointsAnimationFrameV1 = 0
+          }
+
+          el.classList.remove('is-points-counting')
+          el.textContent = formatNumber(target)
+          return
+        }
+
+        if (window.__tnxPointsAnimationFrameV1) {
+          cancelAnimationFrame(window.__tnxPointsAnimationFrameV1)
+          window.__tnxPointsAnimationFrameV1 = 0
+        }
+
+        const start = current
+        const delta = target - start
+        const startedAt = performance.now()
+        const duration = Math.min(1200, Math.max(520, 360 + Math.log10(Math.max(10, delta)) * 140))
+
+        el.classList.remove('is-points-counting')
+        void el.offsetWidth
+        el.classList.add('is-points-counting')
+
+        const step = (now) => {
+          const progress = Math.min(1, (now - startedAt) / duration)
+          const eased = 1 - Math.pow(1 - progress, 3)
+          const next = Math.round(start + (delta * eased))
+
+          el.textContent = formatNumber(next)
+
+          if (progress < 1) {
+            window.__tnxPointsAnimationFrameV1 = requestAnimationFrame(step)
+          } else {
+            el.textContent = formatNumber(target)
+            window.__tnxPointsAnimationFrameV1 = 0
+            window.setTimeout(() => el.classList.remove('is-points-counting'), 180)
+          }
+        }
+
+        window.__tnxPointsAnimationFrameV1 = requestAnimationFrame(step)
+      }
+
 
       function safeUrl(value) {
         const url = String(value || '').trim()
@@ -8580,7 +8671,7 @@ const metadata = {
         setText('rank', rankFor(user))
         setText('messages', formatNumber(messagesFor(user)))
         setText('checkins', formatNumber(checkinsFor(user)))
-        setText('points', formatNumber(currentPoints(user)))
+        setProfilePointsV1(currentPoints(user))
 
         setText('inventoryCount', `${inventory.length} ${inventory.length === 1 ? 'غرض' : 'أغراض'}`)
         setText('badgesCount', `${badges.length} مفتوحة`)
@@ -10520,7 +10611,7 @@ const metadata = {
           const badges = Array.isArray(user.badges) ? user.badges : []
           const level = calculateLevel(user)
 
-          setText('points', formatNumber(points))
+          setProfilePointsV1(points)
           setText('rank', rankFor(user))
           renderChips(chipsFor(user, level.level, badges, inventory))
           renderNextBadge(user, badges)
@@ -11013,7 +11104,7 @@ const metadata = {
             const badges = Array.isArray(nextUser.badges) ? nextUser.badges : []
             const level = calculateLevel(nextUser)
 
-            setText('points', formatNumber(points))
+            setProfilePointsV1(points)
             setText('rank', rankFor(nextUser))
             renderChips(chipsFor(nextUser, level.level, badges, inventory))
             renderNextBadge(nextUser, badges)
