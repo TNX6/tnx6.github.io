@@ -8175,6 +8175,51 @@ const metadata = {
     }
 
 
+    /* BP30 smooth picker performance overrides */
+    .bp29-modal,
+    .bp29-scroller,
+    .bp29-grid {
+      contain: layout paint;
+    }
+
+    .bp29-card {
+      contain: layout paint style;
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease, opacity .14s ease;
+    }
+
+    .bp29-card:hover {
+      transform: translate3d(0, -2px, 0);
+      box-shadow: none;
+    }
+
+    .bp29-card.sel {
+      box-shadow: 0 0 0 1px rgba(240,196,90,.34);
+    }
+
+    .bp29-card.sel .bp29-ring {
+      animation: none !important;
+    }
+
+    .bp29-card.lock {
+      filter: none !important;
+      opacity: .45;
+    }
+
+    .bp29-tick {
+      transition: transform .16s ease;
+    }
+
+    .bp29-chip,
+    .bp29-pip,
+    .bp29-save,
+    .bp29-clear {
+      transition-duration: .12s;
+    }
+
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -11141,6 +11186,65 @@ const metadata = {
         const changed = () => JSON.stringify([...selected].sort()) !== JSON.stringify([...saved].sort())
         const byKey = (key) => selectable.find((badge) => bp29Key(badge) === key) || null
 
+        const updateSelectionState = () => {
+          const selectedSet = new Set(selected)
+          const full = selected.length >= BP29_LIMIT
+
+          shell.querySelectorAll('[data-bp29-key]').forEach((card) => {
+            const key = card.dataset.bp29Key || ''
+            const role = card.dataset.bp29Role === '1'
+            const isSelected = role || selectedSet.has(key)
+            const locked = !role && full && !isSelected
+
+            card.classList.toggle('sel', isSelected)
+            card.classList.toggle('lock', locked)
+            card.setAttribute('aria-pressed', isSelected ? 'true' : 'false')
+          })
+
+          const pips = shell.querySelector('[data-bp29-pips]')
+          if (pips) {
+            pips.innerHTML = Array.from({ length: BP29_LIMIT }, (_, index) =>
+              `<span class="bp29-pip ${index < selected.length ? 'on' : ''}"></span>`
+            ).join('')
+          }
+
+          const count = shell.querySelector('[data-bp29-count]')
+          if (count) count.textContent = String(selected.length)
+
+          const tray = shell.querySelector('[data-bp29-tray]')
+          if (tray) tray.classList.toggle('show', selected.length > 0)
+
+          const chips = shell.querySelector('[data-bp29-chips]')
+          if (chips) {
+            chips.innerHTML = selected.map((key) => {
+              const badge = byKey(key)
+              if (!badge) return ''
+
+              const image = badgeImage(badge)
+              const name = badgeName(badge)
+
+              return `
+                <button class="bp29-chip" type="button" data-bp29-remove="${esc(key)}" title="إزالة ${esc(name)}">
+                  <span class="dot">${image ? `<img src="${esc(image)}" alt="" />` : esc(bp29Fallback(badge))}</span>
+                  <code>${esc(bp29ShortName(name))}</code>
+                  <span class="x">×</span>
+                </button>
+              `
+            }).join('')
+          }
+
+          const clear = shell.querySelector('[data-bp29-clear]')
+          if (clear) clear.disabled = selected.length === 0
+
+          const save = shell.querySelector('[data-bp29-save]')
+          if (save) {
+            save.disabled = !changed()
+            save.textContent = !changed()
+              ? (selected.length ? 'لا توجد تغييرات' : 'احفظ الاختيار')
+              : `احفظ الاختيار (${selected.length})`
+          }
+        }
+
         const render = () => {
           const normalizedQuery = normalize(query)
           const full = selected.length >= BP29_LIMIT
@@ -11188,46 +11292,7 @@ const metadata = {
               : `<div class="bp29-empty">ما فيه بادج بهذا الاسم — جرّب كلمة ثانية.</div>`
           }
 
-          const pips = shell.querySelector('[data-bp29-pips]')
-          if (pips) {
-            pips.innerHTML = Array.from({ length: BP29_LIMIT }, (_, index) =>
-              `<span class="bp29-pip ${index < selected.length ? 'on' : ''}"></span>`
-            ).join('')
-          }
-
-          const count = shell.querySelector('[data-bp29-count]')
-          if (count) count.textContent = String(selected.length)
-
-          const tray = shell.querySelector('[data-bp29-tray]')
-          if (tray) tray.classList.toggle('show', selected.length > 0)
-
-          const chips = shell.querySelector('[data-bp29-chips]')
-          if (chips) {
-            chips.innerHTML = selected.map((key) => {
-              const badge = byKey(key)
-              if (!badge) return ''
-              const image = badgeImage(badge)
-              const name = badgeName(badge)
-              return `
-                <button class="bp29-chip" type="button" data-bp29-remove="${esc(key)}" title="إزالة ${esc(name)}">
-                  <span class="dot">${image ? `<img src="${esc(image)}" alt="" />` : esc(bp29Fallback(badge))}</span>
-                  <code>${esc(bp29ShortName(name))}</code>
-                  <span class="x">×</span>
-                </button>
-              `
-            }).join('')
-          }
-
-          const clear = shell.querySelector('[data-bp29-clear]')
-          if (clear) clear.disabled = selected.length === 0
-
-          const save = shell.querySelector('[data-bp29-save]')
-          if (save) {
-            save.disabled = !changed()
-            save.textContent = !changed()
-              ? (selected.length ? 'لا توجد تغييرات' : 'احفظ الاختيار')
-              : `احفظ الاختيار (${selected.length})`
-          }
+          updateSelectionState()
         }
 
         shell.addEventListener('click', (event) => {
@@ -11250,14 +11315,14 @@ const metadata = {
 
           if (target.closest('[data-bp29-clear]')) {
             selected = []
-            render()
+            updateSelectionState()
             return
           }
 
           const remove = target.closest('[data-bp29-remove]')
           if (remove) {
             selected = selected.filter((key) => key !== remove.dataset.bp29Remove)
-            render()
+            updateSelectionState()
             return
           }
 
@@ -11283,7 +11348,7 @@ const metadata = {
 
           if (selected.includes(key)) {
             selected = selected.filter((item) => item !== key)
-            render()
+            updateSelectionState()
             return
           }
 
@@ -11293,12 +11358,14 @@ const metadata = {
           }
 
           selected = [...selected, key]
-          render()
+          updateSelectionState()
         })
 
+        let searchTimer = 0
         shell.querySelector('[data-bp29-search]')?.addEventListener('input', (event) => {
           query = event.target.value || ''
-          render()
+          window.clearTimeout(searchTimer)
+          searchTimer = window.setTimeout(render, 80)
         })
 
         shell.addEventListener('keydown', (event) => {
