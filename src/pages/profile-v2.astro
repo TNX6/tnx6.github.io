@@ -8220,6 +8220,77 @@ const metadata = {
     }
 
 
+    /* BP31_ULTRA_SMOOTH */
+    /* BP31 ultra smooth picker performance overrides */
+    .bp29-modal,
+    .bp29-scroller,
+    .bp29-grid,
+    .bp29-card,
+    .bp29-medal,
+    .bp29-core {
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+
+    .bp29-card {
+      transition: border-color .08s linear, background .08s linear, opacity .08s linear !important;
+      will-change: auto !important;
+      box-shadow: none !important;
+    }
+
+    .bp29-card:hover {
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .bp29-ring {
+      display: none !important;
+    }
+
+    .bp29-card.sel {
+      box-shadow: none !important;
+      background: linear-gradient(180deg,#231a0d,#1a1207) !important;
+    }
+
+    .bp29-card.sel .bp29-core {
+      outline: 2px solid rgba(240,196,90,.72);
+      outline-offset: 3px;
+      box-shadow: none !important;
+    }
+
+    .bp29-tick {
+      transition: none !important;
+    }
+
+    .bp29-card.lock {
+      filter: none !important;
+      opacity: .42;
+    }
+
+    .bp29-card.lock:hover .bp29-hint,
+    .bp29-card.lock:hover .bp29-cat {
+      opacity: 1;
+    }
+
+    .bp29-chip,
+    .bp29-pip,
+    .bp29-plus,
+    .bp29-save,
+    .bp29-cancel,
+    .bp29-clear {
+      transition: none !important;
+    }
+
+    .bp29-chip {
+      animation: none !important;
+    }
+
+    .bp29-core img,
+    .bp29-mini img {
+      filter: none !important;
+    }
+
+
 </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -11186,26 +11257,44 @@ const metadata = {
         const changed = () => JSON.stringify([...selected].sort()) !== JSON.stringify([...saved].sort())
         const byKey = (key) => selectable.find((badge) => bp29Key(badge) === key) || null
 
-        const updateSelectionState = () => {
+        const updateSelectionState = (changedKey = null, previousCount = selected.length) => {
           const selectedSet = new Set(selected)
           const full = selected.length >= BP29_LIMIT
+          const mustRefreshLocks = changedKey === null || previousCount >= BP29_LIMIT || selected.length >= BP29_LIMIT
 
-          shell.querySelectorAll('[data-bp29-key]').forEach((card) => {
-            const key = card.dataset.bp29Key || ''
-            const role = card.dataset.bp29Role === '1'
-            const isSelected = role || selectedSet.has(key)
-            const locked = !role && full && !isSelected
+          if (mustRefreshLocks) {
+            shell.querySelectorAll('[data-bp29-key]').forEach((card) => {
+              const key = card.dataset.bp29Key || ''
+              const role = card.dataset.bp29Role === '1'
+              const isSelected = role || selectedSet.has(key)
+              const locked = !role && full && !isSelected
 
-            card.classList.toggle('sel', isSelected)
-            card.classList.toggle('lock', locked)
-            card.setAttribute('aria-pressed', isSelected ? 'true' : 'false')
-          })
+              card.classList.toggle('sel', isSelected)
+              card.classList.toggle('lock', locked)
+              card.setAttribute('aria-pressed', isSelected ? 'true' : 'false')
+            })
+          } else if (changedKey) {
+            shell.querySelectorAll('[data-bp29-key]').forEach((card) => {
+              if ((card.dataset.bp29Key || '') !== changedKey) return
+
+              const role = card.dataset.bp29Role === '1'
+              const isSelected = role || selectedSet.has(changedKey)
+
+              card.classList.toggle('sel', isSelected)
+              card.classList.remove('lock')
+              card.setAttribute('aria-pressed', isSelected ? 'true' : 'false')
+            })
+          }
 
           const pips = shell.querySelector('[data-bp29-pips]')
           if (pips) {
-            pips.innerHTML = Array.from({ length: BP29_LIMIT }, (_, index) =>
-              `<span class="bp29-pip ${index < selected.length ? 'on' : ''}"></span>`
-            ).join('')
+            if (!pips.children.length) {
+              pips.innerHTML = Array.from({ length: BP29_LIMIT }, () => `<span class="bp29-pip"></span>`).join('')
+            }
+
+            Array.from(pips.children).forEach((pip, index) => {
+              pip.classList.toggle('on', index < selected.length)
+            })
           }
 
           const count = shell.querySelector('[data-bp29-count]')
@@ -11244,6 +11333,7 @@ const metadata = {
               : `احفظ الاختيار (${selected.length})`
           }
         }
+
 
         const render = () => {
           const normalizedQuery = normalize(query)
@@ -11292,7 +11382,7 @@ const metadata = {
               : `<div class="bp29-empty">ما فيه بادج بهذا الاسم — جرّب كلمة ثانية.</div>`
           }
 
-          updateSelectionState()
+          updateSelectionState(null)
         }
 
         shell.addEventListener('click', (event) => {
@@ -11314,15 +11404,18 @@ const metadata = {
           }
 
           if (target.closest('[data-bp29-clear]')) {
+            const previousCount = selected.length
             selected = []
-            updateSelectionState()
+            updateSelectionState(null, previousCount)
             return
           }
 
           const remove = target.closest('[data-bp29-remove]')
           if (remove) {
-            selected = selected.filter((key) => key !== remove.dataset.bp29Remove)
-            updateSelectionState()
+            const keyToRemove = remove.dataset.bp29Remove
+            const previousCount = selected.length
+            selected = selected.filter((key) => key !== keyToRemove)
+            updateSelectionState(keyToRemove, previousCount)
             return
           }
 
@@ -11347,8 +11440,9 @@ const metadata = {
           const key = option.dataset.bp29Key || ''
 
           if (selected.includes(key)) {
+            const previousCount = selected.length
             selected = selected.filter((item) => item !== key)
-            updateSelectionState()
+            updateSelectionState(key, previousCount)
             return
           }
 
@@ -11357,8 +11451,9 @@ const metadata = {
             return
           }
 
+          const previousCount = selected.length
           selected = [...selected, key]
-          updateSelectionState()
+          updateSelectionState(key, previousCount)
         })
 
         let searchTimer = 0
