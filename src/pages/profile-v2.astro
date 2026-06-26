@@ -240,9 +240,7 @@ const metadata = {
     </div>
 
     <button id="backToTop" class="back-top" type="button" aria-label="الرجوع للأعلى">↑</button>
-  
-<!-- TNX_PROFILE_BADGE_PICKER_V24_NO_DUPLICATE_PLUS -->
-</main>
+  </main>
 
   <style is:global>
     :root {
@@ -7451,72 +7449,79 @@ const metadata = {
     }
 
 
-    /* Badge picker v23 — closer to Claude mockup */
+    /* TNX clean badge picker v29 — no old modal / no old selected storage */
     .profile-featured-badges {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
       margin: 8px 0 4px;
+      min-height: 34px;
     }
 
     .profile-featured-badges.hidden {
       display: none !important;
     }
 
-    .profile-featured-badge-mini,
-    .profile-featured-badge-add {
+    .bp29-mini,
+    .bp29-plus {
       width: 34px;
       height: 34px;
-      border-radius: 999px;
+      min-width: 34px;
+      min-height: 34px;
       display: inline-grid;
       place-items: center;
+      border-radius: 999px;
       border: 1px solid rgba(240,196,90,.34);
-      background: rgba(20, 14, 7, .66);
-      color: #f0c45a;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 10px 24px rgba(0,0,0,.24);
+      background:
+        radial-gradient(circle at 50% 20%, rgba(240,196,90,.14), transparent 42%),
+        rgba(0,0,0,.34);
+      color: rgba(255,239,196,.94);
+      box-shadow: 0 10px 22px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.04);
       overflow: hidden;
     }
 
-    .profile-featured-badge-mini img {
-      width: 25px;
-      height: 25px;
+    .bp29-mini img {
+      width: 24px;
+      height: 24px;
       object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 5px 10px rgba(0,0,0,.35));
     }
 
-    .profile-featured-badge-mini span {
+    .bp29-mini span {
       font-family: Oxanium, Tajawal, system-ui, sans-serif;
-      font-weight: 900;
       font-size: 11px;
+      font-weight: 900;
       direction: ltr;
     }
 
-    .profile-featured-badge-add {
-      border-style: dashed;
+    .bp29-plus {
+      border: 2px dashed rgba(240,196,90,.62);
       cursor: pointer;
-      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+      transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
     }
 
-    .profile-featured-badge-add:hover {
+    .bp29-plus:hover {
       transform: translateY(-2px) scale(1.05);
-      border-color: rgba(240,196,90,.85);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 14px 28px rgba(0,0,0,.30), 0 0 18px rgba(240,196,90,.16);
+      border-color: rgba(240,196,90,.95);
+      box-shadow: 0 14px 30px rgba(0,0,0,.36), 0 0 24px rgba(240,196,90,.22);
     }
 
-    .profile-featured-badge-add span {
+    .bp29-plus span {
       width: 19px;
       height: 19px;
-      border-radius: 999px;
       display: grid;
       place-items: center;
-      background: linear-gradient(180deg, #f0c45a, #b8862e);
+      border-radius: 999px;
+      background: linear-gradient(180deg,#f0c45a,#b8862e);
       color: #2a1f08;
       font-size: 16px;
       font-weight: 1000;
       line-height: 1;
     }
 
-    .tnxbp-shell {
+    .bp29-shell {
       position: fixed;
       inset: 0;
       z-index: 100000;
@@ -7526,7 +7531,7 @@ const metadata = {
       direction: rtl;
     }
 
-    .tnxbp-backdrop {
+    .bp29-backdrop {
       position: absolute;
       inset: 0;
       border: 0;
@@ -7536,21 +7541,7 @@ const metadata = {
       cursor: pointer;
     }
 
-    .tnxbp-modal {
-      --bp-bg:#0c0a07;
-      --bp-panel:#15110c;
-      --bp-card:#191309;
-      --bp-card-hi:#221a0f;
-      --bp-line:#2c2316;
-      --bp-line-soft:#241c12;
-      --bp-gold:#f0c45a;
-      --bp-gold-deep:#b8862e;
-      --bp-txt:#f4ecdc;
-      --bp-txt-2:#b9ad97;
-      --bp-txt-3:#857a66;
-      --bp-bad:#e0795f;
-      --bp-ease:cubic-bezier(.34,1.3,.5,1);
-
+    .bp29-modal {
       position: relative;
       z-index: 1;
       width: min(940px, 100%);
@@ -7558,76 +7549,74 @@ const metadata = {
       background:
         radial-gradient(1200px 700px at 80% -10%, #1c150c 0%, transparent 55%),
         radial-gradient(900px 600px at 10% 110%, #170f07 0%, transparent 50%),
-        linear-gradient(180deg,var(--bp-panel) 0%,#100c08 100%);
-      border: 1px solid var(--bp-line);
+        linear-gradient(180deg,#15110c 0%,#100c08 100%);
+      border: 1px solid #2c2316;
       border-radius: 26px;
       box-shadow: 0 40px 90px -30px #000, 0 0 0 1px #00000055, inset 0 1px 0 #ffffff0a;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      color: var(--bp-txt);
+      color: #f4ecdc;
       font-family: Tajawal, system-ui, sans-serif;
-      animation: tnxbpIn .22s var(--bp-ease) both;
+      animation: bp29In .22s cubic-bezier(.34,1.3,.5,1) both;
     }
 
-    .tnxbp-modal::before {
+    .bp29-modal::before {
       content: "";
       position: absolute;
       inset: 0;
-      border-radius: 26px;
       pointer-events: none;
       background: linear-gradient(180deg,#f0c45a22,transparent 18%);
       -webkit-mask: linear-gradient(#000,transparent 30%);
       mask: linear-gradient(#000,transparent 30%);
     }
 
-    @keyframes tnxbpIn {
+    @keyframes bp29In {
       from { opacity: 0; transform: translateY(8px) scale(.985); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    .tnxbp-head {
-      padding: 22px 26px 16px;
-      border-bottom: 1px solid var(--bp-line-soft);
+    .bp29-head {
       position: relative;
       z-index: 1;
+      padding: 22px 26px 16px;
+      border-bottom: 1px solid #241c12;
     }
 
-    .tnxbp-head-top {
+    .bp29-head-top {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
       gap: 16px;
     }
 
-    .tnxbp-title {
+    .bp29-title {
       font-size: 22px;
       font-weight: 800;
       letter-spacing: -.2px;
-      line-height: 1.2;
     }
 
-    .tnxbp-subtitle {
-      color: var(--bp-txt-3);
+    .bp29-subtitle {
+      color: #857a66;
       font-size: 13.5px;
       margin-top: 3px;
       line-height: 1.6;
-      font-weight: 600;
+      font-weight: 700;
     }
 
-    .tnxbp-subtitle b {
-      color: var(--bp-txt-2);
+    .bp29-subtitle b {
+      color: #b9ad97;
       font-weight: 800;
     }
 
-    .tnxbp-xbtn {
+    .bp29-close {
       width: 38px;
       height: 38px;
       border-radius: 12px;
       flex: none;
       background: #ffffff0a;
-      border: 1px solid var(--bp-line);
-      color: var(--bp-txt-2);
+      border: 1px solid #2c2316;
+      color: #b9ad97;
       display: grid;
       place-items: center;
       cursor: pointer;
@@ -7637,112 +7626,115 @@ const metadata = {
       padding: 0;
     }
 
-    .tnxbp-xbtn:hover {
+    .bp29-close:hover {
       background: #ffffff14;
-      color: var(--bp-txt);
+      color: #f4ecdc;
       transform: rotate(90deg);
     }
 
-    .tnxbp-counter {
+    .bp29-counter {
       display: flex;
       align-items: center;
       gap: 10px;
       margin-top: 14px;
     }
 
-    .tnxbp-pips {
+    .bp29-pips {
       display: flex;
       gap: 7px;
     }
 
-    .tnxbp-pip {
+    .bp29-pip {
       width: 34px;
       height: 7px;
       border-radius: 99px;
       background: #ffffff12;
-      transition: .35s var(--bp-ease);
+      transition: .25s ease;
     }
 
-    .tnxbp-pip.on {
-      background: linear-gradient(90deg,var(--bp-gold),var(--bp-gold-deep));
+    .bp29-pip.on {
+      background: linear-gradient(90deg,#f0c45a,#b8862e);
       box-shadow: 0 0 12px #f0c45a66;
     }
 
-    .tnxbp-count-num {
+    .bp29-count {
       font-family: Oxanium, Tajawal, system-ui, sans-serif;
       font-weight: 700;
       font-size: 14px;
-      color: var(--bp-txt-2);
+      color: #b9ad97;
     }
 
-    .tnxbp-count-num b {
-      color: var(--bp-gold);
+    .bp29-count b {
+      color: #f0c45a;
     }
 
-    .tnxbp-tools {
+    .bp29-tools {
+      position: relative;
+      z-index: 1;
       display: flex;
       gap: 12px;
       padding: 16px 26px 6px;
       align-items: center;
       flex-wrap: wrap;
-      position: relative;
-      z-index: 1;
     }
 
-    .tnxbp-search {
+    .bp29-search {
       flex: 1;
       min-width: 200px;
       position: relative;
     }
 
-    .tnxbp-search input {
-      width: 100%;
-      background: #0f0b06;
-      border: 1px solid var(--bp-line);
-      border-radius: 13px;
-      color: var(--bp-txt);
-      font-family: inherit;
-      font-size: 14.5px;
-      padding: 12px 44px 12px 14px;
-      outline: none;
-      transition: .18s;
-      height: 46px;
-      font-weight: 700;
-    }
-
-    .tnxbp-search input::placeholder {
-      color: var(--bp-txt-3);
-    }
-
-    .tnxbp-search input:focus {
-      border-color: var(--bp-gold-deep);
-      box-shadow: 0 0 0 3px #f0c45a1f;
-    }
-
-    .tnxbp-search-mark {
+    .bp29-search span {
       position: absolute;
       right: 14px;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--bp-txt-3);
+      color: #857a66;
       font-weight: 900;
-      font-size: 17px;
     }
 
-    .tnxbp-seg {
+    .bp29-search input {
+      width: 100%;
+      height: 46px;
+      background: #0f0b06;
+      border: 1px solid #2c2316;
+      border-radius: 13px;
+      color: #f4ecdc;
+      font: inherit;
+      font-size: 14.5px;
+      font-weight: 700;
+      padding: 12px 44px 12px 14px;
+      outline: none;
+      transition: .18s;
+    }
+
+    .bp29-search input::placeholder {
+      color: #857a66;
+    }
+
+    .bp29-search input:focus {
+      border-color: #b8862e;
+      box-shadow: 0 0 0 3px #f0c45a1f;
+    }
+
+    .bp29-seg {
       display: flex;
       background: #0f0b06;
-      border: 1px solid var(--bp-line);
+      border: 1px solid #2c2316;
       border-radius: 13px;
       padding: 4px;
       gap: 2px;
+      overflow-x: auto;
+      scrollbar-width: none;
     }
 
-    .tnxbp-seg button {
+    .bp29-seg::-webkit-scrollbar { display: none; }
+
+    .bp29-seg button {
       border: 0;
       background: transparent;
-      color: var(--bp-txt-2);
-      font-family: inherit;
+      color: #b9ad97;
+      font: inherit;
       font-weight: 700;
       font-size: 13.5px;
       padding: 8px 15px;
@@ -7752,17 +7744,19 @@ const metadata = {
       white-space: nowrap;
     }
 
-    .tnxbp-seg button:hover {
-      color: var(--bp-txt);
+    .bp29-seg button:hover {
+      color: #f4ecdc;
     }
 
-    .tnxbp-seg button.act {
-      background: linear-gradient(180deg,var(--bp-gold),var(--bp-gold-deep));
+    .bp29-seg button.act {
+      background: linear-gradient(180deg,#f0c45a,#b8862e);
       color: #2a1f08;
       box-shadow: 0 4px 14px -4px #f0c45a99;
     }
 
-    .tnxbp-tray {
+    .bp29-tray {
+      position: relative;
+      z-index: 1;
       padding: 4px 26px 0;
       display: flex;
       align-items: center;
@@ -7773,30 +7767,28 @@ const metadata = {
       opacity: 0;
       overflow: hidden;
       transition: max-height .3s ease, opacity .25s ease, padding .3s ease;
-      position: relative;
-      z-index: 1;
     }
 
-    .tnxbp-tray.show {
+    .bp29-tray.show {
       max-height: 120px;
       opacity: 1;
       padding: 14px 26px 2px;
     }
 
-    .tnxbp-tray-label {
-      color: var(--bp-txt-3);
+    .bp29-tray-label {
+      color: #857a66;
       font-size: 12.5px;
       font-weight: 700;
     }
 
-    .tnxbp-chips {
+    .bp29-chips {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
       flex: 1;
     }
 
-    .tnxbp-chip {
+    .bp29-chip {
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -7806,61 +7798,58 @@ const metadata = {
       padding: 6px 8px 6px 11px;
       font-size: 13px;
       font-weight: 700;
-      color: var(--bp-txt);
-      animation: tnxbpPop .3s var(--bp-ease);
+      color: #f4ecdc;
       cursor: pointer;
     }
 
-    .tnxbp-chip .dot {
+    .bp29-chip .dot {
       width: 18px;
       height: 18px;
       border-radius: 6px;
       display: grid;
       place-items: center;
-      background: linear-gradient(180deg,var(--bp-gold),var(--bp-gold-deep));
+      background: linear-gradient(180deg,#f0c45a,#b8862e);
       color: #2a1f08;
       font-size: 10px;
       overflow: hidden;
     }
 
-    .tnxbp-chip .dot img {
+    .bp29-chip .dot img {
       width: 15px;
       height: 15px;
       object-fit: contain;
     }
 
-    .tnxbp-chip code {
+    .bp29-chip code {
       font-family: Oxanium, Tajawal, system-ui, sans-serif;
       font-weight: 700;
       letter-spacing: .3px;
       direction: ltr;
     }
 
-    .tnxbp-chip .x {
+    .bp29-chip .x {
       width: 18px;
       height: 18px;
       border-radius: 6px;
-      border: 0;
       background: #ffffff10;
-      color: var(--bp-txt-2);
+      color: #b9ad97;
       display: grid;
       place-items: center;
-      transition: .15s;
       font-size: 14px;
       line-height: 1;
     }
 
-    .tnxbp-chip:hover .x {
-      background: var(--bp-bad);
+    .bp29-chip:hover .x {
+      background: #e0795f;
       color: #fff;
     }
 
-    .tnxbp-clear {
+    .bp29-clear {
       margin-inline-start: auto;
       background: transparent;
-      border: 1px solid var(--bp-line);
-      color: var(--bp-txt-2);
-      font-family: inherit;
+      border: 1px solid #2c2316;
+      color: #b9ad97;
+      font: inherit;
       font-weight: 700;
       font-size: 12.5px;
       padding: 7px 13px;
@@ -7869,68 +7858,53 @@ const metadata = {
       transition: .15s;
     }
 
-    .tnxbp-clear:hover:not(:disabled) {
-      border-color: var(--bp-bad);
-      color: var(--bp-bad);
+    .bp29-clear:hover:not(:disabled) {
+      border-color: #e0795f;
+      color: #e0795f;
     }
 
-    .tnxbp-clear:disabled {
+    .bp29-clear:disabled {
       opacity: .35;
       cursor: default;
     }
 
-    @keyframes tnxbpPop {
-      from { transform: scale(.8); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    .tnxbp-scroller {
+    .bp29-scroller {
+      position: relative;
+      z-index: 1;
       overflow-y: auto;
       padding: 18px 26px 22px;
       flex: 1;
       scrollbar-width: thin;
       scrollbar-color: #3a2e1a transparent;
-      position: relative;
-      z-index: 1;
     }
 
-    .tnxbp-scroller::-webkit-scrollbar {
-      width: 9px;
-    }
-
-    .tnxbp-scroller::-webkit-scrollbar-thumb {
-      background: #3a2e1a;
-      border-radius: 99px;
-      border: 2px solid var(--bp-panel);
-    }
-
-    .tnxbp-grid {
+    .bp29-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill,minmax(150px,1fr));
       gap: 14px;
     }
 
-    .tnxbp-badge {
+    .bp29-card {
       position: relative;
-      background: linear-gradient(180deg,var(--bp-card-hi),var(--bp-card));
-      border: 1.5px solid var(--bp-line);
+      background: linear-gradient(180deg,#221a0f,#191309);
+      border: 1.5px solid #2c2316;
       border-radius: 18px;
       padding: 18px 12px 14px;
       cursor: pointer;
       text-align: center;
-      transition: transform .22s var(--bp-ease), border-color .2s, box-shadow .25s, background .2s, opacity .2s;
+      transition: transform .22s cubic-bezier(.34,1.3,.5,1), border-color .2s, box-shadow .25s, background .2s, opacity .2s;
       user-select: none;
       min-height: 154px;
-      color: var(--bp-txt);
+      color: #f4ecdc;
     }
 
-    .tnxbp-badge:hover {
+    .bp29-card:hover {
       transform: translateY(-4px);
       border-color: #54421f;
       box-shadow: 0 16px 30px -18px #000;
     }
 
-    .tnxbp-medal {
+    .bp29-medal {
       position: relative;
       width: 74px;
       height: 74px;
@@ -7939,7 +7913,7 @@ const metadata = {
       place-items: center;
     }
 
-    .tnxbp-ring {
+    .bp29-ring {
       position: absolute;
       inset: 0;
       border-radius: 50%;
@@ -7947,11 +7921,10 @@ const metadata = {
       padding: 3px;
       -webkit-mask: radial-gradient(circle,transparent 58%,#000 60%);
       mask: radial-gradient(circle,transparent 58%,#000 60%);
-      transition: .3s;
       opacity: .85;
     }
 
-    .tnxbp-core {
+    .bp29-core {
       width: 54px;
       height: 54px;
       border-radius: 50%;
@@ -7968,26 +7941,27 @@ const metadata = {
       direction: ltr;
     }
 
-    .tnxbp-core img {
+    .bp29-core img {
       width: 34px;
       height: 34px;
       object-fit: contain;
     }
 
-    .tnxbp-tier-k .tnxbp-ring {
+    .bp29-card.tier-k .bp29-ring {
       background: conic-gradient(from 200deg,#6a3c22,#e0a85a,#8a4e2a,#f6cf86,#6a3c22);
     }
 
-    .tnxbp-tier-role .tnxbp-ring {
+    .bp29-card.tier-role .bp29-ring {
       background: conic-gradient(from 200deg,#4d2a7a,#b586ff,#6f43ad,#dcc6ff,#4d2a7a);
     }
 
-    .tnxbp-bname {
+    .bp29-name {
+      display: block;
       font-family: Oxanium, Tajawal, system-ui, sans-serif;
       font-weight: 700;
       font-size: 18px;
       letter-spacing: .5px;
-      color: var(--bp-txt);
+      color: #f4ecdc;
       direction: ltr;
       white-space: nowrap;
       overflow: hidden;
@@ -7996,14 +7970,15 @@ const metadata = {
       margin: 0 auto;
     }
 
-    .tnxbp-bcat {
+    .bp29-cat {
+      display: block;
       font-size: 11.5px;
-      color: var(--bp-txt-3);
+      color: #857a66;
       margin-top: 3px;
       font-weight: 500;
     }
 
-    .tnxbp-info {
+    .bp29-info {
       position: absolute;
       top: 9px;
       inset-inline-start: 9px;
@@ -8011,169 +7986,136 @@ const metadata = {
       height: 24px;
       border-radius: 8px;
       background: #ffffff0c;
-      border: 1px solid var(--bp-line);
-      color: var(--bp-txt-3);
+      border: 1px solid #2c2316;
+      color: #857a66;
       display: grid;
       place-items: center;
       font-family: Oxanium, Tajawal, system-ui, sans-serif;
       font-weight: 700;
       font-size: 12px;
-      cursor: help;
-      transition: .15s;
       z-index: 3;
       font-style: normal;
     }
 
-    .tnxbp-info:hover {
-      background: #ffffff18;
-      color: var(--bp-gold);
-    }
-
-    .tnxbp-tick {
+    .bp29-tick {
       position: absolute;
       top: 9px;
       inset-inline-end: 9px;
       width: 26px;
       height: 26px;
       border-radius: 9px;
-      background: linear-gradient(180deg,var(--bp-gold),var(--bp-gold-deep));
+      background: linear-gradient(180deg,#f0c45a,#b8862e);
       display: grid;
       place-items: center;
       transform: scale(0);
-      transition: transform .28s var(--bp-ease);
+      transition: transform .28s cubic-bezier(.34,1.3,.5,1);
       box-shadow: 0 4px 12px -3px #f0c45a;
       z-index: 3;
       color: #2a1f08;
       font-weight: 1000;
     }
 
-    .tnxbp-badge.sel {
-      border-color: var(--bp-gold);
+    .bp29-card.sel {
+      border-color: #f0c45a;
       background: linear-gradient(180deg,#2a2010,#1c1409);
       box-shadow: 0 0 0 1px #f0c45a55, 0 14px 34px -16px #f0c45a66;
     }
 
-    .tnxbp-badge.sel .tnxbp-tick {
+    .bp29-card.sel .bp29-tick {
       transform: scale(1);
     }
 
-    .tnxbp-badge.sel .tnxbp-ring {
-      opacity: 1;
+    .bp29-card.sel .bp29-ring {
       animation: spin 9s linear infinite;
     }
 
-    .tnxbp-badge.sel .tnxbp-core {
-      box-shadow: inset 0 2px 6px #00000088, 0 0 22px -4px #f0c45a55;
-    }
-
-    .tnxbp-badge.lock {
+    .bp29-card.lock {
       opacity: .4;
       cursor: not-allowed;
       filter: saturate(.5);
     }
 
-    .tnxbp-badge.lock:hover {
-      transform: none;
-      border-color: var(--bp-line);
-      box-shadow: none;
-    }
-
-    .tnxbp-hint {
+    .bp29-hint {
       position: absolute;
       inset: auto 0 12px;
       font-size: 11px;
       font-weight: 700;
-      color: var(--bp-gold);
+      color: #f0c45a;
       opacity: 0;
       transition: .18s;
       pointer-events: none;
     }
 
-    .tnxbp-badge.lock:hover .tnxbp-hint {
+    .bp29-card.lock:hover .bp29-hint {
       opacity: 1;
     }
 
-    .tnxbp-badge.lock:hover .tnxbp-bcat {
+    .bp29-card.lock:hover .bp29-cat {
       opacity: 0;
     }
 
-    .tnxbp-badge.limit-hit {
-      border-color: var(--bp-bad);
-      box-shadow: 0 0 0 1px rgba(224,121,95,.30), 0 16px 28px -18px rgba(224,121,95,.70);
-      animation: tnxbpShake .28s ease both;
-    }
-
-    @keyframes tnxbpShake {
-      0%, 100% { transform: translateX(0); }
-      35% { transform: translateX(4px); }
-      70% { transform: translateX(-4px); }
-    }
-
-    .tnxbp-empty {
+    .bp29-empty {
       grid-column: 1/-1;
       text-align: center;
-      color: var(--bp-txt-3);
+      color: #857a66;
       padding: 46px 0;
       font-size: 14.5px;
       font-weight: 700;
     }
 
-    .tnxbp-foot {
+    .bp29-foot {
+      position: relative;
+      z-index: 1;
       display: flex;
       gap: 12px;
       padding: 16px 26px;
-      border-top: 1px solid var(--bp-line-soft);
+      border-top: 1px solid #241c12;
       background: linear-gradient(180deg,transparent,#0d0905);
-      position: relative;
-      z-index: 1;
     }
 
-    .tnxbp-save {
-      flex: 1;
-      border: 0;
+    .bp29-save,
+    .bp29-cancel {
       border-radius: 14px;
-      padding: 15px;
-      font-family: inherit;
+      padding: 15px 24px;
+      font: inherit;
+      font-size: 15px;
       font-weight: 800;
-      font-size: 15.5px;
       cursor: pointer;
       transition: .2s;
+    }
+
+    .bp29-save {
+      flex: 1;
+      border: 0;
       color: #2a1f08;
-      background: linear-gradient(180deg,var(--bp-gold),var(--bp-gold-deep));
+      background: linear-gradient(180deg,#f0c45a,#b8862e);
       box-shadow: 0 10px 26px -10px #f0c45ac0;
     }
 
-    .tnxbp-save:hover:not(:disabled) {
+    .bp29-save:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 16px 32px -10px #f0c45a;
     }
 
-    .tnxbp-save:disabled {
+    .bp29-save:disabled {
       background: #221a10;
-      color: var(--bp-txt-3);
+      color: #857a66;
       box-shadow: none;
       cursor: default;
     }
 
-    .tnxbp-cancel {
-      border: 1px solid var(--bp-line);
+    .bp29-cancel {
+      border: 1px solid #2c2316;
       background: #ffffff08;
-      color: var(--bp-txt-2);
-      border-radius: 14px;
-      padding: 15px 26px;
-      font-family: inherit;
-      font-weight: 700;
-      font-size: 15px;
-      cursor: pointer;
-      transition: .18s;
+      color: #b9ad97;
     }
 
-    .tnxbp-cancel:hover {
+    .bp29-cancel:hover {
       background: #ffffff12;
-      color: var(--bp-txt);
+      color: #f4ecdc;
     }
 
-    .tnxbp-toast {
+    .bp29-toast {
       position: fixed;
       bottom: 26px;
       left: 50%;
@@ -8193,79 +8135,43 @@ const metadata = {
       transition: .18s ease;
     }
 
-    .tnxbp-toast.show {
+    .bp29-toast.show {
       opacity: 1;
       transform: translateX(-50%) translateY(0) scale(1);
     }
 
-    @media (max-width: 560px) {
-      .tnxbp-shell {
+    @media (max-width:560px) {
+      .bp29-shell {
         align-items: end;
         padding: 0;
       }
 
-      .tnxbp-modal {
+      .bp29-modal {
         width: 100vw;
         max-height: 92vh;
         border-radius: 24px 24px 0 0;
       }
 
-      .tnxbp-head,
-      .tnxbp-tools,
-      .tnxbp-tray.show,
-      .tnxbp-scroller,
-      .tnxbp-foot {
+      .bp29-head,
+      .bp29-tools,
+      .bp29-tray.show,
+      .bp29-scroller,
+      .bp29-foot {
         padding-inline: 18px;
       }
 
-      .tnxbp-title {
+      .bp29-title {
         font-size: 19px;
       }
 
-      .tnxbp-grid {
+      .bp29-grid {
         grid-template-columns: repeat(auto-fill,minmax(130px,1fr));
         gap: 11px;
       }
 
-      .tnxbp-cancel {
-        padding: 15px 18px;
+      .bp29-card {
+        min-height: 140px;
       }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .tnxbp-modal,
-      .tnxbp-badge,
-      .tnxbp-badge.sel .tnxbp-ring,
-      .tnxbp-chip {
-        animation: none !important;
-        transition-duration: .01ms !important;
-      }
-    }
-
-    /* Badge picker v24 safety: remove old picker flashes and force one plus */
-    .featured-badge-modal-test,
-    .featured-badge-toast {
-      display: none !important;
-      visibility: hidden !important;
-      pointer-events: none !important;
-    }
-
-    #featuredBadgePlusTest,
-    .featured-badge-plus-test,
-    [data-featured-badge-add-v22] {
-      display: none !important;
-      visibility: hidden !important;
-      pointer-events: none !important;
-    }
-
-    #featuredBadges .profile-featured-badge-add {
-      display: inline-grid !important;
-      visibility: visible !important;
-      pointer-events: auto !important;
-    }
-
-    #featuredBadges .profile-featured-badge-add + .profile-featured-badge-add {
-      display: none !important;
     }
 
 
@@ -9504,7 +9410,7 @@ const metadata = {
         renderInventory(inventory)
         enhanceInventorySellButtons(inventory)
         renderBadges(badges)
-        renderFeaturedBadgesV23(user)
+        renderFeaturedBadgesCleanV29(user)
         renderMail(mail)
       }
 
@@ -10989,30 +10895,30 @@ const metadata = {
       }
 
 
-      /* Badge picker v23 — dynamic version of the Claude mockup */
-      const TNXBP_LIMIT = 3
-      const TNXBP_STORAGE = 'tnx_featured_badges_v23:'
+      /* Clean badge picker v29: single source, new localStorage key, no legacy picker */
+      const BP29_LIMIT = 3
+      const BP29_STORAGE_PREFIX = 'tnx_profile_featured_badges_clean_v29:'
 
-      function tnxbpScope(user = state.activeUser) {
+      function bp29Scope(user = state.activeUser) {
         const id = String(userId(user) || get(user, ['twitchId', 'twitch_id'], '') || '').trim()
         const login = normalize(userLogin(user) || userName(user) || '')
         return id || login || 'unknown'
       }
 
-      function tnxbpKey(badge) {
+      function bp29Key(badge) {
         const explicit = String(get(badge, ['id', 'badgeId', 'key', 'code'], '')).trim()
         const name = badgeName(badge)
         const image = badgeImage(badge)
         return explicit || `${normalize(name)}::${image}`
       }
 
-      function tnxbpShortName(name) {
+      function bp29ShortName(name) {
         const clean = String(name || '').trim()
         if (!clean) return 'BADGE'
         return clean.length > 18 ? clean.slice(0, 18) + '…' : clean
       }
 
-      function tnxbpIsRole(badge) {
+      function bp29IsRole(badge) {
         const n = normalize(badgeName(badge))
         return (
           n === 'mod' ||
@@ -11025,215 +10931,201 @@ const metadata = {
         )
       }
 
-      function tnxbpTier(badge) {
-        if (tnxbpIsRole(badge)) return 'role'
+      function bp29Tier(badge) {
+        if (bp29IsRole(badge)) return 'role'
 
         const raw = String(badgeName(badge) || '')
         const n = normalize(raw)
 
-        if (/\d+\s*q\b/i.test(raw) || n.includes('سؤال') || n.includes('quiz')) return 'q'
         if (/\d+\s*k\b/i.test(raw) || /\d+\s*m\b/i.test(raw) || n.includes('التقاط') || n.includes('صيد')) return 'k'
-
         return 'q'
       }
 
-      function tnxbpCat(badge) {
-        if (tnxbpIsRole(badge)) return 'ثابت'
-        const tier = tnxbpTier(badge)
-        if (tier === 'k') return 'التقاط'
-        return 'الأسئلة'
+      function bp29Category(badge) {
+        if (bp29IsRole(badge)) return 'ثابت'
+        return bp29Tier(badge) === 'k' ? 'التقاط' : 'الأسئلة'
       }
 
-      function tnxbpFallback(badge) {
-        if (tnxbpIsRole(badge)) return '★'
-        const tier = tnxbpTier(badge)
-        return tier === 'k' ? 'K' : 'Q'
+      function bp29Fallback(badge) {
+        if (bp29IsRole(badge)) return '★'
+        return bp29Tier(badge) === 'k' ? 'K' : 'Q'
       }
 
-      function tnxbpBadges(user = state.activeUser) {
+      function bp29Badges(user = state.activeUser) {
         return Array.isArray(user?.badges) ? user.badges : []
       }
 
-      function tnxbpRead(user = state.activeUser) {
+      function bp29Read(user = state.activeUser) {
         try {
-          const raw = localStorage.getItem(TNXBP_STORAGE + tnxbpScope(user))
+          const raw = localStorage.getItem(BP29_STORAGE_PREFIX + bp29Scope(user))
           const parsed = JSON.parse(raw || '[]')
-          return Array.isArray(parsed) ? parsed.map((x) => String(x)).filter(Boolean).slice(0, TNXBP_LIMIT) : []
+          return Array.isArray(parsed) ? parsed.map((x) => String(x)).filter(Boolean).slice(0, BP29_LIMIT) : []
         } catch {
           return []
         }
       }
 
-      function tnxbpWrite(user = state.activeUser, keys = []) {
+      function bp29Write(user = state.activeUser, keys = []) {
         try {
           const clean = [...new Set((Array.isArray(keys) ? keys : []).map((x) => String(x)).filter(Boolean))]
-            .slice(0, TNXBP_LIMIT)
-          localStorage.setItem(TNXBP_STORAGE + tnxbpScope(user), JSON.stringify(clean))
+            .slice(0, BP29_LIMIT)
+          localStorage.setItem(BP29_STORAGE_PREFIX + bp29Scope(user), JSON.stringify(clean))
           return clean
         } catch {
           return []
         }
       }
 
-      function tnxbpSelectedBadges(user = state.activeUser) {
-        const badges = tnxbpBadges(user)
-        const map = new Map(badges.map((badge) => [tnxbpKey(badge), badge]))
-        const valid = tnxbpRead(user).filter((key) => map.has(key) && !tnxbpIsRole(map.get(key))).slice(0, TNXBP_LIMIT)
+      function bp29SelectedBadges(user = state.activeUser) {
+        const badges = bp29Badges(user)
+        const map = new Map(badges.map((badge) => [bp29Key(badge), badge]))
+        const valid = bp29Read(user)
+          .filter((key) => map.has(key) && !bp29IsRole(map.get(key)))
+          .slice(0, BP29_LIMIT)
         return valid.map((key) => map.get(key)).filter(Boolean)
       }
 
-      function tnxbpMiniHtml(badge) {
+      function bp29CleanupOldUi() {
+        document
+          .querySelectorAll('.featured-badge-modal-test, .featured-badge-toast, .tnxbp-shell, .tnxbp-toast, .bp29-shell, .bp29-toast')
+          .forEach((el) => el.remove())
+      }
+
+      function bp29MiniHtml(badge) {
         const name = badgeName(badge)
         const image = badgeImage(badge)
         return `
-          <span class="profile-featured-badge-mini" title="${esc(name)}">
-            ${image ? `<img src="${esc(image)}" alt="${esc(name)}" loading="lazy" />` : `<span>${esc(tnxbpFallback(badge))}</span>`}
+          <span class="bp29-mini" title="${esc(name)}">
+            ${image ? `<img src="${esc(image)}" alt="${esc(name)}" loading="lazy" />` : `<span>${esc(bp29Fallback(badge))}</span>`}
           </span>
         `
       }
 
-      function renderFeaturedBadgesV23(user = state.activeUser) {
+      function renderFeaturedBadgesCleanV29(user = state.activeUser) {
         const box = $('featuredBadges')
         if (!box || !user) return
 
-        // v24: prevent the old experimental picker from flashing or opening.
-        document.querySelectorAll('.featured-badge-modal-test, .featured-badge-toast').forEach((el) => el.remove())
+        bp29CleanupOldUi()
 
-        const renderSeq = String(Date.now()) + ':' + Math.random().toString(36).slice(2)
-        box.dataset.tnxbpRenderSeq = renderSeq
+        const badges = bp29Badges(user)
+        const roles = badges.filter(bp29IsRole)
+        const selected = bp29SelectedBadges(user)
 
-        const badges = tnxbpBadges(user)
-        const selected = tnxbpSelectedBadges(user)
-        const roles = badges.filter(tnxbpIsRole)
-        const hasBadges = badges.length > 0
-
-        if (!hasBadges) {
+        if (!badges.length) {
           box.classList.add('hidden')
           box.innerHTML = ''
           return
         }
 
         box.classList.remove('hidden')
-
-        // Remove any old plus buttons before drawing the current state.
-        box.querySelectorAll(
-          '.profile-featured-badge-add, #featuredBadgePlusTest, .featured-badge-plus-test, [data-featured-badge-add-v22]'
-        ).forEach((el) => el.remove())
-
         box.innerHTML = [
-          ...roles.map(tnxbpMiniHtml),
-          ...selected.map(tnxbpMiniHtml),
+          ...roles.map(bp29MiniHtml),
+          ...selected.map(bp29MiniHtml),
         ].join('')
 
         getCurrentAccount().then((account) => {
           if (!box || state.activeUser !== user) return
-          if (box.dataset.tnxbpRenderSeq !== renderSeq) return
+          if (!accountMatchesViewedUser(account)) return
 
-          box.querySelectorAll(
-            '.profile-featured-badge-add, #featuredBadgePlusTest, .featured-badge-plus-test, [data-featured-badge-add-v22]'
-          ).forEach((el) => el.remove())
-
-          if (!accountMatchesViewedUser(account)) {
-            return
-          }
+          box.querySelectorAll('.bp29-plus, .profile-featured-badge-add, #featuredBadgePlusTest, .featured-badge-plus-test, [data-featured-badge-add-v22], [data-tnxbp-add-v24]').forEach((el) => el.remove())
 
           const add = document.createElement('button')
           add.type = 'button'
-          add.className = 'profile-featured-badge-add'
-          add.setAttribute('data-tnxbp-add-v24', '1')
+          add.className = 'bp29-plus'
           add.setAttribute('aria-label', 'اختيار البادجات')
           add.innerHTML = '<span>+</span>'
           add.addEventListener('click', (event) => {
             event.preventDefault()
             event.stopPropagation()
-            openTnxbpPicker(state.activeUser || user)
+            openBadgePickerCleanV29(state.activeUser || user)
           })
+
           box.appendChild(add)
         }).catch(() => {})
       }
 
-      function tnxbpToast(message) {
-        let toast = document.querySelector('.tnxbp-toast')
+      function bp29Toast(message) {
+        let toast = document.querySelector('.bp29-toast')
         if (!toast) {
           toast = document.createElement('div')
-          toast.className = 'tnxbp-toast'
+          toast.className = 'bp29-toast'
           document.body.appendChild(toast)
         }
 
         toast.textContent = message
         toast.classList.add('show')
 
-        window.clearTimeout(window.__tnxbpToastTimer)
-        window.__tnxbpToastTimer = window.setTimeout(() => {
+        window.clearTimeout(window.__bp29ToastTimer)
+        window.__bp29ToastTimer = window.setTimeout(() => {
           toast?.classList.remove('show')
         }, 1700)
       }
 
-      function openTnxbpPicker(user = state.activeUser) {
+      function openBadgePickerCleanV29(user = state.activeUser) {
         if (!user) return
 
-        document.querySelectorAll('.tnxbp-shell, .featured-badge-modal-test, .featured-badge-toast').forEach((el) => el.remove())
+        bp29CleanupOldUi()
 
-        const badges = tnxbpBadges(user)
-        const selectable = badges.filter((badge) => !tnxbpIsRole(badge))
-        const roles = badges.filter(tnxbpIsRole)
+        const badges = bp29Badges(user)
+        const selectable = badges.filter((badge) => !bp29IsRole(badge))
+        const roles = badges.filter(bp29IsRole)
         const all = [...roles, ...selectable]
 
         let filter = 'all'
-        let selected = tnxbpRead(user)
-          .filter((key) => selectable.some((badge) => tnxbpKey(badge) === key))
-          .slice(0, TNXBP_LIMIT)
-        let saved = [...selected]
         let query = ''
+        let selected = bp29Read(user)
+          .filter((key) => selectable.some((badge) => bp29Key(badge) === key))
+          .slice(0, BP29_LIMIT)
+        let saved = [...selected]
 
         const shell = document.createElement('div')
-        shell.className = 'tnxbp-shell'
+        shell.className = 'bp29-shell'
         shell.setAttribute('role', 'dialog')
         shell.setAttribute('aria-label', 'اختيار البادجات')
 
         shell.innerHTML = `
-          <button class="tnxbp-backdrop" type="button" aria-label="إغلاق"></button>
-          <div class="tnxbp-modal">
-            <div class="tnxbp-head">
-              <div class="tnxbp-head-top">
+          <button class="bp29-backdrop" type="button" aria-label="إغلاق"></button>
+          <div class="bp29-modal">
+            <div class="bp29-head">
+              <div class="bp29-head-top">
                 <div>
-                  <div class="tnxbp-title">اختيار البادجات</div>
-                  <div class="tnxbp-subtitle">اختر حتى <b>3 بادجات</b> من مخزونك — بادجات <b>MOD / VIP</b> لا تُحسب من الحد.</div>
+                  <div class="bp29-title">اختيار البادجات</div>
+                  <div class="bp29-subtitle">اختر حتى <b>3 بادجات</b> من مخزونك — بادجات <b>MOD / VIP</b> لا تُحسب من الحد.</div>
                 </div>
-                <button class="tnxbp-xbtn" type="button" aria-label="إغلاق">×</button>
+                <button class="bp29-close" type="button" aria-label="إغلاق">×</button>
               </div>
-              <div class="tnxbp-counter">
-                <div class="tnxbp-pips" data-pips></div>
-                <div class="tnxbp-count-num"><b data-count>0</b> / ${TNXBP_LIMIT}</div>
+              <div class="bp29-counter">
+                <div class="bp29-pips" data-bp29-pips></div>
+                <div class="bp29-count"><b data-bp29-count>0</b> / ${BP29_LIMIT}</div>
               </div>
             </div>
 
-            <div class="tnxbp-tools">
-              <label class="tnxbp-search">
-                <span class="tnxbp-search-mark">⌕</span>
-                <input data-search placeholder="ابحث عن بادج…" autocomplete="off" />
+            <div class="bp29-tools">
+              <label class="bp29-search">
+                <span>⌕</span>
+                <input data-bp29-search placeholder="ابحث عن بادج…" autocomplete="off" />
               </label>
 
-              <div class="tnxbp-seg" data-seg>
-                <button class="act" type="button" data-filter="all">الكل</button>
-                <button type="button" data-filter="q">الأسئلة</button>
-                <button type="button" data-filter="k">التقاط</button>
+              <div class="bp29-seg" data-bp29-seg>
+                <button class="act" type="button" data-bp29-filter="all">الكل</button>
+                <button type="button" data-bp29-filter="q">الأسئلة</button>
+                <button type="button" data-bp29-filter="k">التقاط</button>
               </div>
             </div>
 
-            <div class="tnxbp-tray" data-tray>
-              <span class="tnxbp-tray-label">المختارة الآن</span>
-              <div class="tnxbp-chips" data-chips></div>
-              <button class="tnxbp-clear" type="button" data-clear>مسح الاختيار</button>
+            <div class="bp29-tray" data-bp29-tray>
+              <span class="bp29-tray-label">المختارة الآن</span>
+              <div class="bp29-chips" data-bp29-chips></div>
+              <button class="bp29-clear" type="button" data-bp29-clear>مسح الاختيار</button>
             </div>
 
-            <div class="tnxbp-scroller">
-              <div class="tnxbp-grid" data-grid></div>
+            <div class="bp29-scroller">
+              <div class="bp29-grid" data-bp29-grid></div>
             </div>
 
-            <div class="tnxbp-foot">
-              <button class="tnxbp-save" type="button" data-save disabled>احفظ الاختيار</button>
-              <button class="tnxbp-cancel" type="button" data-cancel>إلغاء</button>
+            <div class="bp29-foot">
+              <button class="bp29-save" type="button" data-bp29-save disabled>احفظ الاختيار</button>
+              <button class="bp29-cancel" type="button" data-bp29-cancel>إلغاء</button>
             </div>
           </div>
         `
@@ -11247,68 +11139,69 @@ const metadata = {
         }
 
         const changed = () => JSON.stringify([...selected].sort()) !== JSON.stringify([...saved].sort())
-        const byKey = (key) => selectable.find((badge) => tnxbpKey(badge) === key) || null
+        const byKey = (key) => selectable.find((badge) => bp29Key(badge) === key) || null
 
         const render = () => {
           const normalizedQuery = normalize(query)
-          const full = selected.length >= TNXBP_LIMIT
+          const full = selected.length >= BP29_LIMIT
 
           const list = all.filter((badge) => {
-            const tier = tnxbpTier(badge)
+            const tier = bp29Tier(badge)
             const matchesFilter = filter === 'all' || tier === filter
-            const matchesSearch = !normalizedQuery || normalize(badgeName(badge)).includes(normalizedQuery) || normalize(tnxbpCat(badge)).includes(normalizedQuery)
+            const matchesSearch = !normalizedQuery || normalize(badgeName(badge)).includes(normalizedQuery) || normalize(bp29Category(badge)).includes(normalizedQuery)
             return matchesFilter && matchesSearch
           })
 
-          const grid = shell.querySelector('[data-grid]')
+          const grid = shell.querySelector('[data-bp29-grid]')
           if (grid) {
             grid.innerHTML = list.length
               ? list.map((badge) => {
-                  const key = tnxbpKey(badge)
-                  const role = tnxbpIsRole(badge)
-                  const sel = role || selected.includes(key)
-                  const lock = !role && full && !sel
+                  const key = bp29Key(badge)
+                  const role = bp29IsRole(badge)
+                  const isSelected = role || selected.includes(key)
+                  const locked = !role && full && !isSelected
                   const image = badgeImage(badge)
                   const name = badgeName(badge)
-                  const tier = tnxbpTier(badge)
+                  const tier = bp29Tier(badge)
 
                   return `
                     <button
                       type="button"
-                      class="tnxbp-badge tnxbp-tier-${tier} ${sel ? 'sel' : ''} ${lock ? 'lock' : ''}"
-                      data-key="${esc(key)}"
-                      data-role="${role ? '1' : '0'}"
-                      aria-pressed="${sel ? 'true' : 'false'}"
+                      class="bp29-card tier-${tier} ${isSelected ? 'sel' : ''} ${locked ? 'lock' : ''}"
+                      data-bp29-key="${esc(key)}"
+                      data-bp29-role="${role ? '1' : '0'}"
+                      aria-pressed="${isSelected ? 'true' : 'false'}"
                       title="${esc(name)}"
                     >
-                      <span class="tnxbp-info" title="${esc(tnxbpCat(badge))} • ${esc(name)}">i</span>
-                      <span class="tnxbp-tick">✓</span>
-                      <span class="tnxbp-medal">
-                        <span class="tnxbp-ring"></span>
-                        <span class="tnxbp-core">
-                          ${image ? `<img src="${esc(image)}" alt="${esc(name)}" loading="lazy" />` : esc(tnxbpFallback(badge))}
-                        </span>
+                      <span class="bp29-info">i</span>
+                      <span class="bp29-tick">✓</span>
+                      <span class="bp29-medal">
+                        <span class="bp29-ring"></span>
+                        <span class="bp29-core">${image ? `<img src="${esc(image)}" alt="${esc(name)}" loading="lazy" />` : esc(bp29Fallback(badge))}</span>
                       </span>
-                      <span class="tnxbp-bname">${esc(tnxbpShortName(name))}</span>
-                      <span class="tnxbp-bcat">${esc(role ? 'ثابت ولا يُحسب' : tnxbpCat(badge))}</span>
-                      <span class="tnxbp-hint">وصلت للحد ٣</span>
+                      <span class="bp29-name">${esc(bp29ShortName(name))}</span>
+                      <span class="bp29-cat">${esc(role ? 'ثابت ولا يُحسب' : bp29Category(badge))}</span>
+                      <span class="bp29-hint">وصلت للحد ٣</span>
                     </button>
                   `
                 }).join('')
-              : `<div class="tnxbp-empty">ما فيه بادج بهذا الاسم — جرّب كلمة ثانية.</div>`
+              : `<div class="bp29-empty">ما فيه بادج بهذا الاسم — جرّب كلمة ثانية.</div>`
           }
 
-          shell.querySelector('[data-pips]').innerHTML = Array.from({ length: TNXBP_LIMIT }, (_, i) =>
-            `<span class="tnxbp-pip ${i < selected.length ? 'on' : ''}"></span>`
-          ).join('')
+          const pips = shell.querySelector('[data-bp29-pips]')
+          if (pips) {
+            pips.innerHTML = Array.from({ length: BP29_LIMIT }, (_, index) =>
+              `<span class="bp29-pip ${index < selected.length ? 'on' : ''}"></span>`
+            ).join('')
+          }
 
-          const count = shell.querySelector('[data-count]')
+          const count = shell.querySelector('[data-bp29-count]')
           if (count) count.textContent = String(selected.length)
 
-          const tray = shell.querySelector('[data-tray]')
+          const tray = shell.querySelector('[data-bp29-tray]')
           if (tray) tray.classList.toggle('show', selected.length > 0)
 
-          const chips = shell.querySelector('[data-chips]')
+          const chips = shell.querySelector('[data-bp29-chips]')
           if (chips) {
             chips.innerHTML = selected.map((key) => {
               const badge = byKey(key)
@@ -11316,19 +11209,19 @@ const metadata = {
               const image = badgeImage(badge)
               const name = badgeName(badge)
               return `
-                <button class="tnxbp-chip" type="button" data-remove="${esc(key)}" title="إزالة ${esc(name)}">
-                  <span class="dot">${image ? `<img src="${esc(image)}" alt="" />` : esc(tnxbpFallback(badge))}</span>
-                  <code>${esc(tnxbpShortName(name))}</code>
+                <button class="bp29-chip" type="button" data-bp29-remove="${esc(key)}" title="إزالة ${esc(name)}">
+                  <span class="dot">${image ? `<img src="${esc(image)}" alt="" />` : esc(bp29Fallback(badge))}</span>
+                  <code>${esc(bp29ShortName(name))}</code>
                   <span class="x">×</span>
                 </button>
               `
             }).join('')
           }
 
-          const clear = shell.querySelector('[data-clear]')
+          const clear = shell.querySelector('[data-bp29-clear]')
           if (clear) clear.disabled = selected.length === 0
 
-          const save = shell.querySelector('[data-save]')
+          const save = shell.querySelector('[data-bp29-save]')
           if (save) {
             save.disabled = !changed()
             save.textContent = !changed()
@@ -11340,53 +11233,53 @@ const metadata = {
         shell.addEventListener('click', (event) => {
           const target = event.target
 
-          if (target.closest('.tnxbp-backdrop') || target.closest('.tnxbp-xbtn') || target.closest('[data-cancel]')) {
+          if (target.closest('.bp29-backdrop') || target.closest('.bp29-close') || target.closest('[data-bp29-cancel]')) {
             close()
             return
           }
 
-          const filterButton = target.closest('[data-filter]')
+          const filterButton = target.closest('[data-bp29-filter]')
           if (filterButton) {
-            filter = filterButton.dataset.filter || 'all'
-            shell.querySelectorAll('.tnxbp-seg button').forEach((button) => {
+            filter = filterButton.dataset.bp29Filter || 'all'
+            shell.querySelectorAll('[data-bp29-filter]').forEach((button) => {
               button.classList.toggle('act', button === filterButton)
             })
             render()
             return
           }
 
-          if (target.closest('[data-clear]')) {
+          if (target.closest('[data-bp29-clear]')) {
             selected = []
             render()
             return
           }
 
-          const remove = target.closest('[data-remove]')
+          const remove = target.closest('[data-bp29-remove]')
           if (remove) {
-            selected = selected.filter((key) => key !== remove.dataset.remove)
+            selected = selected.filter((key) => key !== remove.dataset.bp29Remove)
             render()
             return
           }
 
-          const save = target.closest('[data-save]')
+          const save = target.closest('[data-bp29-save]')
           if (save && !save.disabled) {
-            saved = tnxbpWrite(user, selected)
+            saved = bp29Write(user, selected)
             selected = [...saved]
-            renderFeaturedBadgesV23(user)
+            renderFeaturedBadgesCleanV29(user)
             close()
-            tnxbpToast(`تم حفظ ${selected.length} بادجات ✓`)
+            bp29Toast(`تم حفظ ${selected.length} بادجات ✓`)
             return
           }
 
-          const option = target.closest('.tnxbp-badge')
+          const option = target.closest('[data-bp29-key]')
           if (!option) return
 
-          if (option.dataset.role === '1') {
-            tnxbpToast('هذا بادج ثابت ولا يُحسب من الحد')
+          if (option.dataset.bp29Role === '1') {
+            bp29Toast('هذا بادج ثابت ولا يُحسب من الحد')
             return
           }
 
-          const key = option.dataset.key || ''
+          const key = option.dataset.bp29Key || ''
 
           if (selected.includes(key)) {
             selected = selected.filter((item) => item !== key)
@@ -11394,12 +11287,8 @@ const metadata = {
             return
           }
 
-          if (selected.length >= TNXBP_LIMIT) {
-            option.classList.remove('limit-hit')
-            void option.offsetWidth
-            option.classList.add('limit-hit')
-            tnxbpToast('وصلت للحد ٣')
-            window.setTimeout(() => option.classList.remove('limit-hit'), 520)
+          if (selected.length >= BP29_LIMIT) {
+            bp29Toast('وصلت للحد ٣')
             return
           }
 
@@ -11407,7 +11296,7 @@ const metadata = {
           render()
         })
 
-        shell.querySelector('[data-search]')?.addEventListener('input', (event) => {
+        shell.querySelector('[data-bp29-search]')?.addEventListener('input', (event) => {
           query = event.target.value || ''
           render()
         })
@@ -11417,7 +11306,7 @@ const metadata = {
         })
 
         render()
-        shell.querySelector('[data-search]')?.focus({ preventScroll: true })
+        shell.querySelector('[data-bp29-search]')?.focus({ preventScroll: true })
       }
 
       function mailItems(user) {
@@ -12462,48 +12351,6 @@ const metadata = {
         watchtime: normalizeLeaderboardData(leaderboardPayload, 'watchtime'),
       }
 
-
-      window.TNXBP_V28_SAFE_PLUS = true;
-
-      if (!window.__tnxbpSafePlusV28) {
-        window.__tnxbpSafePlusV28 = true;
-
-        const fixPlus = () => {
-          const box = document.getElementById("featuredBadges");
-          if (!box) return;
-
-          const oldButtons = box.querySelectorAll(".profile-featured-badge-add, #featuredBadgePlusTest, .featured-badge-plus-test, [data-featured-badge-add-v22], [data-tnxbp-add-v24]");
-          oldButtons.forEach((button, index) => {
-            if (index > 0) {
-              button.remove();
-              return;
-            }
-
-            button.style.display = "inline-grid";
-            button.style.visibility = "visible";
-            button.style.opacity = "1";
-            button.style.pointerEvents = "auto";
-            button.style.cursor = "pointer";
-            button.style.position = "relative";
-            button.style.zIndex = "9999";
-
-            button.onclick = (event) => {
-              event.preventDefault();
-              event.stopPropagation();
-
-              document.querySelectorAll(".featured-badge-modal-test, .featured-badge-toast").forEach((el) => el.remove());
-
-              if (typeof openTnxbpPicker === "function") {
-                openTnxbpPicker(state.activeUser);
-              }
-            };
-          });
-        };
-
-        fixPlus();
-        setInterval(fixPlus, 500);
-      }
-
       await openFromQuery()
     })()
   </script>
@@ -12740,8 +12587,6 @@ const metadata = {
 
 
   <script is:inline src="/data/badge-meta.js?v=3"></script>
-  <script src="/js/profile-badge-modal-test.js?v=31" defer data-astro-rerun>
-</script>
 </Layout>
 
 
