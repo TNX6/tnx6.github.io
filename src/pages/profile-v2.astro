@@ -6345,6 +6345,7 @@ const metadata = {
       transform: none;
     }
 
+
     .inventory-sell-modal {
       position: fixed;
       inset: 0;
@@ -6352,151 +6353,423 @@ const metadata = {
       display: grid;
       place-items: center;
       padding: 18px;
-      background: rgba(0,0,0,.70);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(215,168,79,.10), transparent 38%),
+        rgba(0,0,0,.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
 
     .inventory-sell-box {
-      width: min(520px, 100%);
-      border-radius: 28px;
-      border: 1px solid rgba(255, 223, 138, .20);
+      --sell-paper-1: #1c1711;
+      --sell-paper-2: #12100c;
+      --sell-gold-hi: #ffe9a8;
+      --sell-gold: #e7bf5f;
+      --sell-gold-deep: #a67931;
+      --sell-cream: #f4ead4;
+      --sell-muted: rgba(244,234,212,.62);
+      --sell-dim: rgba(244,234,212,.42);
+      --sell-line: rgba(231,191,95,.18);
+      position: relative;
+      width: min(430px, 100%);
+      border-radius: 25px;
+      border: 1px solid var(--sell-line);
       background:
-        radial-gradient(circle at 80% 0%, rgba(215,168,79,.14), transparent 36%),
-        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025)),
-        rgba(10,10,14,.98);
-      box-shadow: 0 34px 100px rgba(0,0,0,.62);
-      overflow: hidden;
+        radial-gradient(120% 90% at 50% -22%, rgba(231,191,95,.12), transparent 48%),
+        linear-gradient(165deg, var(--sell-paper-1), var(--sell-paper-2));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.055),
+        inset 0 0 70px rgba(231,191,95,.035),
+        0 38px 95px -30px rgba(0,0,0,.90);
+      color: var(--sell-cream);
       direction: rtl;
+      overflow: hidden;
+      animation: inventorySellRise .32s cubic-bezier(.22,1,.36,1) both;
     }
 
-    .inventory-sell-head {
-      padding: 18px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
+    @keyframes inventorySellRise {
+      from { opacity: 0; transform: translateY(14px) scale(.98); }
+      to { opacity: 1; transform: none; }
     }
 
-    .inventory-sell-head h3 {
-      margin: 0;
-      color: #ffdf8a;
-      font-size: 22px;
-      font-weight: 1000;
+    .inventory-sell-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        repeating-radial-gradient(circle at 16% 10%, rgba(231,191,95,.045) 0 1px, transparent 1px 14px),
+        repeating-linear-gradient(115deg, rgba(231,191,95,.022) 0 1px, transparent 1px 9px);
+      mask: linear-gradient(180deg, #000, transparent 62%);
+      opacity: .65;
     }
 
     .inventory-sell-close {
-      width: 38px;
-      height: 38px;
-      border-radius: 14px;
+      position: absolute;
+      inset-inline-start: 16px;
+      top: 16px;
+      z-index: 5;
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
       border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color: #fff;
-      font-size: 20px;
+      background: rgba(0,0,0,.28);
+      color: rgba(255,255,255,.82);
+      font-size: 22px;
       font-weight: 900;
+      line-height: 1;
       cursor: pointer;
+      transition: transform .18s ease, background .18s ease, color .18s ease;
     }
 
-    .inventory-sell-body {
-      padding: 20px;
-    }
-
-    .inventory-sell-name {
-      margin: 0 0 8px;
+    .inventory-sell-close:hover {
+      transform: rotate(90deg);
+      background: rgba(0,0,0,.45);
       color: #fff;
-      font-size: 18px;
+    }
+
+    .inventory-sell-top {
+      position: relative;
+      padding: 30px 26px 23px;
+      text-align: center;
+    }
+
+    .inventory-sell-eyebrow {
+      margin-bottom: 18px;
+      color: var(--sell-gold-deep);
+      font-size: 10.5px;
+      font-weight: 1000;
+      letter-spacing: 2.8px;
+    }
+
+    .inventory-sell-seal {
+      width: 78px;
+      height: 78px;
+      margin: 0 auto 15px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 32% 28%, #fff0b7, var(--sell-gold) 40%, #d1a142 67%, #8c5e23 100%);
+      box-shadow:
+        0 10px 26px -10px rgba(231,191,95,.62),
+        inset 0 2px 3px rgba(255,255,255,.62),
+        inset 0 -7px 12px rgba(90,58,21,.54);
+      color: #322309;
+      font-size: 34px;
       font-weight: 1000;
     }
 
-    .inventory-sell-note {
-      margin: 0 0 16px;
-      color: rgba(255,255,255,.58);
+    .inventory-sell-name {
+      margin: 0;
+      color: #fff;
+      font-size: 25px;
+      font-weight: 1000;
+      line-height: 1.15;
+      letter-spacing: -.2px;
+    }
+
+    .inventory-sell-sub {
+      margin: 9px 0 0;
+      color: var(--sell-muted);
       font-size: 13px;
-      line-height: 1.8;
+      line-height: 1.7;
+    }
+
+    .inventory-sell-sub strong {
+      color: var(--sell-gold-hi);
+      font-weight: 1000;
+    }
+
+    .inventory-sell-market {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 13px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(231,191,95,.10);
+      color: var(--sell-dim);
+      font-size: 11.5px;
+      font-weight: 850;
+    }
+
+    .inventory-sell-market strong {
+      color: rgba(244,234,212,.70);
+      text-decoration: line-through;
+      text-decoration-color: rgba(166,121,49,.78);
+    }
+
+    .inventory-sell-perf {
+      position: relative;
+      height: 24px;
+    }
+
+    .inventory-sell-perf::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      inset-inline: 27px;
+      border-top: 2px dashed rgba(231,191,95,.15);
+    }
+
+    .inventory-sell-perf::after,
+    .inventory-sell-perf span {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.74);
+      transform: translateY(-50%);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,.65);
+    }
+
+    .inventory-sell-perf::after {
+      inset-inline-end: -13px;
+    }
+
+    .inventory-sell-perf span {
+      inset-inline-start: -13px;
+    }
+
+    .inventory-sell-body {
+      position: relative;
+      padding: 22px 26px 25px;
+    }
+
+    .inventory-sell-note {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      margin: 0 0 19px;
+      color: var(--sell-muted);
+      font-size: 12.5px;
+      line-height: 1.75;
+    }
+
+    .inventory-sell-note-icon {
+      width: 18px;
+      height: 18px;
+      flex: none;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(231,191,95,.22);
+      color: var(--sell-gold);
+      font-size: 12px;
+      margin-top: 2px;
     }
 
     .inventory-sell-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 16px;
+      gap: 9px;
+      margin-bottom: 18px;
     }
 
     .inventory-sell-stat {
-      padding: 12px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.045);
+      min-height: 78px;
+      padding: 13px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.075);
+      background: rgba(255,255,255,.035);
+      display: grid;
+      align-content: center;
+      gap: 6px;
     }
 
     .inventory-sell-stat span {
       display: block;
-      margin-bottom: 6px;
-      color: rgba(255,255,255,.48);
+      color: var(--sell-dim);
       font-size: 11px;
-      font-weight: 850;
+      font-weight: 900;
     }
 
     .inventory-sell-stat strong {
       display: block;
-      color: #ffdf8a;
-      font-size: 15px;
+      color: var(--sell-gold-hi);
+      font-size: 16px;
+      font-weight: 1000;
+      line-height: 1.1;
+    }
+
+    .inventory-sell-field-label {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .inventory-sell-field-label .title {
+      color: rgba(255,255,255,.86);
+      font-size: 13px;
       font-weight: 1000;
     }
 
+    .inventory-sell-field-label .available {
+      color: var(--sell-muted);
+      font-size: 11.5px;
+      font-weight: 850;
+    }
+
+    .inventory-sell-field-label .available strong {
+      color: var(--sell-gold-hi);
+    }
+
     .inventory-sell-qty {
-      display: grid;
-      gap: 8px;
-      margin: 14px 0 18px;
+      margin-bottom: 18px;
     }
 
-    .inventory-sell-qty label {
-      color: rgba(255,255,255,.75);
+    .inventory-sell-seg {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .inventory-sell-pill {
+      flex: 1;
+      min-width: 45px;
+      min-height: 44px;
+      border-radius: 13px;
+      border: 1px solid rgba(231,191,95,.11);
+      background: rgba(255,255,255,.03);
+      color: var(--sell-muted);
+      font-size: 15px;
+      font-weight: 1000;
+      cursor: pointer;
+      transition: background .16s ease, border-color .16s ease, transform .16s ease, color .16s ease;
+    }
+
+    .inventory-sell-pill:hover {
+      transform: translateY(-1px);
+      border-color: rgba(231,191,95,.24);
+      color: #fff;
+      background: rgba(255,255,255,.055);
+    }
+
+    .inventory-sell-pill.is-active {
+      border-color: transparent;
+      background: linear-gradient(150deg, #ffe9a8, #d3a244);
+      color: #2d2109;
+      box-shadow:
+        0 8px 18px -10px rgba(231,191,95,.72),
+        inset 0 1px 0 rgba(255,255,255,.52);
+    }
+
+    .inventory-sell-pill.all {
+      flex: 1.25;
       font-size: 13px;
-      font-weight: 900;
     }
 
-    .inventory-sell-qty input {
+    .inventory-sell-stepper {
+      display: grid;
+      grid-template-columns: 48px 1fr 48px 64px;
+      gap: 8px;
+    }
+
+    .inventory-sell-stepper input {
       width: 100%;
       min-height: 48px;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 223, 138, .20);
-      background: rgba(0,0,0,.34);
+      border-radius: 14px;
+      border: 1px solid rgba(231,191,95,.18);
+      background: rgba(0,0,0,.28);
       color: #fff;
-      padding: 0 14px;
+      text-align: center;
+      padding: 0 12px;
       font-size: 18px;
       font-weight: 1000;
       outline: none;
     }
 
-    .inventory-sell-total {
-      margin-bottom: 16px;
-      padding: 14px;
-      border-radius: 18px;
-      border: 1px solid rgba(255, 223, 138, .16);
-      background: rgba(215,168,79,.08);
-      color: rgba(255,255,255,.78);
-      font-size: 14px;
-      font-weight: 900;
+    .inventory-sell-single {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 13px 15px;
+      border-radius: 14px;
+      border: 1px dashed rgba(231,191,95,.19);
+      color: var(--sell-muted);
+      font-size: 13px;
+      font-weight: 850;
     }
 
-    .inventory-sell-total strong {
-      color: #ffdf8a;
-      font-size: 17px;
+    .inventory-sell-payout {
+      position: relative;
+      overflow: hidden;
+      margin: 20px 0 14px;
+      padding: 18px 18px;
+      border-radius: 17px;
+      border: 1px solid rgba(231,191,95,.28);
+      background:
+        radial-gradient(120% 145% at 100% 0%, rgba(231,191,95,.13), transparent 55%),
+        linear-gradient(180deg, rgba(231,191,95,.065), rgba(0,0,0,.18));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .inventory-sell-payout::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-radial-gradient(circle at 90% 110%, rgba(231,191,95,.07) 0 1px, transparent 1px 12px);
+      mask: linear-gradient(300deg, #000, transparent 70%);
+    }
+
+    .inventory-sell-payout-label {
+      position: relative;
+      color: var(--sell-muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .inventory-sell-formula {
+      position: relative;
+      margin-top: 4px;
+      color: var(--sell-dim);
+      font-size: 11.5px;
+      font-weight: 800;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .inventory-sell-payout-number {
+      position: relative;
+      color: var(--sell-gold-hi);
+      font-size: 35px;
       font-weight: 1000;
+      line-height: 1;
+      letter-spacing: -.7px;
+      text-align: left;
+      text-shadow: 0 2px 16px rgba(231,191,95,.22);
+      white-space: nowrap;
+    }
+
+    .inventory-sell-payout-unit {
+      position: relative;
+      margin-top: 3px;
+      color: var(--sell-gold-deep);
+      font-size: 13px;
+      font-weight: 900;
+      text-align: left;
     }
 
     .inventory-sell-message {
       min-height: 24px;
       margin-bottom: 14px;
-      color: rgba(255,255,255,.72);
+      color: rgba(255,255,255,.70);
       font-size: 13px;
       line-height: 1.7;
+      font-weight: 850;
     }
 
     .inventory-sell-message.ok {
-      color: #7CFFB2;
+      color: #86ffb8;
     }
 
     .inventory-sell-message.err {
@@ -6505,45 +6778,128 @@ const metadata = {
 
     .inventory-sell-actions {
       display: flex;
-      align-items: center;
-      justify-content: flex-end;
       gap: 10px;
+      margin-top: 12px;
     }
 
     .inventory-sell-actions button {
-      min-height: 44px;
-      padding: 0 18px;
+      min-height: 53px;
       border-radius: 15px;
       border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color: rgba(255,255,255,.86);
-      font-weight: 950;
+      background: rgba(255,255,255,.045);
+      color: rgba(255,255,255,.78);
+      font-size: 14px;
+      font-weight: 1000;
       cursor: pointer;
+      transition: filter .16s ease, transform .16s ease, opacity .16s ease, background .16s ease;
+    }
+
+    .inventory-sell-actions button:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.065);
+      color: #fff;
     }
 
     .inventory-sell-actions .primary {
-      border-color: rgba(255, 223, 138, .32);
-      background: linear-gradient(135deg, #ffdf8a, #d7a84f);
-      color: #15100a;
+      flex: 1;
+      border-color: transparent;
+      background: linear-gradient(150deg, #ffe9a8, #d3a244);
+      color: #2d2109;
+      box-shadow:
+        0 13px 27px -13px rgba(231,191,95,.70),
+        inset 0 1px 0 rgba(255,255,255,.55);
     }
 
-    .inventory-sell-actions button:disabled {
+    .inventory-sell-actions [data-sell-close] {
+      padding: 0 22px;
+    }
+
+    .inventory-sell-actions button:disabled,
+    .inventory-sell-pill:disabled {
       opacity: .55;
       cursor: wait;
+      transform: none;
+    }
+
+    .inventory-sell-stamp {
+      position: absolute;
+      top: 62px;
+      inset-inline-end: 31px;
+      z-index: 6;
+      width: 104px;
+      height: 104px;
+      border-radius: 999px;
+      border: 3px solid rgba(231,191,95,.92);
+      color: rgba(231,191,95,.96);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      transform: rotate(-14deg) scale(1.45);
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 0 0 4px rgba(231,191,95,.10);
+      font-weight: 1000;
+    }
+
+    .inventory-sell-stamp.show {
+      animation: inventorySellStamp .45s cubic-bezier(.22,1,.36,1) forwards;
+    }
+
+    .inventory-sell-stamp .big {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .inventory-sell-stamp .small {
+      margin-top: 5px;
+      font-size: 8.5px;
+      letter-spacing: 1.7px;
+      direction: ltr;
+    }
+
+    @keyframes inventorySellStamp {
+      0% { opacity: 0; transform: rotate(-14deg) scale(1.5); }
+      58% { opacity: 1; transform: rotate(-14deg) scale(.92); }
+      78% { transform: rotate(-14deg) scale(1.04); }
+      100% { opacity: 1; transform: rotate(-14deg) scale(1); }
     }
 
     @media (max-width: 560px) {
+      .inventory-sell-box {
+        width: min(100%, 410px);
+        border-radius: 22px;
+      }
+
+      .inventory-sell-top {
+        padding: 27px 20px 21px;
+      }
+
+      .inventory-sell-body {
+        padding: 21px 20px 23px;
+      }
+
       .inventory-sell-grid {
         grid-template-columns: 1fr;
       }
 
+      .inventory-sell-stepper {
+        grid-template-columns: 44px 1fr 44px 58px;
+      }
+
+      .inventory-sell-payout-number {
+        font-size: 30px;
+      }
+
       .inventory-sell-actions {
         flex-direction: column-reverse;
-        align-items: stretch;
+      }
+
+      .inventory-sell-actions [data-sell-close] {
+        width: 100%;
       }
     }
 
-  
+
   .inventory-pagination {
     display: flex;
     align-items: center;
@@ -8941,20 +9297,75 @@ const metadata = {
         const owned = Math.max(1, Math.floor(Number(item.qty || item.quantity || 1)))
         const priceEach = itemSellPrice(meta)
         const value = Math.max(0, Math.floor(Number(meta?.value || 0)))
+        const itemIcon = String(item.icon || meta?.icon || '👑').trim() || '👑'
 
         const modal = document.createElement('div')
         modal.className = 'inventory-sell-modal'
+
+        const quantityControlHtml = (() => {
+          if (owned <= 1) {
+            return `
+              <div class="inventory-sell-single">
+                <span>✓</span>
+                <span>وحدة واحدة متوفرة — جاهزة للبيع</span>
+              </div>
+            `
+          }
+
+          if (owned <= 8) {
+            const buttons = Array.from({ length: owned }, (_, index) => {
+              const value = index + 1
+              return `<button class="inventory-sell-pill${value === 1 ? ' is-active' : ''}" type="button" data-sell-qty-pick="${value}">${formatNumber(value)}</button>`
+            }).join('')
+
+            return `
+              <div class="inventory-sell-seg">
+                ${buttons}
+                <button class="inventory-sell-pill all" type="button" data-sell-qty-pick="${owned}">الكل</button>
+              </div>
+            `
+          }
+
+          return `
+            <div class="inventory-sell-stepper">
+              <button class="inventory-sell-pill" type="button" data-sell-qty-step="-1" aria-label="إنقاص الكمية">−</button>
+              <input id="inventorySellQty" type="number" min="1" max="${owned}" value="1" inputmode="numeric" />
+              <button class="inventory-sell-pill" type="button" data-sell-qty-step="1" aria-label="زيادة الكمية">+</button>
+              <button class="inventory-sell-pill all" type="button" data-sell-qty-pick="${owned}">الكل</button>
+            </div>
+          `
+        })()
+
         modal.innerHTML = `
-          <div class="inventory-sell-box" role="dialog" aria-modal="true">
-            <div class="inventory-sell-head">
-              <h3>بيع الغرض</h3>
-              <button class="inventory-sell-close" type="button" data-sell-close>×</button>
+          <div class="inventory-sell-box" role="dialog" aria-modal="true" aria-labelledby="inventorySellTitle">
+            <button class="inventory-sell-close" type="button" data-sell-close aria-label="إغلاق">×</button>
+
+            <div class="inventory-sell-stamp" data-sell-stamp aria-hidden="true">
+              <div>
+                <div class="big">تم البيع</div>
+                <div class="small">REDEEMED</div>
+              </div>
             </div>
 
+            <div class="inventory-sell-top">
+              <div class="inventory-sell-eyebrow">قسيمة بيع</div>
+              <div class="inventory-sell-seal" aria-hidden="true">${esc(itemIcon)}</div>
+              <h3 class="inventory-sell-name" id="inventorySellTitle">${esc(name)}</h3>
+              <p class="inventory-sell-sub">
+                قابل للاستبدال بـ <strong>${formatNumber(priceEach)}</strong> نقطة للوحدة
+              </p>
+              <div class="inventory-sell-market">
+                <span>قيمة الغرض في المتجر</span>
+                <strong>${formatNumber(value)}</strong>
+              </div>
+            </div>
+
+            <div class="inventory-sell-perf"><span></span></div>
+
             <div class="inventory-sell-body">
-              <p class="inventory-sell-name">${esc(name)}</p>
               <p class="inventory-sell-note">
-                البيع يسجل كطلب في النظام. إذا Streamer.bot شغال بيتنفذ قريب، وإذا مقفل يبقى Pending لين تشغله.
+                <span class="inventory-sell-note-icon">i</span>
+                <span>سيتم استبدال الغرض بنقاط حسب سعر البيع المعتمد. تأكد من الكمية قبل تأكيد العملية.</span>
               </p>
 
               <div class="inventory-sell-grid">
@@ -8972,13 +9383,24 @@ const metadata = {
                 </div>
               </div>
 
-              <div class="inventory-sell-qty">
-                <label for="inventorySellQty">الكمية</label>
-                <input id="inventorySellQty" type="number" min="1" max="${owned}" value="1" inputmode="numeric" />
+              <div class="inventory-sell-field-label">
+                <span class="title">اختر الكمية</span>
+                <span class="available">المتوفر لديك <strong>${formatNumber(owned)}</strong></span>
               </div>
 
-              <div class="inventory-sell-total">
-                الإجمالي: <strong data-sell-total>${formatNumber(priceEach)}</strong> نقطة
+              <div class="inventory-sell-qty" data-sell-qty-control>
+                ${quantityControlHtml}
+              </div>
+
+              <div class="inventory-sell-payout">
+                <div>
+                  <div class="inventory-sell-payout-label">ستحصل على</div>
+                  <div class="inventory-sell-formula" data-sell-formula>${formatNumber(priceEach)} × 1</div>
+                </div>
+                <div>
+                  <div class="inventory-sell-payout-number" data-sell-total>${formatNumber(priceEach)}</div>
+                  <div class="inventory-sell-payout-unit">نقطة</div>
+                </div>
               </div>
 
               <div class="inventory-sell-message" data-sell-message></div>
@@ -8994,16 +9416,53 @@ const metadata = {
         const close = () => modal.remove()
         const qtyInput = modal.querySelector('#inventorySellQty')
         const total = modal.querySelector('[data-sell-total]')
+        const formula = modal.querySelector('[data-sell-formula]')
         const msg = modal.querySelector('[data-sell-message]')
         const submit = modal.querySelector('[data-sell-submit]')
+        const stamp = modal.querySelector('[data-sell-stamp]')
+        const qtyButtons = () => [...modal.querySelectorAll('[data-sell-qty-pick], [data-sell-qty-step]')]
+        let selectedQty = 1
 
-        const updateTotal = () => {
-          const qty = Math.max(1, Math.min(owned, Math.floor(Number(qtyInput.value || 1))))
-          qtyInput.value = String(qty)
-          total.textContent = formatNumber(qty * priceEach)
+        const clampQty = (value) => {
+          const number = Math.floor(Number(value || 1))
+          if (!Number.isFinite(number)) return 1
+          return Math.max(1, Math.min(owned, number))
         }
 
-        addListener(qtyInput, 'input', updateTotal)
+        const setQty = (value) => {
+          selectedQty = clampQty(value)
+
+          if (qtyInput) {
+            qtyInput.value = String(selectedQty)
+          }
+
+          modal.querySelectorAll('[data-sell-qty-pick]').forEach((button) => {
+            const picked = clampQty(button.dataset.sellQtyPick)
+            const isActive = picked === selectedQty && !button.classList.contains('all')
+            button.classList.toggle('is-active', isActive)
+          })
+
+          formula.textContent = `${formatNumber(priceEach)} × ${formatNumber(selectedQty)}`
+          total.textContent = formatNumber(selectedQty * priceEach)
+        }
+
+        addListener(modal, 'click', (event) => {
+          const pick = event.target.closest('[data-sell-qty-pick]')
+          const step = event.target.closest('[data-sell-qty-step]')
+
+          if (pick) {
+            setQty(pick.dataset.sellQtyPick)
+          }
+
+          if (step) {
+            setQty(selectedQty + Math.floor(Number(step.dataset.sellQtyStep || 0)))
+          }
+        })
+
+        if (qtyInput) {
+          addListener(qtyInput, 'input', () => setQty(qtyInput.value))
+          addListener(qtyInput, 'blur', () => setQty(qtyInput.value))
+        }
 
         modal.querySelectorAll('[data-sell-close]').forEach((button) => {
           addListener(button, 'click', close)
@@ -9014,12 +9473,13 @@ const metadata = {
         })
 
         addListener(submit, 'click', async () => {
-          const qty = Math.max(1, Math.min(owned, Math.floor(Number(qtyInput.value || 1))))
+          const qty = clampQty(selectedQty)
 
           submit.disabled = true
-          qtyInput.disabled = true
+          qtyButtons().forEach((button) => { button.disabled = true })
+          if (qtyInput) qtyInput.disabled = true
           msg.className = 'inventory-sell-message'
-          msg.textContent = 'جاري تسجيل طلب البيع...'
+          msg.textContent = 'جاري تسجيل البيع...'
 
           const localSellLockId = addInventorySellLock(name, qty, owned, state.activeUser);
 
@@ -9046,16 +9506,13 @@ const metadata = {
             }
 
             msg.className = 'inventory-sell-message ok'
-            msg.textContent = data.botOnline
-              ? 'تم تسجيل الطلب. Streamer.bot شغال وبيتنفذ قريب.'
-              : 'تم تسجيل الطلب Pending. بيتنفذ أول ما تشغل Streamer.bot.'
+            msg.textContent = 'تم تسجيل البيع بنجاح. سيتم تحديث الحقيبة خلال لحظات.'
+            stamp?.classList.add('show')
 
             try {
               const localChanged = await renderInventoryAfterLocalSellV4(name, qty, items)
 
               if (!localChanged) {
-                // Fallback only. Normal path rerenders from the full inventory list
-                // so next-page items fill the sold card slot immediately.
                 updateInventoryItemDomAfterSell(name, qty)
                 requestAnimationFrame(() => {
                   renderInventory(window.__tnxInventoryFullList || items || [])
@@ -9072,7 +9529,7 @@ const metadata = {
               })
             }
 
-            submit.textContent = 'تم التسجيل'
+            submit.textContent = 'تم البيع'
 
             watchInventorySellFinalStatus(data.requestId, localSellLockId)
 
@@ -9097,7 +9554,7 @@ const metadata = {
               } catch {}
             };
 
-            setTimeout(closeInventorySellModalAfterSuccess, 100)
+            setTimeout(closeInventorySellModalAfterSuccess, 650)
           } catch (error) {
             removeInventorySellLock(localSellLockId);
             refreshActiveProfileFromD1();
@@ -9124,14 +9581,22 @@ const metadata = {
             }
 
             submit.disabled = false
-            qtyInput.disabled = false
+            qtyButtons().forEach((button) => { button.disabled = false })
+            if (qtyInput) qtyInput.disabled = false
           }
         })
 
         document.body.appendChild(modal)
-        qtyInput.focus()
+        setQty(1)
+
+        if (qtyInput) {
+          qtyInput.focus()
+        } else {
+          submit.focus()
+        }
       }
 
+      
       function itemMetaForDetail(name) {
         try {
           return typeof findCatalogItemByName === 'function' ? findCatalogItemByName(name) : null;
