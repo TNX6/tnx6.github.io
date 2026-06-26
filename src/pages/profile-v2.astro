@@ -12462,6 +12462,48 @@ const metadata = {
         watchtime: normalizeLeaderboardData(leaderboardPayload, 'watchtime'),
       }
 
+
+      window.TNXBP_V28_SAFE_PLUS = true;
+
+      if (!window.__tnxbpSafePlusV28) {
+        window.__tnxbpSafePlusV28 = true;
+
+        const fixPlus = () => {
+          const box = document.getElementById("featuredBadges");
+          if (!box) return;
+
+          const oldButtons = box.querySelectorAll(".profile-featured-badge-add, #featuredBadgePlusTest, .featured-badge-plus-test, [data-featured-badge-add-v22], [data-tnxbp-add-v24]");
+          oldButtons.forEach((button, index) => {
+            if (index > 0) {
+              button.remove();
+              return;
+            }
+
+            button.style.display = "inline-grid";
+            button.style.visibility = "visible";
+            button.style.opacity = "1";
+            button.style.pointerEvents = "auto";
+            button.style.cursor = "pointer";
+            button.style.position = "relative";
+            button.style.zIndex = "9999";
+
+            button.onclick = (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+
+              document.querySelectorAll(".featured-badge-modal-test, .featured-badge-toast").forEach((el) => el.remove());
+
+              if (typeof openTnxbpPicker === "function") {
+                openTnxbpPicker(state.activeUser);
+              }
+            };
+          });
+        };
+
+        fixPlus();
+        setInterval(fixPlus, 500);
+      }
+
       await openFromQuery()
     })()
   </script>
