@@ -8378,7 +8378,17 @@ const metadata = {
             inventoryPageV2 += 1;
           }
 
-          renderInventory(window.__tnxInventoryFullList || []);
+          const fullList = window.__tnxInventoryFullList || [];
+
+          renderInventory(fullList);
+
+          requestAnimationFrame(() => {
+            if (typeof enhanceInventorySellButtons === 'function') {
+              enhanceInventorySellButtons(fullList).catch((error) => {
+                console.warn('Failed to restore sell buttons after inventory page switch:', error);
+              });
+            }
+          });
         };
 
         if (typeof addListener === 'function') {
