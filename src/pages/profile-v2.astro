@@ -9546,6 +9546,9 @@ const metadata = {
             msg.textContent = 'تم تسجيل البيع بنجاح. سيتم تحديث الحقيبة خلال لحظات.'
             stamp?.classList.add('show')
 
+            const localSellTotal = Math.max(0, Math.floor(Number(data.sellTotal || data.sell_total || (qty * priceEach) || 0)))
+            applyLocalEconomyAfterSellV1(localSellTotal)
+
             try {
               const localChanged = await renderInventoryAfterLocalSellV4(name, qty, items)
 
@@ -10448,6 +10451,117 @@ const metadata = {
         }
       }
 
+      function getOptimisticEconomyV1(user) {
+        try {
+          const key = d1EconomyCacheKey(user || state.activeUser)
+          const store = window.__tnxOptimisticEconomyV1 || null
+
+          if (!key || !store || store.key !== key) return null
+          if (Date.now() > Number(store.expiresAt || 0)) {
+            window.__tnxOptimisticEconomyV1 = null
+            return null
+          }
+
+          return store
+        } catch {
+          return null
+        }
+      }
+
+      function clearOptimisticEconomyV1() {
+        try {
+          window.__tnxOptimisticEconomyV1 = null
+        } catch {}
+      }
+
+      function resolveEconomyAmountsV1(user, d1Points, d1Gold) {
+        const rawPoints = Math.max(0, Math.floor(Number(d1Points || 0)))
+        const rawGold = Math.max(0, Math.floor(Number(d1Gold || 0)))
+        const optimistic = getOptimisticEconomyV1(user)
+
+        if (!optimistic) {
+          return {
+            points: rawPoints,
+            gold: rawGold,
+            optimistic: false,
+          }
+        }
+
+        const optimisticPoints = Math.max(0, Math.floor(Number(optimistic.points || 0)))
+
+        if (rawPoints >= optimisticPoints) {
+          clearOptimisticEconomyV1()
+
+          return {
+            points: rawPoints,
+            gold: rawGold,
+            optimistic: false,
+          }
+        }
+
+        return {
+          points: optimisticPoints,
+          gold: Math.max(rawGold, Math.floor(optimisticPoints / 10)),
+          optimistic: true,
+        }
+      }
+
+      function updateEconomyUiV1(user) {
+        try {
+          if (!user) return
+
+          const points = Math.max(0, Math.floor(Number(currentPoints(user) || 0)))
+          const inventory = inventoryItems(user)
+          const badges = Array.isArray(user.badges) ? user.badges : []
+          const level = calculateLevel(user)
+
+          setText('points', formatNumber(points))
+          setText('rank', rankFor(user))
+          renderChips(chipsFor(user, level.level, badges, inventory))
+          renderNextBadge(user, badges)
+        } catch (error) {
+          console.warn('Failed to update local economy UI:', error)
+        }
+      }
+
+      function applyLocalEconomyAfterSellV1(sellTotal) {
+        try {
+          if (!state.activeUser) return
+
+          const delta = Math.max(0, Math.floor(Number(sellTotal || 0)))
+
+          if (delta <= 0) return
+
+          const current = Math.max(0, Math.floor(Number(currentPoints(state.activeUser) || 0)))
+          const nextPoints = current + delta
+          const nextGold = Math.floor(nextPoints / 10)
+          const key = d1EconomyCacheKey(state.activeUser)
+
+          if (key) {
+            window.__tnxOptimisticEconomyV1 = {
+              key,
+              points: nextPoints,
+              gold: nextGold,
+              delta,
+              expiresAt: Date.now() + 30000,
+            }
+          }
+
+          state.activeUser = {
+            ...state.activeUser,
+            points: nextPoints,
+            totalPoints: nextPoints,
+            balance: nextPoints,
+            gold: nextGold,
+            economySource: 'local-sell-optimistic',
+          }
+
+          updateEconomyUiV1(state.activeUser)
+        } catch (error) {
+          console.warn('Failed to apply local economy after sell:', error)
+        }
+      }
+
       async function userWithD1Economy(user) {
         const data = await loadEconomyFromD1(user)
 
@@ -10455,8 +10569,11 @@ const metadata = {
 
         const d1User = data.user || {}
         const economy = data.economy || {}
-        const points = Math.max(0, Math.floor(Number(economy.points || 0)))
-        const gold = Math.max(0, Math.floor(Number(economy.gold || 0)))
+        const rawPoints = Math.max(0, Math.floor(Number(economy.points || 0)))
+        const rawGold = Math.max(0, Math.floor(Number(economy.gold || 0)))
+        const resolvedEconomy = resolveEconomyAmountsV1(user, rawPoints, rawGold)
+        const points = resolvedEconomy.points
+        const gold = resolvedEconomy.gold
 
         return {
           ...user,
@@ -10473,7 +10590,7 @@ const metadata = {
           balance: points,
           gold,
           economyUpdatedAt: economy.updatedAt || null,
-          economySource: 'd1',
+          economySource: resolvedEconomy.optimistic ? 'd1-optimistic' : 'd1',
         }
       }
 
@@ -10869,8 +10986,11 @@ const metadata = {
             poller.lastSignature = nextSignature
             poller.lastStartedKey = key
 
-            const points = Math.max(0, Math.floor(Number(data.economy.points || 0)))
-            const gold = Math.max(0, Math.floor(Number(data.economy.gold || 0)))
+            const rawPoints = Math.max(0, Math.floor(Number(data.economy.points || 0)))
+            const rawGold = Math.max(0, Math.floor(Number(data.economy.gold || 0)))
+            const resolvedEconomy = resolveEconomyAmountsV1(state.activeUser, rawPoints, rawGold)
+            const points = resolvedEconomy.points
+            const gold = resolvedEconomy.gold
 
             const nextUser = {
               ...state.activeUser,
@@ -10879,7 +10999,7 @@ const metadata = {
               balance: points,
               gold,
               economyUpdatedAt: data.economy.updatedAt || null,
-              economySource: 'd1-live',
+              economySource: resolvedEconomy.optimistic ? 'd1-live-optimistic' : 'd1-live',
             }
 
             state.activeUser = nextUser
