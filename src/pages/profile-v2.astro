@@ -10814,7 +10814,7 @@ const metadata = {
         throw new Error('تأخر تنفيذ استخدام الغرض. جرّب تحديث الصفحة.');
       }
 
-      async function useInventoryItemFromProfileV1(item, button, hint) {
+      async async function useInventoryItemFromProfileV1(item, button, hint) {
         const name = String(item?.name || '').trim();
         const qty = Math.max(1, Math.floor(Number(item?.qty || 1)));
 
@@ -10831,6 +10831,7 @@ const metadata = {
         }
 
         const oldText = button?.textContent || 'استخدام';
+          let restoreUseButton = true;
 
         try {
           if (button) {
@@ -10887,18 +10888,33 @@ const metadata = {
           }
 
           setTimeout(() => {
-            if (button) {
-              button.disabled = false;
-              button.textContent = oldText;
+            if (restoreUseButton) {
+              if (button) {
+                button.disabled = false;
+                button.textContent = oldText;
+              }
             }
           }, 1400);
-          return await waitForProfileUseRequestCompletion(data?.requestId, hint);
+          const useCompleted = await waitForProfileUseRequestCompletion(data?.requestId, hint);
+
+          if (useCompleted) {
+            restoreUseButton = false;
+          }
+
+          return useCompleted;
         } catch (error) {
           console.error('[Inventory Use] Failed:', error);
 
-          if (button) {
-            button.disabled = false;
-            button.textContent = oldText;
+          if (restoreUseButton) {
+
+            if (button) {
+
+              button.disabled = false;
+
+              button.textContent = oldText;
+
+            }
+
           }
 
           if (hint) {
