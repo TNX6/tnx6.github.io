@@ -8440,6 +8440,32 @@ const metadata = {
     }
     }
 
+      /* TNX Sell All Inventory Lock */
+    .tnx-sell-all-lock {
+      position: absolute;
+      inset: 74px 18px 18px;
+      z-index: 80;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      background: rgba(6, 6, 8, .78);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 223, 138, .14);
+      color: #ffdf8a;
+      font-size: 13px;
+      font-weight: 950;
+      text-align: center;
+      pointer-events: all;
+    }
+
+    .tnx-sell-all-lock span {
+      display: block;
+      margin-top: 6px;
+      color: rgba(255,255,255,.58);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
   </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -10534,6 +10560,34 @@ const metadata = {
         }
 
         throw new Error('تأخر تنفيذ بيع الكل. جرّب تحديث الصفحة.');
+      }
+
+      function tnxSetSellAllInventoryLock(message, subMessage = '') {
+        const inventoryBox = document.getElementById('inventory');
+
+        if (!inventoryBox) return;
+
+        const host = inventoryBox.closest('.card, .inventory-card, section, div') || inventoryBox.parentElement;
+
+        if (!host) return;
+
+        if (getComputedStyle(host).position === 'static') {
+          host.style.position = 'relative';
+        }
+
+        let lock = host.querySelector('.tnx-sell-all-lock');
+
+        if (!lock) {
+          lock = document.createElement('div');
+          lock.className = 'tnx-sell-all-lock';
+          host.appendChild(lock);
+        }
+
+        lock.innerHTML = esc(message || 'جاري بيع الكل...') + (subMessage ? '<span>' + esc(subMessage) + '</span>' : '');
+      }
+
+      function tnxClearSellAllInventoryLock() {
+        document.querySelectorAll('.tnx-sell-all-lock').forEach((el) => el.remove());
       }
       async function tnxMountSellAllButtonV2(items) {
         const inventoryBox = document.getElementById('inventory');
