@@ -10769,6 +10769,51 @@ const metadata = {
         document.querySelectorAll('.item-detail-v3').forEach((modal) => modal.remove());
       }
 
+      async function waitForProfileUseRequestCompletion(requestId, hint) {
+        const id = String(requestId || '').trim();
+
+        if (!id) {
+          return true;
+        }
+
+        const startedAt = Date.now();
+        const timeoutMs = 30000;
+        const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+        while (Date.now() - startedAt < timeoutMs) {
+          await delay(900);
+
+          const res = await fetch(TNX_API_ORIGIN + '/api/me/inventory/use-status?id=' + encodeURIComponent(id), {
+            method: 'GET',
+            credentials: 'include',
+          });
+
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok || !data?.ok) {
+            continue;
+          }
+
+          const status = String(data?.request?.status || '').toLowerCase();
+
+          if (hint && status === 'processing') {
+            hint.textContent = 'جاري تنفيذ استخدام الغرض...';
+          }
+
+          if (status === 'completed') {
+            if (hint) hint.textContent = 'تم استخدام الغرض.';
+            return true;
+          }
+
+          if (status === 'rejected') {
+            const message = data?.request?.errorMessage || 'فشل استخدام الغرض.';
+            throw new Error(message);
+          }
+        }
+
+        throw new Error('تأخر تنفيذ استخدام الغرض. جرّب تحديث الصفحة.');
+      }
+
       async function useInventoryItemFromProfileV1(item, button, hint) {
         const name = String(item?.name || '').trim();
         const qty = Math.max(1, Math.floor(Number(item?.qty || 1)));
@@ -10847,7 +10892,7 @@ const metadata = {
               button.textContent = oldText;
             }
           }, 1400);
-          return true;
+          return await waitForProfileUseRequestCompletion(data?.requestId, hint);
         } catch (error) {
           console.error('[Inventory Use] Failed:', error);
 
