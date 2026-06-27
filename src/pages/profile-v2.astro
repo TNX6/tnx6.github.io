@@ -10857,7 +10857,8 @@ const metadata = {
 
           if (hint) {
             hint.textContent = error?.message || 'فشل استخدام الغرض.';
-          }
+          }
+          return false;
         }
       }
       function openItemDetailModalV3(item) {
@@ -10928,7 +10929,7 @@ const metadata = {
         });
 
         modal.querySelectorAll('[data-v3-action]').forEach((button) => {
-          addListener(button, 'click', () => {
+          addListener(button, 'click', async () => {
             const action = button.dataset.v3Action;
             const hint = modal.querySelector('[data-v3-hint]');
 
@@ -11795,7 +11796,7 @@ const metadata = {
         addListener(modal.querySelector('[data-close-item]'), 'click', close)
 
         modal.querySelectorAll('[data-item-action]').forEach((button) => {
-          addListener(button, 'click', () => {
+          addListener(button, 'click', async () => {
             if (button.disabled) return
 
             const hint = modal.querySelector('[data-item-hint]')
