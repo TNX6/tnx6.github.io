@@ -8466,6 +8466,65 @@ const metadata = {
       font-weight: 800;
     }
 
+  
+    /* TNX Sell All Lock Full Cover - forced override */
+    .tnx-sell-all-lock {
+      position: absolute !important;
+      inset: 0 !important;
+      width: auto !important;
+      height: auto !important;
+      z-index: 999 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-radius: 28px !important;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(255, 224, 138, 0.10), transparent 34%),
+        linear-gradient(180deg, rgba(5, 6, 10, 0.88), rgba(2, 3, 6, 0.94)) !important;
+      backdrop-filter: blur(14px) !important;
+      -webkit-backdrop-filter: blur(14px) !important;
+      border: 1px solid rgba(255, 224, 138, 0.18) !important;
+      pointer-events: all !important;
+    }
+
+    .tnx-sell-all-lock-box {
+      width: min(92%, 620px) !important;
+      min-height: 310px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 22px !important;
+      text-align: center !important;
+      padding: 42px 24px !important;
+    }
+
+    .tnx-sell-all-lock-title {
+      font-size: clamp(34px, 3vw, 52px) !important;
+      font-weight: 1000 !important;
+      line-height: 1.15 !important;
+      color: #ffe08a !important;
+      letter-spacing: -0.04em !important;
+      text-shadow:
+        0 0 10px rgba(255, 224, 138, 0.65),
+        0 0 24px rgba(255, 224, 138, 0.42),
+        0 0 46px rgba(255, 191, 77, 0.22) !important;
+    }
+
+    .tnx-sell-all-lock-subtitle {
+      font-size: clamp(17px, 1.5vw, 24px) !important;
+      font-weight: 900 !important;
+      line-height: 1.8 !important;
+      color: rgba(255, 255, 255, 0.94) !important;
+      text-shadow:
+        0 0 10px rgba(255, 255, 255, 0.18),
+        0 0 20px rgba(255, 224, 138, 0.10) !important;
+    }
+
+    .tnx-sell-all-lock > span {
+      display: none !important;
+    }
+
   </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -10562,20 +10621,48 @@ const metadata = {
         throw new Error('تأخر تنفيذ بيع الكل. جرّب تحديث الصفحة.');
       }
 
-      function tnxSetSellAllInventoryLock(message, subMessage = '') {
+      function tnxGetSellAllLockHost() {
         const inventoryBox = document.getElementById('inventory');
 
-        if (!inventoryBox) return;
+        if (!inventoryBox) {
+          return null;
+        }
 
-        const host = inventoryBox.closest('.card, .inventory-card, section, div') || inventoryBox.parentElement;
+        let current = inventoryBox.parentElement;
+        let best = inventoryBox.parentElement || inventoryBox;
 
-        if (!host) return;
+        for (let i = 0; current && i < 8; i++) {
+          const text = String(current.textContent || '');
+          const hasInventory = current.contains(inventoryBox);
+          const hasSellAllButton = !!current.querySelector('.tnx-sell-all-row');
+          const hasInventoryTitle = text.includes('الحقيبة');
+
+          if (hasInventory && hasSellAllButton && hasInventoryTitle) {
+            return current;
+          }
+
+          best = current;
+          current = current.parentElement;
+        }
+
+        return inventoryBox.parentElement?.parentElement || best || inventoryBox;
+      }
+      function tnxSetSellAllInventoryLock(message, subMessage = '') {
+        const host = typeof tnxGetSellAllLockHost === 'function'
+          ? tnxGetSellAllLockHost()
+          : document.getElementById('inventory')?.parentElement;
+
+        if (!host) {
+          return;
+        }
 
         if (getComputedStyle(host).position === 'static') {
           host.style.position = 'relative';
         }
 
-        let lock = host.querySelector('.tnx-sell-all-lock');
+        host.classList.add('is-sell-all-locked');
+
+        let lock = host.querySelector(':scope > .tnx-sell-all-lock');
 
         if (!lock) {
           lock = document.createElement('div');
@@ -10583,18 +10670,30 @@ const metadata = {
           host.appendChild(lock);
         }
 
-        lock.innerHTML = esc(message || 'جاري بيع الكل...') + (subMessage ? '<span>' + esc(subMessage) + '</span>' : '');
+        const safe = typeof esc === 'function'
+          ? esc
+          : (value) => String(value || '')
+              .replaceAll('&', '&amp;')
+              .replaceAll('<', '&lt;')
+              .replaceAll('>', '&gt;')
+              .replaceAll('"', '&quot;')
+              .replaceAll("'", '&#39;');
+
+        lock.innerHTML =
+          '<div class="tnx-sell-all-lock-box">' +
+            '<div class="tnx-sell-all-lock-title">' + safe(message || 'جاري بيع الكل...') + '</div>' +
+            (subMessage ? '<div class="tnx-sell-all-lock-subtitle">' + safe(subMessage) + '</div>' : '') +
+          '</div>';
       }
 
       function tnxClearSellAllInventoryLock() {
-        const inventoryBox = document.getElementById('inventory')
-        if (!inventoryBox) return
+        document.querySelectorAll('.is-sell-all-locked').forEach((el) => {
+          el.classList.remove('is-sell-all-locked');
+        });
 
-        const inventoryWrap = inventoryBox.parentElement
-        if (!inventoryWrap) return
-
-        inventoryWrap.classList.remove('is-sell-all-locked')
-        inventoryWrap.querySelectorAll(':scope > .tnx-sell-all-lock').forEach((el) => el.remove())
+        document.querySelectorAll('.tnx-sell-all-lock').forEach((el) => {
+          el.remove();
+        });
       }
       async function tnxMountSellAllButtonV2(items) {
         document.querySelectorAll('.tnx-sell-all-row, .inventory-sell-all-bar').forEach((el) => el.remove());
