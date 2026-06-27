@@ -10783,7 +10783,7 @@ const metadata = {
             note.textContent = 'جاري إرسال طلب بيع واحد...';
 
             if (typeof tnxSetSellAllInventoryLock === 'function') {
-              tnxSetSellAllInventoryLock('جاري بيع الكل...', 'طلب واحد فقط لكل الأغراض');
+              tnxSetSellAllInventoryLock('جاري بيع الكل...');
             }
 
             const res = await fetch(TNX_API_ORIGIN + '/api/me/inventory/sell-all', {
