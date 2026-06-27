@@ -10865,6 +10865,13 @@ const metadata = {
         const desc = itemDetailDescription(item, meta);
         const price = itemDetailSellPrice(meta);
         const saleDisabled = itemDetailIsSaleDisabled(meta) || price <= 0;
+        const useDisabled = (() => {
+          try {
+            return typeof isUseDisabled === 'function' ? isUseDisabled(meta, item) : false;
+          } catch {
+            return false;
+          }
+        })();
 
         closeItemDetailModalV3();
 
@@ -10896,7 +10903,7 @@ const metadata = {
               </div>
 
               <div class="item-detail-v3-actions">
-                <button class="item-detail-v3-action primary" type="button" data-v3-action="use">استخدام</button>
+                <button class="item-detail-v3-action primary ${useDisabled ? 'is-disabled' : ''}" type="button" data-v3-action="use" ${useDisabled ? 'disabled aria-disabled="true"' : ''}>${useDisabled ? 'لا يمكن استخدامه' : 'استخدام'}</button>
                 <button class="item-detail-v3-action" type="button" data-v3-action="gift">إهداء</button>
                 <button class="item-detail-v3-action sell" type="button" data-v3-action="sell" ${saleDisabled ? 'disabled' : ''}>بيع</button>
                 <button class="item-detail-v3-action" type="button" data-v3-action="market">عرض في السوق</button>
@@ -10922,6 +10929,11 @@ const metadata = {
             const hint = modal.querySelector('[data-v3-hint]');
 
             if (action === 'use') {
+              if (useDisabled) {
+                if (hint) hint.textContent = 'هذا الغرض غير قابل للاستخدام.';
+                return;
+              }
+
               useInventoryItemFromProfileV1(item, button, hint);
               return;
             }
