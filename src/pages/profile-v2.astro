@@ -8380,33 +8380,24 @@ const metadata = {
     }
 
   
-    /* TNX Sell All Absolute Anchor */
-    .profile-v2-layout .inventory-card,
-    .profile-v2-layout .card:has(#inventory) {
-      position: relative;
-    }
-
     /* TNX Sell All Mount */
     .tnx-sell-all-row {
-      display: inline-flex;
+      width: 100%;
+      height: 30px;
+      display: flex;
       align-items: center;
-      justify-content: center;
-      width: auto;
-      height: auto;
-      margin: 0 0 0 8px;
-      padding: 0;
-      direction: rtl;
+      justify-content: flex-start;
+      gap: 10px;
+      margin: -28px 0 0;
+      padding-right: 0;
+      padding-left: 120px;
+      direction: ltr;
       pointer-events: none;
-      vertical-align: middle;
-      position: static !important;
-      top: auto !important;
-      left: auto !important;
-      z-index: 20;
     }
 
     .tnx-sell-all-btn {
-      min-height: 30px;
-      padding: 0 15px;
+      min-height: 31px;
+      padding: 0 16px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -8435,20 +8426,17 @@ const metadata = {
       /* TNX Sell All Mobile Position */
     @media (max-width: 760px) {
       .tnx-sell-all-row {
-      display: inline-flex;
+      width: 100%;
+      height: 30px;
+      display: flex;
       align-items: center;
-      justify-content: center;
-      width: auto;
-      height: auto;
-      margin: 0 0 0 8px;
-      padding: 0;
-      direction: rtl;
+      justify-content: flex-start;
+      gap: 10px;
+      margin: -28px 0 0;
+      padding-right: 0;
+      padding-left: 120px;
+      direction: ltr;
       pointer-events: none;
-      vertical-align: middle;
-      position: static !important;
-      top: auto !important;
-      left: auto !important;
-      z-index: 20;
     }
     }
 
@@ -10560,17 +10548,7 @@ const metadata = {
         row.appendChild(btn);
         row.appendChild(note);
 
-        const inventoryHost = inventoryBox.closest('.card, .inventory-card, section, div') || inventoryBox.parentElement;
-
-        const countEl = inventoryHost
-          ? Array.from(inventoryHost.querySelectorAll('span, small, div, p')).find((el) => /^\s*\d+\s+أغراض\s*$/.test(String(el.textContent || '').trim()))
-          : null;
-
-        if (countEl) {
-          countEl.insertAdjacentElement('afterend', row);
-        } else {
-          inventoryBox.parentElement?.insertBefore(row, inventoryBox);
-        }
+        inventoryBox.parentElement?.insertBefore(row, inventoryBox);
 
         // Keep only one sell-all row
         const sellAllRows = Array.from(document.querySelectorAll('.tnx-sell-all-row'));
