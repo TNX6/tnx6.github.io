@@ -9817,9 +9817,13 @@ const metadata = {
 
         for (const source of sources) {
           const disabledValue =
+            source.excludeUsage ??
             source.excludeUse ??
+            source.disableUsage ??
             source.disableUse ??
+            source.disabledUsage ??
             source.disabledUse ??
+            source.noUsage ??
             source.noUse ??
             source.notUsable ??
             source.isUseDisabled
