@@ -10297,10 +10297,15 @@ const metadata = {
 
         box.querySelectorAll('.inventory-sell-all-bar').forEach((el) => el.remove());
 
-        const sellable = getSellAllEligibleInventoryItems(items);
+        const sourceItemsForSellAll = Array.isArray(items)
+          ? items
+          : Array.isArray(window.__tnxInventoryFullList)
+            ? window.__tnxInventoryFullList
+            : [];
 
-        if (!canSell || !list.length) return;
+        if (!canSell || !sourceItemsForSellAll.length) return;
 
+        const sellable = getSellAllEligibleInventoryItems(sourceItemsForSellAll);
         const total = sellable.reduce((sum, row) => sum + row.total, 0);
 
         const bar = document.createElement('div');
@@ -10313,11 +10318,11 @@ const metadata = {
 
         const meta = document.createElement('span');
         meta.className = 'inventory-sell-all-meta';
-        meta.textContent = 'القابل للبيع فقط • ' + formatNumber(total) + ' نقطة';
+        meta.textContent = sellable.length ? 'القابل للبيع فقط • ' + formatNumber(total) + ' نقطة' : 'ما فيه أغراض قابلة للبيع';
 
         bar.appendChild(button);
         bar.appendChild(meta);
-        box.parentElement?.insertBefore(bar, box);
+        box.prepend(bar);
 
         addListener(button, 'click', async () => {
           const sourceItems = Array.isArray(window.__tnxInventoryFullList)
