@@ -8379,6 +8379,50 @@ const metadata = {
       font-weight: 800;
     }
 
+  
+    /* TNX Sell All Mount */
+    .tnx-sell-all-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      margin: 0 0 12px;
+      padding: 0 4px;
+      direction: rtl;
+    }
+
+    .tnx-sell-all-btn {
+      min-height: 34px;
+      padding: 0 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 223, 138, .60);
+      background: rgba(255, 223, 138, .13);
+      color: #ffdf8a;
+      font-size: 12px;
+      font-weight: 950;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tnx-sell-all-btn:hover {
+      background: rgba(255, 223, 138, .20);
+      border-color: rgba(255, 223, 138, .9);
+    }
+
+    .tnx-sell-all-btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .tnx-sell-all-note {
+      color: rgba(255,255,255,.48);
+      font-size: 11px;
+      font-weight: 800;
+    }
   </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -10398,7 +10442,172 @@ const metadata = {
         });
       }
 
+
+      function tnxSellAllEligibleV2(items) {
+        const list = Array.isArray(items) ? items : [];
+
+        return list
+          .map((item) => {
+            const name = String(item?.name || item?.text || item?.itemName || '').trim();
+            const qty = Math.max(0, Math.floor(Number(item?.qty ?? item?.quantity ?? 0)));
+
+            if (!name || qty <= 0) return null;
+
+            const meta = typeof itemMetaForDetail === 'function'
+              ? itemMetaForDetail(name)
+              : (typeof findCatalogItemByName === 'function' ? findCatalogItemByName(name) : null);
+
+            const disabled = typeof itemDetailIsSaleDisabled === 'function'
+              ? itemDetailIsSaleDisabled(meta)
+              : false;
+
+            if (disabled) return null;
+
+            const price = typeof itemDetailSellPrice === 'function'
+              ? itemDetailSellPrice(meta)
+              : 0;
+
+            if (!Number.isFinite(price) || price <= 0) return null;
+
+            return {
+              item,
+              name,
+              qty,
+              price,
+              total: price * qty,
+            };
+          })
+          .filter(Boolean);
+      }
+
+      async function tnxMountSellAllButtonV2(items) {
+        const inventoryBox = document.getElementById('inventory');
+
+        if (!inventoryBox) return;
+
+        document.querySelectorAll('.tnx-sell-all-row').forEach((el) => el.remove());
+
+        const sourceItems = Array.isArray(items)
+          ? items
+          : Array.isArray(window.__tnxInventoryFullList)
+            ? window.__tnxInventoryFullList
+            : [];
+
+        if (!sourceItems.length) return;
+
+        let allowed = true;
+
+        try {
+          if (typeof isProfileOwnerV36 === 'function') {
+            allowed = await isProfileOwnerV36(state.activeUser);
+          }
+        } catch {
+          allowed = true;
+        }
+
+        if (!allowed) return;
+
+        const sellable = tnxSellAllEligibleV2(sourceItems);
+        const total = sellable.reduce((sum, row) => sum + row.total, 0);
+
+        const row = document.createElement('div');
+        row.className = 'tnx-sell-all-row';
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'tnx-sell-all-btn';
+        btn.textContent = 'بيع الكل';
+
+        const note = document.createElement('span');
+        note.className = 'tnx-sell-all-note';
+        note.textContent = sellable.length
+          ? 'القابل للبيع فقط • ' + formatNumber(total) + ' نقطة'
+          : 'ما فيه أغراض قابلة للبيع';
+
+        row.appendChild(btn);
+        row.appendChild(note);
+
+        inventoryBox.parentElement?.insertBefore(row, inventoryBox);
+
+        btn.addEventListener('click', async () => {
+          const currentItems = Array.isArray(window.__tnxInventoryFullList)
+            ? window.__tnxInventoryFullList
+            : sourceItems;
+
+          const currentSellable = tnxSellAllEligibleV2(currentItems);
+          const currentTotal = currentSellable.reduce((sum, row) => sum + row.total, 0);
+
+          if (!currentSellable.length) {
+            btn.disabled = true;
+            note.textContent = 'ما فيه أغراض قابلة للبيع';
+            return;
+          }
+
+          const ok = window.confirm(
+            'تأكيد بيع الكل\n\n' +
+            'سيتم بيع كل الأغراض القابلة للبيع من حقيبتك.\n' +
+            'عدد الأنواع: ' + formatNumber(currentSellable.length) + '\n' +
+            'الإجمالي المتوقع: ' + formatNumber(currentTotal) + ' نقطة'
+          );
+
+          if (!ok) return;
+
+          btn.disabled = true;
+          btn.textContent = 'جاري البيع...';
+          note.textContent = 'جاري إرسال طلبات البيع...';
+
+          let sold = 0;
+          let failed = 0;
+
+          for (const entry of currentSellable) {
+            try {
+              const res = await fetch(TNX_API_ORIGIN + '/api/me/inventory/sell', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  itemName: entry.name,
+                  quantity: entry.qty,
+                }),
+              });
+
+              const data = await res.json().catch(() => ({}));
+
+              if (!res.ok || data?.ok === false) {
+                throw new Error(String(data?.message || data?.error || res.status || 'sell_failed'));
+              }
+
+              sold += 1;
+
+              if (typeof applyLocalSellToInventory === 'function') {
+                applyLocalSellToInventory(currentItems, entry.name, entry.qty);
+              }
+            } catch (error) {
+              failed += 1;
+              console.error('[Sell All] Failed:', entry.name, error);
+            }
+          }
+
+          if (typeof renderInventory === 'function') {
+            renderInventory(currentItems);
+          }
+
+          requestAnimationFrame(() => {
+            if (typeof enhanceInventorySellButtons === 'function') {
+              enhanceInventorySellButtons(currentItems);
+            }
+          });
+
+          if (failed > 0) {
+            window.alert('تم إرسال ' + formatNumber(sold) + ' طلب بيع، وفشل ' + formatNumber(failed) + '.');
+          }
+        });
+      }
+
       async function enhanceInventorySellButtons(items) {
+        await tnxMountSellAllButtonV2(items);
         const box = $('inventory')
         if (!box || !items?.length) return
 
