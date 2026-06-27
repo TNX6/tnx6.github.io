@@ -8388,19 +8388,19 @@ const metadata = {
 
     /* TNX Sell All Mount */
     .tnx-sell-all-row {
-      position: absolute;
-      top: 26px;
-      left: 92px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       width: auto;
       height: auto;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 0;
-      margin: 0;
+      margin: 0 0 0 8px;
       padding: 0;
       direction: rtl;
       pointer-events: none;
+      vertical-align: middle;
+      position: static !important;
+      top: auto !important;
+      left: auto !important;
       z-index: 20;
     }
 
@@ -8435,13 +8435,21 @@ const metadata = {
       /* TNX Sell All Mobile Position */
     @media (max-width: 760px) {
       .tnx-sell-all-row {
-        position: static !important;
-        width: 100% !important;
-        margin: 8px 0 10px !important;
-        padding: 0 !important;
-        justify-content: flex-start !important;
-        direction: rtl !important;
-      }
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: auto;
+      height: auto;
+      margin: 0 0 0 8px;
+      padding: 0;
+      direction: rtl;
+      pointer-events: none;
+      vertical-align: middle;
+      position: static !important;
+      top: auto !important;
+      left: auto !important;
+      z-index: 20;
+    }
     }
 
   </style>
@@ -10552,7 +10560,17 @@ const metadata = {
         row.appendChild(btn);
         row.appendChild(note);
 
-        inventoryBox.parentElement?.insertBefore(row, inventoryBox);
+        const inventoryHost = inventoryBox.closest('.card, .inventory-card, section, div') || inventoryBox.parentElement;
+
+        const countEl = inventoryHost
+          ? Array.from(inventoryHost.querySelectorAll('span, small, div, p')).find((el) => /^\s*\d+\s+أغراض\s*$/.test(String(el.textContent || '').trim()))
+          : null;
+
+        if (countEl) {
+          countEl.insertAdjacentElement('afterend', row);
+        } else {
+          inventoryBox.parentElement?.insertBefore(row, inventoryBox);
+        }
 
         // Keep only one sell-all row
         const sellAllRows = Array.from(document.querySelectorAll('.tnx-sell-all-row'));
