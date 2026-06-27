@@ -10587,7 +10587,14 @@ const metadata = {
       }
 
       function tnxClearSellAllInventoryLock() {
-        document.querySelectorAll('.tnx-sell-all-lock').forEach((el) => el.remove());
+        const inventoryBox = document.getElementById('inventory')
+        if (!inventoryBox) return
+
+        const inventoryWrap = inventoryBox.parentElement
+        if (!inventoryWrap) return
+
+        inventoryWrap.classList.remove('is-sell-all-locked')
+        inventoryWrap.querySelectorAll(':scope > .tnx-sell-all-lock').forEach((el) => el.remove())
       }
       async function tnxMountSellAllButtonV2(items) {
         document.querySelectorAll('.tnx-sell-all-row, .inventory-sell-all-bar').forEach((el) => el.remove());
