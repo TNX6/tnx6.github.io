@@ -10485,7 +10485,7 @@ const metadata = {
 
         if (!inventoryBox) return;
 
-        document.querySelectorAll('.tnx-sell-all-row').forEach((el) => el.remove());
+        document.querySelectorAll('.tnx-sell-all-row, .inventory-sell-all-bar').forEach((el) => el.remove());
 
         const sourceItems = Array.isArray(items)
           ? items
