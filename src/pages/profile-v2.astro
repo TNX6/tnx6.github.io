@@ -8331,7 +8331,55 @@ const metadata = {
     }
 
 
-</style>
+
+    /* Inventory Sell All Button */
+    .profile-v2-layout .inventory-sell-all-bar {
+      grid-column: 1 / -1;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      margin: 0 0 8px;
+      padding: 0 2px;
+      direction: rtl;
+    }
+
+    .profile-v2-layout .inventory-sell-all-btn {
+      min-height: 34px;
+      padding: 0 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 223, 138, .45);
+      background: rgba(255, 223, 138, .10);
+      color: #ffdf8a;
+      font-size: 12px;
+      font-weight: 950;
+      cursor: pointer;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease, opacity .14s ease;
+    }
+
+    .profile-v2-layout .inventory-sell-all-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 223, 138, .85);
+      background: rgba(255, 223, 138, .16);
+    }
+
+    .profile-v2-layout .inventory-sell-all-btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .profile-v2-layout .inventory-sell-all-meta {
+      color: rgba(255,255,255,.48);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+  </style>
 
   <script is:inline data-astro-rerun data-reinit>
     ;(async () => {
@@ -10210,6 +10258,139 @@ const metadata = {
 
           openInventorySellModal(item, meta, items)
         })
+      }
+
+
+      function getSellAllEligibleInventoryItems(items) {
+        const list = Array.isArray(items) ? items : [];
+
+        return list
+          .map((item) => {
+            const name = String(item?.name || item?.text || item?.itemName || '').trim();
+            const qty = Math.max(0, Math.floor(Number(item?.qty ?? item?.quantity ?? 0)));
+
+            if (!name || qty <= 0) return null;
+
+            const meta = findCatalogItemByName(name);
+
+            if (!meta || isSaleDisabled(meta)) return null;
+
+            const price = itemSellPrice(meta);
+
+            if (!Number.isFinite(price) || price <= 0) return null;
+
+            return {
+              item,
+              name,
+              qty,
+              price,
+              total: price * qty,
+            };
+          })
+          .filter(Boolean);
+      }
+
+      function renderInventorySellAllButton(items, canSell) {
+        const box = $('inventory');
+
+        if (!box) return;
+
+        box.querySelectorAll('.inventory-sell-all-bar').forEach((el) => el.remove());
+
+        const sellable = getSellAllEligibleInventoryItems(items);
+
+        if (!canSell || !sellable.length) return;
+
+        const total = sellable.reduce((sum, row) => sum + row.total, 0);
+
+        const bar = document.createElement('div');
+        bar.className = 'inventory-sell-all-bar';
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'inventory-sell-all-btn';
+        button.textContent = 'بيع الكل';
+
+        const meta = document.createElement('span');
+        meta.className = 'inventory-sell-all-meta';
+        meta.textContent = 'القابل للبيع فقط • ' + formatNumber(total) + ' نقطة';
+
+        bar.appendChild(button);
+        bar.appendChild(meta);
+        box.prepend(bar);
+
+        addListener(button, 'click', async () => {
+          const sourceItems = Array.isArray(window.__tnxInventoryFullList)
+            ? window.__tnxInventoryFullList
+            : Array.isArray(items)
+              ? items
+              : [];
+
+          const currentSellable = getSellAllEligibleInventoryItems(sourceItems);
+
+          if (!currentSellable.length) {
+            button.disabled = true;
+            meta.textContent = 'ما فيه أغراض قابلة للبيع';
+            return;
+          }
+
+          const currentTotal = currentSellable.reduce((sum, row) => sum + row.total, 0);
+
+          const confirmed = window.confirm(
+            'تأكيد بيع الكل\n\n' +
+            'سيتم بيع كل الأغراض القابلة للبيع من حقيبتك.\n' +
+            'عدد الأنواع: ' + formatNumber(currentSellable.length) + '\n' +
+            'الإجمالي المتوقع: ' + formatNumber(currentTotal) + ' نقطة'
+          );
+
+          if (!confirmed) return;
+
+          const oldText = button.textContent;
+          button.disabled = true;
+          button.textContent = 'جاري البيع...';
+          meta.textContent = 'جاري إرسال طلبات البيع...';
+
+          let sold = 0;
+          let failed = 0;
+
+          for (const row of currentSellable) {
+            try {
+              const res = await fetch(TNX_API_ORIGIN + '/api/me/inventory/sell', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  itemName: row.name,
+                  quantity: row.qty,
+                }),
+              });
+
+              const data = await res.json().catch(() => ({}));
+
+              if (!res.ok || data?.ok === false) {
+                throw new Error(String(data?.message || data?.error || res.status || 'sell_failed'));
+              }
+
+              sold += 1;
+              applyLocalSellToInventory(sourceItems, row.name, row.qty);
+            } catch (error) {
+              failed += 1;
+              console.error('[Sell All] Failed:', row.name, error);
+            }
+          }
+
+          renderInventory(sourceItems);
+
+          requestAnimationFrame(() => {
+            enhanceInventorySellButtons(sourceItems);
+          });
+
+          if (failed > 0) {
+            window.alert('تم إرسال ' + formatNumber(sold) + ' طلب بيع، وفشل ' + formatNumber(failed) + '.');
+          }
+        });
       }
 
       async function enhanceInventorySellButtons(items) {
