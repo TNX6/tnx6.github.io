@@ -10498,6 +10498,43 @@ const metadata = {
           .filter(Boolean);
       }
 
+
+      async function tnxWaitSellRequestCompleteV2(requestId) {
+        const id = String(requestId || '').trim();
+
+        if (!id) return false;
+
+        const startedAt = Date.now();
+        const timeoutMs = 45000;
+        const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+        while (Date.now() - startedAt < timeoutMs) {
+          await delay(900);
+
+          const res = await fetch(TNX_API_ORIGIN + '/api/me/inventory/sell-status?id=' + encodeURIComponent(id), {
+            method: 'GET',
+            credentials: 'include',
+          });
+
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok || !data?.ok) {
+            continue;
+          }
+
+          const status = String(data?.request?.status || '').toLowerCase();
+
+          if (status === 'completed') {
+            return true;
+          }
+
+          if (status === 'rejected') {
+            throw new Error(data?.request?.errorMessage || 'فشل بيع أحد الأغراض.');
+          }
+        }
+
+        throw new Error('تأخر تنفيذ بيع الكل. جرّب تحديث الصفحة.');
+      }
       async function tnxMountSellAllButtonV2(items) {
         const inventoryBox = document.getElementById('inventory');
 
