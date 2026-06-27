@@ -10885,13 +10885,6 @@ const metadata = {
           if (hint) {
             hint.textContent = 'تم إرسال طلب الاستخدام. راقب البث أو الشات للتنفيذ.';
           }
-
-          setTimeout(() => {
-            if (button) {
-              button.disabled = false;
-              button.textContent = oldText;
-            }
-          }, 1400);
           return await waitForProfileUseRequestCompletion(data?.requestId, hint);
         } catch (error) {
           console.error('[Inventory Use] Failed:', error);
