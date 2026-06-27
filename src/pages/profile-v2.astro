@@ -10271,11 +10271,11 @@ const metadata = {
 
             if (!name || qty <= 0) return null;
 
-            const meta = findCatalogItemByName(name);
+            const meta = itemMetaForDetail(name);
 
-            if (!meta || isSaleDisabled(meta)) return null;
+            if (itemDetailIsSaleDisabled(meta)) return null;
 
-            const price = itemSellPrice(meta);
+            const price = itemDetailSellPrice(meta);
 
             if (!Number.isFinite(price) || price <= 0) return null;
 
@@ -10299,7 +10299,7 @@ const metadata = {
 
         const sellable = getSellAllEligibleInventoryItems(items);
 
-        if (!canSell || !sellable.length) return;
+        if (!canSell || !list.length) return;
 
         const total = sellable.reduce((sum, row) => sum + row.total, 0);
 
@@ -10317,7 +10317,7 @@ const metadata = {
 
         bar.appendChild(button);
         bar.appendChild(meta);
-        box.prepend(bar);
+        box.parentElement?.insertBefore(bar, box);
 
         addListener(button, 'click', async () => {
           const sourceItems = Array.isArray(window.__tnxInventoryFullList)
