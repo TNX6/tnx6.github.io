@@ -10335,6 +10335,7 @@ const metadata = {
       }
 
       function renderInventorySellAllButton(items, canSell) {
+        return; // legacy disabled: using tnxMountSellAllButtonV2
         const box = $('inventory');
 
         if (!box) return;
@@ -10485,6 +10486,9 @@ const metadata = {
 
         if (!inventoryBox) return;
 
+        window.__tnxSellAllMountToken = (window.__tnxSellAllMountToken || 0) + 1;
+        const sellAllMountToken = window.__tnxSellAllMountToken;
+
         document.querySelectorAll('.tnx-sell-all-row, .inventory-sell-all-bar').forEach((el) => el.remove());
 
         const sourceItems = Array.isArray(items)
@@ -10528,6 +10532,11 @@ const metadata = {
         row.appendChild(note);
 
         inventoryBox.parentElement?.insertBefore(row, inventoryBox);
+
+        // Keep only one sell-all row
+        const sellAllRows = Array.from(document.querySelectorAll('.tnx-sell-all-row'));
+        sellAllRows.slice(1).forEach((el) => el.remove());
+        document.querySelectorAll('.inventory-sell-all-bar').forEach((el) => el.remove());
 
         btn.addEventListener('click', async () => {
           const currentItems = Array.isArray(window.__tnxInventoryFullList)
@@ -13541,7 +13550,6 @@ const metadata = {
 
   <script is:inline src="/data/badge-meta.js?v=3"></script>
 </Layout>
-
 
 
 
