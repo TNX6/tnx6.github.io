@@ -14088,9 +14088,40 @@ const metadata = {
         $('backToTop')?.classList.toggle('is-visible', window.scrollY > 420)
       }, { passive: true })
 
+      const loadD1MailboxUsersForProfile = async () => {
+        try {
+          const res = await fetch(TNX_API_ORIGIN + '/api/mailbox/users?limit=50', {
+            credentials: 'include',
+          });
+
+          const data = await res.json().catch(() => null);
+
+          if (!res.ok || !data || data.ok !== true || !Array.isArray(data.users)) {
+            throw new Error((data && data.error) || 'mailbox_users_failed');
+          }
+
+          return data.users.map((entry) => ({
+            userId: String(entry.userId || ''),
+            id: String(entry.userId || ''),
+            userName: String(entry.userLogin || ''),
+            userLogin: String(entry.userLogin || ''),
+            login: String(entry.userLogin || ''),
+            displayName: String(entry.displayName || entry.userLogin || ''),
+            messages: [],
+            mailbox: [],
+            messageCount: 0,
+            mailboxOwned: true,
+            ownsMailbox: true,
+            capacity: Number(entry.capacity || 5),
+          })).filter((entry) => entry.userId);
+        } catch (error) {
+          console.warn('[Mailbox] D1 users failed, fallback to static JSON:', error);
+          return loadJson('/api/user_mailbox.json', []);
+        }
+      };
       const [users, mailboxes, profiles, itemPayload, leaderboardPayload] = await Promise.all([
         loadJson('/api/user_badges.json', []),
-        loadJson('/api/user_mailbox.json', []),
+        loadD1MailboxUsersForProfile(),
         loadJson('/api/user_profile.json', []),
         loadJson('/api/items.json', { items: [] }),
         loadJson('/api/leaderboard_data.json', {}),
