@@ -8525,6 +8525,149 @@ const metadata = {
       display: none !important;
     }
 
+  
+    /* TNX Sell All Custom Confirm Modal */
+    .tnx-sell-all-confirm-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0, 0, 0, 0.62);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .tnx-sell-all-confirm-modal {
+      width: min(94vw, 520px);
+      direction: rtl;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 224, 138, 0.22);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255, 224, 138, 0.12), transparent 34%),
+        linear-gradient(180deg, rgba(20, 21, 26, 0.98), rgba(10, 11, 15, 0.98));
+      box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      overflow: hidden;
+      animation: tnxSellAllConfirmIn 180ms ease-out both;
+    }
+
+    .tnx-sell-all-confirm-head {
+      padding: 26px 28px 14px;
+      text-align: center;
+    }
+
+    .tnx-sell-all-confirm-icon {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 14px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 224, 138, 0.38);
+      background: rgba(255, 224, 138, 0.10);
+      color: #ffe08a;
+      font-size: 25px;
+      box-shadow:
+        0 0 22px rgba(255, 224, 138, 0.18),
+        inset 0 0 18px rgba(255, 224, 138, 0.08);
+    }
+
+    .tnx-sell-all-confirm-title {
+      color: #fff;
+      font-size: 24px;
+      font-weight: 1000;
+      line-height: 1.3;
+      margin: 0;
+    }
+
+    .tnx-sell-all-confirm-desc {
+      margin: 10px auto 0;
+      max-width: 390px;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.8;
+    }
+
+    .tnx-sell-all-confirm-stats {
+      margin: 16px 28px 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .tnx-sell-all-confirm-stat {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 13px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .tnx-sell-all-confirm-label {
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .tnx-sell-all-confirm-value {
+      color: #ffe08a;
+      font-size: 15px;
+      font-weight: 1000;
+      text-shadow: 0 0 14px rgba(255, 224, 138, 0.24);
+      white-space: nowrap;
+    }
+
+    .tnx-sell-all-confirm-actions {
+      display: flex;
+      gap: 10px;
+      padding: 22px 28px 28px;
+    }
+
+    .tnx-sell-all-confirm-btn {
+      flex: 1;
+      min-height: 46px;
+      border: 0;
+      border-radius: 16px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 1000;
+      transition: transform 140ms ease, opacity 140ms ease, border-color 140ms ease;
+    }
+
+    .tnx-sell-all-confirm-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .tnx-sell-all-confirm-btn.cancel {
+      color: rgba(255, 255, 255, 0.78);
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+    }
+
+    .tnx-sell-all-confirm-btn.confirm {
+      color: #1a1304;
+      background: linear-gradient(180deg, #ffe08a, #d8aa45);
+      box-shadow: 0 10px 28px rgba(255, 200, 80, 0.18);
+    }
+
+    @keyframes tnxSellAllConfirmIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
   </style>
 
   <script is:inline data-astro-rerun data-reinit>
@@ -10833,6 +10976,87 @@ const metadata = {
           target.textContent = tnxFormatDisplayNumber(nextValue);
         }
       }
+
+      function tnxOpenSellAllConfirmModal(options = {}) {
+        return new Promise((resolve) => {
+          const fmt = typeof options.fmt === 'function'
+            ? options.fmt
+            : (value) => String(value || 0);
+
+          const itemCount = Math.max(0, Math.floor(Number(options.itemCount || 0)));
+          const total = Math.max(0, Math.floor(Number(options.total || 0)));
+
+          document.querySelectorAll('.tnx-sell-all-confirm-backdrop').forEach((el) => el.remove());
+
+          const safe = typeof esc === 'function'
+            ? esc
+            : (value) => String(value || '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+
+          const backdrop = document.createElement('div');
+          backdrop.className = 'tnx-sell-all-confirm-backdrop';
+
+          backdrop.innerHTML =
+            '<div class="tnx-sell-all-confirm-modal" role="dialog" aria-modal="true" aria-label="تأكيد بيع الكل">' +
+              '<div class="tnx-sell-all-confirm-head">' +
+                '<div class="tnx-sell-all-confirm-icon">↯</div>' +
+                '<h3 class="tnx-sell-all-confirm-title">تأكيد بيع الكل</h3>' +
+                '<div class="tnx-sell-all-confirm-desc">سيتم بيع كل الأغراض القابلة للبيع من حقيبتك وإضافة النقاط مباشرة.</div>' +
+              '</div>' +
+              '<div class="tnx-sell-all-confirm-stats">' +
+                '<div class="tnx-sell-all-confirm-stat">' +
+                  '<span class="tnx-sell-all-confirm-label">عدد الأنواع</span>' +
+                  '<span class="tnx-sell-all-confirm-value">' + safe(fmt(itemCount)) + '</span>' +
+                '</div>' +
+                '<div class="tnx-sell-all-confirm-stat">' +
+                  '<span class="tnx-sell-all-confirm-label">الإجمالي المتوقع</span>' +
+                  '<span class="tnx-sell-all-confirm-value">' + safe(fmt(total)) + ' نقطة</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="tnx-sell-all-confirm-actions">' +
+                '<button type="button" class="tnx-sell-all-confirm-btn cancel" data-sell-all-confirm="no">إلغاء</button>' +
+                '<button type="button" class="tnx-sell-all-confirm-btn confirm" data-sell-all-confirm="yes">تأكيد البيع</button>' +
+              '</div>' +
+            '</div>';
+
+          const close = (value) => {
+            document.removeEventListener('keydown', onKeyDown);
+            backdrop.remove();
+            resolve(value);
+          };
+
+          const onKeyDown = (event) => {
+            if (event.key === 'Escape') {
+              close(false);
+            }
+          };
+
+          backdrop.addEventListener('click', (event) => {
+            if (event.target === backdrop) {
+              close(false);
+            }
+
+            const button = event.target?.closest?.('[data-sell-all-confirm]');
+
+            if (!button) {
+              return;
+            }
+
+            close(button.getAttribute('data-sell-all-confirm') === 'yes');
+          });
+
+          document.addEventListener('keydown', onKeyDown);
+          document.body.appendChild(backdrop);
+
+          requestAnimationFrame(() => {
+            backdrop.querySelector('[data-sell-all-confirm="yes"]')?.focus?.();
+          });
+        });
+      }
       async function tnxMountSellAllButtonV2(items) {
         document.querySelectorAll('.tnx-sell-all-row, .inventory-sell-all-bar').forEach((el) => el.remove());
 
@@ -10902,12 +11126,11 @@ const metadata = {
 
           const estimatedTotal = currentSellable.reduce((sum, entry) => sum + getEntryTotal(entry), 0);
 
-          const confirmed = window.confirm(
-            'تأكيد بيع الكل\n\n' +
-            'سيتم بيع كل الأغراض القابلة للبيع من حقيبتك.\n' +
-            'عدد الأنواع: ' + fmt(payloadItems.length) + '\n' +
-            'الإجمالي المتوقع: ' + fmt(estimatedTotal) + ' نقطة'
-          );
+          const confirmed = await tnxOpenSellAllConfirmModal({
+            itemCount: payloadItems.length,
+            total: estimatedTotal,
+            fmt,
+          });
 
           if (!confirmed) {
             return;
