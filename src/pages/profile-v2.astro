@@ -10758,7 +10758,48 @@ const metadata = {
         return fallback || null;
       }
 
-      function tnxApplyLocalPointBoostAfterSellAll(amount) {
+
+      function tnxAnimateDisplayedNumber(target, fromValue, toValue, duration = 850) {
+        if (!target) return;
+
+        const from = Math.max(0, Math.floor(Number(fromValue || 0)));
+        const to = Math.max(0, Math.floor(Number(toValue || 0)));
+
+        if (from === to) {
+          target.textContent = tnxFormatDisplayNumber(to);
+          return;
+        }
+
+        const oldFrame = Number(target.getAttribute('data-tnx-points-animation-frame') || 0);
+
+        if (oldFrame) {
+          cancelAnimationFrame(oldFrame);
+        }
+
+        const startedAt = performance.now();
+
+        const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+        const tick = (now) => {
+          const progress = Math.min(1, (now - startedAt) / duration);
+          const eased = easeOutCubic(progress);
+          const current = Math.round(from + ((to - from) * eased));
+
+          target.textContent = tnxFormatDisplayNumber(current);
+
+          if (progress < 1) {
+            const frame = requestAnimationFrame(tick);
+            target.setAttribute('data-tnx-points-animation-frame', String(frame));
+          } else {
+            target.textContent = tnxFormatDisplayNumber(to);
+            target.removeAttribute('data-tnx-points-animation-frame');
+          }
+        };
+
+        const frame = requestAnimationFrame(tick);
+        target.setAttribute('data-tnx-points-animation-frame', String(frame));
+      }
+      function tnxApplyLocalPointBoostAfterSellAll(amount, animate = true) {
         const boost = Math.max(0, Math.floor(Number(amount || 0)));
 
         if (!boost) return;
@@ -10767,21 +10808,30 @@ const metadata = {
 
         if (!target) return;
 
-        const existingBoost = Math.floor(Number(target.getAttribute('data-tnx-sell-all-point-boost') || 0));
+        const previousBoost = Math.floor(Number(target.getAttribute('data-tnx-sell-all-point-boost') || 0));
+        const currentDisplayed = tnxNumberFromText(target.textContent);
 
-        if (existingBoost === boost) {
+        if (previousBoost === boost && target.getAttribute('data-tnx-sell-all-point-done') === '1') {
           return;
         }
 
-        let base = tnxNumberFromText(target.getAttribute('data-tnx-sell-all-point-base') || target.textContent);
+        let base = tnxNumberFromText(target.getAttribute('data-tnx-sell-all-point-base') || '');
 
         if (!base) {
-          base = tnxNumberFromText(target.textContent);
+          base = Math.max(0, currentDisplayed - previousBoost);
         }
+
+        const nextValue = base + boost;
 
         target.setAttribute('data-tnx-sell-all-point-base', String(base));
         target.setAttribute('data-tnx-sell-all-point-boost', String(boost));
-        target.textContent = tnxFormatDisplayNumber(base + boost);
+        target.setAttribute('data-tnx-sell-all-point-done', '1');
+
+        if (animate && typeof tnxAnimateDisplayedNumber === 'function') {
+          tnxAnimateDisplayedNumber(target, currentDisplayed, nextValue, 900);
+        } else {
+          target.textContent = tnxFormatDisplayNumber(nextValue);
+        }
       }
       async function tnxMountSellAllButtonV2(items) {
         document.querySelectorAll('.tnx-sell-all-row, .inventory-sell-all-bar').forEach((el) => el.remove());
@@ -10900,9 +10950,9 @@ const metadata = {
             const localSellTotal = Math.max(0, Math.floor(Number(data?.sellTotal || estimatedTotal || 0)));
 
             if (typeof tnxApplyLocalPointBoostAfterSellAll === 'function') {
-              tnxApplyLocalPointBoostAfterSellAll(localSellTotal);
-              setTimeout(() => tnxApplyLocalPointBoostAfterSellAll(localSellTotal), 800);
-              setTimeout(() => tnxApplyLocalPointBoostAfterSellAll(localSellTotal), 2000);
+              tnxApplyLocalPointBoostAfterSellAll(localSellTotal, true);
+              setTimeout(() => tnxApplyLocalPointBoostAfterSellAll(localSellTotal, false), 800);
+              setTimeout(() => tnxApplyLocalPointBoostAfterSellAll(localSellTotal, false), 2000);
             }
 
             for (const entry of currentSellable) {
