@@ -9905,6 +9905,7 @@ const metadata = {
         renderBadges(badges)
         renderFeaturedBadgesCleanV29(user)
         renderMail(mail)
+        loadD1MailboxForProfile(user)
         syncOwnerControlsV36(user)
       }
 
@@ -12937,6 +12938,182 @@ const metadata = {
         return mail.sort((a, b) => new Date(get(b, ['date', 'createdAt'], 0)) - new Date(get(a, ['date', 'createdAt'], 0)))
       }
 
+      
+      function mailboxMessageId(message) {
+        return String(get(message, ['id', 'messageId', 'message_id'], '')).trim()
+      }
+
+      function mailboxGiftStatus(message) {
+        return String(get(message, ['giftStatus', 'gift_status'], '') || '').trim().toLowerCase()
+      }
+
+      function mailboxMessageType(message) {
+        return String(get(message, ['type', 'messageType', 'message_type'], '') || '').trim().toLowerCase()
+      }
+
+      function mailboxItemName(message) {
+        return String(get(message, ['itemName', 'item_name'], '') || '').trim()
+      }
+
+      function mailboxItemAmount(message) {
+        return Math.max(1, num(get(message, ['itemAmount', 'item_amount', 'quantity'], 1)))
+      }
+
+      function normalizeD1MailboxMessages(payload) {
+        const rows = Array.isArray(payload?.messages) ? payload.messages : []
+
+        return rows.map((row) => {
+          const id = mailboxMessageId(row)
+          const fromDisplayName = get(row, ['fromDisplayName', 'from_display_name', 'from', 'fromName'], '')
+          const fromLogin = get(row, ['fromLogin', 'from_user_login', 'fromUserLogin'], '')
+          const type = mailboxMessageType(row)
+          const giftStatus = mailboxGiftStatus(row)
+          const itemName = mailboxItemName(row)
+          const itemAmount = mailboxItemAmount(row)
+
+          return {
+            ...row,
+            id,
+            messageId: id,
+            from: fromDisplayName || fromLogin || 'النظام',
+            fromDisplayName: fromDisplayName || fromLogin || 'النظام',
+            fromLogin,
+            text: get(row, ['message', 'text'], ''),
+            message: get(row, ['message', 'text'], ''),
+            type,
+            giftStatus,
+            gift_status: giftStatus,
+            itemName,
+            item_name: itemName,
+            itemAmount,
+            item_amount: itemAmount,
+            createdAt: get(row, ['createdAt', 'created_at', 'date'], ''),
+            date: get(row, ['createdAt', 'created_at', 'date'], ''),
+          }
+        }).sort((a, b) => new Date(get(b, ['createdAt', 'date'], 0)) - new Date(get(a, ['createdAt', 'date'], 0)))
+      }
+
+      function sameProfileUser(profileUser, apiUser) {
+        const profileId = String(get(profileUser, ['userId', 'id', 'twitchId', 'twitch_id'], '') || '').trim()
+        const apiId = String(get(apiUser, ['userId', 'id', 'twitchId', 'twitch_id'], '') || '').trim()
+
+        if (profileId && apiId && profileId === apiId) {
+          return true
+        }
+
+        const profileLogin = String(userLogin(profileUser) || '').trim().toLowerCase()
+        const apiLogin = String(get(apiUser, ['userLogin', 'login', 'user_login'], '') || '').trim().toLowerCase()
+
+        return Boolean(profileLogin && apiLogin && profileLogin === apiLogin)
+      }
+
+      async function loadD1MailboxForProfile(user, force = false) {
+        if (!user) return
+
+        if (state.d1MailboxLoading && !force) {
+          return
+        }
+
+        state.d1MailboxLoading = true
+
+        try {
+          const res = await fetch(TNX_API_ORIGIN + '/api/me/mailbox', {
+            credentials: 'include',
+            cache: 'no-store',
+          })
+
+          const data = await res.json().catch(() => null)
+
+          if (!res.ok || !data || data.ok !== true) {
+            return
+          }
+
+          if (!sameProfileUser(user, data.user || {})) {
+            return
+          }
+
+          const messages = normalizeD1MailboxMessages(data)
+
+          user.mailbox = messages
+
+          if (state.activeUser && sameProfileUser(state.activeUser, user)) {
+            state.activeUser.mailbox = messages
+          }
+
+          setText('mailCount', messages.length)
+          setText('messages', formatNumber(messages.length))
+          renderMail(messages)
+        } catch (error) {
+          console.warn('[Mailbox] Failed to load current user mailbox:', error)
+        } finally {
+          state.d1MailboxLoading = false
+        }
+      }
+
+      function mailboxGiftStatusLabel(status) {
+        if (status === 'pending') return 'معلقة'
+        if (status === 'accepted') return 'مقبولة'
+        if (status === 'rejected') return 'مرفوضة'
+        return status || ''
+      }
+
+      async function submitMailboxGiftAction(message, action, button) {
+        const messageId = mailboxMessageId(message)
+
+        if (!messageId || !action) {
+          return
+        }
+
+        const row = button?.closest('.mail-message')
+        const statusBox = row?.querySelector('[data-mail-gift-status]')
+
+        row?.querySelectorAll('[data-mail-gift-action]').forEach((btn) => {
+          btn.disabled = true
+          btn.setAttribute('aria-disabled', 'true')
+        })
+
+        if (statusBox) {
+          statusBox.textContent = action === 'accept' ? 'جاري قبول الهدية...' : 'جاري رفض الهدية...'
+        }
+
+        try {
+          const res = await fetch(TNX_API_ORIGIN + '/api/me/mailbox/gift-action', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              messageId,
+              action,
+            }),
+          })
+
+          const data = await res.json().catch(() => null)
+
+          if (!res.ok || !data || data.ok !== true) {
+            throw new Error((data && (data.error || data.message)) || 'gift_action_failed')
+          }
+
+          if (statusBox) {
+            statusBox.textContent = action === 'accept'
+              ? 'تم إرسال طلب قبول الهدية...'
+              : 'تم إرسال طلب رفض الهدية...'
+          }
+
+          window.setTimeout(() => loadD1MailboxForProfile(state.activeUser, true), 4500)
+        } catch (error) {
+          row?.querySelectorAll('[data-mail-gift-action]').forEach((btn) => {
+            btn.disabled = false
+            btn.removeAttribute('aria-disabled')
+          })
+
+          if (statusBox) {
+            statusBox.textContent = 'تعذر تنفيذ العملية: ' + (error?.message || 'خطأ غير معروف')
+          }
+        }
+      }
+
       function renderMail(mail) {
         const box = $('mailList')
         if (!box) return
@@ -12947,16 +13124,57 @@ const metadata = {
         }
 
         box.innerHTML = mail.map((message) => {
-          const from = get(message, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], 'النظام')
+          const id = mailboxMessageId(message)
+          const from = get(message, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], 'النظام') || 'النظام'
           const text = get(message, ['message', 'text'], '')
+          const type = mailboxMessageType(message)
+          const giftStatus = mailboxGiftStatus(message)
+          const itemName = mailboxItemName(message)
+          const itemAmount = mailboxItemAmount(message)
+          const isGift = type === 'gift_item' || Boolean(giftStatus) || Boolean(itemName)
+          const isPendingGift = isGift && giftStatus === 'pending' && id
+          const giftLabel = mailboxGiftStatusLabel(giftStatus)
+
+          const giftInfo = isGift
+            ? `
+              <div class="item-command-hint" data-mail-gift-status>
+                هدية ${giftLabel ? '(' + esc(giftLabel) + ')' : ''}: ${esc(itemName || 'غرض')} ×${formatNumber(itemAmount)}
+              </div>
+            `
+            : ''
+
+          const giftActions = isPendingGift
+            ? `
+              <div class="item-actions mail-gift-actions">
+                <button class="item-action-btn" type="button" data-mail-gift-action="accept" data-message-id="${esc(id)}">قبول الهدية</button>
+                <button class="item-action-btn" type="button" data-mail-gift-action="reject" data-message-id="${esc(id)}">رفض الهدية</button>
+              </div>
+            `
+            : ''
+
           return `
-            <div class="mail-message">
+            <div class="mail-message" data-mail-message-id="${esc(id)}">
               <strong>${esc(from)}</strong>
-              <p>${esc(text)}</p>
+              <p>${esc(text || (isGift ? 'هدية في البريد.' : ''))}</p>
+              ${giftInfo}
+              ${giftActions}
             </div>
           `
         }).join('')
+
+        box.querySelectorAll('[data-mail-gift-action]').forEach((button) => {
+          addListener(button, 'click', () => {
+            const messageId = button.getAttribute('data-message-id') || ''
+            const action = button.getAttribute('data-mail-gift-action') || ''
+            const message = mail.find((entry) => mailboxMessageId(entry) === messageId)
+
+            if (!message) return
+
+            submitMailboxGiftAction(message, action, button)
+          })
+        })
       }
+
 
       function openMail() {
         $('mailModal')?.classList.add('show')
