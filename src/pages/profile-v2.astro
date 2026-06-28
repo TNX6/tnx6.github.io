@@ -13219,6 +13219,220 @@ const metadata = {
         return 'استخدم الأوامر من الشات.'
       }
 
+
+      function giftRecipientList() {
+        const activeLogin = String(userLogin(state.activeUser) || '').trim().toLowerCase()
+        const activeId = String(get(state.activeUser || {}, ['userId', 'id', 'twitchId', 'twitch_id'], '') || '').trim()
+
+        return (Array.isArray(state.mailboxes) ? state.mailboxes : [])
+          .map((entry) => {
+            const userId = String(get(entry, ['userId', 'id', 'twitchId', 'twitch_id'], '') || '').trim()
+            const login = String(get(entry, ['userLogin', 'login', 'user_login'], '') || '').trim()
+            const displayName = String(get(entry, ['displayName', 'display_name', 'userName'], '') || login).trim()
+
+            return {
+              userId,
+              login,
+              displayName,
+            }
+          })
+          .filter((entry) => entry.userId && entry.login)
+          .filter((entry) => {
+            const sameId = activeId && entry.userId === activeId
+            const sameLogin = activeLogin && entry.login.toLowerCase() === activeLogin
+            return !sameId && !sameLogin
+          })
+          .sort((a, b) => a.displayName.localeCompare(b.displayName, 'ar'))
+      }
+
+      function renderInventoryGiftForm(modal, item) {
+        const hint = modal.querySelector('[data-item-hint]')
+        if (!hint) return
+
+        const recipients = giftRecipientList()
+
+        if (!recipients.length) {
+          hint.innerHTML = 'ما فيه مستلمين متاحين. لازم المستلم يكون عنده بريد مفعل.'
+          return
+        }
+
+        const maxQty = Math.max(1, item.qty || 1)
+
+        hint.innerHTML = `
+          <div class="mail-message">
+            <strong>إهداء: ${esc(item.name)}</strong>
+            <p>اختر المستلم والكمية. الهدية توصل لبريده، وهو يقدر يقبلها أو يرفضها.</p>
+
+            <label class="item-command-hint" style="display:block;margin-top:10px;">
+              المستلم
+              <select data-gift-recipient style="width:100%;margin-top:6px;padding:10px;border-radius:12px;background:rgba(0,0,0,.25);color:inherit;border:1px solid rgba(255,255,255,.14);">
+                <option value="">اختر المستلم</option>
+                ${recipients.map((entry) => `
+                  <option value="${esc(entry.login)}">${esc(entry.displayName)} @${esc(entry.login)}</option>
+                `).join('')}
+              </select>
+            </label>
+
+            <label class="item-command-hint" style="display:block;margin-top:10px;">
+              الكمية
+              <input data-gift-quantity type="number" min="1" max="${esc(maxQty)}" value="1" style="width:100%;margin-top:6px;padding:10px;border-radius:12px;background:rgba(0,0,0,.25);color:inherit;border:1px solid rgba(255,255,255,.14);" />
+            </label>
+
+            <label class="item-command-hint" style="display:block;margin-top:10px;">
+              رسالة اختيارية
+              <input data-gift-message type="text" maxlength="160" placeholder="اكتب رسالة قصيرة..." style="width:100%;margin-top:6px;padding:10px;border-radius:12px;background:rgba(0,0,0,.25);color:inherit;border:1px solid rgba(255,255,255,.14);" />
+            </label>
+
+            <div class="item-actions" style="margin-top:12px;">
+              <button class="item-action-btn" type="button" data-submit-inventory-gift>إرسال الهدية</button>
+            </div>
+
+            <div class="item-command-hint" data-gift-status style="margin-top:10px;">
+              بانتظار الإرسال.
+            </div>
+          </div>
+        `
+
+        addListener(hint.querySelector('[data-submit-inventory-gift]'), 'click', () => {
+          submitInventoryGiftFromProfile(modal, item)
+        })
+      }
+
+      async function submitInventoryGiftFromProfile(modal, item) {
+        const hint = modal.querySelector('[data-item-hint]')
+        const recipientInput = hint?.querySelector('[data-gift-recipient]')
+        const quantityInput = hint?.querySelector('[data-gift-quantity]')
+        const messageInput = hint?.querySelector('[data-gift-message]')
+        const statusBox = hint?.querySelector('[data-gift-status]')
+        const submitButton = hint?.querySelector('[data-submit-inventory-gift]')
+
+        const recipientLogin = String(recipientInput?.value || '').trim()
+        const quantity = Math.max(1, Math.floor(Number(quantityInput?.value || 1)))
+        const maxQty = Math.max(1, item.qty || 1)
+        const message = String(messageInput?.value || '').trim()
+
+        if (!recipientLogin) {
+          if (statusBox) statusBox.textContent = 'اختر المستلم أولًا.'
+          return
+        }
+
+        if (quantity > maxQty) {
+          if (statusBox) statusBox.textContent = 'الكمية أكبر من الموجود في حقيبتك.'
+          return
+        }
+
+        if (submitButton) {
+          submitButton.disabled = true
+          submitButton.setAttribute('aria-disabled', 'true')
+        }
+
+        if (statusBox) {
+          statusBox.textContent = 'جاري إرسال طلب الإهداء...'
+        }
+
+        try {
+          const res = await fetch(TNX_API_ORIGIN + '/api/me/inventory/gift', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              recipientLogin,
+              itemName: item.name,
+              quantity,
+              message,
+            }),
+          })
+
+          const data = await res.json().catch(() => null)
+
+          if (!res.ok || !data || data.ok !== true) {
+            throw new Error((data && (data.error || data.message)) || 'gift_request_failed')
+          }
+
+          const requestId = String(data.requestId || data.id || '').trim()
+
+          if (statusBox) {
+            statusBox.textContent = 'تم إرسال الطلب للبوت. جاري التحقق من النتيجة...'
+          }
+
+          if (requestId) {
+            await pollInventoryGiftStatus(requestId, statusBox)
+          } else if (statusBox) {
+            statusBox.textContent = 'تم إرسال طلب الإهداء.'
+          }
+
+          window.setTimeout(() => {
+            modal.remove()
+            refreshProfileInventoryAfterGift()
+            loadD1MailboxForProfile(state.activeUser, true)
+          }, 1600)
+        } catch (error) {
+          if (submitButton) {
+            submitButton.disabled = false
+            submitButton.removeAttribute('aria-disabled')
+          }
+
+          if (statusBox) {
+            statusBox.textContent = 'تعذر إرسال الهدية: ' + (error?.message || 'خطأ غير معروف')
+          }
+        }
+      }
+
+      async function pollInventoryGiftStatus(requestId, statusBox) {
+        for (let attempt = 0; attempt < 18; attempt++) {
+          await new Promise((resolve) => window.setTimeout(resolve, 1500))
+
+          const res = await fetch(TNX_API_ORIGIN + '/api/me/inventory/gift-status?id=' + encodeURIComponent(requestId), {
+            credentials: 'include',
+            cache: 'no-store',
+          })
+
+          const data = await res.json().catch(() => null)
+
+          if (!res.ok || !data || data.ok !== true) {
+            continue
+          }
+
+          const status = String(data.status || data.request?.status || '').toLowerCase()
+          const errorMessage = String(data.errorMessage || data.request?.errorMessage || '').trim()
+
+          if (status === 'completed') {
+            if (statusBox) statusBox.textContent = 'تم إرسال الهدية إلى بريد المستلم.'
+            return
+          }
+
+          if (status === 'rejected') {
+            throw new Error(errorMessage || 'تم رفض الإهداء.')
+          }
+
+          if (statusBox) {
+            statusBox.textContent = 'الطلب قيد المعالجة...'
+          }
+        }
+
+        if (statusBox) {
+          statusBox.textContent = 'تم إرسال الطلب، لكن المعالجة أخذت وقت أطول. افحص البريد بعد قليل.'
+        }
+      }
+
+      async function refreshProfileInventoryAfterGift() {
+        try {
+          if (typeof loadFreshInventoryForActiveProfile === 'function') {
+            await loadFreshInventoryForActiveProfile()
+            return
+          }
+
+          if (state.activeUser) {
+            renderProfile(state.activeUser)
+          }
+        } catch (error) {
+          console.warn('[Inventory Gift] refresh failed:', error)
+        }
+      }
+
+
       async function openItemModal(item) {
         const allowed = await isProfileOwnerV36(state.activeUser)
         if (!allowed) {
