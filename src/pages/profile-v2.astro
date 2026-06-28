@@ -9955,36 +9955,54 @@ const metadata = {
         `).join('')
       }
 
-      function renderInventory(items) {
-        const list = Array.isArray(items)
-          ? items
-              .map((item) => ({
-                ...item,
-                name: String(item.name || item.itemName || item.itemKey || '').trim(),
-                quantity: Math.max(0, Math.floor(Number(item.quantity || item.qty || item.amount || item.count || 0))),
-                qty: Math.max(0, Math.floor(Number(item.quantity || item.qty || item.amount || item.count || 0))),
-                itemKey: String(item.itemKey || '').trim(),
-              }))
-              .filter((item) => item.name && Math.max(0, Math.floor(Number(item.quantity || item.qty || 0))) > 0)
-          : [];
+      function renderInventoryRaw(items) {
+        const box = $('inventory')
+        if (!box) return
 
-        window.__tnxInventoryFullList = list;
-        window.__tnxInventoryPage = 1;
-
-        renderInventoryRaw(list);
-
-        const pagination = document.getElementById('inventoryPagination');
-
-        if (pagination) {
-          pagination.innerHTML = '';
-          pagination.hidden = true;
-          pagination.style.display = 'none';
+        if (!items.length) {
+          box.innerHTML = `<div class="empty">الحقيبة فاضية.</div>`
+          return
         }
 
-        if (typeof renderInventorySellAllButton === 'function') {
-          const canSell = Boolean(window.__tnxCanSellInventory ?? true);
-          renderInventorySellAllButton(list, canSell);
-        }
+        const sorted = [...items].sort((a, b) => b.qty - a.qty || a.name.localeCompare(b.name))
+
+        box.innerHTML = sorted.map((item, index) => {
+          const color = rarityColors[item.rarity] || rarityColors[item.cat] || '#ffffff'
+          return `
+            <button
+              class="item"
+              type="button"
+              data-item-index="${index}"
+              data-item-name="${esc(item.name)}"
+              data-item-qty="${esc(item.qty)}"
+              data-item-icon="${esc(item.icon)}"
+              data-item-rarity="${esc(item.rarity || item.cat || '')}"
+              style="--rarity-color:${color}"
+            >
+              <div class="item-icon">${esc(item.icon)}</div>
+              <div>
+                <h3 class="item-name">${esc(item.name)}</h3>
+                <div class="item-meta">
+                  <span class="qty">x${formatNumber(item.qty)}</span>
+                  <span>${esc(item.rarity || item.cat || 'Item')}</span>
+                </div>
+              </div>
+            </button>
+          `
+        }).join('')
+
+        box.querySelectorAll('[data-item-index]').forEach((button) => {
+          addListener(button, 'click', async () => {
+            const allowed = await isProfileOwnerV36(state.activeUser)
+            if (!allowed) {
+              await syncOwnerControlsV36(state.activeUser)
+              return
+            }
+
+            const item = sorted[Number(button.dataset.itemIndex)]
+            if (item) await openItemModal(item)
+          })
+        })
       }
 
       const INVENTORY_PAGE_SIZE_V2 = 6;
@@ -10327,7 +10345,7 @@ const metadata = {
 
 
 
-      const INVENTORY_PAGE_SIZE = 6;
+      const INVENTORY_PAGE_SIZE = 999;
       let inventoryCurrentPage = 1;
       let inventoryCurrentKey = "";
 
