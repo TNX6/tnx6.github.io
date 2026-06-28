@@ -10656,10 +10656,7 @@ const metadata = {
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                  itemName: row.name,
-                  quantity: row.qty,
-                }),
+                body: JSON.stringify({ itemName: apiItemName, quantity: qty }),
               });
 
               const data = await res.json().catch(() => ({}));
@@ -11104,7 +11101,7 @@ const metadata = {
         btn.addEventListener('click', async () => {
           const currentItems = Array.isArray(items) ? items : sourceItems;
           if (typeof refreshActiveProfileFromD1 === 'function') {
-            meta.textContent = 'جاري تحديث الحقيبة...';
+            note.textContent = 'جاري تحديث الحقيبة...';
             await refreshActiveProfileFromD1();
           }
 
@@ -12055,7 +12052,7 @@ const metadata = {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ itemName: apiItemName, quantity: qty }),
+            body: JSON.stringify(tnxUsePayload),
           });
 
           const data = await res.json().catch(() => ({}));
