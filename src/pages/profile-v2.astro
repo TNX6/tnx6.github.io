@@ -11931,7 +11931,7 @@ const metadata = {
           });
 
           actions.append(cancel, confirm);
-          modal.append(title, desc, textarea, hint, error, actions);
+          modal.append(title, desc, textarea, error, actions);
           backdrop.appendChild(modal);
           document.body.appendChild(backdrop);
           document.addEventListener('keydown', onKey);
