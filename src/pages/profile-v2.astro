@@ -11581,10 +11581,7 @@ const metadata = {
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({
-                itemName: apiItemName,
-                quantity: qty,
-              }),
+              body: JSON.stringify(tnxUsePayload),
             })
 
             const data = await res.json().catch(() => ({}))
@@ -11783,6 +11780,168 @@ const metadata = {
         document.querySelectorAll('.item-detail-v3').forEach((modal) => modal.remove());
       }
 
+
+      function tnxNormalizeUseInputName(value) {
+        try {
+          if (typeof compactInventoryName === 'function') {
+            return compactInventoryName(value);
+          }
+        } catch {}
+
+        return String(value || '')
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, ' ')
+          .replace(/ـ/g, '')
+          .replace(/[\u064B-\u065F\u0670]/g, '')
+          .replace(/[أإآ]/g, 'ا')
+          .replace(/ى/g, 'ي')
+          .replace(/ة/g, 'ه');
+      }
+
+      function tnxGetUseInputRule(itemName) {
+        const key = tnxNormalizeUseInputName(itemName);
+
+        const rules = [
+          {
+            names: ['تغير العنوان مطور', 'تغيير العنوان مطور'],
+            label: 'العنوان الجديد',
+            placeholder: 'مثال: مرحبا بالجميع',
+            maxLength: 120,
+            required: true,
+          },
+        ];
+
+        return rules.find((rule) => rule.names.some((name) => tnxNormalizeUseInputName(name) === key)) || null;
+      }
+
+      function tnxOpenUseInputModal(itemName, rule) {
+        return new Promise((resolve) => {
+          const old = document.querySelector('.tnx-use-input-backdrop');
+          if (old) old.remove();
+
+          const backdrop = document.createElement('div');
+          backdrop.className = 'tnx-use-input-backdrop';
+          backdrop.style.cssText = [
+            'position:fixed',
+            'inset:0',
+            'z-index:10000',
+            'display:flex',
+            'align-items:center',
+            'justify-content:center',
+            'padding:18px',
+            'background:rgba(0,0,0,.68)',
+            'backdrop-filter:blur(8px)',
+          ].join(';');
+
+          const modal = document.createElement('div');
+          modal.style.cssText = [
+            'width:min(94vw,520px)',
+            'direction:rtl',
+            'border-radius:24px',
+            'border:1px solid rgba(255,224,138,.22)',
+            'background:linear-gradient(180deg,rgba(22,23,29,.98),rgba(8,9,13,.98))',
+            'box-shadow:0 24px 80px rgba(0,0,0,.55)',
+            'padding:26px',
+            'font-family:inherit',
+          ].join(';');
+
+          const title = document.createElement('div');
+          title.textContent = 'استخدام ' + itemName;
+          title.style.cssText = 'color:#ffe08a;font-size:24px;font-weight:1000;text-align:center;margin-bottom:10px;text-shadow:0 0 18px rgba(255,224,138,.35);';
+
+          const desc = document.createElement('div');
+          desc.textContent = rule.label || 'النص المطلوب';
+          desc.style.cssText = 'color:rgba(255,255,255,.75);font-size:14px;font-weight:800;text-align:center;margin-bottom:14px;';
+
+          const textarea = document.createElement('textarea');
+          textarea.placeholder = rule.placeholder || '';
+          textarea.maxLength = Math.max(1, Number(rule.maxLength || 120));
+          textarea.rows = 3;
+          textarea.style.cssText = [
+            'width:100%',
+            'box-sizing:border-box',
+            'resize:vertical',
+            'min-height:96px',
+            'border-radius:18px',
+            'border:1px solid rgba(255,255,255,.12)',
+            'background:rgba(255,255,255,.06)',
+            'color:white',
+            'outline:none',
+            'padding:14px 16px',
+            'font-size:16px',
+            'font-weight:800',
+            'line-height:1.7',
+            'font-family:inherit',
+          ].join(';');
+
+          const hint = document.createElement('div');
+          hint.textContent = 'بيتم إرساله مع الغرض كأنه: !use ' + itemName + ' ' + (rule.placeholder || '');
+          hint.style.cssText = 'color:rgba(255,255,255,.48);font-size:12px;font-weight:700;line-height:1.8;margin-top:10px;text-align:center;';
+
+          const error = document.createElement('div');
+          error.style.cssText = 'min-height:20px;color:#ff8a8a;font-size:13px;font-weight:900;text-align:center;margin-top:8px;';
+
+          const actions = document.createElement('div');
+          actions.style.cssText = 'display:flex;gap:10px;margin-top:18px;';
+
+          const cancel = document.createElement('button');
+          cancel.type = 'button';
+          cancel.textContent = 'إلغاء';
+          cancel.style.cssText = 'flex:1;min-height:46px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:white;font-weight:1000;cursor:pointer;';
+
+          const confirm = document.createElement('button');
+          confirm.type = 'button';
+          confirm.textContent = 'تأكيد الاستخدام';
+          confirm.style.cssText = 'flex:1;min-height:46px;border-radius:16px;border:0;background:linear-gradient(180deg,#ffe08a,#d8aa45);color:#1a1304;font-weight:1000;cursor:pointer;';
+
+          const close = (value) => {
+            document.removeEventListener('keydown', onKey);
+            backdrop.remove();
+            resolve(value);
+          };
+
+          const onKey = (event) => {
+            if (event.key === 'Escape') close(null);
+          };
+
+          cancel.addEventListener('click', () => close(null));
+          confirm.addEventListener('click', () => {
+            const value = textarea.value.trim();
+
+            if (rule.required && !value) {
+              error.textContent = 'اكتب النص المطلوب أول.';
+              textarea.focus();
+              return;
+            }
+
+            close(value);
+          });
+
+          backdrop.addEventListener('click', (event) => {
+            if (event.target === backdrop) close(null);
+          });
+
+          actions.append(cancel, confirm);
+          modal.append(title, desc, textarea, hint, error, actions);
+          backdrop.appendChild(modal);
+          document.body.appendChild(backdrop);
+          document.addEventListener('keydown', onKey);
+
+          setTimeout(() => textarea.focus(), 50);
+        });
+      }
+
+      async function tnxResolveInventoryUseInputText(itemName) {
+        const rule = tnxGetUseInputRule(itemName);
+
+        if (!rule) {
+          return '';
+        }
+
+        return await tnxOpenUseInputModal(itemName, rule);
+      }
+
       async function waitForProfileUseRequestCompletion(requestId, hint) {
         const id = String(requestId || '').trim();
 
@@ -11856,16 +12015,36 @@ const metadata = {
             hint.textContent = 'جاري إرسال طلب الاستخدام إلى Streamer.bot...';
           }
 
+          const tnxUseItemNameForApi = String((typeof apiItemName !== 'undefined' ? apiItemName : name) || '').trim();
+          const tnxUseQtyForApi = Math.max(1, Math.floor(Number(typeof qty !== 'undefined' ? qty : 1)));
+
+          const tnxUseInputText = await tnxResolveInventoryUseInputText(tnxUseItemNameForApi);
+
+          if (tnxUseInputText === null) {
+            if (hint) hint.textContent = 'تم إلغاء الاستخدام.';
+            if (button) {
+              button.disabled = false;
+              button.textContent = 'استخدام';
+            }
+            return;
+          }
+
+          const tnxUsePayload = {
+            itemName: tnxUseItemNameForApi,
+            quantity: tnxUseQtyForApi,
+          };
+
+          if (tnxUseInputText) {
+            tnxUsePayload.inputText = tnxUseInputText;
+          }
+
           const res = await fetch(TNX_API_ORIGIN + '/api/me/inventory/use', {
             method: 'POST',
             credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-              itemName: name,
-              quantity: 1,
-            }),
+            body: JSON.stringify(tnxUsePayload),
           });
 
           const data = await res.json().catch(() => ({}));
