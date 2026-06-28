@@ -13472,9 +13472,9 @@ const metadata = {
 
         document.body.appendChild(modal)
 
-        const inventoryGiftCaptureHandler = (event) => {
-          const clicked = event.target
-          const giftButton = clicked && clicked.closest ? clicked.closest('[data-item-action="gift"]') : null
+        const hardWireInventoryGiftButton = (event) => {
+          const target = event.target
+          const giftButton = target && target.closest ? target.closest('[data-item-action="gift"]') : null
 
           if (!giftButton || !modal.contains(giftButton) || giftButton.disabled) {
             return
@@ -13482,12 +13482,28 @@ const metadata = {
 
           event.preventDefault()
           event.stopPropagation()
-          event.stopImmediatePropagation?.()
+          if (event.stopImmediatePropagation) event.stopImmediatePropagation()
 
+          const hint = modal.querySelector('[data-item-hint]')
+
+          if (typeof renderInventoryGiftForm !== 'function') {
+            if (hint) hint.textContent = 'تعذر فتح نموذج الإهداء. دالة الإهداء غير موجودة.'
+            console.warn('[Inventory Gift] renderInventoryGiftForm missing')
+            return
+          }
+
+          console.log('[Inventory Gift] opening form for', item && item.name ? item.name : item)
           renderInventoryGiftForm(modal, item)
         }
 
-        modal.addEventListener('click', inventoryGiftCaptureHandler, true)
+        modal.addEventListener('click', hardWireInventoryGiftButton, true)
+        modal.addEventListener('pointerup', hardWireInventoryGiftButton, true)
+
+        const hardGiftButton = modal.querySelector('[data-item-action="gift"]')
+        if (hardGiftButton) {
+          hardGiftButton.addEventListener('click', hardWireInventoryGiftButton, true)
+          hardGiftButton.addEventListener('pointerup', hardWireInventoryGiftButton, true)
+        }
 
         const close = () => modal.remove()
         addListener(modal, 'click', (event) => {
