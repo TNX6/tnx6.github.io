@@ -11103,8 +11103,19 @@ const metadata = {
 
         btn.addEventListener('click', async () => {
           const currentItems = Array.isArray(items) ? items : sourceItems;
+          if (typeof refreshActiveProfileFromD1 === 'function') {
+            meta.textContent = 'جاري تحديث الحقيبة...';
+            await refreshActiveProfileFromD1();
+          }
+
+          const freshItems = Array.isArray(window.__tnxInventoryFullList)
+            ? window.__tnxInventoryFullList
+            : Array.isArray(state?.activeUser?.inventory)
+              ? state.activeUser.inventory
+              : currentItems;
+
           const currentSellable = typeof tnxSellAllEligibleV2 === 'function'
-            ? tnxSellAllEligibleV2(currentItems)
+            ? tnxSellAllEligibleV2(freshItems)
             : [];
 
           if (!currentSellable.length) {
@@ -11185,12 +11196,12 @@ const metadata = {
             }
 
             if (typeof renderInventory === 'function') {
-              renderInventory(currentItems);
+              renderInventory(window.__tnxInventoryFullList || freshItems || currentItems);
             }
 
             requestAnimationFrame(() => {
               if (typeof enhanceInventorySellButtons === 'function') {
-                enhanceInventorySellButtons(currentItems);
+                enhanceInventorySellButtons(window.__tnxInventoryFullList || freshItems || currentItems);
               }
 
               setTimeout(() => {
@@ -11581,7 +11592,7 @@ const metadata = {
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify(tnxUsePayload),
+              body: JSON.stringify({ itemName: apiItemName, quantity: qty }),
             })
 
             const data = await res.json().catch(() => ({}))
@@ -12044,7 +12055,7 @@ const metadata = {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(tnxUsePayload),
+            body: JSON.stringify({ itemName: apiItemName, quantity: qty }),
           });
 
           const data = await res.json().catch(() => ({}));
