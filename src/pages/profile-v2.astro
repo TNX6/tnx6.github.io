@@ -11169,13 +11169,10 @@ const metadata = {
             if (typeof tnxWaitSellRequestCompleteV2 === 'function') {
               await tnxWaitSellRequestCompleteV2(data.requestId);
             }
-
-            const localSellTotal = Math.max(0, Math.floor(Number(data?.sellTotal || estimatedTotal || 0)));
-
-            if (typeof tnxApplyLocalPointBoostAfterSellAll === 'function') {
-              tnxApplyLocalPointBoostAfterSellAll(localSellTotal, true);
-              setTimeout(() => tnxApplyLocalPointBoostAfterSellAll(localSellTotal, false), 800);
-              setTimeout(() => tnxApplyLocalPointBoostAfterSellAll(localSellTotal, false), 2000);
+            if (typeof refreshActiveProfileFromD1 === 'function') {
+              await refreshActiveProfileFromD1();
+              setTimeout(() => refreshActiveProfileFromD1(), 1200);
+              setTimeout(() => refreshActiveProfileFromD1(), 3000);
             }
 
             for (const entry of currentSellable) {
