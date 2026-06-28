@@ -13472,6 +13472,23 @@ const metadata = {
 
         document.body.appendChild(modal)
 
+        const inventoryGiftCaptureHandler = (event) => {
+          const clicked = event.target
+          const giftButton = clicked && clicked.closest ? clicked.closest('[data-item-action="gift"]') : null
+
+          if (!giftButton || !modal.contains(giftButton) || giftButton.disabled) {
+            return
+          }
+
+          event.preventDefault()
+          event.stopPropagation()
+          event.stopImmediatePropagation?.()
+
+          renderInventoryGiftForm(modal, item)
+        }
+
+        modal.addEventListener('click', inventoryGiftCaptureHandler, true)
+
         const close = () => modal.remove()
         addListener(modal, 'click', (event) => {
           if (event.target === modal) close()
