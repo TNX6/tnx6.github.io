@@ -13433,6 +13433,58 @@ const metadata = {
       }
 
 
+
+      function delegatedInventoryGiftClick(event) {
+        const target = event.target
+        const giftButton = target && target.closest ? target.closest('[data-item-action="gift"]') : null
+
+        if (!giftButton) {
+          return
+        }
+
+        const modal = giftButton.closest('.item-modal')
+
+        if (!modal || giftButton.disabled) {
+          return
+        }
+
+        event.preventDefault()
+        event.stopPropagation()
+        event.stopImmediatePropagation?.()
+
+        const title = modal.querySelector('h3')?.textContent?.trim() || ''
+        const qtyText = modal.querySelector('.mail-message strong')?.textContent || ''
+        const qtyMatch = qtyText.match(/x\s*([0-9,]+)/i)
+        const qty = qtyMatch ? Math.max(1, Number(qtyMatch[1].replace(/,/g, '')) || 1) : 1
+
+        const item = {
+          name: title,
+          qty,
+          description: modal.querySelector('.mail-message p')?.textContent?.trim() || '',
+          icon: '',
+        }
+
+        console.log('[Inventory Gift] delegated click', item)
+
+        if (typeof renderInventoryGiftForm === 'function') {
+          renderInventoryGiftForm(modal, item)
+          return
+        }
+
+        const hint = modal.querySelector('[data-item-hint]')
+        if (hint) {
+          hint.textContent = 'تعذر فتح نموذج الإهداء. دالة نموذج الإهداء غير موجودة.'
+        }
+      }
+
+      if (!window.__tnxInventoryGiftDelegationInstalled) {
+        window.__tnxInventoryGiftDelegationInstalled = true
+        document.addEventListener('click', delegatedInventoryGiftClick, true)
+        document.addEventListener('pointerup', delegatedInventoryGiftClick, true)
+        console.log('[Inventory Gift] delegated handler installed')
+      }
+
+
       async function openItemModal(item) {
         const allowed = await isProfileOwnerV36(state.activeUser)
         if (!allowed) {
