@@ -13182,8 +13182,14 @@ const metadata = {
       }
 
       function closeMail() {
-        $('mailModal')?.classList.remove('show')
-        $('mailModal')?.setAttribute('aria-hidden', 'true')
+        const modal = $('mailModal')
+
+        if (modal && modal.contains(document.activeElement)) {
+          document.activeElement?.blur?.()
+        }
+
+        modal?.classList.remove('show')
+        modal?.setAttribute('aria-hidden', 'true')
       }
 
       function commandItemName(name) {
