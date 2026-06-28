@@ -11263,46 +11263,56 @@ const metadata = {
 
 
       async function watchInventorySellFinalStatus(requestId, lockId) {
-        const id = String(requestId || '').trim()
-        if (!id) return
+        const id = String(requestId || '').trim();
 
-        const delays = [1200, 2200, 3500, 5000, 8000, 12000, 16000, 22000, 30000]
+        if (!id) {
+          return false;
+        }
 
-        for (const delay of delays) {
-          await new Promise((resolve) => window.setTimeout(resolve, delay))
+        const startedAt = Date.now();
+        const timeoutMs = 30000;
+        const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+        while (Date.now() - startedAt < timeoutMs) {
+          await delay(700);
 
           try {
             const res = await fetch(TNX_API_ORIGIN + '/api/me/inventory/sell-status?id=' + encodeURIComponent(id), {
+              method: 'GET',
               credentials: 'include',
-              cache: 'no-store',
-            })
+            });
 
-            const data = await res.json().catch(() => ({}))
+            const data = await res.json().catch(() => ({}));
 
             if (!res.ok || !data?.ok) {
-              continue
+              continue;
             }
 
-            const status = String(data.request?.status || data.status || '').toLowerCase()
+            const status = String(data?.request?.status || '').toLowerCase();
 
             if (status === 'completed') {
-              removeInventorySellLock(lockId)
-              await refreshActiveProfileFromD1()
-              return
+              removeInventorySellLock(lockId);
+              await refreshActiveProfileFromD1();
+              return true;
             }
 
-            if (status === 'rejected' || status === 'failed') {
-              removeInventorySellLock(lockId)
-              await refreshActiveProfileFromD1()
+            if (status === 'rejected') {
+              removeInventorySellLock(lockId);
+              await refreshActiveProfileFromD1();
 
-              const msg = String(data.request?.errorMessage || data.errorMessage || 'تم رفض البيع ورجع الغرض للحقيبة.')
-              console.warn('[Inventory Sell] Rejected:', msg)
-              return
+              const msg = String(data.request?.errorMessage || data.errorMessage || 'تم رفض البيع ورجع الغرض للحقيبة.');
+              console.warn('[Inventory Sell] Rejected:', msg);
+
+              return false;
             }
           } catch (error) {
-            console.warn('Failed to check sell status:', error)
+            console.warn('Failed to check sell status:', error);
           }
         }
+
+        removeInventorySellLock(lockId);
+        await refreshActiveProfileFromD1();
+        return false;
       }
 
       async function renderInventoryAfterLocalSellV4(soldName, quantity, fallbackItems) {
