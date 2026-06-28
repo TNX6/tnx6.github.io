@@ -10695,6 +10695,94 @@ const metadata = {
           el.remove();
         });
       }
+
+      function tnxNumberFromText(value) {
+        const clean = String(value || '').replace(/[^\d]/g, '');
+        const number = Math.floor(Number(clean || 0));
+
+        return Number.isFinite(number) ? number : 0;
+      }
+
+      function tnxFormatDisplayNumber(value) {
+        const number = Math.max(0, Math.floor(Number(value || 0)));
+
+        try {
+          return number.toLocaleString('en-US');
+        } catch {
+          return String(number);
+        }
+      }
+
+      function tnxFindDisplayedPointsElement() {
+        const inventory = document.getElementById('inventory');
+
+        const labels = Array.from(document.querySelectorAll('body *')).filter((el) => {
+          if (!el || el.children.length > 0) return false;
+          if (inventory && inventory.contains(el)) return false;
+
+          const text = String(el.textContent || '').trim();
+
+          return text === 'نقطة' || text === 'النقاط' || text === 'نقاط';
+        });
+
+        for (const label of labels) {
+          const host = label.closest('.card, section, article, div') || label.parentElement;
+
+          if (!host) continue;
+          if (inventory && inventory.contains(host)) continue;
+
+          const numbers = Array.from(host.querySelectorAll('*')).filter((el) => {
+            if (!el || el.children.length > 0) return false;
+            if (inventory && inventory.contains(el)) return false;
+
+            const text = String(el.textContent || '').trim();
+
+            return /^[\d\s,٬.]+$/.test(text) && tnxNumberFromText(text) > 0;
+          });
+
+          if (numbers.length) {
+            numbers.sort((a, b) => tnxNumberFromText(b.textContent) - tnxNumberFromText(a.textContent));
+            return numbers[0];
+          }
+        }
+
+        const fallback = Array.from(document.querySelectorAll('body *')).find((el) => {
+          if (!el || el.children.length > 0) return false;
+          if (inventory && inventory.contains(el)) return false;
+
+          const text = String(el.textContent || '').trim();
+
+          return /^[\d\s,٬.]+$/.test(text) && tnxNumberFromText(text) >= 1000;
+        });
+
+        return fallback || null;
+      }
+
+      function tnxApplyLocalPointBoostAfterSellAll(amount) {
+        const boost = Math.max(0, Math.floor(Number(amount || 0)));
+
+        if (!boost) return;
+
+        const target = tnxFindDisplayedPointsElement();
+
+        if (!target) return;
+
+        const existingBoost = Math.floor(Number(target.getAttribute('data-tnx-sell-all-point-boost') || 0));
+
+        if (existingBoost === boost) {
+          return;
+        }
+
+        let base = tnxNumberFromText(target.getAttribute('data-tnx-sell-all-point-base') || target.textContent);
+
+        if (!base) {
+          base = tnxNumberFromText(target.textContent);
+        }
+
+        target.setAttribute('data-tnx-sell-all-point-base', String(base));
+        target.setAttribute('data-tnx-sell-all-point-boost', String(boost));
+        target.textContent = tnxFormatDisplayNumber(base + boost);
+      }
       async function tnxMountSellAllButtonV2(items) {
         document.querySelectorAll('.tnx-sell-all-row, .inventory-sell-all-bar').forEach((el) => el.remove());
 
@@ -10807,6 +10895,14 @@ const metadata = {
 
             if (typeof tnxWaitSellRequestCompleteV2 === 'function') {
               await tnxWaitSellRequestCompleteV2(data.requestId);
+            }
+
+            const localSellTotal = Math.max(0, Math.floor(Number(data?.sellTotal || estimatedTotal || 0)));
+
+            if (typeof tnxApplyLocalPointBoostAfterSellAll === 'function') {
+              tnxApplyLocalPointBoostAfterSellAll(localSellTotal);
+              setTimeout(() => tnxApplyLocalPointBoostAfterSellAll(localSellTotal), 800);
+              setTimeout(() => tnxApplyLocalPointBoostAfterSellAll(localSellTotal), 2000);
             }
 
             for (const entry of currentSellable) {
