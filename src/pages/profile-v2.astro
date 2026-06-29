@@ -13259,39 +13259,246 @@ const metadata = {
         const maxQty = Math.max(1, item.qty || 1)
 
         hint.innerHTML = `
-          <div class="mail-message">
-            <strong>إهداء: ${esc(item.name)}</strong>
-            <p>اختر المستلم والكمية. الهدية توصل لبريده، وهو يقدر يقبلها أو يرفضها.</p>
+          <style>
+            .gift-picker-card {
+              border: 1px solid rgba(255, 255, 255, .12);
+              background:
+                radial-gradient(circle at top right, rgba(198, 164, 79, .18), transparent 35%),
+                rgba(12, 12, 16, .72);
+              border-radius: 18px;
+              padding: 14px;
+              box-shadow: 0 18px 55px rgba(0, 0, 0, .32);
+            }
 
-            <label class="item-command-hint" style="display:block;margin-top:10px;">
-              المستلم
-              <select data-gift-recipient style="width:100%;margin-top:6px;padding:10px;border-radius:12px;background:rgba(0,0,0,.25);color:inherit;border:1px solid rgba(255,255,255,.14);">
-                <option value="">اختر المستلم</option>
-                ${recipients.map((entry) => `
-                  <option value="${esc(entry.login)}">${esc(entry.displayName)} @${esc(entry.login)}</option>
-                `).join('')}
-              </select>
+            .gift-picker-title {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              gap: 12px;
+              margin-bottom: 10px;
+            }
+
+            .gift-picker-title strong {
+              color: #ffda6a;
+              font-size: 15px;
+            }
+
+            .gift-picker-title span {
+              color: rgba(255, 255, 255, .62);
+              font-size: 12px;
+            }
+
+            .gift-field {
+              display: block;
+              margin-top: 12px;
+            }
+
+            .gift-field span {
+              display: block;
+              margin-bottom: 6px;
+              color: rgba(255, 255, 255, .72);
+              font-size: 12px;
+            }
+
+            .gift-input {
+              width: 100%;
+              padding: 11px 12px;
+              border-radius: 13px;
+              background: rgba(255, 255, 255, .075);
+              color: #fff;
+              border: 1px solid rgba(255, 255, 255, .13);
+              outline: none;
+            }
+
+            .gift-input:focus {
+              border-color: rgba(255, 218, 106, .55);
+              box-shadow: 0 0 0 3px rgba(255, 218, 106, .10);
+            }
+
+            .gift-recipient-list {
+              display: grid;
+              gap: 8px;
+              max-height: 220px;
+              overflow: auto;
+              padding: 4px 2px;
+              margin-top: 10px;
+            }
+
+            .gift-recipient-option {
+              width: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              gap: 12px;
+              text-align: right;
+              border: 1px solid rgba(255, 255, 255, .10);
+              background: rgba(255, 255, 255, .055);
+              color: #fff;
+              border-radius: 14px;
+              padding: 10px 12px;
+              cursor: pointer;
+              transition: transform .12s ease, border-color .12s ease, background .12s ease;
+            }
+
+            .gift-recipient-option:hover {
+              transform: translateY(-1px);
+              background: rgba(255, 218, 106, .09);
+              border-color: rgba(255, 218, 106, .30);
+            }
+
+            .gift-recipient-option.is-selected {
+              background: linear-gradient(135deg, rgba(198, 164, 79, .34), rgba(255, 218, 106, .12));
+              border-color: rgba(255, 218, 106, .62);
+            }
+
+            .gift-recipient-main {
+              display: grid;
+              gap: 2px;
+              min-width: 0;
+            }
+
+            .gift-recipient-name {
+              font-weight: 800;
+              color: #fff;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .gift-recipient-login {
+              direction: ltr;
+              text-align: right;
+              color: rgba(255, 255, 255, .55);
+              font-size: 12px;
+            }
+
+            .gift-recipient-check {
+              width: 24px;
+              height: 24px;
+              border-radius: 999px;
+              display: grid;
+              place-items: center;
+              background: rgba(255, 255, 255, .08);
+              color: rgba(255, 255, 255, .55);
+              flex: 0 0 auto;
+            }
+
+            .gift-recipient-option.is-selected .gift-recipient-check {
+              background: #ffda6a;
+              color: #1c1604;
+              font-weight: 900;
+            }
+
+            .gift-recipient-empty {
+              display: none;
+              color: rgba(255, 255, 255, .55);
+              padding: 10px;
+              text-align: center;
+              border: 1px dashed rgba(255, 255, 255, .14);
+              border-radius: 14px;
+            }
+
+            .gift-recipient-empty.is-visible {
+              display: block;
+            }
+          </style>
+
+          <div class="gift-picker-card">
+            <div class="gift-picker-title">
+              <strong>إهداء: ${esc(item.name)}</strong>
+              <span>المتوفر: ×${formatNumber(maxQty)}</span>
+            </div>
+
+            <p style="margin:0;color:rgba(255,255,255,.62);font-size:13px;line-height:1.8;">
+              اختر المستلم والكمية. الهدية توصل لبريده، وهو يقدر يقبلها أو يرفضها.
+            </p>
+
+            <input type="hidden" data-gift-recipient value="" />
+
+            <label class="gift-field">
+              <span>ابحث عن المستلم</span>
+              <input class="gift-input" data-gift-recipient-search type="text" placeholder="اكتب الاسم أو اليوزر..." autocomplete="off" />
             </label>
 
-            <label class="item-command-hint" style="display:block;margin-top:10px;">
-              الكمية
-              <input data-gift-quantity type="number" min="1" max="${esc(maxQty)}" value="1" style="width:100%;margin-top:6px;padding:10px;border-radius:12px;background:rgba(0,0,0,.25);color:inherit;border:1px solid rgba(255,255,255,.14);" />
+            <div class="gift-recipient-list" data-gift-recipient-list>
+              ${recipients.map((entry) => `
+                <button
+                  class="gift-recipient-option"
+                  type="button"
+                  data-gift-recipient-option
+                  data-login="${esc(entry.login)}"
+                  data-search="${esc((entry.displayName + ' ' + entry.login).toLowerCase())}"
+                >
+                  <span class="gift-recipient-main">
+                    <span class="gift-recipient-name">${esc(entry.displayName)}</span>
+                    <span class="gift-recipient-login">@${esc(entry.login)}</span>
+                  </span>
+                  <span class="gift-recipient-check">✓</span>
+                </button>
+              `).join('')}
+              <div class="gift-recipient-empty" data-gift-recipient-empty>ما لقيت مستلم بهذا الاسم.</div>
+            </div>
+
+            <label class="gift-field">
+              <span>الكمية</span>
+              <input class="gift-input" data-gift-quantity type="number" min="1" max="${esc(maxQty)}" value="1" />
             </label>
 
-            <label class="item-command-hint" style="display:block;margin-top:10px;">
-              رسالة اختيارية
-              <input data-gift-message type="text" maxlength="160" placeholder="اكتب رسالة قصيرة..." style="width:100%;margin-top:6px;padding:10px;border-radius:12px;background:rgba(0,0,0,.25);color:inherit;border:1px solid rgba(255,255,255,.14);" />
+            <label class="gift-field">
+              <span>رسالة اختيارية</span>
+              <input class="gift-input" data-gift-message type="text" maxlength="160" placeholder="اكتب رسالة قصيرة..." />
             </label>
 
-            <div class="item-actions" style="margin-top:12px;">
+            <div class="item-actions" style="margin-top:14px;">
               <button class="item-action-btn" type="button" data-submit-inventory-gift>إرسال الهدية</button>
             </div>
 
             <div class="item-command-hint" data-gift-status style="margin-top:10px;">
-              بانتظار الإرسال.
+              اختر المستلم لإرسال الهدية.
             </div>
           </div>
         `
+
+        const recipientInput = hint.querySelector('[data-gift-recipient]')
+        const searchInput = hint.querySelector('[data-gift-recipient-search]')
+        const emptyBox = hint.querySelector('[data-gift-recipient-empty]')
+        const options = Array.from(hint.querySelectorAll('[data-gift-recipient-option]'))
+
+        const selectRecipient = (button) => {
+          const login = button.getAttribute('data-login') || ''
+          recipientInput.value = login
+
+          options.forEach((option) => {
+            option.classList.toggle('is-selected', option === button)
+          })
+
+          const statusBox = hint.querySelector('[data-gift-status]')
+          if (statusBox) {
+            statusBox.textContent = 'المستلم المحدد: @' + login
+          }
+        }
+
+        options.forEach((button) => {
+          addListener(button, 'click', () => selectRecipient(button))
+        })
+
+        addListener(searchInput, 'input', () => {
+          const query = String(searchInput.value || '').trim().toLowerCase()
+          let visibleCount = 0
+
+          options.forEach((button) => {
+            const haystack = button.getAttribute('data-search') || ''
+            const visible = !query || haystack.includes(query)
+
+            button.style.display = visible ? '' : 'none'
+
+            if (visible) {
+              visibleCount++
+            }
+          })
+
+          emptyBox?.classList.toggle('is-visible', visibleCount === 0)
+        })
 
         addListener(hint.querySelector('[data-submit-inventory-gift]'), 'click', () => {
           submitInventoryGiftFromProfile(modal, item)
