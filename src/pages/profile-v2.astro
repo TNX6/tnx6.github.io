@@ -9906,6 +9906,7 @@ const metadata = {
         renderFeaturedBadgesCleanV29(user)
         renderMail(mail)
         loadD1MailboxForProfile(user)
+        installMailboxAutoRefresh()
         syncOwnerControlsV36(user)
       }
 
@@ -13114,7 +13115,120 @@ const metadata = {
         }
       }
 
-      function renderMail(mail) {
+      async function deleteMailboxMessage(message, button) {
+        const messageId = mailboxMessageId(message)
+        const row = button?.closest?.('.mail-message')
+        const statusBox = row?.querySelector?.('[data-mail-inline-status]') || row?.querySelector?.('[data-mail-gift-status]')
+
+        if (mailboxMessageType(message) === 'gift_item' && mailboxGiftStatus(message) === 'pending') {
+          if (statusBox) statusBox.textContent = 'اقبل أو ارفض الهدية أولًا قبل حذفها.'
+          return
+        }
+
+        if (button) {
+          button.disabled = true
+          button.setAttribute('aria-disabled', 'true')
+        }
+
+        try {
+          const res = await fetch(TNX_API_ORIGIN + '/api/me/mailbox/delete', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messageId }),
+          })
+
+          const data = await res.json().catch(() => null)
+
+          if (!res.ok || !data || data.ok !== true) {
+            throw new Error((data && data.error) || 'delete_failed')
+          }
+
+          row?.remove?.()
+          await loadD1MailboxForProfile(state.activeUser, true)
+        } catch (error) {
+          if (button) {
+            button.disabled = false
+            button.removeAttribute('aria-disabled')
+          }
+
+          if (statusBox) {
+            statusBox.textContent = 'تعذر حذف الرسالة: ' + (error?.message || 'خطأ غير معروف')
+          }
+        }
+      }
+
+      async function clearMailboxMessages(button) {
+        if (button) {
+          button.disabled = true
+          button.setAttribute('aria-disabled', 'true')
+          button.textContent = 'جاري الحذف...'
+        }
+
+        try {
+          const res = await fetch(TNX_API_ORIGIN + '/api/me/mailbox/clear', {
+            method: 'POST',
+            credentials: 'include',
+          })
+
+          const data = await res.json().catch(() => null)
+
+          if (!res.ok || !data || data.ok !== true) {
+            throw new Error((data && data.error) || 'clear_failed')
+          }
+
+          await loadD1MailboxForProfile(state.activeUser, true)
+        } catch (error) {
+          if (button) {
+            button.disabled = false
+            button.removeAttribute('aria-disabled')
+            button.textContent = 'حذف كل البريد'
+          }
+
+          console.warn('[Mailbox] clear failed:', error)
+        }
+      }
+
+      function installMailboxAutoRefresh() {
+        if (window.__tnxMailboxAutoRefreshInstalled) return
+        window.__tnxMailboxAutoRefreshInstalled = true
+
+        window.setInterval(() => {
+          if (!state.activeUser) return
+          loadD1MailboxForProfile(state.activeUser, true)
+        }, 15000)
+      }
+
+      function optimisticRemoveGiftedInventoryItem(giftedItemName, quantity) {
+        if (!state.activeUser || !Array.isArray(state.activeUser.inventory)) return
+
+        const wanted = key(giftedItemName)
+        let remaining = Math.max(1, Number(quantity || 1))
+
+        state.activeUser.inventory = state.activeUser.inventory
+          .map((entry) => {
+            const entryName = itemName(entry)
+            if (key(entryName) !== wanted || remaining <= 0) return entry
+
+            const current = itemQty(entry)
+            const nextQty = Math.max(0, current - remaining)
+            remaining = Math.max(0, remaining - current)
+
+            return {
+              ...entry,
+              quantity: nextQty,
+              qty: nextQty,
+              amount: nextQty,
+            }
+          })
+          .filter((entry) => itemQty(entry) > 0)
+
+        const inventory = inventoryItems(state.activeUser)
+        setText('inventoryCount', `${inventory.length} ${inventory.length === 1 ? 'غرض' : 'أغراض'}`)
+        renderInventory(inventory)
+        enhanceInventorySellButtons(inventory)
+      }
+            function renderMail(mail) {
         const box = $('mailList')
         if (!box) return
 
@@ -13123,44 +13237,127 @@ const metadata = {
           return
         }
 
-        box.innerHTML = mail.map((message) => {
-          const id = mailboxMessageId(message)
-          const from = get(message, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], 'النظام') || 'النظام'
-          const text = get(message, ['message', 'text'], '')
-          const type = mailboxMessageType(message)
-          const giftStatus = mailboxGiftStatus(message)
-          const itemName = mailboxItemName(message)
-          const itemAmount = mailboxItemAmount(message)
-          const isGift = type === 'gift_item' || Boolean(giftStatus) || Boolean(itemName)
-          const isPendingGift = isGift && giftStatus === 'pending' && id
-          const giftLabel = mailboxGiftStatusLabel(giftStatus)
+        box.innerHTML = `
+          <style>
+            .mail-toolbar {
+              display: flex;
+              justify-content: center;
+              margin-bottom: 12px;
+            }
 
-          const giftInfo = isGift
-            ? `
-              <div class="item-command-hint" data-mail-gift-status>
-                هدية ${giftLabel ? '(' + esc(giftLabel) + ')' : ''}: ${esc(itemName || 'غرض')} ×${formatNumber(itemAmount)}
+            .mail-clear-btn {
+              border: 1px solid rgba(255, 90, 90, .35);
+              background: rgba(255, 90, 90, .10);
+              color: #ff8f8f;
+              border-radius: 14px;
+              padding: 9px 14px;
+              cursor: pointer;
+              font-weight: 800;
+            }
+
+            .mail-message {
+              position: relative;
+              padding-left: 52px;
+            }
+
+            .mail-delete-btn {
+              position: absolute;
+              top: 10px;
+              left: 10px;
+              width: 34px;
+              height: 34px;
+              display: grid;
+              place-items: center;
+              border-radius: 12px;
+              border: 1px solid rgba(255, 255, 255, .12);
+              background: rgba(255, 255, 255, .06);
+              color: rgba(255, 255, 255, .72);
+              cursor: pointer;
+            }
+
+            .mail-delete-btn:hover {
+              background: rgba(255, 90, 90, .16);
+              color: #ff8f8f;
+              border-color: rgba(255, 90, 90, .38);
+            }
+
+            .mail-gift-actions {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 8px;
+              margin-top: 10px;
+            }
+
+            .mail-gift-accept {
+              border-color: rgba(47, 209, 114, .45) !important;
+              background: rgba(47, 209, 114, .14) !important;
+              color: #7dffae !important;
+            }
+
+            .mail-gift-reject {
+              border-color: rgba(255, 85, 85, .45) !important;
+              background: rgba(255, 85, 85, .14) !important;
+              color: #ff9090 !important;
+            }
+          </style>
+
+          <div class="mail-toolbar">
+            <button class="mail-clear-btn" type="button" data-mail-clear>حذف كل البريد</button>
+          </div>
+
+          ${mail.map((message) => {
+            const id = mailboxMessageId(message)
+            const from = get(message, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], 'النظام') || 'النظام'
+            const text = get(message, ['message', 'text'], '')
+            const type = mailboxMessageType(message)
+            const giftStatus = mailboxGiftStatus(message)
+            const itemNameValue = mailboxItemName(message)
+            const itemAmount = mailboxItemAmount(message)
+            const isGift = type === 'gift_item' || Boolean(giftStatus) || Boolean(itemNameValue)
+            const isPendingGift = isGift && giftStatus === 'pending' && id
+            const giftLabel = mailboxGiftStatusLabel(giftStatus)
+
+            const giftInfo = isGift
+              ? `
+                <div class="item-command-hint" data-mail-gift-status>
+                  هدية ${giftLabel ? '(' + esc(giftLabel) + ')' : ''}: ${esc(itemNameValue || 'غرض')} ×${formatNumber(itemAmount)}
+                </div>
+              `
+              : '<div class="item-command-hint" data-mail-inline-status></div>'
+
+            const giftActions = isPendingGift
+              ? `
+                <div class="mail-gift-actions">
+                  <button class="item-action-btn mail-gift-accept" type="button" data-mail-gift-action="accept" data-message-id="${esc(id)}">قبول الهدية</button>
+                  <button class="item-action-btn mail-gift-reject" type="button" data-mail-gift-action="reject" data-message-id="${esc(id)}">رفض الهدية</button>
+                </div>
+              `
+              : ''
+
+            return `
+              <div class="mail-message" data-mail-message-id="${esc(id)}">
+                <button class="mail-delete-btn" type="button" data-mail-delete data-message-id="${esc(id)}" title="حذف الرسالة">🗑️</button>
+                <strong>${esc(from)}</strong>
+                <p>${esc(text || (isGift ? 'هدية في البريد.' : ''))}</p>
+                ${giftInfo}
+                ${giftActions}
               </div>
             `
-            : ''
+          }).join('')}
+        `
 
-          const giftActions = isPendingGift
-            ? `
-              <div class="item-actions mail-gift-actions">
-                <button class="item-action-btn" type="button" data-mail-gift-action="accept" data-message-id="${esc(id)}">قبول الهدية</button>
-                <button class="item-action-btn" type="button" data-mail-gift-action="reject" data-message-id="${esc(id)}">رفض الهدية</button>
-              </div>
-            `
-            : ''
+        box.querySelector('[data-mail-clear]')?.addEventListener('click', (event) => {
+          clearMailboxMessages(event.currentTarget)
+        })
 
-          return `
-            <div class="mail-message" data-mail-message-id="${esc(id)}">
-              <strong>${esc(from)}</strong>
-              <p>${esc(text || (isGift ? 'هدية في البريد.' : ''))}</p>
-              ${giftInfo}
-              ${giftActions}
-            </div>
-          `
-        }).join('')
+        box.querySelectorAll('[data-mail-delete]').forEach((button) => {
+          addListener(button, 'click', () => {
+            const messageId = button.getAttribute('data-message-id') || ''
+            const message = mail.find((entry) => mailboxMessageId(entry) === messageId)
+            if (!message) return
+            deleteMailboxMessage(message, button)
+          })
+        })
 
         box.querySelectorAll('[data-mail-gift-action]').forEach((button) => {
           addListener(button, 'click', () => {
@@ -13245,7 +13442,7 @@ const metadata = {
           .sort((a, b) => a.displayName.localeCompare(b.displayName, 'ar'))
       }
 
-      function renderInventoryGiftForm(modal, item) {
+            function renderInventoryGiftForm(modal, item) {
         const hint = modal.querySelector('[data-item-hint]')
         if (!hint) return
 
@@ -13257,14 +13454,13 @@ const metadata = {
         }
 
         const maxQty = Math.max(1, item.qty || 1)
+        const qtyButtons = Array.from({ length: Math.min(maxQty, 12) }, (_, index) => index + 1)
 
         hint.innerHTML = `
           <style>
             .gift-picker-card {
               border: 1px solid rgba(255, 255, 255, .12);
-              background:
-                radial-gradient(circle at top right, rgba(198, 164, 79, .18), transparent 35%),
-                rgba(12, 12, 16, .72);
+              background: radial-gradient(circle at top right, rgba(198, 164, 79, .18), transparent 35%), rgba(12, 12, 16, .72);
               border-radius: 18px;
               padding: 14px;
               box-shadow: 0 18px 55px rgba(0, 0, 0, .32);
@@ -13281,11 +13477,6 @@ const metadata = {
             .gift-picker-title strong {
               color: #ffda6a;
               font-size: 15px;
-            }
-
-            .gift-picker-title span {
-              color: rgba(255, 255, 255, .62);
-              font-size: 12px;
             }
 
             .gift-field {
@@ -13310,11 +13501,6 @@ const metadata = {
               outline: none;
             }
 
-            .gift-input:focus {
-              border-color: rgba(255, 218, 106, .55);
-              box-shadow: 0 0 0 3px rgba(255, 218, 106, .10);
-            }
-
             .gift-recipient-list {
               display: grid;
               gap: 8px;
@@ -13337,13 +13523,6 @@ const metadata = {
               border-radius: 14px;
               padding: 10px 12px;
               cursor: pointer;
-              transition: transform .12s ease, border-color .12s ease, background .12s ease;
-            }
-
-            .gift-recipient-option:hover {
-              transform: translateY(-1px);
-              background: rgba(255, 218, 106, .09);
-              border-color: rgba(255, 218, 106, .30);
             }
 
             .gift-recipient-option.is-selected {
@@ -13389,6 +13568,49 @@ const metadata = {
               font-weight: 900;
             }
 
+            .gift-qty-grid {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 8px;
+              margin-top: 8px;
+            }
+
+            .gift-qty-btn {
+              min-width: 44px;
+              padding: 9px 12px;
+              border-radius: 12px;
+              border: 1px solid rgba(255, 255, 255, .12);
+              background: rgba(255, 255, 255, .06);
+              color: #fff;
+              cursor: pointer;
+              font-weight: 800;
+            }
+
+            .gift-qty-btn.is-selected {
+              background: #ffda6a;
+              color: #1c1604;
+              border-color: #ffda6a;
+            }
+
+            .gift-single-qty {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              min-width: 120px;
+              padding: 10px 14px;
+              border-radius: 14px;
+              background: rgba(255, 218, 106, .12);
+              border: 1px solid rgba(255, 218, 106, .35);
+              color: #ffda6a;
+              font-weight: 900;
+            }
+
+            .gift-submit-row {
+              display: flex;
+              justify-content: center;
+              margin-top: 16px;
+            }
+
             .gift-recipient-empty {
               display: none;
               color: rgba(255, 255, 255, .55);
@@ -13409,11 +13631,8 @@ const metadata = {
               <span>المتوفر: ×${formatNumber(maxQty)}</span>
             </div>
 
-            <p style="margin:0;color:rgba(255,255,255,.62);font-size:13px;line-height:1.8;">
-              اختر المستلم والكمية. الهدية توصل لبريده، وهو يقدر يقبلها أو يرفضها.
-            </p>
-
             <input type="hidden" data-gift-recipient value="" />
+            <input type="hidden" data-gift-quantity value="1" />
 
             <label class="gift-field">
               <span>ابحث عن المستلم</span>
@@ -13441,7 +13660,15 @@ const metadata = {
 
             <label class="gift-field">
               <span>الكمية</span>
-              <input class="gift-input" data-gift-quantity type="number" min="1" max="${esc(maxQty)}" value="1" />
+              ${
+                maxQty === 1
+                  ? `<div class="gift-single-qty">غرض واحد</div>`
+                  : `<div class="gift-qty-grid">
+                      ${qtyButtons.map((qty) => `
+                        <button class="gift-qty-btn${qty === 1 ? ' is-selected' : ''}" type="button" data-gift-qty-option="${qty}">${qty}</button>
+                      `).join('')}
+                    </div>`
+              }
             </label>
 
             <label class="gift-field">
@@ -13449,20 +13676,22 @@ const metadata = {
               <input class="gift-input" data-gift-message type="text" maxlength="160" placeholder="اكتب رسالة قصيرة..." />
             </label>
 
-            <div class="item-actions" style="margin-top:14px;">
+            <div class="gift-submit-row">
               <button class="item-action-btn" type="button" data-submit-inventory-gift>إرسال الهدية</button>
             </div>
 
-            <div class="item-command-hint" data-gift-status style="margin-top:10px;">
+            <div class="item-command-hint" data-gift-status style="margin-top:10px;text-align:center;">
               اختر المستلم لإرسال الهدية.
             </div>
           </div>
         `
 
         const recipientInput = hint.querySelector('[data-gift-recipient]')
+        const quantityInput = hint.querySelector('[data-gift-quantity]')
         const searchInput = hint.querySelector('[data-gift-recipient-search]')
         const emptyBox = hint.querySelector('[data-gift-recipient-empty]')
         const options = Array.from(hint.querySelectorAll('[data-gift-recipient-option]'))
+        const qtyOptions = Array.from(hint.querySelectorAll('[data-gift-qty-option]'))
 
         const selectRecipient = (button) => {
           const login = button.getAttribute('data-login') || ''
@@ -13482,6 +13711,17 @@ const metadata = {
           addListener(button, 'click', () => selectRecipient(button))
         })
 
+        qtyOptions.forEach((button) => {
+          addListener(button, 'click', () => {
+            const qty = button.getAttribute('data-gift-qty-option') || '1'
+            quantityInput.value = qty
+
+            qtyOptions.forEach((entry) => {
+              entry.classList.toggle('is-selected', entry === button)
+            })
+          })
+        })
+
         addListener(searchInput, 'input', () => {
           const query = String(searchInput.value || '').trim().toLowerCase()
           let visibleCount = 0
@@ -13492,9 +13732,7 @@ const metadata = {
 
             button.style.display = visible ? '' : 'none'
 
-            if (visible) {
-              visibleCount++
-            }
+            if (visible) visibleCount++
           })
 
           emptyBox?.classList.toggle('is-visible', visibleCount === 0)
@@ -13505,7 +13743,7 @@ const metadata = {
         })
       }
 
-      async function submitInventoryGiftFromProfile(modal, item) {
+      async       async function submitInventoryGiftFromProfile(modal, item) {
         const hint = modal.querySelector('[data-item-hint]')
         const recipientInput = hint?.querySelector('[data-gift-recipient]')
         const quantityInput = hint?.querySelector('[data-gift-quantity]')
@@ -13570,11 +13808,12 @@ const metadata = {
             statusBox.textContent = 'تم إرسال طلب الإهداء.'
           }
 
+          optimisticRemoveGiftedInventoryItem(item.name, quantity)
+
           window.setTimeout(() => {
             modal.remove()
-            refreshProfileInventoryAfterGift()
             loadD1MailboxForProfile(state.activeUser, true)
-          }, 1600)
+          }, 600)
         } catch (error) {
           if (submitButton) {
             submitButton.disabled = false
