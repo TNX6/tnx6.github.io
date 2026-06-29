@@ -13436,13 +13436,31 @@ const metadata = {
 
       function delegatedInventoryGiftClick(event) {
         const target = event.target
-        const giftButton = target && target.closest ? target.closest('[data-item-action="gift"]') : null
+        let giftButton = target && target.closest ? target.closest('[data-item-action="gift"]') : null
+
+        if (!giftButton && target && target.closest) {
+          const possibleButton = target.closest('button')
+
+          if (
+            possibleButton &&
+            possibleButton.classList.contains('item-detail-v3-action') &&
+            possibleButton.textContent.trim() === 'إهداء'
+          ) {
+            giftButton = possibleButton
+          }
+        }
 
         if (!giftButton) {
           return
         }
 
-        const modal = giftButton.closest('.item-modal')
+        const modal =
+          giftButton.closest('.item-modal') ||
+          giftButton.closest('.item-detail-v3') ||
+          giftButton.closest('.item-detail-v3-modal') ||
+          giftButton.closest('.modal-backdrop') ||
+          giftButton.closest('[class*="item-detail"]') ||
+          document.body
 
         if (!modal || giftButton.disabled) {
           return
@@ -13452,16 +13470,49 @@ const metadata = {
         event.stopPropagation()
         event.stopImmediatePropagation?.()
 
-        const title = modal.querySelector('h3')?.textContent?.trim() || ''
-        const qtyText = modal.querySelector('.mail-message strong')?.textContent || ''
-        const qtyMatch = qtyText.match(/x\s*([0-9,]+)/i)
+        const title =
+          modal.querySelector('[data-item-name]')?.textContent?.trim() ||
+          modal.querySelector('.item-detail-v3-name')?.textContent?.trim() ||
+          modal.querySelector('.item-detail-name')?.textContent?.trim() ||
+          modal.querySelector('h3')?.textContent?.trim() ||
+          modal.querySelector('h2')?.textContent?.trim() ||
+          ''
+
+        const qtyText = modal.textContent || ''
+        const qtyMatch = qtyText.match(/x\s*([0-9,]+)/i) || qtyText.match(/×\s*([0-9,]+)/i)
         const qty = qtyMatch ? Math.max(1, Number(qtyMatch[1].replace(/,/g, '')) || 1) : 1
 
         const item = {
           name: title,
           qty,
-          description: modal.querySelector('.mail-message p')?.textContent?.trim() || '',
+          description:
+            modal.querySelector('.item-detail-v3-description')?.textContent?.trim() ||
+            modal.querySelector('.item-detail-description')?.textContent?.trim() ||
+            modal.querySelector('.mail-message p')?.textContent?.trim() ||
+            '',
           icon: '',
+        }
+
+        if (!item.name) {
+          console.warn('[Inventory Gift] item name not found from modal')
+        }
+
+        if (!modal.querySelector('[data-item-hint]')) {
+          const giftMount = document.createElement('div')
+          giftMount.setAttribute('data-item-hint', '')
+          giftMount.className = 'item-command-hint'
+          giftMount.style.marginTop = '12px'
+
+          const actions =
+            giftButton.closest('.item-detail-v3-actions') ||
+            giftButton.closest('.item-actions') ||
+            giftButton.parentElement
+
+          if (actions && actions.parentElement) {
+            actions.insertAdjacentElement('afterend', giftMount)
+          } else {
+            modal.appendChild(giftMount)
+          }
         }
 
         console.log('[Inventory Gift] delegated click', item)
@@ -13526,7 +13577,19 @@ const metadata = {
 
         const hardWireInventoryGiftButton = (event) => {
           const target = event.target
-          const giftButton = target && target.closest ? target.closest('[data-item-action="gift"]') : null
+          let giftButton = target && target.closest ? target.closest('[data-item-action="gift"]') : null
+
+        if (!giftButton && target && target.closest) {
+          const possibleButton = target.closest('button')
+
+          if (
+            possibleButton &&
+            possibleButton.classList.contains('item-detail-v3-action') &&
+            possibleButton.textContent.trim() === 'إهداء'
+          ) {
+            giftButton = possibleButton
+          }
+        }
 
           if (!giftButton || !modal.contains(giftButton) || giftButton.disabled) {
             return
