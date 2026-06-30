@@ -14415,7 +14415,83 @@ function mbV2Card(message) {
         )
       }
 
-      function renderMailboxProV2(mail) {
+      
+      // fix-mbv2-message-normalizer
+      function mbV2NormalizeMessages(payload) {
+        if (Array.isArray(payload)) {
+          return payload;
+        }
+
+        if (!payload || typeof payload !== 'object') {
+          return [];
+        }
+
+        const candidates = [
+          payload.messages,
+          payload.mail,
+          payload.items,
+          payload.data,
+          payload.mailbox && payload.mailbox.messages,
+          payload.mailbox && payload.mailbox.mail,
+          payload.mailbox && payload.mailbox.items,
+          payload.result && payload.result.messages,
+          payload.result && payload.result.mail,
+          payload.result && payload.result.items,
+        ];
+
+        for (const candidate of candidates) {
+          if (Array.isArray(candidate)) {
+            return candidate;
+          }
+        }
+
+        return [];
+      }
+
+      function mbV2ApiBase() {
+        try {
+          if (typeof API_BASE === 'string' && API_BASE) {
+            return API_BASE.replace(/\/$/, '');
+          }
+        } catch {}
+
+        return 'https://api.tnx6.xyz';
+      }
+
+      async function mbV2FetchMailboxDirect(root) {
+        if (!root || root.dataset.mbv2DirectFetchBusy === '1') {
+          return;
+        }
+
+        root.dataset.mbv2DirectFetchBusy = '1';
+
+        try {
+          const response = await fetch(mbV2ApiBase() + '/api/me/mailbox?limit=50&v=' + Date.now(), {
+            credentials: 'include',
+            cache: 'no-store',
+            headers: {
+              Accept: 'application/json',
+            },
+          });
+
+          const data = await response.json().catch(() => ({}));
+          const list = mbV2NormalizeMessages(data);
+
+          if (list.length) {
+            renderMailboxProV2(list);
+          }
+        } catch (error) {
+          console.error('[Mailbox V2] direct fetch failed', error);
+        } finally {
+          setTimeout(() => {
+            try {
+              root.dataset.mbv2DirectFetchBusy = '0';
+            } catch {}
+          }, 1000);
+        }
+      }
+
+function renderMailboxProV2(mail) {
         const roots = Array.from(document.querySelectorAll('.mail-pro'))
                 const root = roots[0] || null
         
@@ -14424,8 +14500,19 @@ function mbV2Card(message) {
                 })
         if (!root) return
 
-        const list = Array.isArray(mail) ? mail : []
-        const filter = root.dataset.mbv2Filter || 'all'
+        let list = mbV2NormalizeMessages(mail)
+
+        if (!list.length) {
+          try {
+            mbV2FetchMailboxDirect(root);
+          } catch {}
+        }
+        let filter = root.dataset.mbv2Filter || 'all'
+
+        if (!['all', 'message', 'gift', 'system'].includes(filter)) {
+          filter = 'all';
+          root.dataset.mbv2Filter = 'all';
+        }
         const counts = mbV2Counts(list)
         const upgrade = mbV2UpgradeInfo(list)
         const percent = Math.max(0, Math.min(100, Math.round((upgrade.used / Math.max(1, upgrade.capacity)) * 100)))
