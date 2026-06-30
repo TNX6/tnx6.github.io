@@ -13764,6 +13764,42 @@ const metadata = {
               color: var(--mail-muted);
               font-size: 13px;
             }
+
+            /* mail-delete-bottom-force-fix */
+            .mail-pro .mail-pro-card-footer-actions {
+              display: flex !important;
+              justify-content: flex-start !important;
+              margin-top: 12px !important;
+              padding-top: 10px !important;
+              border-top: 1px solid rgba(255,255,255,.07) !important;
+            }
+
+            .mail-pro .mail-pro-delete {
+              position: static !important;
+              inset: auto !important;
+              width: auto !important;
+              min-height: 34px !important;
+              display: inline-flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              gap: 6px !important;
+              border-radius: 12px !important;
+              border: 1px solid rgba(255,107,107,.24) !important;
+              background: rgba(255,107,107,.08) !important;
+              color: #ff9b9b !important;
+              cursor: pointer !important;
+              padding: 8px 11px !important;
+              font-size: 12px !important;
+              font-weight: 900 !important;
+              line-height: 1 !important;
+            }
+
+            .mail-pro .mail-pro-delete:hover {
+              transform: translateY(-1px) !important;
+              background: rgba(255,107,107,.14) !important;
+              color: #ffc0c0 !important;
+            }
+
           </style>
 
           <div class="mail-pro">
@@ -13850,6 +13886,9 @@ const metadata = {
                                   : ''
                               }
                             </div>
+                          </div>
+                          <div class="mail-pro-card-footer-actions">
+                            <button class="mail-pro-delete" type="button" data-mail-delete data-message-id="${esc(id)}" title="حذف الرسالة">🗑️ حذف الرسالة</button>
                           </div>
                         </div>
                       `
