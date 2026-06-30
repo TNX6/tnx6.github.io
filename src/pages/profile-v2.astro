@@ -15666,6 +15666,165 @@ function renderMail(mail) {
                 flex: 1 !important;
               }
             }
+
+
+            /* clean-mailbox-upgrade-strip-v2-css */
+            .mail-pro .mail-pro-footer-capacity,
+            .mail-pro .mail-pro-capacity-mini,
+            .mail-pro .mail-pro-capacity,
+            .mail-pro .mail-pro-capacity-clean,
+            .mail-pro .mail-pro-upgrade-strip {
+              display: none !important;
+            }
+
+            .mail-pro .mailbox-level-strip-v2[data-mail-capacity-box] {
+              display: flex !important;
+              align-items: center !important;
+              justify-content: space-between !important;
+              gap: 14px !important;
+              width: 100% !important;
+              margin: 11px 0 10px !important;
+              padding: 10px 13px !important;
+              border-radius: 15px !important;
+              border: 1px solid rgba(255, 138, 91, .18) !important;
+              background:
+                linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012)) !important;
+              box-shadow: none !important;
+              transform: none !important;
+            }
+
+            .mail-pro .mailbox-level-main-v2 {
+              display: grid !important;
+              grid-template-columns: auto minmax(90px, 160px) auto !important;
+              align-items: center !important;
+              gap: 10px !important;
+              min-width: 0 !important;
+              flex: 1 !important;
+            }
+
+            .mail-pro .mailbox-level-title-v2 {
+              display: inline-flex !important;
+              align-items: center !important;
+              gap: 7px !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro .mailbox-level-dot-v2 {
+              width: 7px !important;
+              height: 7px !important;
+              border-radius: 999px !important;
+              background: linear-gradient(135deg, #ffd36a, #ff8a5b) !important;
+              box-shadow: 0 0 12px rgba(255, 138, 91, .35) !important;
+            }
+
+            .mail-pro .mailbox-level-title-v2 strong {
+              color: rgba(255,255,255,.82) !important;
+              font-size: 12.5px !important;
+              font-weight: 1000 !important;
+            }
+
+            .mail-pro .mailbox-level-bar-v2 {
+              width: 100% !important;
+              height: 5px !important;
+              border-radius: 999px !important;
+              overflow: hidden !important;
+              background: rgba(255,255,255,.085) !important;
+            }
+
+            .mail-pro .mailbox-level-bar-v2 span {
+              display: block !important;
+              height: 100% !important;
+              border-radius: inherit !important;
+              background: linear-gradient(90deg, #ffd36a, #ff8a5b) !important;
+            }
+
+            .mail-pro .mailbox-level-count-v2 {
+              color: #ffd36a !important;
+              font-size: 12px !important;
+              font-weight: 1000 !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro .mailbox-level-side-v2 {
+              display: inline-flex !important;
+              align-items: center !important;
+              gap: 8px !important;
+              flex-shrink: 0 !important;
+            }
+
+            .mail-pro .mailbox-level-cost-v2 {
+              display: inline-flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              height: 27px !important;
+              min-width: 76px !important;
+              padding: 0 9px !important;
+              border-radius: 9px !important;
+              background: rgba(255, 211, 106, .075) !important;
+              color: #ffd36a !important;
+              font-size: 10.8px !important;
+              font-weight: 1000 !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro .mailbox-level-button-v2 {
+              display: inline-flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              height: 32px !important;
+              min-width: 108px !important;
+              padding: 0 12px !important;
+              border-radius: 11px !important;
+              border: 1px solid rgba(255, 138, 91, .30) !important;
+              background: rgba(255, 138, 91, .085) !important;
+              color: #ffbd80 !important;
+              cursor: pointer !important;
+              font-size: 12px !important;
+              font-weight: 1000 !important;
+              line-height: 1 !important;
+              white-space: nowrap !important;
+              box-shadow: none !important;
+              transform: none !important;
+            }
+
+            .mail-pro .mailbox-level-button-v2:hover {
+              background: linear-gradient(135deg, rgba(255,211,106,.18), rgba(255,138,91,.16)) !important;
+              border-color: rgba(255, 138, 91, .42) !important;
+              transform: none !important;
+            }
+
+            .mail-pro .mailbox-level-button-v2:disabled,
+            .mail-pro .mailbox-level-button-v2[aria-disabled="true"] {
+              opacity: .55 !important;
+              cursor: not-allowed !important;
+            }
+
+            .mail-pro .mail-pro-upgrade,
+            .mail-pro .mail-pro-upgrade-mini,
+            .mail-pro .mail-pro-footer-upgrade {
+              display: none !important;
+            }
+
+            @media (max-width: 720px) {
+              .mail-pro .mailbox-level-strip-v2[data-mail-capacity-box] {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 10px !important;
+              }
+
+              .mail-pro .mailbox-level-main-v2 {
+                grid-template-columns: auto minmax(70px, 1fr) auto !important;
+              }
+
+              .mail-pro .mailbox-level-side-v2 {
+                width: 100% !important;
+              }
+
+              .mail-pro .mailbox-level-button-v2 {
+                flex: 1 !important;
+              }
+            }
+
           </style>
 
           <div class="mail-pro">
@@ -15690,46 +15849,43 @@ function renderMail(mail) {
                 <button class="mail-pro-tab" type="button" data-mail-filter="msg">رسائل <span class="mail-pro-tab-count">${formatNumber(counts.msg)}</span></button>
                 <button class="mail-pro-tab" type="button" data-mail-filter="sys">نظام <span class="mail-pro-tab-count">${formatNumber(counts.sys)}</span></button>
               </div>
-              <div class="mail-pro-upgrade-strip" data-mail-capacity-box>
-                <div class="mail-pro-upgrade-info">
-                  <div class="mail-pro-upgrade-title">
-                    <span class="mail-pro-upgrade-dot"></span>
+              <div class="mailbox-level-strip-v2" data-mail-capacity-box>
+                <div class="mailbox-level-main-v2">
+                  <div class="mailbox-level-title-v2">
+                    <span class="mailbox-level-dot-v2"></span>
                     <strong>سعة البريد</strong>
                   </div>
 
-                  <div class="mail-pro-upgrade-bar">
+                  <div class="mailbox-level-bar-v2">
                     <span data-mail-capacity-bar style="width: ${Math.max(0, Math.min(100, Math.round(((mailboxUpgradeInfo.used || counts.all) / Math.max(1, mailboxUpgradeInfo.capacity || 5)) * 100)))}%"></span>
                   </div>
 
-                  <span class="mail-pro-upgrade-capacity" data-mail-capacity-label>
+                  <span class="mailbox-level-count-v2" data-mail-capacity-label>
                     ${mailboxUpgradeFormat(mailboxUpgradeInfo.used || counts.all)} / ${mailboxUpgradeFormat(mailboxUpgradeInfo.capacity || 5)}
                   </span>
                 </div>
 
-                <div class="mail-pro-upgrade-action">
-                  <span class="mail-pro-upgrade-cost" data-mail-upgrade-cost>
+                <div class="mailbox-level-side-v2">
+                  <span class="mailbox-level-cost-v2" data-mail-upgrade-cost>
                     ${mailboxUpgradeFormat(mailboxUpgradeInfo.cost || 25000)} نقطة
                   </span>
 
-                  <button class="mail-pro-upgrade-btn" type="button" data-mail-upgrade-open>
+                  <button class="mailbox-level-button-v2" type="button" data-mail-upgrade-open>
                     تطوير البريد
                   </button>
                 </div>
               </div>
 
-                  <div class="mail-pro-upgrade-strip-bar">
-                    <span data-mail-capacity-bar style="width: ${Math.max(0, Math.min(100, Math.round(((mailboxUpgradeInfo.used || counts.all) / Math.max(1, mailboxUpgradeInfo.capacity || 5)) * 100)))}%"></span>
-                  </div>
+              
+
+                  
 
                   <span class="mail-pro-upgrade-strip-capacity" data-mail-capacity-label>
                     ${mailboxUpgradeFormat(mailboxUpgradeInfo.used || counts.all)} / ${mailboxUpgradeFormat(mailboxUpgradeInfo.capacity || 5)}
                   </span>
                 </div>
 
-                <button class="mail-pro-upgrade-strip-btn" type="button" data-mail-upgrade-open>
-                  <span>تطوير البريد</span>
-                  <b data-mail-upgrade-cost>${mailboxUpgradeFormat(mailboxUpgradeInfo.cost || 25000)} نقطة</b>
-                </button>
+                
               </div>
             </div>
 
