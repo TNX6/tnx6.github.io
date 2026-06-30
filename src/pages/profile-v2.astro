@@ -13250,7 +13250,433 @@ const metadata = {
         renderInventory(inventory)
         enhanceInventorySellButtons(inventory)
       }
-                        function renderMail(mail) {
+                        
+
+      /* mailbox-upgrade-ui-helpers */
+      let mailboxUpgradeInfo = {
+        used: 0,
+        capacity: 5,
+        maxCapacity: 45,
+        nextCapacity: 10,
+        increase: 5,
+        cost: 25000,
+        canUpgrade: true,
+        activeRequest: null,
+      }
+
+      function getTnxApiBaseForMailboxUpgrade() {
+        try {
+          if (typeof API_BASE === 'string' && API_BASE) {
+            return API_BASE.replace(/\/$/, '')
+          }
+        } catch {}
+
+        return 'https://api.tnx6.xyz'
+      }
+
+      function mailboxUpgradeApiUrl(path) {
+        return getTnxApiBaseForMailboxUpgrade() + path
+      }
+
+      function mailboxUpgradeNumber(value) {
+        const number = Number(value || 0)
+
+        if (!Number.isFinite(number)) {
+          return 0
+        }
+
+        return number
+      }
+
+      function mailboxUpgradeFormat(value) {
+        try {
+          if (typeof formatNumber === 'function') {
+            return formatNumber(value)
+          }
+        } catch {}
+
+        try {
+          return new Intl.NumberFormat('ar-SA').format(Number(value || 0))
+        } catch {
+          return String(value || 0)
+        }
+      }
+
+      function getMailboxUpgradeClientPlan(capacity) {
+        const tiers = [
+          { target: 10, cost: 25000 },
+          { target: 15, cost: 50000 },
+          { target: 20, cost: 90000 },
+          { target: 25, cost: 120000 },
+          { target: 30, cost: 160000 },
+          { target: 35, cost: 220000 },
+          { target: 40, cost: 260000 },
+          { target: 45, cost: 300000 },
+        ]
+
+        for (const tier of tiers) {
+          if (capacity < tier.target) {
+            return {
+              nextCapacity: tier.target,
+              increase: tier.target - capacity,
+              cost: tier.cost,
+              canUpgrade: true,
+            }
+          }
+        }
+
+        return {
+          nextCapacity: 45,
+          increase: 0,
+          cost: 0,
+          canUpgrade: false,
+        }
+      }
+
+      function normalizeMailboxUpgradeInfo(raw) {
+        const current = mailboxUpgradeInfo || {}
+        const used = mailboxUpgradeNumber(raw?.used ?? current.used ?? 0)
+        const capacity = Math.max(5, mailboxUpgradeNumber(raw?.capacity ?? current.capacity ?? 5))
+        const maxCapacity = Math.max(45, mailboxUpgradeNumber(raw?.maxCapacity ?? current.maxCapacity ?? 45))
+        const fallbackPlan = getMailboxUpgradeClientPlan(capacity)
+
+        return {
+          used,
+          capacity,
+          maxCapacity,
+          nextCapacity: mailboxUpgradeNumber(raw?.nextCapacity ?? fallbackPlan.nextCapacity),
+          increase: mailboxUpgradeNumber(raw?.increase ?? fallbackPlan.increase),
+          cost: mailboxUpgradeNumber(raw?.cost ?? fallbackPlan.cost),
+          canUpgrade: Boolean(raw?.canUpgrade ?? fallbackPlan.canUpgrade),
+          activeRequest: raw?.activeRequest || null,
+        }
+      }
+
+      function updateMailboxUpgradeDom() {
+        const info = normalizeMailboxUpgradeInfo(mailboxUpgradeInfo)
+        mailboxUpgradeInfo = info
+
+        const boxes = document.querySelectorAll('[data-mail-capacity-box]')
+
+        boxes.forEach((box) => {
+          const used = mailboxUpgradeNumber(info.used)
+          const capacity = Math.max(1, mailboxUpgradeNumber(info.capacity))
+          const percent = Math.max(0, Math.min(100, Math.round((used / capacity) * 100)))
+
+          const label = box.querySelector('[data-mail-capacity-label]')
+          const bar = box.querySelector('[data-mail-capacity-bar]')
+          const upgradeButton = box.querySelector('[data-mail-upgrade-open]')
+
+          if (label) {
+            label.textContent = mailboxUpgradeFormat(used) + ' / ' + mailboxUpgradeFormat(capacity)
+          }
+
+          if (bar) {
+            bar.style.width = percent + '%'
+          }
+
+          if (upgradeButton) {
+            if (!info.canUpgrade) {
+              upgradeButton.textContent = 'مكتمل'
+              upgradeButton.disabled = true
+              upgradeButton.setAttribute('aria-disabled', 'true')
+            } else if (info.activeRequest) {
+              upgradeButton.textContent = 'قيد التطوير'
+              upgradeButton.disabled = true
+              upgradeButton.setAttribute('aria-disabled', 'true')
+            } else {
+              upgradeButton.textContent = 'تطوير البريد'
+              upgradeButton.disabled = false
+              upgradeButton.removeAttribute('aria-disabled')
+            }
+          }
+        })
+      }
+
+      async function loadMailboxUpgradeInfo() {
+        try {
+          const response = await fetch(mailboxUpgradeApiUrl('/api/me/mailbox/upgrade-info'), {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              Accept: 'application/json',
+            },
+          })
+
+          const data = await response.json().catch(() => ({}))
+
+          if (!response.ok || !data.ok) {
+            return null
+          }
+
+          mailboxUpgradeInfo = normalizeMailboxUpgradeInfo(data)
+          updateMailboxUpgradeDom()
+          return mailboxUpgradeInfo
+        } catch {
+          return null
+        }
+      }
+
+      function removeMailboxUpgradeModal() {
+        document.querySelectorAll('[data-mail-upgrade-modal]').forEach((modal) => modal.remove())
+      }
+
+      function setMailboxUpgradeModalState(modal, type, message) {
+        const state = modal ? modal.querySelector('[data-mail-upgrade-state]') : null
+
+        if (!state) {
+          return
+        }
+
+        state.textContent = message || ''
+        state.dataset.state = type || 'idle'
+      }
+
+      async function openMailboxUpgradeModal() {
+        const latest = await loadMailboxUpgradeInfo()
+        const info = normalizeMailboxUpgradeInfo(latest || mailboxUpgradeInfo)
+
+        removeMailboxUpgradeModal()
+
+        const modal = document.createElement('div')
+        modal.className = 'mail-upgrade-modal'
+        modal.setAttribute('data-mail-upgrade-modal', 'true')
+        modal.setAttribute('dir', 'rtl')
+
+        if (!info.canUpgrade) {
+          modal.innerHTML = `
+            <div class="mail-upgrade-dialog">
+              <button class="mail-upgrade-x" type="button" data-mail-upgrade-cancel aria-label="إغلاق">×</button>
+              <div class="mail-upgrade-kicker">تطوير البريد</div>
+              <h3>وصلت للحد الأعلى</h3>
+              <p>مساحة بريدك الحالية <strong>${mailboxUpgradeFormat(info.capacity)}</strong> رسالة، وهذا هو الحد الأعلى المتاح حاليًا.</p>
+              <button class="mail-upgrade-btn mail-upgrade-btn-secondary" type="button" data-mail-upgrade-cancel>إغلاق</button>
+            </div>
+          `
+
+          document.body.appendChild(modal)
+          return
+        }
+
+        modal.innerHTML = `
+          <div class="mail-upgrade-dialog">
+            <button class="mail-upgrade-x" type="button" data-mail-upgrade-cancel aria-label="إغلاق">×</button>
+
+            <div class="mail-upgrade-kicker">تطوير البريد</div>
+            <h3>تأكيد تطوير مساحة البريد</h3>
+            <p>سيتم إرسال الطلب إلى Streamer.bot لخصم النقاط وتحديث مساحة البريد عندك.</p>
+
+            <div class="mail-upgrade-grid">
+              <div>
+                <span>المساحة الحالية</span>
+                <strong>${mailboxUpgradeFormat(info.capacity)}</strong>
+              </div>
+
+              <div>
+                <span>بعد التطوير</span>
+                <strong>${mailboxUpgradeFormat(info.nextCapacity)}</strong>
+              </div>
+
+              <div>
+                <span>الزيادة</span>
+                <strong>+${mailboxUpgradeFormat(info.increase)}</strong>
+              </div>
+
+              <div>
+                <span>التكلفة</span>
+                <strong>${mailboxUpgradeFormat(info.cost)} نقطة</strong>
+              </div>
+            </div>
+
+            <div class="mail-upgrade-state" data-mail-upgrade-state></div>
+
+            <div class="mail-upgrade-actions">
+              <button class="mail-upgrade-btn mail-upgrade-btn-primary" type="button" data-mail-upgrade-confirm data-target-capacity="${info.nextCapacity}">
+                تأكيد التطوير
+              </button>
+
+              <button class="mail-upgrade-btn mail-upgrade-btn-secondary" type="button" data-mail-upgrade-cancel>
+                إلغاء
+              </button>
+            </div>
+          </div>
+        `
+
+        document.body.appendChild(modal)
+      }
+
+      async function pollMailboxUpgradeStatus(requestId, modal, confirmButton) {
+        const startedAt = Date.now()
+
+        while (Date.now() - startedAt < 70000) {
+          await new Promise((resolve) => setTimeout(resolve, 1500))
+
+          const response = await fetch(mailboxUpgradeApiUrl('/api/me/mailbox/upgrade-status?id=' + encodeURIComponent(requestId)), {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              Accept: 'application/json',
+            },
+          })
+
+          const data = await response.json().catch(() => ({}))
+
+          if (!response.ok || !data.ok) {
+            continue
+          }
+
+          if (data.status === 'completed') {
+            mailboxUpgradeInfo = normalizeMailboxUpgradeInfo({
+              ...mailboxUpgradeInfo,
+              capacity: data.targetCapacity,
+              nextCapacity: data.targetCapacity,
+              activeRequest: null,
+            })
+
+            await loadMailboxUpgradeInfo()
+
+            setMailboxUpgradeModalState(
+              modal,
+              'success',
+              'تم تطوير البريد بنجاح. المساحة الجديدة: ' + mailboxUpgradeFormat(data.targetCapacity) + ' رسالة.'
+            )
+
+            if (confirmButton) {
+              confirmButton.disabled = true
+              confirmButton.textContent = 'تم التطوير'
+            }
+
+            setTimeout(() => {
+              removeMailboxUpgradeModal()
+              updateMailboxUpgradeDom()
+            }, 1600)
+
+            return
+          }
+
+          if (data.status === 'rejected') {
+            await loadMailboxUpgradeInfo()
+
+            const msg = data.errorMessage === 'not_enough_points'
+              ? 'ما عندك نقاط كافية للتطوير.'
+              : data.errorMessage === 'mailbox_not_owned'
+                ? 'لازم تفعل صندوق البريد أولًا.'
+                : data.errorMessage === 'target_capacity_changed'
+                  ? 'مساحة البريد تغيرت. افتح نافذة التطوير من جديد.'
+                  : 'تم رفض طلب التطوير: ' + (data.errorMessage || 'غير معروف')
+
+            setMailboxUpgradeModalState(modal, 'error', msg)
+
+            if (confirmButton) {
+              confirmButton.disabled = false
+              confirmButton.textContent = 'تأكيد التطوير'
+            }
+
+            return
+          }
+        }
+
+        setMailboxUpgradeModalState(modal, 'error', 'تأخر الرد من Streamer.bot. جرّب بعد قليل.')
+
+        if (confirmButton) {
+          confirmButton.disabled = false
+          confirmButton.textContent = 'تأكيد التطوير'
+        }
+      }
+
+      async function submitMailboxUpgrade(confirmButton) {
+        const modal = confirmButton.closest('[data-mail-upgrade-modal]')
+        const targetCapacity = Number(confirmButton.dataset.targetCapacity || 0)
+
+        confirmButton.disabled = true
+        confirmButton.textContent = 'جاري التنفيذ...'
+
+        setMailboxUpgradeModalState(modal, 'loading', 'جاري إرسال طلب التطوير...')
+
+        try {
+          const response = await fetch(mailboxUpgradeApiUrl('/api/me/mailbox/upgrade'), {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+            body: JSON.stringify({
+              targetCapacity,
+            }),
+          })
+
+          const data = await response.json().catch(() => ({}))
+
+          if (!response.ok || !data.ok) {
+            const error = data.error || 'upgrade_failed'
+
+            if (error === 'upgrade_already_pending') {
+              setMailboxUpgradeModalState(modal, 'loading', 'عندك طلب تطوير قيد التنفيذ. ننتظر النتيجة...')
+              await pollMailboxUpgradeStatus(data.requestId, modal, confirmButton)
+              return
+            }
+
+            const msg = error === 'max_capacity_reached'
+              ? 'وصلت للحد الأعلى.'
+              : error === 'mailbox_not_found'
+                ? 'صندوق البريد غير مفعّل.'
+                : error === 'target_capacity_changed'
+                  ? 'مساحة البريد تغيرت. افتح نافذة التطوير من جديد.'
+                  : 'تعذر إرسال طلب التطوير.'
+
+            setMailboxUpgradeModalState(modal, 'error', msg)
+            confirmButton.disabled = false
+            confirmButton.textContent = 'تأكيد التطوير'
+            await loadMailboxUpgradeInfo()
+            return
+          }
+
+          setMailboxUpgradeModalState(modal, 'loading', 'تم إرسال الطلب. بانتظار Streamer.bot...')
+          await pollMailboxUpgradeStatus(data.requestId, modal, confirmButton)
+        } catch {
+          setMailboxUpgradeModalState(modal, 'error', 'صار خطأ في الاتصال. جرّب مرة ثانية.')
+          confirmButton.disabled = false
+          confirmButton.textContent = 'تأكيد التطوير'
+        }
+      }
+
+      if (!window.__tnxMailboxUpgradeEventsInstalled) {
+        window.__tnxMailboxUpgradeEventsInstalled = true
+
+        document.addEventListener('click', (event) => {
+          const target = event.target
+
+          if (!(target instanceof Element)) {
+            return
+          }
+
+          const openButton = target.closest('[data-mail-upgrade-open]')
+          if (openButton) {
+            event.preventDefault()
+            openMailboxUpgradeModal()
+            return
+          }
+
+          const cancelButton = target.closest('[data-mail-upgrade-cancel]')
+          if (cancelButton) {
+            event.preventDefault()
+            removeMailboxUpgradeModal()
+            return
+          }
+
+          const confirmButton = target.closest('[data-mail-upgrade-confirm]')
+          if (confirmButton) {
+            event.preventDefault()
+            submitMailboxUpgrade(confirmButton)
+          }
+        })
+      }
+
+function renderMail(mail) {
+
+          // mailbox-upgrade-render-refresh
+          try { loadMailboxUpgradeInfo().catch(() => {}) } catch {}
         const box = $('mailList')
         if (!box) return
 
