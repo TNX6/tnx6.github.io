@@ -14106,6 +14106,41 @@ const metadata = {
               -webkit-backdrop-filter: none !important;
             }
 
+
+            /* mail-clear-small-fix */
+            .mail-pro .mail-pro-clear {
+              width: 34px !important;
+              height: 34px !important;
+              min-width: 34px !important;
+              min-height: 34px !important;
+              max-width: 34px !important;
+              max-height: 34px !important;
+              display: grid !important;
+              place-items: center !important;
+              padding: 0 !important;
+              border-radius: 12px !important;
+              border: 1px solid rgba(255,107,107,.24) !important;
+              background: rgba(255,107,107,.08) !important;
+              color: #ff9b9b !important;
+              cursor: pointer !important;
+              font-size: 15px !important;
+              line-height: 1 !important;
+              font-weight: 900 !important;
+              white-space: nowrap !important;
+              overflow: hidden !important;
+            }
+
+            .mail-pro .mail-pro-clear:hover {
+              background: rgba(255,107,107,.14) !important;
+              color: #ffc0c0 !important;
+              border-color: rgba(255,107,107,.34) !important;
+            }
+
+            .mail-pro .mail-pro-clear:disabled,
+            .mail-pro .mail-pro-clear[aria-disabled="true"] {
+              opacity: .45 !important;
+              cursor: not-allowed !important;
+            }
           </style>
 
           <div class="mail-pro">
@@ -14122,7 +14157,7 @@ const metadata = {
                   </div>
                 </div>
 
-                <button class="mail-pro-clear" type="button" data-mail-clear ${counts.all ? '' : 'disabled aria-disabled="true"'}>حذف الكل</button>
+                <button class="mail-pro-clear" type="button" data-mail-clear ${counts.all ? '' : 'disabled aria-disabled="true"'} title="حذف كل البريد" aria-label="حذف كل البريد">🗑️</button>
               </div>
 
               <div class="mail-pro-tabs" data-mail-tabs>
