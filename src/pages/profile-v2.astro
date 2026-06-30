@@ -13641,7 +13641,35 @@ const metadata = {
         }
       }
 
-      if (!window.__tnxMailboxUpgradeEventsInstalled) {
+      
+      // mailbox-upgrade-capture-click-fix
+      if (!window.__tnxMailboxUpgradeCaptureClickInstalled) {
+        window.__tnxMailboxUpgradeCaptureClickInstalled = true
+
+        document.addEventListener('click', (event) => {
+          const target = event.target
+
+          if (!(target instanceof Element)) {
+            return
+          }
+
+          const openButton = target.closest('[data-mail-upgrade-open]')
+
+          if (!openButton) {
+            return
+          }
+
+          event.preventDefault()
+          event.stopPropagation()
+
+          try {
+            openMailboxUpgradeModal()
+          } catch (error) {
+            console.error('[Mailbox Upgrade] Failed to open modal', error)
+          }
+        }, true)
+      }
+if (!window.__tnxMailboxUpgradeEventsInstalled) {
         window.__tnxMailboxUpgradeEventsInstalled = true
 
         document.addEventListener('click', (event) => {
@@ -14692,6 +14720,111 @@ function renderMail(mail) {
                 width: 100% !important;
               }
             }
+
+            /* mail-capacity-clean-polish-css */
+            .mail-pro .mail-pro-capacity,
+            .mail-pro .mail-pro-capacity-clean {
+              width: fit-content !important;
+              max-width: 100% !important;
+              min-width: 0 !important;
+              margin: 8px 0 10px auto !important;
+              padding: 7px 8px !important;
+              display: inline-grid !important;
+              grid-template-columns: auto auto !important;
+              grid-template-rows: auto 4px !important;
+              align-items: center !important;
+              gap: 5px 9px !important;
+              border-radius: 13px !important;
+              border: 1px solid rgba(255, 211, 106, .18) !important;
+              background: rgba(255, 211, 106, .045) !important;
+              box-shadow: none !important;
+            }
+
+            .mail-pro .mail-pro-capacity-main,
+            .mail-pro .mail-pro-capacity-top {
+              grid-column: 1 / 2 !important;
+              display: inline-flex !important;
+              align-items: center !important;
+              gap: 7px !important;
+              justify-content: flex-start !important;
+              min-width: 0 !important;
+            }
+
+            .mail-pro .mail-pro-capacity-main span,
+            .mail-pro .mail-pro-capacity-top span {
+              color: rgba(255,255,255,.58) !important;
+              font-size: 11px !important;
+              font-weight: 800 !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro .mail-pro-capacity-main strong,
+            .mail-pro .mail-pro-capacity-top strong {
+              color: #ffd36a !important;
+              font-size: 12px !important;
+              font-weight: 1000 !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro .mail-pro-capacity-track {
+              grid-column: 1 / 2 !important;
+              width: 112px !important;
+              height: 4px !important;
+              border-radius: 999px !important;
+              overflow: hidden !important;
+              background: rgba(255,255,255,.10) !important;
+            }
+
+            .mail-pro .mail-pro-capacity-track span {
+              display: block !important;
+              height: 100% !important;
+              border-radius: inherit !important;
+              background: linear-gradient(90deg, rgba(255,211,106,.82), rgba(255,139,86,.90)) !important;
+            }
+
+            .mail-pro .mail-pro-upgrade {
+              grid-column: 2 / 3 !important;
+              grid-row: 1 / 3 !important;
+              width: auto !important;
+              min-width: 58px !important;
+              height: 28px !important;
+              padding: 0 10px !important;
+              border-radius: 10px !important;
+              border: 1px solid rgba(255, 211, 106, .22) !important;
+              background: rgba(255, 211, 106, .075) !important;
+              color: #ffd36a !important;
+              cursor: pointer !important;
+              font-size: 11.5px !important;
+              font-weight: 1000 !important;
+              white-space: nowrap !important;
+              box-shadow: none !important;
+              transform: none !important;
+            }
+
+            .mail-pro .mail-pro-upgrade:hover {
+              background: rgba(255, 211, 106, .13) !important;
+              border-color: rgba(255, 211, 106, .34) !important;
+              transform: none !important;
+            }
+
+            .mail-pro .mail-pro-upgrade:disabled,
+            .mail-pro .mail-pro-upgrade[aria-disabled="true"] {
+              opacity: .55 !important;
+              cursor: not-allowed !important;
+            }
+
+            @media (max-width: 720px) {
+              .mail-pro .mail-pro-capacity,
+              .mail-pro .mail-pro-capacity-clean {
+                width: 100% !important;
+                margin: 8px 0 10px !important;
+                grid-template-columns: minmax(0, 1fr) auto !important;
+              }
+
+              .mail-pro .mail-pro-capacity-track {
+                width: 100% !important;
+              }
+            }
           </style>
 
           <div class="mail-pro">
@@ -14717,8 +14850,8 @@ function renderMail(mail) {
                 <button class="mail-pro-tab" type="button" data-mail-filter="msg">رسائل <span class="mail-pro-tab-count">${formatNumber(counts.msg)}</span></button>
                 <button class="mail-pro-tab" type="button" data-mail-filter="sys">نظام <span class="mail-pro-tab-count">${formatNumber(counts.sys)}</span></button>
               </div>
-              <div class="mail-pro-capacity" data-mail-capacity-box>
-                <div class="mail-pro-capacity-top">
+                            <div class="mail-pro-capacity mail-pro-capacity-clean" data-mail-capacity-box>
+                <div class="mail-pro-capacity-main">
                   <span>مساحة البريد</span>
                   <strong data-mail-capacity-label>${mailboxUpgradeFormat(mailboxUpgradeInfo.used || counts.all)} / ${mailboxUpgradeFormat(mailboxUpgradeInfo.capacity || 5)}</strong>
                 </div>
@@ -14728,7 +14861,7 @@ function renderMail(mail) {
                 </div>
 
                 <button class="mail-pro-upgrade" type="button" data-mail-upgrade-open>
-                  تطوير البريد
+                  تطوير
                 </button>
               </div>
             </div>
