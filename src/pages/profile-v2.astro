@@ -13800,6 +13800,45 @@ const metadata = {
               color: #ffc0c0 !important;
             }
 
+
+            /* mail-trash-icon-only-fix */
+            .mail-pro .mail-pro-card-footer-actions {
+              display: flex !important;
+              justify-content: flex-start !important;
+              margin-top: 10px !important;
+              padding-top: 8px !important;
+              border-top: 1px solid rgba(255,255,255,.06) !important;
+            }
+
+            .mail-pro .mail-pro-delete {
+              position: static !important;
+              inset: auto !important;
+              width: 34px !important;
+              height: 34px !important;
+              min-width: 34px !important;
+              min-height: 34px !important;
+              max-width: 34px !important;
+              max-height: 34px !important;
+              display: grid !important;
+              place-items: center !important;
+              padding: 0 !important;
+              border-radius: 12px !important;
+              border: 1px solid rgba(255,255,255,.10) !important;
+              background: rgba(255,255,255,.055) !important;
+              color: rgba(255,255,255,.72) !important;
+              cursor: pointer !important;
+              font-size: 15px !important;
+              line-height: 1 !important;
+              overflow: hidden !important;
+            }
+
+            .mail-pro .mail-pro-delete:hover {
+              transform: translateY(-1px) !important;
+              background: rgba(255,107,107,.14) !important;
+              color: #ff9b9b !important;
+              border-color: rgba(255,107,107,.34) !important;
+            }
+
           </style>
 
           <div class="mail-pro">
@@ -13888,7 +13927,7 @@ const metadata = {
                             </div>
                           </div>
                           <div class="mail-pro-card-footer-actions">
-                            <button class="mail-pro-delete" type="button" data-mail-delete data-message-id="${esc(id)}" title="حذف الرسالة">🗑️ حذف الرسالة</button>
+                            <button class="mail-pro-delete" type="button" data-mail-delete data-message-id="${esc(id)}" title="حذف الرسالة" aria-label="حذف الرسالة">🗑️</button>
                           </div>
                         </div>
                       `
