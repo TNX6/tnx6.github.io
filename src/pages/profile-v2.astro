@@ -13254,6 +13254,23 @@ const metadata = {
         const box = $('mailList')
         if (!box) return
 
+        // mail-selection-render-guard
+        try {
+          const selection = window.getSelection ? window.getSelection() : null
+          const selectedText = selection ? String(selection.toString() || '').trim() : ''
+
+          if (
+            selectedText &&
+            selection &&
+            selection.anchorNode &&
+            box.contains(selection.anchorNode) &&
+            box.querySelector('.mail-pro')
+          ) {
+            return
+          }
+        } catch {}
+
+
         const list = Array.isArray(mail) ? mail : []
 
         // mail-render-skip-fix
@@ -14026,6 +14043,69 @@ const metadata = {
             .mail-pro .mail-pro-card {
               transform: translateZ(0);
             }
+
+            /* mail-selection-smooth-fix */
+            .mail-pro,
+            .mail-pro *,
+            .mail-pro *::before,
+            .mail-pro *::after {
+              animation: none !important;
+              transition: none !important;
+              will-change: auto !important;
+            }
+
+            .mail-pro,
+            .mail-pro .mail-pro-list,
+            .mail-pro .mail-pro-card,
+            .mail-pro .mail-pro-head,
+            .mail-pro .mail-pro-avatar,
+            .mail-pro .mail-pro-icon {
+              contain: none !important;
+              content-visibility: visible !important;
+              transform: none !important;
+              backface-visibility: visible !important;
+              filter: none !important;
+              box-shadow: none !important;
+            }
+
+            .mail-pro .mail-pro-card:hover,
+            .mail-pro .mail-pro-delete:hover {
+              transform: none !important;
+            }
+
+            .mail-pro .mail-pro-head {
+              background: rgba(255,255,255,.045) !important;
+            }
+
+            .mail-pro .mail-pro-list {
+              overflow-y: auto !important;
+              overscroll-behavior: auto !important;
+            }
+
+            .mail-pro .mail-pro-text,
+            .mail-pro .mail-pro-name,
+            .mail-pro .mail-pro-time,
+            .mail-pro .mail-pro-title span,
+            .mail-pro .mail-pro-title strong {
+              user-select: text !important;
+              -webkit-user-select: text !important;
+            }
+
+            .mail-pro button,
+            .mail-pro .mail-pro-delete,
+            .mail-pro .mail-pro-tab {
+              user-select: none !important;
+              -webkit-user-select: none !important;
+            }
+
+            body:has(.mail-pro) [class*="backdrop"],
+            body:has(.mail-pro) [class*="overlay"],
+            body:has(.mail-pro) [class*="Backdrop"],
+            body:has(.mail-pro) [class*="Overlay"] {
+              backdrop-filter: none !important;
+              -webkit-backdrop-filter: none !important;
+            }
+
           </style>
 
           <div class="mail-pro">
