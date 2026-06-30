@@ -14605,6 +14605,93 @@ function renderMail(mail) {
               opacity: .45 !important;
               cursor: not-allowed !important;
             }
+
+            /* mail-capacity-panel-v2-css */
+            .mail-pro .mail-pro-capacity {
+              margin: 10px 0 12px !important;
+              display: grid !important;
+              grid-template-columns: minmax(0, 1fr) auto !important;
+              gap: 8px 12px !important;
+              align-items: center !important;
+              padding: 10px 12px !important;
+              border-radius: 16px !important;
+              border: 1px solid rgba(255, 211, 106, .22) !important;
+              background: rgba(255, 211, 106, .065) !important;
+              box-shadow: none !important;
+            }
+
+            .mail-pro .mail-pro-capacity-top {
+              display: flex !important;
+              align-items: center !important;
+              justify-content: space-between !important;
+              gap: 10px !important;
+            }
+
+            .mail-pro .mail-pro-capacity-top span {
+              color: rgba(255,255,255,.68) !important;
+              font-size: 12px !important;
+              font-weight: 900 !important;
+            }
+
+            .mail-pro .mail-pro-capacity-top strong {
+              color: #ffd36a !important;
+              font-size: 13px !important;
+              font-weight: 1000 !important;
+            }
+
+            .mail-pro .mail-pro-capacity-track {
+              grid-column: 1 / 2 !important;
+              height: 7px !important;
+              border-radius: 999px !important;
+              overflow: hidden !important;
+              background: rgba(255,255,255,.10) !important;
+            }
+
+            .mail-pro .mail-pro-capacity-track span {
+              display: block !important;
+              height: 100% !important;
+              border-radius: inherit !important;
+              background: linear-gradient(90deg, rgba(255,211,106,.9), rgba(255,139,86,.95)) !important;
+            }
+
+            .mail-pro .mail-pro-upgrade {
+              grid-column: 2 / 3 !important;
+              grid-row: 1 / 3 !important;
+              height: 36px !important;
+              min-width: 102px !important;
+              padding: 0 14px !important;
+              border-radius: 13px !important;
+              border: 1px solid rgba(255, 211, 106, .30) !important;
+              background: rgba(255, 211, 106, .11) !important;
+              color: #ffd36a !important;
+              cursor: pointer !important;
+              font-size: 12.5px !important;
+              font-weight: 1000 !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro .mail-pro-upgrade:hover {
+              background: rgba(255, 211, 106, .17) !important;
+              transform: none !important;
+            }
+
+            .mail-pro .mail-pro-upgrade:disabled,
+            .mail-pro .mail-pro-upgrade[aria-disabled="true"] {
+              opacity: .55 !important;
+              cursor: not-allowed !important;
+            }
+
+            @media (max-width: 720px) {
+              .mail-pro .mail-pro-capacity {
+                grid-template-columns: 1fr !important;
+              }
+
+              .mail-pro .mail-pro-upgrade {
+                grid-column: 1 / 2 !important;
+                grid-row: auto !important;
+                width: 100% !important;
+              }
+            }
           </style>
 
           <div class="mail-pro">
@@ -14629,6 +14716,20 @@ function renderMail(mail) {
                 <button class="mail-pro-tab" type="button" data-mail-filter="gift">هدايا <span class="mail-pro-tab-count">${formatNumber(counts.gift)}</span></button>
                 <button class="mail-pro-tab" type="button" data-mail-filter="msg">رسائل <span class="mail-pro-tab-count">${formatNumber(counts.msg)}</span></button>
                 <button class="mail-pro-tab" type="button" data-mail-filter="sys">نظام <span class="mail-pro-tab-count">${formatNumber(counts.sys)}</span></button>
+              </div>
+              <div class="mail-pro-capacity" data-mail-capacity-box>
+                <div class="mail-pro-capacity-top">
+                  <span>مساحة البريد</span>
+                  <strong data-mail-capacity-label>${mailboxUpgradeFormat(mailboxUpgradeInfo.used || counts.all)} / ${mailboxUpgradeFormat(mailboxUpgradeInfo.capacity || 5)}</strong>
+                </div>
+
+                <div class="mail-pro-capacity-track">
+                  <span data-mail-capacity-bar style="width: ${Math.max(0, Math.min(100, Math.round(((mailboxUpgradeInfo.used || counts.all) / Math.max(1, mailboxUpgradeInfo.capacity || 5)) * 100)))}%"></span>
+                </div>
+
+                <button class="mail-pro-upgrade" type="button" data-mail-upgrade-open>
+                  تطوير البريد
+                </button>
               </div>
             </div>
 
