@@ -14395,7 +14395,6 @@ if (!window.__tnxMailboxUpgradeEventsInstalled) {
               '</div>' +
 
               '<div class="mbv2-head-actions">' +
-                '<button class="mbv2-clear-read" type="button" data-mail-clear-read>حذف المقروء</button>' +
                 '<button class="mbv2-clear" type="button" data-mail-clear ' + (counts.all ? '' : 'disabled aria-disabled="true"') + '>حذف الكل</button>' +
               '</div>' +
             '</header>' +
@@ -14409,14 +14408,13 @@ if (!window.__tnxMailboxUpgradeEventsInstalled) {
 
             '<div class="mbv2-capacity" data-mail-capacity-box>' +
               '<div class="mbv2-cap-main">' +
-                '<div class="mbv2-cap-name"><span class="mbv2-cap-dot"></span><strong>سعة البريد</strong></div>' +
+                '<div class="mbv2-cap-name"><strong>سعة البريد</strong><span data-mail-capacity-label>' + mbV2Format(upgrade.used) + ' / ' + mbV2Format(upgrade.capacity) + '</span></div>' +
                 '<div class="mbv2-cap-bar"><span data-mail-capacity-bar style="width:' + percent + '%"></span></div>' +
-                '<span class="mbv2-cap-count" data-mail-capacity-label>' + mbV2Format(upgrade.used) + ' / ' + mbV2Format(upgrade.capacity) + '</span>' +
               '</div>' +
 
               '<div class="mbv2-upgrade">' +
                 '<span class="mbv2-cost" data-mail-upgrade-cost>' + upgradeCostText + '</span>' +
-                '<button class="mbv2-upgrade-btn" type="button" data-mail-upgrade-open ' + (!upgrade.canUpgrade || upgrade.activeRequest ? 'disabled aria-disabled="true"' : '') + '>' + upgradeButtonText + '</button>' +
+                '<button class="mbv2-upgrade-btn" type="button" data-mail-upgrade-open ' + (!upgrade.canUpgrade ? 'disabled aria-disabled="true"' : '') + '>' + upgradeButtonText + '</button>' +
               '</div>' +
             '</div>' +
 
@@ -14429,6 +14427,37 @@ if (!window.__tnxMailboxUpgradeEventsInstalled) {
               '<span>اقبل الهدايا المعلقة قبل حذفها</span>' +
             '</footer>' +
           '</section>'
+
+        
+        // mailbox-v2-direct-upgrade-click-fix
+        root.querySelectorAll('[data-mail-upgrade-open]').forEach((button) => {
+          button.addEventListener('click', (event) => {
+            event.preventDefault()
+            event.stopPropagation()
+
+            try {
+              if (typeof event.stopImmediatePropagation === 'function') {
+                event.stopImmediatePropagation()
+              }
+            } catch {}
+
+            try {
+              if (typeof tnxOpenMailboxUpgradeModalV3 === 'function') {
+                tnxOpenMailboxUpgradeModalV3()
+                return
+              }
+
+              if (typeof openMailboxUpgradeModal === 'function') {
+                openMailboxUpgradeModal()
+                return
+              }
+
+              console.error('[Mailbox Upgrade] No upgrade modal opener found')
+            } catch (error) {
+              console.error('[Mailbox Upgrade] Failed to open modal', error)
+            }
+          })
+        })
 
         root.querySelectorAll('[data-mbv2-filter]').forEach((button) => {
           button.addEventListener('click', () => {
@@ -15380,6 +15409,166 @@ function renderMail(mail) {
               cursor: not-allowed !important;
             }
 
+
+
+
+            /* mailbox-v2-polish-upgrade-css */
+            .mail-pro[data-mailbox-v2="true"] .mbv2-clear-read {
+              display: none !important;
+            }
+
+            .mail-pro[data-mailbox-v2="true"] .mbv2-head-actions {
+              display: flex !important;
+              align-items: center !important;
+              justify-content: flex-end !important;
+              gap: 8px !important;
+            }
+
+            .mail-pro[data-mailbox-v2="true"] .mbv2-capacity {
+              display: flex !important;
+              align-items: center !important;
+              justify-content: space-between !important;
+              gap: 12px !important;
+              margin: 0 14px 12px !important;
+              padding: 10px 12px !important;
+              border-radius: 15px !important;
+              border: 1px solid rgba(255, 138, 91, .15) !important;
+              background: rgba(255,255,255,.026) !important;
+            }
+
+            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-main {
+              display: flex !important;
+              align-items: center !important;
+              gap: 10px !important;
+              min-width: 0 !important;
+              flex: 1 !important;
+            }
+
+            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-name {
+              display: inline-flex !important;
+              align-items: center !important;
+              gap: 7px !important;
+              min-width: 98px !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-name::before {
+              content: "" !important;
+              width: 7px !important;
+              height: 7px !important;
+              border-radius: 999px !important;
+              background: linear-gradient(135deg, #ffd36a, #ff8a5b) !important;
+              box-shadow: 0 0 12px rgba(255, 138, 91, .35) !important;
+              flex: 0 0 auto !important;
+            }
+
+            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-name strong {
+              color: rgba(255,255,255,.78) !important;
+              font-size: 12px !important;
+              font-weight: 1000 !important;
+            }
+
+            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-name span,
+            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-count {
+              color: #ffd36a !important;
+              font-size: 12px !important;
+              font-weight: 1000 !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-bar {
+              flex: 1 !important;
+              max-width: 160px !important;
+              min-width: 90px !important;
+              height: 5px !important;
+              border-radius: 999px !important;
+              overflow: hidden !important;
+              background: rgba(255,255,255,.085) !important;
+            }
+
+            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-bar span {
+              display: block !important;
+              height: 100% !important;
+              border-radius: inherit !important;
+              background: linear-gradient(90deg, #ffd36a, #ff8a5b) !important;
+            }
+
+            .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade {
+              display: inline-flex !important;
+              align-items: center !important;
+              gap: 8px !important;
+              flex-shrink: 0 !important;
+            }
+
+            .mail-pro[data-mailbox-v2="true"] .mbv2-cost {
+              display: inline-flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              height: 27px !important;
+              min-width: 76px !important;
+              padding: 0 9px !important;
+              border-radius: 9px !important;
+              background: rgba(255, 211, 106, .075) !important;
+              color: #ffd36a !important;
+              font-size: 10.8px !important;
+              font-weight: 1000 !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade-btn {
+              display: inline-flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              height: 32px !important;
+              min-width: 108px !important;
+              padding: 0 12px !important;
+              border-radius: 11px !important;
+              border: 1px solid rgba(255, 138, 91, .30) !important;
+              background: rgba(255, 138, 91, .085) !important;
+              color: #ffbd80 !important;
+              cursor: pointer !important;
+              font-size: 12px !important;
+              font-weight: 1000 !important;
+              line-height: 1 !important;
+              white-space: nowrap !important;
+              box-shadow: none !important;
+              transform: none !important;
+            }
+
+            .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade-btn:hover {
+              background: linear-gradient(135deg, rgba(255,211,106,.18), rgba(255,138,91,.16)) !important;
+              border-color: rgba(255, 138, 91, .42) !important;
+              transform: none !important;
+            }
+
+            .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade-btn:disabled,
+            .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade-btn[aria-disabled="true"] {
+              opacity: .55 !important;
+              cursor: not-allowed !important;
+            }
+
+            @media (max-width: 720px) {
+              .mail-pro[data-mailbox-v2="true"] .mbv2-capacity {
+                flex-direction: column !important;
+                align-items: stretch !important;
+              }
+
+              .mail-pro[data-mailbox-v2="true"] .mbv2-cap-main {
+                width: 100% !important;
+              }
+
+              .mail-pro[data-mailbox-v2="true"] .mbv2-cap-bar {
+                max-width: none !important;
+              }
+
+              .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade {
+                width: 100% !important;
+              }
+
+              .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade-btn {
+                flex: 1 !important;
+              }
+            }
 
           </style>
 
