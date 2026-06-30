@@ -13008,6 +13008,28 @@ const metadata = {
         return Boolean(profileLogin && apiLogin && profileLogin === apiLogin)
       }
 
+
+      function prewarmMailboxForProfile(user) {
+        if (!user || window.__tnxMailboxPrewarmed) return
+
+        window.__tnxMailboxPrewarmed = true
+
+        const run = () => {
+          try {
+            if (typeof loadD1MailboxForProfile === 'function') {
+              loadD1MailboxForProfile(user, true)
+            }
+          } catch (error) {
+            console.warn('[mail prewarm]', error)
+          }
+        }
+
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(run, { timeout: 1800 })
+        } else {
+          window.setTimeout(run, 700)
+        }
+      }
       async function loadD1MailboxForProfile(user, force = false) {
         if (!user) return
 
@@ -13989,6 +14011,21 @@ const metadata = {
               background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035)) !important;
             }
 
+
+            /* mail-modal-open-performance-fix */
+            .mail-pro {
+              transform: translateZ(0);
+              backface-visibility: hidden;
+            }
+
+            .mail-pro .mail-pro-list {
+              content-visibility: auto;
+              contain-intrinsic-size: 430px;
+            }
+
+            .mail-pro .mail-pro-card {
+              transform: translateZ(0);
+            }
           </style>
 
           <div class="mail-pro">
