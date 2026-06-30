@@ -13228,409 +13228,664 @@ const metadata = {
         renderInventory(inventory)
         enhanceInventorySellButtons(inventory)
       }
-                  function renderMail(mail) {
+                        function renderMail(mail) {
         const box = $('mailList')
         if (!box) return
 
         const list = Array.isArray(mail) ? mail : []
-        const total = list.length
 
-        const mailShellStart = `
+        const classifyMail = (message) => {
+          const type = mailboxMessageType(message)
+          const giftStatus = mailboxGiftStatus(message)
+          const item = mailboxItemName(message)
+          const from = String(get(message, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], '') || '').toLowerCase()
+          const isSystem = Boolean(get(message, ['isSystem', 'is_system', 'system'], false))
+
+          if (type === 'gift_item' || giftStatus || item) return 'gift'
+          if (type === 'system' || type === 'system_message' || isSystem || from.includes('system') || from.includes('النظام')) return 'sys'
+          return 'msg'
+        }
+
+        const timeLabel = (message) => {
+          const raw = get(message, ['date', 'createdAt', 'created_at'], '')
+          if (!raw) return ''
+
+          const date = new Date(raw)
+          if (Number.isNaN(date.getTime())) return ''
+
+          const diff = Date.now() - date.getTime()
+          const minute = 60 * 1000
+          const hour = 60 * minute
+          const day = 24 * hour
+
+          if (diff < minute) return 'الآن'
+          if (diff < hour) return `قبل ${Math.max(1, Math.floor(diff / minute))} د`
+          if (diff < day) return `قبل ${Math.max(1, Math.floor(diff / hour))} س`
+          if (diff < 7 * day) return `قبل ${Math.max(1, Math.floor(diff / day))} يوم`
+
+          return date.toLocaleDateString('ar-SA')
+        }
+
+        const typeIcon = (kind, giftStatus) => {
+          if (kind === 'gift') {
+            if (giftStatus === 'accepted') return '✅'
+            if (giftStatus === 'rejected') return '🚫'
+            return '🎁'
+          }
+
+          if (kind === 'sys') return '📣'
+          return '💬'
+        }
+
+        const cardClass = (kind, giftStatus) => {
+          if (kind === 'gift' && giftStatus === 'pending') return 'mail-pro-card gift pending'
+          if (kind === 'gift' && giftStatus === 'accepted') return 'mail-pro-card gift accepted read'
+          if (kind === 'gift' && giftStatus === 'rejected') return 'mail-pro-card gift rejected read'
+          if (kind === 'sys') return 'mail-pro-card system'
+          return 'mail-pro-card message'
+        }
+
+        const counts = {
+          all: list.length,
+          gift: list.filter((message) => classifyMail(message) === 'gift').length,
+          msg: list.filter((message) => classifyMail(message) === 'msg').length,
+          sys: list.filter((message) => classifyMail(message) === 'sys').length,
+        }
+
+        box.innerHTML = `
           <style>
-            .tnx-mail-shell {
+            .mail-pro {
+              --mail-bg: #15151c;
+              --mail-bg-2: #1b1b24;
+              --mail-line: rgba(255,255,255,.10);
+              --mail-text: #ececf2;
+              --mail-muted: rgba(236,236,242,.58);
+              --mail-faint: rgba(236,236,242,.36);
+              --mail-accent: #ff8a5b;
+              --mail-accent-2: #ffb36b;
+              --mail-gold: #ffd56b;
+              --mail-green: #4ed6a1;
+              --mail-red: #ff6b6b;
               display: grid;
-              gap: 14px;
+              gap: 12px;
             }
 
-            .tnx-mail-hero {
+            .mail-pro-head {
               position: relative;
               overflow: hidden;
-              border: 1px solid rgba(255, 255, 255, .10);
-              background:
-                radial-gradient(circle at top right, rgba(198, 164, 79, .22), transparent 38%),
-                linear-gradient(135deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .035));
-              border-radius: 20px;
               padding: 16px;
+              border-radius: 20px;
+              border: 1px solid var(--mail-line);
+              background:
+                radial-gradient(700px 250px at 20% -40%, rgba(255,138,91,.18), transparent 55%),
+                linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));
+              box-shadow: 0 20px 60px rgba(0,0,0,.18);
             }
 
-            .tnx-mail-hero::before {
-              content: "";
-              position: absolute;
-              inset: -70px auto auto -70px;
-              width: 160px;
-              height: 160px;
-              border-radius: 999px;
-              background: rgba(255, 218, 106, .10);
-              filter: blur(6px);
-            }
-
-            .tnx-mail-headline {
+            .mail-pro-top {
               position: relative;
               display: flex;
               align-items: center;
               justify-content: space-between;
               gap: 12px;
-              margin-bottom: 8px;
             }
 
-            .tnx-mail-title-group {
+            .mail-pro-title-wrap {
               display: flex;
               align-items: center;
-              gap: 10px;
+              gap: 12px;
+              min-width: 0;
             }
 
-            .tnx-mail-icon {
-              width: 42px;
-              height: 42px;
-              border-radius: 16px;
+            .mail-pro-icon {
+              position: relative;
+              width: 46px;
+              height: 46px;
+              border-radius: 15px;
               display: grid;
               place-items: center;
-              background: rgba(255, 218, 106, .13);
-              border: 1px solid rgba(255, 218, 106, .22);
-              font-size: 20px;
+              background: linear-gradient(145deg, rgba(255,138,91,.22), rgba(255,179,107,.09));
+              border: 1px solid rgba(255,138,91,.25);
+              color: var(--mail-accent-2);
+              font-size: 22px;
+              box-shadow: 0 12px 26px rgba(255,138,91,.10);
+              flex: 0 0 auto;
             }
 
-            .tnx-mail-title-group strong {
-              display: block;
-              color: #fff;
-              font-size: 16px;
-              line-height: 1.4;
-            }
-
-            .tnx-mail-title-group span {
-              display: block;
-              color: rgba(255, 255, 255, .55);
-              font-size: 12px;
-              margin-top: 2px;
-            }
-
-            .tnx-mail-count-pill {
-              border: 1px solid rgba(255, 218, 106, .24);
-              background: rgba(255, 218, 106, .10);
-              color: #ffda6a;
+            .mail-pro-badge {
+              position: absolute;
+              top: -7px;
+              left: -7px;
+              min-width: 22px;
+              height: 22px;
+              padding: 0 6px;
               border-radius: 999px;
-              padding: 7px 11px;
-              font-size: 12px;
+              display: grid;
+              place-items: center;
+              background: #ff5a4d;
+              color: white;
+              border: 2px solid #17171f;
+              font-size: 11px;
+              font-weight: 900;
+            }
+
+            .mail-pro-title {
+              display: grid;
+              gap: 2px;
+              min-width: 0;
+            }
+
+            .mail-pro-title strong {
+              font-size: 19px;
+              line-height: 1.2;
+              color: var(--mail-text);
+            }
+
+            .mail-pro-title span {
+              color: var(--mail-muted);
+              font-size: 12.5px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            .mail-pro-clear {
+              border: 1px solid rgba(255, 90, 90, .28);
+              background: rgba(255, 90, 90, .09);
+              color: #ff9b9b;
+              border-radius: 12px;
+              padding: 9px 12px;
+              cursor: pointer;
               font-weight: 900;
               white-space: nowrap;
             }
 
-            .tnx-mail-toolbar {
+            .mail-pro-clear:hover {
+              background: rgba(255, 90, 90, .15);
+              border-color: rgba(255, 90, 90, .42);
+            }
+
+            .mail-pro-tabs {
               position: relative;
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              gap: 10px;
-              margin-top: 12px;
+              display: grid;
+              grid-template-columns: repeat(4, 1fr);
+              gap: 6px;
+              margin-top: 14px;
+              padding: 5px;
+              border-radius: 15px;
+              background: rgba(255,255,255,.035);
+              border: 1px solid rgba(255,255,255,.08);
             }
 
-            .tnx-mail-note {
-              color: rgba(255, 255, 255, .56);
-              font-size: 12px;
-            }
-
-            .tnx-mail-clear-btn {
-              border: 1px solid rgba(255, 90, 90, .32);
-              background: rgba(255, 90, 90, .10);
-              color: #ff9a9a;
-              border-radius: 13px;
-              padding: 9px 12px;
+            .mail-pro-tab {
+              border: 0;
+              border-radius: 11px;
+              padding: 9px 5px;
+              background: transparent;
+              color: var(--mail-muted);
               cursor: pointer;
               font-weight: 900;
-              transition: transform .12s ease, background .12s ease, border-color .12s ease;
-            }
-
-            .tnx-mail-clear-btn:hover {
-              transform: translateY(-1px);
-              background: rgba(255, 90, 90, .16);
-              border-color: rgba(255, 90, 90, .46);
-            }
-
-            .tnx-mail-empty {
-              border: 1px dashed rgba(255, 255, 255, .14);
-              background: rgba(255, 255, 255, .035);
-              border-radius: 20px;
-              padding: 28px 18px;
-              text-align: center;
-              display: grid;
-              place-items: center;
-              gap: 10px;
-            }
-
-            .tnx-mail-empty-icon {
-              width: 62px;
-              height: 62px;
-              border-radius: 22px;
-              display: grid;
-              place-items: center;
-              background: rgba(255, 255, 255, .06);
-              border: 1px solid rgba(255, 255, 255, .10);
-              font-size: 28px;
-            }
-
-            .tnx-mail-empty strong {
-              color: #fff;
-              font-size: 16px;
-            }
-
-            .tnx-mail-empty span {
-              color: rgba(255, 255, 255, .52);
-              font-size: 13px;
-            }
-
-            .tnx-mail-list {
-              display: grid;
-              gap: 10px;
-            }
-
-            .mail-message.tnx-mail-card {
-              position: relative;
-              padding: 14px 52px 14px 14px;
-              border-radius: 18px;
-              border: 1px solid rgba(255, 255, 255, .10);
-              background:
-                radial-gradient(circle at top left, rgba(255, 218, 106, .08), transparent 42%),
-                rgba(255, 255, 255, .045);
-              box-shadow: 0 12px 34px rgba(0, 0, 0, .18);
-            }
-
-            .tnx-mail-card-head {
+              font-size: 12px;
               display: flex;
               align-items: center;
-              justify-content: space-between;
-              gap: 10px;
-              margin-bottom: 7px;
+              justify-content: center;
+              gap: 6px;
             }
 
-            .tnx-mail-from {
+            .mail-pro-tab.is-active {
+              background: linear-gradient(135deg, var(--mail-accent-2), var(--mail-accent));
+              color: #241309;
+              box-shadow: 0 10px 22px rgba(255,138,91,.16);
+            }
+
+            .mail-pro-tab-count {
+              min-width: 19px;
+              height: 19px;
+              padding: 0 5px;
+              border-radius: 999px;
+              display: inline-grid;
+              place-items: center;
+              background: rgba(255,255,255,.08);
+              color: inherit;
+              font-size: 11px;
+            }
+
+            .mail-pro-list {
+              display: grid;
+              gap: 10px;
+              max-height: 430px;
+              overflow: auto;
+              padding: 2px 2px 6px;
+            }
+
+            .mail-pro-list::-webkit-scrollbar {
+              width: 8px;
+            }
+
+            .mail-pro-list::-webkit-scrollbar-thumb {
+              background: rgba(255,255,255,.14);
+              border-radius: 999px;
+            }
+
+            .mail-pro-card {
+              position: relative;
+              overflow: hidden;
+              border-radius: 17px;
+              padding: 14px;
+              border: 1px solid rgba(255,255,255,.10);
+              background: rgba(255,255,255,.045);
+              transition: transform .15s ease, border-color .15s ease, background .15s ease, opacity .15s ease;
+            }
+
+            .mail-pro-card:hover {
+              transform: translateY(-1px);
+              background: rgba(255,255,255,.06);
+              border-color: rgba(255,255,255,.16);
+            }
+
+            .mail-pro-card.gift.pending {
+              border-color: rgba(255, 213, 107, .34);
+              background:
+                linear-gradient(180deg, rgba(255, 213, 107, .075), rgba(255,255,255,.045) 58%);
+              box-shadow: 0 0 28px -12px rgba(255, 213, 107, .46);
+            }
+
+            .mail-pro-card.gift.accepted {
+              border-color: rgba(78, 214, 161, .25);
+            }
+
+            .mail-pro-card.gift.rejected {
+              border-color: rgba(255, 107, 107, .25);
+            }
+
+            .mail-pro-card.system {
+              border-color: rgba(124,196,255,.18);
+            }
+
+            .mail-pro-row {
+              display: flex;
+              gap: 12px;
+              align-items: flex-start;
+            }
+
+            .mail-pro-avatar {
+              width: 46px;
+              height: 46px;
+              border-radius: 14px;
+              display: grid;
+              place-items: center;
+              background: rgba(255,255,255,.07);
+              border: 1px solid rgba(255,255,255,.10);
+              flex: 0 0 auto;
+              font-size: 22px;
+            }
+
+            .mail-pro-card.gift.pending .mail-pro-avatar {
+              background: linear-gradient(145deg, #ffd56b, #ff9d2e);
+              color: #3a2400;
+              box-shadow: 0 8px 18px rgba(255, 157, 46, .24);
+            }
+
+            .mail-pro-card.system .mail-pro-avatar {
+              background: rgba(124,196,255,.10);
+              color: #7cc4ff;
+            }
+
+            .mail-pro-body {
+              min-width: 0;
+              flex: 1;
+            }
+
+            .mail-pro-meta {
               display: flex;
               align-items: center;
               gap: 8px;
-              min-width: 0;
+              margin-bottom: 4px;
             }
 
-            .tnx-mail-avatar {
-              width: 32px;
-              height: 32px;
-              border-radius: 13px;
-              display: grid;
-              place-items: center;
-              background: rgba(255, 218, 106, .12);
-              border: 1px solid rgba(255, 218, 106, .18);
-              color: #ffda6a;
-              font-weight: 900;
+            .mail-pro-dot {
+              width: 8px;
+              height: 8px;
+              border-radius: 999px;
+              background: var(--mail-accent);
               flex: 0 0 auto;
             }
 
-            .tnx-mail-from strong {
+            .mail-pro-card.gift.pending .mail-pro-dot {
+              background: var(--mail-gold);
+            }
+
+            .mail-pro-card.gift.accepted .mail-pro-dot {
+              background: var(--mail-green);
+            }
+
+            .mail-pro-card.gift.rejected .mail-pro-dot {
+              background: var(--mail-red);
+            }
+
+            .mail-pro-name {
               color: #fff;
+              font-size: 14.5px;
+              font-weight: 900;
               overflow: hidden;
               text-overflow: ellipsis;
               white-space: nowrap;
             }
 
-            .tnx-mail-date {
-              color: rgba(255, 255, 255, .42);
+            .mail-pro-time {
+              margin-right: auto;
+              color: var(--mail-faint);
               font-size: 11px;
               white-space: nowrap;
             }
 
-            .tnx-mail-card p {
+            .mail-pro-text {
               margin: 0;
-              color: rgba(255, 255, 255, .72);
-              line-height: 1.8;
+              color: var(--mail-muted);
               font-size: 13px;
+              line-height: 1.75;
             }
 
-            .mail-delete-btn {
-              position: absolute;
-              top: 12px;
-              right: 12px;
-              width: 32px;
-              height: 32px;
-              display: grid;
-              place-items: center;
-              border-radius: 12px;
-              border: 1px solid rgba(255, 255, 255, .10);
-              background: rgba(255, 255, 255, .055);
-              color: rgba(255, 255, 255, .70);
-              cursor: pointer;
-              transition: transform .12s ease, background .12s ease, color .12s ease, border-color .12s ease;
+            .mail-pro-tag {
+              display: inline-flex;
+              align-items: center;
+              gap: 4px;
+              padding: 3px 8px;
+              border-radius: 8px;
+              background: rgba(255, 213, 107, .13);
+              color: var(--mail-gold);
+              font-size: 11px;
+              font-weight: 900;
+              white-space: nowrap;
             }
 
-            .mail-delete-btn:hover {
-              transform: translateY(-1px);
-              background: rgba(255, 90, 90, .16);
-              color: #ff9a9a;
-              border-color: rgba(255, 90, 90, .38);
-            }
-
-            .tnx-mail-gift-box {
+            .mail-pro-gift-info {
               margin-top: 10px;
-              border: 1px solid rgba(255, 218, 106, .18);
-              background: rgba(255, 218, 106, .075);
-              border-radius: 14px;
-              padding: 10px 12px;
               display: flex;
               align-items: center;
               justify-content: space-between;
               gap: 10px;
+              padding: 10px 11px;
+              border-radius: 13px;
+              border: 1px solid rgba(255, 213, 107, .16);
+              background: rgba(255, 213, 107, .065);
             }
 
-            .tnx-mail-gift-main {
-              display: grid;
-              gap: 2px;
-            }
-
-            .tnx-mail-gift-main strong {
+            .mail-pro-gift-info strong {
               color: #ffda6a;
               font-size: 13px;
             }
 
-            .tnx-mail-gift-main span {
-              color: rgba(255, 255, 255, .56);
+            .mail-pro-gift-info span {
+              color: rgba(255,255,255,.55);
               font-size: 12px;
             }
 
-            .tnx-mail-status {
-              border-radius: 999px;
+            .mail-pro-status {
               padding: 6px 9px;
+              border-radius: 999px;
               font-size: 11px;
               font-weight: 900;
-              border: 1px solid rgba(255, 255, 255, .13);
-              background: rgba(255, 255, 255, .06);
-              color: rgba(255, 255, 255, .72);
+              border: 1px solid rgba(255,255,255,.12);
+              color: rgba(255,255,255,.68);
+              background: rgba(255,255,255,.06);
               white-space: nowrap;
             }
 
-            .tnx-mail-status.pending {
-              border-color: rgba(255, 218, 106, .30);
-              background: rgba(255, 218, 106, .10);
+            .mail-pro-status.pending {
+              border-color: rgba(255, 213, 107, .30);
+              background: rgba(255, 213, 107, .12);
               color: #ffda6a;
             }
 
-            .tnx-mail-status.accepted {
-              border-color: rgba(47, 209, 114, .35);
-              background: rgba(47, 209, 114, .10);
+            .mail-pro-status.accepted {
+              border-color: rgba(78,214,161,.30);
+              background: rgba(78,214,161,.12);
               color: #7dffae;
             }
 
-            .tnx-mail-status.rejected {
-              border-color: rgba(255, 85, 85, .35);
-              background: rgba(255, 85, 85, .10);
-              color: #ff9090;
+            .mail-pro-status.rejected {
+              border-color: rgba(255,107,107,.30);
+              background: rgba(255,107,107,.12);
+              color: #ff9b9b;
             }
 
-            .mail-gift-actions {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
+            .mail-pro-actions {
+              display: flex;
               gap: 9px;
-              margin-top: 10px;
+              align-items: center;
+              margin-top: 11px;
             }
 
-            .mail-gift-accept {
-              border-color: rgba(47, 209, 114, .45) !important;
-              background: rgba(47, 209, 114, .14) !important;
-              color: #7dffae !important;
+            .mail-pro-accept,
+            .mail-pro-reject {
+              border: 0;
+              border-radius: 11px;
+              padding: 9px 16px;
+              cursor: pointer;
+              font-weight: 900;
             }
 
-            .mail-gift-reject {
-              border-color: rgba(255, 85, 85, .45) !important;
-              background: rgba(255, 85, 85, .14) !important;
-              color: #ff9090 !important;
+            .mail-pro-accept {
+              background: linear-gradient(135deg, #7dffae, #2fd172);
+              color: #04160b;
+            }
+
+            .mail-pro-reject {
+              border: 1px solid rgba(255,107,107,.32);
+              background: rgba(255,107,107,.10);
+              color: #ff9b9b;
+            }
+
+            .mail-pro-delete {
+              position: absolute;
+              top: 10px;
+              left: 10px;
+              width: 34px;
+              height: 34px;
+              display: grid;
+              place-items: center;
+              border-radius: 12px;
+              border: 1px solid rgba(255,255,255,.10);
+              background: rgba(255,255,255,.055);
+              color: rgba(255,255,255,.62);
+              cursor: pointer;
+              transition: transform .15s ease, background .15s ease, color .15s ease;
+            }
+
+            .mail-pro-delete:hover {
+              transform: translateY(-1px);
+              background: rgba(255,107,107,.14);
+              color: #ff9b9b;
+            }
+
+            .mail-pro-footer {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              gap: 10px;
+              padding: 12px 4px 2px;
+              color: var(--mail-faint);
+              font-size: 11px;
+            }
+
+            .mail-pro-empty {
+              display: grid;
+              place-items: center;
+              gap: 10px;
+              text-align: center;
+              padding: 34px 16px;
+              border-radius: 18px;
+              border: 1px dashed rgba(255,255,255,.13);
+              background: rgba(255,255,255,.03);
+            }
+
+            .mail-pro-empty-icon {
+              width: 64px;
+              height: 64px;
+              display: grid;
+              place-items: center;
+              border-radius: 20px;
+              background: rgba(255,255,255,.05);
+              border: 1px solid rgba(255,255,255,.09);
+              font-size: 31px;
+            }
+
+            .mail-pro-empty strong {
+              color: #fff;
+              font-size: 16px;
+            }
+
+            .mail-pro-empty span {
+              color: var(--mail-muted);
+              font-size: 13px;
             }
           </style>
 
-          <div class="tnx-mail-shell">
-            <div class="tnx-mail-hero">
-              <div class="tnx-mail-headline">
-                <div class="tnx-mail-title-group">
-                  <div class="tnx-mail-icon">✉️</div>
-                  <div>
+          <div class="mail-pro">
+            <div class="mail-pro-head">
+              <div class="mail-pro-top">
+                <div class="mail-pro-title-wrap">
+                  <div class="mail-pro-icon">
+                    ✉️
+                    <span class="mail-pro-badge">${formatNumber(counts.all)}</span>
+                  </div>
+                  <div class="mail-pro-title">
                     <strong>البريد</strong>
                     <span>رسائل وهدايا المجتمع في مكان واحد</span>
                   </div>
                 </div>
-                <div class="tnx-mail-count-pill">${formatNumber(total)} رسالة</div>
+
+                <button class="mail-pro-clear" type="button" data-mail-clear ${counts.all ? '' : 'disabled aria-disabled="true"'}>حذف الكل</button>
               </div>
 
-              <div class="tnx-mail-toolbar">
-                <span class="tnx-mail-note">الهدايا المعلّقة لازم تقبلها أو ترفضها قبل الحذف.</span>
-                <button class="tnx-mail-clear-btn" type="button" data-mail-clear ${total ? '' : 'disabled aria-disabled="true"'}>حذف كل البريد</button>
+              <div class="mail-pro-tabs" data-mail-tabs>
+                <button class="mail-pro-tab is-active" type="button" data-mail-filter="all">الكل <span class="mail-pro-tab-count">${formatNumber(counts.all)}</span></button>
+                <button class="mail-pro-tab" type="button" data-mail-filter="gift">هدايا <span class="mail-pro-tab-count">${formatNumber(counts.gift)}</span></button>
+                <button class="mail-pro-tab" type="button" data-mail-filter="msg">رسائل <span class="mail-pro-tab-count">${formatNumber(counts.msg)}</span></button>
+                <button class="mail-pro-tab" type="button" data-mail-filter="sys">نظام <span class="mail-pro-tab-count">${formatNumber(counts.sys)}</span></button>
               </div>
             </div>
+
+            <div class="mail-pro-list" data-mail-pro-list>
+              ${
+                counts.all
+                  ? list.map((message) => {
+                      const id = mailboxMessageId(message)
+                      const from = get(message, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], 'النظام') || 'النظام'
+                      const text = get(message, ['message', 'text'], '')
+                      const giftStatus = mailboxGiftStatus(message)
+                      const itemNameValue = mailboxItemName(message)
+                      const itemAmount = mailboxItemAmount(message)
+                      const kind = classifyMail(message)
+                      const isGift = kind === 'gift'
+                      const isPendingGift = isGift && giftStatus === 'pending' && id
+                      const giftLabel = mailboxGiftStatusLabel(giftStatus)
+                      const icon = typeIcon(kind, giftStatus)
+                      const title = isGift
+                        ? `هدية من ${from}`
+                        : from
+
+                      return `
+                        <div class="${cardClass(kind, giftStatus)}" data-mail-kind="${esc(kind)}" data-mail-message-id="${esc(id)}">
+                          <button class="mail-pro-delete" type="button" data-mail-delete data-message-id="${esc(id)}" title="حذف الرسالة">🗑️</button>
+
+                          <div class="mail-pro-row">
+                            <div class="mail-pro-avatar">${esc(icon)}</div>
+
+                            <div class="mail-pro-body">
+                              <div class="mail-pro-meta">
+                                <span class="mail-pro-dot"></span>
+                                <span class="mail-pro-name">${esc(title)}</span>
+                                ${isGift ? `<span class="mail-pro-tag">✨ هدية</span>` : ''}
+                                <span class="mail-pro-time">${esc(timeLabel(message))}</span>
+                              </div>
+
+                              <p class="mail-pro-text">${esc(text || (isGift ? 'هدية في البريد.' : ''))}</p>
+
+                              ${
+                                isGift
+                                  ? `
+                                    <div class="mail-pro-gift-info" data-mail-gift-status>
+                                      <div>
+                                        <strong>${esc(itemNameValue || 'غرض')}</strong><br />
+                                        <span>الكمية: ×${formatNumber(itemAmount)}</span>
+                                      </div>
+                                      <div class="mail-pro-status ${esc(giftStatus || '')}">${esc(giftLabel || 'هدية')}</div>
+                                    </div>
+                                  `
+                                  : `<div class="item-command-hint" data-mail-inline-status style="display:none;"></div>`
+                              }
+
+                              ${
+                                isPendingGift
+                                  ? `
+                                    <div class="mail-pro-actions">
+                                      <button class="mail-pro-accept" type="button" data-mail-gift-action="accept" data-message-id="${esc(id)}">قبول الهدية</button>
+                                      <button class="mail-pro-reject" type="button" data-mail-gift-action="reject" data-message-id="${esc(id)}">رفض</button>
+                                    </div>
+                                  `
+                                  : ''
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      `
+                    }).join('')
+                  : `
+                    <div class="mail-pro-empty" data-mail-empty>
+                      <div class="mail-pro-empty-icon">📭</div>
+                      <strong>ما عندك شي هنا</strong>
+                      <span>إذا وصلك إهداء أو رسالة بتظهر هنا مباشرة.</span>
+                    </div>
+                  `
+              }
+            </div>
+
+            <div class="mail-pro-footer">
+              <span>يتم تحديث البريد تلقائيًا.</span>
+              <span>اقبل أو ارفض الهدايا المعلّقة قبل حذفها.</span>
+            </div>
+          </div>
         `
 
-        const mailShellEnd = `</div>`
+        const applyFilter = (filter) => {
+          const cards = Array.from(box.querySelectorAll('[data-mail-kind]'))
+          let visible = 0
 
-        if (!total) {
-          box.innerHTML = mailShellStart + `
-            <div class="tnx-mail-empty">
-              <div class="tnx-mail-empty-icon">📭</div>
-              <strong>ما عندك رسائل</strong>
-              <span>إذا وصلك إهداء أو رسالة بتظهر هنا مباشرة.</span>
-            </div>
-          ` + mailShellEnd
-          return
+          cards.forEach((card) => {
+            const ok = filter === 'all' || card.getAttribute('data-mail-kind') === filter
+            card.style.display = ok ? '' : 'none'
+            if (ok) visible++
+          })
+
+          let empty = box.querySelector('[data-filter-empty]')
+
+          if (!visible && counts.all) {
+            if (!empty) {
+              empty = document.createElement('div')
+              empty.className = 'mail-pro-empty'
+              empty.setAttribute('data-filter-empty', '')
+              empty.innerHTML = `
+                <div class="mail-pro-empty-icon">📭</div>
+                <strong>ما فيه عناصر هنا</strong>
+                <span>جرّب تبويب ثاني.</span>
+              `
+              box.querySelector('[data-mail-pro-list]')?.appendChild(empty)
+            }
+            empty.style.display = ''
+          } else if (empty) {
+            empty.style.display = 'none'
+          }
         }
 
-        box.innerHTML = mailShellStart + `
-          <div class="tnx-mail-list">
-            ${list.map((message) => {
-              const id = mailboxMessageId(message)
-              const from = get(message, ['from', 'fromDisplayName', 'fromLogin', 'fromUserName'], 'النظام') || 'النظام'
-              const text = get(message, ['message', 'text'], '')
-              const type = mailboxMessageType(message)
-              const giftStatus = mailboxGiftStatus(message)
-              const itemNameValue = mailboxItemName(message)
-              const itemAmount = mailboxItemAmount(message)
-              const date = get(message, ['date', 'createdAt', 'created_at'], '')
-              const isGift = type === 'gift_item' || Boolean(giftStatus) || Boolean(itemNameValue)
-              const isPendingGift = isGift && giftStatus === 'pending' && id
-              const giftLabel = mailboxGiftStatusLabel(giftStatus)
-              const initial = String(from || 'ن').trim().slice(0, 1)
-
-              const giftInfo = isGift
-                ? `
-                  <div class="tnx-mail-gift-box" data-mail-gift-status>
-                    <div class="tnx-mail-gift-main">
-                      <strong>${esc(itemNameValue || 'غرض')}</strong>
-                      <span>الكمية: ×${formatNumber(itemAmount)}</span>
-                    </div>
-                    <div class="tnx-mail-status ${esc(giftStatus || '')}">${esc(giftLabel || 'هدية')}</div>
-                  </div>
-                `
-                : '<div class="item-command-hint" data-mail-inline-status style="display:none;"></div>'
-
-              const giftActions = isPendingGift
-                ? `
-                  <div class="mail-gift-actions">
-                    <button class="item-action-btn mail-gift-accept" type="button" data-mail-gift-action="accept" data-message-id="${esc(id)}">قبول الهدية</button>
-                    <button class="item-action-btn mail-gift-reject" type="button" data-mail-gift-action="reject" data-message-id="${esc(id)}">رفض الهدية</button>
-                  </div>
-                `
-                : ''
-
-              return `
-                <div class="mail-message tnx-mail-card" data-mail-message-id="${esc(id)}">
-                  <button class="mail-delete-btn" type="button" data-mail-delete data-message-id="${esc(id)}" title="حذف الرسالة">🗑️</button>
-
-                  <div class="tnx-mail-card-head">
-                    <div class="tnx-mail-from">
-                      <div class="tnx-mail-avatar">${esc(initial)}</div>
-                      <strong>${esc(from)}</strong>
-                    </div>
-                    <span class="tnx-mail-date">${esc(date ? new Date(date).toLocaleDateString('ar-SA') : '')}</span>
-                  </div>
-
-                  <p>${esc(text || (isGift ? 'هدية في البريد.' : ''))}</p>
-                  ${giftInfo}
-                  ${giftActions}
-                </div>
-              `
-            }).join('')}
-          </div>
-        ` + mailShellEnd
+        box.querySelectorAll('[data-mail-filter]').forEach((button) => {
+          addListener(button, 'click', () => {
+            box.querySelectorAll('[data-mail-filter]').forEach((entry) => entry.classList.remove('is-active'))
+            button.classList.add('is-active')
+            applyFilter(button.getAttribute('data-mail-filter') || 'all')
+          })
+        })
 
         box.querySelector('[data-mail-clear]')?.addEventListener('click', (event) => {
           if (typeof clearMailboxMessages === 'function') {
