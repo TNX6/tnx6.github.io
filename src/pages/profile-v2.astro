@@ -8668,7 +8668,26 @@ const metadata = {
       }
     }
 
-  </style>
+  
+
+      .mail-message-avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: inherit;
+        display: block;
+      }
+
+      .mail-message-avatar-fallback {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        place-items: center;
+        border-radius: inherit;
+        font-weight: 900;
+      }
+
+</style>
 
   <script is:inline data-astro-rerun data-reinit>
     ;(async () => {
@@ -15095,7 +15114,158 @@ if (!window.__tnxMailboxUpgradeEventsInstalled) {
       }
 
 
+
+      /* mailbox-relative-time-avatar-helpers */
+      function formatMailboxRelativeTime(value) {
+        if (!value) return '';
+
+        let date = null;
+        try {
+          date = new Date(value);
+        } catch {}
+
+        if (!date || Number.isNaN(date.getTime())) {
+          try {
+            date = new Date(String(value).replace(' ', 'T'));
+          } catch {}
+        }
+
+        if (!date || Number.isNaN(date.getTime())) return String(value);
+
+        const now = new Date();
+        let diffMs = now.getTime() - date.getTime();
+
+        if (diffMs < 0) diffMs = 0;
+
+        const minute = 60 * 1000;
+        const hour = 60 * minute;
+        const day = 24 * hour;
+
+        if (diffMs < minute) return 'الآن';
+
+        const minutes = Math.floor(diffMs / minute);
+        if (minutes < 60) return minutes + 'د';
+
+        const hours = Math.floor(diffMs / hour);
+        if (hours < 24) return hours + 'س';
+
+        const days = Math.floor(diffMs / day);
+        if (days === 1) return '1يوم';
+        if (days < 30) return days + 'يوم';
+
+        const months = Math.floor(days / 30);
+        if (months < 12) return months + 'ش';
+
+        const years = Math.floor(days / 365);
+        return years + 'سنة';
+      }
+
+      function resolveMailboxAvatar(mail) {
+        if (!mail || typeof mail !== 'object') return '';
+
+        const directCandidates = [
+          mail.fromProfileImageUrl,
+          mail.from_profile_image_url,
+          mail.profileImageUrl,
+          mail.profile_image_url,
+          mail.senderProfileImageUrl,
+          mail.sender_profile_image_url,
+          mail.fromAvatarUrl,
+          mail.from_avatar_url,
+          mail.avatarUrl,
+          mail.avatar_url,
+          mail.userProfileImageUrl,
+          mail.user_profile_image_url
+        ];
+
+        for (const value of directCandidates) {
+          if (value && String(value).trim()) return String(value).trim();
+        }
+
+        const senderId =
+          String(
+            mail.fromUserId ||
+            mail.from_user_id ||
+            mail.senderUserId ||
+            mail.sender_user_id ||
+            ''
+          ).trim();
+
+        const senderLogin =
+          String(
+            mail.fromUserLogin ||
+            mail.from_user_login ||
+            mail.fromUserName ||
+            mail.from_user_name ||
+            mail.senderLogin ||
+            mail.sender_login ||
+            mail.userLogin ||
+            mail.user_login ||
+            ''
+          ).trim().toLowerCase();
+
+        const globalMaps = [
+          window.__tnxMailboxAvatarMap,
+          window.__tnxUserProfileMap,
+          window.__tnxProfileImageMap
+        ];
+
+        for (const map of globalMaps) {
+          if (!map || typeof map !== 'object') continue;
+
+          if (senderId && map[senderId]) return String(map[senderId]).trim();
+          if (senderLogin && map[senderLogin]) return String(map[senderLogin]).trim();
+        }
+
+        return '';
+      }
+
+      function getMailboxAvatarFallbackLetter(mail) {
+        const raw =
+          String(
+            mail?.fromDisplayName ||
+            mail?.from_display_name ||
+            mail?.fromUserLogin ||
+            mail?.from_user_login ||
+            mail?.senderLogin ||
+            mail?.sender_login ||
+            '?'
+          ).trim();
+
+        if (!raw) return '?';
+        return raw.charAt(0).toUpperCase();
+      }
+
+      function renderMailboxAvatarHtml(mail) {
+        const avatarUrl = resolveMailboxAvatar(mail);
+
+        if (avatarUrl) {
+          const safeAlt = escapeHtml(
+            String(
+              mail?.fromDisplayName ||
+              mail?.from_display_name ||
+              mail?.fromUserLogin ||
+              mail?.from_user_login ||
+              'user'
+            )
+          );
+
+          return '<img src="' + escapeHtml(avatarUrl) + '" alt="' + safeAlt + '" class="mail-message-avatar-img" loading="lazy" referrerpolicy="no-referrer">';
+        }
+
+        return '<span class="mail-message-avatar-fallback">' + escapeHtml(getMailboxAvatarFallbackLetter(mail)) + '</span>';
+      }
+
 function renderMail(mail) {
+        const timeText = formatMailboxRelativeTime(
+          mail?.createdAt ||
+          mail?.created_at ||
+          mail?.sentAt ||
+          mail?.sent_at ||
+          ''
+        );
+        const avatarHtml = renderMailboxAvatarHtml(mail);
+
 // mailbox-upgrade-render-refresh
           try { loadMailboxUpgradeInfo().catch(() => {}) } catch {}
         const box = $('mailList')
