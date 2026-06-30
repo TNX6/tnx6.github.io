@@ -14141,6 +14141,44 @@ const metadata = {
               opacity: .45 !important;
               cursor: not-allowed !important;
             }
+
+            /* mail-clear-text-nice-fix */
+            .mail-pro .mail-pro-clear {
+              width: auto !important;
+              height: 34px !important;
+              min-width: 82px !important;
+              max-width: none !important;
+              min-height: 34px !important;
+              max-height: 34px !important;
+              display: inline-flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              padding: 0 14px !important;
+              border-radius: 12px !important;
+              border: 1px solid rgba(255, 107, 107, .28) !important;
+              background: rgba(255, 107, 107, .075) !important;
+              color: #ff9b9b !important;
+              cursor: pointer !important;
+              font-size: 12.5px !important;
+              font-weight: 900 !important;
+              line-height: 1 !important;
+              white-space: nowrap !important;
+              overflow: visible !important;
+              box-shadow: none !important;
+            }
+
+            .mail-pro .mail-pro-clear:hover {
+              background: rgba(255, 107, 107, .13) !important;
+              color: #ffc0c0 !important;
+              border-color: rgba(255, 107, 107, .42) !important;
+              transform: none !important;
+            }
+
+            .mail-pro .mail-pro-clear:disabled,
+            .mail-pro .mail-pro-clear[aria-disabled="true"] {
+              opacity: .45 !important;
+              cursor: not-allowed !important;
+            }
           </style>
 
           <div class="mail-pro">
@@ -14157,7 +14195,7 @@ const metadata = {
                   </div>
                 </div>
 
-                <button class="mail-pro-clear" type="button" data-mail-clear ${counts.all ? '' : 'disabled aria-disabled="true"'} title="حذف كل البريد" aria-label="حذف كل البريد">🗑️</button>
+                <button class="mail-pro-clear" type="button" data-mail-clear ${counts.all ? '' : 'disabled aria-disabled="true"'}>حذف الكل</button>
               </div>
 
               <div class="mail-pro-tabs" data-mail-tabs>
