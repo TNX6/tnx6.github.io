@@ -9904,7 +9904,7 @@ const metadata = {
         enhanceInventorySellButtons(inventory)
         renderBadges(badges)
         renderFeaturedBadgesCleanV29(user)
-        renderMail(mail)
+        renderMail(mail); try { setTimeout(() => renderMailboxProV2(mail), 0) } catch {}
         loadD1MailboxForProfile(user)
         installMailboxAutoRefresh()
         syncOwnerControlsV36(user)
@@ -13065,7 +13065,7 @@ const metadata = {
 
           setText('mailCount', messages.length)
           setText('messages', formatNumber(messages.length))
-          renderMail(messages)
+          renderMail(messages); try { setTimeout(() => renderMailboxProV2(messages), 0) } catch {}
         } catch (error) {
           console.warn('[Mailbox] Failed to load current user mailbox:', error)
         } finally {
@@ -14024,6 +14024,418 @@ if (!window.__tnxMailboxUpgradeEventsInstalled) {
           tnxOpenMailboxUpgradeModalV3()
         }, true)
       }
+
+
+      /* mailbox-modal-v2-redesign */
+      function mbV2Escape(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;')
+      }
+
+      function mbV2Format(value) {
+        try {
+          if (typeof formatNumber === 'function') return formatNumber(value)
+        } catch {}
+
+        try {
+          return new Intl.NumberFormat('ar-SA').format(Number(value || 0))
+        } catch {
+          return String(value || 0)
+        }
+      }
+
+      function mbV2Get(obj, keys, fallback = '') {
+        for (const key of keys) {
+          try {
+            const parts = String(key).split('.')
+            let current = obj
+
+            for (const part of parts) {
+              if (current == null) break
+              current = current[part]
+            }
+
+            if (current !== undefined && current !== null && String(current).trim() !== '') {
+              return current
+            }
+          } catch {}
+        }
+
+        return fallback
+      }
+
+      function mbV2Id(message) {
+        try {
+          if (typeof mailboxMessageId === 'function') return mailboxMessageId(message)
+        } catch {}
+
+        return String(mbV2Get(message, ['id', 'messageId', 'message_id', 'requestId'], ''))
+      }
+
+      function mbV2Type(message) {
+        try {
+          if (typeof mailboxMessageType === 'function') return mailboxMessageType(message)
+        } catch {}
+
+        const raw = String(mbV2Get(message, ['type', 'kind', 'messageType'], 'message')).toLowerCase()
+        const giftStatus = mbV2GiftStatus(message)
+
+        if (raw.includes('gift') || giftStatus) return 'gift'
+        if (raw.includes('system') || raw.includes('sys')) return 'system'
+
+        return 'message'
+      }
+
+      function mbV2GiftStatus(message) {
+        try {
+          if (typeof mailboxGiftStatus === 'function') return mailboxGiftStatus(message)
+        } catch {}
+
+        return String(mbV2Get(message, ['giftStatus', 'gift_status', 'status'], '')).toLowerCase()
+      }
+
+      function mbV2Sender(message) {
+        const name = mbV2Get(message, [
+          'fromDisplayName',
+          'from_display_name',
+          'from.displayName',
+          'from.display_name',
+          'senderDisplayName',
+          'sender_display_name',
+          'displayName',
+          'display_name',
+          'fromLogin',
+          'from_login',
+          'senderLogin',
+          'sender_login',
+          'from'
+        ], '')
+
+        return String(name || 'النظام')
+      }
+
+      function mbV2Text(message) {
+        const itemName = mbV2Get(message, ['itemName', 'item_name', 'giftItemName', 'gift_item_name'], '')
+        const amount = Number(mbV2Get(message, ['quantity', 'amount', 'itemAmount', 'item_amount'], 0))
+        const text = mbV2Get(message, ['message', 'text', 'body', 'content'], '')
+
+        if (mbV2Type(message) === 'gift' && itemName) {
+          return 'أرسل لك ' + (amount > 1 ? mbV2Format(amount) + ' × ' : '') + String(itemName) + '.'
+        }
+
+        return String(text || 'بدون نص')
+      }
+
+      function mbV2Time(message) {
+        try {
+          if (typeof timeLabel === 'function') {
+            const raw = mbV2Get(message, ['createdAt', 'created_at', 'date', 'time'], '')
+            const label = timeLabel(raw)
+            if (label) return label
+          }
+        } catch {}
+
+        return String(mbV2Get(message, ['timeLabel', 'time_label', 'createdAt', 'created_at', 'date'], 'الآن'))
+      }
+
+      function mbV2StatusLabel(message) {
+        const status = mbV2GiftStatus(message)
+
+        if (status === 'pending') return 'معلقة'
+        if (status === 'accepted' || status === 'claimed') return 'مقبولة'
+        if (status === 'rejected' || status === 'declined') return 'مرفوضة'
+
+        const type = mbV2Type(message)
+
+        if (type === 'gift') return 'هدية'
+        if (type === 'system') return 'نظام'
+
+        return 'رسالة'
+      }
+
+      function mbV2Initials(name) {
+        const parts = String(name || '')
+          .replace(/[@#]/g, '')
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean)
+
+        if (!parts.length) return '؟'
+
+        return parts
+          .slice(0, 2)
+          .map((part) => part.charAt(0))
+          .join('')
+      }
+
+      function mbV2Icon(type) {
+        if (type === 'gift') return '🎁'
+        if (type === 'system') return '📣'
+        return '💬'
+      }
+
+      function mbV2Counts(list) {
+        const counts = { all: list.length, gift: 0, message: 0, system: 0 }
+
+        for (const message of list) {
+          const type = mbV2Type(message)
+          if (type === 'gift') counts.gift++
+          else if (type === 'system') counts.system++
+          else counts.message++
+        }
+
+        return counts
+      }
+
+      function mbV2UpgradeInfo(list) {
+        let raw = null
+
+        try {
+          raw = typeof mailboxUpgradeInfo !== 'undefined' ? mailboxUpgradeInfo : null
+        } catch {
+          raw = null
+        }
+
+        let info = raw || {}
+
+        try {
+          if (typeof normalizeMailboxUpgradeInfo === 'function') {
+            info = normalizeMailboxUpgradeInfo(info)
+          }
+        } catch {}
+
+        const used = Number(info.used ?? list.length ?? 0)
+        const capacity = Math.max(1, Number(info.capacity || 5))
+        const cost = Number(info.cost || 25000)
+        const nextCapacity = Number(info.nextCapacity || 10)
+        const canUpgrade = info.canUpgrade !== false
+
+        return {
+          used,
+          capacity,
+          cost,
+          nextCapacity,
+          canUpgrade,
+          activeRequest: info.activeRequest || null,
+        }
+      }
+
+      function mbV2Card(message) {
+        const id = mbV2Id(message)
+        const type = mbV2Type(message)
+        const status = mbV2GiftStatus(message)
+        const sender = mbV2Sender(message)
+        const text = mbV2Text(message)
+        const time = mbV2Time(message)
+        const label = mbV2StatusLabel(message)
+        const isGift = type === 'gift'
+        const isPendingGift = isGift && (!status || status === 'pending')
+        const isSystem = type === 'system'
+
+        const cardClass = isGift ? 'mbv2-card mbv2-card-gift' : isSystem ? 'mbv2-card mbv2-card-system' : 'mbv2-card'
+
+        let actions = ''
+
+        if (isPendingGift) {
+          actions =
+            '<div class="mbv2-card-actions">' +
+              '<button class="mbv2-accept" type="button" data-mail-gift-accept data-mail-gift-action="accept" data-message-id="' + mbV2Escape(id) + '">قبول الهدية</button>' +
+              '<button class="mbv2-reject" type="button" data-mail-gift-reject data-mail-gift-action="reject" data-message-id="' + mbV2Escape(id) + '">رفض</button>' +
+            '</div>'
+        } else {
+          actions =
+            '<button class="mbv2-trash" type="button" data-mail-delete data-message-id="' + mbV2Escape(id) + '" title="حذف الرسالة" aria-label="حذف الرسالة">🗑️</button>'
+        }
+
+        return (
+          '<article class="' + cardClass + '" data-mail-card data-type="' + mbV2Escape(type) + '" data-message-id="' + mbV2Escape(id) + '">' +
+            '<div class="mbv2-avatar">' +
+              (type === 'message' ? '<span>' + mbV2Escape(mbV2Initials(sender)) + '</span>' : '<span>' + mbV2Icon(type) + '</span>') +
+            '</div>' +
+
+            '<div class="mbv2-card-body">' +
+              '<div class="mbv2-meta">' +
+                '<strong>' + mbV2Escape(sender) + '</strong>' +
+                '<span class="mbv2-pill">' + mbV2Escape(label) + '</span>' +
+                '<time>' + mbV2Escape(time) + '</time>' +
+              '</div>' +
+
+              '<p>' + mbV2Escape(text) + '</p>' +
+              actions +
+            '</div>' +
+          '</article>'
+        )
+      }
+
+      function renderMailboxProV2(mail) {
+        const root = document.querySelector('.mail-pro')
+        if (!root) return
+
+        const list = Array.isArray(mail) ? mail : []
+        const filter = root.dataset.mbv2Filter || 'all'
+        const counts = mbV2Counts(list)
+        const upgrade = mbV2UpgradeInfo(list)
+        const percent = Math.max(0, Math.min(100, Math.round((upgrade.used / Math.max(1, upgrade.capacity)) * 100)))
+
+        const visible = list.filter((message) => {
+          if (filter === 'all') return true
+          return mbV2Type(message) === filter
+        })
+
+        root.dataset.mailboxV2 = 'true'
+
+        const upgradeButtonText = !upgrade.canUpgrade
+          ? 'مكتمل'
+          : upgrade.activeRequest
+            ? 'قيد التنفيذ'
+            : 'تطوير البريد'
+
+        const upgradeCostText = !upgrade.canUpgrade
+          ? 'أقصى سعة'
+          : upgrade.activeRequest
+            ? 'بانتظار التنفيذ'
+            : mbV2Format(upgrade.cost) + ' نقطة'
+
+        root.innerHTML =
+          '<style>' +
+            '.mail-pro[data-mailbox-v2="true"]{direction:rtl;color:#f4f4f5;font-family:inherit;}' +
+            '.mail-pro[data-mailbox-v2="true"] *{box-sizing:border-box;}' +
+
+            '.mbv2-shell{overflow:hidden;border:1px solid rgba(255,255,255,.08);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));}' +
+
+            '.mbv2-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,.07);}' +
+            '.mbv2-title{display:flex;align-items:center;gap:12px;min-width:0;}' +
+            '.mbv2-icon{position:relative;width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(255,138,91,.18),rgba(255,138,91,.06));border:1px solid rgba(255,138,91,.22);font-size:22px;}' +
+            '.mbv2-badge{position:absolute;top:-7px;left:-7px;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#ff5757;color:#fff;font-size:11px;font-weight:1000;display:grid;place-items:center;border:2px solid #1b1b22;}' +
+            '.mbv2-title h3{margin:0;font-size:21px;font-weight:1000;letter-spacing:-.02em;}' +
+            '.mbv2-title p{margin:3px 0 0;color:rgba(255,255,255,.58);font-size:12.5px;font-weight:700;}' +
+            '.mbv2-head-actions{display:flex;align-items:center;gap:8px;}' +
+            '.mbv2-clear,.mbv2-clear-read{height:34px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,107,107,.22);background:rgba(255,107,107,.06);color:#ff9f9f;cursor:pointer;font-size:12px;font-weight:1000;white-space:nowrap;}' +
+            '.mbv2-clear-read{border-color:rgba(255,255,255,.10);background:rgba(255,255,255,.045);color:rgba(255,255,255,.68);}' +
+
+            '.mbv2-tabs{display:flex;align-items:center;gap:6px;padding:12px 14px 8px;}' +
+            '.mbv2-tab{flex:1;height:38px;border:0;border-radius:13px;background:rgba(255,255,255,.045);color:rgba(255,255,255,.60);cursor:pointer;font-size:12.5px;font-weight:1000;display:flex;align-items:center;justify-content:center;gap:7px;}' +
+            '.mbv2-tab span{min-width:19px;height:19px;padding:0 6px;border-radius:999px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:11px;}' +
+            '.mbv2-tab.active{background:linear-gradient(135deg,#ffb36b,#ff8a5b);color:#24140c;box-shadow:0 10px 24px rgba(255,138,91,.18);}' +
+            '.mbv2-tab.active span{background:rgba(0,0,0,.16);color:#24140c;}' +
+
+            '.mbv2-capacity{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:4px 14px 12px;padding:12px 14px;border-radius:17px;border:1px solid rgba(255,138,91,.16);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.014));}' +
+            '.mbv2-cap-main{display:grid;grid-template-columns:auto minmax(90px,160px) auto;align-items:center;gap:10px;min-width:0;flex:1;}' +
+            '.mbv2-cap-name{display:inline-flex;align-items:center;gap:7px;color:rgba(255,255,255,.80);font-size:12.5px;font-weight:1000;white-space:nowrap;}' +
+            '.mbv2-cap-dot{width:7px;height:7px;border-radius:999px;background:linear-gradient(135deg,#ffd36a,#ff8a5b);box-shadow:0 0 12px rgba(255,138,91,.35);}' +
+            '.mbv2-cap-bar{height:5px;border-radius:999px;background:rgba(255,255,255,.085);overflow:hidden;}' +
+            '.mbv2-cap-bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ffd36a,#ff8a5b);}' +
+            '.mbv2-cap-count{color:#ffd36a;font-size:12px;font-weight:1000;white-space:nowrap;}' +
+            '.mbv2-upgrade{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;}' +
+            '.mbv2-cost{height:27px;padding:0 9px;border-radius:9px;background:rgba(255,211,106,.075);color:#ffd36a;font-size:10.8px;font-weight:1000;display:grid;place-items:center;white-space:nowrap;}' +
+            '.mbv2-upgrade-btn{height:33px;min-width:110px;padding:0 12px;border-radius:11px;border:1px solid rgba(255,138,91,.30);background:rgba(255,138,91,.085);color:#ffbd80;cursor:pointer;font-size:12px;font-weight:1000;white-space:nowrap;}' +
+            '.mbv2-upgrade-btn:hover{background:linear-gradient(135deg,rgba(255,211,106,.18),rgba(255,138,91,.16));border-color:rgba(255,138,91,.42);}' +
+            '.mbv2-upgrade-btn:disabled,.mbv2-upgrade-btn[aria-disabled="true"]{opacity:.55;cursor:not-allowed;}' +
+
+            '.mbv2-list{padding:0 14px 12px;display:flex;flex-direction:column;gap:10px;max-height:min(48vh,430px);overflow:auto;}' +
+            '.mbv2-list::-webkit-scrollbar{width:8px;}.mbv2-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:999px;}' +
+            '.mbv2-card{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;padding:13px;border-radius:17px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.035);}' +
+            '.mbv2-card-gift{border-color:rgba(255,211,106,.22);background:linear-gradient(180deg,rgba(255,211,106,.06),rgba(255,255,255,.026));}' +
+            '.mbv2-card-system{border-color:rgba(150,124,255,.20);background:linear-gradient(180deg,rgba(150,124,255,.05),rgba(255,255,255,.025));}' +
+            '.mbv2-avatar{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);font-size:20px;font-weight:1000;color:#fff;}' +
+            '.mbv2-card-gift .mbv2-avatar{background:linear-gradient(145deg,#ffd36a,#ff9d2e);color:#2a1804;}' +
+            '.mbv2-card-system .mbv2-avatar{background:linear-gradient(145deg,#b79cff,#7b5cff);}' +
+            '.mbv2-card-body{min-width:0;}' +
+            '.mbv2-meta{display:flex;align-items:center;gap:7px;margin-bottom:5px;min-width:0;}' +
+            '.mbv2-meta strong{font-size:14px;font-weight:1000;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}' +
+            '.mbv2-meta time{margin-inline-start:auto;color:rgba(255,255,255,.42);font-size:11px;font-weight:800;white-space:nowrap;}' +
+            '.mbv2-pill{padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.62);font-size:10.5px;font-weight:1000;white-space:nowrap;}' +
+            '.mbv2-card-gift .mbv2-pill{background:rgba(255,211,106,.11);color:#ffd36a;}' +
+            '.mbv2-card p{margin:0;color:rgba(255,255,255,.62);font-size:13px;line-height:1.7;}' +
+            '.mbv2-card-actions{display:flex;align-items:center;gap:8px;margin-top:11px;}' +
+            '.mbv2-accept{height:34px;padding:0 16px;border:0;border-radius:11px;background:linear-gradient(135deg,#ffd36a,#ff9d2e);color:#241404;cursor:pointer;font-size:12.5px;font-weight:1000;}' +
+            '.mbv2-reject{height:34px;padding:0 14px;border-radius:11px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:rgba(255,255,255,.65);cursor:pointer;font-size:12px;font-weight:900;}' +
+            '.mbv2-trash{position:absolute;left:12px;bottom:12px;width:28px;height:28px;border-radius:10px;border:1px solid rgba(255,107,107,.18);background:rgba(255,107,107,.055);color:#ff9f9f;cursor:pointer;font-size:13px;display:grid;place-items:center;}' +
+
+            '.mbv2-empty{padding:34px 18px;text-align:center;color:rgba(255,255,255,.55);}' +
+            '.mbv2-empty strong{display:block;color:#fff;font-size:15px;margin-bottom:5px;}' +
+            '.mbv2-empty span{font-size:12.5px;}' +
+
+            '.mbv2-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-top:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.12);color:rgba(255,255,255,.46);font-size:11.5px;font-weight:800;}' +
+
+            '@media(max-width:720px){' +
+              '.mbv2-head{align-items:flex-start;flex-direction:column;}' +
+              '.mbv2-head-actions{width:100%;justify-content:space-between;}' +
+              '.mbv2-tabs{gap:5px;}' +
+              '.mbv2-tab{font-size:11.5px;}' +
+              '.mbv2-capacity{flex-direction:column;align-items:stretch;}' +
+              '.mbv2-cap-main{grid-template-columns:auto minmax(70px,1fr) auto;}' +
+              '.mbv2-upgrade{width:100%;}' +
+              '.mbv2-upgrade-btn{flex:1;}' +
+              '.mbv2-card{grid-template-columns:40px minmax(0,1fr);}' +
+              '.mbv2-avatar{width:40px;height:40px;}' +
+            '}' +
+          '</style>' +
+
+          '<section class="mbv2-shell">' +
+            '<header class="mbv2-head">' +
+              '<div class="mbv2-title">' +
+                '<div class="mbv2-icon">✉️' + (counts.all ? '<span class="mbv2-badge">' + mbV2Format(counts.all) + '</span>' : '') + '</div>' +
+                '<div><h3>البريد</h3><p>رسائلك وهدايا المجتمع في مكان واحد</p></div>' +
+              '</div>' +
+
+              '<div class="mbv2-head-actions">' +
+                '<button class="mbv2-clear-read" type="button" data-mail-clear-read>حذف المقروء</button>' +
+                '<button class="mbv2-clear" type="button" data-mail-clear ' + (counts.all ? '' : 'disabled aria-disabled="true"') + '>حذف الكل</button>' +
+              '</div>' +
+            '</header>' +
+
+            '<nav class="mbv2-tabs" data-mail-tabs-v2>' +
+              '<button class="mbv2-tab ' + (filter === 'all' ? 'active' : '') + '" type="button" data-mbv2-filter="all">الكل <span>' + mbV2Format(counts.all) + '</span></button>' +
+              '<button class="mbv2-tab ' + (filter === 'message' ? 'active' : '') + '" type="button" data-mbv2-filter="message">رسائل <span>' + mbV2Format(counts.message) + '</span></button>' +
+              '<button class="mbv2-tab ' + (filter === 'gift' ? 'active' : '') + '" type="button" data-mbv2-filter="gift">هدايا <span>' + mbV2Format(counts.gift) + '</span></button>' +
+              '<button class="mbv2-tab ' + (filter === 'system' ? 'active' : '') + '" type="button" data-mbv2-filter="system">نظام <span>' + mbV2Format(counts.system) + '</span></button>' +
+            '</nav>' +
+
+            '<div class="mbv2-capacity" data-mail-capacity-box>' +
+              '<div class="mbv2-cap-main">' +
+                '<div class="mbv2-cap-name"><span class="mbv2-cap-dot"></span><strong>سعة البريد</strong></div>' +
+                '<div class="mbv2-cap-bar"><span data-mail-capacity-bar style="width:' + percent + '%"></span></div>' +
+                '<span class="mbv2-cap-count" data-mail-capacity-label>' + mbV2Format(upgrade.used) + ' / ' + mbV2Format(upgrade.capacity) + '</span>' +
+              '</div>' +
+
+              '<div class="mbv2-upgrade">' +
+                '<span class="mbv2-cost" data-mail-upgrade-cost>' + upgradeCostText + '</span>' +
+                '<button class="mbv2-upgrade-btn" type="button" data-mail-upgrade-open ' + (!upgrade.canUpgrade || upgrade.activeRequest ? 'disabled aria-disabled="true"' : '') + '>' + upgradeButtonText + '</button>' +
+              '</div>' +
+            '</div>' +
+
+            '<div class="mbv2-list">' +
+              (visible.length ? visible.map(mbV2Card).join('') : '<div class="mbv2-empty"><strong>ما عندك شيء هنا</strong><span>إذا وصلك إهداء أو رسالة بيظهر هنا مباشرة.</span></div>') +
+            '</div>' +
+
+            '<footer class="mbv2-footer">' +
+              '<span>يتم تحديث البريد تلقائيًا</span>' +
+              '<span>اقبل الهدايا المعلقة قبل حذفها</span>' +
+            '</footer>' +
+          '</section>'
+
+        root.querySelectorAll('[data-mbv2-filter]').forEach((button) => {
+          button.addEventListener('click', () => {
+            root.dataset.mbv2Filter = button.dataset.mbv2Filter || 'all'
+            renderMailboxProV2(list)
+          })
+        })
+
+        try {
+          if (!root.dataset.mbv2UpgradeInfoLoaded && typeof loadMailboxUpgradeInfo === 'function') {
+            root.dataset.mbv2UpgradeInfoLoaded = '1'
+            loadMailboxUpgradeInfo().then(() => {
+              try { renderMailboxProV2(list) } catch {}
+            }).catch(() => {})
+          }
+        } catch {}
+      }
+
 
 function renderMail(mail) {
 // mailbox-upgrade-render-refresh
