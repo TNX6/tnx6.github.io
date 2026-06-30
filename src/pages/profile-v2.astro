@@ -14024,7 +14024,93 @@ if (!window.__tnxMailboxUpgradeEventsInstalled) {
           tnxOpenMailboxUpgradeModalV3()
         }, true)
       }
+
+      // runtime-mailbox-upgrade-strip-v1
+      function ensureMailboxUpgradeStripRuntime() {
+        try {
+          const mailRoot = document.querySelector('.mail-pro')
+
+          if (!mailRoot) {
+            return
+          }
+
+          const tabs = mailRoot.querySelector('.mail-pro-tabs[data-mail-tabs], [data-mail-tabs]')
+
+          if (!tabs) {
+            return
+          }
+
+          mailRoot.querySelectorAll(
+            '.mail-pro-upgrade-strip[data-mail-capacity-box], .mail-pro-footer-capacity[data-mail-capacity-box], .mail-pro-capacity-mini[data-mail-capacity-box], .mail-pro-capacity[data-mail-capacity-box]'
+          ).forEach((item) => item.remove())
+
+          const info = normalizeMailboxUpgradeInfo ? normalizeMailboxUpgradeInfo(mailboxUpgradeInfo || {}) : (mailboxUpgradeInfo || {})
+          const used = Number(info.used || 0)
+          const capacity = Math.max(1, Number(info.capacity || 5))
+          const cost = Number(info.cost || 25000)
+          const percent = Math.max(0, Math.min(100, Math.round((used / capacity) * 100)))
+
+          const strip = document.createElement('div')
+          strip.className = 'mail-pro-upgrade-strip'
+          strip.setAttribute('data-mail-capacity-box', 'true')
+
+          strip.innerHTML = `
+            <div class="mail-pro-upgrade-strip-info">
+              <div class="mail-pro-upgrade-strip-title">
+                <span class="mail-pro-upgrade-dot"></span>
+                <strong>سعة البريد</strong>
+              </div>
+
+              <div class="mail-pro-upgrade-strip-bar">
+                <span data-mail-capacity-bar style="width:${percent}%"></span>
+              </div>
+
+              <span class="mail-pro-upgrade-strip-capacity" data-mail-capacity-label>
+                ${mailboxUpgradeFormat(used)} / ${mailboxUpgradeFormat(capacity)}
+              </span>
+            </div>
+
+            <button class="mail-pro-upgrade-strip-btn" type="button" data-mail-upgrade-open>
+              <span>تطوير البريد</span>
+              <b data-mail-upgrade-cost>${info.canUpgrade === false ? 'مكتمل' : mailboxUpgradeFormat(cost) + ' نقطة'}</b>
+            </button>
+          `
+
+          tabs.insertAdjacentElement('afterend', strip)
+
+          try {
+            updateMailboxUpgradeDom()
+          } catch {}
+        } catch (error) {
+          console.error('[Mailbox Upgrade Strip] mount failed', error)
+        }
+      }
+
+      if (!window.__tnxRuntimeMailboxUpgradeStripInstalled) {
+        window.__tnxRuntimeMailboxUpgradeStripInstalled = true
+
+        const mountRuntimeMailboxUpgradeStrip = () => {
+          try {
+            ensureMailboxUpgradeStripRuntime()
+          } catch {}
+        }
+
+        setInterval(mountRuntimeMailboxUpgradeStrip, 700)
+
+        try {
+          const observer = new MutationObserver(() => {
+            mountRuntimeMailboxUpgradeStrip()
+          })
+
+          observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+          })
+        } catch {}
+      }
 function renderMail(mail) {
+          // runtime-mailbox-upgrade-strip-render-call
+          try { setTimeout(() => ensureMailboxUpgradeStripRuntime(), 0) } catch {}
 
           // mailbox-upgrade-render-refresh
           try { loadMailboxUpgradeInfo().catch(() => {}) } catch {}
@@ -15662,6 +15748,147 @@ function renderMail(mail) {
                 width: 100% !important;
               }
             }
+
+            /* runtime-mailbox-upgrade-strip-css */
+            .mail-pro .mail-pro-footer-capacity,
+            .mail-pro .mail-pro-capacity-mini,
+            .mail-pro .mail-pro-capacity,
+            .mail-pro .mail-pro-capacity-clean {
+              display: none !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-strip[data-mail-capacity-box] {
+              display: flex !important;
+              align-items: center !important;
+              justify-content: space-between !important;
+              gap: 14px !important;
+              margin: 10px 0 11px !important;
+              padding: 10px 13px !important;
+              border-radius: 15px !important;
+              border: 1px solid rgba(255, 138, 91, .18) !important;
+              background: linear-gradient(180deg, rgba(255,255,255,.032), rgba(255,255,255,.014)) !important;
+              box-shadow: none !important;
+              transform: none !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-strip-info {
+              display: grid !important;
+              grid-template-columns: auto minmax(78px, 140px) auto !important;
+              align-items: center !important;
+              gap: 9px !important;
+              min-width: 0 !important;
+              flex: 1 !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-strip-title {
+              display: inline-flex !important;
+              align-items: center !important;
+              gap: 6px !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-dot {
+              width: 7px !important;
+              height: 7px !important;
+              border-radius: 50% !important;
+              background: linear-gradient(135deg, #ffd36a, #ff8a5b) !important;
+              box-shadow: 0 0 12px rgba(255, 138, 91, .35) !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-strip-title strong {
+              color: rgba(255,255,255,.78) !important;
+              font-size: 12.2px !important;
+              font-weight: 1000 !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-strip-bar {
+              width: 100% !important;
+              height: 5px !important;
+              border-radius: 999px !important;
+              overflow: hidden !important;
+              background: rgba(255,255,255,.085) !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-strip-bar span {
+              display: block !important;
+              height: 100% !important;
+              border-radius: inherit !important;
+              background: linear-gradient(90deg, #ffd36a, #ff8a5b) !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-strip-capacity {
+              color: #ffd36a !important;
+              font-size: 12px !important;
+              font-weight: 1000 !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-strip-btn {
+              display: inline-flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              gap: 8px !important;
+              height: 34px !important;
+              min-width: 146px !important;
+              padding: 0 11px !important;
+              border-radius: 12px !important;
+              border: 1px solid rgba(255, 138, 91, .26) !important;
+              background: rgba(255, 138, 91, .075) !important;
+              color: #ffbd80 !important;
+              cursor: pointer !important;
+              font-size: 12px !important;
+              font-weight: 1000 !important;
+              line-height: 1 !important;
+              white-space: nowrap !important;
+              box-shadow: none !important;
+              transform: none !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-strip-btn span {
+              color: #ffbd80 !important;
+              font-weight: 1000 !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-strip-btn b {
+              display: inline-flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              min-width: 54px !important;
+              padding: 4px 7px !important;
+              border-radius: 8px !important;
+              background: rgba(0,0,0,.18) !important;
+              color: #ffd36a !important;
+              font-size: 10.5px !important;
+              font-weight: 1000 !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-strip-btn:hover {
+              background: linear-gradient(135deg, rgba(255,211,106,.18), rgba(255,138,91,.16)) !important;
+              border-color: rgba(255, 138, 91, .38) !important;
+              transform: none !important;
+            }
+
+            .mail-pro .mail-pro-upgrade,
+            .mail-pro .mail-pro-upgrade-mini,
+            .mail-pro .mail-pro-footer-upgrade {
+              display: none !important;
+            }
+
+            @media (max-width: 720px) {
+              .mail-pro .mail-pro-upgrade-strip[data-mail-capacity-box] {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 10px !important;
+              }
+
+              .mail-pro .mail-pro-upgrade-strip-info {
+                grid-template-columns: auto minmax(70px, 1fr) auto !important;
+              }
+
+              .mail-pro .mail-pro-upgrade-strip-btn {
+                width: 100% !important;
+              }
+            }
           </style>
 
           <div class="mail-pro">
@@ -15686,12 +15913,6 @@ function renderMail(mail) {
                 <button class="mail-pro-tab" type="button" data-mail-filter="msg">رسائل <span class="mail-pro-tab-count">${formatNumber(counts.msg)}</span></button>
                 <button class="mail-pro-tab" type="button" data-mail-filter="sys">نظام <span class="mail-pro-tab-count">${formatNumber(counts.sys)}</span></button>
               </div>
-              <div class="mail-pro-upgrade-strip" data-mail-capacity-box>
-                <div class="mail-pro-upgrade-strip-info">
-                  <div class="mail-pro-upgrade-strip-title">
-                    <span class="mail-pro-upgrade-dot"></span>
-                    <strong>سعة البريد</strong>
-                  </div>
 
                   <div class="mail-pro-upgrade-strip-bar">
                     <span data-mail-capacity-bar style="width: ${Math.max(0, Math.min(100, Math.round(((mailboxUpgradeInfo.used || counts.all) / Math.max(1, mailboxUpgradeInfo.capacity || 5)) * 100)))}%"></span>
