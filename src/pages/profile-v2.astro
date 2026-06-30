@@ -13396,7 +13396,7 @@ const metadata = {
               upgradeButton.disabled = true
               upgradeButton.setAttribute('aria-disabled', 'true')
             } else {
-              upgradeButton.textContent = 'تطوير'
+              upgradeButton.textContent = 'تطوير البريد'
               upgradeButton.disabled = false
               upgradeButton.removeAttribute('aria-disabled')
             }
@@ -15515,6 +15515,157 @@ function renderMail(mail) {
                 margin: 0 0 4px !important;
               }
             }
+
+            /* safe-mail-upgrade-strip-css */
+            .mail-pro [data-mail-capacity-box]:not(.mail-pro-upgrade-strip) {
+              display: none !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-strip {
+              display: flex !important;
+              align-items: center !important;
+              justify-content: space-between !important;
+              gap: 14px !important;
+              margin: 10px 0 11px !important;
+              padding: 10px 13px !important;
+              border-radius: 15px !important;
+              border: 1px solid rgba(255, 138, 91, .18) !important;
+              background: linear-gradient(180deg, rgba(255,255,255,.032), rgba(255,255,255,.014)) !important;
+              box-shadow: none !important;
+              transform: none !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-info {
+              display: grid !important;
+              grid-template-columns: auto minmax(86px, 150px) auto !important;
+              align-items: center !important;
+              gap: 10px !important;
+              min-width: 0 !important;
+              flex: 1 !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-title {
+              display: inline-flex !important;
+              align-items: center !important;
+              gap: 6px !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-dot {
+              width: 7px !important;
+              height: 7px !important;
+              border-radius: 50% !important;
+              background: linear-gradient(135deg, #ffd36a, #ff8a5b) !important;
+              box-shadow: 0 0 12px rgba(255, 138, 91, .35) !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-title strong {
+              color: rgba(255,255,255,.80) !important;
+              font-size: 12.5px !important;
+              font-weight: 1000 !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-bar {
+              width: 100% !important;
+              height: 5px !important;
+              border-radius: 999px !important;
+              overflow: hidden !important;
+              background: rgba(255,255,255,.085) !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-bar span {
+              display: block !important;
+              height: 100% !important;
+              border-radius: inherit !important;
+              background: linear-gradient(90deg, #ffd36a, #ff8a5b) !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-capacity {
+              color: #ffd36a !important;
+              font-size: 12px !important;
+              font-weight: 1000 !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-action {
+              display: inline-flex !important;
+              align-items: center !important;
+              gap: 8px !important;
+              flex-shrink: 0 !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-cost {
+              display: inline-flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              min-width: 68px !important;
+              height: 26px !important;
+              padding: 0 8px !important;
+              border-radius: 9px !important;
+              background: rgba(255, 211, 106, .075) !important;
+              color: #ffd36a !important;
+              font-size: 10.8px !important;
+              font-weight: 1000 !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-btn {
+              display: inline-flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              height: 32px !important;
+              min-width: 104px !important;
+              padding: 0 12px !important;
+              border-radius: 11px !important;
+              border: 1px solid rgba(255, 138, 91, .28) !important;
+              background: rgba(255, 138, 91, .085) !important;
+              color: #ffbd80 !important;
+              cursor: pointer !important;
+              font-size: 12px !important;
+              font-weight: 1000 !important;
+              line-height: 1 !important;
+              white-space: nowrap !important;
+              box-shadow: none !important;
+              transform: none !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-btn:hover {
+              background: linear-gradient(135deg, rgba(255,211,106,.18), rgba(255,138,91,.16)) !important;
+              border-color: rgba(255, 138, 91, .42) !important;
+              transform: none !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-btn:disabled,
+            .mail-pro .mail-pro-upgrade-btn[aria-disabled="true"] {
+              opacity: .55 !important;
+              cursor: not-allowed !important;
+            }
+
+            .mail-pro .mail-pro-upgrade,
+            .mail-pro .mail-pro-upgrade-mini,
+            .mail-pro .mail-pro-footer-upgrade {
+              display: none !important;
+            }
+
+            @media (max-width: 720px) {
+              .mail-pro .mail-pro-upgrade-strip {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 10px !important;
+              }
+
+              .mail-pro .mail-pro-upgrade-info {
+                grid-template-columns: auto minmax(70px, 1fr) auto !important;
+              }
+
+              .mail-pro .mail-pro-upgrade-action {
+                width: 100% !important;
+              }
+
+              .mail-pro .mail-pro-upgrade-btn {
+                flex: 1 !important;
+              }
+            }
           </style>
 
           <div class="mail-pro">
@@ -15538,6 +15689,32 @@ function renderMail(mail) {
                 <button class="mail-pro-tab" type="button" data-mail-filter="gift">هدايا <span class="mail-pro-tab-count">${formatNumber(counts.gift)}</span></button>
                 <button class="mail-pro-tab" type="button" data-mail-filter="msg">رسائل <span class="mail-pro-tab-count">${formatNumber(counts.msg)}</span></button>
                 <button class="mail-pro-tab" type="button" data-mail-filter="sys">نظام <span class="mail-pro-tab-count">${formatNumber(counts.sys)}</span></button>
+              </div>
+              <div class="mail-pro-upgrade-strip" data-mail-capacity-box>
+                <div class="mail-pro-upgrade-info">
+                  <div class="mail-pro-upgrade-title">
+                    <span class="mail-pro-upgrade-dot"></span>
+                    <strong>سعة البريد</strong>
+                  </div>
+
+                  <div class="mail-pro-upgrade-bar">
+                    <span data-mail-capacity-bar style="width: ${Math.max(0, Math.min(100, Math.round(((mailboxUpgradeInfo.used || counts.all) / Math.max(1, mailboxUpgradeInfo.capacity || 5)) * 100)))}%"></span>
+                  </div>
+
+                  <span class="mail-pro-upgrade-capacity" data-mail-capacity-label>
+                    ${mailboxUpgradeFormat(mailboxUpgradeInfo.used || counts.all)} / ${mailboxUpgradeFormat(mailboxUpgradeInfo.capacity || 5)}
+                  </span>
+                </div>
+
+                <div class="mail-pro-upgrade-action">
+                  <span class="mail-pro-upgrade-cost" data-mail-upgrade-cost>
+                    ${mailboxUpgradeFormat(mailboxUpgradeInfo.cost || 25000)} نقطة
+                  </span>
+
+                  <button class="mail-pro-upgrade-btn" type="button" data-mail-upgrade-open>
+                    تطوير البريد
+                  </button>
+                </div>
               </div>
 
                   <div class="mail-pro-upgrade-strip-bar">
