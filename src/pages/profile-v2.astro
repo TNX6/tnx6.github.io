@@ -13385,7 +13385,7 @@ const metadata = {
               upgradeButton.disabled = true
               upgradeButton.setAttribute('aria-disabled', 'true')
             } else {
-              upgradeButton.textContent = 'تطوير البريد'
+              upgradeButton.textContent = 'تطوير'
               upgradeButton.disabled = false
               upgradeButton.removeAttribute('aria-disabled')
             }
@@ -13701,6 +13701,318 @@ if (!window.__tnxMailboxUpgradeEventsInstalled) {
         })
       }
 
+
+      // mailbox-upgrade-v3-modal-fix
+      function tnxMailboxUpgradeApiUrlV3(path) {
+        try {
+          if (typeof API_BASE === 'string' && API_BASE) {
+            return API_BASE.replace(/\/$/, '') + path
+          }
+        } catch {}
+
+        return 'https://api.tnx6.xyz' + path
+      }
+
+      function tnxMailboxUpgradeFormatV3(value) {
+        try {
+          if (typeof formatNumber === 'function') {
+            return formatNumber(value)
+          }
+        } catch {}
+
+        try {
+          return new Intl.NumberFormat('ar-SA').format(Number(value || 0))
+        } catch {
+          return String(value || 0)
+        }
+      }
+
+      async function tnxMailboxUpgradeFetchV3(path, options) {
+        const response = await fetch(tnxMailboxUpgradeApiUrlV3(path), {
+          credentials: 'include',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            ...((options && options.headers) || {}),
+          },
+          ...(options || {}),
+        })
+
+        const data = await response.json().catch(() => ({}))
+
+        return {
+          response,
+          data,
+        }
+      }
+
+      function tnxMailboxUpgradeErrorTextV3(error) {
+        if (error === 'not_enough_points') return 'ما عندك نقاط كافية للتطوير.'
+        if (error === 'mailbox_not_owned') return 'لازم تفعل صندوق البريد أولًا.'
+        if (error === 'mailbox_not_found') return 'صندوق البريد غير مفعّل.'
+        if (error === 'max_capacity_reached') return 'وصلت للحد الأعلى.'
+        if (error === 'target_capacity_changed') return 'مساحة البريد تغيرت. افتح نافذة التطوير من جديد.'
+        if (error === 'upgrade_already_pending') return 'عندك طلب تطوير قيد التنفيذ.'
+        return 'تعذر تنفيذ طلب التطوير.'
+      }
+
+      function tnxSetMailboxUpgradeV3State(modal, type, text) {
+        const state = modal ? modal.querySelector('[data-mail-upgrade-v3-state]') : null
+
+        if (!state) return
+
+        state.dataset.state = type || ''
+        state.textContent = text || ''
+      }
+
+      async function tnxPollMailboxUpgradeV3(requestId, modal, confirmButton) {
+        const startedAt = Date.now()
+
+        while (Date.now() - startedAt < 70000) {
+          await new Promise((resolve) => setTimeout(resolve, 1500))
+
+          const { response, data } = await tnxMailboxUpgradeFetchV3('/api/me/mailbox/upgrade-status?id=' + encodeURIComponent(requestId), {
+            method: 'GET',
+          })
+
+          if (!response.ok || !data.ok) {
+            continue
+          }
+
+          if (data.status === 'completed') {
+            tnxSetMailboxUpgradeV3State(
+              modal,
+              'success',
+              'تم التطوير بنجاح. المساحة الجديدة: ' + tnxMailboxUpgradeFormatV3(data.targetCapacity) + ' رسالة.'
+            )
+
+            try {
+              if (typeof loadMailboxUpgradeInfo === 'function') {
+                await loadMailboxUpgradeInfo()
+              }
+            } catch {}
+
+            try {
+              if (typeof updateMailboxUpgradeDom === 'function') {
+                updateMailboxUpgradeDom()
+              }
+            } catch {}
+
+            if (confirmButton) {
+              confirmButton.textContent = 'تم'
+              confirmButton.disabled = true
+            }
+
+            setTimeout(() => {
+              document.querySelectorAll('[data-mail-upgrade-modal]').forEach((item) => item.remove())
+            }, 1400)
+
+            return
+          }
+
+          if (data.status === 'rejected') {
+            tnxSetMailboxUpgradeV3State(modal, 'error', tnxMailboxUpgradeErrorTextV3(data.errorMessage || data.error || 'rejected'))
+
+            if (confirmButton) {
+              confirmButton.textContent = 'تأكيد التطوير'
+              confirmButton.disabled = false
+            }
+
+            try {
+              if (typeof loadMailboxUpgradeInfo === 'function') {
+                await loadMailboxUpgradeInfo()
+              }
+            } catch {}
+
+            return
+          }
+        }
+
+        tnxSetMailboxUpgradeV3State(modal, 'error', 'تأخر الرد من Streamer.bot. تأكد أن البرنامج والـ Bridge شغالين.')
+
+        if (confirmButton) {
+          confirmButton.textContent = 'تأكيد التطوير'
+          confirmButton.disabled = false
+        }
+      }
+
+      async function tnxOpenMailboxUpgradeModalV3() {
+        document.querySelectorAll('[data-mail-upgrade-modal]').forEach((item) => item.remove())
+
+        let info = null
+
+        try {
+          const { response, data } = await tnxMailboxUpgradeFetchV3('/api/me/mailbox/upgrade-info', {
+            method: 'GET',
+          })
+
+          if (response.ok && data.ok) {
+            info = data
+          }
+        } catch {}
+
+        if (!info) {
+          info = {
+            used: 0,
+            capacity: 5,
+            maxCapacity: 45,
+            nextCapacity: 10,
+            increase: 5,
+            cost: 25000,
+            canUpgrade: true,
+          }
+        }
+
+        const modal = document.createElement('div')
+        modal.className = 'mail-upgrade-modal mail-upgrade-modal-v3'
+        modal.setAttribute('data-mail-upgrade-modal', 'true')
+        modal.setAttribute('dir', 'rtl')
+
+        const canUpgrade = Boolean(info.canUpgrade)
+        const used = Number(info.used || 0)
+        const capacity = Number(info.capacity || 5)
+        const nextCapacity = Number(info.nextCapacity || 10)
+        const increase = Number(info.increase || Math.max(0, nextCapacity - capacity))
+        const cost = Number(info.cost || 0)
+
+        modal.innerHTML = `
+          <div class="mail-upgrade-v3-dialog">
+            <button class="mail-upgrade-v3-close" type="button" data-mail-upgrade-v3-close aria-label="إغلاق">×</button>
+
+            <div class="mail-upgrade-v3-top">
+              <div>
+                <span>تطوير البريد</span>
+                <h3>${canUpgrade ? 'رفع مساحة صندوق البريد' : 'وصلت للحد الأعلى'}</h3>
+              </div>
+
+              <strong>${tnxMailboxUpgradeFormatV3(used)} / ${tnxMailboxUpgradeFormatV3(capacity)}</strong>
+            </div>
+
+            <p class="mail-upgrade-v3-desc">
+              ${canUpgrade
+                ? 'التطوير يتم عن طريق Streamer.bot حتى يتم خصم النقاط وتحديث الشات والموقع معًا.'
+                : 'صندوق بريدك وصل لأعلى مساحة متاحة حاليًا.'}
+            </p>
+
+            ${canUpgrade ? `
+              <div class="mail-upgrade-v3-grid">
+                <div>
+                  <span>الحالية</span>
+                  <strong>${tnxMailboxUpgradeFormatV3(capacity)}</strong>
+                </div>
+
+                <div>
+                  <span>بعد التطوير</span>
+                  <strong>${tnxMailboxUpgradeFormatV3(nextCapacity)}</strong>
+                </div>
+
+                <div>
+                  <span>الزيادة</span>
+                  <strong>+${tnxMailboxUpgradeFormatV3(increase)}</strong>
+                </div>
+
+                <div>
+                  <span>التكلفة</span>
+                  <strong>${tnxMailboxUpgradeFormatV3(cost)} نقطة</strong>
+                </div>
+              </div>
+            ` : ''}
+
+            <div class="mail-upgrade-v3-state" data-mail-upgrade-v3-state></div>
+
+            <div class="mail-upgrade-v3-actions">
+              ${canUpgrade ? `
+                <button class="mail-upgrade-v3-confirm" type="button" data-mail-upgrade-v3-confirm data-target-capacity="${nextCapacity}">
+                  تأكيد التطوير
+                </button>
+              ` : ''}
+
+              <button class="mail-upgrade-v3-cancel" type="button" data-mail-upgrade-v3-close>
+                ${canUpgrade ? 'إلغاء' : 'إغلاق'}
+              </button>
+            </div>
+          </div>
+        `
+
+        document.body.appendChild(modal)
+
+        modal.querySelectorAll('[data-mail-upgrade-v3-close]').forEach((button) => {
+          button.addEventListener('click', () => {
+            modal.remove()
+          })
+        })
+
+        const confirmButton = modal.querySelector('[data-mail-upgrade-v3-confirm]')
+
+        if (confirmButton) {
+          confirmButton.addEventListener('click', async () => {
+            const targetCapacity = Number(confirmButton.dataset.targetCapacity || 0)
+
+            confirmButton.disabled = true
+            confirmButton.textContent = 'جاري التنفيذ...'
+            tnxSetMailboxUpgradeV3State(modal, 'loading', 'جاري إرسال طلب التطوير...')
+
+            try {
+              const { response, data } = await tnxMailboxUpgradeFetchV3('/api/me/mailbox/upgrade', {
+                method: 'POST',
+                body: JSON.stringify({
+                  targetCapacity,
+                }),
+              })
+
+              if (!response.ok || !data.ok) {
+                if (data.error === 'upgrade_already_pending' && data.requestId) {
+                  tnxSetMailboxUpgradeV3State(modal, 'loading', 'عندك طلب قيد التنفيذ. ننتظر النتيجة...')
+                  await tnxPollMailboxUpgradeV3(data.requestId, modal, confirmButton)
+                  return
+                }
+
+                tnxSetMailboxUpgradeV3State(modal, 'error', tnxMailboxUpgradeErrorTextV3(data.error))
+
+                confirmButton.disabled = false
+                confirmButton.textContent = 'تأكيد التطوير'
+                return
+              }
+
+              tnxSetMailboxUpgradeV3State(modal, 'loading', 'تم إرسال الطلب. بانتظار Streamer.bot...')
+              await tnxPollMailboxUpgradeV3(data.requestId, modal, confirmButton)
+            } catch {
+              tnxSetMailboxUpgradeV3State(modal, 'error', 'صار خطأ في الاتصال. جرّب مرة ثانية.')
+              confirmButton.disabled = false
+              confirmButton.textContent = 'تأكيد التطوير'
+            }
+          })
+        }
+      }
+
+      if (!window.__tnxMailboxUpgradeV3ClickInstalled) {
+        window.__tnxMailboxUpgradeV3ClickInstalled = true
+
+        document.addEventListener('click', (event) => {
+          const target = event.target
+
+          if (!(target instanceof Element)) {
+            return
+          }
+
+          const button = target.closest('[data-mail-upgrade-open]')
+
+          if (!button) {
+            return
+          }
+
+          event.preventDefault()
+          event.stopPropagation()
+
+          try {
+            if (typeof event.stopImmediatePropagation === 'function') {
+              event.stopImmediatePropagation()
+            }
+          } catch {}
+
+          tnxOpenMailboxUpgradeModalV3()
+        }, true)
+      }
 function renderMail(mail) {
 
           // mailbox-upgrade-render-refresh
@@ -14825,6 +15137,260 @@ function renderMail(mail) {
                 width: 100% !important;
               }
             }
+
+            /* mailbox-upgrade-v3-clean-css */
+            .mail-pro .mail-pro-head {
+              display: flex !important;
+              align-items: center !important;
+              gap: 10px !important;
+            }
+
+            .mail-pro .mail-pro-capacity:not(.mail-pro-capacity-mini),
+            .mail-pro .mail-pro-capacity-clean {
+              display: none !important;
+            }
+
+            .mail-pro .mail-pro-capacity-mini {
+              display: inline-flex !important;
+              align-items: center !important;
+              gap: 7px !important;
+              height: 30px !important;
+              margin-inline-start: auto !important;
+              margin-inline-end: 2px !important;
+              padding: 0 7px !important;
+              border-radius: 12px !important;
+              border: 1px solid rgba(255, 211, 106, .16) !important;
+              background: rgba(255, 211, 106, .045) !important;
+              box-shadow: none !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-pro .mail-pro-capacity-mini-label {
+              color: rgba(255,255,255,.48) !important;
+              font-size: 10.5px !important;
+              font-weight: 900 !important;
+            }
+
+            .mail-pro .mail-pro-capacity-mini strong {
+              color: #ffd36a !important;
+              font-size: 11.5px !important;
+              font-weight: 1000 !important;
+            }
+
+            .mail-pro .mail-pro-capacity-mini .mail-pro-capacity-track {
+              width: 48px !important;
+              min-width: 48px !important;
+              height: 4px !important;
+              border-radius: 999px !important;
+              overflow: hidden !important;
+              background: rgba(255,255,255,.10) !important;
+            }
+
+            .mail-pro .mail-pro-capacity-mini .mail-pro-capacity-track span {
+              display: block !important;
+              height: 100% !important;
+              border-radius: inherit !important;
+              background: linear-gradient(90deg, rgba(255,211,106,.88), rgba(255,139,86,.95)) !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-mini {
+              height: 24px !important;
+              padding: 0 8px !important;
+              border-radius: 9px !important;
+              border: 1px solid rgba(255, 211, 106, .20) !important;
+              background: rgba(255, 211, 106, .075) !important;
+              color: #ffd36a !important;
+              cursor: pointer !important;
+              font-size: 10.8px !important;
+              font-weight: 1000 !important;
+              line-height: 1 !important;
+              box-shadow: none !important;
+              transform: none !important;
+            }
+
+            .mail-pro .mail-pro-upgrade-mini:hover {
+              background: rgba(255, 211, 106, .13) !important;
+              border-color: rgba(255, 211, 106, .32) !important;
+              transform: none !important;
+            }
+
+            @media (max-width: 720px) {
+              .mail-pro .mail-pro-head {
+                flex-wrap: wrap !important;
+              }
+
+              .mail-pro .mail-pro-capacity-mini {
+                order: 3 !important;
+                width: 100% !important;
+                justify-content: space-between !important;
+                margin: 8px 0 0 !important;
+              }
+
+              .mail-pro .mail-pro-capacity-mini .mail-pro-capacity-track {
+                flex: 1 !important;
+                width: auto !important;
+              }
+            }
+
+            .mail-upgrade-modal-v3 {
+              position: fixed !important;
+              inset: 0 !important;
+              z-index: 9999999 !important;
+              display: grid !important;
+              place-items: center !important;
+              padding: 16px !important;
+              background: rgba(0,0,0,.68) !important;
+            }
+
+            .mail-upgrade-v3-dialog {
+              position: relative !important;
+              width: min(430px, 100%) !important;
+              border-radius: 24px !important;
+              border: 1px solid rgba(255, 211, 106, .22) !important;
+              background: #141414 !important;
+              color: #fff !important;
+              padding: 20px !important;
+              box-shadow: 0 24px 80px rgba(0,0,0,.50) !important;
+            }
+
+            .mail-upgrade-v3-close {
+              position: absolute !important;
+              top: 12px !important;
+              left: 12px !important;
+              width: 32px !important;
+              height: 32px !important;
+              border-radius: 11px !important;
+              border: 1px solid rgba(255,255,255,.12) !important;
+              background: rgba(255,255,255,.06) !important;
+              color: rgba(255,255,255,.82) !important;
+              cursor: pointer !important;
+              font-size: 20px !important;
+              line-height: 1 !important;
+            }
+
+            .mail-upgrade-v3-top {
+              display: flex !important;
+              align-items: flex-start !important;
+              justify-content: space-between !important;
+              gap: 14px !important;
+              margin-bottom: 10px !important;
+              padding-left: 38px !important;
+            }
+
+            .mail-upgrade-v3-top span {
+              display: block !important;
+              color: #ffd36a !important;
+              font-size: 12px !important;
+              font-weight: 1000 !important;
+              margin-bottom: 5px !important;
+            }
+
+            .mail-upgrade-v3-top h3 {
+              margin: 0 !important;
+              color: #fff !important;
+              font-size: 20px !important;
+              font-weight: 1000 !important;
+            }
+
+            .mail-upgrade-v3-top > strong {
+              color: #ffd36a !important;
+              background: rgba(255,211,106,.08) !important;
+              border: 1px solid rgba(255,211,106,.16) !important;
+              border-radius: 12px !important;
+              padding: 7px 10px !important;
+              font-size: 12px !important;
+              white-space: nowrap !important;
+            }
+
+            .mail-upgrade-v3-desc {
+              margin: 0 0 14px !important;
+              color: rgba(255,255,255,.68) !important;
+              font-size: 13px !important;
+              line-height: 1.8 !important;
+            }
+
+            .mail-upgrade-v3-grid {
+              display: grid !important;
+              grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+              gap: 9px !important;
+              margin: 14px 0 !important;
+            }
+
+            .mail-upgrade-v3-grid div {
+              padding: 11px !important;
+              border-radius: 15px !important;
+              border: 1px solid rgba(255,255,255,.10) !important;
+              background: rgba(255,255,255,.045) !important;
+            }
+
+            .mail-upgrade-v3-grid span {
+              display: block !important;
+              color: rgba(255,255,255,.54) !important;
+              font-size: 11px !important;
+              font-weight: 900 !important;
+              margin-bottom: 6px !important;
+            }
+
+            .mail-upgrade-v3-grid strong {
+              color: #ffd36a !important;
+              font-size: 16px !important;
+              font-weight: 1000 !important;
+            }
+
+            .mail-upgrade-v3-state {
+              min-height: 22px !important;
+              margin: 8px 0 13px !important;
+              color: rgba(255,255,255,.68) !important;
+              font-size: 12.5px !important;
+              font-weight: 800 !important;
+              line-height: 1.6 !important;
+            }
+
+            .mail-upgrade-v3-state[data-state="loading"] {
+              color: #ffd36a !important;
+            }
+
+            .mail-upgrade-v3-state[data-state="success"] {
+              color: #8ff0b3 !important;
+            }
+
+            .mail-upgrade-v3-state[data-state="error"] {
+              color: #ff9b9b !important;
+            }
+
+            .mail-upgrade-v3-actions {
+              display: flex !important;
+              gap: 10px !important;
+              align-items: center !important;
+            }
+
+            .mail-upgrade-v3-confirm,
+            .mail-upgrade-v3-cancel {
+              height: 40px !important;
+              border-radius: 14px !important;
+              padding: 0 16px !important;
+              cursor: pointer !important;
+              font-size: 13px !important;
+              font-weight: 1000 !important;
+              border: 1px solid rgba(255,255,255,.12) !important;
+            }
+
+            .mail-upgrade-v3-confirm {
+              flex: 1 !important;
+              background: linear-gradient(135deg, #ffd36a, #ffb142) !important;
+              color: #221706 !important;
+              border-color: rgba(255,211,106,.42) !important;
+            }
+
+            .mail-upgrade-v3-cancel {
+              background: rgba(255,255,255,.06) !important;
+              color: rgba(255,255,255,.78) !important;
+            }
+
+            .mail-upgrade-v3-confirm:disabled {
+              opacity: .62 !important;
+              cursor: not-allowed !important;
+            }
           </style>
 
           <div class="mail-pro">
@@ -14841,7 +15407,18 @@ function renderMail(mail) {
                   </div>
                 </div>
 
-                <button class="mail-pro-clear" type="button" data-mail-clear ${counts.all ? '' : 'disabled aria-disabled="true"'}>حذف الكل</button>
+                
+                <div class="mail-pro-capacity-mini" data-mail-capacity-box>
+                  <span class="mail-pro-capacity-mini-label">السعة</span>
+                  <strong data-mail-capacity-label>${mailboxUpgradeFormat(mailboxUpgradeInfo.used || counts.all)} / ${mailboxUpgradeFormat(mailboxUpgradeInfo.capacity || 5)}</strong>
+                  <span class="mail-pro-capacity-track">
+                    <span data-mail-capacity-bar style="width: ${Math.max(0, Math.min(100, Math.round(((mailboxUpgradeInfo.used || counts.all) / Math.max(1, mailboxUpgradeInfo.capacity || 5)) * 100)))}%"></span>
+                  </span>
+                  <button class="mail-pro-upgrade-mini" type="button" data-mail-upgrade-open>
+                    تطوير
+                  </button>
+                </div>
+<button class="mail-pro-clear" type="button" data-mail-clear ${counts.all ? '' : 'disabled aria-disabled="true"'}>حذف الكل</button>
               </div>
 
               <div class="mail-pro-tabs" data-mail-tabs>
@@ -14849,20 +15426,6 @@ function renderMail(mail) {
                 <button class="mail-pro-tab" type="button" data-mail-filter="gift">هدايا <span class="mail-pro-tab-count">${formatNumber(counts.gift)}</span></button>
                 <button class="mail-pro-tab" type="button" data-mail-filter="msg">رسائل <span class="mail-pro-tab-count">${formatNumber(counts.msg)}</span></button>
                 <button class="mail-pro-tab" type="button" data-mail-filter="sys">نظام <span class="mail-pro-tab-count">${formatNumber(counts.sys)}</span></button>
-              </div>
-                            <div class="mail-pro-capacity mail-pro-capacity-clean" data-mail-capacity-box>
-                <div class="mail-pro-capacity-main">
-                  <span>مساحة البريد</span>
-                  <strong data-mail-capacity-label>${mailboxUpgradeFormat(mailboxUpgradeInfo.used || counts.all)} / ${mailboxUpgradeFormat(mailboxUpgradeInfo.capacity || 5)}</strong>
-                </div>
-
-                <div class="mail-pro-capacity-track">
-                  <span data-mail-capacity-bar style="width: ${Math.max(0, Math.min(100, Math.round(((mailboxUpgradeInfo.used || counts.all) / Math.max(1, mailboxUpgradeInfo.capacity || 5)) * 100)))}%"></span>
-                </div>
-
-                <button class="mail-pro-upgrade" type="button" data-mail-upgrade-open>
-                  تطوير
-                </button>
               </div>
             </div>
 
