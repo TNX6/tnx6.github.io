@@ -15256,6 +15256,23 @@ if (!window.__tnxMailboxUpgradeEventsInstalled) {
         return '<span class="mail-message-avatar-fallback">' + escapeHtml(getMailboxAvatarFallbackLetter(mail)) + '</span>';
       }
 
+
+      // fix-escapehtml-missing
+      function escapeHtml(value) {
+        try {
+          if (typeof esc === 'function') {
+            return esc(value);
+          }
+        } catch {}
+
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
 function renderMail(mail) {
         const timeText = formatMailboxRelativeTime(
           mail?.createdAt ||
