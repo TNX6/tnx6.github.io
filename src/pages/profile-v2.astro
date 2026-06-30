@@ -13678,18 +13678,20 @@ const metadata = {
             }
 
             .mail-pro-delete {
-              position: absolute;
-              top: 10px;
-              left: 10px;
-              width: 34px;
-              height: 34px;
-              display: grid;
-              place-items: center;
+              width: fit-content;
+              min-height: 34px;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              gap: 6px;
               border-radius: 12px;
-              border: 1px solid rgba(255,255,255,.10);
-              background: rgba(255,255,255,.055);
-              color: rgba(255,255,255,.62);
+              border: 1px solid rgba(255,107,107,.22);
+              background: rgba(255,107,107,.08);
+              color: #ff9b9b;
               cursor: pointer;
+              padding: 8px 11px;
+              font-size: 12px;
+              font-weight: 900;
               transition: transform .15s ease, background .15s ease, color .15s ease;
             }
 
@@ -13697,6 +13699,14 @@ const metadata = {
               transform: translateY(-1px);
               background: rgba(255,107,107,.14);
               color: #ff9b9b;
+            }
+
+            .mail-pro-card-footer-actions {
+              display: flex;
+              justify-content: flex-start;
+              margin-top: 12px;
+              padding-top: 10px;
+              border-top: 1px solid rgba(255,255,255,.07);
             }
 
             .mail-pro-footer {
@@ -13788,9 +13798,7 @@ const metadata = {
 
                       return `
                         <div class="${cardClass(kind, giftStatus)}" data-mail-kind="${esc(kind)}" data-mail-message-id="${esc(id)}">
-                          <button class="mail-pro-delete" type="button" data-mail-delete data-message-id="${esc(id)}" title="حذف الرسالة">🗑️</button>
-
-                          <div class="mail-pro-row">
+<div class="mail-pro-row">
                             <div class="mail-pro-avatar">${esc(icon)}</div>
 
                             <div class="mail-pro-body">
