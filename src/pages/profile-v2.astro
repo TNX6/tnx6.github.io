@@ -13389,12 +13389,12 @@ const metadata = {
           if (upgradeButton) {
             if (!info.canUpgrade) {
               upgradeButton.textContent = 'مكتمل'
-              upgradeButton.disabled = true
-              upgradeButton.setAttribute('aria-disabled', 'true')
+              upgradeButton.disabled = false
+              upgradeButton.removeAttribute('aria-disabled')
             } else if (info.activeRequest) {
               upgradeButton.textContent = 'قيد التطوير'
-              upgradeButton.disabled = true
-              upgradeButton.setAttribute('aria-disabled', 'true')
+              upgradeButton.disabled = false
+              upgradeButton.removeAttribute('aria-disabled')
             } else {
               upgradeButton.textContent = 'تطوير البريد'
               upgradeButton.disabled = false
@@ -14459,6 +14459,16 @@ if (!window.__tnxMailboxUpgradeEventsInstalled) {
           })
         })
 
+        
+        // mailbox-upgrade-v2-enable-button-hard-fix
+        root.querySelectorAll('[data-mail-upgrade-open]').forEach((button) => {
+          try {
+            button.disabled = false
+            button.removeAttribute('disabled')
+            button.removeAttribute('aria-disabled')
+          } catch {}
+        })
+
         root.querySelectorAll('[data-mbv2-filter]').forEach((button) => {
           button.addEventListener('click', () => {
             root.dataset.mbv2Filter = button.dataset.mbv2Filter || 'all'
@@ -14474,6 +14484,301 @@ if (!window.__tnxMailboxUpgradeEventsInstalled) {
             }).catch(() => {})
           }
         } catch {}
+      }
+
+
+
+      // mailbox-upgrade-hard-opener-v1
+      function mbHardUpgradeFormat(value) {
+        try {
+          if (typeof formatNumber === 'function') return formatNumber(value)
+        } catch {}
+
+        try {
+          return new Intl.NumberFormat('ar-SA').format(Number(value || 0))
+        } catch {
+          return String(value || 0)
+        }
+      }
+
+      function mbHardUpgradeApi(path) {
+        try {
+          if (typeof API_BASE === 'string' && API_BASE) {
+            return API_BASE.replace(/\/$/, '') + path
+          }
+        } catch {}
+
+        return 'https://api.tnx6.xyz' + path
+      }
+
+      async function mbHardUpgradeFetch(path, options) {
+        const response = await fetch(mbHardUpgradeApi(path), {
+          credentials: 'include',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            ...((options && options.headers) || {}),
+          },
+          ...(options || {}),
+        })
+
+        const data = await response.json().catch(() => ({}))
+
+        return {
+          response,
+          data,
+        }
+      }
+
+      function mbHardUpgradeErrorText(error) {
+        if (error === 'not_enough_points') return 'ما عندك نقاط كافية للتطوير.'
+        if (error === 'mailbox_not_owned') return 'لازم تفعل صندوق البريد أولًا.'
+        if (error === 'mailbox_not_found') return 'صندوق البريد غير مفعّل.'
+        if (error === 'max_capacity_reached') return 'وصلت للحد الأعلى.'
+        if (error === 'target_capacity_changed') return 'مساحة البريد تغيرت. افتح نافذة التطوير من جديد.'
+        if (error === 'upgrade_already_pending') return 'عندك طلب تطوير قيد التنفيذ.'
+        if (error === 'Unauthorized') return 'لازم تسجل دخول أولًا.'
+        return 'تعذر تنفيذ طلب التطوير.'
+      }
+
+      function mbHardUpgradeRemoveModal() {
+        document.querySelectorAll('[data-mb-hard-upgrade-modal]').forEach((modal) => modal.remove())
+      }
+
+      function mbHardUpgradeSetState(modal, type, message) {
+        const state = modal ? modal.querySelector('[data-mb-hard-upgrade-state]') : null
+        if (!state) return
+
+        state.dataset.state = type || ''
+        state.textContent = message || ''
+      }
+
+      function mbHardUpgradeInstallStyle() {
+        if (document.getElementById('mb-hard-upgrade-style')) return
+
+        const style = document.createElement('style')
+        style.id = 'mb-hard-upgrade-style'
+        style.textContent =
+          '.mb-hard-upgrade-modal{position:fixed;inset:0;z-index:99999999;display:grid;place-items:center;padding:18px;background:rgba(0,0,0,.68);direction:rtl}' +
+          '.mb-hard-upgrade-dialog{position:relative;width:min(440px,100%);border-radius:24px;border:1px solid rgba(255,138,91,.20);background:#17171d;color:#fff;padding:20px;box-shadow:0 28px 90px rgba(0,0,0,.55)}' +
+          '.mb-hard-upgrade-close{position:absolute;top:12px;left:12px;width:34px;height:34px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);cursor:pointer;font-size:20px;line-height:1}' +
+          '.mb-hard-upgrade-kicker{color:#ffbd80;font-size:12px;font-weight:1000;margin-bottom:7px}' +
+          '.mb-hard-upgrade-dialog h3{margin:0 0 8px;font-size:21px;font-weight:1000}' +
+          '.mb-hard-upgrade-dialog p{margin:0 0 15px;color:rgba(255,255,255,.66);font-size:13px;line-height:1.8}' +
+          '.mb-hard-upgrade-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}' +
+          '.mb-hard-upgrade-grid div{padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04)}' +
+          '.mb-hard-upgrade-grid span{display:block;color:rgba(255,255,255,.52);font-size:11.5px;font-weight:900;margin-bottom:6px}' +
+          '.mb-hard-upgrade-grid strong{display:block;color:#ffd36a;font-size:17px;font-weight:1000}' +
+          '.mb-hard-upgrade-state{min-height:22px;margin:8px 0 14px;color:rgba(255,255,255,.66);font-size:12.5px;font-weight:900;line-height:1.6}' +
+          '.mb-hard-upgrade-state[data-state="loading"]{color:#ffd36a}' +
+          '.mb-hard-upgrade-state[data-state="success"]{color:#8ff0b3}' +
+          '.mb-hard-upgrade-state[data-state="error"]{color:#ff9b9b}' +
+          '.mb-hard-upgrade-actions{display:flex;align-items:center;gap:10px}' +
+          '.mb-hard-upgrade-confirm,.mb-hard-upgrade-cancel{height:40px;border-radius:14px;padding:0 16px;cursor:pointer;font-size:13px;font-weight:1000;border:1px solid rgba(255,255,255,.12)}' +
+          '.mb-hard-upgrade-confirm{flex:1;background:linear-gradient(135deg,#ffd36a,#ff9d2e);color:#241404;border-color:rgba(255,211,106,.40)}' +
+          '.mb-hard-upgrade-cancel{background:rgba(255,255,255,.06);color:rgba(255,255,255,.76)}' +
+          '.mb-hard-upgrade-confirm:disabled{opacity:.62;cursor:not-allowed}'
+
+        document.head.appendChild(style)
+      }
+
+      async function mbHardPollUpgrade(requestId, modal, confirmButton) {
+        const startedAt = Date.now()
+
+        while (Date.now() - startedAt < 70000) {
+          await new Promise((resolve) => setTimeout(resolve, 1500))
+
+          const result = await mbHardUpgradeFetch('/api/me/mailbox/upgrade-status?id=' + encodeURIComponent(requestId), {
+            method: 'GET',
+          })
+
+          const response = result.response
+          const data = result.data
+
+          if (!response.ok || !data.ok) continue
+
+          if (data.status === 'completed') {
+            mbHardUpgradeSetState(
+              modal,
+              'success',
+              'تم تطوير البريد بنجاح. السعة الجديدة: ' + mbHardUpgradeFormat(data.targetCapacity) + ' رسالة.'
+            )
+
+            try {
+              if (typeof loadMailboxUpgradeInfo === 'function') await loadMailboxUpgradeInfo()
+            } catch {}
+
+            try {
+              if (typeof updateMailboxUpgradeDom === 'function') updateMailboxUpgradeDom()
+            } catch {}
+
+            if (confirmButton) {
+              confirmButton.textContent = 'تم التطوير'
+              confirmButton.disabled = true
+            }
+
+            setTimeout(() => {
+              mbHardUpgradeRemoveModal()
+            }, 1500)
+
+            return
+          }
+
+          if (data.status === 'rejected') {
+            mbHardUpgradeSetState(modal, 'error', mbHardUpgradeErrorText(data.errorMessage || data.error || 'rejected'))
+
+            if (confirmButton) {
+              confirmButton.textContent = 'تأكيد التطوير'
+              confirmButton.disabled = false
+            }
+
+            return
+          }
+        }
+
+        mbHardUpgradeSetState(modal, 'error', 'تأخر الرد من Streamer.bot. تأكد أن Streamer.bot والـ Bridge شغالين.')
+
+        if (confirmButton) {
+          confirmButton.textContent = 'تأكيد التطوير'
+          confirmButton.disabled = false
+        }
+      }
+
+      async function mbHardOpenUpgradeModal() {
+        mbHardUpgradeInstallStyle()
+        mbHardUpgradeRemoveModal()
+
+        let info = null
+
+        try {
+          const result = await mbHardUpgradeFetch('/api/me/mailbox/upgrade-info', {
+            method: 'GET',
+          })
+
+          if (result.response.ok && result.data.ok) {
+            info = result.data
+          }
+        } catch {}
+
+        if (!info) {
+          info = {
+            used: 0,
+            capacity: 5,
+            maxCapacity: 45,
+            nextCapacity: 10,
+            increase: 5,
+            cost: 25000,
+            canUpgrade: true,
+          }
+        }
+
+        const used = Number(info.used || 0)
+        const capacity = Number(info.capacity || 5)
+        const nextCapacity = Number(info.nextCapacity || 10)
+        const increase = Number(info.increase || Math.max(0, nextCapacity - capacity))
+        const cost = Number(info.cost || 0)
+        const canUpgrade = Boolean(info.canUpgrade)
+
+        const modal = document.createElement('div')
+        modal.className = 'mb-hard-upgrade-modal'
+        modal.setAttribute('data-mb-hard-upgrade-modal', 'true')
+
+        modal.innerHTML =
+          '<div class="mb-hard-upgrade-dialog">' +
+            '<button class="mb-hard-upgrade-close" type="button" data-mb-hard-upgrade-close aria-label="إغلاق">×</button>' +
+            '<div class="mb-hard-upgrade-kicker">تطوير البريد</div>' +
+            '<h3>' + (canUpgrade ? 'تأكيد تطوير سعة البريد' : 'وصلت للحد الأعلى') + '</h3>' +
+            '<p>' + (canUpgrade ? 'سيتم إرسال الطلب إلى Streamer.bot لخصم النقاط وتحديث الشات والموقع معًا.' : 'صندوق بريدك وصل لأعلى سعة متاحة حاليًا.') + '</p>' +
+
+            '<div class="mb-hard-upgrade-grid">' +
+              '<div><span>المستخدم الآن</span><strong>' + mbHardUpgradeFormat(used) + ' / ' + mbHardUpgradeFormat(capacity) + '</strong></div>' +
+              '<div><span>بعد التطوير</span><strong>' + mbHardUpgradeFormat(nextCapacity) + '</strong></div>' +
+              '<div><span>الزيادة</span><strong>+' + mbHardUpgradeFormat(increase) + '</strong></div>' +
+              '<div><span>التكلفة</span><strong>' + (canUpgrade ? mbHardUpgradeFormat(cost) + ' نقطة' : 'مكتمل') + '</strong></div>' +
+            '</div>' +
+
+            '<div class="mb-hard-upgrade-state" data-mb-hard-upgrade-state></div>' +
+
+            '<div class="mb-hard-upgrade-actions">' +
+              (canUpgrade ? '<button class="mb-hard-upgrade-confirm" type="button" data-mb-hard-upgrade-confirm data-target-capacity="' + nextCapacity + '">تأكيد التطوير</button>' : '') +
+              '<button class="mb-hard-upgrade-cancel" type="button" data-mb-hard-upgrade-close>' + (canUpgrade ? 'إلغاء' : 'إغلاق') + '</button>' +
+            '</div>' +
+          '</div>'
+
+        document.body.appendChild(modal)
+
+        modal.querySelectorAll('[data-mb-hard-upgrade-close]').forEach((button) => {
+          button.addEventListener('click', () => modal.remove())
+        })
+
+        const confirmButton = modal.querySelector('[data-mb-hard-upgrade-confirm]')
+
+        if (confirmButton) {
+          confirmButton.addEventListener('click', async () => {
+            const targetCapacity = Number(confirmButton.dataset.targetCapacity || 0)
+
+            confirmButton.disabled = true
+            confirmButton.textContent = 'جاري التنفيذ...'
+            mbHardUpgradeSetState(modal, 'loading', 'جاري إرسال طلب التطوير...')
+
+            try {
+              const result = await mbHardUpgradeFetch('/api/me/mailbox/upgrade', {
+                method: 'POST',
+                body: JSON.stringify({
+                  targetCapacity,
+                }),
+              })
+
+              const response = result.response
+              const data = result.data
+
+              if (!response.ok || !data.ok) {
+                if (data.error === 'upgrade_already_pending' && data.requestId) {
+                  mbHardUpgradeSetState(modal, 'loading', 'عندك طلب قيد التنفيذ. ننتظر النتيجة...')
+                  await mbHardPollUpgrade(data.requestId, modal, confirmButton)
+                  return
+                }
+
+                mbHardUpgradeSetState(modal, 'error', mbHardUpgradeErrorText(data.error))
+                confirmButton.disabled = false
+                confirmButton.textContent = 'تأكيد التطوير'
+                return
+              }
+
+              mbHardUpgradeSetState(modal, 'loading', 'تم إرسال الطلب. بانتظار Streamer.bot...')
+              await mbHardPollUpgrade(data.requestId, modal, confirmButton)
+            } catch {
+              mbHardUpgradeSetState(modal, 'error', 'صار خطأ في الاتصال. جرّب مرة ثانية.')
+              confirmButton.disabled = false
+              confirmButton.textContent = 'تأكيد التطوير'
+            }
+          })
+        }
+      }
+
+      if (!window.__mbHardUpgradeClickInstalled) {
+        window.__mbHardUpgradeClickInstalled = true
+
+        document.addEventListener('click', (event) => {
+          const target = event.target
+
+          if (!(target instanceof Element)) return
+
+          const button = target.closest('[data-mail-upgrade-open]')
+
+          if (!button) return
+
+          event.preventDefault()
+          event.stopPropagation()
+
+          try {
+            if (typeof event.stopImmediatePropagation === 'function') {
+              event.stopImmediatePropagation()
+            }
+          } catch {}
+
+          mbHardOpenUpgradeModal()
+        }, true)
       }
 
 
