@@ -14491,63 +14491,123 @@ function mbV2Card(message) {
         }
       }
 
-function renderMailboxProV2(mail) {
-        const roots = Array.from(document.querySelectorAll('.mail-pro'))
-                const root = roots[0] || null
-        
-                roots.slice(1).forEach((extraRoot) => {
-                  try { extraRoot.remove() } catch {}
-                })
-        if (!root) return
 
-        let list = mbV2NormalizeMessages(mail)
+      function renderMailboxProV2(mail) {
+        const roots = Array.from(document.querySelectorAll('.mail-pro'));
+        const root = roots[0] || null;
 
-        if (!list.length) {
+        roots.slice(1).forEach((extraRoot) => {
+          try { extraRoot.remove(); } catch {}
+        });
+
+        if (!root) return;
+
+        const normalize = (payload) => {
+          if (Array.isArray(payload)) return payload;
+          if (!payload || typeof payload !== 'object') return [];
+
+          const candidates = [
+            payload.messages,
+            payload.mail,
+            payload.items,
+            payload.data,
+            payload.mailbox && payload.mailbox.messages,
+            payload.mailbox && payload.mailbox.mail,
+            payload.mailbox && payload.mailbox.items,
+            payload.result && payload.result.messages,
+            payload.result && payload.result.mail,
+            payload.result && payload.result.items,
+          ];
+
+          for (const candidate of candidates) {
+            if (Array.isArray(candidate)) return candidate;
+          }
+
+          return [];
+        };
+
+        const apiBase = () => {
           try {
-            mbV2FetchMailboxDirect(root);
+            if (typeof API_BASE === 'string' && API_BASE) return API_BASE.replace(/\/$/, '');
           } catch {}
+
+          return 'https://api.tnx6.xyz';
+        };
+
+        let list = normalize(mail);
+
+        // إذا وصلنا هنا بقائمة فاضية، لا تعرض Empty مباشرة.
+        // اسحب البريد مباشرة من API ثم ارندر من جديد.
+        if (!list.length && root.dataset.mbv2DirectTried !== '1') {
+          root.dataset.mbv2DirectTried = '1';
+          root.dataset.mailboxV2 = 'true';
+
+          root.innerHTML =
+            '<style>' +
+              '.mail-pro[data-mailbox-v2="true"]{direction:rtl;color:#f4f4f5;font-family:inherit;}' +
+              '.mbv2-loading-box{padding:34px 18px;text-align:center;color:rgba(255,255,255,.62);font-size:13px;font-weight:900;}' +
+            '</style>' +
+            '<div class="mbv2-loading-box">جاري تحميل البريد...</div>';
+
+          fetch(apiBase() + '/api/me/mailbox?limit=50&v=' + Date.now(), {
+            credentials: 'include',
+            cache: 'no-store',
+            headers: { Accept: 'application/json' },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              const fresh = normalize(data);
+              root.dataset.mbv2DirectTried = '0';
+              renderMailboxProV2(fresh);
+            })
+            .catch((error) => {
+              console.error('[Mailbox V2] direct load failed', error);
+              root.dataset.mbv2DirectTried = '0';
+              renderMailboxProV2([]);
+            });
+
+          return;
         }
-        let filter = root.dataset.mbv2Filter || 'all'
+
+        root.dataset.mbv2DirectTried = '0';
+
+        let filter = root.dataset.mbv2Filter || 'all';
 
         if (!['all', 'message', 'gift', 'system'].includes(filter)) {
           filter = 'all';
           root.dataset.mbv2Filter = 'all';
         }
-        const counts = mbV2Counts(list)
-        const upgrade = mbV2UpgradeInfo(list)
-        const percent = Math.max(0, Math.min(100, Math.round((upgrade.used / Math.max(1, upgrade.capacity)) * 100)))
+
+        const counts = mbV2Counts(list);
+        const upgrade = mbV2UpgradeInfo(list);
+        const percent = Math.max(0, Math.min(100, Math.round((upgrade.used / Math.max(1, upgrade.capacity)) * 100)));
 
         const visible = list.filter((message) => {
-          if (filter === 'all') return true
-          return mbV2Type(message) === filter
-        })
+          if (filter === 'all') return true;
+          return mbV2Type(message) === filter;
+        });
 
-        root.dataset.mailboxV2 = 'true'
+        root.dataset.mailboxV2 = 'true';
 
         const upgradeButtonText = !upgrade.canUpgrade
           ? 'مكتمل'
           : upgrade.activeRequest
             ? 'قيد التنفيذ'
-            : 'تطوير البريد'
+            : 'تطوير البريد';
 
         const upgradeCostText = !upgrade.canUpgrade
           ? 'أقصى سعة'
           : upgrade.activeRequest
             ? 'بانتظار التنفيذ'
-            : mbV2Format(upgrade.cost) + ' نقطة'
+            : mbV2Format(upgrade.cost) + ' نقطة';
 
         root.innerHTML =
           '<style>' +
             '.mail-pro[data-mailbox-v2="true"]{direction:rtl;color:#f4f4f5;font-family:inherit;}' +
-            '.mail-pro[data-mailbox-v2="true"] > :not(style):not(.mbv2-shell){display:none!important;}' +
-            'html body .mail-pro[data-mailbox-v2="true"] .mbv2-shell{display:block!important;width:100%!important;max-width:none!important;border-radius:22px!important;overflow:hidden!important;}' +
-            'html body .mail-pro[data-mailbox-v2="true"] .mbv2-capacity[data-mail-capacity-box]{display:flex!important;}' +
-            'html body .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade-btn[data-mail-upgrade-open]{display:inline-flex!important;}' +
-            'html body .mail-pro[data-mailbox-v2="true"] .mbv2-cost[data-mail-upgrade-cost]{display:inline-flex!important;}' +
-            'html body .mail-pro[data-mailbox-v2="true"] .mail-pro-card,html body .mail-pro[data-mailbox-v2="true"] .mail-pro-footer,html body .mail-pro[data-mailbox-v2="true"] .mail-pro-list,html body .mail-pro[data-mailbox-v2="true"] .mail-pro-head,html body .mail-pro[data-mailbox-v2="true"] .mail-pro-tabs{display:none!important;}' +
             '.mail-pro[data-mailbox-v2="true"] *{box-sizing:border-box;}' +
+            '.mail-pro[data-mailbox-v2="true"] > :not(style):not(.mbv2-shell){display:none!important;}' +
 
-            '.mbv2-shell{overflow:hidden;border:1px solid rgba(255,255,255,.085);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.048),rgba(255,255,255,.018));box-shadow:none;}' +
+            '.mbv2-shell{overflow:hidden;border:1px solid rgba(255,255,255,.085);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.048),rgba(255,255,255,.018));}' +
 
             '.mbv2-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 16px 13px;border-bottom:1px solid rgba(255,255,255,.07);}' +
             '.mbv2-title{display:flex;align-items:center;gap:12px;min-width:0;}' +
@@ -14556,8 +14616,7 @@ function renderMailboxProV2(mail) {
             '.mbv2-title h3{margin:0;font-size:21px;font-weight:1000;letter-spacing:-.02em;}' +
             '.mbv2-title p{margin:3px 0 0;color:rgba(255,255,255,.58);font-size:12.5px;font-weight:700;}' +
             '.mbv2-head-actions{display:flex;align-items:center;gap:8px;}' +
-            '.mbv2-clear,.mbv2-clear-read{height:34px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,107,107,.22);background:rgba(255,107,107,.06);color:#ff9f9f;cursor:pointer;font-size:12px;font-weight:1000;white-space:nowrap;}' +
-            '.mbv2-clear-read{border-color:rgba(255,255,255,.10);background:rgba(255,255,255,.045);color:rgba(255,255,255,.68);}' +
+            '.mbv2-clear{height:34px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,107,107,.22);background:rgba(255,107,107,.06);color:#ff9f9f;cursor:pointer;font-size:12px;font-weight:1000;white-space:nowrap;}' +
 
             '.mbv2-tabs{display:flex;align-items:center;gap:6px;padding:12px 14px 10px;}' +
             '.mbv2-tab{flex:1;height:38px;border:0;border-radius:13px;background:rgba(255,255,255,.045);color:rgba(255,255,255,.60);cursor:pointer;font-size:12.5px;font-weight:1000;display:flex;align-items:center;justify-content:center;gap:7px;}' +
@@ -14565,25 +14624,23 @@ function renderMailboxProV2(mail) {
             '.mbv2-tab.active{background:linear-gradient(135deg,#ffb36b,#ff8a5b);color:#24140c;box-shadow:0 10px 24px rgba(255,138,91,.18);}' +
             '.mbv2-tab.active span{background:rgba(0,0,0,.16);color:#24140c;}' +
 
-            '.mbv2-capacity{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 14px 12px;padding:11px 13px;border-radius:16px;border:1px solid rgba(255,138,91,.16);background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.012));}' +
-            '.mbv2-cap-main{display:grid;grid-template-columns:auto minmax(90px,160px) auto;align-items:center;gap:10px;min-width:0;flex:1;}' +
-            '.mbv2-cap-name{display:inline-flex;align-items:center;gap:7px;color:rgba(255,255,255,.80);font-size:12.5px;font-weight:1000;white-space:nowrap;}' +
-            '.mbv2-cap-dot{width:7px;height:7px;border-radius:999px;background:linear-gradient(135deg,#ffd36a,#ff8a5b);box-shadow:0 0 12px rgba(255,138,91,.35);}' +
-            '.mbv2-cap-bar{height:5px;border-radius:999px;background:rgba(255,255,255,.085);overflow:hidden;}' +
+            '.mbv2-capacity{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 14px 12px;padding:10px 12px;border-radius:15px;border:1px solid rgba(255,138,91,.15);background:rgba(255,255,255,.026);}' +
+            '.mbv2-cap-main{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}' +
+            '.mbv2-cap-name{display:inline-flex;align-items:center;gap:7px;min-width:98px;white-space:nowrap;}' +
+            '.mbv2-cap-name:before{content:"";width:7px;height:7px;border-radius:999px;background:linear-gradient(135deg,#ffd36a,#ff8a5b);box-shadow:0 0 12px rgba(255,138,91,.35);flex:0 0 auto;}' +
+            '.mbv2-cap-name strong{color:rgba(255,255,255,.78);font-size:12px;font-weight:1000;}' +
+            '.mbv2-cap-name span{color:#ffd36a;font-size:12px;font-weight:1000;white-space:nowrap;}' +
+            '.mbv2-cap-bar{flex:1;max-width:160px;min-width:90px;height:5px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.085);}' +
             '.mbv2-cap-bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ffd36a,#ff8a5b);}' +
-            '.mbv2-cap-count{color:#ffd36a;font-size:12px;font-weight:1000;white-space:nowrap;}' +
             '.mbv2-upgrade{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;}' +
-            '.mbv2-cost{height:27px;padding:0 9px;border-radius:9px;background:rgba(255,211,106,.075);color:#ffd36a;font-size:10.8px;font-weight:1000;display:grid;place-items:center;white-space:nowrap;}' +
-            '.mbv2-upgrade-btn{height:33px;min-width:110px;padding:0 12px;border-radius:11px;border:1px solid rgba(255,138,91,.30);background:rgba(255,138,91,.085);color:#ffbd80;cursor:pointer;font-size:12px;font-weight:1000;white-space:nowrap;}' +
-            '.mbv2-upgrade-btn:hover{background:linear-gradient(135deg,rgba(255,211,106,.18),rgba(255,138,91,.16));border-color:rgba(255,138,91,.42);}' +
-            '.mbv2-upgrade-btn:disabled,.mbv2-upgrade-btn[aria-disabled="true"]{opacity:.55;cursor:not-allowed;}' +
+            '.mbv2-cost{display:inline-flex;align-items:center;justify-content:center;height:27px;min-width:76px;padding:0 9px;border-radius:9px;background:rgba(255,211,106,.075);color:#ffd36a;font-size:10.8px;font-weight:1000;white-space:nowrap;}' +
+            '.mbv2-upgrade-btn{display:inline-flex;align-items:center;justify-content:center;height:32px;min-width:108px;padding:0 12px;border-radius:11px;border:1px solid rgba(255,138,91,.30);background:rgba(255,138,91,.085);color:#ffbd80;cursor:pointer;font-size:12px;font-weight:1000;line-height:1;white-space:nowrap;}' +
 
             '.mbv2-list{padding:0 14px 12px;display:flex;flex-direction:column;gap:10px;max-height:min(46vh,410px);overflow:auto;}' +
-            '.mbv2-list::-webkit-scrollbar{width:8px;}.mbv2-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:999px;}' +
             '.mbv2-card{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;padding:13px;border-radius:17px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.035);}' +
             '.mbv2-card-gift{border-color:rgba(255,211,106,.22);background:linear-gradient(180deg,rgba(255,211,106,.06),rgba(255,255,255,.026));}' +
             '.mbv2-card-system{border-color:rgba(150,124,255,.20);background:linear-gradient(180deg,rgba(150,124,255,.05),rgba(255,255,255,.025));}' +
-            '.mbv2-avatar{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);font-size:20px;font-weight:1000;color:#fff;}' +
+            '.mbv2-avatar{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);font-size:20px;font-weight:1000;color:#fff;overflow:hidden;}' +
             '.mbv2-avatar-img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;}' +
             '.mbv2-card-gift .mbv2-avatar{background:linear-gradient(145deg,#ffd36a,#ff9d2e);color:#2a1804;}' +
             '.mbv2-card-system .mbv2-avatar{background:linear-gradient(145deg,#b79cff,#7b5cff);}' +
@@ -14592,31 +14649,15 @@ function renderMailboxProV2(mail) {
             '.mbv2-meta strong{font-size:14px;font-weight:1000;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}' +
             '.mbv2-meta time{margin-inline-start:auto;color:rgba(255,255,255,.42);font-size:11px;font-weight:800;white-space:nowrap;}' +
             '.mbv2-pill{padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.62);font-size:10.5px;font-weight:1000;white-space:nowrap;}' +
-            '.mbv2-card-gift .mbv2-pill{background:rgba(255,211,106,.11);color:#ffd36a;}' +
             '.mbv2-card p{margin:0;color:rgba(255,255,255,.62);font-size:13px;line-height:1.7;}' +
+            '.mbv2-trash{position:absolute;left:12px;bottom:12px;width:28px;height:28px;border-radius:10px;border:1px solid rgba(255,107,107,.18);background:rgba(255,107,107,.055);color:#ff9f9f;cursor:pointer;font-size:13px;display:grid;place-items:center;}' +
             '.mbv2-card-actions{display:flex;align-items:center;gap:8px;margin-top:11px;}' +
             '.mbv2-accept{height:34px;padding:0 16px;border:0;border-radius:11px;background:linear-gradient(135deg,#ffd36a,#ff9d2e);color:#241404;cursor:pointer;font-size:12.5px;font-weight:1000;}' +
             '.mbv2-reject{height:34px;padding:0 14px;border-radius:11px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:rgba(255,255,255,.65);cursor:pointer;font-size:12px;font-weight:900;}' +
-            '.mbv2-trash{position:absolute;left:12px;bottom:12px;width:28px;height:28px;border-radius:10px;border:1px solid rgba(255,107,107,.18);background:rgba(255,107,107,.055);color:#ff9f9f;cursor:pointer;font-size:13px;display:grid;place-items:center;}' +
-
             '.mbv2-empty{padding:34px 18px;text-align:center;color:rgba(255,255,255,.55);}' +
             '.mbv2-empty strong{display:block;color:#fff;font-size:15px;margin-bottom:5px;}' +
             '.mbv2-empty span{font-size:12.5px;}' +
-
             '.mbv2-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-top:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.12);color:rgba(255,255,255,.46);font-size:11.5px;font-weight:800;}' +
-
-            '@media(max-width:720px){' +
-              '.mbv2-head{align-items:flex-start;flex-direction:column;}' +
-              '.mbv2-head-actions{width:100%;justify-content:space-between;}' +
-              '.mbv2-tabs{gap:5px;}' +
-              '.mbv2-tab{font-size:11.5px;}' +
-              '.mbv2-capacity{flex-direction:column;align-items:stretch;}' +
-              '.mbv2-cap-main{grid-template-columns:auto minmax(70px,1fr) auto;}' +
-              '.mbv2-upgrade{width:100%;}' +
-              '.mbv2-upgrade-btn{flex:1;}' +
-              '.mbv2-card{grid-template-columns:40px minmax(0,1fr);}' +
-              '.mbv2-avatar{width:40px;height:40px;}' +
-            '}' +
           '</style>' +
 
           '<section class="mbv2-shell">' +
@@ -14625,7 +14666,6 @@ function renderMailboxProV2(mail) {
                 '<div class="mbv2-icon">✉️' + (counts.all ? '<span class="mbv2-badge">' + mbV2Format(counts.all) + '</span>' : '') + '</div>' +
                 '<div><h3>البريد</h3><p>رسائلك وهدايا المجتمع في مكان واحد</p></div>' +
               '</div>' +
-
               '<div class="mbv2-head-actions">' +
                 '<button class="mbv2-clear" type="button" data-mail-clear ' + (counts.all ? '' : 'disabled aria-disabled="true"') + '>حذف الكل</button>' +
               '</div>' +
@@ -14643,10 +14683,9 @@ function renderMailboxProV2(mail) {
                 '<div class="mbv2-cap-name"><strong>سعة البريد</strong><span data-mail-capacity-label>' + mbV2Format(upgrade.used) + ' / ' + mbV2Format(upgrade.capacity) + '</span></div>' +
                 '<div class="mbv2-cap-bar"><span data-mail-capacity-bar style="width:' + percent + '%"></span></div>' +
               '</div>' +
-
               '<div class="mbv2-upgrade">' +
                 '<span class="mbv2-cost" data-mail-upgrade-cost>' + upgradeCostText + '</span>' +
-                '<button class="mbv2-upgrade-btn" type="button" data-mail-upgrade-open ' + (!upgrade.canUpgrade ? 'disabled aria-disabled="true"' : '') + '>' + upgradeButtonText + '</button>' +
+                '<button class="mbv2-upgrade-btn" type="button" data-mb-upgrade-open-v4>' + upgradeButtonText + '</button>' +
               '</div>' +
             '</div>' +
 
@@ -14658,77 +14697,16 @@ function renderMailboxProV2(mail) {
               '<span>يتم تحديث البريد تلقائيًا</span>' +
               '<span>اقبل الهدايا المعلقة قبل حذفها</span>' +
             '</footer>' +
-          '</section>'
-
-        
-        // mailbox-v2-direct-upgrade-click-fix
-        root.querySelectorAll('[data-mail-upgrade-open]').forEach((button) => {
-          button.addEventListener('click', (event) => {
-            event.preventDefault()
-            event.stopPropagation()
-
-            try {
-              if (typeof event.stopImmediatePropagation === 'function') {
-                event.stopImmediatePropagation()
-              }
-            } catch {}
-
-            try {
-              if (typeof tnxOpenMailboxUpgradeModalV3 === 'function') {
-                tnxOpenMailboxUpgradeModalV3()
-                return
-              }
-
-              if (typeof openMailboxUpgradeModal === 'function') {
-                openMailboxUpgradeModal()
-                return
-              }
-
-              console.error('[Mailbox Upgrade] No upgrade modal opener found')
-            } catch (error) {
-              console.error('[Mailbox Upgrade] Failed to open modal', error)
-            }
-          })
-        })
-
-        
-        // mailbox-upgrade-v2-enable-button-hard-fix
-        root.querySelectorAll('[data-mail-upgrade-open]').forEach((button) => {
-          try {
-            button.disabled = false
-            button.removeAttribute('disabled')
-            button.removeAttribute('aria-disabled')
-          } catch {}
-        })
-
-        
-        // mailbox-upgrade-v4-isolate-button
-        root.querySelectorAll('[data-mail-upgrade-open]').forEach((button) => {
-          try {
-            button.removeAttribute('data-mail-upgrade-open')
-            button.setAttribute('data-mb-upgrade-open-v4', 'true')
-            button.disabled = false
-            button.removeAttribute('disabled')
-            button.removeAttribute('aria-disabled')
-          } catch {}
-        })
+          '</section>';
 
         root.querySelectorAll('[data-mbv2-filter]').forEach((button) => {
           button.addEventListener('click', () => {
-            root.dataset.mbv2Filter = button.dataset.mbv2Filter || 'all'
-            renderMailboxProV2(list)
-          })
-        })
-
-        try {
-          if (!root.dataset.mbv2UpgradeInfoLoaded && typeof loadMailboxUpgradeInfo === 'function') {
-            root.dataset.mbv2UpgradeInfoLoaded = '1'
-            loadMailboxUpgradeInfo().then(() => {
-              try { renderMailboxProV2(list) } catch {}
-            }).catch(() => {})
-          }
-        } catch {}
+            root.dataset.mbv2Filter = button.dataset.mbv2Filter || 'all';
+            renderMailboxProV2(list);
+          });
+        });
       }
+
 
 
 
