@@ -13100,6 +13100,41 @@ const metadata = {
         return status || ''
       }
 
+      // ينتظر تغيّر حالة الهدية فعليًا في D1 بعد ما ينفذها الـ Bridge
+      async function mbV2WaitGiftResult(messageId, timeoutMs = 24000) {
+        const startedAt = Date.now()
+
+        while (Date.now() - startedAt < timeoutMs) {
+          await new Promise((resolve) => setTimeout(resolve, 2500))
+
+          try {
+            const res = await fetch(TNX_API_ORIGIN + '/api/me/mailbox?limit=50&v=' + Date.now(), {
+              credentials: 'include',
+              cache: 'no-store',
+            })
+
+            const data = await res.json().catch(() => null)
+
+            if (!res.ok || !data || data.ok !== true) continue
+
+            const messages = normalizeD1MailboxMessages(data)
+            const found = messages.find((entry) => mailboxMessageId(entry) === messageId)
+
+            if (!found) {
+              return { done: true, messages, status: '' }
+            }
+
+            const status = mailboxGiftStatus(found)
+
+            if (status && status !== 'pending') {
+              return { done: true, messages, status }
+            }
+          } catch {}
+        }
+
+        return { done: false }
+      }
+
       async function submitMailboxGiftAction(message, action, button) {
         const messageId = mailboxMessageId(message)
 
@@ -13107,17 +13142,39 @@ const metadata = {
           return
         }
 
-        const row = button?.closest('.mail-message')
-        const statusBox = row?.querySelector('[data-mail-gift-status]')
+        const isAccept = action === 'accept'
+        const card = button?.closest?.('[data-mail-card]') || button?.closest?.('.mail-message') || null
+        const actionsBox = card?.querySelector?.('.mbv2-card-actions') || null
 
-        row?.querySelectorAll('[data-mail-gift-action]').forEach((btn) => {
+        card?.classList?.add('mbv2-busy')
+
+        card?.querySelectorAll?.('[data-mail-gift-action]').forEach((btn) => {
           btn.disabled = true
           btn.setAttribute('aria-disabled', 'true')
         })
 
-        if (statusBox) {
-          statusBox.textContent = action === 'accept' ? 'جاري قبول الهدية...' : 'جاري رفض الهدية...'
+        const setInline = (kind, text) => {
+          if (!actionsBox) return
+
+          actionsBox.innerHTML =
+            '<span class="mbv2-inline-state is-' + kind + '">' +
+              (kind === 'loading' ? '<span class="mbv2-spin"></span>' : '') +
+              mbV2Escape(text) +
+            '</span>'
         }
+
+        const restoreButtons = (errorText) => {
+          card?.classList?.remove('mbv2-busy')
+
+          if (!actionsBox) return
+
+          actionsBox.innerHTML =
+            '<button class="mbv2-accept" type="button" data-mail-gift-accept data-mail-gift-action="accept" data-message-id="' + mbV2Escape(messageId) + '">' + mbV2IconSvg('check', 14) + 'قبول الهدية</button>' +
+            '<button class="mbv2-reject" type="button" data-mail-gift-reject data-mail-gift-action="reject" data-message-id="' + mbV2Escape(messageId) + '">رفض</button>' +
+            (errorText ? '<span class="mbv2-inline-state is-error">' + mbV2Escape(errorText) + '</span>' : '')
+        }
+
+        setInline('loading', isAccept ? 'جاري قبول الهدية...' : 'جاري رفض الهدية...')
 
         try {
           const res = await fetch(TNX_API_ORIGIN + '/api/me/mailbox/gift-action', {
@@ -13138,28 +13195,34 @@ const metadata = {
             throw new Error((data && (data.error || data.message)) || 'gift_action_failed')
           }
 
-          if (statusBox) {
-            statusBox.textContent = action === 'accept'
-              ? 'تم إرسال طلب قبول الهدية...'
-              : 'تم إرسال طلب رفض الهدية...'
-          }
+          setInline('loading', isAccept ? 'تم الإرسال، جاري تنفيذ القبول...' : 'تم الإرسال، جاري تنفيذ الرفض...')
 
-          window.setTimeout(() => loadD1MailboxForProfile(state.activeUser, true), 4500)
+          const result = await mbV2WaitGiftResult(messageId)
+
+          card?.classList?.remove('mbv2-busy')
+
+          if (result.done) {
+            // flash أخضر عند القبول / أحمر عند الرفض بعد إعادة الرندر
+            window.__mbV2FlashId = messageId
+            window.__mbV2FlashKind = result.status === 'rejected' ? 'no' : 'ok'
+
+            if (state.activeUser) {
+              state.activeUser.mailbox = result.messages
+            }
+
+            renderMail(result.messages)
+          } else {
+            setInline('loading', 'التنفيذ متأخر شوي... بيتحدث تلقائيًا')
+            window.setTimeout(() => loadD1MailboxForProfile(state.activeUser, true), 6000)
+          }
         } catch (error) {
-          row?.querySelectorAll('[data-mail-gift-action]').forEach((btn) => {
-            btn.disabled = false
-            btn.removeAttribute('aria-disabled')
-          })
-
-          if (statusBox) {
-            statusBox.textContent = 'تعذر تنفيذ العملية: ' + (error?.message || 'خطأ غير معروف')
-          }
+          restoreButtons('تعذر تنفيذ العملية، جرّب مرة ثانية')
         }
       }
 
       async function deleteMailboxMessage(message, button) {
         const messageId = mailboxMessageId(message)
-        const row = button?.closest?.('.mail-message')
+        const row = button?.closest?.('[data-mail-card]') || button?.closest?.('.mail-message')
         const statusBox = row?.querySelector?.('[data-mail-inline-status]') || row?.querySelector?.('[data-mail-gift-status]')
 
         if (mailboxMessageType(message) === 'gift_item' && mailboxGiftStatus(message) === 'pending') {
@@ -13185,6 +13248,12 @@ const metadata = {
           if (!res.ok || !data || data.ok !== true) {
             throw new Error((data && data.error) || 'delete_failed')
           }
+
+          // انميشن اختفاء قبل الحذف من القائمة
+          try {
+            row?.classList?.add('mbv2-removing')
+            await new Promise((resolve) => setTimeout(resolve, 240))
+          } catch {}
 
           row?.remove?.()
           await loadD1MailboxForProfile(state.activeUser, true)
@@ -13842,6 +13911,11 @@ function mbV2Card(message) {
         else if (isSystem) cardClass += ' mbv2-card-system'
         cardClass += isUnread ? ' mbv2-unread' : ' mbv2-read'
 
+        // flash لمرة واحدة بعد اكتمال قبول/رفض هدية
+        if (window.__mbV2FlashId && window.__mbV2FlashId === id) {
+          cardClass += window.__mbV2FlashKind === 'no' ? ' mbv2-flash-no' : ' mbv2-flash-ok'
+        }
+
         const giftChip = (isGift && itemName)
           ? '<div class="mbv2-gift-chip">' + mbV2IconSvg('box', 14) + '<span>' + mbV2Escape(itemName) + '</span>' + (itemAmount > 1 ? '<em>×' + mbV2Format(itemAmount) + '</em>' : '') + '</div>'
           : ''
@@ -14155,7 +14229,19 @@ function mbV2Card(message) {
             '.mbv2-gift-chip{display:inline-flex;align-items:center;gap:7px;margin-top:8px;padding:6px 10px;border-radius:10px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.06);color:#ffd36a;}' +
             '.mbv2-gift-chip span{font-size:12px;color:rgba(255,255,255,.8);font-weight:800;}' +
             '.mbv2-gift-chip em{font-style:normal;font-size:11px;color:rgba(255,255,255,.45);font-weight:800;}' +
-            '.mbv2-card-actions{display:flex;align-items:center;gap:8px;margin-top:10px;}' +
+            '.mbv2-card-actions{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap;}' +
+            '.mbv2-inline-state{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:900;color:rgba(255,255,255,.65);min-height:33px;}' +
+            '.mbv2-inline-state.is-loading{color:#ffd36a;}' +
+            '.mbv2-inline-state.is-error{color:#ff9b9b;}' +
+            '.mbv2-spin{width:14px;height:14px;border-radius:999px;border:2px solid rgba(255,211,106,.25);border-top-color:#ffd36a;animation:mbv2spin .7s linear infinite;flex:0 0 auto;}' +
+            '@keyframes mbv2spin{to{transform:rotate(360deg)}}' +
+            '.mbv2-busy{animation:mbv2pulse 1.5s ease-in-out infinite;}' +
+            '@keyframes mbv2pulse{0%,100%{border-color:rgba(255,211,106,.28)}50%{border-color:rgba(255,211,106,.65)}}' +
+            '.mbv2-flash-ok{animation:mbv2flashok 1.1s ease-out 1;}' +
+            '@keyframes mbv2flashok{0%{box-shadow:0 0 0 0 rgba(143,240,179,.5);border-color:rgba(143,240,179,.8)}100%{box-shadow:0 0 0 14px rgba(143,240,179,0)}}' +
+            '.mbv2-flash-no{animation:mbv2flashno 1.1s ease-out 1;}' +
+            '@keyframes mbv2flashno{0%{box-shadow:0 0 0 0 rgba(255,155,155,.5);border-color:rgba(255,155,155,.8)}100%{box-shadow:0 0 0 14px rgba(255,155,155,0)}}' +
+            '.mbv2-removing{opacity:0;transform:translateX(14px);transition:opacity .24s ease,transform .24s ease;}' +
             '.mbv2-accept{height:33px;padding:0 16px;border:0;border-radius:10px;background:#ffd36a;color:#2a1c04;cursor:pointer;font-size:12px;font-weight:1000;display:inline-flex;align-items:center;gap:6px;}' +
             '.mbv2-reject{height:33px;padding:0 14px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.6);cursor:pointer;font-size:12px;font-weight:900;}' +
             '.mbv2-trash{position:absolute;left:10px;bottom:10px;width:27px;height:27px;border-radius:9px;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.35);cursor:pointer;display:grid;place-items:center;}' +
@@ -14204,6 +14290,12 @@ function mbV2Card(message) {
               '<span>اقبل الهدايا المعلقة قبل حذفها</span>' +
             '</footer>' +
           '</section>';
+
+        // الـ flash يشتغل مرة واحدة فقط
+        try {
+          window.__mbV2FlashId = null;
+          window.__mbV2FlashKind = null;
+        } catch {}
 
         root.querySelectorAll('[data-mbv2-filter]').forEach((button) => {
           button.addEventListener('click', () => {
