@@ -13503,15 +13503,24 @@ const metadata = {
       }
 
       function mbV2Type(message) {
+        // يرجع دائمًا نوع منسّق: gift / system / message
+        // (mailboxMessageType ترجع النوع الخام مثل gift_item، لذلك لازم ننسّقه هنا)
+        let raw = ''
+
         try {
-          if (typeof mailboxMessageType === 'function') return mailboxMessageType(message)
+          if (typeof mailboxMessageType === 'function') raw = String(mailboxMessageType(message) || '')
         } catch {}
 
-        const raw = String(mbV2Get(message, ['type', 'kind', 'messageType'], 'message')).toLowerCase()
-        const giftStatus = mbV2GiftStatus(message)
+        if (!raw) raw = String(mbV2Get(message, ['type', 'kind', 'messageType'], 'message'))
 
-        if (raw.includes('gift') || giftStatus) return 'gift'
-        if (raw.includes('system') || raw.includes('sys')) return 'system'
+        raw = raw.toLowerCase()
+
+        const giftStatus = mbV2GiftStatus(message)
+        const hasItem = String(mbV2Get(message, ['itemName', 'item_name'], '') || '').trim() !== ''
+        const isSystem = Boolean(mbV2Get(message, ['isSystem', 'is_system'], false))
+
+        if (raw.includes('gift') || giftStatus || hasItem) return 'gift'
+        if (raw.includes('system') || raw.includes('sys') || isSystem) return 'system'
 
         return 'message'
       }
