@@ -13293,7 +13293,7 @@ const metadata = {
           if (button) {
             button.disabled = false
             button.removeAttribute('aria-disabled')
-            button.textContent = 'حذف كل البريد'
+            button.textContent = 'حذف الكل'
           }
 
           console.warn('[Mailbox] clear failed:', error)
@@ -14072,8 +14072,16 @@ function mbV2Card(message) {
 
         let list = normalize(mail);
 
-        if (!list.length && root.dataset.mbv2DirectTried !== '1') {
-          root.dataset.mbv2DirectTried = '1';
+        // القائمة فيها بيانات: صفّر تأكيد الفراغ للمرات الجاية
+        if (list.length) {
+          root.dataset.mbv2EmptyConfirmed = '0';
+        }
+
+        // قائمة فاضية وما تأكدنا أنها فعلًا فاضية من الـ API:
+        // نجرب fetch مباشر مرة واحدة فقط، وإذا رجع فاضي نأكد الفراغ ونعرض Empty
+        // (بدون هذا التأكيد كانت تصير حلقة تحميل لا نهائية بعد "حذف الكل")
+        if (!list.length && root.dataset.mbv2EmptyConfirmed !== '1' && root.dataset.mbv2DirectFetching !== '1') {
+          root.dataset.mbv2DirectFetching = '1';
           root.dataset.mailboxV2 = 'true';
 
           root.innerHTML =
@@ -14091,19 +14099,19 @@ function mbV2Card(message) {
             .then((response) => response.json())
             .then((data) => {
               const fresh = normalize(data);
-              root.dataset.mbv2DirectTried = '0';
+              root.dataset.mbv2DirectFetching = '0';
+              root.dataset.mbv2EmptyConfirmed = fresh.length ? '0' : '1';
               renderMailboxProV2(fresh);
             })
             .catch((error) => {
               console.error('[Mailbox V2] direct load failed', error);
-              root.dataset.mbv2DirectTried = '0';
+              root.dataset.mbv2DirectFetching = '0';
+              root.dataset.mbv2EmptyConfirmed = '1';
               renderMailboxProV2([]);
             });
 
           return;
         }
-
-        root.dataset.mbv2DirectTried = '0';
 
         let filter = root.dataset.mbv2Filter || 'all';
 
