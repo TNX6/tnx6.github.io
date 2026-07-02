@@ -14282,25 +14282,46 @@ function mbV2Card(message) {
         const style = document.createElement('style')
         style.id = 'mb-upgrade-v4-style'
         style.textContent =
-          '.mb-upgrade-v4-modal{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:18px;background:rgba(0,0,0,.70);direction:rtl}' +
-          '.mb-upgrade-v4-dialog{position:relative;width:min(440px,100%);border-radius:24px;border:1px solid rgba(255,138,91,.22);background:#17171d;color:#fff;padding:20px;box-shadow:0 28px 90px rgba(0,0,0,.58)}' +
-          '.mb-upgrade-v4-close{position:absolute;top:12px;left:12px;width:34px;height:34px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);cursor:pointer;font-size:20px;line-height:1}' +
-          '.mb-upgrade-v4-kicker{color:#ffbd80;font-size:12px;font-weight:1000;margin-bottom:7px}' +
-          '.mb-upgrade-v4-dialog h3{margin:0 0 8px;font-size:21px;font-weight:1000}' +
-          '.mb-upgrade-v4-dialog p{margin:0 0 15px;color:rgba(255,255,255,.66);font-size:13px;line-height:1.8}' +
-          '.mb-upgrade-v4-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}' +
-          '.mb-upgrade-v4-grid div{padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04)}' +
-          '.mb-upgrade-v4-grid span{display:block;color:rgba(255,255,255,.52);font-size:11.5px;font-weight:900;margin-bottom:6px}' +
-          '.mb-upgrade-v4-grid strong{display:block;color:#ffd36a;font-size:17px;font-weight:1000}' +
-          '.mb-upgrade-v4-state{min-height:22px;margin:8px 0 14px;color:rgba(255,255,255,.66);font-size:12.5px;font-weight:900;line-height:1.6}' +
+          '.mb-upgrade-v4-modal{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:18px;background:rgba(0,0,0,.72);direction:rtl}' +
+          '.mb-upgrade-v4-dialog{position:relative;width:min(430px,100%);border-radius:22px;border:1px solid rgba(255,255,255,.1);background:#17171d;color:#f4f4f5;padding:20px;box-shadow:0 28px 90px rgba(0,0,0,.58)}' +
+          '.mb-upgrade-v4-dialog svg{flex:0 0 auto;display:block}' +
+          '.mb-upgrade-v4-close{position:absolute;top:14px;left:14px;width:30px;height:30px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.4);cursor:pointer;font-size:15px;line-height:1;display:grid;place-items:center}' +
+          '.mb-upgrade-v4-close:hover{color:#fff;border-color:rgba(255,255,255,.2)}' +
+          '.mb-upgrade-v4-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}' +
+          '.mb-upgrade-v4-head-icon{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:rgba(255,138,91,.12);border:1px solid rgba(255,138,91,.25);color:#ff9d6b}' +
+          '.mb-upgrade-v4-head h3{margin:0;font-size:17px;font-weight:1000}' +
+          '.mb-upgrade-v4-head p{margin:2px 0 0;font-size:12px;color:rgba(255,255,255,.5);font-weight:800}' +
+          '.mb-upgrade-v4-compare{display:flex;align-items:center;gap:12px;padding:16px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);margin-bottom:12px}' +
+          '.mb-upgrade-v4-col{flex:1;text-align:center}' +
+          '.mb-upgrade-v4-col small{display:block;font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px;font-weight:900}' +
+          '.mb-upgrade-v4-col strong{display:block;font-size:26px;font-weight:1000;color:rgba(255,255,255,.85);line-height:1.2}' +
+          '.mb-upgrade-v4-col em{display:block;font-style:normal;font-size:10.5px;color:rgba(255,255,255,.35);font-weight:800}' +
+          '.mb-upgrade-v4-col-next{border-radius:12px;background:rgba(255,138,91,.07);border:1px solid rgba(255,138,91,.2);padding:8px 0}' +
+          '.mb-upgrade-v4-col-next small{color:#ffbd80}' +
+          '.mb-upgrade-v4-col-next strong{color:#ffd36a}' +
+          '.mb-upgrade-v4-col-next em{color:rgba(255,211,106,.55)}' +
+          '.mb-upgrade-v4-mid{display:flex;flex-direction:column;align-items:center;gap:4px;color:#ff8a5b}' +
+          '.mb-upgrade-v4-mid span{font-size:10.5px;color:#ffbd80;background:rgba(255,138,91,.12);padding:2px 8px;border-radius:999px;white-space:nowrap;font-weight:1000}' +
+          '.mb-upgrade-v4-stages{display:flex;align-items:center;gap:5px;margin-bottom:14px;padding:0 4px}' +
+          '.mb-upgrade-v4-stage{flex:1;height:5px;border-radius:999px;background:rgba(255,255,255,.09)}' +
+          '.mb-upgrade-v4-stage.done{background:#ff8a5b}' +
+          '.mb-upgrade-v4-stage.next{background:rgba(255,138,91,.45)}' +
+          '.mb-upgrade-v4-cost{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,211,106,.18);background:rgba(255,211,106,.05);margin-bottom:6px}' +
+          '.mb-upgrade-v4-cost-label{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:rgba(255,255,255,.7);font-weight:900}' +
+          '.mb-upgrade-v4-cost-label svg{color:#ffd36a}' +
+          '.mb-upgrade-v4-cost-value{font-size:15px;font-weight:1000;color:#ffd36a}' +
+          '.mb-upgrade-v4-cost-value i{font-style:normal;font-size:11px;color:rgba(255,211,106,.6)}' +
+          '.mb-upgrade-v4-max{padding:6px 0 2px;text-align:center;color:rgba(255,255,255,.65);font-size:13px;line-height:1.8}' +
+          '.mb-upgrade-v4-state{min-height:20px;margin:6px 0 10px;color:rgba(255,255,255,.66);font-size:12.5px;font-weight:900;line-height:1.6}' +
           '.mb-upgrade-v4-state[data-state="loading"]{color:#ffd36a}' +
           '.mb-upgrade-v4-state[data-state="success"]{color:#8ff0b3}' +
           '.mb-upgrade-v4-state[data-state="error"]{color:#ff9b9b}' +
-          '.mb-upgrade-v4-actions{display:flex;align-items:center;gap:10px}' +
-          '.mb-upgrade-v4-confirm,.mb-upgrade-v4-cancel{height:40px;border-radius:14px;padding:0 16px;cursor:pointer;font-size:13px;font-weight:1000;border:1px solid rgba(255,255,255,.12)}' +
-          '.mb-upgrade-v4-confirm{flex:1;background:linear-gradient(135deg,#ffd36a,#ff9d2e);color:#241404;border-color:rgba(255,211,106,.40)}' +
-          '.mb-upgrade-v4-cancel{background:rgba(255,255,255,.06);color:rgba(255,255,255,.76)}' +
-          '.mb-upgrade-v4-confirm:disabled{opacity:.62;cursor:not-allowed}'
+          '.mb-upgrade-v4-actions{display:flex;align-items:center;gap:9px}' +
+          '.mb-upgrade-v4-confirm{flex:1;height:42px;border:0;border-radius:13px;background:#ff8a5b;color:#2a160c;cursor:pointer;font-size:13px;font-weight:1000;display:inline-flex;align-items:center;justify-content:center;gap:7px}' +
+          '.mb-upgrade-v4-confirm:hover{background:#ff9d6b}' +
+          '.mb-upgrade-v4-confirm:disabled{opacity:.62;cursor:not-allowed}' +
+          '.mb-upgrade-v4-cancel{height:42px;padding:0 18px;border-radius:13px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.6);cursor:pointer;font-size:13px;font-weight:900}' +
+          '.mb-upgrade-v4-cancel:hover{color:#fff;border-color:rgba(255,255,255,.2)}'
 
         document.head.appendChild(style)
       }
@@ -14355,7 +14376,7 @@ function mbV2Card(message) {
           }
         }
 
-        mbUpgradeV4State(modal, 'error', 'تأخر الرد من Streamer.bot. تأكد أن Streamer.bot والـ Bridge شغالين.')
+        mbUpgradeV4State(modal, 'error', 'تأخر تنفيذ الطلب. جرّب من جديد بعد قليل.')
 
         if (confirmButton) {
           confirmButton.textContent = 'تأكيد التطوير'
@@ -14402,6 +14423,17 @@ function mbV2Card(message) {
           const cost = Number(info.cost || 0)
           const canUpgrade = Boolean(info.canUpgrade)
 
+          const doneStages = Math.max(0, Math.min(8, Math.round((capacity - 5) / 5)))
+          const stageLabel = doneStages >= 8 ? 'وصلت للحد الأعلى' : 'المرحلة ' + mbUpgradeV4Format(doneStages + 1) + ' من 8'
+
+          let stagesHtml = '<div class="mb-upgrade-v4-stages">'
+          for (let i = 0; i < 8; i++) {
+            stagesHtml += '<div class="mb-upgrade-v4-stage' + (i < doneStages ? ' done' : (i === doneStages && canUpgrade) ? ' next' : '') + '"></div>'
+          }
+          stagesHtml += '</div>'
+
+          const arrowSvg = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 18-6-6 6-6"/></svg>'
+
           const modal = document.createElement('div')
           modal.className = 'mb-upgrade-v4-modal'
           modal.setAttribute('data-mb-upgrade-v4-modal', 'true')
@@ -14409,21 +14441,34 @@ function mbV2Card(message) {
           modal.innerHTML =
             '<div class="mb-upgrade-v4-dialog">' +
               '<button class="mb-upgrade-v4-close" type="button" data-mb-upgrade-v4-close aria-label="إغلاق">×</button>' +
-              '<div class="mb-upgrade-v4-kicker">تطوير البريد</div>' +
-              '<h3>' + (canUpgrade ? 'تأكيد تطوير سعة البريد' : 'وصلت للحد الأعلى') + '</h3>' +
-              '<p>' + (canUpgrade ? 'سيتم إرسال الطلب إلى Streamer.bot لخصم النقاط وتحديث الشات والموقع معًا.' : 'صندوق بريدك وصل لأعلى سعة متاحة حاليًا.') + '</p>' +
 
-              '<div class="mb-upgrade-v4-grid">' +
-                '<div><span>المستخدم الآن</span><strong>' + mbUpgradeV4Format(used) + ' / ' + mbUpgradeV4Format(capacity) + '</strong></div>' +
-                '<div><span>بعد التطوير</span><strong>' + mbUpgradeV4Format(nextCapacity) + '</strong></div>' +
-                '<div><span>الزيادة</span><strong>+' + mbUpgradeV4Format(increase) + '</strong></div>' +
-                '<div><span>التكلفة</span><strong>' + (canUpgrade ? mbUpgradeV4Format(cost) + ' نقطة' : 'مكتمل') + '</strong></div>' +
+              '<div class="mb-upgrade-v4-head">' +
+                '<div class="mb-upgrade-v4-head-icon">' + mbV2IconSvg('up', 22) + '</div>' +
+                '<div><h3>تطوير البريد</h3><p>' + stageLabel + '</p></div>' +
               '</div>' +
+
+              (canUpgrade
+                ? '<div class="mb-upgrade-v4-compare">' +
+                    '<div class="mb-upgrade-v4-col"><small>السعة الحالية</small><strong>' + mbUpgradeV4Format(capacity) + '</strong><em>رسالة</em></div>' +
+                    '<div class="mb-upgrade-v4-mid">' + arrowSvg + '<span>+' + mbUpgradeV4Format(increase) + '</span></div>' +
+                    '<div class="mb-upgrade-v4-col mb-upgrade-v4-col-next"><small>بعد التطوير</small><strong>' + mbUpgradeV4Format(nextCapacity) + '</strong><em>رسالة</em></div>' +
+                  '</div>' +
+                  stagesHtml +
+                  '<div class="mb-upgrade-v4-cost">' +
+                    '<span class="mb-upgrade-v4-cost-label">' + mbV2IconSvg('coin', 16) + 'تكلفة التطوير</span>' +
+                    '<span class="mb-upgrade-v4-cost-value">' + mbUpgradeV4Format(cost) + ' <i>نقطة</i></span>' +
+                  '</div>'
+                : '<div class="mb-upgrade-v4-compare">' +
+                    '<div class="mb-upgrade-v4-col mb-upgrade-v4-col-next"><small>السعة الحالية</small><strong>' + mbUpgradeV4Format(capacity) + '</strong><em>رسالة</em></div>' +
+                  '</div>' +
+                  stagesHtml +
+                  '<div class="mb-upgrade-v4-max">صندوق بريدك وصل لأعلى سعة متاحة حاليًا.</div>'
+              ) +
 
               '<div class="mb-upgrade-v4-state" data-mb-upgrade-v4-state></div>' +
 
               '<div class="mb-upgrade-v4-actions">' +
-                (canUpgrade ? '<button class="mb-upgrade-v4-confirm" type="button" data-mb-upgrade-v4-confirm data-target-capacity="' + nextCapacity + '">تأكيد التطوير</button>' : '') +
+                (canUpgrade ? '<button class="mb-upgrade-v4-confirm" type="button" data-mb-upgrade-v4-confirm data-target-capacity="' + nextCapacity + '">' + mbV2IconSvg('check', 16) + 'تأكيد التطوير</button>' : '') +
                 '<button class="mb-upgrade-v4-cancel" type="button" data-mb-upgrade-v4-close>' + (canUpgrade ? 'إلغاء' : 'إغلاق') + '</button>' +
               '</div>' +
             '</div>'
@@ -14468,7 +14513,7 @@ function mbV2Card(message) {
                   return
                 }
 
-                mbUpgradeV4State(modal, 'loading', 'تم إرسال الطلب. بانتظار Streamer.bot...')
+                mbUpgradeV4State(modal, 'loading', 'تم إرسال الطلب. جاري تنفيذ التطوير...')
                 await mbUpgradeV4Poll(data.requestId, modal, confirmButton)
               } catch {
                 mbUpgradeV4State(modal, 'error', 'صار خطأ في الاتصال. جرّب مرة ثانية.')
