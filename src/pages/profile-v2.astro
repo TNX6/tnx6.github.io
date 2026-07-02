@@ -13085,6 +13085,10 @@ const metadata = {
 
           setText('mailCount', messages.length)
           setText('messages', formatNumber(messages.length))
+
+          // اهتزاز زر البريد عند وصول رسالة جديدة
+          try { tnxNotifyNewMail(messages) } catch {}
+
           renderMail(messages)
         } catch (error) {
           console.warn('[Mailbox] Failed to load current user mailbox:', error)
@@ -13298,6 +13302,55 @@ const metadata = {
 
           console.warn('[Mailbox] clear failed:', error)
         }
+      }
+
+      // mailbox-new-mail-shake
+      // يقارن IDs الرسائل مع آخر تحميل، وإذا فيه رسالة جديدة يهز زر البريد بخفة
+      function tnxNotifyNewMail(messages) {
+        const ids = new Set(
+          (Array.isArray(messages) ? messages : [])
+            .map((entry) => mailboxMessageId(entry))
+            .filter(Boolean)
+        )
+
+        const known = window.__tnxMailKnownIds
+        window.__tnxMailKnownIds = ids
+
+        // أول تحميل بعد فتح الصفحة: خزّن بدون اهتزاز
+        if (!(known instanceof Set)) return
+
+        let hasNew = false
+
+        for (const id of ids) {
+          if (!known.has(id)) {
+            hasNew = true
+            break
+          }
+        }
+
+        if (!hasNew) return
+
+        const button = document.getElementById('openMailButton')
+        if (!button) return
+
+        if (!document.getElementById('tnx-mail-shake-style')) {
+          const style = document.createElement('style')
+          style.id = 'tnx-mail-shake-style'
+          style.textContent =
+            '@keyframes tnxMailShake{0%,100%{transform:rotate(0)}15%{transform:rotate(-7deg)}30%{transform:rotate(6deg)}45%{transform:rotate(-5deg)}60%{transform:rotate(4deg)}75%{transform:rotate(-2deg)}}' +
+            '.tnx-mail-shake{animation:tnxMailShake .7s ease-in-out 2;transform-origin:top center;}'
+          document.head.appendChild(style)
+        }
+
+        // أعد تشغيل الانميشن حتى لو كان شغال
+        button.classList.remove('tnx-mail-shake')
+        void button.offsetWidth
+        button.classList.add('tnx-mail-shake')
+
+        window.clearTimeout(window.__tnxMailShakeTimer)
+        window.__tnxMailShakeTimer = window.setTimeout(() => {
+          button.classList.remove('tnx-mail-shake')
+        }, 1600)
       }
 
       function installMailboxAutoRefresh() {
