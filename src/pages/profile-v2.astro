@@ -13644,10 +13644,47 @@ const metadata = {
           .join('')
       }
 
+      function mbV2IconSvg(name, size) {
+        const s = Number(size || 16)
+        const icons = {
+          mail: '<path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m3 7 9 6 9-6"/>',
+          trash: '<path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="m5 7 1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/>',
+          gift: '<path d="M3 8h18v4H3z"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
+          horn: '<path d="M18 8a3 3 0 0 1 0 6"/><path d="M10 8v11a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-5"/><path d="M12 8h0l4.524-3.77A.9.9 0 0 1 18 4.922v12.156a.9.9 0 0 1-1.476.692L12 14H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>',
+          box: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5"/><path d="M12 12v9"/><path d="M12 12 4 7.5"/>',
+          check: '<path d="m5 12 5 5L20 7"/>',
+          coin: '<circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 1 0 0 4h2a2 2 0 1 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 7v10"/>',
+          refresh: '<path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>',
+          db: '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/>'
+        }
+        const body = icons[name] || icons.mail
+        return '<svg viewBox="0 0 24 24" width="' + s + '" height="' + s + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + body + '</svg>'
+      }
+
       function mbV2Icon(type) {
-        if (type === 'gift') return '🎁'
-        if (type === 'system') return '📣'
-        return '💬'
+        if (type === 'gift') return mbV2IconSvg('gift', 20)
+        if (type === 'system') return mbV2IconSvg('horn', 19)
+        return mbV2IconSvg('mail', 19)
+      }
+
+      function mbV2DayLabel(message) {
+        const raw = mbV2Get(message, ['createdAt', 'created_at', 'date'], '')
+        if (!raw) return 'أقدم'
+
+        let normalized = String(raw).trim()
+        if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(normalized)) normalized = normalized.replace(' ', 'T') + 'Z'
+        else if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(normalized)) normalized = normalized + 'Z'
+
+        const date = new Date(normalized)
+        if (Number.isNaN(date.getTime())) return 'أقدم'
+
+        const now = new Date()
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
+        const t = date.getTime()
+
+        if (t >= startOfToday) return 'اليوم'
+        if (t >= startOfToday - 86400000) return 'أمس'
+        return 'أقدم'
       }
 
       function mbV2Counts(list) {
@@ -13786,36 +13823,45 @@ function mbV2Card(message) {
         const isGift = type === 'gift'
         const isPendingGift = isGift && (!status || status === 'pending')
         const isSystem = type === 'system'
+        const isUnread = mbV2Get(message, ['read'], true) === false
 
-        const cardClass = isGift ? 'mbv2-card mbv2-card-gift' : isSystem ? 'mbv2-card mbv2-card-system' : 'mbv2-card'
+        const itemName = String(mbV2Get(message, ['itemName', 'item_name'], '') || '').trim()
+        const itemAmount = Number(mbV2Get(message, ['itemAmount', 'item_amount'], 0) || 0)
+
+        let cardClass = 'mbv2-card'
+        if (isGift) cardClass += ' mbv2-card-gift'
+        else if (isSystem) cardClass += ' mbv2-card-system'
+        cardClass += isUnread ? ' mbv2-unread' : ' mbv2-read'
+
+        const giftChip = (isGift && itemName)
+          ? '<div class="mbv2-gift-chip">' + mbV2IconSvg('box', 14) + '<span>' + mbV2Escape(itemName) + '</span>' + (itemAmount > 1 ? '<em>×' + mbV2Format(itemAmount) + '</em>' : '') + '</div>'
+          : ''
 
         let actions = ''
 
         if (isPendingGift) {
           actions =
             '<div class="mbv2-card-actions">' +
-              '<button class="mbv2-accept" type="button" data-mail-gift-accept data-mail-gift-action="accept" data-message-id="' + mbV2Escape(id) + '">قبول الهدية</button>' +
+              '<button class="mbv2-accept" type="button" data-mail-gift-accept data-mail-gift-action="accept" data-message-id="' + mbV2Escape(id) + '">' + mbV2IconSvg('check', 14) + 'قبول الهدية</button>' +
               '<button class="mbv2-reject" type="button" data-mail-gift-reject data-mail-gift-action="reject" data-message-id="' + mbV2Escape(id) + '">رفض</button>' +
             '</div>'
         } else {
           actions =
-            '<button class="mbv2-trash" type="button" data-mail-delete data-message-id="' + mbV2Escape(id) + '" title="حذف الرسالة" aria-label="حذف الرسالة">🗑️</button>'
+            '<button class="mbv2-trash" type="button" data-mail-delete data-message-id="' + mbV2Escape(id) + '" title="حذف الرسالة" aria-label="حذف الرسالة">' + mbV2IconSvg('trash', 13) + '</button>'
         }
 
         return (
           '<article class="' + cardClass + '" data-mail-card data-type="' + mbV2Escape(type) + '" data-message-id="' + mbV2Escape(id) + '">' +
-            '<div class="mbv2-avatar">' +
-              mbV2AvatarHtml(message, type, sender) +
-            '</div>' +
-
+            (isUnread ? '<span class="mbv2-unread-strip"></span>' : '') +
+            '<div class="mbv2-avatar">' + mbV2AvatarHtml(message, type, sender) + '</div>' +
             '<div class="mbv2-card-body">' +
               '<div class="mbv2-meta">' +
                 '<strong>' + mbV2Escape(sender) + '</strong>' +
-                '<span class="mbv2-pill">' + mbV2Escape(label) + '</span>' +
+                '<span class="mbv2-pill' + (isGift ? ' mbv2-pill-gift' : isSystem ? ' mbv2-pill-system' : '') + '">' + mbV2Escape(label) + '</span>' +
                 '<time>' + mbV2Escape(time) + '</time>' +
               '</div>' +
-
-              '<p>' + mbV2Escape(text) + '</p>' +
+              (text ? '<p>' + mbV2Escape(text) + '</p>' : '') +
+              giftChip +
               actions +
             '</div>' +
           '</article>'
@@ -13943,8 +13989,6 @@ function mbV2Card(message) {
 
         let list = normalize(mail);
 
-        // إذا وصلنا هنا بقائمة فاضية، لا تعرض Empty مباشرة.
-        // اسحب البريد مباشرة من API ثم ارندر من جديد.
         if (!list.length && root.dataset.mbv2DirectTried !== '1') {
           root.dataset.mbv2DirectTried = '1';
           root.dataset.mailboxV2 = 'true';
@@ -13986,6 +14030,7 @@ function mbV2Card(message) {
         }
 
         const counts = mbV2Counts(list);
+        const unreadCount = list.filter((message) => mbV2Get(message, ['read'], true) === false).length;
         const upgrade = mbV2UpgradeInfo(list);
         const percent = Math.max(0, Math.min(100, Math.round((upgrade.used / Math.max(1, upgrade.capacity)) * 100)));
 
@@ -14008,74 +14053,120 @@ function mbV2Card(message) {
             ? 'بانتظار التنفيذ'
             : mbV2Format(upgrade.cost) + ' نقطة';
 
+        const capacityState = percent >= 100
+          ? '<span class="mbv2-cap-state mbv2-cap-full">ممتلئ</span>'
+          : percent >= 80
+            ? '<span class="mbv2-cap-state">شبه ممتلئ</span>'
+            : '';
+
+        const nextLabel = upgrade.canUpgrade
+          ? 'التالي: ' + mbV2Format(upgrade.nextCapacity) + ' رسالة'
+          : 'أقصى سعة';
+
+        const subtitle = unreadCount > 0
+          ? 'غير مقروءة: ' + mbV2Format(unreadCount)
+          : 'رسائلك وهدايا المجتمع في مكان واحد';
+
+        let cardsHtml = '';
+
+        if (visible.length) {
+          let lastGroup = '';
+
+          for (const message of visible) {
+            const group = mbV2DayLabel(message);
+
+            if (group !== lastGroup) {
+              lastGroup = group;
+              cardsHtml += '<div class="mbv2-group">' + group + '</div>';
+            }
+
+            cardsHtml += mbV2Card(message);
+          }
+        } else {
+          cardsHtml = '<div class="mbv2-empty">' + mbV2IconSvg('mail', 26) + '<strong>ما عندك شيء هنا</strong><span>إذا وصلك إهداء أو رسالة بيظهر هنا مباشرة.</span></div>';
+        }
+
         root.innerHTML =
           '<style>' +
             '.mail-pro[data-mailbox-v2="true"]{direction:rtl;color:#f4f4f5;font-family:inherit;}' +
             '.mail-pro[data-mailbox-v2="true"] *{box-sizing:border-box;}' +
             '.mail-pro[data-mailbox-v2="true"] > :not(style):not(.mbv2-shell){display:none!important;}' +
-
-            '.mbv2-shell{overflow:hidden;border:1px solid rgba(255,255,255,.085);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.048),rgba(255,255,255,.018));}' +
-
-            '.mbv2-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 16px 13px;border-bottom:1px solid rgba(255,255,255,.07);}' +
+            '.mbv2-shell{overflow:hidden;border:1px solid rgba(255,255,255,.09);border-radius:22px;background:#17171d;}' +
+            '.mbv2-shell svg{flex:0 0 auto;display:block;}' +
+            '.mbv2-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,.07);}' +
             '.mbv2-title{display:flex;align-items:center;gap:12px;min-width:0;}' +
-            '.mbv2-icon{position:relative;width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(255,138,91,.18),rgba(255,138,91,.06));border:1px solid rgba(255,138,91,.22);font-size:22px;}' +
-            '.mbv2-badge{position:absolute;top:-7px;left:-7px;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#ff5757;color:#fff;font-size:11px;font-weight:1000;display:grid;place-items:center;border:2px solid #1b1b22;}' +
-            '.mbv2-title h3{margin:0;font-size:21px;font-weight:1000;letter-spacing:-.02em;}' +
-            '.mbv2-title p{margin:3px 0 0;color:rgba(255,255,255,.58);font-size:12.5px;font-weight:700;}' +
-            '.mbv2-head-actions{display:flex;align-items:center;gap:8px;}' +
-            '.mbv2-clear{height:34px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,107,107,.22);background:rgba(255,107,107,.06);color:#ff9f9f;cursor:pointer;font-size:12px;font-weight:1000;white-space:nowrap;}' +
-
-            '.mbv2-tabs{display:flex;align-items:center;gap:6px;padding:12px 14px 10px;}' +
-            '.mbv2-tab{flex:1;height:38px;border:0;border-radius:13px;background:rgba(255,255,255,.045);color:rgba(255,255,255,.60);cursor:pointer;font-size:12.5px;font-weight:1000;display:flex;align-items:center;justify-content:center;gap:7px;}' +
+            '.mbv2-icon{position:relative;width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:rgba(255,138,91,.12);border:1px solid rgba(255,138,91,.25);color:#ff9d6b;}' +
+            '.mbv2-badge{position:absolute;top:-7px;left:-7px;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#ff5757;color:#fff;font-size:11px;font-weight:1000;display:grid;place-items:center;border:2px solid #17171d;}' +
+            '.mbv2-title h3{margin:0;font-size:19px;font-weight:1000;letter-spacing:-.02em;}' +
+            '.mbv2-title p{margin:3px 0 0;color:rgba(255,255,255,.55);font-size:12px;font-weight:700;}' +
+            '.mbv2-clear{height:34px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,107,107,.25);background:rgba(255,107,107,.07);color:#ff9f9f;cursor:pointer;font-size:12px;font-weight:1000;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;}' +
+            '.mbv2-clear:disabled{opacity:.45;cursor:not-allowed;}' +
+            '.mbv2-tabs{display:flex;gap:5px;padding:12px 14px 4px;}' +
+            '.mbv2-tab{flex:1;height:36px;border:0;border-radius:12px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);cursor:pointer;font-size:12.5px;font-weight:1000;display:flex;align-items:center;justify-content:center;gap:7px;}' +
             '.mbv2-tab span{min-width:19px;height:19px;padding:0 6px;border-radius:999px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:11px;}' +
-            '.mbv2-tab.active{background:linear-gradient(135deg,#ffb36b,#ff8a5b);color:#24140c;box-shadow:0 10px 24px rgba(255,138,91,.18);}' +
-            '.mbv2-tab.active span{background:rgba(0,0,0,.16);color:#24140c;}' +
-
-            '.mbv2-capacity{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 14px 12px;padding:10px 12px;border-radius:15px;border:1px solid rgba(255,138,91,.15);background:rgba(255,255,255,.026);}' +
-            '.mbv2-cap-main{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}' +
-            '.mbv2-cap-name{display:inline-flex;align-items:center;gap:7px;min-width:98px;white-space:nowrap;}' +
-            '.mbv2-cap-name:before{content:"";width:7px;height:7px;border-radius:999px;background:linear-gradient(135deg,#ffd36a,#ff8a5b);box-shadow:0 0 12px rgba(255,138,91,.35);flex:0 0 auto;}' +
-            '.mbv2-cap-name strong{color:rgba(255,255,255,.78);font-size:12px;font-weight:1000;}' +
-            '.mbv2-cap-name span{color:#ffd36a;font-size:12px;font-weight:1000;white-space:nowrap;}' +
-            '.mbv2-cap-bar{flex:1;max-width:160px;min-width:90px;height:5px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.085);}' +
-            '.mbv2-cap-bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ffd36a,#ff8a5b);}' +
-            '.mbv2-upgrade{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;}' +
-            '.mbv2-cost{display:inline-flex;align-items:center;justify-content:center;height:27px;min-width:76px;padding:0 9px;border-radius:9px;background:rgba(255,211,106,.075);color:#ffd36a;font-size:10.8px;font-weight:1000;white-space:nowrap;}' +
-            '.mbv2-upgrade-btn{display:inline-flex;align-items:center;justify-content:center;height:32px;min-width:108px;padding:0 12px;border-radius:11px;border:1px solid rgba(255,138,91,.30);background:rgba(255,138,91,.085);color:#ffbd80;cursor:pointer;font-size:12px;font-weight:1000;line-height:1;white-space:nowrap;}' +
-
-            '.mbv2-list{padding:0 14px 12px;display:flex;flex-direction:column;gap:10px;max-height:min(46vh,410px);overflow:auto;}' +
-            '.mbv2-card{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;padding:13px;border-radius:17px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.035);}' +
-            '.mbv2-card-gift{border-color:rgba(255,211,106,.22);background:linear-gradient(180deg,rgba(255,211,106,.06),rgba(255,255,255,.026));}' +
-            '.mbv2-card-system{border-color:rgba(150,124,255,.20);background:linear-gradient(180deg,rgba(150,124,255,.05),rgba(255,255,255,.025));}' +
-            '.mbv2-avatar{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);font-size:20px;font-weight:1000;color:#fff;overflow:hidden;}' +
+            '.mbv2-tab.active{background:#ff8a5b;color:#2a160c;}' +
+            '.mbv2-tab.active span{background:rgba(0,0,0,.16);color:#2a160c;}' +
+            '.mbv2-capacity{margin:10px 14px 4px;padding:12px 14px;border-radius:16px;border:1px solid rgba(255,138,91,.18);background:rgba(255,138,91,.045);}' +
+            '.mbv2-cap-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}' +
+            '.mbv2-cap-title{display:flex;align-items:center;gap:8px;min-width:0;color:#ffb98a;}' +
+            '.mbv2-cap-title strong{font-size:12.5px;color:rgba(255,255,255,.75);font-weight:1000;white-space:nowrap;}' +
+            '.mbv2-cap-title [data-mail-capacity-label]{font-size:12.5px;color:#ffd36a;font-weight:1000;white-space:nowrap;}' +
+            '.mbv2-cap-state{font-size:11px;color:#ff9f9f;background:rgba(255,107,107,.1);padding:2px 8px;border-radius:999px;font-weight:1000;white-space:nowrap;}' +
+            '.mbv2-cap-next{font-size:11.5px;color:rgba(255,255,255,.45);font-weight:800;white-space:nowrap;}' +
+            '.mbv2-cap-bar{height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:10px;}' +
+            '.mbv2-cap-bar span{display:block;height:100%;border-radius:inherit;background:#ff8a5b;}' +
+            '.mbv2-cap-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;}' +
+            '.mbv2-cost{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:#ffd36a;background:rgba(255,211,106,.08);padding:5px 10px;border-radius:9px;font-weight:1000;white-space:nowrap;}' +
+            '.mbv2-upgrade-btn{height:32px;padding:0 16px;border-radius:11px;border:1px solid rgba(255,138,91,.35);background:rgba(255,138,91,.12);color:#ffbd80;font-size:12px;font-weight:1000;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}' +
+            '.mbv2-upgrade-btn:hover{background:rgba(255,138,91,.2);border-color:rgba(255,138,91,.5);}' +
+            '.mbv2-list{padding:8px 14px 12px;display:flex;flex-direction:column;gap:8px;max-height:min(46vh,420px);overflow:auto;}' +
+            '.mbv2-list::-webkit-scrollbar{width:6px;}' +
+            '.mbv2-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:999px;}' +
+            '.mbv2-group{font-size:11px;color:rgba(255,255,255,.38);padding:6px 4px 0;font-weight:900;}' +
+            '.mbv2-card{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:11px;padding:12px;border-radius:15px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.03);}' +
+            '.mbv2-unread{border-color:rgba(255,255,255,.10);background:rgba(255,255,255,.045);}' +
+            '.mbv2-read{opacity:.82;}' +
+            '.mbv2-unread-strip{position:absolute;top:14px;right:-1px;width:3px;height:26px;background:#ff8a5b;border-radius:0;}' +
+            '.mbv2-card-gift{border-color:rgba(255,211,106,.28);background:rgba(255,211,106,.05);}' +
+            '.mbv2-card-gift .mbv2-unread-strip{background:#ffd36a;}' +
+            '.mbv2-card-system{border-color:rgba(150,124,255,.22);background:rgba(150,124,255,.04);}' +
+            '.mbv2-avatar{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-size:15px;font-weight:1000;color:rgba(255,255,255,.75);overflow:hidden;}' +
             '.mbv2-avatar-img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;}' +
-            '.mbv2-card-gift .mbv2-avatar{background:linear-gradient(145deg,#ffd36a,#ff9d2e);color:#2a1804;}' +
-            '.mbv2-card-system .mbv2-avatar{background:linear-gradient(145deg,#b79cff,#7b5cff);}' +
+            '.mbv2-card-gift .mbv2-avatar{background:rgba(255,211,106,.14);border-color:rgba(255,211,106,.3);color:#ffd36a;}' +
+            '.mbv2-card-system .mbv2-avatar{background:rgba(150,124,255,.12);border-color:rgba(150,124,255,.25);color:#b79cff;}' +
             '.mbv2-card-body{min-width:0;}' +
-            '.mbv2-meta{display:flex;align-items:center;gap:7px;margin-bottom:5px;min-width:0;}' +
-            '.mbv2-meta strong{font-size:14px;font-weight:1000;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}' +
-            '.mbv2-meta time{margin-inline-start:auto;color:rgba(255,255,255,.42);font-size:11px;font-weight:800;white-space:nowrap;}' +
-            '.mbv2-pill{padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.62);font-size:10.5px;font-weight:1000;white-space:nowrap;}' +
-            '.mbv2-card p{margin:0;color:rgba(255,255,255,.62);font-size:13px;line-height:1.7;}' +
-            '.mbv2-trash{position:absolute;left:12px;bottom:12px;width:28px;height:28px;border-radius:10px;border:1px solid rgba(255,107,107,.18);background:rgba(255,107,107,.055);color:#ff9f9f;cursor:pointer;font-size:13px;display:grid;place-items:center;}' +
-            '.mbv2-card-actions{display:flex;align-items:center;gap:8px;margin-top:11px;}' +
-            '.mbv2-accept{height:34px;padding:0 16px;border:0;border-radius:11px;background:linear-gradient(135deg,#ffd36a,#ff9d2e);color:#241404;cursor:pointer;font-size:12.5px;font-weight:1000;}' +
-            '.mbv2-reject{height:34px;padding:0 14px;border-radius:11px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:rgba(255,255,255,.65);cursor:pointer;font-size:12px;font-weight:900;}' +
-            '.mbv2-empty{padding:34px 18px;text-align:center;color:rgba(255,255,255,.55);}' +
-            '.mbv2-empty strong{display:block;color:#fff;font-size:15px;margin-bottom:5px;}' +
+            '.mbv2-meta{display:flex;align-items:center;gap:7px;margin-bottom:4px;min-width:0;}' +
+            '.mbv2-meta strong{font-size:13.5px;font-weight:1000;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}' +
+            '.mbv2-meta time{margin-inline-start:auto;color:rgba(255,255,255,.4);font-size:11px;font-weight:800;white-space:nowrap;}' +
+            '.mbv2-pill{padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);font-size:10.5px;font-weight:1000;white-space:nowrap;}' +
+            '.mbv2-pill-gift{background:rgba(255,211,106,.12);color:#ffd36a;}' +
+            '.mbv2-pill-system{background:rgba(150,124,255,.12);color:#b79cff;}' +
+            '.mbv2-card p{margin:0;color:rgba(255,255,255,.7);font-size:13px;line-height:1.7;word-break:break-word;}' +
+            '.mbv2-read p{color:rgba(255,255,255,.6);}' +
+            '.mbv2-gift-chip{display:inline-flex;align-items:center;gap:7px;margin-top:8px;padding:6px 10px;border-radius:10px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.06);color:#ffd36a;}' +
+            '.mbv2-gift-chip span{font-size:12px;color:rgba(255,255,255,.8);font-weight:800;}' +
+            '.mbv2-gift-chip em{font-style:normal;font-size:11px;color:rgba(255,255,255,.45);font-weight:800;}' +
+            '.mbv2-card-actions{display:flex;align-items:center;gap:8px;margin-top:10px;}' +
+            '.mbv2-accept{height:33px;padding:0 16px;border:0;border-radius:10px;background:#ffd36a;color:#2a1c04;cursor:pointer;font-size:12px;font-weight:1000;display:inline-flex;align-items:center;gap:6px;}' +
+            '.mbv2-reject{height:33px;padding:0 14px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.6);cursor:pointer;font-size:12px;font-weight:900;}' +
+            '.mbv2-trash{position:absolute;left:10px;bottom:10px;width:27px;height:27px;border-radius:9px;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.35);cursor:pointer;display:grid;place-items:center;}' +
+            '.mbv2-trash:hover{color:#ff9f9f;border-color:rgba(255,107,107,.3);background:rgba(255,107,107,.06);}' +
+            '.mbv2-empty{padding:30px 18px;text-align:center;color:rgba(255,255,255,.55);display:flex;flex-direction:column;align-items:center;gap:8px;}' +
+            '.mbv2-empty svg{color:rgba(255,255,255,.3);}' +
+            '.mbv2-empty strong{color:#fff;font-size:15px;}' +
             '.mbv2-empty span{font-size:12.5px;}' +
-            '.mbv2-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-top:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.12);color:rgba(255,255,255,.46);font-size:11.5px;font-weight:800;}' +
+            '.mbv2-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 16px;border-top:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.15);color:rgba(255,255,255,.42);font-size:11.5px;font-weight:800;}' +
+            '.mbv2-footer span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}' +
+            '@media (max-width:720px){.mbv2-cap-top{flex-direction:column;align-items:flex-start;}.mbv2-cap-foot{flex-direction:column;align-items:stretch;}.mbv2-upgrade-btn{justify-content:center;}.mbv2-footer{flex-direction:column;gap:4px;}}' +
           '</style>' +
 
           '<section class="mbv2-shell">' +
             '<header class="mbv2-head">' +
               '<div class="mbv2-title">' +
-                '<div class="mbv2-icon">✉️' + (counts.all ? '<span class="mbv2-badge">' + mbV2Format(counts.all) + '</span>' : '') + '</div>' +
-                '<div><h3>البريد</h3><p>رسائلك وهدايا المجتمع في مكان واحد</p></div>' +
+                '<div class="mbv2-icon">' + mbV2IconSvg('mail', 22) + (unreadCount ? '<span class="mbv2-badge">' + mbV2Format(unreadCount) + '</span>' : '') + '</div>' +
+                '<div><h3>البريد</h3><p>' + subtitle + '</p></div>' +
               '</div>' +
-              '<div class="mbv2-head-actions">' +
-                '<button class="mbv2-clear" type="button" data-mail-clear ' + (counts.all ? '' : 'disabled aria-disabled="true"') + '>حذف الكل</button>' +
-              '</div>' +
+              '<button class="mbv2-clear" type="button" data-mail-clear ' + (counts.all ? '' : 'disabled aria-disabled="true"') + '>' + mbV2IconSvg('trash', 15) + 'حذف الكل</button>' +
             '</header>' +
 
             '<nav class="mbv2-tabs" data-mail-tabs-v2>' +
@@ -14086,22 +14177,21 @@ function mbV2Card(message) {
             '</nav>' +
 
             '<div class="mbv2-capacity" data-mail-capacity-box>' +
-              '<div class="mbv2-cap-main">' +
-                '<div class="mbv2-cap-name"><strong>سعة البريد</strong><span data-mail-capacity-label>' + mbV2Format(upgrade.used) + ' / ' + mbV2Format(upgrade.capacity) + '</span></div>' +
-                '<div class="mbv2-cap-bar"><span data-mail-capacity-bar style="width:' + percent + '%"></span></div>' +
+              '<div class="mbv2-cap-top">' +
+                '<div class="mbv2-cap-title">' + mbV2IconSvg('db', 15) + '<strong>سعة البريد</strong><span data-mail-capacity-label>' + mbV2Format(upgrade.used) + ' / ' + mbV2Format(upgrade.capacity) + '</span>' + capacityState + '</div>' +
+                '<span class="mbv2-cap-next">' + nextLabel + '</span>' +
               '</div>' +
-              '<div class="mbv2-upgrade">' +
-                '<span class="mbv2-cost" data-mail-upgrade-cost>' + upgradeCostText + '</span>' +
+              '<div class="mbv2-cap-bar"><span data-mail-capacity-bar style="width:' + percent + '%"></span></div>' +
+              '<div class="mbv2-cap-foot">' +
+                '<span class="mbv2-cost">' + mbV2IconSvg('coin', 14) + '<span data-mail-upgrade-cost>' + upgradeCostText + '</span></span>' +
                 '<button class="mbv2-upgrade-btn" type="button" data-mb-upgrade-open-v4>' + upgradeButtonText + '</button>' +
               '</div>' +
             '</div>' +
 
-            '<div class="mbv2-list">' +
-              (visible.length ? visible.map(mbV2Card).join('') : '<div class="mbv2-empty"><strong>ما عندك شيء هنا</strong><span>إذا وصلك إهداء أو رسالة بيظهر هنا مباشرة.</span></div>') +
-            '</div>' +
+            '<div class="mbv2-list">' + cardsHtml + '</div>' +
 
             '<footer class="mbv2-footer">' +
-              '<span>يتم تحديث البريد تلقائيًا</span>' +
+              '<span>' + mbV2IconSvg('refresh', 13) + 'يتم تحديث البريد تلقائيًا</span>' +
               '<span>اقبل الهدايا المعلقة قبل حذفها</span>' +
             '</footer>' +
           '</section>';
@@ -14607,172 +14697,11 @@ function mbV2Card(message) {
       }
 
       const MAILBOX_V2_OVERRIDE_CSS = `
-            /* mailbox-v2-polish-upgrade-css */
-            .mail-pro[data-mailbox-v2="true"] .mbv2-clear-read {
-              display: none !important;
-            }
-
-            .mail-pro[data-mailbox-v2="true"] .mbv2-head-actions {
-              display: flex !important;
-              align-items: center !important;
-              justify-content: flex-end !important;
-              gap: 8px !important;
-            }
-
-            .mail-pro[data-mailbox-v2="true"] .mbv2-capacity {
-              display: flex !important;
-              align-items: center !important;
-              justify-content: space-between !important;
-              gap: 12px !important;
-              margin: 0 14px 12px !important;
-              padding: 10px 12px !important;
-              border-radius: 15px !important;
-              border: 1px solid rgba(255, 138, 91, .15) !important;
-              background: rgba(255,255,255,.026) !important;
-            }
-
-            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-main {
-              display: flex !important;
-              align-items: center !important;
-              gap: 10px !important;
-              min-width: 0 !important;
-              flex: 1 !important;
-            }
-
-            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-name {
-              display: inline-flex !important;
-              align-items: center !important;
-              gap: 7px !important;
-              min-width: 98px !important;
-              white-space: nowrap !important;
-            }
-
-            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-name::before {
-              content: "" !important;
-              width: 7px !important;
-              height: 7px !important;
-              border-radius: 999px !important;
-              background: linear-gradient(135deg, #ffd36a, #ff8a5b) !important;
-              box-shadow: 0 0 12px rgba(255, 138, 91, .35) !important;
-              flex: 0 0 auto !important;
-            }
-
-            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-name strong {
-              color: rgba(255,255,255,.78) !important;
-              font-size: 12px !important;
-              font-weight: 1000 !important;
-            }
-
-            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-name span,
-            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-count {
-              color: #ffd36a !important;
-              font-size: 12px !important;
-              font-weight: 1000 !important;
-              white-space: nowrap !important;
-            }
-
-            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-bar {
-              flex: 1 !important;
-              max-width: 160px !important;
-              min-width: 90px !important;
-              height: 5px !important;
-              border-radius: 999px !important;
-              overflow: hidden !important;
-              background: rgba(255,255,255,.085) !important;
-            }
-
-            .mail-pro[data-mailbox-v2="true"] .mbv2-cap-bar span {
-              display: block !important;
-              height: 100% !important;
-              border-radius: inherit !important;
-              background: linear-gradient(90deg, #ffd36a, #ff8a5b) !important;
-            }
-
-            .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade {
-              display: inline-flex !important;
-              align-items: center !important;
-              gap: 8px !important;
-              flex-shrink: 0 !important;
-            }
-
-            .mail-pro[data-mailbox-v2="true"] .mbv2-cost {
-              display: inline-flex !important;
-              align-items: center !important;
-              justify-content: center !important;
-              height: 27px !important;
-              min-width: 76px !important;
-              padding: 0 9px !important;
-              border-radius: 9px !important;
-              background: rgba(255, 211, 106, .075) !important;
-              color: #ffd36a !important;
-              font-size: 10.8px !important;
-              font-weight: 1000 !important;
-              white-space: nowrap !important;
-            }
-
-            .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade-btn {
-              display: inline-flex !important;
-              align-items: center !important;
-              justify-content: center !important;
-              height: 32px !important;
-              min-width: 108px !important;
-              padding: 0 12px !important;
-              border-radius: 11px !important;
-              border: 1px solid rgba(255, 138, 91, .30) !important;
-              background: rgba(255, 138, 91, .085) !important;
-              color: #ffbd80 !important;
-              cursor: pointer !important;
-              font-size: 12px !important;
-              font-weight: 1000 !important;
-              line-height: 1 !important;
-              white-space: nowrap !important;
-              box-shadow: none !important;
-              transform: none !important;
-            }
-
-            .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade-btn:hover {
-              background: linear-gradient(135deg, rgba(255,211,106,.18), rgba(255,138,91,.16)) !important;
-              border-color: rgba(255, 138, 91, .42) !important;
-              transform: none !important;
-            }
-
-            .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade-btn:disabled,
-            .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade-btn[aria-disabled="true"] {
-              opacity: .55 !important;
-              cursor: not-allowed !important;
-            }
-
-            @media (max-width: 720px) {
-              .mail-pro[data-mailbox-v2="true"] .mbv2-capacity {
-                flex-direction: column !important;
-                align-items: stretch !important;
-              }
-
-              .mail-pro[data-mailbox-v2="true"] .mbv2-cap-main {
-                width: 100% !important;
-              }
-
-              .mail-pro[data-mailbox-v2="true"] .mbv2-cap-bar {
-                max-width: none !important;
-              }
-
-              .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade {
-                width: 100% !important;
-              }
-
-              .mail-pro[data-mailbox-v2="true"] .mbv2-upgrade-btn {
-                flex: 1 !important;
-              }
-            }
-
-
-
-            /* mailbox-upgrade-v4-button-css */
             .mail-pro[data-mailbox-v2="true"] [data-mb-upgrade-open-v4] {
               pointer-events: auto !important;
               cursor: pointer !important;
             }
-      `
+       `
 
       // mailbox-v2-delegated-actions
       // استبدال innerHTML في renderMailboxProV2 كان يفقد listeners الأزرار،
