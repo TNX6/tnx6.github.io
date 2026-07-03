@@ -171,6 +171,15 @@ const metadata = {
 
                   <div class="inventory" id="inventory"></div>
                 </section>
+
+                <section class="card v2-card" id="workshopCard" hidden>
+                  <div class="card-header">
+                    <h2 class="card-title">الورشة</h2>
+                    <span class="card-subtitle" id="workshopSubtitle">تصنيع الأغراض</span>
+                  </div>
+
+                  <div class="workshop" id="workshopBox"></div>
+                </section>
               </div>
 
               <aside class="v2-side-stack">
@@ -9926,6 +9935,7 @@ const metadata = {
         renderMail(mail)
         loadD1MailboxForProfile(user)
         installMailboxAutoRefresh()
+        try { initWorkshopForProfile(user) } catch {}
         syncOwnerControlsV36(user)
       }
 
@@ -14717,6 +14727,670 @@ function mbV2Card(message) {
       }
 
 
+
+      /* ============================================================
+         الورشة (Workshop V1)
+         مصدر الوقت الحقيقي: finish_at من الـ API — الواجهة countdown فقط.
+         بعد start/claim: refetch inventory + recipes + jobs.
+         ============================================================ */
+
+      const wsState = {
+        recipes: [],
+        hasActiveJob: false,
+        jobs: { active: [], ready: [], history: [] },
+        tab: 'recipes',
+        loading: false,
+        visible: false,
+        timer: null,
+        pollTimer: null,
+        reloadQueued: false,
+        pendingInvRefresh: false,
+        reveal: null,
+        notice: null,
+      }
+
+      function wsBox() { return document.getElementById('workshopBox') }
+      function wsCard() { return document.getElementById('workshopCard') }
+
+      function wsIcon(name, size) {
+        const s = Number(size || 16)
+        const icons = {
+          hammer: '<path d="m11.414 10-7.383 7.418a2.09 2.09 0 0 0 0 2.967 2.11 2.11 0 0 0 2.976 0L14.414 13"/><path d="M18.121 15.293 21 12.414a1 1 0 0 0 0-1.414l-1.586-1.586a1 1 0 0 0-1.414 0l-.707.707-5.586-5.586a2 2 0 0 0-2.828 0L7.464 5.95l8.485 8.486z"/>',
+          clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
+          spark: '<path d="M12 3v3"/><path d="M18.4 5.6 16.3 7.7"/><path d="M21 12h-3"/><path d="M18.4 18.4l-2.1-2.1"/><path d="M12 21v-3"/><path d="m5.6 18.4 2.1-2.1"/><path d="M3 12h3"/><path d="m5.6 5.6 2.1 2.1"/>',
+          check: '<path d="m5 12 5 5L20 7"/>',
+          x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+          refresh: '<path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>',
+          box: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5"/><path d="M12 12v9"/><path d="M12 12 4 7.5"/>',
+          dice: '<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="15" r="1" fill="currentColor"/>',
+        }
+        const body = icons[name] || icons.hammer
+        return '<svg viewBox="0 0 24 24" width="' + s + '" height="' + s + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + body + '</svg>'
+      }
+
+      function wsFormat(value) {
+        try { return formatNumber(value) } catch { return String(value || 0) }
+      }
+
+      function wsEscape(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;')
+      }
+
+      function wsDuration(seconds) {
+        const total = Math.max(0, Math.floor(Number(seconds || 0)))
+        if (total >= 3600) {
+          const hours = Math.floor(total / 3600)
+          const minutes = Math.floor((total % 3600) / 60)
+          return wsFormat(hours) + ' ساعة' + (minutes ? ' و' + wsFormat(minutes) + ' دقيقة' : '')
+        }
+        if (total >= 60) return wsFormat(Math.floor(total / 60)) + ' دقيقة'
+        return wsFormat(total) + ' ثانية'
+      }
+
+      function wsRemainingText(seconds) {
+        const total = Math.max(0, Math.floor(Number(seconds || 0)))
+        const h = Math.floor(total / 3600)
+        const m = Math.floor((total % 3600) / 60)
+        const s = total % 60
+        const two = (n) => String(n).padStart(2, '0')
+        return h > 0 ? h + ':' + two(m) + ':' + two(s) : two(m) + ':' + two(s)
+      }
+
+      function wsTimeShort(raw) {
+        if (!raw) return ''
+        let normalized = String(raw).trim()
+        if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(normalized)) normalized = normalized.replace(' ', 'T') + 'Z'
+        else if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(normalized)) normalized = normalized + 'Z'
+        const date = new Date(normalized)
+        if (Number.isNaN(date.getTime())) return ''
+        let diff = Date.now() - date.getTime()
+        if (diff < 0) diff = 0
+        const minute = 60000, hour = 3600000, day = 86400000
+        if (diff < minute) return 'الآن'
+        if (diff < hour) return wsFormat(Math.floor(diff / minute)) + 'د'
+        if (diff < day) return wsFormat(Math.floor(diff / hour)) + 'س'
+        const days = Math.floor(diff / day)
+        if (days === 1) return '1يوم'
+        if (days < 30) return wsFormat(days) + 'يوم'
+        return wsFormat(Math.floor(days / 30)) + 'ش'
+      }
+
+      function wsRarityLabel(rarity) {
+        const value = String(rarity || 'common').toLowerCase()
+        if (value === 'legendary') return 'أسطوري'
+        if (value === 'epic') return 'ملحمي'
+        if (value === 'rare') return 'نادر'
+        if (value === 'uncommon') return 'مميز'
+        return 'عادي'
+      }
+
+      function wsErrorText(error) {
+        const value = String(error || '').toLowerCase()
+        if (value.includes('missing_ingredients')) return 'المواد ما تكفي لهذي الوصفة.'
+        if (value.includes('item_limit_reached')) return 'وصلت الحد الأعلى من هذا الغرض، ما قدرنا نضيف الناتج.'
+        if (value.includes('active_job_exists')) return 'عندك تصنيع قيد التنفيذ بالفعل.'
+        if (value.includes('recipe_not_found')) return 'الوصفة غير متاحة حاليًا.'
+        if (value.includes('job_not_ready')) return 'التصنيع ما خلص بعد.'
+        return 'حدث خطأ، جرّب بعد قليل.'
+      }
+
+      async function wsGetMe() {
+        if (window.__tnxMeCache) return window.__tnxMeCache
+        try {
+          const res = await fetch(TNX_API_ORIGIN + '/api/me', { credentials: 'include', cache: 'no-store' })
+          const data = await res.json().catch(() => null)
+          if (!res.ok || !data) return null
+          window.__tnxMeCache = data.user || data
+          return window.__tnxMeCache
+        } catch { return null }
+      }
+
+      async function initWorkshopForProfile(user) {
+        const card = wsCard()
+        if (!card) return
+
+        const me = await wsGetMe()
+
+        if (!me || !sameProfileUser(user, me)) {
+          card.setAttribute('hidden', '')
+          wsState.visible = false
+          return
+        }
+
+        card.removeAttribute('hidden')
+        wsState.visible = true
+        loadWorkshop(true)
+      }
+
+      async function loadWorkshop(force) {
+        if (!wsState.visible) return
+        if (wsState.loading && !force) return
+
+        wsState.loading = true
+
+        try {
+          const [recipesRes, jobsRes] = await Promise.all([
+            fetch(TNX_API_ORIGIN + '/api/me/crafting/recipes?v=' + Date.now(), { credentials: 'include', cache: 'no-store' }),
+            fetch(TNX_API_ORIGIN + '/api/me/crafting/jobs?v=' + Date.now(), { credentials: 'include', cache: 'no-store' }),
+          ])
+
+          const recipesData = await recipesRes.json().catch(() => null)
+          const jobsData = await jobsRes.json().catch(() => null)
+
+          if (recipesData && recipesData.ok) {
+            wsState.recipes = Array.isArray(recipesData.recipes) ? recipesData.recipes : []
+            wsState.hasActiveJob = Boolean(recipesData.hasActiveJob)
+          }
+
+          if (jobsData && jobsData.ok) {
+            wsState.jobs = {
+              active: Array.isArray(jobsData.active) ? jobsData.active : [],
+              ready: Array.isArray(jobsData.ready) ? jobsData.ready : [],
+              history: Array.isArray(jobsData.history) ? jobsData.history : [],
+            }
+          }
+
+          // متابعة كشف النتيجة
+          if (wsState.reveal && wsState.reveal.phase === 'waiting') {
+            const all = [].concat(wsState.jobs.history, wsState.jobs.active, wsState.jobs.ready)
+            const found = all.find((job) => job.jobId === wsState.reveal.jobId)
+
+            if (found && ['success', 'failed', 'error'].includes(found.status)) {
+              wsState.reveal = { jobId: found.jobId, phase: 'done', job: found }
+            } else if (Date.now() - wsState.reveal.startedAtMs > 60000) {
+              wsState.reveal = { ...wsState.reveal, phase: 'timeout' }
+            }
+          }
+
+          // تحديث الحقيبة بعد ما يخلص start/claim فعليًا
+          const stillPending = wsState.jobs.active.some((job) => job.status === 'pending_start' || job.status === 'pending_claim')
+
+          if (wsState.pendingInvRefresh && !stillPending) {
+            wsState.pendingInvRefresh = false
+            wsRefreshInventory()
+          }
+
+          renderWorkshop()
+        } catch (error) {
+          console.warn('[Workshop] load failed', error)
+        } finally {
+          wsState.loading = false
+        }
+      }
+
+      async function wsRefreshInventory() {
+        try {
+          const user = state.activeUser
+          if (!user) return
+
+          const cacheKey = d1InventoryCacheKey(user)
+          if (cacheKey) delete state.d1InventoryCache[cacheKey]
+
+          const fresh = await userWithD1Inventory(user)
+
+          if (fresh && Array.isArray(fresh.inventory)) {
+            state.activeUser.inventory = fresh.inventory
+            const inventory = inventoryItems(state.activeUser)
+            setText('inventoryCount', `${inventory.length} ${inventory.length === 1 ? 'غرض' : 'أغراض'}`)
+            renderInventory(inventory)
+            try { enhanceInventorySellButtons(inventory) } catch {}
+          }
+        } catch (error) {
+          console.warn('[Workshop] inventory refresh failed', error)
+        }
+      }
+
+      async function wsStartCraft(recipeId, button) {
+        if (!recipeId) return
+
+        if (button) {
+          button.disabled = true
+          button.textContent = 'جاري بدء التصنيع...'
+        }
+
+        wsState.notice = null
+
+        try {
+          const res = await fetch(TNX_API_ORIGIN + '/api/me/crafting/start', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ recipeId }),
+          })
+
+          const data = await res.json().catch(() => null)
+
+          if (!res.ok || !data || data.ok !== true) {
+            const error = (data && data.error) || 'start_failed'
+
+            if (error === 'missing_ingredients' && Array.isArray(data.missing) && data.missing.length) {
+              const parts = data.missing.map((entry) => entry.item + ' ×' + wsFormat(Math.max(1, entry.need - entry.have)))
+              wsState.notice = { type: 'error', text: 'ناقصك: ' + parts.join('، ') }
+            } else {
+              wsState.notice = { type: 'error', text: wsErrorText(error) }
+            }
+
+            await loadWorkshop(true)
+            return
+          }
+
+          wsState.notice = { type: 'ok', text: 'تم إرسال طلب التصنيع...' }
+          wsState.pendingInvRefresh = true
+          wsState.tab = 'active'
+          await loadWorkshop(true)
+        } catch {
+          wsState.notice = { type: 'error', text: 'حدث خطأ، جرّب بعد قليل.' }
+          renderWorkshop()
+        }
+      }
+
+      async function wsClaimCraft(jobId, button) {
+        if (!jobId) return
+
+        if (button) {
+          button.disabled = true
+          button.textContent = 'جاري كشف النتيجة...'
+        }
+
+        wsState.notice = null
+
+        try {
+          const res = await fetch(TNX_API_ORIGIN + '/api/me/crafting/claim', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ jobId }),
+          })
+
+          const data = await res.json().catch(() => null)
+
+          if (!res.ok || !data || data.ok !== true) {
+            wsState.notice = { type: 'error', text: wsErrorText((data && data.error) || 'claim_failed') }
+            await loadWorkshop(true)
+            return
+          }
+
+          wsState.reveal = { jobId, phase: 'waiting', startedAtMs: Date.now() }
+          wsState.pendingInvRefresh = true
+          wsState.tab = 'ready'
+          await loadWorkshop(true)
+        } catch {
+          wsState.notice = { type: 'error', text: 'حدث خطأ، جرّب بعد قليل.' }
+          renderWorkshop()
+        }
+      }
+
+      function wsRecipeCard(recipe) {
+        const reqs = (recipe.ingredients || []).map((ing) => {
+          const ok = Boolean(ing.enough)
+          return '<span class="ws-req ' + (ok ? 'ok' : 'no') + '">' +
+            wsIcon(ok ? 'check' : 'x', 12) +
+            '<b>' + wsEscape(ing.item) + '</b>' +
+            '<i>' + wsFormat(Math.min(ing.have, ing.need)) + ' / ' + wsFormat(ing.need) + '</i>' +
+          '</span>'
+        }).join('')
+
+        let buttonHtml = ''
+
+        if (wsState.hasActiveJob) {
+          buttonHtml = '<button class="ws-start" type="button" disabled>عندك تصنيع قيد التنفيذ</button>'
+        } else if (!recipe.canCraft) {
+          const missing = (recipe.ingredients || []).filter((ing) => !ing.enough)
+          const first = missing[0]
+          const label = first ? 'ناقصك: ' + wsEscape(first.item) + ' ×' + wsFormat(Math.max(1, first.need - first.have)) : 'المواد غير متوفرة'
+          buttonHtml = '<button class="ws-start" type="button" disabled>' + label + '</button>'
+        } else {
+          buttonHtml = '<button class="ws-start ws-start-ok" type="button" data-ws-start="' + wsEscape(recipe.recipeId) + '">' + wsIcon('hammer', 14) + 'ابدأ التصنيع</button>'
+        }
+
+        return (
+          '<article class="ws-recipe' + (recipe.canCraft && !wsState.hasActiveJob ? '' : ' ws-locked') + '">' +
+            '<div class="ws-recipe-head">' +
+              '<div class="ws-recipe-icon">' + wsIcon('box', 19) + '</div>' +
+              '<div class="ws-recipe-title">' +
+                '<strong>' + wsEscape(recipe.resultItem) + (Number(recipe.resultAmount || 1) > 1 ? ' ×' + wsFormat(recipe.resultAmount) : '') + '</strong>' +
+                '<div class="ws-recipe-meta">' +
+                  '<span>' + wsIcon('clock', 11) + wsDuration(recipe.durationSeconds) + '</span>' +
+                  '<span>' + wsIcon('dice', 11) + 'نسبة النجاح ' + wsFormat(recipe.successRate) + '%</span>' +
+                  '<span class="ws-rarity ws-rarity-' + wsEscape(String(recipe.rarity || 'common').toLowerCase()) + '">' + wsRarityLabel(recipe.rarity) + '</span>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="ws-reqs">' + reqs + '</div>' +
+            buttonHtml +
+          '</article>'
+        )
+      }
+
+      function wsActiveJobCard(job) {
+        const duration = Math.max(1, Number(job.durationSeconds || 1))
+        const remaining = Math.max(0, Number(job.remainingSeconds || 0))
+        const percent = Math.max(0, Math.min(100, Math.round(((duration - remaining) / duration) * 100)))
+        const finishMs = job.finishAt ? Date.parse(job.finishAt) : 0
+
+        let stateHtml = ''
+
+        if (job.status === 'pending_start') {
+          stateHtml = '<div class="ws-job-state"><span class="ws-spin"></span>جاري بدء التصنيع...</div>'
+        } else if (job.status === 'pending_claim') {
+          stateHtml = '<div class="ws-job-state"><span class="ws-spin"></span>جاري كشف النتيجة...</div>'
+        } else {
+          stateHtml =
+            '<div class="ws-job-state ws-job-crafting">' +
+              '<span>قيد التصنيع</span>' +
+              '<b data-ws-remaining>' + wsRemainingText(remaining) + '</b>' +
+            '</div>' +
+            '<div class="ws-job-bar"><span data-ws-bar style="width:' + percent + '%"></span></div>'
+        }
+
+        return (
+          '<article class="ws-job" data-ws-job data-ws-finish="' + (Number.isFinite(finishMs) ? finishMs : 0) + '" data-ws-duration="' + duration + '">' +
+            '<div class="ws-recipe-head">' +
+              '<div class="ws-recipe-icon ws-icon-active">' + wsIcon('hammer', 19) + '</div>' +
+              '<div class="ws-recipe-title">' +
+                '<strong>' + wsEscape(job.resultItem) + '</strong>' +
+                (job.startedAt ? '<div class="ws-recipe-meta"><span>' + wsIcon('clock', 11) + 'المدة: ' + wsDuration(duration) + '</span></div>' : '') +
+              '</div>' +
+            '</div>' +
+            stateHtml +
+          '</article>'
+        )
+      }
+
+      function wsReadyCard(job) {
+        return (
+          '<article class="ws-job ws-job-ready">' +
+            '<div class="ws-recipe-head">' +
+              '<div class="ws-recipe-icon ws-icon-ready">' + wsIcon('spark', 19) + '</div>' +
+              '<div class="ws-recipe-title">' +
+                '<strong>' + wsEscape(job.resultItem) + '</strong>' +
+                '<div class="ws-recipe-meta"><span>انتهى التصنيع</span></div>' +
+              '</div>' +
+            '</div>' +
+            '<button class="ws-claim" type="button" data-ws-claim="' + wsEscape(job.jobId) + '">' + wsIcon('spark', 14) + 'كشف النتيجة</button>' +
+          '</article>'
+        )
+      }
+
+      function wsRevealCard() {
+        const reveal = wsState.reveal
+        if (!reveal) return ''
+
+        if (reveal.phase === 'waiting') {
+          return '<article class="ws-reveal"><span class="ws-spin ws-spin-lg"></span><strong>جاري كشف النتيجة...</strong><span class="ws-reveal-sub">لحظات وتطلع النتيجة</span></article>'
+        }
+
+        if (reveal.phase === 'timeout') {
+          return '<article class="ws-reveal"><strong>تأخر كشف النتيجة</strong><span class="ws-reveal-sub">بيتحدث تلقائيًا خلال لحظات</span><button class="ws-dismiss" type="button" data-ws-reveal-close>إغلاق</button></article>'
+        }
+
+        const job = reveal.job || {}
+
+        if (job.status === 'success') {
+          return (
+            '<article class="ws-reveal ws-reveal-ok">' +
+              '<div class="ws-reveal-icon ok">' + wsIcon('check', 26) + '</div>' +
+              '<strong>نجح التصنيع</strong>' +
+              '<span class="ws-reveal-sub">حصلت على: ' + wsEscape(job.resultItem) + ' ×' + wsFormat(job.resultAmount || 1) + '</span>' +
+              '<button class="ws-dismiss" type="button" data-ws-reveal-close>تم</button>' +
+            '</article>'
+          )
+        }
+
+        if (job.status === 'failed') {
+          return (
+            '<article class="ws-reveal ws-reveal-no">' +
+              '<div class="ws-reveal-icon no">' + wsIcon('x', 26) + '</div>' +
+              '<strong>فشل التصنيع</strong>' +
+              '<span class="ws-reveal-sub">لم تحصل على الناتج هذي المرة</span>' +
+              '<button class="ws-dismiss" type="button" data-ws-reveal-close>تم</button>' +
+            '</article>'
+          )
+        }
+
+        return (
+          '<article class="ws-reveal ws-reveal-no">' +
+            '<div class="ws-reveal-icon no">' + wsIcon('x', 26) + '</div>' +
+            '<strong>تعذر إكمال التصنيع</strong>' +
+            '<span class="ws-reveal-sub">' + wsEscape(wsErrorText(job.errorMessage)) + '</span>' +
+            '<button class="ws-dismiss" type="button" data-ws-reveal-close>تم</button>' +
+          '</article>'
+        )
+      }
+
+      function wsHistoryRow(job) {
+        const isOk = job.status === 'success'
+        const label = isOk ? 'نجح تصنيع' : job.status === 'failed' ? 'فشل تصنيع' : 'تعذر تصنيع'
+
+        return (
+          '<div class="ws-history-row">' +
+            '<span class="ws-history-icon ' + (isOk ? 'ok' : 'no') + '">' + wsIcon(isOk ? 'check' : 'x', 12) + '</span>' +
+            '<span class="ws-history-text">' + label + ' <b>' + wsEscape(job.resultItem) + '</b></span>' +
+            '<time>' + wsEscape(wsTimeShort(job.completedAt || job.updatedAt || job.createdAt)) + '</time>' +
+          '</div>'
+        )
+      }
+
+      function renderWorkshop() {
+        const box = wsBox()
+        if (!box) return
+
+        const activeCount = wsState.jobs.active.length
+        const readyCount = wsState.jobs.ready.length
+        const historyCount = wsState.jobs.history.length
+
+        const subtitle = document.getElementById('workshopSubtitle')
+        if (subtitle) {
+          subtitle.textContent = activeCount
+            ? 'قيد التصنيع الآن'
+            : readyCount
+              ? 'عندك نتيجة جاهزة'
+              : wsFormat(wsState.recipes.length) + ' وصفة متاحة'
+        }
+
+        const tab = wsState.tab
+
+        const tabButton = (id, label, count) =>
+          '<button class="ws-tab ' + (tab === id ? 'active' : '') + '" type="button" data-ws-tab="' + id + '">' + label + ' <span>' + wsFormat(count) + '</span></button>'
+
+        let content = ''
+
+        if (tab === 'recipes') {
+          content = wsState.recipes.length
+            ? wsState.recipes.map(wsRecipeCard).join('')
+            : '<div class="ws-empty">' + wsIcon('hammer', 24) + '<strong>ما فيه وصفات متاحة</strong><span>الوصفات بتظهر هنا أول ما تتوفر.</span></div>'
+        } else if (tab === 'active') {
+          content = wsState.jobs.active.length
+            ? wsState.jobs.active.map(wsActiveJobCard).join('')
+            : '<div class="ws-empty">' + wsIcon('clock', 24) + '<strong>ما عندك تصنيع شغال</strong><span>ابدأ وصفة من تبويب الوصفات.</span></div>'
+        } else if (tab === 'ready') {
+          content = wsState.reveal
+            ? wsRevealCard()
+            : wsState.jobs.ready.length
+              ? wsState.jobs.ready.map(wsReadyCard).join('')
+              : '<div class="ws-empty">' + wsIcon('spark', 24) + '<strong>ما فيه شيء جاهز</strong><span>إذا خلص التصنيع بيظهر هنا.</span></div>'
+        } else {
+          content = wsState.jobs.history.length
+            ? '<div class="ws-history">' + wsState.jobs.history.map(wsHistoryRow).join('') + '</div>'
+            : '<div class="ws-empty">' + wsIcon('box', 24) + '<strong>السجل فاضي</strong><span>أول عملية تصنيع بتنحفظ هنا.</span></div>'
+        }
+
+        const noticeHtml = wsState.notice
+          ? '<div class="ws-notice ' + (wsState.notice.type === 'error' ? 'is-error' : 'is-ok') + '">' + wsEscape(wsState.notice.text) + '</div>'
+          : ''
+
+        box.innerHTML =
+          '<style>' +
+            '.workshop{direction:rtl;color:#f4f4f5;}' +
+            '.workshop *{box-sizing:border-box;}' +
+            '.workshop svg{flex:0 0 auto;display:block;}' +
+            '.ws-tabs{display:flex;gap:5px;margin-bottom:10px;}' +
+            '.ws-tab{flex:1;height:34px;border:0;border-radius:11px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);cursor:pointer;font-size:11.5px;font-weight:1000;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;}' +
+            '.ws-tab span{min-width:17px;height:17px;padding:0 5px;border-radius:999px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:10px;}' +
+            '.ws-tab.active{background:#ff8a5b;color:#2a160c;}' +
+            '.ws-tab.active span{background:rgba(0,0,0,.16);color:#2a160c;}' +
+            '.ws-notice{margin-bottom:10px;padding:9px 12px;border-radius:12px;font-size:12px;font-weight:900;}' +
+            '.ws-notice.is-error{border:1px solid rgba(255,107,107,.25);background:rgba(255,107,107,.07);color:#ff9f9f;}' +
+            '.ws-notice.is-ok{border:1px solid rgba(143,240,179,.22);background:rgba(143,240,179,.06);color:#8ff0b3;}' +
+            '.ws-list{display:flex;flex-direction:column;gap:9px;}' +
+            '.ws-recipe,.ws-job{padding:12px;border-radius:15px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.03);}' +
+            '.ws-locked{opacity:.75;}' +
+            '.ws-recipe-head{display:flex;align-items:center;gap:10px;margin-bottom:9px;}' +
+            '.ws-recipe-icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(255,138,91,.1);border:1px solid rgba(255,138,91,.22);color:#ff9d6b;flex:0 0 auto;}' +
+            '.ws-icon-active{background:rgba(255,211,106,.1);border-color:rgba(255,211,106,.25);color:#ffd36a;}' +
+            '.ws-icon-ready{background:rgba(143,240,179,.1);border-color:rgba(143,240,179,.25);color:#8ff0b3;}' +
+            '.ws-recipe-title{min-width:0;}' +
+            '.ws-recipe-title strong{display:block;font-size:13.5px;font-weight:1000;color:#fff;margin-bottom:3px;}' +
+            '.ws-recipe-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}' +
+            '.ws-recipe-meta span{display:inline-flex;align-items:center;gap:4px;color:rgba(255,255,255,.5);font-size:10.5px;font-weight:800;white-space:nowrap;}' +
+            '.ws-rarity{padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.6)!important;}' +
+            '.ws-rarity-rare{background:rgba(120,170,255,.12);color:#9cc0ff!important;}' +
+            '.ws-rarity-epic{background:rgba(150,124,255,.12);color:#b79cff!important;}' +
+            '.ws-rarity-legendary{background:rgba(255,211,106,.12);color:#ffd36a!important;}' +
+            '.ws-reqs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}' +
+            '.ws-req{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:9px;font-size:11px;font-weight:900;border:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.14);}' +
+            '.ws-req b{color:rgba(255,255,255,.8);font-weight:900;}' +
+            '.ws-req i{font-style:normal;color:rgba(255,255,255,.45);}' +
+            '.ws-req.ok{color:#8ff0b3;}' +
+            '.ws-req.no{color:#ff9f9f;border-color:rgba(255,107,107,.18);}' +
+            '.ws-start,.ws-claim{width:100%;height:36px;border-radius:11px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);color:rgba(255,255,255,.45);font-size:12px;font-weight:1000;cursor:not-allowed;display:inline-flex;align-items:center;justify-content:center;gap:7px;}' +
+            '.ws-start-ok{border-color:rgba(255,138,91,.35);background:rgba(255,138,91,.12);color:#ffbd80;cursor:pointer;}' +
+            '.ws-start-ok:hover{background:rgba(255,138,91,.2);}' +
+            '.ws-claim{border-color:rgba(255,211,106,.4);background:linear-gradient(135deg,#ffd36a,#ff9d2e);color:#241404;cursor:pointer;}' +
+            '.ws-job-state{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#ffd36a;font-size:12px;font-weight:1000;margin-bottom:7px;}' +
+            '.ws-job-state b{font-variant-numeric:tabular-nums;font-size:15px;}' +
+            '.ws-job-bar{height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;}' +
+            '.ws-job-bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ffd36a,#ff8a5b);transition:width 1s linear;}' +
+            '.ws-spin{width:14px;height:14px;border-radius:999px;border:2px solid rgba(255,211,106,.25);border-top-color:#ffd36a;animation:wsspin .7s linear infinite;flex:0 0 auto;display:inline-block;}' +
+            '.ws-spin-lg{width:26px;height:26px;border-width:3px;}' +
+            '@keyframes wsspin{to{transform:rotate(360deg)}}' +
+            '.ws-reveal{display:flex;flex-direction:column;align-items:center;gap:8px;padding:26px 16px;border-radius:15px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);text-align:center;}' +
+            '.ws-reveal strong{font-size:15px;font-weight:1000;}' +
+            '.ws-reveal-sub{color:rgba(255,255,255,.6);font-size:12.5px;}' +
+            '.ws-reveal-ok{border-color:rgba(143,240,179,.3);animation:wsflashok 1.1s ease-out 1;}' +
+            '.ws-reveal-no{border-color:rgba(255,155,155,.3);}' +
+            '@keyframes wsflashok{0%{box-shadow:0 0 0 0 rgba(143,240,179,.5)}100%{box-shadow:0 0 0 16px rgba(143,240,179,0)}}' +
+            '.ws-reveal-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;}' +
+            '.ws-reveal-icon.ok{background:rgba(143,240,179,.12);color:#8ff0b3;}' +
+            '.ws-reveal-icon.no{background:rgba(255,155,155,.1);color:#ff9f9f;}' +
+            '.ws-dismiss{margin-top:4px;height:34px;padding:0 22px;border-radius:11px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.75);font-size:12px;font-weight:1000;cursor:pointer;}' +
+            '.ws-empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:26px 14px;text-align:center;color:rgba(255,255,255,.5);}' +
+            '.ws-empty svg{color:rgba(255,255,255,.28);}' +
+            '.ws-empty strong{color:#fff;font-size:13.5px;}' +
+            '.ws-empty span{font-size:12px;}' +
+            '.ws-history{display:flex;flex-direction:column;gap:6px;}' +
+            '.ws-history-row{display:flex;align-items:center;gap:8px;padding:9px 11px;border-radius:11px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025);font-size:12px;}' +
+            '.ws-history-icon{width:22px;height:22px;border-radius:8px;display:grid;place-items:center;flex:0 0 auto;}' +
+            '.ws-history-icon.ok{background:rgba(143,240,179,.12);color:#8ff0b3;}' +
+            '.ws-history-icon.no{background:rgba(255,155,155,.1);color:#ff9f9f;}' +
+            '.ws-history-text{color:rgba(255,255,255,.65);font-weight:800;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
+            '.ws-history-text b{color:#fff;font-weight:900;}' +
+            '.ws-history-row time{margin-inline-start:auto;color:rgba(255,255,255,.38);font-size:10.5px;font-weight:800;white-space:nowrap;}' +
+          '</style>' +
+
+          '<nav class="ws-tabs">' +
+            tabButton('recipes', 'الوصفات', wsState.recipes.length) +
+            tabButton('active', 'قيد التصنيع', activeCount) +
+            tabButton('ready', 'جاهز', readyCount) +
+            tabButton('history', 'السجل', historyCount) +
+          '</nav>' +
+          noticeHtml +
+          '<div class="ws-list">' + content + '</div>'
+
+        wsEnsureTimers()
+      }
+
+      function wsTickCountdown() {
+        const box = wsBox()
+        if (!box) return
+
+        let needsReload = false
+
+        box.querySelectorAll('[data-ws-job]').forEach((card) => {
+          const finishMs = Number(card.dataset.wsFinish || 0)
+          const duration = Math.max(1, Number(card.dataset.wsDuration || 1))
+
+          if (!finishMs) return
+
+          const remaining = Math.max(0, Math.ceil((finishMs - Date.now()) / 1000))
+          const remainingEl = card.querySelector('[data-ws-remaining]')
+          const barEl = card.querySelector('[data-ws-bar]')
+
+          if (remainingEl) remainingEl.textContent = wsRemainingText(remaining)
+          if (barEl) barEl.style.width = Math.max(0, Math.min(100, Math.round(((duration - remaining) / duration) * 100))) + '%'
+
+          if (remaining <= 0) needsReload = true
+        })
+
+        if (needsReload && !wsState.reloadQueued) {
+          wsState.reloadQueued = true
+          loadWorkshop(true).finally(() => { wsState.reloadQueued = false })
+        }
+      }
+
+      function wsEnsureTimers() {
+        const hasCrafting = wsState.jobs.active.some((job) => job.status === 'crafting')
+        const hasPending =
+          wsState.jobs.active.some((job) => job.status === 'pending_start' || job.status === 'pending_claim') ||
+          (wsState.reveal && wsState.reveal.phase === 'waiting')
+
+        if (hasCrafting && !wsState.timer) {
+          wsState.timer = window.setInterval(wsTickCountdown, 1000)
+        } else if (!hasCrafting && wsState.timer) {
+          window.clearInterval(wsState.timer)
+          wsState.timer = null
+        }
+
+        if (hasPending && !wsState.pollTimer) {
+          wsState.pollTimer = window.setInterval(() => loadWorkshop(true), 4000)
+        } else if (!hasPending && wsState.pollTimer) {
+          window.clearInterval(wsState.pollTimer)
+          wsState.pollTimer = null
+        }
+      }
+
+      if (!window.__wsActionsDelegated) {
+        window.__wsActionsDelegated = true
+
+        document.addEventListener('click', (event) => {
+          const target = event.target
+          if (!(target instanceof Element)) return
+          if (!target.closest('#workshopBox')) return
+
+          const tabButton = target.closest('[data-ws-tab]')
+          if (tabButton) {
+            wsState.tab = tabButton.getAttribute('data-ws-tab') || 'recipes'
+            renderWorkshop()
+            return
+          }
+
+          const startButton = target.closest('[data-ws-start]')
+          if (startButton) {
+            event.preventDefault()
+            wsStartCraft(startButton.getAttribute('data-ws-start') || '', startButton)
+            return
+          }
+
+          const claimButton = target.closest('[data-ws-claim]')
+          if (claimButton) {
+            event.preventDefault()
+            wsClaimCraft(claimButton.getAttribute('data-ws-claim') || '', claimButton)
+            return
+          }
+
+          const closeButton = target.closest('[data-ws-reveal-close]')
+          if (closeButton) {
+            wsState.reveal = null
+            wsState.tab = 'history'
+            loadWorkshop(true)
+          }
+        })
+      }
 
       /* mailbox-relative-time-avatar-helpers */
       function formatMailboxRelativeTime(value) {
