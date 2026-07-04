@@ -175,10 +175,10 @@ const metadata = {
                 <section class="card v2-card" id="workshopCard" hidden>
                   <div class="card-header">
                     <h2 class="card-title">الورشة</h2>
-                    <span class="card-subtitle" id="workshopSubtitle">تصنيع الأغراض</span>
+                    <span class="card-subtitle" id="workshopSubtitle">اصنع أغراض جديدة من مواردك</span>
                   </div>
 
-                  <div class="workshop" id="workshopBox"></div>
+                  <div class="ws-entry" id="workshopEntry"></div>
                 </section>
               </div>
 
@@ -14749,8 +14749,99 @@ function mbV2Card(message) {
         notice: null,
       }
 
-      function wsBox() { return document.getElementById('workshopBox') }
+      function wsBox() { return document.getElementById('wsModalBody') }
       function wsCard() { return document.getElementById('workshopCard') }
+      function wsModalEl() { return document.getElementById('wsModal') }
+      function wsModalOpen() { return Boolean(document.getElementById('wsModal')) }
+      function wsEntryEl() { return document.getElementById('workshopEntry') }
+
+      // بطاقة الدخول المصغرة داخل صفحة البروفايل (بدل القسم الطويل)
+      function wsRenderEntry() {
+        const entry = wsEntryEl()
+        if (!entry) return
+
+        const available = wsState.recipes.filter((recipe) => Boolean(recipe.canCraft)).length
+        const activeCount = wsState.jobs.active.length
+        const readyCount = wsState.jobs.ready.length
+
+        entry.innerHTML =
+          '<style>' +
+            '.ws-entry{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;direction:rtl;}' +
+            '.ws-entry svg{flex:0 0 auto;display:block;}' +
+            '.ws-entry-stats{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}' +
+            '.ws-entry-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.65);font-size:11px;font-weight:900;white-space:nowrap;}' +
+            '.ws-entry-chip b{color:#ffd36a;font-weight:1000;}' +
+            '.ws-entry-chip.is-live b{color:#ffbd80;}' +
+            '.ws-entry-chip.is-ready b{color:#8ff0b3;}' +
+            '.ws-open-btn{height:36px;padding:0 16px;border-radius:12px;border:1px solid rgba(255,138,91,.3);background:rgba(255,138,91,.085);color:#ffbd80;font-size:12.5px;font-weight:1000;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;}' +
+            '.ws-open-btn:hover{background:rgba(255,138,91,.16);border-color:rgba(255,138,91,.45);}' +
+          '</style>' +
+          '<div class="ws-entry-stats">' +
+            '<span class="ws-entry-chip">متاح <b>' + wsFormat(available) + '</b></span>' +
+            '<span class="ws-entry-chip is-live">قيد التصنيع <b>' + wsFormat(activeCount) + '</b></span>' +
+            '<span class="ws-entry-chip is-ready">جاهز <b>' + wsFormat(readyCount) + '</b></span>' +
+          '</div>' +
+          '<button class="ws-open-btn" type="button" data-ws-open>' + wsIcon('hammer', 15) + 'فتح الورشة</button>'
+      }
+
+      function wsEnsureModalStyle() {
+        if (document.getElementById('ws-modal-style')) return
+
+        const style = document.createElement('style')
+        style.id = 'ws-modal-style'
+        style.textContent =
+          '.ws-modal{position:fixed;inset:0;z-index:2147483600;display:grid;place-items:center;padding:14px;background:rgba(0,0,0,.72);direction:rtl;}' +
+          '.ws-dialog{display:flex;flex-direction:column;width:min(860px,100%);max-height:min(92vh,860px);border-radius:22px;border:1px solid rgba(255,255,255,.1);background:#17171d;color:#f4f4f5;box-shadow:0 28px 90px rgba(0,0,0,.58);overflow:hidden;}' +
+          '.ws-m-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.07);flex:0 0 auto;}' +
+          '.ws-m-title{display:flex;align-items:center;gap:10px;min-width:0;}' +
+          '.ws-m-icon{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:rgba(255,138,91,.12);border:1px solid rgba(255,138,91,.25);color:#ff9d6b;flex:0 0 auto;}' +
+          '.ws-m-title h3{margin:0;font-size:16px;font-weight:1000;}' +
+          '.ws-m-title p{margin:2px 0 0;font-size:11.5px;color:rgba(255,255,255,.55);font-weight:700;}' +
+          '.ws-m-side{display:flex;align-items:center;gap:8px;}' +
+          '.ws-m-stats{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end;}' +
+          '.ws-m-stat{padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.6);font-size:10.5px;font-weight:900;white-space:nowrap;}' +
+          '.ws-m-stat b{color:#ffd36a;}' +
+          '.ws-m-close{width:30px;height:30px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.4);cursor:pointer;font-size:15px;line-height:1;display:grid;place-items:center;flex:0 0 auto;}' +
+          '.ws-m-close:hover{color:#fff;border-color:rgba(255,255,255,.2);}' +
+          '.ws-m-body{padding:12px 14px 16px;overflow-y:auto;flex:1 1 auto;-webkit-overflow-scrolling:touch;}' +
+          '@media (max-width:640px){.ws-modal{padding:0;}.ws-dialog{width:100%;height:100dvh;max-height:100dvh;border-radius:0;}.ws-m-stats{display:none;}}'
+
+        document.head.appendChild(style)
+      }
+
+      function wsOpenModal() {
+        if (wsModalOpen()) return
+
+        wsEnsureModalStyle()
+
+        const overlay = document.createElement('div')
+        overlay.id = 'wsModal'
+        overlay.className = 'ws-modal'
+        overlay.innerHTML =
+          '<div class="ws-dialog" role="dialog" aria-modal="true" aria-label="الورشة">' +
+            '<header class="ws-m-head">' +
+              '<div class="ws-m-title">' +
+                '<div class="ws-m-icon">' + wsIcon('hammer', 20) + '</div>' +
+                '<div><h3>الورشة</h3><p>اصنع أغراض جديدة من مواردك</p></div>' +
+              '</div>' +
+              '<div class="ws-m-side">' +
+                '<div class="ws-m-stats" data-ws-m-stats></div>' +
+                '<button class="ws-m-close" type="button" data-ws-close aria-label="إغلاق">×</button>' +
+              '</div>' +
+            '</header>' +
+            '<div class="ws-m-body" id="wsModalBody"></div>' +
+          '</div>'
+
+        document.body.appendChild(overlay)
+        renderWorkshop()
+        loadWorkshop(true)
+      }
+
+      function wsCloseModal() {
+        const overlay = wsModalEl()
+        if (overlay) overlay.remove()
+        wsEnsureTimers()
+      }
 
       function wsIcon(name, size) {
         const s = Number(size || 16)
@@ -14950,7 +15041,7 @@ function mbV2Card(message) {
 
         if (button) {
           button.disabled = true
-          button.textContent = 'جاري بدء التصنيع...'
+          button.innerHTML = '<span class="ws-spin"></span>جاري بدء التصنيع...'
         }
 
         wsState.notice = null
@@ -15087,13 +15178,26 @@ function mbV2Card(message) {
           )
         }
 
+        // دائرة تقدم: المحيط = 2π×34 ≈ 213.6
+        const circumference = 213.6
+        const offset = (circumference * (1 - percent / 100)).toFixed(1)
+
         return (
-          '<article class="ws-job" data-ws-job data-ws-finish="' + (Number.isFinite(finishMs) ? finishMs : 0) + '" data-ws-duration="' + duration + '">' +
-            '<div class="ws-j-kicker">قيد التصنيع</div>' +
-            '<strong class="ws-j-name">' + wsEscape(job.resultItem) + '</strong>' +
-            '<div class="ws-j-timer" data-ws-remaining>' + wsRemainingText(remaining) + '</div>' +
-            '<div class="ws-j-bar"><span data-ws-bar style="width:' + percent + '%"></span></div>' +
-            '<p class="ws-j-hint">ارجع عند انتهاء الوقت لكشف النتيجة</p>' +
+          '<article class="ws-job ws-craftcard" data-ws-job data-ws-finish="' + (Number.isFinite(finishMs) ? finishMs : 0) + '" data-ws-duration="' + duration + '">' +
+            '<div class="ws-craft-overlay" aria-hidden="true"></div>' +
+            '<div class="ws-craft-inner">' +
+              '<div class="ws-j-kicker">قيد التصنيع</div>' +
+              '<strong class="ws-j-name">' + wsEscape(job.resultItem) + '</strong>' +
+              '<div class="ws-ring-wrap">' +
+                '<svg class="ws-ring" viewBox="0 0 80 80" aria-hidden="true">' +
+                  '<circle class="ws-ring-bg" cx="40" cy="40" r="34"/>' +
+                  '<circle class="ws-ring-fill" data-ws-ring cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="' + offset + '"/>' +
+                '</svg>' +
+                '<div class="ws-ring-center"><b data-ws-pct>' + percent + '%</b></div>' +
+              '</div>' +
+              '<div class="ws-j-left">الوقت المتبقي <b data-ws-remaining>' + wsRemainingText(remaining) + '</b></div>' +
+              '<p class="ws-j-hint">ارجع عند انتهاء الوقت لكشف النتيجة</p>' +
+            '</div>' +
           '</article>'
         )
       }
@@ -15172,13 +15276,13 @@ function mbV2Card(message) {
       }
 
       function renderWorkshop() {
-        const box = wsBox()
-        if (!box) return
-
         const availableRecipes = wsState.recipes.filter((recipe) => Boolean(recipe.canCraft))
         const activeCount = wsState.jobs.active.length
         const readyCount = wsState.jobs.ready.length
         const historyCount = wsState.jobs.history.length
+
+        // بطاقة الدخول في الصفحة دائمًا
+        wsRenderEntry()
 
         const subtitle = document.getElementById('workshopSubtitle')
         if (subtitle) {
@@ -15186,7 +15290,23 @@ function mbV2Card(message) {
             ? 'قيد التصنيع الآن'
             : readyCount
               ? 'عندك نتيجة جاهزة'
-              : 'متاح للتصنيع: ' + wsFormat(availableRecipes.length) + ' من ' + wsFormat(wsState.recipes.length)
+              : 'اصنع أغراض جديدة من مواردك'
+        }
+
+        // إحصائيات هيدر المودال
+        const statsEl = document.querySelector('#wsModal [data-ws-m-stats]')
+        if (statsEl) {
+          statsEl.innerHTML =
+            '<span class="ws-m-stat">متاح <b>' + wsFormat(availableRecipes.length) + '</b></span>' +
+            '<span class="ws-m-stat">قيد التصنيع <b>' + wsFormat(activeCount) + '</b></span>' +
+            '<span class="ws-m-stat">جاهز <b>' + wsFormat(readyCount) + '</b></span>'
+        }
+
+        const box = wsBox()
+
+        if (!box) {
+          wsEnsureTimers()
+          return
         }
 
         const tab = wsState.tab
@@ -15198,21 +15318,21 @@ function mbV2Card(message) {
 
         if (tab === 'available') {
           content = availableRecipes.length
-            ? availableRecipes.map(wsRecipeCard).join('')
+            ? '<div class="ws-grid">' + availableRecipes.map(wsRecipeCard).join('') + '</div>'
             : '<div class="ws-empty">' + wsIcon('hammer', 24) + '<strong>ما فيه وصفات متاحة الآن</strong><span>جمّع موارد أكثر أو شوف كل الوصفات.</span></div>'
         } else if (tab === 'recipes') {
           content = wsState.recipes.length
-            ? wsState.recipes.map(wsRecipeCard).join('')
+            ? '<div class="ws-grid">' + wsState.recipes.map(wsRecipeCard).join('') + '</div>'
             : '<div class="ws-empty">' + wsIcon('hammer', 24) + '<strong>ما فيه وصفات</strong><span>الوصفات بتظهر هنا أول ما تتوفر.</span></div>'
         } else if (tab === 'active') {
           content = wsState.jobs.active.length
-            ? wsState.jobs.active.map(wsActiveJobCard).join('')
+            ? '<div class="ws-center">' + wsState.jobs.active.map(wsActiveJobCard).join('') + '</div>'
             : '<div class="ws-empty">' + wsIcon('clock', 24) + '<strong>ما عندك تصنيع شغال</strong><span>ابدأ وصفة من تبويب المتاح.</span></div>'
         } else if (tab === 'ready') {
           content = wsState.reveal
-            ? wsRevealCard()
+            ? '<div class="ws-center">' + wsRevealCard() + '</div>'
             : wsState.jobs.ready.length
-              ? wsState.jobs.ready.map(wsReadyCard).join('')
+              ? '<div class="ws-center">' + wsState.jobs.ready.map(wsReadyCard).join('') + '</div>'
               : '<div class="ws-empty">' + wsIcon('spark', 24) + '<strong>ما فيه شيء جاهز</strong><span>إذا خلص التصنيع بيظهر هنا.</span></div>'
         } else {
           content = wsState.jobs.history.length
@@ -15220,37 +15340,18 @@ function mbV2Card(message) {
             : '<div class="ws-empty">' + wsIcon('box', 24) + '<strong>السجل فاضي</strong><span>أول عملية تصنيع بتنحفظ هنا.</span></div>'
         }
 
-        const heroHtml =
-          '<header class="ws-hero">' +
-            '<div class="ws-hero-icon">' + wsIcon('hammer', 24) + '</div>' +
-            '<div class="ws-hero-text">' +
-              '<h3>الورشة الملكية</h3>' +
-              '<p>اصنع أغراض جديدة من مواردك</p>' +
-            '</div>' +
-            '<div class="ws-hero-stat">' +
-              '<b>' + wsFormat(availableRecipes.length) + ' / ' + wsFormat(wsState.recipes.length) + '</b>' +
-              '<span>متاح للتصنيع</span>' +
-            '</div>' +
-          '</header>'
-
         const noticeHtml = wsState.notice
           ? '<div class="ws-notice ' + (wsState.notice.type === 'error' ? 'is-error' : 'is-ok') + '">' + wsEscape(wsState.notice.text) + '</div>'
           : ''
 
         box.innerHTML =
           '<style>' +
-            '.workshop{direction:rtl;color:#f0eee9;}' +
-            '.workshop *{box-sizing:border-box;}' +
-            '.workshop svg{flex:0 0 auto;display:block;}' +
+            '.ws-m-body{direction:rtl;color:#f4f4f5;}' +
+            '.ws-m-body *{box-sizing:border-box;}' +
+            '.ws-m-body svg{flex:0 0 auto;display:block;}' +
 
-            '.ws-hero{position:relative;display:flex;align-items:center;gap:11px;padding:14px;margin-bottom:10px;border-radius:16px;border:1px solid rgba(255,170,100,.16);background:radial-gradient(130% 160% at 88% -10%,rgba(255,138,91,.16),transparent 46%),linear-gradient(160deg,#1d1a20,#141318);overflow:hidden;}' +
-            '.ws-hero-icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:rgba(255,175,100,.09);border:1px solid rgba(255,175,100,.22);color:#ffc98f;flex:0 0 auto;box-shadow:0 0 24px rgba(255,138,91,.12);}' +
-            '.ws-hero-text{min-width:0;flex:1;}' +
-            '.ws-hero-text h3{margin:0;font-size:15.5px;font-weight:1000;color:#ffe9c9;letter-spacing:-.01em;}' +
-            '.ws-hero-text p{margin:2px 0 0;font-size:11.5px;color:rgba(255,255,255,.55);font-weight:700;}' +
-            '.ws-hero-stat{text-align:center;padding:7px 11px;border-radius:12px;background:rgba(0,0,0,.22);border:1px solid rgba(255,197,110,.18);flex:0 0 auto;}' +
-            '.ws-hero-stat b{display:block;font-size:14px;font-weight:1000;color:#ffd36a;font-variant-numeric:tabular-nums;}' +
-            '.ws-hero-stat span{display:block;font-size:9.5px;color:rgba(255,255,255,.5);font-weight:800;margin-top:1px;white-space:nowrap;}' +
+            '.ws-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}' +
+            '.ws-center{max-width:380px;margin:0 auto;display:flex;flex-direction:column;gap:10px;}' +
 
             '.ws-tabs{display:flex;gap:5px;margin-bottom:10px;padding:4px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);overflow-x:auto;scrollbar-width:none;}' +
             '.ws-tabs::-webkit-scrollbar{display:none;}' +
@@ -15295,6 +15396,17 @@ function mbV2Card(message) {
             '.ws-note{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:10px;background:rgba(255,211,106,.06);border:1px solid rgba(255,211,106,.16);color:#ffd9a0;font-size:11.5px;font-weight:900;}' +
 
             '.ws-job{padding:16px 14px;border-radius:16px;border:1px solid rgba(255,211,106,.18);background:linear-gradient(165deg,rgba(255,211,106,.05),rgba(255,255,255,.02));text-align:center;}' +
+            '.ws-craftcard{position:relative;overflow:hidden;}' +
+            '.ws-craft-overlay{position:absolute;inset:0;background:rgba(10,10,14,.35);border-radius:inherit;pointer-events:none;}' +
+            '.ws-craft-inner{position:relative;z-index:1;}' +
+            '.ws-ring-wrap{position:relative;width:96px;height:96px;margin:6px auto 8px;}' +
+            '.ws-ring{width:96px;height:96px;transform:rotate(-90deg);}' +
+            '.ws-ring-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:7;}' +
+            '.ws-ring-fill{fill:none;stroke:#ffd36a;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset 1s linear;}' +
+            '.ws-ring-center{position:absolute;inset:0;display:grid;place-items:center;}' +
+            '.ws-ring-center b{font-size:17px;font-weight:1000;color:#ffd36a;font-variant-numeric:tabular-nums;}' +
+            '.ws-j-left{font-size:12px;color:rgba(255,255,255,.62);font-weight:900;margin-bottom:7px;}' +
+            '.ws-j-left b{color:#ffd36a;font-variant-numeric:tabular-nums;}' +
             '.ws-j-kicker{display:inline-block;padding:3px 11px;border-radius:999px;background:rgba(255,211,106,.09);border:1px solid rgba(255,211,106,.2);color:#ffd36a;font-size:10.5px;font-weight:1000;margin-bottom:8px;}' +
             '.ws-j-kicker-gold{background:linear-gradient(135deg,rgba(255,211,106,.2),rgba(255,157,46,.16));color:#ffe1a3;border-color:rgba(255,211,106,.4);}' +
             '.ws-j-name{display:block;font-size:16px;font-weight:1000;color:#fff;margin-bottom:8px;}' +
@@ -15340,10 +15452,9 @@ function mbV2Card(message) {
             '.ws-tl-row.no .ws-tl-body b{color:#ffb3b3;}' +
             '.ws-tl-body time{display:block;font-size:10.5px;color:rgba(255,255,255,.42);font-weight:800;margin-top:1px;}' +
 
-            '@media (max-width:480px){.ws-hero{padding:12px;}.ws-hero-text h3{font-size:14px;}.ws-hero-stat{padding:6px 9px;}.ws-j-timer{font-size:26px;}}' +
+            '@media (max-width:480px){.ws-ring-wrap,.ws-ring{width:88px;height:88px;}.ws-grid{grid-template-columns:1fr;}}' +
           '</style>' +
 
-          heroHtml +
           '<nav class="ws-tabs">' +
             tabButton('available', 'متاح', availableRecipes.length) +
             tabButton('recipes', 'كل الوصفات', wsState.recipes.length) +
@@ -15370,11 +15481,16 @@ function mbV2Card(message) {
           if (!finishMs) return
 
           const remaining = Math.max(0, Math.ceil((finishMs - Date.now()) / 1000))
+          const percent = Math.max(0, Math.min(100, Math.round(((duration - remaining) / duration) * 100)))
           const remainingEl = card.querySelector('[data-ws-remaining]')
           const barEl = card.querySelector('[data-ws-bar]')
+          const pctEl = card.querySelector('[data-ws-pct]')
+          const ringEl = card.querySelector('[data-ws-ring]')
 
           if (remainingEl) remainingEl.textContent = wsRemainingText(remaining)
-          if (barEl) barEl.style.width = Math.max(0, Math.min(100, Math.round(((duration - remaining) / duration) * 100))) + '%'
+          if (barEl) barEl.style.width = percent + '%'
+          if (pctEl) pctEl.textContent = percent + '%'
+          if (ringEl) ringEl.style.strokeDashoffset = (213.6 * (1 - percent / 100)).toFixed(1)
 
           if (remaining <= 0) needsReload = true
         })
@@ -15386,7 +15502,8 @@ function mbV2Card(message) {
       }
 
       function wsEnsureTimers() {
-        const hasCrafting = wsState.jobs.active.some((job) => job.status === 'crafting')
+        // عداد الثواني فقط والمودال مفتوح — ما فيه intervals دائمة
+        const hasCrafting = wsState.jobs.active.some((job) => job.status === 'crafting') && wsModalOpen()
         const hasPending =
           wsState.jobs.active.some((job) => job.status === 'pending_start' || job.status === 'pending_claim') ||
           (wsState.reveal && wsState.reveal.phase === 'waiting')
@@ -15412,7 +15529,28 @@ function mbV2Card(message) {
         document.addEventListener('click', (event) => {
           const target = event.target
           if (!(target instanceof Element)) return
-          if (!target.closest('#workshopBox')) return
+
+          // زر فتح الورشة (داخل بطاقة الدخول في الصفحة)
+          if (target.closest('[data-ws-open]')) {
+            event.preventDefault()
+            wsOpenModal()
+            return
+          }
+
+          const overlay = wsModalEl()
+
+          // إغلاق بالضغط خارج المودال
+          if (overlay && target === overlay) {
+            wsCloseModal()
+            return
+          }
+
+          if (target.closest('[data-ws-close]')) {
+            wsCloseModal()
+            return
+          }
+
+          if (!target.closest('#wsModal')) return
 
           const tabButton = target.closest('[data-ws-tab]')
           if (tabButton) {
@@ -15435,8 +15573,8 @@ function mbV2Card(message) {
             return
           }
 
-          const closeButton = target.closest('[data-ws-reveal-close]')
-          if (closeButton) {
+          const closeRevealButton = target.closest('[data-ws-reveal-close]')
+          if (closeRevealButton) {
             wsState.reveal = null
             wsState.tab = 'history'
             loadWorkshop(true)
