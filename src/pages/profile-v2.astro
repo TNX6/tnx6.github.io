@@ -165,11 +165,11 @@ const metadata = {
               <div class="v2-main-stack">
                 <section class="card v2-card">
                   <div class="card-header">
-                    <h2 class="card-title">الحقيبة</h2>
                     <div class="inv-header-side">
+                      <h2 class="card-title">الحقيبة</h2>
                       <span class="ws-entry" id="workshopEntry" hidden></span>
-                      <span class="card-subtitle" id="inventoryCount">0 غرض</span>
                     </div>
+                    <span class="card-subtitle" id="inventoryCount">0 غرض</span>
                   </div>
 
                   <div class="inventory" id="inventory"></div>
@@ -14777,7 +14777,8 @@ function mbV2Card(message) {
 
         entry.innerHTML =
           '<style>' +
-            '.inv-header-side{display:flex;align-items:center;gap:10px;min-width:0;}' +
+            '.inv-header-side{display:flex;align-items:center;gap:12px;min-width:0;}' +
+            '.inv-header-side .card-title{margin:0;}' +
             '.ws-entry{display:inline-flex;align-items:center;}' +
             '.ws-entry[hidden]{display:none!important;}' +
             '.ws-entry svg{flex:0 0 auto;display:block;}' +
