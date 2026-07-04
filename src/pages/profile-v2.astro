@@ -14739,6 +14739,8 @@ function mbV2Card(message) {
         hasActiveJob: false,
         jobs: { active: [], ready: [], history: [] },
         tab: 'available',
+        selectedId: '',
+        view: 'craft',
         loading: false,
         visible: false,
         timer: null,
@@ -14801,6 +14803,8 @@ function mbV2Card(message) {
           '.ws-m-stats{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end;}' +
           '.ws-m-stat{padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.6);font-size:10.5px;font-weight:900;white-space:nowrap;}' +
           '.ws-m-stat b{color:#ffd36a;}' +
+          '.ws-m-hist{height:30px;padding:0 12px;border-radius:10px;border:1px solid rgba(255,255,255,.09);background:transparent;color:rgba(255,255,255,.6);cursor:pointer;font-size:11.5px;font-weight:900;flex:0 0 auto;}' +
+          '.ws-m-hist:hover{color:#ffd9a0;border-color:rgba(255,197,110,.35);}' +
           '.ws-m-close{width:30px;height:30px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.4);cursor:pointer;font-size:15px;line-height:1;display:grid;place-items:center;flex:0 0 auto;}' +
           '.ws-m-close:hover{color:#fff;border-color:rgba(255,255,255,.2);}' +
           '.ws-m-body{padding:12px 14px 16px;overflow-y:auto;flex:1 1 auto;-webkit-overflow-scrolling:touch;}' +
@@ -14826,6 +14830,7 @@ function mbV2Card(message) {
               '</div>' +
               '<div class="ws-m-side">' +
                 '<div class="ws-m-stats" data-ws-m-stats></div>' +
+                '<button class="ws-m-hist" type="button" data-ws-view="history">السجل</button>' +
                 '<button class="ws-m-close" type="button" data-ws-close aria-label="إغلاق">×</button>' +
               '</div>' +
             '</header>' +
@@ -15072,7 +15077,7 @@ function mbV2Card(message) {
 
           wsState.notice = { type: 'ok', text: 'تم إرسال طلب التصنيع...' }
           wsState.pendingInvRefresh = true
-          wsState.tab = 'active'
+          wsState.view = 'craft'
           await loadWorkshop(true)
         } catch {
           wsState.notice = { type: 'error', text: 'حدث خطأ، جرّب بعد قليل.' }
@@ -15108,7 +15113,7 @@ function mbV2Card(message) {
 
           wsState.reveal = { jobId, phase: 'waiting', startedAtMs: Date.now() }
           wsState.pendingInvRefresh = true
-          wsState.tab = 'ready'
+          wsState.view = 'craft'
           await loadWorkshop(true)
         } catch {
           wsState.notice = { type: 'error', text: 'حدث خطأ، جرّب بعد قليل.' }
@@ -15116,147 +15121,184 @@ function mbV2Card(message) {
         }
       }
 
-      function wsRecipeCard(recipe) {
-        const canNow = Boolean(recipe.canCraft) && !wsState.hasActiveJob
+      function wsSelectedRecipe() {
+        if (!wsState.recipes.length) return null
 
-        const reqRows = (recipe.ingredients || []).map((ing) => {
+        let recipe = wsState.recipes.find((entry) => entry.recipeId === wsState.selectedId)
+
+        if (!recipe) {
+          recipe = wsState.recipes.find((entry) => entry.canCraft) || wsState.recipes[0]
+          wsState.selectedId = recipe ? recipe.recipeId : ''
+        }
+
+        return recipe
+      }
+
+      function wsListRow(recipe) {
+        const selected = recipe.recipeId === wsState.selectedId
+
+        return (
+          '<button type="button" class="ws-row' + (selected ? ' sel' : '') + (recipe.canCraft ? '' : ' dim') + '" data-ws-select="' + wsEscape(recipe.recipeId) + '">' +
+            '<span class="ws-row-icon">' + wsIcon('box', 15) + '</span>' +
+            '<span class="ws-row-name">' + wsEscape(recipe.resultItem) + '</span>' +
+            '<span class="ws-dot' + (recipe.canCraft ? ' on' : '') + '"></span>' +
+          '</button>'
+        )
+      }
+
+      function wsDetailPanel(recipe) {
+        if (!recipe) {
+          return '<div class="ws-empty">' + wsIcon('hammer', 24) + '<strong>ما فيه وصفات</strong><span>الوصفات بتظهر هنا أول ما تتوفر.</span></div>'
+        }
+
+        const matRows = (recipe.ingredients || []).map((ing) => {
           const ok = Boolean(ing.enough)
+          const pct = Math.max(0, Math.min(100, Math.round((Number(ing.have || 0) / Math.max(1, Number(ing.need || 1))) * 100)))
+
           return (
-            '<div class="ws-req ' + (ok ? 'ok' : 'no') + '">' +
-              '<span class="ws-req-ic">' + wsIcon(ok ? 'check' : 'x', 12) + '</span>' +
-              '<span class="ws-req-name">' + wsEscape(ing.item) + '</span>' +
-              '<span class="ws-req-nums"><b>' + wsFormat(ing.have) + '</b> / ' + wsFormat(ing.need) + '</span>' +
+            '<div class="ws-mat">' +
+              '<div class="ws-mat-top">' +
+                '<span class="ws-mat-name">' + wsEscape(ing.item) + '</span>' +
+                '<span class="ws-mat-nums ' + (ok ? 'ok' : 'no') + '">' + wsFormat(ing.have) + ' / ' + wsFormat(ing.need) + '</span>' +
+              '</div>' +
+              '<div class="ws-mat-bar"><span class="' + (ok ? 'ok' : 'no') + '" style="width:' + pct + '%"></span></div>' +
             '</div>'
           )
         }).join('')
 
-        let footerHtml = ''
+        let ctaHtml = ''
 
-        if (recipe.canCraft && wsState.hasActiveJob) {
-          footerHtml = '<div class="ws-note">' + wsIcon('clock', 13) + 'عندك تصنيع قيد التنفيذ</div>'
-        } else if (!recipe.canCraft) {
+        if (recipe.canCraft && !wsState.hasActiveJob) {
+          ctaHtml = '<button class="ws-start" type="button" data-ws-start="' + wsEscape(recipe.recipeId) + '">' + wsIcon('hammer', 16) + 'ابدأ التصنيع</button>'
+        } else if (recipe.canCraft && wsState.hasActiveJob) {
+          ctaHtml = '<div class="ws-cta-note">' + wsIcon('clock', 13) + 'عندك تصنيع قيد التنفيذ — استلمه أول</div>'
+        } else {
           const missing = (recipe.ingredients || []).filter((ing) => !ing.enough)
           const parts = missing.slice(0, 3).map((ing) => wsEscape(ing.item) + ' ×' + wsFormat(Math.max(1, ing.need - ing.have)))
-          footerHtml = '<div class="ws-missing">' + wsIcon('x', 12) + 'ناقصك: ' + (parts.join('، ') || 'مواد') + '</div>'
-        } else {
-          footerHtml = '<button class="ws-start" type="button" data-ws-start="' + wsEscape(recipe.recipeId) + '">' + wsIcon('hammer', 15) + 'ابدأ التصنيع</button>'
+          ctaHtml = '<div class="ws-cta-missing">' + wsIcon('x', 12) + 'ناقصك: ' + (parts.join('، ') || 'مواد') + '</div>'
         }
 
         return (
-          '<article class="ws-recipe' + (canNow ? ' ws-can' : ' ws-locked') + '">' +
-            '<div class="ws-r-top">' +
-              '<strong class="ws-r-name">' + wsEscape(recipe.resultItem) + '</strong>' +
-              '<span class="ws-rarity ws-rarity-' + wsEscape(String(recipe.rarity || 'common').toLowerCase()) + '">' + wsRarityLabel(recipe.rarity) + '</span>' +
-            '</div>' +
-            '<div class="ws-r-sub">' + wsDuration(recipe.durationSeconds) + ' • نجاح ' + wsFormat(recipe.successRate) + '%</div>' +
-            '<div class="ws-r-block">' +
-              '<span class="ws-r-label">الناتج</span>' +
-              '<span class="ws-r-out">' + wsIcon('box', 13) + wsEscape(recipe.resultItem) + ' ×' + wsFormat(recipe.resultAmount || 1) + '</span>' +
-            '</div>' +
-            '<div class="ws-r-block">' +
-              '<span class="ws-r-label">المتطلبات</span>' +
-              '<div class="ws-reqs">' + reqRows + '</div>' +
-            '</div>' +
-            footerHtml +
-          '</article>'
-        )
-      }
-
-      function wsActiveJobCard(job) {
-        const duration = Math.max(1, Number(job.durationSeconds || 1))
-        const remaining = Math.max(0, Number(job.remainingSeconds || 0))
-        const percent = Math.max(0, Math.min(100, Math.round(((duration - remaining) / duration) * 100)))
-        const finishMs = job.finishAt ? Date.parse(job.finishAt) : 0
-
-        if (job.status === 'pending_start' || job.status === 'pending_claim') {
-          return (
-            '<article class="ws-job">' +
-              '<div class="ws-j-kicker">' + (job.status === 'pending_start' ? 'جاري بدء التصنيع' : 'جاري كشف النتيجة') + '</div>' +
-              '<strong class="ws-j-name">' + wsEscape(job.resultItem) + '</strong>' +
-              '<div class="ws-j-wait"><span class="ws-spin"></span>لحظات...</div>' +
-            '</article>'
-          )
-        }
-
-        // دائرة تقدم: المحيط = 2π×34 ≈ 213.6
-        const circumference = 213.6
-        const offset = (circumference * (1 - percent / 100)).toFixed(1)
-
-        return (
-          '<article class="ws-job ws-craftcard" data-ws-job data-ws-finish="' + (Number.isFinite(finishMs) ? finishMs : 0) + '" data-ws-duration="' + duration + '">' +
-            '<div class="ws-craft-overlay" aria-hidden="true"></div>' +
-            '<div class="ws-craft-inner">' +
-              '<div class="ws-j-kicker">قيد التصنيع</div>' +
-              '<strong class="ws-j-name">' + wsEscape(job.resultItem) + '</strong>' +
-              '<div class="ws-ring-wrap">' +
-                '<svg class="ws-ring" viewBox="0 0 80 80" aria-hidden="true">' +
-                  '<circle class="ws-ring-bg" cx="40" cy="40" r="34"/>' +
-                  '<circle class="ws-ring-fill" data-ws-ring cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="' + offset + '"/>' +
-                '</svg>' +
-                '<div class="ws-ring-center"><b data-ws-pct>' + percent + '%</b></div>' +
+          '<div class="ws-d-head">' +
+            '<div class="ws-d-icon">' + wsIcon('box', 30) + '</div>' +
+            '<div class="ws-d-title">' +
+              '<div class="ws-d-name-row">' +
+                '<strong>' + wsEscape(recipe.resultItem) + '</strong>' +
+                '<span class="ws-rarity ws-rarity-' + wsEscape(String(recipe.rarity || 'common').toLowerCase()) + '">' + wsRarityLabel(recipe.rarity) + '</span>' +
               '</div>' +
-              '<div class="ws-j-left">الوقت المتبقي <b data-ws-remaining>' + wsRemainingText(remaining) + '</b></div>' +
-              '<p class="ws-j-hint">ارجع عند انتهاء الوقت لكشف النتيجة</p>' +
             '</div>' +
-          '</article>'
+          '</div>' +
+
+          '<div class="ws-tiles">' +
+            '<div class="ws-tile"><span>المدة</span><b>' + wsDuration(recipe.durationSeconds) + '</b></div>' +
+            '<div class="ws-tile"><span>النجاح</span><b class="' + (Number(recipe.successRate) >= 100 ? 'ok' : 'warn') + '">' + wsFormat(recipe.successRate) + '%</b></div>' +
+            '<div class="ws-tile"><span>الناتج</span><b class="gold">×' + wsFormat(recipe.resultAmount || 1) + '</b></div>' +
+          '</div>' +
+
+          '<div class="ws-d-label">المواد المطلوبة</div>' +
+          '<div class="ws-mats">' + matRows + '</div>' +
+
+          '<div class="ws-d-cta">' + ctaHtml + '</div>'
         )
       }
 
-      function wsReadyCard(job) {
-        return (
-          '<article class="ws-job ws-job-ready">' +
-            '<div class="ws-j-kicker ws-j-kicker-gold">اكتمل التصنيع</div>' +
-            '<strong class="ws-j-name">' + wsEscape(job.resultItem) + '</strong>' +
-            '<p class="ws-j-hint">جاهز لكشف النتيجة</p>' +
-            '<button class="ws-claim" type="button" data-ws-claim="' + wsEscape(job.jobId) + '">' + wsIcon('spark', 15) + 'كشف النتيجة</button>' +
-          '</article>'
-        )
-      }
+      // شريط الحالة أعلى المودال: تصنيع جاري / جاهز / نتيجة — دائمًا مرئي بدون تبويبات
+      function wsStatusStrip() {
+        // نتيجة الكشف لها الأولوية
+        if (wsState.reveal) {
+          const reveal = wsState.reveal
 
-      function wsRevealCard() {
-        const reveal = wsState.reveal
-        if (!reveal) return ''
+          if (reveal.phase === 'waiting') {
+            return '<div class="ws-strip"><span class="ws-spin"></span><div class="ws-strip-txt"><b>جاري كشف النتيجة...</b><span>لحظات وتطلع النتيجة</span></div></div>'
+          }
 
-        if (reveal.phase === 'waiting') {
-          return '<article class="ws-reveal"><span class="ws-spin ws-spin-lg"></span><strong>جاري كشف النتيجة...</strong><span class="ws-reveal-sub">لحظات وتطلع النتيجة</span></article>'
-        }
+          if (reveal.phase === 'timeout') {
+            return '<div class="ws-strip"><div class="ws-strip-txt"><b>تأخر كشف النتيجة</b><span>بيتحدث تلقائيًا خلال لحظات</span></div><button class="ws-strip-btn" type="button" data-ws-reveal-close>إغلاق</button></div>'
+          }
 
-        if (reveal.phase === 'timeout') {
-          return '<article class="ws-reveal"><strong>تأخر كشف النتيجة</strong><span class="ws-reveal-sub">بيتحدث تلقائيًا خلال لحظات</span><button class="ws-dismiss" type="button" data-ws-reveal-close>إغلاق</button></article>'
-        }
+          const job = reveal.job || {}
 
-        const job = reveal.job || {}
+          if (job.status === 'success') {
+            return (
+              '<div class="ws-strip ws-strip-ok">' +
+                '<span class="ws-strip-ic ok">' + wsIcon('check', 15) + '</span>' +
+                '<div class="ws-strip-txt"><b>نجح التصنيع</b><span>حصلت على: ' + wsEscape(job.resultItem) + ' ×' + wsFormat(job.resultAmount || 1) + '</span></div>' +
+                '<button class="ws-strip-btn" type="button" data-ws-reveal-close>تم</button>' +
+              '</div>'
+            )
+          }
 
-        if (job.status === 'success') {
+          if (job.status === 'failed') {
+            return (
+              '<div class="ws-strip ws-strip-no">' +
+                '<span class="ws-strip-ic no">' + wsIcon('x', 15) + '</span>' +
+                '<div class="ws-strip-txt"><b>فشل التصنيع</b><span>لم تحصل على الناتج هذي المرة</span></div>' +
+                '<button class="ws-strip-btn" type="button" data-ws-reveal-close>تم</button>' +
+              '</div>'
+            )
+          }
+
           return (
-            '<article class="ws-reveal ws-reveal-ok">' +
-              '<div class="ws-reveal-icon ok">' + wsIcon('check', 26) + '</div>' +
-              '<strong>نجح التصنيع</strong>' +
-              '<span class="ws-reveal-sub">حصلت على: ' + wsEscape(job.resultItem) + ' ×' + wsFormat(job.resultAmount || 1) + '</span>' +
-              '<button class="ws-dismiss" type="button" data-ws-reveal-close>تم</button>' +
-            '</article>'
+            '<div class="ws-strip ws-strip-no">' +
+              '<span class="ws-strip-ic no">' + wsIcon('x', 15) + '</span>' +
+              '<div class="ws-strip-txt"><b>تعذر إكمال التصنيع</b><span>' + wsEscape(wsErrorText(job.errorMessage)) + '</span></div>' +
+              '<button class="ws-strip-btn" type="button" data-ws-reveal-close>تم</button>' +
+            '</div>'
           )
         }
 
-        if (job.status === 'failed') {
+        // جاهز للاستلام
+        const ready = wsState.jobs.ready[0]
+
+        if (ready) {
           return (
-            '<article class="ws-reveal ws-reveal-no">' +
-              '<div class="ws-reveal-icon no">' + wsIcon('x', 26) + '</div>' +
-              '<strong>فشل التصنيع</strong>' +
-              '<span class="ws-reveal-sub">لم تحصل على الناتج هذي المرة</span>' +
-              '<button class="ws-dismiss" type="button" data-ws-reveal-close>تم</button>' +
-            '</article>'
+            '<div class="ws-strip ws-strip-gold">' +
+              '<span class="ws-strip-ic gold">' + wsIcon('spark', 15) + '</span>' +
+              '<div class="ws-strip-txt"><b>اكتمل التصنيع: ' + wsEscape(ready.resultItem) + '</b><span>جاهز لكشف النتيجة</span></div>' +
+              '<button class="ws-strip-claim" type="button" data-ws-claim="' + wsEscape(ready.jobId) + '">' + wsIcon('spark', 14) + 'كشف النتيجة</button>' +
+            '</div>'
           )
         }
 
-        return (
-          '<article class="ws-reveal ws-reveal-no">' +
-            '<div class="ws-reveal-icon no">' + wsIcon('x', 26) + '</div>' +
-            '<strong>تعذر إكمال التصنيع</strong>' +
-            '<span class="ws-reveal-sub">' + wsEscape(wsErrorText(job.errorMessage)) + '</span>' +
-            '<button class="ws-dismiss" type="button" data-ws-reveal-close>تم</button>' +
-          '</article>'
-        )
+        // تصنيع جاري
+        const active = wsState.jobs.active[0]
+
+        if (active) {
+          if (active.status === 'pending_start' || active.status === 'pending_claim') {
+            return (
+              '<div class="ws-strip">' +
+                '<span class="ws-spin"></span>' +
+                '<div class="ws-strip-txt"><b>' + (active.status === 'pending_start' ? 'جاري بدء التصنيع: ' : 'جاري كشف النتيجة: ') + wsEscape(active.resultItem) + '</b><span>لحظات...</span></div>' +
+              '</div>'
+            )
+          }
+
+          const duration = Math.max(1, Number(active.durationSeconds || 1))
+          const remaining = Math.max(0, Number(active.remainingSeconds || 0))
+          const percent = Math.max(0, Math.min(100, Math.round(((duration - remaining) / duration) * 100)))
+          const finishMs = active.finishAt ? Date.parse(active.finishAt) : 0
+          // دائرة صغيرة: المحيط = 2π×16 ≈ 100.5
+          const offset = (100.5 * (1 - percent / 100)).toFixed(1)
+
+          return (
+            '<div class="ws-strip ws-strip-live" data-ws-job data-ws-finish="' + (Number.isFinite(finishMs) ? finishMs : 0) + '" data-ws-duration="' + duration + '">' +
+              '<div class="ws-mini-ring">' +
+                '<svg viewBox="0 0 40 40" aria-hidden="true">' +
+                  '<circle class="ws-ring-bg" cx="20" cy="20" r="16"/>' +
+                  '<circle class="ws-ring-fill" data-ws-ring cx="20" cy="20" r="16" stroke-dasharray="100.5" stroke-dashoffset="' + offset + '"/>' +
+                '</svg>' +
+                '<b data-ws-pct>' + percent + '%</b>' +
+              '</div>' +
+              '<div class="ws-strip-txt">' +
+                '<b>جاري تصنيع: ' + wsEscape(active.resultItem) + '</b>' +
+                '<span>الوقت المتبقي <i data-ws-remaining>' + wsRemainingText(remaining) + '</i></span>' +
+              '</div>' +
+              '<span class="ws-strip-slot">خانة 1/1</span>' +
+            '</div>'
+          )
+        }
+
+        return ''
       }
 
       function wsHistoryRow(job) {
@@ -15309,40 +15351,42 @@ function mbV2Card(message) {
           return
         }
 
-        const tab = wsState.tab
-
-        const tabButton = (id, label, count) =>
-          '<button class="ws-tab ' + (tab === id ? 'active' : '') + '" type="button" data-ws-tab="' + id + '">' + label + '<span>' + wsFormat(count) + '</span></button>'
-
-        let content = ''
-
-        if (tab === 'available') {
-          content = availableRecipes.length
-            ? '<div class="ws-grid">' + availableRecipes.map(wsRecipeCard).join('') + '</div>'
-            : '<div class="ws-empty">' + wsIcon('hammer', 24) + '<strong>ما فيه وصفات متاحة الآن</strong><span>جمّع موارد أكثر أو شوف كل الوصفات.</span></div>'
-        } else if (tab === 'recipes') {
-          content = wsState.recipes.length
-            ? '<div class="ws-grid">' + wsState.recipes.map(wsRecipeCard).join('') + '</div>'
-            : '<div class="ws-empty">' + wsIcon('hammer', 24) + '<strong>ما فيه وصفات</strong><span>الوصفات بتظهر هنا أول ما تتوفر.</span></div>'
-        } else if (tab === 'active') {
-          content = wsState.jobs.active.length
-            ? '<div class="ws-center">' + wsState.jobs.active.map(wsActiveJobCard).join('') + '</div>'
-            : '<div class="ws-empty">' + wsIcon('clock', 24) + '<strong>ما عندك تصنيع شغال</strong><span>ابدأ وصفة من تبويب المتاح.</span></div>'
-        } else if (tab === 'ready') {
-          content = wsState.reveal
-            ? '<div class="ws-center">' + wsRevealCard() + '</div>'
-            : wsState.jobs.ready.length
-              ? '<div class="ws-center">' + wsState.jobs.ready.map(wsReadyCard).join('') + '</div>'
-              : '<div class="ws-empty">' + wsIcon('spark', 24) + '<strong>ما فيه شيء جاهز</strong><span>إذا خلص التصنيع بيظهر هنا.</span></div>'
-        } else {
-          content = wsState.jobs.history.length
-            ? '<div class="ws-tl">' + wsState.jobs.history.map(wsHistoryRow).join('') + '</div>'
-            : '<div class="ws-empty">' + wsIcon('box', 24) + '<strong>السجل فاضي</strong><span>أول عملية تصنيع بتنحفظ هنا.</span></div>'
-        }
+        const stripHtml = wsStatusStrip()
 
         const noticeHtml = wsState.notice
           ? '<div class="ws-notice ' + (wsState.notice.type === 'error' ? 'is-error' : 'is-ok') + '">' + wsEscape(wsState.notice.text) + '</div>'
           : ''
+
+        let mainHtml = ''
+
+        if (wsState.view === 'history') {
+          const timeline = wsState.jobs.history.length
+            ? '<div class="ws-tl">' + wsState.jobs.history.map(wsHistoryRow).join('') + '</div>'
+            : '<div class="ws-empty">' + wsIcon('box', 24) + '<strong>السجل فاضي</strong><span>أول عملية تصنيع بتنحفظ هنا.</span></div>'
+
+          mainHtml =
+            '<div class="ws-hist-wrap">' +
+              '<div class="ws-hist-head">' +
+                '<strong>السجل</strong>' +
+                '<button class="ws-back" type="button" data-ws-view="craft">رجوع للورشة</button>' +
+              '</div>' +
+              timeline +
+            '</div>'
+        } else {
+          // الاختيار أولًا حتى تنرسم القائمة والصف المحدد صح من أول رندر
+          const selectedRecipe = wsSelectedRecipe()
+          const lockedRecipes = wsState.recipes.filter((recipe) => !recipe.canCraft)
+
+          const listHtml =
+            (availableRecipes.length ? '<div class="ws-group">متاح للتصنيع</div>' + availableRecipes.map(wsListRow).join('') : '') +
+            (lockedRecipes.length ? '<div class="ws-group">تحتاج موارد</div>' + lockedRecipes.map(wsListRow).join('') : '')
+
+          mainHtml =
+            '<div class="ws-bench">' +
+              '<aside class="ws-side">' + (listHtml || '<div class="ws-side-empty">ما فيه وصفات</div>') + '</aside>' +
+              '<main class="ws-detail">' + wsDetailPanel(selectedRecipe) + '</main>' +
+            '</div>'
+        }
 
         box.innerHTML =
           '<style>' +
@@ -15350,120 +15394,133 @@ function mbV2Card(message) {
             '.ws-m-body *{box-sizing:border-box;}' +
             '.ws-m-body svg{flex:0 0 auto;display:block;}' +
 
-            '.ws-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}' +
-            '.ws-center{max-width:380px;margin:0 auto;display:flex;flex-direction:column;gap:10px;}' +
+            '.ws-strip{display:flex;align-items:center;gap:11px;padding:9px 12px;margin-bottom:10px;border-radius:13px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);}' +
+            '.ws-strip-live{border-color:rgba(255,211,106,.22);background:rgba(255,211,106,.045);}' +
+            '.ws-strip-gold{border-color:rgba(255,211,106,.4);background:linear-gradient(135deg,rgba(255,211,106,.09),rgba(255,157,46,.05));box-shadow:0 0 24px rgba(255,197,110,.07);}' +
+            '.ws-strip-ok{border-color:rgba(143,240,179,.3);background:rgba(143,240,179,.05);animation:wsflashok 1.1s ease-out 1;}' +
+            '.ws-strip-no{border-color:rgba(255,155,155,.26);background:rgba(255,155,155,.04);}' +
+            '@keyframes wsflashok{0%{box-shadow:0 0 0 0 rgba(143,240,179,.4)}100%{box-shadow:0 0 0 14px rgba(143,240,179,0)}}' +
+            '.ws-strip-txt{min-width:0;flex:1;}' +
+            '.ws-strip-txt b{display:block;font-size:12.5px;font-weight:1000;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
+            '.ws-strip-gold .ws-strip-txt b{color:#ffe3b0;}' +
+            '.ws-strip-txt span{display:block;font-size:11px;color:rgba(255,255,255,.55);font-weight:800;margin-top:1px;}' +
+            '.ws-strip-txt i{font-style:normal;color:#ffd36a;font-variant-numeric:tabular-nums;}' +
+            '.ws-strip-ic{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;flex:0 0 auto;}' +
+            '.ws-strip-ic.ok{background:rgba(143,240,179,.12);color:#8ff0b3;}' +
+            '.ws-strip-ic.no{background:rgba(255,155,155,.1);color:#ff9f9f;}' +
+            '.ws-strip-ic.gold{background:rgba(255,211,106,.12);color:#ffd36a;}' +
+            '.ws-strip-slot{font-size:10.5px;color:rgba(255,255,255,.4);font-weight:800;white-space:nowrap;flex:0 0 auto;}' +
+            '.ws-strip-btn{height:30px;padding:0 14px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.78);font-size:11.5px;font-weight:1000;cursor:pointer;flex:0 0 auto;}' +
+            '.ws-strip-claim{height:32px;padding:0 14px;border:0;border-radius:10px;background:linear-gradient(135deg,#ffd36a,#ff9d2e);color:#241404;font-size:12px;font-weight:1000;cursor:pointer;display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;}' +
+            '.ws-strip-claim:disabled{opacity:.75;cursor:wait;}' +
+            '.ws-mini-ring{position:relative;width:40px;height:40px;flex:0 0 auto;}' +
+            '.ws-mini-ring svg{width:40px;height:40px;transform:rotate(-90deg);}' +
+            '.ws-ring-bg{fill:none;stroke:rgba(255,255,255,.09);stroke-width:4;}' +
+            '.ws-ring-fill{fill:none;stroke:#ffd36a;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 1s linear;}' +
+            '.ws-mini-ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:9.5px;font-weight:1000;color:#ffd36a;font-variant-numeric:tabular-nums;}' +
 
-            '.ws-tabs{display:flex;gap:5px;margin-bottom:10px;padding:4px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);overflow-x:auto;scrollbar-width:none;}' +
-            '.ws-tabs::-webkit-scrollbar{display:none;}' +
-            '.ws-tab{flex:1 0 auto;height:30px;padding:0 10px;border:1px solid transparent;border-radius:10px;background:transparent;color:rgba(255,255,255,.55);cursor:pointer;font-size:11px;font-weight:900;display:inline-flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;}' +
-            '.ws-tab span{min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:rgba(255,255,255,.07);display:grid;place-items:center;font-size:9.5px;color:rgba(255,255,255,.55);}' +
-            '.ws-tab.active{background:linear-gradient(135deg,rgba(255,211,106,.14),rgba(255,138,91,.10));border-color:rgba(255,197,110,.4);color:#ffdca8;}' +
-            '.ws-tab.active span{background:rgba(255,197,110,.16);color:#ffd36a;}' +
-
-            '.ws-notice{margin-bottom:10px;padding:9px 12px;border-radius:12px;font-size:12px;font-weight:900;}' +
+            '.ws-notice{margin-bottom:10px;padding:8px 12px;border-radius:12px;font-size:12px;font-weight:900;}' +
             '.ws-notice.is-error{border:1px solid rgba(255,120,120,.22);background:rgba(255,120,120,.06);color:#ffb3b3;}' +
-            '.ws-notice.is-ok{border:1px solid rgba(126,226,168,.2);background:rgba(126,226,168,.05);color:#9fe8bd;}' +
+            '.ws-notice.is-ok{border:1px solid rgba(143,240,179,.2);background:rgba(143,240,179,.05);color:#9fe8bd;}' +
 
-            '.ws-list{display:flex;flex-direction:column;gap:9px;}' +
+            '.ws-bench{display:grid;grid-template-columns:216px minmax(0,1fr);border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;background:rgba(255,255,255,.015);min-height:340px;}' +
+            '.ws-side{border-inline-end:1px solid rgba(255,255,255,.06);padding:10px 8px;display:flex;flex-direction:column;gap:3px;overflow-y:auto;max-height:430px;background:rgba(0,0,0,.1);}' +
+            '.ws-side::-webkit-scrollbar{width:5px;}' +
+            '.ws-side::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}' +
+            '.ws-group{font-size:10px;color:rgba(255,255,255,.42);font-weight:1000;padding:6px 6px 3px;}' +
+            '.ws-row{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:11px;border:1px solid transparent;background:transparent;color:#f4f4f5;cursor:pointer;text-align:right;width:100%;}' +
+            '.ws-row:hover{background:rgba(255,255,255,.04);}' +
+            '.ws-row.sel{background:rgba(255,211,106,.07);border-color:rgba(255,197,110,.35);}' +
+            '.ws-row.dim{opacity:.7;}' +
+            '.ws-row.dim.sel{opacity:1;}' +
+            '.ws-row-icon{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);flex:0 0 auto;}' +
+            '.ws-row.sel .ws-row-icon{background:rgba(255,211,106,.12);color:#ffd36a;}' +
+            '.ws-row-name{flex:1;min-width:0;font-size:12px;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
+            '.ws-dot{width:7px;height:7px;border-radius:999px;background:rgba(255,255,255,.22);flex:0 0 auto;}' +
+            '.ws-dot.on{background:#8ff0b3;}' +
+            '.ws-side-empty{padding:20px 10px;text-align:center;color:rgba(255,255,255,.45);font-size:11.5px;font-weight:800;}' +
 
-            '.ws-recipe{padding:12px 13px;border-radius:15px;border:1px solid rgba(255,255,255,.07);background:linear-gradient(170deg,rgba(255,255,255,.035),rgba(255,255,255,.015));}' +
-            '.ws-can{border-color:rgba(255,197,110,.26);box-shadow:0 0 0 1px rgba(255,197,110,.05),0 8px 26px rgba(255,138,91,.05);}' +
-            '.ws-locked{opacity:.88;}' +
-            '.ws-r-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:2px;}' +
-            '.ws-r-name{font-size:15px;font-weight:1000;color:#fff;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
-            '.ws-rarity{flex:0 0 auto;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:1000;background:rgba(255,255,255,.06);color:#c9c9cf;border:1px solid rgba(255,255,255,.08);}' +
+            '.ws-detail{padding:14px 16px;display:flex;flex-direction:column;min-width:0;}' +
+            '.ws-d-head{display:flex;align-items:center;gap:13px;margin-bottom:12px;}' +
+            '.ws-d-icon{width:60px;height:60px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(150deg,rgba(255,211,106,.13),rgba(255,138,91,.06));border:1px solid rgba(255,197,110,.32);color:#ffd36a;flex:0 0 auto;box-shadow:0 0 22px rgba(255,197,110,.08);}' +
+            '.ws-d-title{min-width:0;}' +
+            '.ws-d-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}' +
+            '.ws-d-name-row strong{font-size:17px;font-weight:1000;color:#fff;}' +
+            '.ws-rarity{flex:0 0 auto;padding:2px 9px;border-radius:999px;font-size:10px;font-weight:1000;background:rgba(255,255,255,.06);color:#c9c9cf;border:1px solid rgba(255,255,255,.09);}' +
             '.ws-rarity-rare{background:rgba(120,170,255,.1);color:#a9c8ff;border-color:rgba(120,170,255,.25);}' +
             '.ws-rarity-epic{background:rgba(160,130,255,.1);color:#c4adff;border-color:rgba(160,130,255,.25);}' +
             '.ws-rarity-legendary{background:rgba(255,203,96,.1);color:#ffd36a;border-color:rgba(255,203,96,.3);}' +
-            '.ws-r-sub{font-size:11px;color:rgba(255,255,255,.55);font-weight:800;margin-bottom:9px;}' +
-            '.ws-r-block{margin-bottom:9px;}' +
-            '.ws-r-label{display:block;font-size:10px;color:rgba(255,255,255,.42);font-weight:1000;margin-bottom:5px;letter-spacing:.02em;}' +
-            '.ws-r-out{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:10px;background:rgba(255,197,110,.07);border:1px solid rgba(255,197,110,.18);color:#ffdca8;font-size:12px;font-weight:1000;}' +
-            '.ws-reqs{display:flex;flex-direction:column;gap:4px;}' +
-            '.ws-req{display:flex;align-items:center;gap:7px;padding:6px 9px;border-radius:9px;background:rgba(0,0,0,.16);border:1px solid rgba(255,255,255,.05);font-size:11.5px;}' +
-            '.ws-req-ic{width:17px;height:17px;border-radius:6px;display:grid;place-items:center;flex:0 0 auto;}' +
-            '.ws-req.ok .ws-req-ic{background:rgba(126,226,168,.13);color:#7ee2a8;}' +
-            '.ws-req.no .ws-req-ic{background:rgba(255,120,120,.11);color:#ff9f9f;}' +
-            '.ws-req-name{color:rgba(255,255,255,.82);font-weight:900;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
-            '.ws-req-nums{margin-inline-start:auto;color:rgba(255,255,255,.5);font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;}' +
-            '.ws-req.ok .ws-req-nums b{color:#7ee2a8;}' +
-            '.ws-req.no .ws-req-nums b{color:#ff9f9f;}' +
 
-            '.ws-start{width:100%;height:37px;border-radius:11px;border:1px solid rgba(255,170,100,.45);background:linear-gradient(135deg,rgba(255,211,106,.2),rgba(255,138,91,.16));color:#ffdca8;font-size:12.5px;font-weight:1000;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;}' +
-            '.ws-start:hover{background:linear-gradient(135deg,rgba(255,211,106,.3),rgba(255,138,91,.24));border-color:rgba(255,197,110,.6);}' +
-            '.ws-start:disabled{opacity:.6;cursor:not-allowed;}' +
-            '.ws-missing{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:10px;background:rgba(255,120,120,.06);border:1px solid rgba(255,120,120,.18);color:#ffb3b3;font-size:11.5px;font-weight:900;max-width:100%;}' +
-            '.ws-note{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:10px;background:rgba(255,211,106,.06);border:1px solid rgba(255,211,106,.16);color:#ffd9a0;font-size:11.5px;font-weight:900;}' +
+            '.ws-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:12px;}' +
+            '.ws-tile{padding:8px 6px;border-radius:11px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);text-align:center;}' +
+            '.ws-tile span{display:block;font-size:9.5px;color:rgba(255,255,255,.45);font-weight:900;margin-bottom:2px;}' +
+            '.ws-tile b{display:block;font-size:12px;font-weight:1000;color:#f4f4f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}' +
+            '.ws-tile b.ok{color:#8ff0b3;}' +
+            '.ws-tile b.warn{color:#ffd36a;}' +
+            '.ws-tile b.gold{color:#ffd36a;}' +
 
-            '.ws-job{padding:16px 14px;border-radius:16px;border:1px solid rgba(255,211,106,.18);background:linear-gradient(165deg,rgba(255,211,106,.05),rgba(255,255,255,.02));text-align:center;}' +
-            '.ws-craftcard{position:relative;overflow:hidden;}' +
-            '.ws-craft-overlay{position:absolute;inset:0;background:rgba(10,10,14,.35);border-radius:inherit;pointer-events:none;}' +
-            '.ws-craft-inner{position:relative;z-index:1;}' +
-            '.ws-ring-wrap{position:relative;width:96px;height:96px;margin:6px auto 8px;}' +
-            '.ws-ring{width:96px;height:96px;transform:rotate(-90deg);}' +
-            '.ws-ring-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:7;}' +
-            '.ws-ring-fill{fill:none;stroke:#ffd36a;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset 1s linear;}' +
-            '.ws-ring-center{position:absolute;inset:0;display:grid;place-items:center;}' +
-            '.ws-ring-center b{font-size:17px;font-weight:1000;color:#ffd36a;font-variant-numeric:tabular-nums;}' +
-            '.ws-j-left{font-size:12px;color:rgba(255,255,255,.62);font-weight:900;margin-bottom:7px;}' +
-            '.ws-j-left b{color:#ffd36a;font-variant-numeric:tabular-nums;}' +
-            '.ws-j-kicker{display:inline-block;padding:3px 11px;border-radius:999px;background:rgba(255,211,106,.09);border:1px solid rgba(255,211,106,.2);color:#ffd36a;font-size:10.5px;font-weight:1000;margin-bottom:8px;}' +
-            '.ws-j-kicker-gold{background:linear-gradient(135deg,rgba(255,211,106,.2),rgba(255,157,46,.16));color:#ffe1a3;border-color:rgba(255,211,106,.4);}' +
-            '.ws-j-name{display:block;font-size:16px;font-weight:1000;color:#fff;margin-bottom:8px;}' +
-            '.ws-j-timer{font-size:30px;font-weight:1000;color:#ffd36a;font-variant-numeric:tabular-nums;letter-spacing:.03em;margin-bottom:9px;text-shadow:0 0 22px rgba(255,211,106,.25);}' +
-            '.ws-j-bar{height:7px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:9px;}' +
-            '.ws-j-bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ffd36a,#ff8a5b);transition:width 1s linear;}' +
-            '.ws-j-hint{margin:0;font-size:11.5px;color:rgba(255,255,255,.55);font-weight:800;}' +
-            '.ws-j-wait{display:inline-flex;align-items:center;gap:8px;color:#ffd36a;font-size:12px;font-weight:1000;}' +
-            '.ws-job-ready{border-color:rgba(255,211,106,.38);box-shadow:0 0 30px rgba(255,197,110,.08);}' +
-            '.ws-claim{width:100%;height:40px;margin-top:10px;border:0;border-radius:12px;background:linear-gradient(135deg,#ffd36a,#ff9d2e);color:#241404;font-size:13px;font-weight:1000;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;}' +
-            '.ws-claim:hover{filter:brightness(1.06);}' +
-            '.ws-claim:disabled{opacity:.75;cursor:wait;}' +
+            '.ws-d-label{font-size:10px;color:rgba(255,255,255,.42);font-weight:1000;margin-bottom:6px;}' +
+            '.ws-mats{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}' +
+            '.ws-mat{padding:8px 11px;border-radius:11px;background:rgba(0,0,0,.16);border:1px solid rgba(255,255,255,.05);}' +
+            '.ws-mat-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px;}' +
+            '.ws-mat-name{font-size:12px;color:rgba(255,255,255,.85);font-weight:900;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
+            '.ws-mat-nums{font-size:11.5px;font-weight:1000;font-variant-numeric:tabular-nums;white-space:nowrap;}' +
+            '.ws-mat-nums.ok{color:#8ff0b3;}' +
+            '.ws-mat-nums.no{color:#ff9f9f;}' +
+            '.ws-mat-bar{height:4px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;}' +
+            '.ws-mat-bar span{display:block;height:100%;border-radius:inherit;}' +
+            '.ws-mat-bar span.ok{background:#8ff0b3;}' +
+            '.ws-mat-bar span.no{background:#ff9f9f;}' +
+
+            '.ws-d-cta{margin-top:auto;}' +
+            '.ws-start{width:100%;height:42px;border:0;border-radius:13px;background:linear-gradient(135deg,#ffd36a,#ff9d2e);color:#241404;font-size:13.5px;font-weight:1000;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;}' +
+            '.ws-start:hover{filter:brightness(1.06);}' +
+            '.ws-start:disabled{opacity:.7;cursor:wait;}' +
+            '.ws-cta-missing{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border-radius:12px;background:rgba(255,120,120,.06);border:1px solid rgba(255,120,120,.18);color:#ffb3b3;font-size:12px;font-weight:900;}' +
+            '.ws-cta-note{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border-radius:12px;background:rgba(255,211,106,.06);border:1px solid rgba(255,211,106,.16);color:#ffd9a0;font-size:12px;font-weight:900;}' +
 
             '.ws-spin{width:14px;height:14px;border-radius:999px;border:2px solid rgba(255,211,106,.25);border-top-color:#ffd36a;animation:wsspin .7s linear infinite;flex:0 0 auto;display:inline-block;}' +
             '.ws-spin-dark{border-color:rgba(36,20,4,.25);border-top-color:#241404;}' +
-            '.ws-spin-lg{width:26px;height:26px;border-width:3px;}' +
             '@keyframes wsspin{to{transform:rotate(360deg)}}' +
 
-            '.ws-reveal{display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 16px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);text-align:center;}' +
-            '.ws-reveal strong{font-size:15px;font-weight:1000;}' +
-            '.ws-reveal-sub{color:rgba(255,255,255,.62);font-size:12.5px;font-weight:800;}' +
-            '.ws-reveal-ok{border-color:rgba(126,226,168,.3);animation:wsflashok 1.1s ease-out 1;}' +
-            '.ws-reveal-no{border-color:rgba(255,155,155,.28);}' +
-            '@keyframes wsflashok{0%{box-shadow:0 0 0 0 rgba(126,226,168,.45)}100%{box-shadow:0 0 0 16px rgba(126,226,168,0)}}' +
-            '.ws-reveal-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;}' +
-            '.ws-reveal-icon.ok{background:rgba(126,226,168,.12);color:#7ee2a8;}' +
-            '.ws-reveal-icon.no{background:rgba(255,155,155,.1);color:#ff9f9f;}' +
-            '.ws-dismiss{margin-top:4px;height:34px;padding:0 22px;border-radius:11px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.78);font-size:12px;font-weight:1000;cursor:pointer;}' +
-
-            '.ws-empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:24px 14px;text-align:center;color:rgba(255,255,255,.55);}' +
+            '.ws-empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:34px 14px;text-align:center;color:rgba(255,255,255,.55);}' +
             '.ws-empty svg{color:rgba(255,255,255,.26);}' +
             '.ws-empty strong{color:#fff;font-size:13.5px;}' +
             '.ws-empty span{font-size:12px;font-weight:700;}' +
+
+            '.ws-hist-wrap{border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:12px 14px;background:rgba(255,255,255,.015);}' +
+            '.ws-hist-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;}' +
+            '.ws-hist-head strong{font-size:13.5px;font-weight:1000;}' +
+            '.ws-back{height:30px;padding:0 12px;border-radius:10px;border:1px solid rgba(255,255,255,.09);background:transparent;color:rgba(255,255,255,.6);font-size:11.5px;font-weight:900;cursor:pointer;}' +
+            '.ws-back:hover{color:#ffd9a0;border-color:rgba(255,197,110,.35);}' +
 
             '.ws-tl{display:flex;flex-direction:column;position:relative;padding-inline-start:6px;}' +
             '.ws-tl-row{position:relative;display:flex;align-items:flex-start;gap:10px;padding:7px 0 7px;}' +
             '.ws-tl-row:not(:last-child):before{content:"";position:absolute;top:26px;right:9px;bottom:-8px;width:1.5px;background:rgba(255,255,255,.07);}' +
             '.ws-tl-dot{width:19px;height:19px;border-radius:999px;display:grid;place-items:center;flex:0 0 auto;margin-top:1px;position:relative;z-index:1;}' +
-            '.ws-tl-row.ok .ws-tl-dot{background:rgba(126,226,168,.13);color:#7ee2a8;border:1px solid rgba(126,226,168,.3);}' +
+            '.ws-tl-row.ok .ws-tl-dot{background:rgba(143,240,179,.13);color:#8ff0b3;border:1px solid rgba(143,240,179,.3);}' +
             '.ws-tl-row.no .ws-tl-dot{background:rgba(255,120,120,.1);color:#ff9f9f;border:1px solid rgba(255,120,120,.26);}' +
             '.ws-tl-body{min-width:0;}' +
             '.ws-tl-body b{display:block;font-size:12px;font-weight:900;color:rgba(255,255,255,.85);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
             '.ws-tl-row.no .ws-tl-body b{color:#ffb3b3;}' +
             '.ws-tl-body time{display:block;font-size:10.5px;color:rgba(255,255,255,.42);font-weight:800;margin-top:1px;}' +
 
-            '@media (max-width:480px){.ws-ring-wrap,.ws-ring{width:88px;height:88px;}.ws-grid{grid-template-columns:1fr;}}' +
+            '@media (max-width:640px){' +
+              '.ws-bench{grid-template-columns:1fr;min-height:0;}' +
+              '.ws-side{flex-direction:row;overflow-x:auto;overflow-y:hidden;max-height:none;gap:6px;padding:10px;border-inline-end:0;border-bottom:1px solid rgba(255,255,255,.06);scrollbar-width:none;}' +
+              '.ws-side::-webkit-scrollbar{display:none;}' +
+              '.ws-group{display:none;}' +
+              '.ws-row{flex:0 0 auto;width:auto;padding:6px 10px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);}' +
+              '.ws-row.sel{border-color:rgba(255,197,110,.4);}' +
+              '.ws-detail{padding:13px 13px;}' +
+              '.ws-d-icon{width:52px;height:52px;}' +
+              '.ws-strip{flex-wrap:wrap;}' +
+            '}' +
           '</style>' +
 
-          '<nav class="ws-tabs">' +
-            tabButton('available', 'متاح', availableRecipes.length) +
-            tabButton('recipes', 'كل الوصفات', wsState.recipes.length) +
-            tabButton('active', 'قيد التصنيع', activeCount) +
-            tabButton('ready', 'جاهز', readyCount) +
-            tabButton('history', 'السجل', historyCount) +
-          '</nav>' +
+          stripHtml +
           noticeHtml +
-          '<div class="ws-list">' + content + '</div>'
+          mainHtml
 
         wsEnsureTimers()
       }
@@ -15490,7 +15547,11 @@ function mbV2Card(message) {
           if (remainingEl) remainingEl.textContent = wsRemainingText(remaining)
           if (barEl) barEl.style.width = percent + '%'
           if (pctEl) pctEl.textContent = percent + '%'
-          if (ringEl) ringEl.style.strokeDashoffset = (213.6 * (1 - percent / 100)).toFixed(1)
+
+          if (ringEl) {
+            const dash = Number(ringEl.getAttribute('stroke-dasharray')) || 213.6
+            ringEl.style.strokeDashoffset = (dash * (1 - percent / 100)).toFixed(1)
+          }
 
           if (remaining <= 0) needsReload = true
         })
@@ -15552,9 +15613,16 @@ function mbV2Card(message) {
 
           if (!target.closest('#wsModal')) return
 
-          const tabButton = target.closest('[data-ws-tab]')
-          if (tabButton) {
-            wsState.tab = tabButton.getAttribute('data-ws-tab') || 'available'
+          const selectButton = target.closest('[data-ws-select]')
+          if (selectButton) {
+            wsState.selectedId = selectButton.getAttribute('data-ws-select') || ''
+            renderWorkshop()
+            return
+          }
+
+          const viewButton = target.closest('[data-ws-view]')
+          if (viewButton) {
+            wsState.view = viewButton.getAttribute('data-ws-view') === 'history' ? 'history' : 'craft'
             renderWorkshop()
             return
           }
@@ -15576,7 +15644,6 @@ function mbV2Card(message) {
           const closeRevealButton = target.closest('[data-ws-reveal-close]')
           if (closeRevealButton) {
             wsState.reveal = null
-            wsState.tab = 'history'
             loadWorkshop(true)
           }
         })
