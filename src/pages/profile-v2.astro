@@ -14723,6 +14723,251 @@ function mbV2Card(message) {
 
 
       /* ============================================================
+         عرض في السوق (Market List Modal)
+         UI فقط: POST /api/me/market/list ثم متابعة my-listings
+         ============================================================ */
+
+      const MK_DURATIONS = [
+        { seconds: 21600, label: '6 ساعات', fee: 0 },
+        { seconds: 43200, label: '12 ساعة', fee: 2500 },
+        { seconds: 86400, label: '24 ساعة', fee: 5000 },
+      ]
+
+      function mkEnsureStyle() {
+        if (document.getElementById('mk-list-style')) return
+
+        const style = document.createElement('style')
+        style.id = 'mk-list-style'
+        style.textContent =
+          '.mk-modal{position:fixed;inset:0;z-index:2147483610;display:grid;place-items:center;padding:14px;background:rgba(0,0,0,.72);direction:rtl;}' +
+          '.mk-dialog{width:min(430px,100%);max-height:92vh;overflow-y:auto;border-radius:22px;border:1px solid rgba(255,255,255,.1);background:#17171d;color:#f4f4f5;padding:20px;box-shadow:0 28px 90px rgba(0,0,0,.58);position:relative;}' +
+          '.mk-close{position:absolute;top:14px;left:14px;width:30px;height:30px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.4);cursor:pointer;font-size:15px;line-height:1;display:grid;place-items:center;}' +
+          '.mk-close:hover{color:#fff;border-color:rgba(255,255,255,.2);}' +
+          '.mk-head{display:flex;align-items:center;gap:11px;margin-bottom:16px;}' +
+          '.mk-head-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:rgba(255,211,106,.1);border:1px solid rgba(255,211,106,.25);color:#ffd36a;font-size:19px;flex:0 0 auto;}' +
+          '.mk-head h3{margin:0;font-size:16px;font-weight:1000;}' +
+          '.mk-head p{margin:2px 0 0;font-size:11.5px;color:rgba(255,255,255,.55);font-weight:700;}' +
+          '.mk-field{margin-bottom:12px;}' +
+          '.mk-label{display:block;font-size:11px;color:rgba(255,255,255,.55);font-weight:1000;margin-bottom:6px;}' +
+          '.mk-input{width:100%;height:38px;padding:0 12px;border-radius:11px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.2);color:#fff;font-size:13px;font-weight:900;outline:none;}' +
+          '.mk-input:focus{border-color:rgba(255,197,110,.45);}' +
+          '.mk-durations{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;}' +
+          '.mk-dur{padding:8px 6px;border-radius:11px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:rgba(255,255,255,.65);cursor:pointer;text-align:center;}' +
+          '.mk-dur b{display:block;font-size:12px;font-weight:1000;color:#f4f4f5;margin-bottom:2px;}' +
+          '.mk-dur span{display:block;font-size:10px;font-weight:900;color:rgba(255,255,255,.45);}' +
+          '.mk-dur.sel{border-color:rgba(255,197,110,.5);background:rgba(255,211,106,.08);}' +
+          '.mk-dur.sel b{color:#ffd36a;}' +
+          '.mk-dur.sel span{color:#ffbd80;}' +
+          '.mk-state{min-height:20px;margin:10px 0;font-size:12px;font-weight:900;color:rgba(255,255,255,.6);line-height:1.6;}' +
+          '.mk-state.is-error{color:#ff9f9f;}' +
+          '.mk-state.is-ok{color:#8ff0b3;}' +
+          '.mk-state.is-loading{color:#ffd36a;}' +
+          '.mk-actions{display:flex;gap:9px;}' +
+          '.mk-submit{flex:1;height:42px;border:0;border-radius:13px;background:linear-gradient(135deg,#ffd36a,#ff9d2e);color:#241404;font-size:13px;font-weight:1000;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;}' +
+          '.mk-submit:disabled{opacity:.65;cursor:wait;}' +
+          '.mk-cancel{height:42px;padding:0 18px;border-radius:13px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.6);font-size:13px;font-weight:900;cursor:pointer;}' +
+          '.mk-link{display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 18px;border-radius:13px;border:1px solid rgba(255,197,110,.4);background:rgba(255,211,106,.08);color:#ffd9a0;font-size:13px;font-weight:1000;text-decoration:none;}' +
+          '.mk-spin{width:14px;height:14px;border-radius:999px;border:2px solid rgba(36,20,4,.25);border-top-color:#241404;animation:mkspin .7s linear infinite;display:inline-block;flex:0 0 auto;}' +
+          '@keyframes mkspin{to{transform:rotate(360deg)}}'
+
+        document.head.appendChild(style)
+      }
+
+      function mkListErrorText(error, data) {
+        const value = String(error || '').toLowerCase()
+        if (value.includes('missing_item')) return 'الكمية المطلوبة غير متوفرة في حقيبتك.'
+        if (value.includes('listing_limit_reached')) return 'وصلت الحد الأعلى للعروض المتزامنة (' + ((data && data.limit) || 3) + ').'
+        if (value.includes('invalid_price')) return 'السعر لازم يكون ' + formatNumber((data && data.minPrice) || 500) + ' نقطة أو أكثر.'
+        if (value.includes('not_enough_points_fee')) return 'نقاطك ما تكفي لرسوم المدة المختارة.'
+        if (value.includes('inventory_parse_failed')) return 'صار خطأ في بيانات الحقيبة، تواصل مع الإدارة.'
+        if (value.includes('invalid_duration')) return 'اختر مدة عرض صحيحة.'
+        if (value.includes('timeout')) return 'تأخر النشر، جرّب بعد قليل.'
+        return 'حدث خطأ، جرّب بعد قليل.'
+      }
+
+      async function mkPollListing(listingId, timeoutMs = 45000) {
+        const startedAt = Date.now()
+
+        while (Date.now() - startedAt < timeoutMs) {
+          await new Promise((resolve) => setTimeout(resolve, 2500))
+
+          try {
+            const res = await fetch(TNX_API_ORIGIN + '/api/me/market/my-listings?v=' + Date.now(), {
+              credentials: 'include',
+              cache: 'no-store',
+            })
+
+            const data = await res.json().catch(() => null)
+
+            if (!res.ok || !data || data.ok !== true) continue
+
+            const found = (data.listings || []).find((entry) => entry.listingId === listingId)
+
+            if (!found) continue
+            if (found.status === 'active') return { ok: true }
+            if (found.status === 'error') return { error: found.errorMessage || 'list_failed' }
+          } catch {}
+        }
+
+        return { timeout: true }
+      }
+
+      function mkOpenListModal(item, parentModal) {
+        mkEnsureStyle()
+        document.querySelectorAll('[data-mk-modal]').forEach((el) => el.remove())
+
+        const ownedQty = Math.max(1, Math.floor(Number(item.qty || item.quantity || 1)))
+
+        const modal = document.createElement('div')
+        modal.className = 'mk-modal'
+        modal.setAttribute('data-mk-modal', 'true')
+
+        modal.innerHTML =
+          '<div class="mk-dialog" role="dialog" aria-modal="true" aria-label="عرض في السوق">' +
+            '<button class="mk-close" type="button" data-mk-close aria-label="إغلاق">×</button>' +
+            '<div class="mk-head">' +
+              '<div class="mk-head-icon">🏷️</div>' +
+              '<div><h3>عرض في السوق</h3><p>' + esc(item.name) + ' — تملك ×' + formatNumber(ownedQty) + '</p></div>' +
+            '</div>' +
+
+            '<div class="mk-field">' +
+              '<label class="mk-label">الكمية</label>' +
+              '<input class="mk-input" type="number" data-mk-qty min="1" max="' + ownedQty + '" value="1" inputmode="numeric">' +
+            '</div>' +
+
+            '<div class="mk-field">' +
+              '<label class="mk-label">السعر المطلوب (بالنقاط)</label>' +
+              '<input class="mk-input" type="number" data-mk-price min="500" step="100" placeholder="500 نقطة أو أكثر" inputmode="numeric">' +
+            '</div>' +
+
+            '<div class="mk-field">' +
+              '<label class="mk-label">مدة العرض</label>' +
+              '<div class="mk-durations">' +
+                MK_DURATIONS.map((d, i) =>
+                  '<button type="button" class="mk-dur' + (i === 0 ? ' sel' : '') + '" data-mk-dur="' + d.seconds + '">' +
+                    '<b>' + d.label + '</b>' +
+                    '<span>' + (d.fee ? formatNumber(d.fee) + ' نقطة' : 'مجانًا') + '</span>' +
+                  '</button>'
+                ).join('') +
+              '</div>' +
+            '</div>' +
+
+            '<div class="mk-state" data-mk-state></div>' +
+
+            '<div class="mk-actions" data-mk-actions>' +
+              '<button class="mk-submit" type="button" data-mk-submit>نشر العرض</button>' +
+              '<button class="mk-cancel" type="button" data-mk-close>إلغاء</button>' +
+            '</div>' +
+          '</div>'
+
+        document.body.appendChild(modal)
+
+        const stateEl = modal.querySelector('[data-mk-state]')
+
+        const setState = (kind, text) => {
+          if (!stateEl) return
+          stateEl.className = 'mk-state' + (kind ? ' is-' + kind : '')
+          stateEl.textContent = text || ''
+        }
+
+        modal.addEventListener('click', (event) => {
+          const target = event.target
+          if (!(target instanceof Element)) return
+
+          if (target === modal || target.closest('[data-mk-close]')) {
+            modal.remove()
+            return
+          }
+
+          const durButton = target.closest('[data-mk-dur]')
+          if (durButton) {
+            modal.querySelectorAll('[data-mk-dur]').forEach((btn) => btn.classList.remove('sel'))
+            durButton.classList.add('sel')
+            return
+          }
+
+          const submitButton = target.closest('[data-mk-submit]')
+          if (submitButton) {
+            submitList(submitButton)
+          }
+        })
+
+        async function submitList(button) {
+          const quantity = Math.floor(Number(modal.querySelector('[data-mk-qty]')?.value || 0))
+          const price = Math.floor(Number(modal.querySelector('[data-mk-price]')?.value || 0))
+          const durEl = modal.querySelector('[data-mk-dur].sel')
+          const durationSeconds = Number(durEl?.getAttribute('data-mk-dur') || 21600)
+
+          if (!Number.isFinite(quantity) || quantity < 1 || quantity > ownedQty) {
+            setState('error', 'الكمية لازم تكون بين 1 و' + formatNumber(ownedQty) + '.')
+            return
+          }
+
+          if (!Number.isFinite(price) || price < 500) {
+            setState('error', 'السعر لازم يكون 500 نقطة أو أكثر.')
+            return
+          }
+
+          button.disabled = true
+          button.innerHTML = '<span class="mk-spin"></span>جاري نشر العرض...'
+          setState('loading', 'جاري إرسال العرض...')
+
+          try {
+            const res = await fetch(TNX_API_ORIGIN + '/api/me/market/list', {
+              method: 'POST',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ itemName: item.name, quantity, price, durationSeconds }),
+            })
+
+            const data = await res.json().catch(() => null)
+
+            if (!res.ok || !data || data.ok !== true) {
+              setState('error', mkListErrorText((data && data.error) || 'list_failed', data))
+              button.disabled = false
+              button.textContent = 'نشر العرض'
+              return
+            }
+
+            setState('loading', 'جاري تجهيز العرض وحجز الغرض...')
+
+            const result = await mkPollListing(data.listingId)
+
+            if (result.ok) {
+              setState('ok', 'تم نشر العرض في السوق ✓')
+
+              const actions = modal.querySelector('[data-mk-actions]')
+              if (actions) {
+                actions.innerHTML =
+                  '<a class="mk-link" href="/market">شوف السوق</a>' +
+                  '<button class="mk-cancel" type="button" data-mk-close>تم</button>'
+              }
+
+              // تحديث الحقيبة (الغرض انحجز)
+              try { wsRefreshInventory() } catch {}
+              try { if (parentModal && parentModal.remove) parentModal.remove() } catch {}
+              return
+            }
+
+            if (result.error) {
+              setState('error', mkListErrorText(result.error))
+              button.disabled = false
+              button.textContent = 'نشر العرض'
+              return
+            }
+
+            setState('loading', 'تأخر النشر شوي... تقدر تتابع من صفحة السوق، تبويب عروضي.')
+            button.disabled = false
+            button.textContent = 'نشر العرض'
+          } catch {
+            setState('error', 'حدث خطأ، جرّب بعد قليل.')
+            button.disabled = false
+            button.textContent = 'نشر العرض'
+          }
+        }
+      }
+
+      /* ============================================================
          الورشة (Workshop V1)
          مصدر الوقت الحقيقي: finish_at من الـ API — الواجهة countdown فقط.
          بعد start/claim: refetch inventory + recipes + jobs.
@@ -16592,6 +16837,12 @@ function mbV2Card(message) {
         modal.querySelectorAll('[data-item-action]').forEach((button) => {
           addListener(button, 'click', async () => {
             if (button.disabled) return
+
+            // عرض في السوق: يفتح مودال النشر بدل الـ hint
+            if (button.dataset.itemAction === 'market') {
+              try { mkOpenListModal(item, modal) } catch (error) { console.warn('[Market] list modal failed', error) }
+              return
+            }
 
             const hint = modal.querySelector('[data-item-hint]')
             if (hint) hint.innerHTML = itemActionHint(button.dataset.itemAction, item)

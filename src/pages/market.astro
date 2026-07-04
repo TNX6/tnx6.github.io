@@ -1,0 +1,786 @@
+---
+import Layout from '~/layouts/PageLayout.astro'
+
+const metadata = {
+  title: 'السوق — TNX6',
+  ignoreTitleTemplate: true,
+  description: 'سوق أغراض مجتمع TNX6 — اعرض واشترِ أغراض الأعضاء.',
+}
+---
+
+<Layout metadata={metadata}>
+  <main class="tnx-market-page" dir="rtl">
+    <section class="mkp-shell">
+      <header class="mkp-head">
+        <div class="mkp-title">
+          <div class="mkp-icon">🛒</div>
+          <div>
+            <h1>السوق</h1>
+            <p>اعرض أغراضك واشترِ من أعضاء المجتمع</p>
+          </div>
+        </div>
+
+        <div class="mkp-head-side">
+          <button class="mkp-refresh" type="button" id="mkpRefresh" title="تحديث">⟳</button>
+        </div>
+      </header>
+
+      <nav class="mkp-tabs">
+        <button class="mkp-tab active" type="button" data-mkp-tab="market">السوق <span id="mkpCountMarket">0</span></button>
+        <button class="mkp-tab" type="button" data-mkp-tab="mine" id="mkpMineTab" hidden>عروضي <span id="mkpCountMine">0</span></button>
+      </nav>
+
+      <div class="mkp-notice" id="mkpNotice" hidden></div>
+
+      <div class="mkp-grid" id="mkpGrid">
+        <div class="mkp-empty">جاري تحميل السوق...</div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style is:global>
+  .tnx-market-page {
+    min-height: 70vh;
+    padding: 24px 14px 60px;
+    color: #f4f4f5;
+  }
+
+  .mkp-shell {
+    max-width: 1040px;
+    margin: 0 auto;
+  }
+
+  .mkp-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .mkp-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .mkp-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    font-size: 23px;
+    background: rgba(255, 138, 91, 0.12);
+    border: 1px solid rgba(255, 138, 91, 0.25);
+  }
+
+  .mkp-title h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 1000;
+    color: #fff;
+  }
+
+  .mkp-title p {
+    margin: 3px 0 0;
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 700;
+  }
+
+  .mkp-refresh {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 17px;
+    cursor: pointer;
+  }
+
+  .mkp-refresh:hover {
+    color: #ffd9a0;
+    border-color: rgba(255, 197, 110, 0.35);
+  }
+
+  .mkp-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 12px;
+    padding: 4px;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    width: fit-content;
+  }
+
+  .mkp-tab {
+    height: 32px;
+    padding: 0 16px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.55);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 1000;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .mkp-tab span {
+    min-width: 17px;
+    height: 17px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+  }
+
+  .mkp-tab.active {
+    background: linear-gradient(135deg, rgba(255, 211, 106, 0.14), rgba(255, 138, 91, 0.1));
+    border-color: rgba(255, 197, 110, 0.4);
+    color: #ffdca8;
+  }
+
+  .mkp-notice {
+    margin-bottom: 12px;
+    padding: 10px 13px;
+    border-radius: 12px;
+    font-size: 12.5px;
+    font-weight: 900;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .mkp-notice.is-ok {
+    border-color: rgba(143, 240, 179, 0.25);
+    background: rgba(143, 240, 179, 0.05);
+    color: #9fe8bd;
+  }
+
+  .mkp-notice.is-error {
+    border-color: rgba(255, 120, 120, 0.22);
+    background: rgba(255, 120, 120, 0.06);
+    color: #ffb3b3;
+  }
+
+  .mkp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 11px;
+  }
+
+  .mkp-card {
+    padding: 13px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: linear-gradient(170deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015));
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .mkp-card-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .mkp-item-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 211, 106, 0.09);
+    border: 1px solid rgba(255, 211, 106, 0.22);
+    font-size: 19px;
+    flex: 0 0 auto;
+  }
+
+  .mkp-item-name {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .mkp-item-name strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 1000;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mkp-item-name span {
+    display: block;
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.45);
+    font-weight: 800;
+    margin-top: 1px;
+  }
+
+  .mkp-price {
+    flex: 0 0 auto;
+    text-align: left;
+  }
+
+  .mkp-price b {
+    display: block;
+    font-size: 15px;
+    font-weight: 1000;
+    color: #ffd36a;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .mkp-price span {
+    display: block;
+    font-size: 9.5px;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 800;
+  }
+
+  .mkp-seller {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .mkp-seller img {
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    flex: 0 0 auto;
+  }
+
+  .mkp-seller-fallback {
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 11px;
+    font-weight: 1000;
+    flex: 0 0 auto;
+  }
+
+  .mkp-seller span {
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 900;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mkp-time {
+    margin-inline-start: auto;
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.45);
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .mkp-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 1000;
+    width: fit-content;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .mkp-status.is-live { background: rgba(143, 240, 179, 0.08); color: #8ff0b3; border-color: rgba(143, 240, 179, 0.22); }
+  .mkp-status.is-wait { background: rgba(255, 211, 106, 0.08); color: #ffd36a; border-color: rgba(255, 211, 106, 0.22); }
+  .mkp-status.is-sold { background: rgba(120, 170, 255, 0.08); color: #a9c8ff; border-color: rgba(120, 170, 255, 0.22); }
+  .mkp-status.is-err { background: rgba(255, 120, 120, 0.07); color: #ffb3b3; border-color: rgba(255, 120, 120, 0.2); }
+
+  .mkp-buy {
+    height: 38px;
+    border: 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ffd36a, #ff9d2e);
+    color: #241404;
+    font-size: 12.5px;
+    font-weight: 1000;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+  }
+
+  .mkp-buy:hover { filter: brightness(1.06); }
+  .mkp-buy:disabled { opacity: 0.65; cursor: wait; }
+
+  .mkp-own {
+    height: 38px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 11.5px;
+    font-weight: 900;
+    display: grid;
+    place-items: center;
+  }
+
+  .mkp-login {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 197, 110, 0.4);
+    background: rgba(255, 211, 106, 0.08);
+    color: #ffd9a0;
+    font-size: 12px;
+    font-weight: 1000;
+    text-decoration: none;
+    width: 100%;
+  }
+
+  .mkp-cancel {
+    height: 34px;
+    border-radius: 11px;
+    border: 1px solid rgba(255, 120, 120, 0.25);
+    background: rgba(255, 120, 120, 0.06);
+    color: #ffb3b3;
+    font-size: 11.5px;
+    font-weight: 1000;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .mkp-cancel:disabled { opacity: 0.65; cursor: wait; }
+
+  .mkp-empty {
+    grid-column: 1 / -1;
+    padding: 50px 16px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 13.5px;
+    font-weight: 800;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+  }
+
+  .mkp-spin {
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    border: 2px solid rgba(36, 20, 4, 0.25);
+    border-top-color: #241404;
+    animation: mkpspin 0.7s linear infinite;
+    display: inline-block;
+    flex: 0 0 auto;
+  }
+
+  @keyframes mkpspin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 520px) {
+    .mkp-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var API = 'https://api.tnx6.xyz'
+
+    var mkp = {
+      me: null,
+      listings: [],
+      mine: [],
+      tab: 'market',
+      busy: false,
+    }
+
+    function el(id) { return document.getElementById(id) }
+
+    function escText(value) {
+      return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+    }
+
+    function fmt(value) {
+      try { return new Intl.NumberFormat('en-US').format(Number(value || 0)) } catch { return String(value || 0) }
+    }
+
+    function remainingText(seconds) {
+      var total = Math.max(0, Math.floor(Number(seconds || 0)))
+      if (total <= 0) return 'ينتهي الآن'
+      var h = Math.floor(total / 3600)
+      var m = Math.floor((total % 3600) / 60)
+      if (h > 0) return 'باقي ' + h + 'س ' + (m > 0 ? m + 'د' : '')
+      if (m > 0) return 'باقي ' + m + 'د'
+      return 'أقل من دقيقة'
+    }
+
+    function statusInfo(status) {
+      if (status === 'active') return { cls: 'is-live', text: 'نشط' }
+      if (status === 'pending_list') return { cls: 'is-wait', text: 'قيد النشر...' }
+      if (status === 'pending_buy') return { cls: 'is-wait', text: 'قيد الشراء...' }
+      if (status === 'pending_refund') return { cls: 'is-wait', text: 'قيد الاسترجاع...' }
+      if (status === 'sold') return { cls: 'is-sold', text: 'مباع ✓' }
+      if (status === 'refunded') return { cls: '', text: 'انتهى ورجع لك' }
+      if (status === 'cancelled') return { cls: '', text: 'ملغي' }
+      return { cls: 'is-err', text: 'خطأ' }
+    }
+
+    function buyErrorText(error) {
+      var value = String(error || '').toLowerCase()
+      if (value.indexOf('not_enough_points') >= 0) return 'نقاطك ما تكفي لهذا الشراء.'
+      if (value.indexOf('item_limit_reached') >= 0) return 'وصلت الحد الأعلى من هذا الغرض.'
+      if (value.indexOf('listing_unavailable') >= 0) return 'العرض ما عاد متاحًا.'
+      if (value.indexOf('own_listing') >= 0) return 'هذا عرضك أنت.'
+      if (value.indexOf('parse_failed') >= 0) return 'صار خطأ في البيانات، تواصل مع الإدارة.'
+      if (value.indexOf('timeout') >= 0) return 'تأخر التنفيذ، جرّب بعد قليل.'
+      return 'حدث خطأ، جرّب بعد قليل.'
+    }
+
+    function setNotice(kind, text) {
+      var box = el('mkpNotice')
+      if (!box) return
+
+      if (!text) {
+        box.hidden = true
+        return
+      }
+
+      box.hidden = false
+      box.className = 'mkp-notice' + (kind ? ' is-' + kind : '')
+      box.textContent = text
+    }
+
+    async function fetchMe() {
+      if (mkp.me !== null) return mkp.me
+
+      try {
+        var res = await fetch(API + '/api/me', { credentials: 'include', cache: 'no-store' })
+        var data = await res.json().catch(function () { return null })
+        mkp.me = res.ok && data ? (data.user || data) : false
+      } catch { mkp.me = false }
+
+      return mkp.me
+    }
+
+    function meId() {
+      var me = mkp.me
+      if (!me) return ''
+      return String(me.twitchId || me.twitch_id || me.userId || me.id || '')
+    }
+
+    async function loadAll() {
+      if (mkp.busy) return
+      mkp.busy = true
+
+      try {
+        await fetchMe()
+
+        var jobs = [fetch(API + '/api/market/listings?v=' + Date.now(), { cache: 'no-store' })]
+
+        if (mkp.me) {
+          jobs.push(fetch(API + '/api/me/market/my-listings?v=' + Date.now(), { credentials: 'include', cache: 'no-store' }))
+        }
+
+        var responses = await Promise.all(jobs)
+        var marketData = await responses[0].json().catch(function () { return null })
+
+        if (marketData && marketData.ok) {
+          mkp.listings = marketData.listings || []
+        }
+
+        if (responses[1]) {
+          var mineData = await responses[1].json().catch(function () { return null })
+          if (mineData && mineData.ok) mkp.mine = mineData.listings || []
+        }
+
+        render()
+      } catch (error) {
+        console.warn('[Market] load failed', error)
+      } finally {
+        mkp.busy = false
+      }
+    }
+
+    function sellerHtml(listing) {
+      var avatar = listing.sellerImage
+        ? '<img src="' + escText(listing.sellerImage) + '" alt="" loading="lazy" referrerpolicy="no-referrer">'
+        : '<span class="mkp-seller-fallback">' + escText(String(listing.sellerName || '؟').charAt(0).toUpperCase()) + '</span>'
+
+      return (
+        '<div class="mkp-seller">' +
+          avatar +
+          '<span>' + escText(listing.sellerName || listing.sellerLogin || '') + '</span>' +
+          '<span class="mkp-time">' + remainingText(listing.remainingSeconds) + '</span>' +
+        '</div>'
+      )
+    }
+
+    function marketCard(listing) {
+      var isOwn = mkp.me && listing.sellerId === meId()
+
+      var action = ''
+
+      if (!mkp.me) {
+        action = '<a class="mkp-login" href="' + API + '/auth/twitch/login">سجل دخول للشراء</a>'
+      } else if (isOwn) {
+        action = '<div class="mkp-own">هذا عرضك</div>'
+      } else {
+        action = '<button class="mkp-buy" type="button" data-mkp-buy="' + escText(listing.listingId) + '">شراء بـ ' + fmt(listing.price) + ' نقطة</button>'
+      }
+
+      return (
+        '<article class="mkp-card">' +
+          '<div class="mkp-card-top">' +
+            '<div class="mkp-item-icon">📦</div>' +
+            '<div class="mkp-item-name">' +
+              '<strong>' + escText(listing.itemName) + '</strong>' +
+              '<span>الكمية ×' + fmt(listing.quantity) + '</span>' +
+            '</div>' +
+            '<div class="mkp-price"><b>' + fmt(listing.price) + '</b><span>نقطة</span></div>' +
+          '</div>' +
+          sellerHtml(listing) +
+          action +
+        '</article>'
+      )
+    }
+
+    function mineCard(listing) {
+      var info = statusInfo(listing.status)
+
+      var cancelHtml = listing.status === 'active'
+        ? '<button class="mkp-cancel" type="button" data-mkp-cancel="' + escText(listing.listingId) + '">إلغاء العرض وإرجاع الغرض</button>'
+        : ''
+
+      var timeHtml = listing.status === 'active'
+        ? '<span class="mkp-time">' + remainingText(listing.remainingSeconds) + '</span>'
+        : ''
+
+      var soldHtml = listing.status === 'sold' && listing.buyerName
+        ? '<div class="mkp-seller"><span>اشتراه: ' + escText(listing.buyerName) + '</span></div>'
+        : ''
+
+      return (
+        '<article class="mkp-card">' +
+          '<div class="mkp-card-top">' +
+            '<div class="mkp-item-icon">📦</div>' +
+            '<div class="mkp-item-name">' +
+              '<strong>' + escText(listing.itemName) + '</strong>' +
+              '<span>الكمية ×' + fmt(listing.quantity) + '</span>' +
+            '</div>' +
+            '<div class="mkp-price"><b>' + fmt(listing.price) + '</b><span>نقطة</span></div>' +
+          '</div>' +
+          '<div class="mkp-card-top"><span class="mkp-status ' + info.cls + '">' + info.text + '</span>' + timeHtml + '</div>' +
+          soldHtml +
+          cancelHtml +
+        '</article>'
+      )
+    }
+
+    function render() {
+      var grid = el('mkpGrid')
+      if (!grid) return
+
+      var mineTab = el('mkpMineTab')
+      if (mineTab) mineTab.hidden = !mkp.me
+
+      var countMarket = el('mkpCountMarket')
+      if (countMarket) countMarket.textContent = fmt(mkp.listings.length)
+
+      var countMine = el('mkpCountMine')
+      if (countMine) countMine.textContent = fmt(mkp.mine.length)
+
+      document.querySelectorAll('[data-mkp-tab]').forEach(function (btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-mkp-tab') === mkp.tab)
+      })
+
+      if (mkp.tab === 'mine') {
+        grid.innerHTML = mkp.mine.length
+          ? mkp.mine.map(mineCard).join('')
+          : '<div class="mkp-empty">ما عندك عروض بعد — اعرض غرضًا من حقيبتك في صفحة بروفايلك.</div>'
+        return
+      }
+
+      grid.innerHTML = mkp.listings.length
+        ? mkp.listings.map(marketCard).join('')
+        : '<div class="mkp-empty">السوق فاضي حاليًا — كن أول من يعرض غرضًا.</div>'
+    }
+
+    async function pollRequest(requestId, timeoutMs) {
+      var startedAt = Date.now()
+      var limit = timeoutMs || 45000
+
+      while (Date.now() - startedAt < limit) {
+        await new Promise(function (resolve) { setTimeout(resolve, 2500) })
+
+        try {
+          var res = await fetch(API + '/api/me/market/request-status?id=' + encodeURIComponent(requestId) + '&v=' + Date.now(), {
+            credentials: 'include',
+            cache: 'no-store',
+          })
+
+          var data = await res.json().catch(function () { return null })
+
+          if (!res.ok || !data || data.ok !== true) continue
+          if (data.status === 'completed') return { ok: true }
+          if (data.status === 'error') return { error: data.errorMessage || 'failed' }
+        } catch {}
+      }
+
+      return { timeout: true }
+    }
+
+    async function buyListing(listingId, button) {
+      setNotice('', '')
+      button.disabled = true
+      button.innerHTML = '<span class="mkp-spin"></span>جاري الشراء...'
+
+      try {
+        var res = await fetch(API + '/api/me/market/buy', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ listingId: listingId }),
+        })
+
+        var data = await res.json().catch(function () { return null })
+
+        if (!res.ok || !data || data.ok !== true) {
+          setNotice('error', buyErrorText((data && data.error) || 'buy_failed'))
+          await loadAll()
+          return
+        }
+
+        var result = await pollRequest(data.requestId)
+
+        if (result.ok) {
+          setNotice('ok', 'تم الشراء ✓ الغرض وصل حقيبتك.')
+        } else if (result.error) {
+          setNotice('error', buyErrorText(result.error))
+        } else {
+          setNotice('', 'تأخر التنفيذ شوي... بيتحدث تلقائيًا.')
+        }
+
+        await loadAll()
+      } catch {
+        setNotice('error', 'حدث خطأ، جرّب بعد قليل.')
+        await loadAll()
+      }
+    }
+
+    async function cancelListing(listingId, button) {
+      setNotice('', '')
+      button.disabled = true
+      button.textContent = 'جاري الإلغاء...'
+
+      try {
+        var res = await fetch(API + '/api/me/market/cancel', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ listingId: listingId }),
+        })
+
+        var data = await res.json().catch(function () { return null })
+
+        if (!res.ok || !data || data.ok !== true) {
+          setNotice('error', 'تعذر إلغاء العرض، جرّب بعد قليل.')
+          await loadAll()
+          return
+        }
+
+        // انتظار رجوع الغرض
+        var startedAt = Date.now()
+
+        while (Date.now() - startedAt < 45000) {
+          await new Promise(function (resolve) { setTimeout(resolve, 2500) })
+
+          try {
+            var check = await fetch(API + '/api/me/market/my-listings?v=' + Date.now(), { credentials: 'include', cache: 'no-store' })
+            var checkData = await check.json().catch(function () { return null })
+
+            if (checkData && checkData.ok) {
+              var found = (checkData.listings || []).find(function (entry) { return entry.listingId === listingId })
+
+              if (found && (found.status === 'cancelled' || found.status === 'refunded')) {
+                setNotice('ok', 'تم إلغاء العرض ✓ الغرض رجع لحقيبتك.')
+                break
+              }
+
+              if (found && found.status === 'error') {
+                setNotice('error', 'صار خطأ أثناء الإلغاء، تواصل مع الإدارة.')
+                break
+              }
+            }
+          } catch {}
+        }
+
+        await loadAll()
+      } catch {
+        setNotice('error', 'حدث خطأ، جرّب بعد قليل.')
+        await loadAll()
+      }
+    }
+
+    document.addEventListener('click', function (event) {
+      var target = event.target
+      if (!(target instanceof Element)) return
+
+      var tabButton = target.closest('[data-mkp-tab]')
+      if (tabButton) {
+        mkp.tab = tabButton.getAttribute('data-mkp-tab') || 'market'
+        render()
+        return
+      }
+
+      var buyButton = target.closest('[data-mkp-buy]')
+      if (buyButton) {
+        buyListing(buyButton.getAttribute('data-mkp-buy') || '', buyButton)
+        return
+      }
+
+      var cancelButton = target.closest('[data-mkp-cancel]')
+      if (cancelButton) {
+        cancelListing(cancelButton.getAttribute('data-mkp-cancel') || '', cancelButton)
+      }
+    })
+
+    var refreshButton = el('mkpRefresh')
+    if (refreshButton) refreshButton.addEventListener('click', function () { loadAll() })
+
+    // تحديث دوري خفيف — فقط والصفحة ظاهرة
+    setInterval(function () {
+      if (!document.hidden) loadAll()
+    }, 60000)
+
+    loadAll()
+  })()
+</script>
