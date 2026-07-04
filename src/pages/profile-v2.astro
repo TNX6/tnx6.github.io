@@ -166,10 +166,11 @@ const metadata = {
                 <section class="card v2-card">
                   <div class="card-header">
                     <h2 class="card-title">الحقيبة</h2>
-                    <span class="card-subtitle" id="inventoryCount">0 غرض</span>
+                    <div class="inv-header-side">
+                      <span class="ws-entry" id="workshopEntry" hidden></span>
+                      <span class="card-subtitle" id="inventoryCount">0 غرض</span>
+                    </div>
                   </div>
-
-                  <div class="ws-entry" id="workshopEntry" hidden></div>
 
                   <div class="inventory" id="inventory"></div>
                 </section>
@@ -14750,44 +14751,45 @@ function mbV2Card(message) {
       function wsModalOpen() { return Boolean(document.getElementById('wsModal')) }
       function wsEntryEl() { return document.getElementById('workshopEntry') }
 
-      // شريط الورشة المدمج داخل كارد الحقيبة (الكرافت جزء من الحقيبة)
+      // زر الورشة داخل هيدر الحقيبة نفسه — بجانب عداد الأغراض
       function wsRenderEntry() {
         const entry = wsEntryEl()
         if (!entry) return
 
-        const available = wsState.recipes.filter((recipe) => Boolean(recipe.canCraft)).length
         const activeJob = wsState.jobs.active[0] || null
         const readyJob = wsState.jobs.ready[0] || null
 
-        // حالة حية مختصرة بدل ثلاث chips دائمة
-        let statusHtml = ''
+        // مؤشر الحالة على الزر نفسه:
+        // أخضر (جاهز للكشف) > نقطة ذهبية تنبض (قيد التصنيع) > بدون
+        let indicatorHtml = ''
 
         if (readyJob) {
-          statusHtml = '<span class="ws-entry-live is-ready"><i></i>اكتمل تصنيع ' + wsEscape(readyJob.resultItem) + ' — جاهز للكشف</span>'
+          indicatorHtml = '<span class="ws-open-badge">1</span>'
         } else if (activeJob) {
-          statusHtml = '<span class="ws-entry-live"><i></i>جاري تصنيع ' + wsEscape(activeJob.resultItem) + '</span>'
-        } else {
-          statusHtml = '<span class="ws-entry-live is-idle"><i></i>متاح للتصنيع: ' + wsFormat(available) + '</span>'
+          indicatorHtml = '<span class="ws-open-dot"></span>'
         }
+
+        const title = readyJob
+          ? 'اكتمل تصنيع ' + wsEscape(readyJob.resultItem) + ' — جاهز للكشف'
+          : activeJob
+            ? 'جاري تصنيع ' + wsEscape(activeJob.resultItem)
+            : 'فتح الورشة'
 
         entry.innerHTML =
           '<style>' +
-            '.ws-entry{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;direction:rtl;margin:0 0 12px;padding:8px 11px;border-radius:13px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025);}' +
+            '.inv-header-side{display:flex;align-items:center;gap:10px;min-width:0;}' +
+            '.ws-entry{display:inline-flex;align-items:center;}' +
+            '.ws-entry[hidden]{display:none!important;}' +
             '.ws-entry svg{flex:0 0 auto;display:block;}' +
-            '.ws-entry-live{display:inline-flex;align-items:center;gap:7px;color:rgba(255,255,255,.7);font-size:11.5px;font-weight:900;min-width:0;}' +
-            '.ws-entry-live i{width:7px;height:7px;border-radius:999px;background:#ffd36a;flex:0 0 auto;animation:wsentrypulse 1.6s ease-in-out infinite;}' +
-            '.ws-entry-live.is-ready i{background:#8ff0b3;}' +
-            '.ws-entry-live.is-ready{color:#9fe8bd;}' +
-            '.ws-entry-live.is-idle i{background:rgba(255,255,255,.3);animation:none;}' +
-            '@keyframes wsentrypulse{0%,100%{opacity:1}50%{opacity:.35}}' +
-            '.ws-open-btn{height:33px;padding:0 14px;border-radius:11px;border:1px solid rgba(255,138,91,.3);background:rgba(255,138,91,.085);color:#ffbd80;font-size:12px;font-weight:1000;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;position:relative;}' +
+            '.ws-open-btn{height:30px;padding:0 12px;border-radius:10px;border:1px solid rgba(255,138,91,.3);background:rgba(255,138,91,.085);color:#ffbd80;font-size:11.5px;font-weight:1000;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;position:relative;}' +
             '.ws-open-btn:hover{background:rgba(255,138,91,.16);border-color:rgba(255,138,91,.45);}' +
             '.ws-open-badge{position:absolute;top:-6px;left:-6px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:#8ff0b3;color:#0f2418;font-size:10px;font-weight:1000;display:grid;place-items:center;border:2px solid #17171d;}' +
+            '.ws-open-dot{position:absolute;top:-4px;left:-4px;width:10px;height:10px;border-radius:999px;background:#ffd36a;border:2px solid #17171d;animation:wsentrypulse 1.5s ease-in-out infinite;}' +
+            '@keyframes wsentrypulse{0%,100%{opacity:1}50%{opacity:.35}}' +
           '</style>' +
-          statusHtml +
-          '<button class="ws-open-btn" type="button" data-ws-open>' +
-            wsIcon('hammer', 14) + 'فتح الورشة' +
-            (readyJob ? '<span class="ws-open-badge">1</span>' : '') +
+          '<button class="ws-open-btn" type="button" data-ws-open title="' + title + '" aria-label="' + title + '">' +
+            wsIcon('hammer', 13) + 'الورشة' +
+            indicatorHtml +
           '</button>'
       }
 
