@@ -11,12 +11,21 @@ const metadata = {
 <Layout metadata={metadata}>
   <main class="tnx-market-page" dir="rtl">
     <section class="mkp-shell">
-      <header class="mkp-head">
-        <h1>السوق</h1>
-        <p>اشترِ وبيع أغراض المجتمع</p>
-      </header>
+      <div class="mkp-panel">
+        <header class="mkp-head">
+          <div class="mkp-head-main">
+            <h1>السوق</h1>
+            <p>اشترِ وبيع أغراض المجتمع</p>
+          </div>
 
-      <div class="mkp-toolbar">
+          <div class="mkp-head-side">
+            <span class="mkp-count">العروض النشطة: <b id="mkpCountMarket">0</b></span>
+            <button class="mkp-refresh" type="button" id="mkpRefresh" title="تحديث">
+              <span class="mkp-refresh-ico" aria-hidden="true">⟳</span> تحديث
+            </button>
+          </div>
+        </header>
+
         <nav class="mkp-tabs">
           <button class="mkp-tab active" type="button" data-mkp-tab="market">السوق</button>
           <button class="mkp-tab" type="button" data-mkp-tab="mine" id="mkpMineTab" hidden>
@@ -24,19 +33,10 @@ const metadata = {
           </button>
         </nav>
 
-        <div class="mkp-toolbar-side">
-          <span class="mkp-count"><b id="mkpCountMarket">0</b> عرض نشط</span>
-          <button class="mkp-refresh" type="button" id="mkpRefresh" title="تحديث">
-            <span class="mkp-refresh-ico" aria-hidden="true">⟳</span> تحديث
-          </button>
-        </div>
-      </div>
+        <div class="mkp-notice" id="mkpNotice" hidden></div>
 
-      <div class="mkp-notice" id="mkpNotice" hidden></div>
-
-      <div class="mkp-grid" id="mkpGrid">
-        <div class="mkp-empty">
-          <strong>جاري تحميل السوق...</strong>
+        <div class="mkp-grid" id="mkpGrid">
+          <div class="mkp-empty"><strong>جاري تحميل السوق...</strong></div>
         </div>
       </div>
     </section>
@@ -45,110 +45,68 @@ const metadata = {
 
 <style is:global>
   .tnx-market-page {
-    min-height: 70vh;
-    padding: 26px 14px 64px;
+    min-height: 82vh;
+    padding: 40px 16px 76px;
     color: #f4f4f5;
   }
 
   .mkp-shell {
-    max-width: 1120px;
+    max-width: 1080px;
     margin: 0 auto;
+  }
+
+  /* ---------- main panel ---------- */
+  .mkp-panel {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+      #0d0d10;
+    border: 1px solid rgba(255, 223, 138, 0.14);
+    border-radius: 26px;
+    padding: 26px 26px 28px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    min-height: 540px;
+    display: flex;
+    flex-direction: column;
   }
 
   /* ---------- header ---------- */
   .mkp-head {
-    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   }
 
-  .mkp-head h1 {
+  .mkp-head-main h1 {
     margin: 0;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 1000;
     color: #ffda6a;
     letter-spacing: -0.01em;
   }
 
-  .mkp-head p {
-    margin: 4px 0 0;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.5);
+  .mkp-head-main p {
+    margin: 5px 0 0;
+    font-size: 13.5px;
+    color: rgba(255, 255, 255, 0.52);
     font-weight: 700;
   }
 
-  /* ---------- toolbar ---------- */
-  .mkp-toolbar {
-    display: flex;
+  .mkp-head-side {
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
     gap: 12px;
-    flex-wrap: wrap;
-    padding-bottom: 14px;
-    margin-bottom: 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  }
-
-  .mkp-tabs {
-    display: inline-flex;
-    gap: 4px;
-    padding: 4px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-  }
-
-  .mkp-tab {
-    height: 32px;
-    padding: 0 15px;
-    border: 1px solid transparent;
-    border-radius: 9px;
-    background: transparent;
-    color: rgba(255, 255, 255, 0.55);
-    cursor: pointer;
-    font-size: 12.5px;
-    font-weight: 1000;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: color 0.15s, background 0.15s, border-color 0.15s;
-  }
-
-  .mkp-tab:hover {
-    color: rgba(255, 255, 255, 0.85);
-  }
-
-  .mkp-tab.active {
-    background: rgba(255, 218, 106, 0.12);
-    border-color: rgba(255, 218, 106, 0.35);
-    color: #ffda6a;
-  }
-
-  .mkp-badge {
-    min-width: 18px;
-    height: 18px;
-    padding: 0 5px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    display: inline-grid;
-    place-items: center;
-    font-size: 10px;
-    font-weight: 1000;
-  }
-
-  .mkp-tab.active .mkp-badge {
-    background: rgba(255, 218, 106, 0.2);
-    color: #ffe9ad;
-  }
-
-  .mkp-toolbar-side {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
   }
 
   .mkp-count {
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 800;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.55);
     white-space: nowrap;
   }
 
@@ -159,28 +117,29 @@ const metadata = {
   }
 
   .mkp-refresh {
-    height: 32px;
-    padding: 0 13px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.03);
-    color: rgba(255, 255, 255, 0.62);
-    font-size: 12px;
+    height: 36px;
+    padding: 0 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 223, 138, 0.18);
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 12.5px;
     font-weight: 900;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    transition: color 0.15s, border-color 0.15s;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
   }
 
   .mkp-refresh:hover {
     color: #ffe1a8;
-    border-color: rgba(255, 218, 106, 0.35);
+    border-color: rgba(255, 223, 138, 0.4);
+    background: rgba(255, 218, 106, 0.08);
   }
 
   .mkp-refresh-ico {
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1;
   }
 
@@ -189,160 +148,141 @@ const metadata = {
     display: inline-block;
   }
 
+  /* ---------- tabs ---------- */
+  .mkp-tabs {
+    display: inline-flex;
+    gap: 5px;
+    margin: 18px 0 4px;
+    padding: 5px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    width: fit-content;
+  }
+
+  .mkp-tab {
+    height: 38px;
+    padding: 0 20px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.58);
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 1000;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: color 0.15s, background 0.15s, border-color 0.15s;
+  }
+
+  .mkp-tab:hover {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .mkp-tab.active {
+    background: rgba(255, 218, 106, 0.12);
+    border-color: rgba(255, 223, 138, 0.32);
+    color: #ffda6a;
+  }
+
+  .mkp-badge {
+    min-width: 19px;
+    height: 19px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    display: inline-grid;
+    place-items: center;
+    font-size: 10.5px;
+    font-weight: 1000;
+  }
+
+  .mkp-tab.active .mkp-badge {
+    background: rgba(255, 218, 106, 0.2);
+    color: #ffe9ad;
+  }
+
   /* ---------- notice ---------- */
   .mkp-notice {
-    margin-bottom: 14px;
-    padding: 10px 14px;
-    border-radius: 11px;
+    margin: 16px 0 0;
+    padding: 11px 15px;
+    border-radius: 13px;
     font-size: 12.5px;
     font-weight: 900;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.03);
-    color: rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.75);
   }
 
   .mkp-notice.is-ok {
-    border-color: rgba(255, 218, 106, 0.32);
-    background: rgba(255, 218, 106, 0.07);
+    border-color: rgba(255, 223, 138, 0.3);
+    background: rgba(255, 218, 106, 0.08);
     color: #ffe1a1;
   }
 
   .mkp-notice.is-error {
-    border-color: rgba(239, 68, 68, 0.35);
+    border-color: rgba(239, 68, 68, 0.34);
     background: rgba(239, 68, 68, 0.08);
     color: #ffb0b0;
   }
 
   /* ---------- grid ---------- */
-  /* full-width list */
   .mkp-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+    flex: 1;
+    align-content: start;
   }
 
-  .mkp-row {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    padding: 15px 20px;
-    border-radius: 14px;
+  /* ---------- offer card ---------- */
+  .mkp-card {
+    background: rgba(255, 255, 255, 0.045);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
+    border-radius: 18px;
+    padding: 17px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
     transition: border-color 0.15s, background 0.15s;
   }
 
-  .mkp-row:hover {
-    border-color: rgba(255, 218, 106, 0.28);
-    background: linear-gradient(180deg, rgba(255, 218, 106, 0.05), rgba(255, 255, 255, 0.015));
-  }
-
-  .mkp-row-item {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  .mkp-row-price {
-    flex: 0 0 auto;
-    min-width: 118px;
-    display: flex;
-    align-items: baseline;
-    gap: 5px;
-  }
-
-  .mkp-row-price b {
-    font-size: 19px;
-    font-weight: 1000;
-    color: #ffda6a;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-  }
-
-  .mkp-row-price span {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.45);
-    font-weight: 800;
-  }
-
-  .mkp-row-seller {
-    flex: 0 0 auto;
-    width: 170px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
-  }
-
-  .mkp-row-status {
-    flex: 0 0 auto;
-    width: 120px;
-    display: flex;
-  }
-
-  .mkp-row-time {
-    flex: 0 0 auto;
-    width: 110px;
-    text-align: center;
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.45);
-    font-weight: 800;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .mkp-row-action {
-    flex: 0 0 auto;
-    width: 164px;
-  }
-
-  /* ---------- card ---------- */
-  .mkp-card {
-    padding: 16px;
-    border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
-    display: flex;
-    flex-direction: column;
-    gap: 13px;
-    transition: border-color 0.15s, transform 0.15s;
-  }
-
   .mkp-card:hover {
-    border-color: rgba(255, 218, 106, 0.3);
-    transform: translateY(-2px);
+    border-color: rgba(255, 223, 138, 0.26);
+    background: rgba(255, 218, 106, 0.045);
   }
 
-  .mkp-card-top {
+  .mkp-card-head {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     min-width: 0;
   }
 
-  .mkp-item-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 11px;
+  .mkp-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
     display: grid;
     place-items: center;
-    background: rgba(255, 218, 106, 0.08);
-    border: 1px solid rgba(255, 218, 106, 0.2);
-    font-size: 18px;
+    background: rgba(255, 218, 106, 0.09);
+    border: 1px solid rgba(255, 223, 138, 0.22);
+    font-size: 21px;
     flex: 0 0 auto;
   }
 
-  .mkp-item-name {
+  .mkp-card-title {
     min-width: 0;
-    flex: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    flex-wrap: wrap;
   }
 
-  .mkp-item-name strong {
-    display: block;
-    font-size: 14px;
+  .mkp-card-title strong {
+    font-size: 15.5px;
     font-weight: 1000;
     color: #fff;
     overflow: hidden;
@@ -350,103 +290,104 @@ const metadata = {
     white-space: nowrap;
   }
 
-  .mkp-qty {
-    display: inline-block;
-    margin-top: 3px;
-    font-size: 10.5px;
-    color: rgba(255, 255, 255, 0.5);
+  .mkp-card-title span {
+    font-size: 12px;
     font-weight: 900;
+    color: rgba(255, 255, 255, 0.5);
   }
 
-  /* price row */
-  .mkp-price-row {
+  /* meta rows */
+  .mkp-card-meta {
     display: flex;
-    align-items: baseline;
-    gap: 5px;
-    padding-bottom: 11px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    flex-direction: column;
+    gap: 9px;
+    padding-top: 13px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  .mkp-price-row b {
-    font-size: 18px;
-    font-weight: 1000;
-    color: #ffda6a;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-  }
-
-  .mkp-price-row span {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.45);
-    font-weight: 800;
-  }
-
-  /* seller row */
-  .mkp-seller {
+  .mkp-meta-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: space-between;
+    gap: 10px;
     min-width: 0;
   }
 
-  .mkp-seller img,
+  .mkp-meta-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.45);
+    flex: 0 0 auto;
+  }
+
+  .mkp-meta-price {
+    font-size: 15px;
+    font-weight: 1000;
+    color: #ffda6a;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mkp-meta-seller {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    font-size: 12.5px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.72);
+    overflow: hidden;
+  }
+
+  .mkp-meta-seller img,
   .mkp-seller-fallback {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     border-radius: 999px;
     flex: 0 0 auto;
     object-fit: cover;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   .mkp-seller-fallback {
     display: grid;
     place-items: center;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.07);
     color: rgba(255, 255, 255, 0.6);
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 1000;
     border-style: solid;
   }
 
-  .mkp-seller-name {
-    font-size: 11.5px;
-    color: rgba(255, 255, 255, 0.62);
-    font-weight: 900;
+  .mkp-meta-seller span {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     min-width: 0;
   }
 
-  .mkp-time {
-    margin-inline-start: auto;
-    font-size: 10.5px;
-    color: rgba(255, 255, 255, 0.42);
-    font-weight: 800;
-    white-space: nowrap;
-    flex: 0 0 auto;
+  .mkp-meta-value {
+    font-size: 12.5px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.68);
   }
 
-  /* status pill (عروضي) */
+  /* status pill */
   .mkp-status {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 11px;
+    padding: 4px 11px;
     border-radius: 999px;
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 1000;
-    width: fit-content;
     background: rgba(255, 255, 255, 0.05);
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.62);
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .mkp-status.is-live {
     background: rgba(255, 218, 106, 0.1);
     color: #ffda6a;
-    border-color: rgba(255, 218, 106, 0.3);
+    border-color: rgba(255, 223, 138, 0.3);
   }
 
   .mkp-status.is-wait {
@@ -457,8 +398,8 @@ const metadata = {
 
   .mkp-status.is-done {
     background: rgba(255, 255, 255, 0.05);
-    color: rgba(255, 255, 255, 0.7);
-    border-color: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.72);
+    border-color: rgba(255, 255, 255, 0.13);
   }
 
   .mkp-status.is-err {
@@ -467,24 +408,18 @@ const metadata = {
     border-color: rgba(239, 68, 68, 0.25);
   }
 
-  .mkp-status-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  /* actions */
-  .mkp-action {
+  /* action */
+  .mkp-card-action {
     margin-top: auto;
   }
 
   .mkp-buy {
-    height: 40px;
+    height: 42px;
     border: 0;
-    border-radius: 11px;
+    border-radius: 12px;
     background: linear-gradient(135deg, #ffda6a, #c29200);
     color: #241404;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 1000;
     cursor: pointer;
     display: inline-flex;
@@ -507,16 +442,16 @@ const metadata = {
   .mkp-buy.is-done {
     background: rgba(255, 218, 106, 0.14);
     color: #ffe1a1;
-    border: 1px solid rgba(255, 218, 106, 0.3);
+    border: 1px solid rgba(255, 223, 138, 0.32);
   }
 
   .mkp-own {
-    height: 40px;
-    border-radius: 11px;
+    height: 42px;
+    border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(255, 255, 255, 0.03);
     color: rgba(255, 255, 255, 0.5);
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 900;
     display: grid;
     place-items: center;
@@ -526,9 +461,9 @@ const metadata = {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 40px;
-    border-radius: 11px;
-    border: 1px solid rgba(255, 218, 106, 0.38);
+    height: 42px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 223, 138, 0.36);
     background: rgba(255, 218, 106, 0.08);
     color: #ffe1a8;
     font-size: 12.5px;
@@ -538,12 +473,12 @@ const metadata = {
   }
 
   .mkp-cancel {
-    height: 38px;
-    border-radius: 11px;
+    height: 40px;
+    border-radius: 12px;
     border: 1px solid rgba(239, 68, 68, 0.28);
     background: rgba(239, 68, 68, 0.06);
     color: #ffb0b0;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 1000;
     cursor: pointer;
     width: 100%;
@@ -562,27 +497,27 @@ const metadata = {
   /* ---------- empty ---------- */
   .mkp-empty {
     grid-column: 1 / -1;
-    max-width: 460px;
-    margin: 22px auto;
-    padding: 48px 20px;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    border: 1px dashed rgba(255, 255, 255, 0.12);
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.015);
+    gap: 8px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.012);
   }
 
   .mkp-empty strong {
-    display: block;
-    color: rgba(255, 255, 255, 0.72);
-    font-size: 14px;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 15px;
     font-weight: 1000;
   }
 
   .mkp-empty span {
-    display: block;
-    margin-top: 6px;
     color: rgba(255, 255, 255, 0.42);
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 700;
   }
 
@@ -605,33 +540,24 @@ const metadata = {
   }
 
   /* ---------- responsive ---------- */
-  @media (max-width: 760px) {
-    .mkp-row {
+  @media (max-width: 720px) {
+    .mkp-panel {
+      padding: 20px 16px 24px;
+      border-radius: 20px;
+    }
+
+    .mkp-head {
       flex-direction: column;
       align-items: stretch;
       gap: 12px;
-      padding: 14px 16px;
     }
 
-    .mkp-row-price,
-    .mkp-row-seller,
-    .mkp-row-status,
-    .mkp-row-time,
-    .mkp-row-action {
-      width: 100%;
-    }
-
-    .mkp-row-time {
-      text-align: start;
-    }
-
-    .mkp-toolbar {
-      gap: 10px;
-    }
-
-    .mkp-toolbar-side {
-      width: 100%;
+    .mkp-head-side {
       justify-content: space-between;
+    }
+
+    .mkp-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>
@@ -668,16 +594,16 @@ const metadata = {
       if (total <= 0) return 'ينتهي الآن'
       var h = Math.floor(total / 3600)
       var m = Math.floor((total % 3600) / 60)
-      if (h > 0) return 'باقي ' + h + 'س ' + (m > 0 ? m + 'د' : '')
-      if (m > 0) return 'باقي ' + m + 'د'
+      if (h > 0) return 'بعد ' + h + 'س ' + (m > 0 ? m + 'د' : '')
+      if (m > 0) return 'بعد ' + m + 'د'
       return 'أقل من دقيقة'
     }
 
     function statusInfo(status) {
       if (status === 'active') return { cls: 'is-live', text: 'نشط' }
-      if (status === 'pending_list') return { cls: 'is-wait', text: 'قيد النشر...' }
-      if (status === 'pending_buy') return { cls: 'is-wait', text: 'قيد الشراء...' }
-      if (status === 'pending_refund') return { cls: 'is-wait', text: 'قيد الاسترجاع...' }
+      if (status === 'pending_list') return { cls: 'is-wait', text: 'قيد النشر' }
+      if (status === 'pending_buy') return { cls: 'is-wait', text: 'قيد الشراء' }
+      if (status === 'pending_refund') return { cls: 'is-wait', text: 'قيد الاسترجاع' }
       if (status === 'sold') return { cls: 'is-done', text: 'مباع ✓' }
       if (status === 'refunded') return { cls: 'is-done', text: 'رجع لك' }
       if (status === 'cancelled') return { cls: 'is-done', text: 'ملغي' }
@@ -773,14 +699,23 @@ const metadata = {
         : '<span class="mkp-seller-fallback">' + escText(String(listing.sellerName || '؟').charAt(0).toUpperCase()) + '</span>'
     }
 
-    function itemBlock(listing) {
+    function cardHead(listing) {
       return (
-        '<div class="mkp-row-item">' +
-          '<div class="mkp-item-icon">📦</div>' +
-          '<div class="mkp-item-name">' +
+        '<div class="mkp-card-head">' +
+          '<div class="mkp-card-icon">📦</div>' +
+          '<div class="mkp-card-title">' +
             '<strong>' + escText(listing.itemName) + '</strong>' +
-            '<span class="mkp-qty">الكمية ×' + fmt(listing.quantity) + '</span>' +
+            '<span>×' + fmt(listing.quantity) + '</span>' +
           '</div>' +
+        '</div>'
+      )
+    }
+
+    function metaRow(label, valueHtml) {
+      return (
+        '<div class="mkp-meta-row">' +
+          '<span class="mkp-meta-label">' + label + '</span>' +
+          valueHtml +
         '</div>'
       )
     }
@@ -789,7 +724,6 @@ const metadata = {
       var isOwn = mkp.me && listing.sellerId === meId()
 
       var action = ''
-
       if (!mkp.me) {
         action = '<a class="mkp-login" href="' + API + '/auth/twitch/login">سجل دخول للشراء</a>'
       } else if (isOwn) {
@@ -798,16 +732,21 @@ const metadata = {
         action = '<button class="mkp-buy" type="button" data-mkp-buy="' + escText(listing.listingId) + '">شراء</button>'
       }
 
+      var seller =
+        '<span class="mkp-meta-seller">' +
+          sellerAvatar(listing) +
+          '<span>' + escText(listing.sellerName || listing.sellerLogin || '') + '</span>' +
+        '</span>'
+
       return (
-        '<article class="mkp-row">' +
-          itemBlock(listing) +
-          '<div class="mkp-row-price"><b>' + fmt(listing.price) + '</b><span>نقطة</span></div>' +
-          '<div class="mkp-row-seller">' +
-            sellerAvatar(listing) +
-            '<span class="mkp-seller-name">' + escText(listing.sellerName || listing.sellerLogin || '') + '</span>' +
+        '<article class="mkp-card">' +
+          cardHead(listing) +
+          '<div class="mkp-card-meta">' +
+            metaRow('السعر', '<span class="mkp-meta-price">' + fmt(listing.price) + ' نقطة</span>') +
+            metaRow('البائع', seller) +
+            metaRow('ينتهي', '<span class="mkp-meta-value">' + remainingText(listing.remainingSeconds) + '</span>') +
           '</div>' +
-          '<div class="mkp-row-time">' + remainingText(listing.remainingSeconds) + '</div>' +
-          '<div class="mkp-row-action">' + action + '</div>' +
+          '<div class="mkp-card-action">' + action + '</div>' +
         '</article>'
       )
     }
@@ -816,21 +755,27 @@ const metadata = {
       var info = statusInfo(listing.status)
       var isActive = listing.status === 'active'
 
-      var infoText = isActive
-        ? remainingText(listing.remainingSeconds)
-        : ((listing.status === 'sold' && listing.buyerName) ? 'اشتراه: ' + escText(listing.buyerName) : '—')
+      var rows =
+        metaRow('السعر', '<span class="mkp-meta-price">' + fmt(listing.price) + ' نقطة</span>') +
+        metaRow('الحالة', '<span class="mkp-status ' + info.cls + '">' + info.text + '</span>')
+
+      if (listing.status === 'sold' && listing.buyerName) {
+        rows += metaRow('المشتري', '<span class="mkp-meta-value">' + escText(listing.buyerName) + '</span>')
+      }
+
+      if (isActive) {
+        rows += metaRow('ينتهي', '<span class="mkp-meta-value">' + remainingText(listing.remainingSeconds) + '</span>')
+      }
 
       var action = isActive
         ? '<button class="mkp-cancel" type="button" data-mkp-cancel="' + escText(listing.listingId) + '">إلغاء العرض</button>'
         : ''
 
       return (
-        '<article class="mkp-row">' +
-          itemBlock(listing) +
-          '<div class="mkp-row-price"><b>' + fmt(listing.price) + '</b><span>نقطة</span></div>' +
-          '<div class="mkp-row-status"><span class="mkp-status ' + info.cls + '">' + info.text + '</span></div>' +
-          '<div class="mkp-row-time">' + infoText + '</div>' +
-          '<div class="mkp-row-action">' + action + '</div>' +
+        '<article class="mkp-card">' +
+          cardHead(listing) +
+          '<div class="mkp-card-meta">' + rows + '</div>' +
+          (action ? '<div class="mkp-card-action">' + action + '</div>' : '') +
         '</article>'
       )
     }
@@ -988,6 +933,8 @@ const metadata = {
         return
       } catch {
         setNotice('error', 'حدث خطأ، جرّب بعد قليل.')
+        button.disabled = false
+        button.textContent = 'شراء'
         await loadAll()
       }
     }
