@@ -4,7 +4,7 @@ import Layout from '~/layouts/PageLayout.astro'
 const metadata = {
   title: 'السوق — TNX6',
   ignoreTitleTemplate: true,
-  description: 'سوق أغراض مجتمع TNX6 — اعرض واشترِ أغراض الأعضاء.',
+  description: 'سوق أغراض مجتمع TNX6 — اشترِ وبيع أغراض الأعضاء.',
 }
 ---
 
@@ -12,28 +12,32 @@ const metadata = {
   <main class="tnx-market-page" dir="rtl">
     <section class="mkp-shell">
       <header class="mkp-head">
-        <div class="mkp-title">
-          <div class="mkp-icon">🛒</div>
-          <div>
-            <h1>السوق</h1>
-            <p>اعرض أغراضك واشترِ من أعضاء المجتمع</p>
-          </div>
-        </div>
-
-        <div class="mkp-head-side">
-          <button class="mkp-refresh" type="button" id="mkpRefresh" title="تحديث">⟳</button>
-        </div>
+        <h1>السوق</h1>
+        <p>اشترِ وبيع أغراض المجتمع</p>
       </header>
 
-      <nav class="mkp-tabs">
-        <button class="mkp-tab active" type="button" data-mkp-tab="market">السوق <span id="mkpCountMarket">0</span></button>
-        <button class="mkp-tab" type="button" data-mkp-tab="mine" id="mkpMineTab" hidden>عروضي <span id="mkpCountMine">0</span></button>
-      </nav>
+      <div class="mkp-toolbar">
+        <nav class="mkp-tabs">
+          <button class="mkp-tab active" type="button" data-mkp-tab="market">السوق</button>
+          <button class="mkp-tab" type="button" data-mkp-tab="mine" id="mkpMineTab" hidden>
+            عروضي <span class="mkp-badge" id="mkpCountMine">0</span>
+          </button>
+        </nav>
+
+        <div class="mkp-toolbar-side">
+          <span class="mkp-count"><b id="mkpCountMarket">0</b> عرض نشط</span>
+          <button class="mkp-refresh" type="button" id="mkpRefresh" title="تحديث">
+            <span class="mkp-refresh-ico" aria-hidden="true">⟳</span> تحديث
+          </button>
+        </div>
+      </div>
 
       <div class="mkp-notice" id="mkpNotice" hidden></div>
 
       <div class="mkp-grid" id="mkpGrid">
-        <div class="mkp-empty">جاري تحميل السوق...</div>
+        <div class="mkp-empty">
+          <strong>جاري تحميل السوق...</strong>
+        </div>
       </div>
     </section>
   </main>
@@ -42,151 +46,194 @@ const metadata = {
 <style is:global>
   .tnx-market-page {
     min-height: 70vh;
-    padding: 24px 14px 60px;
+    padding: 26px 14px 64px;
     color: #f4f4f5;
   }
 
   .mkp-shell {
-    max-width: 1040px;
+    max-width: 1060px;
     margin: 0 auto;
   }
 
+  /* ---------- header ---------- */
   .mkp-head {
+    margin-bottom: 16px;
+  }
+
+  .mkp-head h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 1000;
+    color: #ffda6a;
+    letter-spacing: -0.01em;
+  }
+
+  .mkp-head p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 700;
+  }
+
+  /* ---------- toolbar ---------- */
+  .mkp-toolbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 14px;
-  }
-
-  .mkp-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-  }
-
-  .mkp-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 15px;
-    display: grid;
-    place-items: center;
-    font-size: 23px;
-    background: rgba(255, 138, 91, 0.12);
-    border: 1px solid rgba(255, 138, 91, 0.25);
-  }
-
-  .mkp-title h1 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 1000;
-    color: #fff;
-  }
-
-  .mkp-title p {
-    margin: 3px 0 0;
-    font-size: 12.5px;
-    color: rgba(255, 255, 255, 0.55);
-    font-weight: 700;
-  }
-
-  .mkp-refresh {
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    background: rgba(255, 255, 255, 0.03);
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 17px;
-    cursor: pointer;
-  }
-
-  .mkp-refresh:hover {
-    color: #ffd9a0;
-    border-color: rgba(255, 197, 110, 0.35);
+    flex-wrap: wrap;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   }
 
   .mkp-tabs {
-    display: flex;
-    gap: 5px;
-    margin-bottom: 12px;
+    display: inline-flex;
+    gap: 4px;
     padding: 4px;
-    border-radius: 13px;
+    border-radius: 12px;
     background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    width: fit-content;
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   .mkp-tab {
     height: 32px;
-    padding: 0 16px;
+    padding: 0 15px;
     border: 1px solid transparent;
-    border-radius: 10px;
+    border-radius: 9px;
     background: transparent;
     color: rgba(255, 255, 255, 0.55);
     cursor: pointer;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 1000;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    transition: color 0.15s, background 0.15s, border-color 0.15s;
   }
 
-  .mkp-tab span {
-    min-width: 17px;
-    height: 17px;
-    padding: 0 5px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.07);
-    display: grid;
-    place-items: center;
-    font-size: 10px;
+  .mkp-tab:hover {
+    color: rgba(255, 255, 255, 0.85);
   }
 
   .mkp-tab.active {
-    background: linear-gradient(135deg, rgba(255, 211, 106, 0.14), rgba(255, 138, 91, 0.1));
-    border-color: rgba(255, 197, 110, 0.4);
-    color: #ffdca8;
+    background: rgba(255, 218, 106, 0.12);
+    border-color: rgba(255, 218, 106, 0.35);
+    color: #ffda6a;
   }
 
+  .mkp-badge {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    display: inline-grid;
+    place-items: center;
+    font-size: 10px;
+    font-weight: 1000;
+  }
+
+  .mkp-tab.active .mkp-badge {
+    background: rgba(255, 218, 106, 0.2);
+    color: #ffe9ad;
+  }
+
+  .mkp-toolbar-side {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mkp-count {
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+  }
+
+  .mkp-count b {
+    color: #ffda6a;
+    font-weight: 1000;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mkp-refresh {
+    height: 32px;
+    padding: 0 13px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .mkp-refresh:hover {
+    color: #ffe1a8;
+    border-color: rgba(255, 218, 106, 0.35);
+  }
+
+  .mkp-refresh-ico {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .mkp-refresh.is-loading .mkp-refresh-ico {
+    animation: mkpspin 0.8s linear infinite;
+    display: inline-block;
+  }
+
+  /* ---------- notice ---------- */
   .mkp-notice {
-    margin-bottom: 12px;
-    padding: 10px 13px;
-    border-radius: 12px;
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    border-radius: 11px;
     font-size: 12.5px;
     font-weight: 900;
     border: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(255, 255, 255, 0.03);
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.72);
   }
 
   .mkp-notice.is-ok {
-    border-color: rgba(143, 240, 179, 0.25);
-    background: rgba(143, 240, 179, 0.05);
-    color: #9fe8bd;
+    border-color: rgba(255, 218, 106, 0.32);
+    background: rgba(255, 218, 106, 0.07);
+    color: #ffe1a1;
   }
 
   .mkp-notice.is-error {
-    border-color: rgba(255, 120, 120, 0.22);
-    background: rgba(255, 120, 120, 0.06);
-    color: #ffb3b3;
+    border-color: rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.08);
+    color: #ffb0b0;
   }
 
+  /* ---------- grid ---------- */
   .mkp-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 11px;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 12px;
   }
 
+  /* ---------- card ---------- */
   .mkp-card {
-    padding: 13px;
-    border-radius: 16px;
+    padding: 14px;
+    border-radius: 14px;
     border: 1px solid rgba(255, 255, 255, 0.07);
-    background: linear-gradient(170deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015));
+    background: rgba(255, 255, 255, 0.025);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+    transition: border-color 0.15s;
+  }
+
+  .mkp-card:hover {
+    border-color: rgba(255, 218, 106, 0.22);
   }
 
   .mkp-card-top {
@@ -197,14 +244,14 @@ const metadata = {
   }
 
   .mkp-item-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 13px;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
     display: grid;
     place-items: center;
-    background: rgba(255, 211, 106, 0.09);
-    border: 1px solid rgba(255, 211, 106, 0.22);
-    font-size: 19px;
+    background: rgba(255, 218, 106, 0.08);
+    border: 1px solid rgba(255, 218, 106, 0.2);
+    font-size: 18px;
     flex: 0 0 auto;
   }
 
@@ -223,35 +270,38 @@ const metadata = {
     white-space: nowrap;
   }
 
-  .mkp-item-name span {
-    display: block;
+  .mkp-qty {
+    display: inline-block;
+    margin-top: 3px;
     font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 900;
+  }
+
+  /* price row */
+  .mkp-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    padding-bottom: 11px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .mkp-price-row b {
+    font-size: 18px;
+    font-weight: 1000;
+    color: #ffda6a;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .mkp-price-row span {
+    font-size: 11px;
     color: rgba(255, 255, 255, 0.45);
     font-weight: 800;
-    margin-top: 1px;
   }
 
-  .mkp-price {
-    flex: 0 0 auto;
-    text-align: left;
-  }
-
-  .mkp-price b {
-    display: block;
-    font-size: 15px;
-    font-weight: 1000;
-    color: #ffd36a;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-
-  .mkp-price span {
-    display: block;
-    font-size: 9.5px;
-    color: rgba(255, 255, 255, 0.4);
-    font-weight: 800;
-  }
-
+  /* seller row */
   .mkp-seller {
     display: flex;
     align-items: center;
@@ -259,71 +309,102 @@ const metadata = {
     min-width: 0;
   }
 
-  .mkp-seller img {
-    width: 24px;
-    height: 24px;
-    border-radius: 999px;
-    object-fit: cover;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    flex: 0 0 auto;
-  }
-
+  .mkp-seller img,
   .mkp-seller-fallback {
     width: 24px;
     height: 24px;
     border-radius: 999px;
+    flex: 0 0 auto;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .mkp-seller-fallback {
     display: grid;
     place-items: center;
     background: rgba(255, 255, 255, 0.06);
     color: rgba(255, 255, 255, 0.6);
     font-size: 11px;
     font-weight: 1000;
-    flex: 0 0 auto;
+    border-style: solid;
   }
 
-  .mkp-seller span {
+  .mkp-seller-name {
     font-size: 11.5px;
-    color: rgba(255, 255, 255, 0.65);
+    color: rgba(255, 255, 255, 0.62);
     font-weight: 900;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    min-width: 0;
   }
 
   .mkp-time {
     margin-inline-start: auto;
     font-size: 10.5px;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.42);
     font-weight: 800;
     white-space: nowrap;
+    flex: 0 0 auto;
   }
 
+  /* status pill (عروضي) */
   .mkp-status {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 5px 10px;
+    padding: 5px 11px;
     border-radius: 999px;
     font-size: 10.5px;
     font-weight: 1000;
     width: fit-content;
     background: rgba(255, 255, 255, 0.05);
     color: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .mkp-status.is-live { background: rgba(143, 240, 179, 0.08); color: #8ff0b3; border-color: rgba(143, 240, 179, 0.22); }
-  .mkp-status.is-wait { background: rgba(255, 211, 106, 0.08); color: #ffd36a; border-color: rgba(255, 211, 106, 0.22); }
-  .mkp-status.is-sold { background: rgba(120, 170, 255, 0.08); color: #a9c8ff; border-color: rgba(120, 170, 255, 0.22); }
-  .mkp-status.is-err { background: rgba(255, 120, 120, 0.07); color: #ffb3b3; border-color: rgba(255, 120, 120, 0.2); }
+  .mkp-status.is-live {
+    background: rgba(255, 218, 106, 0.1);
+    color: #ffda6a;
+    border-color: rgba(255, 218, 106, 0.3);
+  }
+
+  .mkp-status.is-wait {
+    background: rgba(250, 204, 21, 0.08);
+    color: #f5d97a;
+    border-color: rgba(250, 204, 21, 0.22);
+  }
+
+  .mkp-status.is-done {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.7);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .mkp-status.is-err {
+    background: rgba(239, 68, 68, 0.08);
+    color: #ffb0b0;
+    border-color: rgba(239, 68, 68, 0.25);
+  }
+
+  .mkp-status-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* actions */
+  .mkp-action {
+    margin-top: auto;
+  }
 
   .mkp-buy {
-    height: 38px;
+    height: 40px;
     border: 0;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #ffd36a, #ff9d2e);
+    border-radius: 11px;
+    background: linear-gradient(135deg, #ffda6a, #c29200);
     color: #241404;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 1000;
     cursor: pointer;
     display: inline-flex;
@@ -331,18 +412,31 @@ const metadata = {
     justify-content: center;
     gap: 7px;
     width: 100%;
+    transition: filter 0.15s;
   }
 
-  .mkp-buy:hover { filter: brightness(1.06); }
-  .mkp-buy:disabled { opacity: 0.65; cursor: wait; }
+  .mkp-buy:hover {
+    filter: brightness(1.06);
+  }
+
+  .mkp-buy:disabled {
+    cursor: wait;
+    opacity: 0.8;
+  }
+
+  .mkp-buy.is-done {
+    background: rgba(255, 218, 106, 0.14);
+    color: #ffe1a1;
+    border: 1px solid rgba(255, 218, 106, 0.3);
+  }
 
   .mkp-own {
-    height: 38px;
-    border-radius: 12px;
+    height: 40px;
+    border-radius: 11px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(255, 255, 255, 0.03);
     color: rgba(255, 255, 255, 0.5);
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 900;
     display: grid;
     place-items: center;
@@ -352,42 +446,64 @@ const metadata = {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 38px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 197, 110, 0.4);
-    background: rgba(255, 211, 106, 0.08);
-    color: #ffd9a0;
-    font-size: 12px;
+    height: 40px;
+    border-radius: 11px;
+    border: 1px solid rgba(255, 218, 106, 0.38);
+    background: rgba(255, 218, 106, 0.08);
+    color: #ffe1a8;
+    font-size: 12.5px;
     font-weight: 1000;
     text-decoration: none;
     width: 100%;
   }
 
   .mkp-cancel {
-    height: 34px;
+    height: 38px;
     border-radius: 11px;
-    border: 1px solid rgba(255, 120, 120, 0.25);
-    background: rgba(255, 120, 120, 0.06);
-    color: #ffb3b3;
-    font-size: 11.5px;
+    border: 1px solid rgba(239, 68, 68, 0.28);
+    background: rgba(239, 68, 68, 0.06);
+    color: #ffb0b0;
+    font-size: 12px;
     font-weight: 1000;
     cursor: pointer;
     width: 100%;
+    transition: background 0.15s;
   }
 
-  .mkp-cancel:disabled { opacity: 0.65; cursor: wait; }
+  .mkp-cancel:hover {
+    background: rgba(239, 68, 68, 0.1);
+  }
 
+  .mkp-cancel:disabled {
+    opacity: 0.7;
+    cursor: wait;
+  }
+
+  /* ---------- empty ---------- */
   .mkp-empty {
     grid-column: 1 / -1;
-    padding: 50px 16px;
+    padding: 54px 18px;
     text-align: center;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 13.5px;
-    font-weight: 800;
     border: 1px dashed rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
+    border-radius: 14px;
   }
 
+  .mkp-empty strong {
+    display: block;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 14px;
+    font-weight: 1000;
+  }
+
+  .mkp-empty span {
+    display: block;
+    margin-top: 6px;
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  /* ---------- spinner ---------- */
   .mkp-spin {
     width: 14px;
     height: 14px;
@@ -399,10 +515,26 @@ const metadata = {
     flex: 0 0 auto;
   }
 
-  @keyframes mkpspin { to { transform: rotate(360deg); } }
+  @keyframes mkpspin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 
-  @media (max-width: 520px) {
-    .mkp-grid { grid-template-columns: 1fr; }
+  /* ---------- responsive ---------- */
+  @media (max-width: 560px) {
+    .mkp-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .mkp-toolbar {
+      gap: 10px;
+    }
+
+    .mkp-toolbar-side {
+      width: 100%;
+      justify-content: space-between;
+    }
   }
 </style>
 
@@ -448,9 +580,9 @@ const metadata = {
       if (status === 'pending_list') return { cls: 'is-wait', text: 'قيد النشر...' }
       if (status === 'pending_buy') return { cls: 'is-wait', text: 'قيد الشراء...' }
       if (status === 'pending_refund') return { cls: 'is-wait', text: 'قيد الاسترجاع...' }
-      if (status === 'sold') return { cls: 'is-sold', text: 'مباع ✓' }
-      if (status === 'refunded') return { cls: '', text: 'انتهى ورجع لك' }
-      if (status === 'cancelled') return { cls: '', text: 'ملغي' }
+      if (status === 'sold') return { cls: 'is-done', text: 'مباع ✓' }
+      if (status === 'refunded') return { cls: 'is-done', text: 'رجع لك' }
+      if (status === 'cancelled') return { cls: 'is-done', text: 'ملغي' }
       return { cls: 'is-err', text: 'خطأ' }
     }
 
@@ -479,6 +611,11 @@ const metadata = {
       box.textContent = text
     }
 
+    function setRefreshLoading(on) {
+      var btn = el('mkpRefresh')
+      if (btn) btn.classList.toggle('is-loading', !!on)
+    }
+
     async function fetchMe() {
       if (mkp.me !== null) return mkp.me
 
@@ -500,6 +637,7 @@ const metadata = {
     async function loadAll() {
       if (mkp.busy) return
       mkp.busy = true
+      setRefreshLoading(true)
 
       try {
         await fetchMe()
@@ -527,6 +665,7 @@ const metadata = {
         console.warn('[Market] load failed', error)
       } finally {
         mkp.busy = false
+        setRefreshLoading(false)
       }
     }
 
@@ -538,7 +677,7 @@ const metadata = {
       return (
         '<div class="mkp-seller">' +
           avatar +
-          '<span>' + escText(listing.sellerName || listing.sellerLogin || '') + '</span>' +
+          '<span class="mkp-seller-name">' + escText(listing.sellerName || listing.sellerLogin || '') + '</span>' +
           '<span class="mkp-time">' + remainingText(listing.remainingSeconds) + '</span>' +
         '</div>'
       )
@@ -554,7 +693,7 @@ const metadata = {
       } else if (isOwn) {
         action = '<div class="mkp-own">هذا عرضك</div>'
       } else {
-        action = '<button class="mkp-buy" type="button" data-mkp-buy="' + escText(listing.listingId) + '">شراء بـ ' + fmt(listing.price) + ' نقطة</button>'
+        action = '<button class="mkp-buy" type="button" data-mkp-buy="' + escText(listing.listingId) + '">شراء</button>'
       }
 
       return (
@@ -563,12 +702,12 @@ const metadata = {
             '<div class="mkp-item-icon">📦</div>' +
             '<div class="mkp-item-name">' +
               '<strong>' + escText(listing.itemName) + '</strong>' +
-              '<span>الكمية ×' + fmt(listing.quantity) + '</span>' +
+              '<span class="mkp-qty">الكمية ×' + fmt(listing.quantity) + '</span>' +
             '</div>' +
-            '<div class="mkp-price"><b>' + fmt(listing.price) + '</b><span>نقطة</span></div>' +
           '</div>' +
+          '<div class="mkp-price-row"><b>' + fmt(listing.price) + '</b><span>نقطة</span></div>' +
           sellerHtml(listing) +
-          action +
+          '<div class="mkp-action">' + action + '</div>' +
         '</article>'
       )
     }
@@ -576,16 +715,16 @@ const metadata = {
     function mineCard(listing) {
       var info = statusInfo(listing.status)
 
-      var cancelHtml = listing.status === 'active'
-        ? '<button class="mkp-cancel" type="button" data-mkp-cancel="' + escText(listing.listingId) + '">إلغاء العرض وإرجاع الغرض</button>'
-        : ''
-
       var timeHtml = listing.status === 'active'
         ? '<span class="mkp-time">' + remainingText(listing.remainingSeconds) + '</span>'
         : ''
 
       var soldHtml = listing.status === 'sold' && listing.buyerName
-        ? '<div class="mkp-seller"><span>اشتراه: ' + escText(listing.buyerName) + '</span></div>'
+        ? '<div class="mkp-seller"><span class="mkp-seller-name">اشتراه: ' + escText(listing.buyerName) + '</span></div>'
+        : ''
+
+      var cancelHtml = listing.status === 'active'
+        ? '<div class="mkp-action"><button class="mkp-cancel" type="button" data-mkp-cancel="' + escText(listing.listingId) + '">إلغاء العرض</button></div>'
         : ''
 
       return (
@@ -594,11 +733,11 @@ const metadata = {
             '<div class="mkp-item-icon">📦</div>' +
             '<div class="mkp-item-name">' +
               '<strong>' + escText(listing.itemName) + '</strong>' +
-              '<span>الكمية ×' + fmt(listing.quantity) + '</span>' +
+              '<span class="mkp-qty">الكمية ×' + fmt(listing.quantity) + '</span>' +
             '</div>' +
-            '<div class="mkp-price"><b>' + fmt(listing.price) + '</b><span>نقطة</span></div>' +
           '</div>' +
-          '<div class="mkp-card-top"><span class="mkp-status ' + info.cls + '">' + info.text + '</span>' + timeHtml + '</div>' +
+          '<div class="mkp-price-row"><b>' + fmt(listing.price) + '</b><span>نقطة</span></div>' +
+          '<div class="mkp-status-row"><span class="mkp-status ' + info.cls + '">' + info.text + '</span>' + timeHtml + '</div>' +
           soldHtml +
           cancelHtml +
         '</article>'
@@ -611,6 +750,8 @@ const metadata = {
 
       var mineTab = el('mkpMineTab')
       if (mineTab) mineTab.hidden = !mkp.me
+
+      if (!mkp.me && mkp.tab === 'mine') mkp.tab = 'market'
 
       var countMarket = el('mkpCountMarket')
       if (countMarket) countMarket.textContent = fmt(mkp.listings.length)
@@ -625,13 +766,13 @@ const metadata = {
       if (mkp.tab === 'mine') {
         grid.innerHTML = mkp.mine.length
           ? mkp.mine.map(mineCard).join('')
-          : '<div class="mkp-empty">ما عندك عروض بعد — اعرض غرضًا من حقيبتك في صفحة بروفايلك.</div>'
+          : '<div class="mkp-empty"><strong>لا توجد عروض حاليًا</strong><span>اعرض غرضًا من حقيبتك ليظهر هنا</span></div>'
         return
       }
 
       grid.innerHTML = mkp.listings.length
         ? mkp.listings.map(marketCard).join('')
-        : '<div class="mkp-empty">السوق فاضي حاليًا — كن أول من يعرض غرضًا.</div>'
+        : '<div class="mkp-empty"><strong>لا توجد عروض حاليًا</strong><span>اعرض غرضًا من حقيبتك ليظهر هنا</span></div>'
     }
 
     async function pollRequest(requestId, timeoutMs) {
@@ -675,6 +816,8 @@ const metadata = {
 
         if (!res.ok || !data || data.ok !== true) {
           setNotice('error', buyErrorText((data && data.error) || 'buy_failed'))
+          button.disabled = false
+          button.textContent = 'شراء'
           await loadAll()
           return
         }
@@ -682,8 +825,14 @@ const metadata = {
         var result = await pollRequest(data.requestId)
 
         if (result.ok) {
+          button.classList.add('is-done')
+          button.textContent = 'تم الشراء ✓'
           setNotice('ok', 'تم الشراء ✓ الغرض وصل حقيبتك.')
-        } else if (result.error) {
+          setTimeout(function () { loadAll() }, 1100)
+          return
+        }
+
+        if (result.error) {
           setNotice('error', buyErrorText(result.error))
         } else {
           setNotice('', 'تأخر التنفيذ شوي... بيتحدث تلقائيًا.')
@@ -699,7 +848,7 @@ const metadata = {
     async function cancelListing(listingId, button) {
       setNotice('', '')
       button.disabled = true
-      button.textContent = 'جاري الإلغاء...'
+      button.innerHTML = '<span class="mkp-spin" style="border-color:rgba(255,176,176,.3);border-top-color:#ffb0b0"></span>جاري الإلغاء...'
 
       try {
         var res = await fetch(API + '/api/me/market/cancel', {
@@ -713,12 +862,14 @@ const metadata = {
 
         if (!res.ok || !data || data.ok !== true) {
           setNotice('error', 'تعذر إلغاء العرض، جرّب بعد قليل.')
+          button.disabled = false
+          button.textContent = 'إلغاء العرض'
           await loadAll()
           return
         }
 
-        // انتظار رجوع الغرض
         var startedAt = Date.now()
+        var done = false
 
         while (Date.now() - startedAt < 45000) {
           await new Promise(function (resolve) { setTimeout(resolve, 2500) })
@@ -731,16 +882,22 @@ const metadata = {
               var found = (checkData.listings || []).find(function (entry) { return entry.listingId === listingId })
 
               if (found && (found.status === 'cancelled' || found.status === 'refunded')) {
-                setNotice('ok', 'تم إلغاء العرض ✓ الغرض رجع لحقيبتك.')
+                setNotice('ok', 'رجع الغرض لحقيبتك ✓')
+                done = true
                 break
               }
 
               if (found && found.status === 'error') {
                 setNotice('error', 'صار خطأ أثناء الإلغاء، تواصل مع الإدارة.')
+                done = true
                 break
               }
             }
           } catch {}
+        }
+
+        if (!done) {
+          setNotice('', 'تأخر الإلغاء شوي... بيتحدث تلقائيًا.')
         }
 
         await loadAll()

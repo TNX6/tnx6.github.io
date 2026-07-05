@@ -12230,6 +12230,16 @@ const metadata = {
               return;
             }
 
+            if (action === 'market') {
+              try {
+                mkOpenListModal(item, modal);
+              } catch (error) {
+                console.warn('[Market] list modal failed', error);
+                if (hint) hint.textContent = 'تعذر فتح مودال السوق، جرّب مرة أخرى.';
+              }
+              return;
+            }
+
             if (hint) {
               hint.textContent = itemDetailHint(action, item, meta);
             }
