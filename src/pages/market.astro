@@ -51,7 +51,7 @@ const metadata = {
   }
 
   .mkp-shell {
-    max-width: 1060px;
+    max-width: 1120px;
     margin: 0 auto;
   }
 
@@ -214,26 +214,106 @@ const metadata = {
   }
 
   /* ---------- grid ---------- */
+  /* full-width list */
   .mkp-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .mkp-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 15px 20px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .mkp-row:hover {
+    border-color: rgba(255, 218, 106, 0.28);
+    background: linear-gradient(180deg, rgba(255, 218, 106, 0.05), rgba(255, 255, 255, 0.015));
+  }
+
+  .mkp-row-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .mkp-row-price {
+    flex: 0 0 auto;
+    min-width: 118px;
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+  }
+
+  .mkp-row-price b {
+    font-size: 19px;
+    font-weight: 1000;
+    color: #ffda6a;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .mkp-row-price span {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+    font-weight: 800;
+  }
+
+  .mkp-row-seller {
+    flex: 0 0 auto;
+    width: 170px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .mkp-row-status {
+    flex: 0 0 auto;
+    width: 120px;
+    display: flex;
+  }
+
+  .mkp-row-time {
+    flex: 0 0 auto;
+    width: 110px;
+    text-align: center;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+    font-weight: 800;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mkp-row-action {
+    flex: 0 0 auto;
+    width: 164px;
   }
 
   /* ---------- card ---------- */
   .mkp-card {
-    padding: 14px;
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    background: rgba(255, 255, 255, 0.025);
+    padding: 16px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    transition: border-color 0.15s;
+    gap: 13px;
+    transition: border-color 0.15s, transform 0.15s;
   }
 
   .mkp-card:hover {
-    border-color: rgba(255, 218, 106, 0.22);
+    border-color: rgba(255, 218, 106, 0.3);
+    transform: translateY(-2px);
   }
 
   .mkp-card-top {
@@ -482,10 +562,13 @@ const metadata = {
   /* ---------- empty ---------- */
   .mkp-empty {
     grid-column: 1 / -1;
-    padding: 54px 18px;
+    max-width: 460px;
+    margin: 22px auto;
+    padding: 48px 20px;
     text-align: center;
-    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border: 1px dashed rgba(255, 255, 255, 0.12);
     border-radius: 14px;
+    background: rgba(255, 255, 255, 0.015);
   }
 
   .mkp-empty strong {
@@ -522,9 +605,24 @@ const metadata = {
   }
 
   /* ---------- responsive ---------- */
-  @media (max-width: 560px) {
-    .mkp-grid {
-      grid-template-columns: 1fr;
+  @media (max-width: 760px) {
+    .mkp-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      padding: 14px 16px;
+    }
+
+    .mkp-row-price,
+    .mkp-row-seller,
+    .mkp-row-status,
+    .mkp-row-time,
+    .mkp-row-action {
+      width: 100%;
+    }
+
+    .mkp-row-time {
+      text-align: start;
     }
 
     .mkp-toolbar {
@@ -669,16 +767,20 @@ const metadata = {
       }
     }
 
-    function sellerHtml(listing) {
-      var avatar = listing.sellerImage
+    function sellerAvatar(listing) {
+      return listing.sellerImage
         ? '<img src="' + escText(listing.sellerImage) + '" alt="" loading="lazy" referrerpolicy="no-referrer">'
         : '<span class="mkp-seller-fallback">' + escText(String(listing.sellerName || '؟').charAt(0).toUpperCase()) + '</span>'
+    }
 
+    function itemBlock(listing) {
       return (
-        '<div class="mkp-seller">' +
-          avatar +
-          '<span class="mkp-seller-name">' + escText(listing.sellerName || listing.sellerLogin || '') + '</span>' +
-          '<span class="mkp-time">' + remainingText(listing.remainingSeconds) + '</span>' +
+        '<div class="mkp-row-item">' +
+          '<div class="mkp-item-icon">📦</div>' +
+          '<div class="mkp-item-name">' +
+            '<strong>' + escText(listing.itemName) + '</strong>' +
+            '<span class="mkp-qty">الكمية ×' + fmt(listing.quantity) + '</span>' +
+          '</div>' +
         '</div>'
       )
     }
@@ -697,49 +799,38 @@ const metadata = {
       }
 
       return (
-        '<article class="mkp-card">' +
-          '<div class="mkp-card-top">' +
-            '<div class="mkp-item-icon">📦</div>' +
-            '<div class="mkp-item-name">' +
-              '<strong>' + escText(listing.itemName) + '</strong>' +
-              '<span class="mkp-qty">الكمية ×' + fmt(listing.quantity) + '</span>' +
-            '</div>' +
+        '<article class="mkp-row">' +
+          itemBlock(listing) +
+          '<div class="mkp-row-price"><b>' + fmt(listing.price) + '</b><span>نقطة</span></div>' +
+          '<div class="mkp-row-seller">' +
+            sellerAvatar(listing) +
+            '<span class="mkp-seller-name">' + escText(listing.sellerName || listing.sellerLogin || '') + '</span>' +
           '</div>' +
-          '<div class="mkp-price-row"><b>' + fmt(listing.price) + '</b><span>نقطة</span></div>' +
-          sellerHtml(listing) +
-          '<div class="mkp-action">' + action + '</div>' +
+          '<div class="mkp-row-time">' + remainingText(listing.remainingSeconds) + '</div>' +
+          '<div class="mkp-row-action">' + action + '</div>' +
         '</article>'
       )
     }
 
     function mineCard(listing) {
       var info = statusInfo(listing.status)
+      var isActive = listing.status === 'active'
 
-      var timeHtml = listing.status === 'active'
-        ? '<span class="mkp-time">' + remainingText(listing.remainingSeconds) + '</span>'
-        : ''
+      var infoText = isActive
+        ? remainingText(listing.remainingSeconds)
+        : ((listing.status === 'sold' && listing.buyerName) ? 'اشتراه: ' + escText(listing.buyerName) : '—')
 
-      var soldHtml = listing.status === 'sold' && listing.buyerName
-        ? '<div class="mkp-seller"><span class="mkp-seller-name">اشتراه: ' + escText(listing.buyerName) + '</span></div>'
-        : ''
-
-      var cancelHtml = listing.status === 'active'
-        ? '<div class="mkp-action"><button class="mkp-cancel" type="button" data-mkp-cancel="' + escText(listing.listingId) + '">إلغاء العرض</button></div>'
+      var action = isActive
+        ? '<button class="mkp-cancel" type="button" data-mkp-cancel="' + escText(listing.listingId) + '">إلغاء العرض</button>'
         : ''
 
       return (
-        '<article class="mkp-card">' +
-          '<div class="mkp-card-top">' +
-            '<div class="mkp-item-icon">📦</div>' +
-            '<div class="mkp-item-name">' +
-              '<strong>' + escText(listing.itemName) + '</strong>' +
-              '<span class="mkp-qty">الكمية ×' + fmt(listing.quantity) + '</span>' +
-            '</div>' +
-          '</div>' +
-          '<div class="mkp-price-row"><b>' + fmt(listing.price) + '</b><span>نقطة</span></div>' +
-          '<div class="mkp-status-row"><span class="mkp-status ' + info.cls + '">' + info.text + '</span>' + timeHtml + '</div>' +
-          soldHtml +
-          cancelHtml +
+        '<article class="mkp-row">' +
+          itemBlock(listing) +
+          '<div class="mkp-row-price"><b>' + fmt(listing.price) + '</b><span>نقطة</span></div>' +
+          '<div class="mkp-row-status"><span class="mkp-status ' + info.cls + '">' + info.text + '</span></div>' +
+          '<div class="mkp-row-time">' + infoText + '</div>' +
+          '<div class="mkp-row-action">' + action + '</div>' +
         '</article>'
       )
     }
@@ -777,10 +868,12 @@ const metadata = {
 
     async function pollRequest(requestId, timeoutMs) {
       var startedAt = Date.now()
-      var limit = timeoutMs || 45000
+      var limit = timeoutMs || 9000
+      var wait = 700
 
       while (Date.now() - startedAt < limit) {
-        await new Promise(function (resolve) { setTimeout(resolve, 2500) })
+        await new Promise(function (resolve) { setTimeout(resolve, wait) })
+        wait = 1500
 
         try {
           var res = await fetch(API + '/api/me/market/request-status?id=' + encodeURIComponent(requestId) + '&v=' + Date.now(), {
@@ -797,6 +890,53 @@ const metadata = {
       }
 
       return { timeout: true }
+    }
+
+    // متابعة خلفية لطلب الشراء بعد انتهاء المهلة السريعة — تحدّث الحالة عند التأكيد الفعلي
+    async function watchBuyRequest(requestId) {
+      var result = await pollRequest(requestId, 60000)
+
+      if (result.ok) {
+        setNotice('ok', 'تم الشراء ✓ الغرض وصل حقيبتك.')
+      } else if (result.error) {
+        setNotice('error', buyErrorText(result.error))
+      } else {
+        setNotice('', 'ما زال طلبك قيد المعالجة، حدّث الصفحة بعد قليل.')
+      }
+
+      await loadAll()
+    }
+
+    // متابعة خلفية لطلب الإلغاء — تحدّث الحالة عند رجوع الغرض فعليًا
+    async function watchCancelRequest(listingId) {
+      var startedAt = Date.now()
+
+      while (Date.now() - startedAt < 60000) {
+        await new Promise(function (resolve) { setTimeout(resolve, 2000) })
+
+        try {
+          var check = await fetch(API + '/api/me/market/my-listings?v=' + Date.now(), { credentials: 'include', cache: 'no-store' })
+          var checkData = await check.json().catch(function () { return null })
+
+          if (checkData && checkData.ok) {
+            var found = (checkData.listings || []).find(function (entry) { return entry.listingId === listingId })
+
+            if (found && (found.status === 'cancelled' || found.status === 'refunded')) {
+              setNotice('ok', 'رجع الغرض لحقيبتك ✓')
+              await loadAll()
+              return
+            }
+
+            if (found && found.status === 'error') {
+              setNotice('error', 'صار خطأ أثناء الإلغاء، تواصل مع الإدارة.')
+              await loadAll()
+              return
+            }
+          }
+        } catch {}
+      }
+
+      await loadAll()
     }
 
     async function buyListing(listingId, button) {
@@ -822,23 +962,30 @@ const metadata = {
           return
         }
 
-        var result = await pollRequest(data.requestId)
+        var result = await pollRequest(data.requestId, 9000)
 
         if (result.ok) {
           button.classList.add('is-done')
           button.textContent = 'تم الشراء ✓'
           setNotice('ok', 'تم الشراء ✓ الغرض وصل حقيبتك.')
-          setTimeout(function () { loadAll() }, 1100)
+          setTimeout(function () { loadAll() }, 1200)
           return
         }
 
         if (result.error) {
           setNotice('error', buyErrorText(result.error))
-        } else {
-          setNotice('', 'تأخر التنفيذ شوي... بيتحدث تلقائيًا.')
+          button.disabled = false
+          button.textContent = 'شراء'
+          await loadAll()
+          return
         }
 
+        // لا نعرض نجاحًا وهميًا — الطلب قيد المعالجة ونتابعه في الخلفية حتى يتأكد
+        button.textContent = 'قيد المعالجة...'
+        setNotice('', 'طلبك قيد المعالجة، سيتم تحديث الحالة خلال لحظات.')
+        watchBuyRequest(data.requestId)
         await loadAll()
+        return
       } catch {
         setNotice('error', 'حدث خطأ، جرّب بعد قليل.')
         await loadAll()
@@ -871,8 +1018,8 @@ const metadata = {
         var startedAt = Date.now()
         var done = false
 
-        while (Date.now() - startedAt < 45000) {
-          await new Promise(function (resolve) { setTimeout(resolve, 2500) })
+        while (Date.now() - startedAt < 8000) {
+          await new Promise(function (resolve) { setTimeout(resolve, 1000) })
 
           try {
             var check = await fetch(API + '/api/me/market/my-listings?v=' + Date.now(), { credentials: 'include', cache: 'no-store' })
@@ -897,7 +1044,9 @@ const metadata = {
         }
 
         if (!done) {
-          setNotice('', 'تأخر الإلغاء شوي... بيتحدث تلقائيًا.')
+          // لا نعرض نجاحًا وهميًا — الإلغاء قيد المعالجة ونتابعه في الخلفية
+          setNotice('', 'طلب الإلغاء قيد المعالجة، سيتم تحديث الحالة خلال لحظات.')
+          watchCancelRequest(listingId)
         }
 
         await loadAll()

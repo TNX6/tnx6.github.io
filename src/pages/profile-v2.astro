@@ -14939,36 +14939,20 @@ function mbV2Card(message) {
               return
             }
 
-            setState('loading', 'جاري تجهيز العرض وحجز الغرض...')
+            // نجح الطلب: ما ننتظر رد الجسر — تأكيد فوري وأسرع.
+            // العرض بيظهر "قيد النشر" ثم "نشط" تلقائيًا في السوق/عروضي.
+            setState('ok', 'تم إرسال العرض ✓ بيظهر في السوق خلال ثوانٍ')
 
-            const result = await mkPollListing(data.listingId)
-
-            if (result.ok) {
-              setState('ok', 'تم نشر العرض في السوق ✓')
-
-              const actions = modal.querySelector('[data-mk-actions]')
-              if (actions) {
-                actions.innerHTML =
-                  '<a class="mk-link" href="/market">شوف السوق</a>' +
-                  '<button class="mk-cancel" type="button" data-mk-close>تم</button>'
-              }
-
-              // تحديث الحقيبة (الغرض انحجز)
-              try { wsRefreshInventory() } catch {}
-              try { if (parentModal && parentModal.remove) parentModal.remove() } catch {}
-              return
+            const actions = modal.querySelector('[data-mk-actions]')
+            if (actions) {
+              actions.innerHTML =
+                '<a class="mk-link" href="/market">شوف السوق</a>' +
+                '<button class="mk-cancel" type="button" data-mk-close>تم</button>'
             }
 
-            if (result.error) {
-              setState('error', mkListErrorText(result.error))
-              button.disabled = false
-              button.textContent = 'نشر العرض'
-              return
-            }
-
-            setState('loading', 'تأخر النشر شوي... تقدر تتابع من صفحة السوق، تبويب عروضي.')
-            button.disabled = false
-            button.textContent = 'نشر العرض'
+            try { wsRefreshInventory() } catch {}
+            try { if (parentModal && parentModal.remove) parentModal.remove() } catch {}
+            return
           } catch {
             setState('error', 'حدث خطأ، جرّب بعد قليل.')
             button.disabled = false
