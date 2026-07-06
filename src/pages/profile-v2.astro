@@ -12317,19 +12317,26 @@ const metadata = {
 
       document.addEventListener("click", () => {
         setTimeout(removeLegacyItemDetailModalAggressive, 0);
-        setTimeout(removeLegacyItemDetailModalAggressive, 80);
-        setTimeout(removeLegacyItemDetailModalAggressive, 200);
-        setTimeout(removeLegacyItemDetailModalAggressive, 500);
+        setTimeout(removeLegacyItemDetailModalAggressive, 250);
       }, true);
 
-      new MutationObserver(() => {
-        removeLegacyItemDetailModalAggressive();
+      // مراقبة خفيفة: نشغّل التنظيف فقط عند إضافة عقدة تحمل بصمة المودال القديم ("Streamer.bot")،
+      // بدل مسح كل عناصر الصفحة مع كل تغيير أو كل 500ms — ذلك كان يثقل الـ main thread
+      // ويسبب عدم سلاسة التمرير (نزول/صعود).
+      new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          for (const node of mutation.addedNodes) {
+            if (node && node.nodeType === 1 && String(node.textContent || "").indexOf("Streamer.bot") >= 0) {
+              removeLegacyItemDetailModalAggressive();
+              return;
+            }
+          }
+        }
       }).observe(document.body, {
         childList: true,
         subtree: true
       });
 
-      setInterval(removeLegacyItemDetailModalAggressive, 500);
       removeLegacyItemDetailModalAggressive();
 
 
@@ -12400,9 +12407,10 @@ const metadata = {
       function watchSellModalCloseAndCleanDetails() {
         let sellRoot = null;
         const startedAt = Date.now();
+        let missCount = 0;
 
         setTimeout(removeItemDetailModalsAfterSell, 0);
-        setTimeout(removeItemDetailModalsAfterSell, 80);
+        setTimeout(removeItemDetailModalsAfterSell, 120);
 
         const timer = setInterval(() => {
           if (!sellRoot || !document.body.contains(sellRoot)) {
@@ -12413,16 +12421,27 @@ const metadata = {
 
           if (sellRoot && !document.body.contains(sellRoot)) {
             setTimeout(removeItemDetailModalsAfterSell, 0);
-            setTimeout(removeItemDetailModalsAfterSell, 80);
-            setTimeout(removeItemDetailModalsAfterSell, 250);
+            setTimeout(removeItemDetailModalsAfterSell, 120);
             clearInterval(timer);
             return;
           }
 
-          if (Date.now() - startedAt > 10 * 60 * 1000) {
+          // إيقاف مبكر: إن لم يُعثر على مودال البيع خلال ثوانٍ قليلة، أوقف الفحص.
+          // (سابقًا كان يفحص كل عناصر الصفحة كل 150ms حتى 10 دقائق — سبب رئيسي لثقل التمرير.)
+          if (!sellRoot) {
+            missCount += 1;
+            if (missCount >= 12) {
+              clearInterval(timer);
+              return;
+            }
+          } else {
+            missCount = 0;
+          }
+
+          if (Date.now() - startedAt > 20000) {
             clearInterval(timer);
           }
-        }, 150);
+        }, 400);
       }
 
       document.addEventListener('click', (event) => {
@@ -12460,11 +12479,19 @@ const metadata = {
 
       document.addEventListener("click", () => {
         setTimeout(killLegacyItemModal, 0);
-        setTimeout(killLegacyItemModal, 80);
+        setTimeout(killLegacyItemModal, 250);
       }, true);
 
-      new MutationObserver(() => {
-        killLegacyItemModal();
+      // خفيفة: تُشغّل فقط عند إضافة عقدة تحمل بصمة المودال القديم، بدل مسح كل الـ divs مع كل تغيير.
+      new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          for (const node of mutation.addedNodes) {
+            if (node && node.nodeType === 1 && String(node.textContent || "").indexOf("Streamer.bot") >= 0) {
+              killLegacyItemModal();
+              return;
+            }
+          }
+        }
       }).observe(document.body, {
         childList: true,
         subtree: true
