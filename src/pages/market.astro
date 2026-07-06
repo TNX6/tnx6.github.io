@@ -51,7 +51,8 @@ const metadata = {
 </Layout>
 
 <style is:global>
-  .tnx-market-page {
+  .tnx-market-page,
+  .mkt-modal {
     --mk-bg: #0e0e11;
     --mk-card: #1a1a1f;
     --mk-card-hover: #1f1f26;
@@ -76,13 +77,20 @@ const metadata = {
     --mk-danger: #d97c7c;
     --mk-danger-dim: rgba(184, 76, 76, 0.1);
     --mk-danger-border: rgba(184, 76, 76, 0.28);
+  }
 
+  .tnx-market-page {
     position: relative;
     min-height: 100vh;
     background: var(--mk-bg);
     color: var(--mk-fg);
     font-family: 'Tajawal', system-ui, -apple-system, 'Segoe UI', Tahoma, Arial, sans-serif;
     line-height: 1.6;
+  }
+
+  .mkt-modal {
+    font-family: 'Tajawal', system-ui, -apple-system, 'Segoe UI', Tahoma, Arial, sans-serif;
+    color: var(--mk-fg);
   }
 
   .tnx-market-page::before {
