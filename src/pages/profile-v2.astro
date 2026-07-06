@@ -13162,7 +13162,7 @@ const metadata = {
 
           setText('mailCount', messages.length)
           setText('messages', formatNumber(messages.length))
-          syncMailboxUpgradeUsedFromMessages(messages)
+          syncMailboxUpgradeUsedFromMessages(messages, mbV2CapacityUsedFromPayload(data, messages))
 
           try {
             const root = document.querySelector('.mail-pro')
@@ -13666,9 +13666,12 @@ const metadata = {
         })
       }
 
-      function syncMailboxUpgradeUsedFromMessages(messages) {
+      function syncMailboxUpgradeUsedFromMessages(messages, usedOverride = null) {
         try {
-          const used = Array.isArray(messages) ? messages.length : 0
+          const overrideNumber = Number(usedOverride)
+          const used = Number.isFinite(overrideNumber) && overrideNumber >= 0
+            ? Math.floor(overrideNumber)
+            : mbV2CapacityUsed(messages)
 
           mailboxUpgradeInfo = normalizeMailboxUpgradeInfo({
             ...(mailboxUpgradeInfo || {}),
@@ -13779,6 +13782,48 @@ const metadata = {
         if (raw.includes('system') || raw.includes('sys') || isSystem) return 'system'
 
         return 'message'
+      }
+
+      function mbV2IsCapacityCounted(message) {
+        const raw = String(mbV2Get(message, ['type', 'kind', 'messageType', 'message_type'], 'message') || '').trim().toLowerCase()
+        const fromLogin = String(mbV2Get(message, ['fromUserLogin', 'from_user_login', 'senderLogin', 'sender_login', 'fromLogin', 'from_login'], '') || '').trim().toLowerCase()
+        const isSystem = Boolean(mbV2Get(message, ['isSystem', 'is_system'], false))
+        const isSystemGift = Boolean(mbV2Get(message, ['isSystemGift', 'is_system_gift'], false))
+
+        if (isSystem || isSystemGift) return false
+        if (raw.includes('system') || raw.includes('market')) return false
+        if (fromLogin === 'system' || fromLogin === 'market') return false
+
+        return true
+      }
+
+      function mbV2CapacityUsed(messages) {
+        return (Array.isArray(messages) ? messages : [])
+          .filter((message) => mbV2IsCapacityCounted(message))
+          .length
+      }
+
+      function mbV2CapacityUsedFromPayload(payload, messages) {
+        const candidates = [
+          payload && payload.capacityUsed,
+          payload && payload.capacity_used,
+          payload && payload.used,
+          payload && payload.counts && payload.counts.capacityUsed,
+          payload && payload.counts && payload.counts.capacity_used,
+          payload && payload.mailbox && payload.mailbox.capacityUsed,
+          payload && payload.mailbox && payload.mailbox.capacity_used,
+          payload && payload.mailbox && payload.mailbox.used,
+        ]
+
+        for (const value of candidates) {
+          const number = Number(value)
+
+          if (Number.isFinite(number) && number >= 0) {
+            return Math.floor(number)
+          }
+        }
+
+        return mbV2CapacityUsed(messages)
       }
 
       function mbV2GiftStatus(message) {
@@ -13982,7 +14027,7 @@ const metadata = {
           }
         } catch {}
 
-        const used = Array.isArray(list) ? list.length : Number(info.used ?? 0)
+        const used = Array.isArray(list) ? mbV2CapacityUsed(list) : Number(info.used ?? 0)
         const capacity = Math.max(1, Number(info.capacity || 5))
         const cost = Number(info.cost || 25000)
         const nextCapacity = Number(info.nextCapacity || 10)
@@ -14254,7 +14299,7 @@ function mbV2Card(message) {
         }
 
         const list = mbV2NormalizeMessages(data)
-        syncMailboxUpgradeUsedFromMessages(list)
+        syncMailboxUpgradeUsedFromMessages(list, mbV2CapacityUsedFromPayload(data, list))
 
         return list
       }
