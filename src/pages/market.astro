@@ -18,6 +18,9 @@ const metadata = {
         </div>
 
         <div class="mkt-head-actions">
+          <button class="mkt-sell-btn" type="button" id="mktSellBtn" hidden>
+            <span class="mkt-plus" aria-hidden="true">+</span> اعرض غرضًا
+          </button>
           <span class="mkt-stat">العروض النشطة: <strong id="mktActiveCount">0</strong></span>
           <button class="mkt-refresh" type="button" id="mktRefresh" title="تحديث">
             <span class="mkt-refresh-ico" aria-hidden="true"></span>
@@ -34,6 +37,11 @@ const metadata = {
       </nav>
 
       <div class="mkt-notice" id="mktNotice" hidden></div>
+
+      <div class="mkt-listbar" id="mktListbar" hidden>
+        <span id="mktListbarText"></span>
+        <button class="mkt-clear" type="button" id="mktClearFinished">مسح المنتهية</button>
+      </div>
 
       <div class="mkt-grid" id="mktGrid">
         <div class="mkt-empty"><div class="mkt-empty-title">جاري تحميل السوق...</div></div>
@@ -56,7 +64,16 @@ const metadata = {
     --mk-fg: #e2e2e8;
     --mk-fg-2: #8a8a96;
     --mk-fg-dim: #56565f;
-    --mk-danger: #cf6b6b;
+    --mk-green: #74d69a;
+    --mk-green-dim: rgba(116, 214, 154, 0.1);
+    --mk-green-border: rgba(116, 214, 154, 0.28);
+    --mk-amber: #e0b24e;
+    --mk-amber-dim: rgba(224, 178, 78, 0.1);
+    --mk-amber-border: rgba(224, 178, 78, 0.26);
+    --mk-blue: #7fb3e0;
+    --mk-blue-dim: rgba(127, 179, 224, 0.1);
+    --mk-blue-border: rgba(127, 179, 224, 0.26);
+    --mk-danger: #d97c7c;
     --mk-danger-dim: rgba(184, 76, 76, 0.1);
     --mk-danger-border: rgba(184, 76, 76, 0.28);
 
@@ -114,8 +131,34 @@ const metadata = {
   .mkt-head-actions {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+
+  .mkt-sell-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border-radius: 10px;
+    background: var(--mk-accent);
+    color: #0e0e11;
+    font-size: 13.5px;
+    font-weight: 800;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s;
+  }
+
+  .mkt-sell-btn:hover {
+    background: var(--mk-accent-hover);
+  }
+
+  .mkt-plus {
+    font-size: 17px;
+    line-height: 1;
+    font-weight: 900;
   }
 
   .mkt-stat {
@@ -179,7 +222,7 @@ const metadata = {
     align-items: center;
     gap: 0;
     border-bottom: 1px solid var(--mk-border);
-    margin-bottom: 28px;
+    margin-bottom: 22px;
   }
 
   .mkt-tab {
@@ -237,7 +280,7 @@ const metadata = {
 
   /* ---------- notice ---------- */
   .mkt-notice {
-    margin-bottom: 22px;
+    margin-bottom: 18px;
     padding: 11px 15px;
     border-radius: 10px;
     font-size: 13.5px;
@@ -248,14 +291,46 @@ const metadata = {
   }
 
   .mkt-notice.is-ok {
-    border-color: var(--mk-accent-border);
-    background: var(--mk-accent-dim);
-    color: var(--mk-accent);
+    border-color: var(--mk-green-border);
+    background: var(--mk-green-dim);
+    color: var(--mk-green);
   }
 
   .mkt-notice.is-error {
     border-color: var(--mk-danger-border);
     background: var(--mk-danger-dim);
+    color: var(--mk-danger);
+  }
+
+  /* ---------- listbar (clear finished) ---------- */
+  .mkt-listbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    background: var(--mk-card);
+    border: 1px solid var(--mk-border);
+    font-size: 13px;
+    color: var(--mk-fg-2);
+  }
+
+  .mkt-clear {
+    padding: 7px 14px;
+    border-radius: 9px;
+    background: transparent;
+    border: 1px solid var(--mk-border);
+    color: var(--mk-fg-2);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .mkt-clear:hover {
+    border-color: var(--mk-danger-border);
     color: var(--mk-danger);
   }
 
@@ -268,6 +343,7 @@ const metadata = {
 
   /* ---------- card ---------- */
   .mkt-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     background: var(--mk-card);
@@ -296,6 +372,29 @@ const metadata = {
   @keyframes mktCardIn {
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  .mkt-dismiss {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--mk-border);
+    color: var(--mk-fg-dim);
+    font-size: 16px;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .mkt-dismiss:hover {
+    color: var(--mk-danger);
+    border-color: var(--mk-danger-border);
   }
 
   .mkt-card-top {
@@ -445,20 +544,25 @@ const metadata = {
     margin-bottom: 14px;
   }
 
-  .mkt-badge.is-live,
-  .mkt-badge.is-wait {
-    background: var(--mk-accent-dim);
-    color: var(--mk-accent);
-    border-color: var(--mk-accent-border);
+  .mkt-badge.is-green {
+    background: var(--mk-green-dim);
+    color: var(--mk-green);
+    border-color: var(--mk-green-border);
   }
 
-  .mkt-badge.is-done {
-    background: rgba(255, 255, 255, 0.04);
-    color: var(--mk-fg-2);
-    border-color: var(--mk-border);
+  .mkt-badge.is-amber {
+    background: var(--mk-amber-dim);
+    color: var(--mk-amber);
+    border-color: var(--mk-amber-border);
   }
 
-  .mkt-badge.is-err {
+  .mkt-badge.is-blue {
+    background: var(--mk-blue-dim);
+    color: var(--mk-blue);
+    border-color: var(--mk-blue-border);
+  }
+
+  .mkt-badge.is-red {
     background: var(--mk-danger-dim);
     color: var(--mk-danger);
     border-color: var(--mk-danger-border);
@@ -616,6 +720,285 @@ const metadata = {
     max-width: 360px;
   }
 
+  /* ---------- sell modal ---------- */
+  .mkt-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    background: rgba(0, 0, 0, 0.66);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    direction: rtl;
+    animation: mktFade 0.2s ease;
+  }
+
+  @keyframes mktFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .mkt-dialog {
+    position: relative;
+    width: min(520px, 100%);
+    max-height: 88vh;
+    overflow-y: auto;
+    background: var(--mk-card);
+    border: 1px solid var(--mk-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+  }
+
+  .mkt-dialog-close {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--mk-border);
+    color: var(--mk-fg-2);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+
+  .mkt-dialog-close:hover {
+    color: var(--mk-fg);
+  }
+
+  .mkt-dialog-head {
+    margin-bottom: 18px;
+    padding-inline-end: 40px;
+  }
+
+  .mkt-dialog-head h3 {
+    margin: 0 0 3px;
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--mk-fg);
+  }
+
+  .mkt-dialog-head p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--mk-fg-2);
+  }
+
+  .mkt-inv-loading,
+  .mkt-inv-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 160px;
+    color: var(--mk-fg-2);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .mkt-inv-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-height: 58vh;
+    overflow-y: auto;
+    padding: 2px;
+  }
+
+  .mkt-inv-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 7px;
+    padding: 14px 10px;
+    border-radius: 12px;
+    background: var(--mk-bg);
+    border: 1px solid var(--mk-border);
+    color: var(--mk-fg);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .mkt-inv-item:hover {
+    border-color: var(--mk-accent-border);
+    background: var(--mk-accent-dim);
+  }
+
+  .mkt-inv-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: var(--mk-accent-dim);
+    border: 1px solid var(--mk-accent-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--mk-accent);
+    flex-shrink: 0;
+  }
+
+  .mkt-inv-icon.sm {
+    width: 44px;
+    height: 44px;
+  }
+
+  .mkt-inv-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--mk-fg);
+    line-height: 1.35;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mkt-inv-qty {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--mk-fg-dim);
+  }
+
+  .mkt-back {
+    background: transparent;
+    border: none;
+    color: var(--mk-fg-2);
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 16px;
+  }
+
+  .mkt-back:hover {
+    color: var(--mk-accent);
+  }
+
+  .mkt-sell-pick {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--mk-bg);
+    border: 1px solid var(--mk-border);
+    margin-bottom: 18px;
+  }
+
+  .mkt-sell-pick strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--mk-fg);
+  }
+
+  .mkt-sell-pick span {
+    font-size: 12.5px;
+    color: var(--mk-fg-2);
+  }
+
+  .mkt-flabel {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--mk-fg-2);
+    margin-bottom: 7px;
+  }
+
+  .mkt-input {
+    width: 100%;
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid var(--mk-border);
+    background: var(--mk-bg);
+    color: var(--mk-fg);
+    font-size: 14px;
+    font-weight: 700;
+    outline: none;
+    margin-bottom: 16px;
+    font-family: inherit;
+  }
+
+  .mkt-input:focus {
+    border-color: var(--mk-accent-border);
+  }
+
+  .mkt-durs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+    margin-bottom: 16px;
+  }
+
+  .mkt-dur {
+    padding: 11px 6px;
+    border-radius: 11px;
+    border: 1px solid var(--mk-border);
+    background: var(--mk-bg);
+    color: var(--mk-fg-2);
+    cursor: pointer;
+    text-align: center;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .mkt-dur b {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--mk-fg);
+    margin-bottom: 2px;
+  }
+
+  .mkt-dur span {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--mk-fg-dim);
+  }
+
+  .mkt-dur.sel {
+    border-color: var(--mk-accent-border);
+    background: var(--mk-accent-dim);
+  }
+
+  .mkt-dur.sel b {
+    color: var(--mk-accent);
+  }
+
+  .mkt-dur.sel span {
+    color: var(--mk-accent);
+  }
+
+  .mkt-sell-state {
+    min-height: 20px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--mk-fg-2);
+    line-height: 1.5;
+  }
+
+  .mkt-sell-state.is-error {
+    color: var(--mk-danger);
+  }
+
+  .mkt-sell-state.is-ok {
+    color: var(--mk-green);
+  }
+
+  .mkt-sell-state.is-loading {
+    color: var(--mk-accent);
+  }
+
   /* ---------- responsive ---------- */
   @media (max-width: 1024px) {
     .mkt-grid {
@@ -656,6 +1039,10 @@ const metadata = {
       padding: 10px 16px;
       font-size: 14px;
     }
+
+    .mkt-inv-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -679,6 +1066,14 @@ const metadata = {
       '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9 4.5 4h15L21 9"/><path d="M4 9v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9"/><path d="M3 9h18"/><path d="M9 13h6"/></svg>'
 
     var SPIN = '<span class="mkt-spin"></span>'
+
+    var DURATIONS = [
+      { s: 21600, label: '6 ساعات', fee: 0 },
+      { s: 43200, label: '12 ساعة', fee: 2500 },
+      { s: 86400, label: '24 ساعة', fee: 5000 },
+    ]
+
+    var DISMISS_KEY = 'tnx_mkt_dismissed'
 
     var mkp = {
       me: null,
@@ -714,14 +1109,18 @@ const metadata = {
     }
 
     function statusInfo(status) {
-      if (status === 'active') return { cls: 'is-live', text: 'نشط' }
-      if (status === 'pending_list') return { cls: 'is-wait', text: 'قيد النشر' }
-      if (status === 'pending_buy') return { cls: 'is-wait', text: 'قيد الشراء' }
-      if (status === 'pending_refund') return { cls: 'is-wait', text: 'قيد الاسترجاع' }
-      if (status === 'sold') return { cls: 'is-done', text: 'مباع' }
-      if (status === 'refunded') return { cls: 'is-done', text: 'رجع لك' }
-      if (status === 'cancelled') return { cls: 'is-done', text: 'ملغي' }
-      return { cls: 'is-err', text: 'خطأ' }
+      if (status === 'active') return { cls: 'is-green', text: 'نشط' }
+      if (status === 'pending_list') return { cls: 'is-amber', text: 'قيد النشر' }
+      if (status === 'pending_buy') return { cls: 'is-amber', text: 'قيد الشراء' }
+      if (status === 'pending_refund') return { cls: 'is-amber', text: 'قيد الاسترجاع' }
+      if (status === 'sold') return { cls: 'is-green', text: 'مباع' }
+      if (status === 'refunded') return { cls: 'is-blue', text: 'رجع لك' }
+      if (status === 'cancelled') return { cls: 'is-red', text: 'ملغي' }
+      return { cls: 'is-red', text: 'خطأ' }
+    }
+
+    function isTerminal(status) {
+      return status === 'sold' || status === 'refunded' || status === 'cancelled' || status === 'error'
     }
 
     function buyErrorText(error) {
@@ -733,6 +1132,41 @@ const metadata = {
       if (value.indexOf('parse_failed') >= 0) return 'صار خطأ في البيانات، تواصل مع الإدارة.'
       if (value.indexOf('timeout') >= 0) return 'تأخر التنفيذ، جرّب بعد قليل.'
       return 'حدث خطأ، جرّب بعد قليل.'
+    }
+
+    function listErrorText(error, data) {
+      var v = String(error || '').toLowerCase()
+      if (v.indexOf('missing_item') >= 0) return 'الكمية المطلوبة غير متوفرة في حقيبتك.'
+      if (v.indexOf('listing_limit_reached') >= 0) return 'وصلت الحد الأعلى للعروض المتزامنة (' + ((data && data.limit) || 3) + ').'
+      if (v.indexOf('invalid_price') >= 0) return 'السعر لازم يكون ' + fmt((data && data.minPrice) || 500) + ' نقطة أو أكثر.'
+      if (v.indexOf('not_enough_points_fee') >= 0) return 'نقاطك ما تكفي لرسوم المدة المختارة.'
+      if (v.indexOf('inventory_parse_failed') >= 0) return 'صار خطأ في بيانات الحقيبة، تواصل مع الإدارة.'
+      if (v.indexOf('invalid_duration') >= 0) return 'اختر مدة عرض صحيحة.'
+      if (v.indexOf('timeout') >= 0) return 'تأخر النشر، جرّب بعد قليل.'
+      return 'حدث خطأ، جرّب بعد قليل.'
+    }
+
+    function loadDismissed() {
+      try {
+        var a = JSON.parse(window.localStorage.getItem(DISMISS_KEY) || '[]')
+        return Array.isArray(a) ? a.map(String) : []
+      } catch { return [] }
+    }
+
+    var dismissed = loadDismissed()
+
+    function saveDismissed() {
+      try { window.localStorage.setItem(DISMISS_KEY, JSON.stringify(dismissed.slice(-500))) } catch {}
+    }
+
+    function isDismissed(id) { return dismissed.indexOf(String(id)) >= 0 }
+
+    function dismiss(id) {
+      id = String(id)
+      if (dismissed.indexOf(id) < 0) {
+        dismissed.push(id)
+        saveDismissed()
+      }
     }
 
     function setNotice(kind, text) {
@@ -906,8 +1340,13 @@ const metadata = {
     function mineCard(listing) {
       var info = statusInfo(listing.status)
 
+      var dismissBtn = isTerminal(listing.status)
+        ? '<button class="mkt-dismiss" type="button" data-mkp-dismiss="' + escText(listing.listingId) + '" title="حذف من القائمة" aria-label="حذف">×</button>'
+        : ''
+
       return (
         '<article class="mkt-card">' +
+          dismissBtn +
           cardTop(listing) +
           priceBlock(listing) +
           '<div class="mkt-divider"></div>' +
@@ -934,34 +1373,58 @@ const metadata = {
       var mineTab = el('mktMineTab')
       if (mineTab) mineTab.hidden = !mkp.me
 
+      var sellBtn = el('mktSellBtn')
+      if (sellBtn) sellBtn.hidden = !mkp.me
+
       if (!mkp.me && mkp.tab === 'mine') mkp.tab = 'market'
+
+      var mineList = mkp.mine.filter(function (l) { return !isDismissed(l.listingId) })
+      var terminals = mineList.filter(function (l) { return isTerminal(l.status) })
 
       var activeCount = el('mktActiveCount')
       if (activeCount) activeCount.textContent = fmt(mkp.listings.length)
 
       var mineCount = el('mktMineCount')
-      if (mineCount) mineCount.textContent = fmt(mkp.mine.length)
+      if (mineCount) mineCount.textContent = fmt(mineList.length)
 
       document.querySelectorAll('[data-mkp-tab]').forEach(function (btn) {
         btn.classList.toggle('active', btn.getAttribute('data-mkp-tab') === mkp.tab)
       })
 
+      var listbar = el('mktListbar')
+      if (listbar) {
+        if (mkp.tab === 'mine' && terminals.length) {
+          listbar.hidden = false
+          var t = el('mktListbarText')
+          if (t) t.textContent = 'عندك ' + fmt(terminals.length) + ' عرض منتهٍ في القائمة'
+        } else {
+          listbar.hidden = true
+        }
+      }
+
       if (mkp.tab === 'mine') {
-        grid.innerHTML = mkp.mine.length ? mkp.mine.map(mineCard).join('') : emptyHtml()
+        grid.innerHTML = mineList.length ? mineList.map(mineCard).join('') : emptyHtml()
         return
       }
 
       grid.innerHTML = mkp.listings.length ? mkp.listings.map(marketCard).join('') : emptyHtml()
     }
 
+    function clearFinished() {
+      mkp.mine.forEach(function (l) {
+        if (isTerminal(l.status)) dismiss(l.listingId)
+      })
+      render()
+    }
+
     async function pollRequest(requestId, timeoutMs) {
       var startedAt = Date.now()
       var limit = timeoutMs || 9000
-      var wait = 700
+      var wait = 400
 
       while (Date.now() - startedAt < limit) {
         await new Promise(function (resolve) { setTimeout(resolve, wait) })
-        wait = 1500
+        wait = 1000
 
         try {
           var res = await fetch(API + '/api/me/market/request-status?id=' + encodeURIComponent(requestId) + '&v=' + Date.now(), {
@@ -1141,9 +1604,218 @@ const metadata = {
       }
     }
 
+    /* ---------- sell (list an item) modal ---------- */
+    async function fetchInventory() {
+      var id = meId()
+      var params = ''
+      if (id) params = 'twitchId=' + encodeURIComponent(id)
+      else if (mkp.me && mkp.me.login) params = 'login=' + encodeURIComponent(String(mkp.me.login).toLowerCase())
+      else return []
+
+      try {
+        var res = await fetch(API + '/api/profile/inventory?' + params + '&v=' + Date.now(), { credentials: 'include', cache: 'no-store' })
+        var data = await res.json().catch(function () { return null })
+        if (!data || !data.ok || !Array.isArray(data.items)) return []
+        return data.items.map(function (it) {
+          return {
+            name: String(it.name || it.itemName || it.itemKey || '').trim(),
+            qty: Math.max(0, Math.floor(Number(it.quantity || it.qty || 0))),
+          }
+        }).filter(function (it) { return it.name && it.qty > 0 })
+      } catch { return [] }
+    }
+
+    function closeSellModal() {
+      var m = document.querySelector('[data-sell-modal]')
+      if (m) m.remove()
+      document.body.style.overflow = ''
+    }
+
+    function openSellModal() {
+      if (!mkp.me) return
+      closeSellModal()
+
+      var modal = document.createElement('div')
+      modal.className = 'mkt-modal'
+      modal.setAttribute('data-sell-modal', '')
+      modal.innerHTML =
+        '<div class="mkt-dialog">' +
+          '<button class="mkt-dialog-close" type="button" data-sell-close aria-label="إغلاق">×</button>' +
+          '<div class="mkt-dialog-head"><h3>اعرض غرضًا في السوق</h3><p data-sell-sub>اختر غرضًا من حقيبتك</p></div>' +
+          '<div class="mkt-dialog-body" data-sell-body><div class="mkt-inv-loading">' + SPIN + ' جاري تحميل حقيبتك...</div></div>' +
+        '</div>'
+
+      document.body.appendChild(modal)
+      document.body.style.overflow = 'hidden'
+
+      var body = modal.querySelector('[data-sell-body]')
+      var sub = modal.querySelector('[data-sell-sub]')
+      var st = { items: [], picked: null, dur: DURATIONS[0].s }
+
+      function renderPicker() {
+        if (sub) sub.textContent = 'اختر غرضًا من حقيبتك'
+        if (!st.items.length) {
+          body.innerHTML = '<div class="mkt-inv-empty">حقيبتك فاضية — ما فيه أغراض تقدر تعرضها.</div>'
+          return
+        }
+        var html = '<div class="mkt-inv-grid">'
+        st.items.forEach(function (it, i) {
+          html +=
+            '<button class="mkt-inv-item" type="button" data-pick="' + i + '">' +
+              '<div class="mkt-inv-icon">' + ICON_ITEM + '</div>' +
+              '<div class="mkt-inv-name">' + escText(it.name) + '</div>' +
+              '<div class="mkt-inv-qty">تملك ×' + fmt(it.qty) + '</div>' +
+            '</button>'
+        })
+        html += '</div>'
+        body.innerHTML = html
+      }
+
+      function renderForm() {
+        var it = st.picked
+        if (sub) sub.textContent = 'حدّد الكمية والسعر والمدة'
+        var durs = DURATIONS.map(function (d) {
+          return (
+            '<button type="button" class="mkt-dur' + (d.s === st.dur ? ' sel' : '') + '" data-dur="' + d.s + '">' +
+              '<b>' + d.label + '</b><span>' + (d.fee ? fmt(d.fee) + ' نقطة' : 'مجانًا') + '</span>' +
+            '</button>'
+          )
+        }).join('')
+
+        body.innerHTML =
+          '<button class="mkt-back" type="button" data-sell-back>‹ رجوع للأغراض</button>' +
+          '<div class="mkt-sell-pick"><div class="mkt-inv-icon sm">' + ICON_ITEM + '</div>' +
+            '<div><strong>' + escText(it.name) + '</strong><span>تملك ×' + fmt(it.qty) + '</span></div></div>' +
+          '<label class="mkt-flabel">الكمية</label>' +
+          '<input class="mkt-input" type="number" data-qty min="1" max="' + it.qty + '" value="1" inputmode="numeric">' +
+          '<label class="mkt-flabel">السعر المطلوب (نقاط)</label>' +
+          '<input class="mkt-input" type="number" data-price min="500" step="100" placeholder="500 نقطة أو أكثر" inputmode="numeric">' +
+          '<label class="mkt-flabel">مدة العرض</label>' +
+          '<div class="mkt-durs">' + durs + '</div>' +
+          '<div class="mkt-sell-state" data-state></div>' +
+          '<button class="mkt-btn mkt-btn-buy" type="button" data-submit>نشر العرض</button>'
+      }
+
+      function setSellState(kind, text) {
+        var s = body.querySelector('[data-state]')
+        if (!s) return
+        s.className = 'mkt-sell-state' + (kind ? ' is-' + kind : '')
+        s.textContent = text || ''
+      }
+
+      async function submit(btn) {
+        var it = st.picked
+        var qtyEl = body.querySelector('[data-qty]')
+        var priceEl = body.querySelector('[data-price]')
+        var qty = Math.floor(Number((qtyEl && qtyEl.value) || 0))
+        var price = Math.floor(Number((priceEl && priceEl.value) || 0))
+
+        if (!(qty >= 1 && qty <= it.qty)) {
+          setSellState('error', 'الكمية لازم تكون بين 1 و' + fmt(it.qty) + '.')
+          return
+        }
+        if (!(price >= 500)) {
+          setSellState('error', 'السعر لازم يكون 500 نقطة أو أكثر.')
+          return
+        }
+
+        btn.disabled = true
+        btn.innerHTML = SPIN + ' جاري النشر...'
+        setSellState('loading', 'جاري إرسال العرض...')
+
+        try {
+          var res = await fetch(API + '/api/me/market/list', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ itemName: it.name, quantity: qty, price: price, durationSeconds: st.dur }),
+          })
+
+          var data = await res.json().catch(function () { return null })
+
+          if (!res.ok || !data || data.ok !== true) {
+            setSellState('error', listErrorText((data && data.error) || 'list_failed', data))
+            btn.disabled = false
+            btn.textContent = 'نشر العرض'
+            return
+          }
+
+          setSellState('ok', 'تم إرسال العرض ✓ بيظهر في السوق خلال ثوانٍ')
+          setTimeout(function () {
+            closeSellModal()
+            mkp.tab = 'mine'
+            loadAll()
+          }, 950)
+        } catch {
+          setSellState('error', 'حدث خطأ، جرّب بعد قليل.')
+          btn.disabled = false
+          btn.textContent = 'نشر العرض'
+        }
+      }
+
+      modal.addEventListener('click', function (e) {
+        var t = e.target
+        if (!(t instanceof Element)) return
+
+        if (t === modal || t.closest('[data-sell-close]')) {
+          closeSellModal()
+          return
+        }
+
+        if (t.closest('[data-sell-back]')) {
+          renderPicker()
+          return
+        }
+
+        var pick = t.closest('[data-pick]')
+        if (pick) {
+          st.picked = st.items[Number(pick.getAttribute('data-pick'))]
+          st.dur = DURATIONS[0].s
+          if (st.picked) renderForm()
+          return
+        }
+
+        var dur = t.closest('[data-dur]')
+        if (dur) {
+          st.dur = Number(dur.getAttribute('data-dur'))
+          body.querySelectorAll('[data-dur]').forEach(function (d) {
+            d.classList.toggle('sel', Number(d.getAttribute('data-dur')) === st.dur)
+          })
+          return
+        }
+
+        var submitBtn = t.closest('[data-submit]')
+        if (submitBtn) {
+          submit(submitBtn)
+        }
+      })
+
+      fetchInventory().then(function (items) {
+        st.items = items
+        renderPicker()
+      })
+    }
+
     document.addEventListener('click', function (event) {
       var target = event.target
       if (!(target instanceof Element)) return
+
+      if (target.closest('#mktSellBtn')) {
+        openSellModal()
+        return
+      }
+
+      if (target.closest('#mktClearFinished')) {
+        clearFinished()
+        return
+      }
+
+      var dismissBtn = target.closest('[data-mkp-dismiss]')
+      if (dismissBtn) {
+        dismiss(dismissBtn.getAttribute('data-mkp-dismiss') || '')
+        render()
+        return
+      }
 
       var tabButton = target.closest('[data-mkp-tab]')
       if (tabButton) {
@@ -1162,6 +1834,10 @@ const metadata = {
       if (cancelButton) {
         cancelListing(cancelButton.getAttribute('data-mkp-cancel') || '', cancelButton)
       }
+    })
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeSellModal()
     })
 
     var refreshButton = el('mktRefresh')
