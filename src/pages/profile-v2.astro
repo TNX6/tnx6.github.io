@@ -13409,6 +13409,7 @@ const metadata = {
                         
 
       /* mailbox-upgrade-ui-helpers */
+      let mailboxUpgradeInfoLoaded = false
       let mailboxUpgradeInfo = {
         used: 0,
         capacity: 5,
@@ -13525,7 +13526,7 @@ const metadata = {
           const costLabel = box.querySelector('[data-mail-upgrade-cost]')
 
           if (label) {
-            label.textContent = mailboxUpgradeFormat(used) + ' / ' + mailboxUpgradeFormat(capacity)
+            label.textContent = mailboxUpgradeFormat(used) + ' / ' + (mailboxUpgradeInfoLoaded ? mailboxUpgradeFormat(capacity) : '…')
           }
 
           if (bar) {
@@ -13577,6 +13578,7 @@ const metadata = {
           }
 
           mailboxUpgradeInfo = normalizeMailboxUpgradeInfo(data)
+          mailboxUpgradeInfoLoaded = true
           updateMailboxUpgradeDom()
           return mailboxUpgradeInfo
         } catch {
@@ -14105,6 +14107,14 @@ function mbV2Card(message) {
 
         if (!root) return;
 
+        // شغّل تحميل سعة البريد الحقيقية مرة واحدة لأي مسار عرض (يمنع بقاء الافتراضي 5)
+        try {
+          if (!mailboxUpgradeInfoLoaded && !window.__tnxMailboxUpgradeInfoInFlight && typeof loadMailboxUpgradeInfo === 'function') {
+            window.__tnxMailboxUpgradeInfoInFlight = true;
+            loadMailboxUpgradeInfo().catch(() => {}).finally(() => { window.__tnxMailboxUpgradeInfoInFlight = false; });
+          }
+        } catch {}
+
         const normalize = (payload) => {
           if (Array.isArray(payload)) return payload;
           if (!payload || typeof payload !== 'object') return [];
@@ -14348,7 +14358,7 @@ function mbV2Card(message) {
 
             '<div class="mbv2-capacity" data-mail-capacity-box>' +
               '<div class="mbv2-cap-top">' +
-                '<div class="mbv2-cap-title">' + mbV2IconSvg('db', 15) + '<strong>سعة البريد</strong><span data-mail-capacity-label>' + mbV2Format(upgrade.used) + ' / ' + mbV2Format(upgrade.capacity) + '</span>' + capacityState + '</div>' +
+                '<div class="mbv2-cap-title">' + mbV2IconSvg('db', 15) + '<strong>سعة البريد</strong><span data-mail-capacity-label>' + mbV2Format(upgrade.used) + ' / ' + (mailboxUpgradeInfoLoaded ? mbV2Format(upgrade.capacity) : '…') + '</span>' + capacityState + '</div>' +
                 '<span class="mbv2-cap-next">' + nextLabel + '</span>' +
               '</div>' +
               '<div class="mbv2-cap-bar"><span data-mail-capacity-bar style="width:' + percent + '%"></span></div>' +
