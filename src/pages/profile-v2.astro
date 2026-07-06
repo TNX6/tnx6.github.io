@@ -14528,6 +14528,11 @@ function mbV2Card(message) {
               if (typeof loadMailboxUpgradeInfo === 'function') await loadMailboxUpgradeInfo()
             } catch {}
 
+            // إعادة تحميل النقاط وبيانات البروفايل من D1 بعد الخصم (يمسح كاش الاقتصاد/الحقيبة ويعيد الجلب)
+            try {
+              if (typeof refreshActiveProfileFromD1 === 'function') await refreshActiveProfileFromD1()
+            } catch {}
+
             if (confirmButton) {
               confirmButton.textContent = 'تم التطوير'
               confirmButton.disabled = true
