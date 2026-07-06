@@ -13666,6 +13666,36 @@ const metadata = {
         })
       }
 
+      function applyMailboxUpgradeCompletedInstant(raw) {
+        try {
+          const nextCapacity = mailboxUpgradeNumber(
+            raw?.capacity ??
+            raw?.targetCapacity ??
+            raw?.target_capacity ??
+            raw?.newCapacity ??
+            raw?.new_capacity
+          )
+
+          if (!nextCapacity || nextCapacity < 5) return
+
+          const maxCapacity = Math.max(45, mailboxUpgradeNumber(mailboxUpgradeInfo?.maxCapacity ?? raw?.maxCapacity ?? 45))
+          const plan = getMailboxUpgradeClientPlan(nextCapacity)
+
+          mailboxUpgradeInfo = normalizeMailboxUpgradeInfo({
+            ...(mailboxUpgradeInfo || {}),
+            capacity: nextCapacity,
+            maxCapacity,
+            nextCapacity: plan.nextCapacity,
+            increase: plan.increase,
+            cost: plan.cost,
+            canUpgrade: nextCapacity < maxCapacity && plan.canUpgrade,
+            activeRequest: null,
+          })
+          mailboxUpgradeInfoLoaded = true
+          updateMailboxUpgradeDom()
+        } catch {}
+      }
+
       function syncMailboxUpgradeUsedFromMessages(messages, usedOverride = null) {
         try {
           const overrideNumber = Number(usedOverride)
@@ -14761,6 +14791,10 @@ function mbV2Card(message) {
           if (!response.ok || !data.ok) continue
 
           if (data.status === 'completed') {
+            try {
+              if (typeof applyMailboxUpgradeCompletedInstant === 'function') applyMailboxUpgradeCompletedInstant(data)
+            } catch {}
+
             mbUpgradeV4State(
               modal,
               'success',
@@ -14768,12 +14802,16 @@ function mbV2Card(message) {
             )
 
             try {
-              if (typeof loadMailboxUpgradeInfo === 'function') await loadMailboxUpgradeInfo()
+              if (typeof loadMailboxUpgradeInfo === 'function') {
+                Promise.resolve().then(() => loadMailboxUpgradeInfo()).catch(() => {})
+              }
             } catch {}
 
             // إعادة تحميل النقاط وبيانات البروفايل من D1 بعد الخصم (يمسح كاش الاقتصاد/الحقيبة ويعيد الجلب)
             try {
-              if (typeof refreshActiveProfileFromD1 === 'function') await refreshActiveProfileFromD1()
+              if (typeof refreshActiveProfileFromD1 === 'function') {
+                Promise.resolve().then(() => refreshActiveProfileFromD1()).catch(() => {})
+              }
             } catch {}
 
             if (confirmButton) {
