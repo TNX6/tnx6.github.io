@@ -13090,6 +13090,39 @@ const metadata = {
           window.setTimeout(run, 700)
         }
       }
+
+      async function tnxFetchJsonWithTimeout(url, options = {}, timeoutMs = 15000) {
+        const controller = typeof AbortController !== 'undefined' ? new AbortController() : null
+        const timeout = Math.max(1000, Number(timeoutMs || 15000))
+        let timer = null
+
+        try {
+          const fetchOptions = { ...options }
+
+          if (controller) {
+            fetchOptions.signal = controller.signal
+            timer = window.setTimeout(() => {
+              try { controller.abort() } catch {}
+            }, timeout)
+          }
+
+          const response = await fetch(url, fetchOptions)
+          const data = await response.json().catch(() => null)
+
+          return { response, data }
+        } catch (error) {
+          if (error?.name === 'AbortError') {
+            const timeoutError = new Error('request_timeout')
+            timeoutError.code = 'request_timeout'
+            throw timeoutError
+          }
+
+          throw error
+        } finally {
+          if (timer) window.clearTimeout(timer)
+        }
+      }
+
       async function loadD1MailboxForProfile(user, force = false) {
         if (!user) return
 
@@ -13100,15 +13133,18 @@ const metadata = {
         state.d1MailboxLoading = true
 
         try {
-          const res = await fetch(TNX_API_ORIGIN + '/api/me/mailbox', {
+          const result = await tnxFetchJsonWithTimeout(TNX_API_ORIGIN + '/api/me/mailbox?limit=50&v=' + Date.now(), {
             credentials: 'include',
             cache: 'no-store',
-          })
-
-          const data = await res.json().catch(() => null)
+            headers: {
+              Accept: 'application/json',
+            },
+          }, 15000)
+          const res = result.response
+          const data = result.data
 
           if (!res.ok || !data || data.ok !== true) {
-            return
+            throw new Error((data && (data.error || data.message)) || 'mailbox_load_failed')
           }
 
           // identity guard: تحقّق فقط إذا الـ API فعليًا رجّع user
@@ -13127,12 +13163,33 @@ const metadata = {
           setText('mailCount', messages.length)
           setText('messages', formatNumber(messages.length))
 
+          try {
+            const root = document.querySelector('.mail-pro')
+
+            if (root) {
+              root.dataset.mbv2DirectFetching = '0'
+              root.dataset.mbv2EmptyConfirmed = messages.length ? '0' : '1'
+            }
+          } catch {}
+
           // اهتزاز زر البريد عند وصول رسالة جديدة
           try { tnxNotifyNewMail(messages) } catch {}
 
           renderMail(messages)
         } catch (error) {
           console.warn('[Mailbox] Failed to load current user mailbox:', error)
+
+          try {
+            const root = document.querySelector('.mail-pro')
+
+            if (
+              root &&
+              typeof mbV2RenderMailboxError === 'function' &&
+              (root.dataset.mbv2RenderState === 'loading' || root.dataset.mbv2DirectFetching === '1')
+            ) {
+              mbV2RenderMailboxError(root, mbV2MailboxLoadErrorText(error))
+            }
+          } catch {}
         } finally {
           state.d1MailboxLoading = false
         }
@@ -13301,6 +13358,7 @@ const metadata = {
           } catch {}
 
           row?.remove?.()
+          mbV2ResetRenderCache(row?.closest?.('.mail-pro[data-mailbox-v2="true"]') || null)
           await loadD1MailboxForProfile(state.activeUser, true)
         } catch (error) {
           if (button) {
@@ -13333,6 +13391,7 @@ const metadata = {
             throw new Error((data && data.error) || 'clear_failed')
           }
 
+          mbV2ResetRenderCache()
           await loadD1MailboxForProfile(state.activeUser, true)
         } catch (error) {
           if (button) {
@@ -13590,15 +13649,15 @@ const metadata = {
 
       async function loadMailboxUpgradeInfo() {
         try {
-          const response = await fetch(mailboxUpgradeApiUrl('/api/me/mailbox/upgrade-info'), {
+          const result = await tnxFetchJsonWithTimeout(mailboxUpgradeApiUrl('/api/me/mailbox/upgrade-info'), {
             method: 'GET',
             credentials: 'include',
             headers: {
               Accept: 'application/json',
             },
-          })
-
-          const data = await response.json().catch(() => ({}))
+          }, 10000)
+          const response = result.response
+          const data = result.data || {}
 
           if (!response.ok || !data.ok) {
             return null
@@ -14090,6 +14149,81 @@ function mbV2Card(message) {
         return 'https://api.tnx6.xyz';
       }
 
+      function mbV2MailboxLoadErrorText(error) {
+        if (error?.code === 'request_timeout' || error?.message === 'request_timeout') {
+          return 'انتهت مهلة تحميل البريد. جرّب مرة ثانية.'
+        }
+
+        return 'تعذر تحميل البريد. تحقق من الاتصال وجرّب مرة ثانية.'
+      }
+
+      function mbV2ResetRenderCache(root = null) {
+        try {
+          const box = root || document.querySelector('.mail-pro')
+          if (!box) return
+
+          delete box.dataset.mbv2Sig
+          box.dataset.mbv2DirectFetching = '0'
+        } catch {}
+      }
+
+      function mbV2RenderMailboxLoading(root) {
+        if (!root) return
+
+        root.dataset.mailboxV2 = 'true'
+        root.dataset.mbv2RenderState = 'loading'
+        delete root.dataset.mbv2Sig
+
+        root.innerHTML =
+          '<style>' +
+            '.mail-pro[data-mailbox-v2="true"]{direction:rtl;color:#f4f4f5;font-family:inherit;}' +
+            '.mbv2-loading-box{padding:34px 18px;text-align:center;color:rgba(255,255,255,.62);font-size:13px;font-weight:900;}' +
+          '</style>' +
+          '<div class="mbv2-loading-box">جاري تحميل البريد...</div>'
+      }
+
+      function mbV2RenderMailboxError(root, message) {
+        if (!root) return
+
+        root.dataset.mailboxV2 = 'true'
+        root.dataset.mbv2RenderState = 'error'
+        root.dataset.mbv2DirectFetching = '0'
+        delete root.dataset.mbv2Sig
+
+        root.innerHTML =
+          '<style>' +
+            '.mail-pro[data-mailbox-v2="true"]{direction:rtl;color:#f4f4f5;font-family:inherit;}' +
+            '.mbv2-error-box{padding:30px 18px;text-align:center;color:rgba(255,255,255,.62);font-size:13px;font-weight:900;display:flex;flex-direction:column;align-items:center;gap:9px;}' +
+            '.mbv2-error-box strong{color:#fff;font-size:15px;}' +
+            '.mbv2-error-box span{color:rgba(255,255,255,.58);line-height:1.7;}' +
+            '.mbv2-retry{height:34px;margin-top:4px;padding:0 14px;border-radius:11px;border:1px solid rgba(255,138,91,.35);background:rgba(255,138,91,.12);color:#ffbd80;cursor:pointer;font-size:12px;font-weight:1000;}' +
+            '.mbv2-retry:hover{background:rgba(255,138,91,.2);border-color:rgba(255,138,91,.5);}' +
+          '</style>' +
+          '<div class="mbv2-error-box">' +
+            '<strong>تعذر تحميل البريد</strong>' +
+            '<span>' + mbV2Escape(message || 'صار خطأ غير متوقع أثناء تحميل البريد.') + '</span>' +
+            '<button class="mbv2-retry" type="button" data-mail-retry>إعادة المحاولة</button>' +
+          '</div>'
+      }
+
+      async function mbV2FetchMailboxWithTimeout(timeoutMs = 15000) {
+        const result = await tnxFetchJsonWithTimeout(mbV2ApiBase() + '/api/me/mailbox?limit=50&v=' + Date.now(), {
+          credentials: 'include',
+          cache: 'no-store',
+          headers: {
+            Accept: 'application/json',
+          },
+        }, timeoutMs)
+        const response = result.response
+        const data = result.data
+
+        if (!response.ok || !data || data.ok === false) {
+          throw new Error((data && (data.error || data.message)) || 'mailbox_load_failed')
+        }
+
+        return mbV2NormalizeMessages(data)
+      }
+
       async function mbV2FetchMailboxDirect(root) {
         if (!root || root.dataset.mbv2DirectFetchBusy === '1') {
           return;
@@ -14098,22 +14232,12 @@ function mbV2Card(message) {
         root.dataset.mbv2DirectFetchBusy = '1';
 
         try {
-          const response = await fetch(mbV2ApiBase() + '/api/me/mailbox?limit=50&v=' + Date.now(), {
-            credentials: 'include',
-            cache: 'no-store',
-            headers: {
-              Accept: 'application/json',
-            },
-          });
-
-          const data = await response.json().catch(() => ({}));
-          const list = mbV2NormalizeMessages(data);
-
-          if (list.length) {
-            renderMailboxProV2(list);
-          }
+          const list = await mbV2FetchMailboxWithTimeout(15000);
+          root.dataset.mbv2EmptyConfirmed = list.length ? '0' : '1';
+          renderMailboxProV2(list);
         } catch (error) {
           console.error('[Mailbox V2] direct fetch failed', error);
+          mbV2RenderMailboxError(root, mbV2MailboxLoadErrorText(error));
         } finally {
           setTimeout(() => {
             try {
@@ -14166,14 +14290,6 @@ function mbV2Card(message) {
           return [];
         };
 
-        const apiBase = () => {
-          try {
-            if (typeof API_BASE === 'string' && API_BASE) return API_BASE.replace(/\/$/, '');
-          } catch {}
-
-          return 'https://api.tnx6.xyz';
-        };
-
         let list = normalize(mail);
 
         // القائمة فيها بيانات: صفّر تأكيد الفراغ للمرات الجاية
@@ -14186,33 +14302,20 @@ function mbV2Card(message) {
         // (بدون هذا التأكيد كانت تصير حلقة تحميل لا نهائية بعد "حذف الكل")
         if (!list.length && root.dataset.mbv2EmptyConfirmed !== '1' && root.dataset.mbv2DirectFetching !== '1') {
           root.dataset.mbv2DirectFetching = '1';
-          root.dataset.mailboxV2 = 'true';
+          mbV2RenderMailboxLoading(root);
 
-          root.innerHTML =
-            '<style>' +
-              '.mail-pro[data-mailbox-v2="true"]{direction:rtl;color:#f4f4f5;font-family:inherit;}' +
-              '.mbv2-loading-box{padding:34px 18px;text-align:center;color:rgba(255,255,255,.62);font-size:13px;font-weight:900;}' +
-            '</style>' +
-            '<div class="mbv2-loading-box">جاري تحميل البريد...</div>';
-
-          fetch(apiBase() + '/api/me/mailbox?limit=50&v=' + Date.now(), {
-            credentials: 'include',
-            cache: 'no-store',
-            headers: { Accept: 'application/json' },
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              const fresh = normalize(data);
-              root.dataset.mbv2DirectFetching = '0';
+          (async () => {
+            try {
+              const fresh = await mbV2FetchMailboxWithTimeout(15000);
               root.dataset.mbv2EmptyConfirmed = fresh.length ? '0' : '1';
               renderMailboxProV2(fresh);
-            })
-            .catch((error) => {
+            } catch (error) {
               console.error('[Mailbox V2] direct load failed', error);
+              mbV2RenderMailboxError(root, mbV2MailboxLoadErrorText(error));
+            } finally {
               root.dataset.mbv2DirectFetching = '0';
-              root.dataset.mbv2EmptyConfirmed = '1';
-              renderMailboxProV2([]);
-            });
+            }
+          })();
 
           return;
         }
@@ -14239,16 +14342,24 @@ function mbV2Card(message) {
         // منع إعادة بناء المودال بالكامل إذا لم تتغيّر الرسائل (التحديث الدوري كل 15ث كان
         // يعيد بناء innerHTML ويصفّر موضع التمرير — سبب الثقل/القفز أثناء قراءة الرسائل).
         try {
-          const renderSig = filter + '|' + unreadCount + '|' + visible.map((m) =>
+          const renderState = visible.length ? 'content' : 'empty';
+          const renderSig = renderState + '|' + filter + '|' +
+            counts.all + ':' + counts.message + ':' + counts.gift + ':' + counts.system + '|' +
+            unreadCount + '|' + visible.map((m) =>
             String(mbV2Get(m, ['id', 'messageId', 'mailId', 'message_id'], '') || '') + ':' +
             (mbV2Get(m, ['read'], true) === false ? 'u' : 'r') + ':' + mbV2Type(m)
           ).join(',');
 
-          if (root.dataset.mbv2Sig === renderSig) {
+          if (
+            root.dataset.mbv2RenderState === renderState &&
+            root.dataset.mbv2Sig === renderSig &&
+            root.querySelector('.mbv2-shell')
+          ) {
             return;
           }
 
           root.dataset.mbv2Sig = renderSig;
+          root.dataset.mbv2RenderState = renderState;
         } catch {}
 
         const upgradeButtonText = !upgrade.canUpgrade
@@ -16123,14 +16234,15 @@ function mbV2Card(message) {
             '<div class="mail-pro"></div>'
         }
 
-        // سعة البريد: انتظر تحميل القيمة الحقيقية من الخادم قبل أول عرض (بدل الافتراضي 5)،
-        // ثم حدّث لاحقًا مع throttle بدون حجب العرض. يمنع رجوع السعة إلى 5 بعد كل refresh.
+        // سعة البريد تتحدث بالخلفية فقط، ولا تحجب رسم الرسائل.
         try {
           const now = Date.now()
-          if (!window.__tnxMailboxUpgradeInfoLoaded) {
-            window.__tnxMailboxUpgradeInfoLoaded = true
+          if (!mailboxUpgradeInfoLoaded && !window.__tnxMailboxUpgradeInfoInFlight) {
             window.__tnxMailboxUpgradeInfoAt = now
-            await loadMailboxUpgradeInfo().catch(() => {})
+            window.__tnxMailboxUpgradeInfoInFlight = true
+            loadMailboxUpgradeInfo()
+              .catch(() => {})
+              .finally(() => { window.__tnxMailboxUpgradeInfoInFlight = false })
           } else if (!window.__tnxMailboxUpgradeInfoAt || now - window.__tnxMailboxUpgradeInfoAt > 30000) {
             window.__tnxMailboxUpgradeInfoAt = now
             loadMailboxUpgradeInfo().catch(() => {})
@@ -16160,6 +16272,20 @@ function mbV2Card(message) {
 
           const root = target.closest('.mail-pro[data-mailbox-v2="true"]')
           if (!root) return
+
+          const retryButton = target.closest('[data-mail-retry]')
+          if (retryButton) {
+            event.preventDefault()
+            mbV2ResetRenderCache(root)
+            root.dataset.mbv2EmptyConfirmed = '0'
+            renderMailboxProV2([])
+
+            try {
+              loadD1MailboxForProfile(state.activeUser, true)
+            } catch {}
+
+            return
+          }
 
           const clearButton = target.closest('[data-mail-clear]')
           if (clearButton) {
@@ -17900,6 +18026,10 @@ function mbV2Card(message) {
         }
 
         openMail()
+
+        try {
+          loadD1MailboxForProfile(state.activeUser, true)
+        } catch {}
       })
       addListener($('closeMailButton'), 'click', closeMail)
 
@@ -18234,11 +18364,3 @@ function mbV2Card(message) {
 
   <script is:inline src="/data/badge-meta.js?v=3"></script>
 </Layout>
-
-
-
-
-
-
-
-
