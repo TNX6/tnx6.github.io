@@ -15445,9 +15445,11 @@ function mbV2Card(message) {
         const card = wsCard()
         if (!card) return
 
-        const me = await wsGetMe()
+        const allowed = typeof isProfileOwnerV36 === 'function'
+          ? await isProfileOwnerV36(user)
+          : sameProfileUser(user, await wsGetMe())
 
-        if (!me || !sameProfileUser(user, me)) {
+        if (!allowed) {
           card.setAttribute('hidden', '')
           wsState.visible = false
           return
@@ -15455,6 +15457,7 @@ function mbV2Card(message) {
 
         card.removeAttribute('hidden')
         wsState.visible = true
+        wsRenderEntry()
         loadWorkshop(true)
       }
 
