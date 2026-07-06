@@ -13162,6 +13162,7 @@ const metadata = {
 
           setText('mailCount', messages.length)
           setText('messages', formatNumber(messages.length))
+          syncMailboxUpgradeUsedFromMessages(messages)
 
           try {
             const root = document.querySelector('.mail-pro')
@@ -13358,7 +13359,18 @@ const metadata = {
           } catch {}
 
           row?.remove?.()
-          mbV2ResetRenderCache(row?.closest?.('.mail-pro[data-mailbox-v2="true"]') || null)
+          const root = row?.closest?.('.mail-pro[data-mailbox-v2="true"]') || null
+          const currentMessages = (state.activeUser && Array.isArray(state.activeUser.mailbox)) ? state.activeUser.mailbox : []
+          const optimisticMessages = currentMessages.filter((entry) => mailboxMessageId(entry) !== messageId)
+
+          if (state.activeUser && optimisticMessages.length !== currentMessages.length) {
+            state.activeUser.mailbox = optimisticMessages
+            setText('mailCount', optimisticMessages.length)
+            setText('messages', formatNumber(optimisticMessages.length))
+            syncMailboxUpgradeUsedFromMessages(optimisticMessages)
+          }
+
+          mbV2ResetRenderCache(root)
           await loadD1MailboxForProfile(state.activeUser, true)
         } catch (error) {
           if (button) {
@@ -13389,6 +13401,13 @@ const metadata = {
 
           if (!res.ok || !data || data.ok !== true) {
             throw new Error((data && data.error) || 'clear_failed')
+          }
+
+          if (state.activeUser) {
+            state.activeUser.mailbox = []
+            setText('mailCount', 0)
+            setText('messages', formatNumber(0))
+            syncMailboxUpgradeUsedFromMessages([])
           }
 
           mbV2ResetRenderCache()
@@ -13645,6 +13664,19 @@ const metadata = {
             }
           }
         })
+      }
+
+      function syncMailboxUpgradeUsedFromMessages(messages) {
+        try {
+          const used = Array.isArray(messages) ? messages.length : 0
+
+          mailboxUpgradeInfo = normalizeMailboxUpgradeInfo({
+            ...(mailboxUpgradeInfo || {}),
+            used,
+          })
+
+          updateMailboxUpgradeDom()
+        } catch {}
       }
 
       async function loadMailboxUpgradeInfo() {
@@ -13950,7 +13982,7 @@ const metadata = {
           }
         } catch {}
 
-        const used = Number(info.used ?? list.length ?? 0)
+        const used = Array.isArray(list) ? list.length : Number(info.used ?? 0)
         const capacity = Math.max(1, Number(info.capacity || 5))
         const cost = Number(info.cost || 25000)
         const nextCapacity = Number(info.nextCapacity || 10)
@@ -14221,7 +14253,10 @@ function mbV2Card(message) {
           throw new Error((data && (data.error || data.message)) || 'mailbox_load_failed')
         }
 
-        return mbV2NormalizeMessages(data)
+        const list = mbV2NormalizeMessages(data)
+        syncMailboxUpgradeUsedFromMessages(list)
+
+        return list
       }
 
       async function mbV2FetchMailboxDirect(root) {
