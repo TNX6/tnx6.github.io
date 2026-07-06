@@ -14209,6 +14209,21 @@ function mbV2Card(message) {
 
         root.dataset.mailboxV2 = 'true';
 
+        // منع إعادة بناء المودال بالكامل إذا لم تتغيّر الرسائل (التحديث الدوري كل 15ث كان
+        // يعيد بناء innerHTML ويصفّر موضع التمرير — سبب الثقل/القفز أثناء قراءة الرسائل).
+        try {
+          const renderSig = filter + '|' + unreadCount + '|' + visible.map((m) =>
+            String(mbV2Get(m, ['id', 'messageId', 'mailId', 'message_id'], '') || '') + ':' +
+            (mbV2Get(m, ['read'], true) === false ? 'u' : 'r') + ':' + mbV2Type(m)
+          ).join(',');
+
+          if (root.dataset.mbv2Sig === renderSig) {
+            return;
+          }
+
+          root.dataset.mbv2Sig = renderSig;
+        } catch {}
+
         const upgradeButtonText = !upgrade.canUpgrade
           ? 'مكتمل'
           : upgrade.activeRequest
