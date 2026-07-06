@@ -16059,7 +16059,7 @@ function mbV2Card(message) {
 
       // mailbox-v2-single-renderer
       // renderMail صار wrapper خفيف فوق renderMailboxProV2 (المصدر الوحيد للعرض)
-      function renderMail(mail) {
+      async function renderMail(mail) {
         const box = $('mailList')
         if (!box) return
 
@@ -16071,10 +16071,15 @@ function mbV2Card(message) {
             '<div class="mail-pro"></div>'
         }
 
-        // تحديث بيانات السعة مع throttle (بدون تكرار upgrade-info)
+        // سعة البريد: انتظر تحميل القيمة الحقيقية من الخادم قبل أول عرض (بدل الافتراضي 5)،
+        // ثم حدّث لاحقًا مع throttle بدون حجب العرض. يمنع رجوع السعة إلى 5 بعد كل refresh.
         try {
           const now = Date.now()
-          if (!window.__tnxMailboxUpgradeInfoAt || now - window.__tnxMailboxUpgradeInfoAt > 30000) {
+          if (!window.__tnxMailboxUpgradeInfoLoaded) {
+            window.__tnxMailboxUpgradeInfoLoaded = true
+            window.__tnxMailboxUpgradeInfoAt = now
+            await loadMailboxUpgradeInfo().catch(() => {})
+          } else if (!window.__tnxMailboxUpgradeInfoAt || now - window.__tnxMailboxUpgradeInfoAt > 30000) {
             window.__tnxMailboxUpgradeInfoAt = now
             loadMailboxUpgradeInfo().catch(() => {})
           }
