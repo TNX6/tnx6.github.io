@@ -1073,8 +1073,6 @@ const metadata = {
       { s: 86400, label: '24 ساعة', fee: 5000 },
     ]
 
-    var DISMISS_KEY = 'tnx_mkt_dismissed'
-
     var mkp = {
       me: null,
       listings: [],
@@ -1146,26 +1144,39 @@ const metadata = {
       return 'حدث خطأ، جرّب بعد قليل.'
     }
 
-    function loadDismissed() {
+    function archiveErrorText(error) {
+      var v = String(error || '').toLowerCase()
+      if (v.indexOf('not_archivable') >= 0) return 'ما نقدر نحذف عرضًا نشطًا أو قيد المعالجة.'
+      if (v.indexOf('not_found') >= 0) return 'العرض غير موجود.'
+      if (v.indexOf('unauthorized') >= 0) return 'سجّل دخولك أولًا.'
+      return 'تعذر حذف العرض، جرّب بعد قليل.'
+    }
+
+    // أرشفة على الخادم (إخفاء من قائمتك فقط، بدون حذف نهائي)
+    async function archiveListing(listingId, btn) {
+      if (btn) { btn.disabled = true; btn.textContent = '…' }
+
       try {
-        var a = JSON.parse(window.localStorage.getItem(DISMISS_KEY) || '[]')
-        return Array.isArray(a) ? a.map(String) : []
-      } catch { return [] }
-    }
+        var res = await fetch(API + '/api/me/market/archive-listing', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ listingId: listingId }),
+        })
 
-    var dismissed = loadDismissed()
+        var data = await res.json().catch(function () { return null })
 
-    function saveDismissed() {
-      try { window.localStorage.setItem(DISMISS_KEY, JSON.stringify(dismissed.slice(-500))) } catch {}
-    }
+        if (!res.ok || !data || data.ok !== true) {
+          setNotice('error', archiveErrorText(data && data.error))
+          if (btn) { btn.disabled = false; btn.textContent = '×' }
+          return false
+        }
 
-    function isDismissed(id) { return dismissed.indexOf(String(id)) >= 0 }
-
-    function dismiss(id) {
-      id = String(id)
-      if (dismissed.indexOf(id) < 0) {
-        dismissed.push(id)
-        saveDismissed()
+        return true
+      } catch {
+        setNotice('error', 'تعذر حذف العرض، جرّب بعد قليل.')
+        if (btn) { btn.disabled = false; btn.textContent = '×' }
+        return false
       }
     }
 
@@ -1378,7 +1389,7 @@ const metadata = {
 
       if (!mkp.me && mkp.tab === 'mine') mkp.tab = 'market'
 
-      var mineList = mkp.mine.filter(function (l) { return !isDismissed(l.listingId) })
+      var mineList = mkp.mine
       var terminals = mineList.filter(function (l) { return isTerminal(l.status) })
 
       var activeCount = el('mktActiveCount')
@@ -1410,11 +1421,23 @@ const metadata = {
       grid.innerHTML = mkp.listings.length ? mkp.listings.map(marketCard).join('') : emptyHtml()
     }
 
-    function clearFinished() {
-      mkp.mine.forEach(function (l) {
-        if (isTerminal(l.status)) dismiss(l.listingId)
-      })
-      render()
+    async function clearFinished() {
+      var terminals = mkp.mine.filter(function (l) { return isTerminal(l.status) })
+      if (!terminals.length) return
+
+      var btn = el('mktClearFinished')
+      if (btn) { btn.disabled = true; btn.textContent = 'جاري المسح...' }
+
+      var failed = 0
+      for (var i = 0; i < terminals.length; i++) {
+        var ok = await archiveListing(terminals[i].listingId, null)
+        if (!ok) failed++
+      }
+
+      if (btn) { btn.disabled = false; btn.textContent = 'مسح المنتهية' }
+      if (!failed) setNotice('ok', 'تم مسح العروض المنتهية من قائمتك.')
+
+      await loadAll()
     }
 
     async function pollRequest(requestId, timeoutMs) {
@@ -1812,10 +1835,12 @@ const metadata = {
 
       var dismissBtn = target.closest('[data-mkp-dismiss]')
       if (dismissBtn) {
-        dismiss(dismissBtn.getAttribute('data-mkp-dismiss') || '')
-        render()
+        archiveListing(dismissBtn.getAttribute('data-mkp-dismiss') || '', dismissBtn).then(function (ok) {
+          if (ok) loadAll()
+        })
         return
       }
+
 
       var tabButton = target.closest('[data-mkp-tab]')
       if (tabButton) {
