@@ -34,6 +34,9 @@ const metadata = {
         <button class="mkt-tab" type="button" role="tab" data-mkp-tab="mine" id="mktMineTab" hidden>
           عروضي <span class="mkt-tab-badge" id="mktMineCount">0</span>
         </button>
+        <button class="mkt-tab" type="button" role="tab" data-mkp-tab="offers" id="mktOffersTab" hidden>
+          العروض <span class="mkt-tab-badge" id="mktOffersCount">0</span>
+        </button>
       </nav>
 
       <div class="mkt-notice" id="mktNotice" hidden></div>
@@ -614,6 +617,27 @@ const metadata = {
     opacity: 0.85;
   }
 
+  .mkt-actions {
+    display: grid;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .mkt-actions .mkt-btn {
+    margin-top: 0;
+  }
+
+  .mkt-btn-offer {
+    background: transparent;
+    border-color: var(--mk-accent-border);
+    color: var(--mk-accent);
+    cursor: pointer;
+  }
+
+  .mkt-btn-offer:hover {
+    background: var(--mk-accent-dim);
+  }
+
   .mkt-btn-guest {
     background: transparent;
     border-color: var(--mk-border);
@@ -671,6 +695,57 @@ const metadata = {
   .mkt-sub strong {
     color: var(--mk-fg-2);
     font-weight: 700;
+  }
+
+  .mkt-offer-section {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 14px;
+  }
+
+  .mkt-offer-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--mk-fg-2);
+  }
+
+  .mkt-offer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .mkt-offer-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--mk-border);
+    font-size: 13px;
+    color: var(--mk-fg-2);
+  }
+
+  .mkt-offer-line:last-of-type {
+    border-bottom: 0;
+    margin-bottom: 14px;
+  }
+
+  .mkt-offer-line strong {
+    color: var(--mk-fg);
+    font-weight: 800;
+  }
+
+  .mkt-offer-actions {
+    display: grid;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .mkt-offer-actions .mkt-btn {
+    height: 40px;
+    margin-top: 0;
+    font-size: 13.5px;
   }
 
   /* spinner */
@@ -1012,6 +1087,10 @@ const metadata = {
     .mkt-grid {
       grid-template-columns: repeat(2, 1fr);
     }
+
+    .mkt-offer-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   @media (max-width: 640px) {
@@ -1035,6 +1114,11 @@ const metadata = {
     }
 
     .mkt-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .mkt-offer-grid {
       grid-template-columns: 1fr;
       gap: 14px;
     }
@@ -1085,6 +1169,7 @@ const metadata = {
       me: null,
       listings: [],
       mine: [],
+      offers: { incoming: [], outgoing: [], offers: [] },
       tab: 'market',
       busy: false,
     }
@@ -1160,6 +1245,18 @@ const metadata = {
       return 'تعذر حذف العرض، جرّب بعد قليل.'
     }
 
+    function offerErrorText(error) {
+      var v = String(error || '').toLowerCase()
+      if (v.indexOf('insufficient_available_points') >= 0) return 'عندك عروض معلقة تتجاوز رصيدك الحالي.'
+      if (v.indexOf('buyer_insufficient_points') >= 0) return 'تعذر قبول العرض لأن المشتري لا يملك نقاطًا كافية الآن.'
+      if (v.indexOf('insufficient_points') >= 0) return 'نقاطك غير كافية لإرسال هذا العرض.'
+      if (v.indexOf('pending_offer_exists') >= 0) return 'عندك عرض معلق على هذا الغرض.'
+      if (v.indexOf('listing_unavailable') >= 0) return 'العرض ما عاد متاحًا.'
+      if (v.indexOf('own_listing') >= 0) return 'هذا عرضك أنت.'
+      if (v.indexOf('invalid') >= 0) return 'أدخل سعرًا صحيحًا.'
+      return 'حدث خطأ، جرّب بعد قليل.'
+    }
+
     // أرشفة على الخادم (إخفاء من قائمتك فقط، بدون حذف نهائي)
     async function archiveListing(listingId, btn) {
       if (btn) { btn.disabled = true; btn.textContent = '…' }
@@ -1232,11 +1329,15 @@ const metadata = {
 
       try {
         await fetchMe()
+        if (!mkp.me) mkp.offers = { incoming: [], outgoing: [], offers: [] }
 
         var jobs = [fetch(API + '/api/market/listings?v=' + Date.now(), { cache: 'no-store' })]
+        var mineIndex = -1
+        var offersIndex = -1
 
         if (mkp.me) {
-          jobs.push(fetch(API + '/api/me/market/my-listings?v=' + Date.now(), { credentials: 'include', cache: 'no-store' }))
+          mineIndex = jobs.push(fetch(API + '/api/me/market/my-listings?v=' + Date.now(), { credentials: 'include', cache: 'no-store' })) - 1
+          offersIndex = jobs.push(fetch(API + '/api/me/market/offers?v=' + Date.now(), { credentials: 'include', cache: 'no-store' })) - 1
         }
 
         var responses = await Promise.all(jobs)
@@ -1246,9 +1347,20 @@ const metadata = {
           mkp.listings = marketData.listings || []
         }
 
-        if (responses[1]) {
-          var mineData = await responses[1].json().catch(function () { return null })
+        if (mineIndex >= 0 && responses[mineIndex]) {
+          var mineData = await responses[mineIndex].json().catch(function () { return null })
           if (mineData && mineData.ok) mkp.mine = mineData.listings || []
+        }
+
+        if (offersIndex >= 0 && responses[offersIndex]) {
+          var offersData = await responses[offersIndex].json().catch(function () { return null })
+          if (offersData && offersData.ok) {
+            mkp.offers = {
+              incoming: offersData.incoming || [],
+              outgoing: offersData.outgoing || [],
+              offers: offersData.offers || [],
+            }
+          }
         }
 
         render()
@@ -1296,7 +1408,11 @@ const metadata = {
       } else if (isOwn) {
         action = '<div class="mkt-btn mkt-btn-own">هذا عرضك</div>'
       } else {
-        action = '<button class="mkt-btn mkt-btn-buy" type="button" data-mkp-buy="' + escText(listing.listingId) + '">شراء</button>'
+        action =
+          '<div class="mkt-actions">' +
+            '<button class="mkt-btn mkt-btn-buy" type="button" data-mkp-buy="' + escText(listing.listingId) + '">شراء</button>' +
+            '<button class="mkt-btn mkt-btn-offer" type="button" data-mkp-offer-open="' + escText(listing.listingId) + '">إرسال عرض</button>' +
+          '</div>'
       }
 
       var secs = Math.max(0, Math.floor(Number(listing.remainingSeconds || 0)))
@@ -1385,6 +1501,73 @@ const metadata = {
       )
     }
 
+    function offerStatusText(status) {
+      if (status === 'pending_seller') return 'بانتظار البائع'
+      if (status === 'pending_buyer') return 'بانتظارك'
+      if (status === 'countered') return 'تم الرد بعرض مضاد'
+      if (status === 'rejected') return 'مرفوض'
+      if (status === 'processing') return 'قيد التنفيذ'
+      if (status === 'completed') return 'مكتمل'
+      if (status === 'expired_insufficient_points') return 'نقاط غير كافية'
+      if (status === 'failed') return 'فشل'
+      return status || 'غير معروف'
+    }
+
+    function offerCard(offer) {
+      var actions = ''
+
+      if (offer.canAccept || offer.canReject || offer.canCounter) {
+        actions += '<div class="mkt-offer-actions">'
+        if (offer.canAccept) actions += '<button class="mkt-btn mkt-btn-buy" type="button" data-mkp-offer-accept="' + escText(offer.offerId) + '">قبول</button>'
+        if (offer.canCounter) actions += '<button class="mkt-btn mkt-btn-offer" type="button" data-mkp-offer-counter="' + escText(offer.offerId) + '">رد بسعر مختلف</button>'
+        if (offer.canReject) actions += '<button class="mkt-btn mkt-btn-cancel" type="button" data-mkp-offer-reject="' + escText(offer.offerId) + '">رفض</button>'
+        actions += '</div>'
+      } else {
+        actions = '<div class="mkt-btn mkt-btn-disabled">' + escText(offerStatusText(offer.status)) + '</div>'
+      }
+
+      return (
+        '<article class="mkt-card">' +
+          '<div class="mkt-card-top">' +
+            '<div class="mkt-icon">' + ICON_ITEM + '</div>' +
+            '<div class="mkt-info">' +
+              '<div class="mkt-name">' + escText(offer.itemName) + '</div>' +
+              '<div class="mkt-qty">×' + fmt(offer.quantity) + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="mkt-offer-line"><span>السعر الأصلي</span><strong>' + fmt(offer.listingPrice) + '</strong></div>' +
+          '<div class="mkt-offer-line"><span>سعر العرض</span><strong>' + fmt(offer.offerPrice) + '</strong></div>' +
+          '<div class="mkt-offer-line"><span>الحالة</span><strong>' + escText(offerStatusText(offer.status)) + '</strong></div>' +
+          '<div class="mkt-offer-line"><span>المشتري</span><strong>' + escText(offer.buyerName || offer.buyerLogin || '') + '</strong></div>' +
+          actions +
+        '</article>'
+      )
+    }
+
+    function offersHtml() {
+      var incoming = mkp.offers.incoming || []
+      var outgoing = mkp.offers.outgoing || []
+
+      if (!incoming.length && !outgoing.length) {
+        return (
+          '<div class="mkt-empty">' +
+            '<div class="mkt-empty-icon">' + ICON_STORE + '</div>' +
+            '<div class="mkt-empty-title">لا توجد عروض</div>' +
+            '<div class="mkt-empty-desc">العروض الواردة والمرسلة تظهر هنا.</div>' +
+          '</div>'
+        )
+      }
+
+      var html = ''
+      if (incoming.length) {
+        html += '<section class="mkt-offer-section"><h2 class="mkt-offer-title">العروض الواردة</h2><div class="mkt-offer-grid">' + incoming.map(offerCard).join('') + '</div></section>'
+      }
+      if (outgoing.length) {
+        html += '<section class="mkt-offer-section"><h2 class="mkt-offer-title">العروض المرسلة</h2><div class="mkt-offer-grid">' + outgoing.map(offerCard).join('') + '</div></section>'
+      }
+      return html
+    }
+
     function render() {
       var grid = el('mktGrid')
       if (!grid) return
@@ -1392,19 +1575,27 @@ const metadata = {
       var mineTab = el('mktMineTab')
       if (mineTab) mineTab.hidden = !mkp.me
 
+      var offersTab = el('mktOffersTab')
+      if (offersTab) offersTab.hidden = !mkp.me
+
       var sellBtn = el('mktSellBtn')
       if (sellBtn) sellBtn.hidden = !mkp.me
 
       if (!mkp.me && mkp.tab === 'mine') mkp.tab = 'market'
+      if (!mkp.me && mkp.tab === 'offers') mkp.tab = 'market'
 
       var mineList = mkp.mine
       var terminals = mineList.filter(function (l) { return isTerminal(l.status) })
+      var offerCount = ((mkp.offers.incoming || []).length + (mkp.offers.outgoing || []).length)
 
       var activeCount = el('mktActiveCount')
       if (activeCount) activeCount.textContent = fmt(mkp.listings.length)
 
       var mineCount = el('mktMineCount')
       if (mineCount) mineCount.textContent = fmt(mineList.length)
+
+      var offersCount = el('mktOffersCount')
+      if (offersCount) offersCount.textContent = fmt(offerCount)
 
       document.querySelectorAll('[data-mkp-tab]').forEach(function (btn) {
         btn.classList.toggle('active', btn.getAttribute('data-mkp-tab') === mkp.tab)
@@ -1423,6 +1614,11 @@ const metadata = {
 
       if (mkp.tab === 'mine') {
         grid.innerHTML = mineList.length ? mineList.map(mineCard).join('') : emptyHtml()
+        return
+      }
+
+      if (mkp.tab === 'offers') {
+        grid.innerHTML = offersHtml()
         return
       }
 
@@ -1468,6 +1664,33 @@ const metadata = {
           if (!res.ok || !data || data.ok !== true) continue
           if (data.status === 'completed') return { ok: true }
           if (data.status === 'error') return { error: data.errorMessage || 'failed' }
+        } catch {}
+      }
+
+      return { timeout: true }
+    }
+
+    async function pollOffer(offerId, timeoutMs) {
+      var startedAt = Date.now()
+      var limit = timeoutMs || 60000
+      var wait = 600
+
+      while (Date.now() - startedAt < limit) {
+        await new Promise(function (resolve) { setTimeout(resolve, wait) })
+        wait = 1200
+
+        try {
+          var res = await fetch(API + '/api/me/market/offers/status?id=' + encodeURIComponent(offerId) + '&v=' + Date.now(), {
+            credentials: 'include',
+            cache: 'no-store',
+          })
+          var data = await res.json().catch(function () { return null })
+          var offer = data && data.offer
+          if (!res.ok || !data || data.ok !== true || !offer) continue
+          if (offer.status === 'completed') return { ok: true }
+          if (offer.status === 'failed' || offer.status === 'expired_insufficient_points') {
+            return { error: offer.errorMessage || offer.status }
+          }
         } catch {}
       }
 
@@ -1566,6 +1789,210 @@ const metadata = {
         watchBuyRequest(data.requestId)
         await loadAll()
         return
+      } catch {
+        setNotice('error', 'حدث خطأ، جرّب بعد قليل.')
+        await loadAll()
+      }
+    }
+
+    function closeOfferModal() {
+      var m = document.querySelector('[data-offer-modal]')
+      if (m) m.remove()
+    }
+
+    function openOfferModal(listingId) {
+      if (!mkp.me) return
+      var listing = (mkp.listings || []).find(function (entry) { return entry.listingId === listingId })
+      if (!listing) return
+      closeOfferModal()
+
+      var modal = document.createElement('div')
+      modal.className = 'mkt-modal'
+      modal.setAttribute('data-offer-modal', '')
+      modal.innerHTML =
+        '<div class="mkt-dialog">' +
+          '<button class="mkt-dialog-close" type="button" data-offer-close aria-label="إغلاق">×</button>' +
+          '<div class="mkt-dialog-head"><h3>إرسال عرض شراء</h3><p>' + escText(listing.itemName) + ' · السعر الحالي ' + fmt(listing.price) + ' نقطة</p></div>' +
+          '<label class="mkt-flabel" for="mktOfferPrice">السعر المقترح</label>' +
+          '<input class="mkt-input" id="mktOfferPrice" data-offer-price type="number" min="1" step="1" inputmode="numeric" value="' + Math.max(1, Math.floor(Number(listing.price || 1))) + '">' +
+          '<div class="mkt-sell-state" data-offer-state></div>' +
+          '<button class="mkt-btn mkt-btn-buy" type="button" data-offer-submit>إرسال العرض</button>' +
+        '</div>'
+      document.body.appendChild(modal)
+
+      var input = modal.querySelector('[data-offer-price]')
+      var state = modal.querySelector('[data-offer-state]')
+      var submit = modal.querySelector('[data-offer-submit]')
+      if (input) input.focus()
+
+      function setState(kind, text) {
+        if (!state) return
+        state.className = 'mkt-sell-state' + (kind ? ' is-' + kind : '')
+        state.innerHTML = text || ''
+      }
+
+      modal.addEventListener('click', function (e) {
+        var t = e.target
+        if (t === modal || t.closest('[data-offer-close]')) closeOfferModal()
+      })
+
+      if (submit) submit.addEventListener('click', async function () {
+        var price = Math.floor(Number(input && input.value || 0))
+        if (!Number.isFinite(price) || price < 1) {
+          setState('error', 'أدخل سعرًا صحيحًا.')
+          return
+        }
+
+        submit.disabled = true
+        submit.innerHTML = SPIN + ' جاري الإرسال...'
+        setState('loading', 'نرسل العرض...')
+
+        try {
+          var res = await fetch(API + '/api/me/market/offers/create', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ listingId: listingId, offerPrice: price }),
+          })
+          var data = await res.json().catch(function () { return null })
+          if (!res.ok || !data || data.ok !== true) {
+            setState('error', offerErrorText(data && data.error))
+            submit.disabled = false
+            submit.textContent = 'إرسال العرض'
+            return
+          }
+
+          closeOfferModal()
+          setNotice('ok', 'تم إرسال العرض للبائع.')
+          mkp.tab = 'offers'
+          await loadAll()
+        } catch {
+          setState('error', 'حدث خطأ، جرّب بعد قليل.')
+          submit.disabled = false
+          submit.textContent = 'إرسال العرض'
+        }
+      })
+    }
+
+    function openCounterModal(offerId) {
+      var offer = ((mkp.offers.incoming || []).concat(mkp.offers.outgoing || [])).find(function (entry) { return entry.offerId === offerId })
+      if (!offer) return
+      closeOfferModal()
+
+      var modal = document.createElement('div')
+      modal.className = 'mkt-modal'
+      modal.setAttribute('data-offer-modal', '')
+      modal.innerHTML =
+        '<div class="mkt-dialog">' +
+          '<button class="mkt-dialog-close" type="button" data-offer-close aria-label="إغلاق">×</button>' +
+          '<div class="mkt-dialog-head"><h3>رد بسعر مختلف</h3><p>' + escText(offer.itemName) + ' · عرض المشتري ' + fmt(offer.offerPrice) + ' نقطة</p></div>' +
+          '<label class="mkt-flabel" for="mktCounterPrice">السعر الجديد</label>' +
+          '<input class="mkt-input" id="mktCounterPrice" data-offer-price type="number" min="1" step="1" inputmode="numeric" value="' + Math.max(1, Math.floor(Number(offer.listingPrice || offer.offerPrice || 1))) + '">' +
+          '<div class="mkt-sell-state" data-offer-state></div>' +
+          '<button class="mkt-btn mkt-btn-buy" type="button" data-offer-submit>إرسال العرض المضاد</button>' +
+        '</div>'
+      document.body.appendChild(modal)
+
+      var input = modal.querySelector('[data-offer-price]')
+      var state = modal.querySelector('[data-offer-state]')
+      var submit = modal.querySelector('[data-offer-submit]')
+      if (input) input.focus()
+
+      function setState(kind, text) {
+        if (!state) return
+        state.className = 'mkt-sell-state' + (kind ? ' is-' + kind : '')
+        state.innerHTML = text || ''
+      }
+
+      modal.addEventListener('click', function (e) {
+        var t = e.target
+        if (t === modal || t.closest('[data-offer-close]')) closeOfferModal()
+      })
+
+      if (submit) submit.addEventListener('click', async function () {
+        var price = Math.floor(Number(input && input.value || 0))
+        if (!Number.isFinite(price) || price < 1) {
+          setState('error', 'أدخل سعرًا صحيحًا.')
+          return
+        }
+
+        submit.disabled = true
+        submit.innerHTML = SPIN + ' جاري الإرسال...'
+        setState('loading', 'نرسل العرض المضاد...')
+
+        try {
+          var res = await fetch(API + '/api/me/market/offers/counter', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ offerId: offerId, counterPrice: price }),
+          })
+          var data = await res.json().catch(function () { return null })
+          if (!res.ok || !data || data.ok !== true) {
+            setState('error', offerErrorText(data && data.error))
+            submit.disabled = false
+            submit.textContent = 'إرسال العرض المضاد'
+            return
+          }
+
+          closeOfferModal()
+          setNotice('ok', 'تم إرسال العرض المضاد.')
+          await loadAll()
+        } catch {
+          setState('error', 'حدث خطأ، جرّب بعد قليل.')
+          submit.disabled = false
+          submit.textContent = 'إرسال العرض المضاد'
+        }
+      })
+    }
+
+    async function rejectOffer(offerId, button) {
+      if (button) { button.disabled = true; button.innerHTML = SPIN + ' جاري الرفض...' }
+
+      try {
+        var res = await fetch(API + '/api/me/market/offers/reject', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ offerId: offerId }),
+        })
+        var data = await res.json().catch(function () { return null })
+        if (!res.ok || !data || data.ok !== true) {
+          setNotice('error', offerErrorText(data && data.error))
+        } else {
+          setNotice('ok', 'تم رفض العرض.')
+        }
+      } catch {
+        setNotice('error', 'حدث خطأ، جرّب بعد قليل.')
+      }
+
+      await loadAll()
+    }
+
+    async function acceptOffer(offerId, button) {
+      if (button) { button.disabled = true; button.innerHTML = SPIN + ' جاري القبول...' }
+      setNotice('', '')
+
+      try {
+        var res = await fetch(API + '/api/me/market/offers/accept', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ offerId: offerId }),
+        })
+        var data = await res.json().catch(function () { return null })
+        if (!res.ok || !data || data.ok !== true) {
+          setNotice('error', offerErrorText(data && data.error))
+          await loadAll()
+          return
+        }
+
+        setNotice('', 'العرض قيد التنفيذ، سيتم تحديث الحالة خلال لحظات.')
+        var result = await pollOffer(offerId, 60000)
+        if (result.ok) setNotice('ok', 'تم تنفيذ العرض ✓')
+        else if (result.error) setNotice('error', offerErrorText(result.error))
+        else setNotice('', 'ما زال العرض قيد التنفيذ، حدّث الصفحة بعد قليل.')
+        await loadAll()
       } catch {
         setNotice('error', 'حدث خطأ، جرّب بعد قليل.')
         await loadAll()
@@ -1860,6 +2287,30 @@ const metadata = {
       var buyButton = target.closest('[data-mkp-buy]')
       if (buyButton) {
         buyListing(buyButton.getAttribute('data-mkp-buy') || '', buyButton)
+        return
+      }
+
+      var offerOpen = target.closest('[data-mkp-offer-open]')
+      if (offerOpen) {
+        openOfferModal(offerOpen.getAttribute('data-mkp-offer-open') || '')
+        return
+      }
+
+      var offerAccept = target.closest('[data-mkp-offer-accept]')
+      if (offerAccept) {
+        acceptOffer(offerAccept.getAttribute('data-mkp-offer-accept') || '', offerAccept)
+        return
+      }
+
+      var offerReject = target.closest('[data-mkp-offer-reject]')
+      if (offerReject) {
+        rejectOffer(offerReject.getAttribute('data-mkp-offer-reject') || '', offerReject)
+        return
+      }
+
+      var offerCounter = target.closest('[data-mkp-offer-counter]')
+      if (offerCounter) {
+        openCounterModal(offerCounter.getAttribute('data-mkp-offer-counter') || '')
         return
       }
 
