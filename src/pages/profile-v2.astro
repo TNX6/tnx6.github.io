@@ -11145,12 +11145,28 @@ const metadata = {
             return;
           }
 
-          const payloadItems = currentSellable
-            .map((entry) => ({
-              itemName: getEntryName(entry),
-              quantity: getEntryQty(entry),
-            }))
-            .filter((entry) => entry.itemName && entry.quantity > 0);
+          const payloadItemMap = new Map();
+
+          currentSellable.forEach((entry) => {
+            const itemName = getEntryName(entry);
+            const quantity = getEntryQty(entry);
+            const itemKey = typeof normalize === 'function'
+              ? normalize(itemName)
+              : String(itemName || '').trim().toLowerCase();
+
+            if (!itemName || !itemKey || quantity <= 0) {
+              return;
+            }
+
+            const previous = payloadItemMap.get(itemKey);
+
+            payloadItemMap.set(itemKey, {
+              itemName: previous?.itemName || itemName,
+              quantity: Math.max(Number(previous?.quantity || 0), quantity),
+            });
+          });
+
+          const payloadItems = Array.from(payloadItemMap.values());
 
           if (!payloadItems.length) {
             window.alert('ما عندك أغراض قابلة للبيع.');
@@ -11241,6 +11257,10 @@ const metadata = {
 
             if (typeof tnxClearSellAllInventoryLock === 'function') {
               tnxClearSellAllInventoryLock();
+            }
+
+            if (typeof refreshActiveProfileFromD1 === 'function') {
+              await refreshActiveProfileFromD1();
             }
 
             window.alert(error?.message || 'فشل بيع الكل.');
