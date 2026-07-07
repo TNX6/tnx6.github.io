@@ -754,21 +754,27 @@ const metadata = {
 
   .mkt-offer-row {
     display: grid;
-    grid-template-columns: minmax(150px, 1fr) minmax(170px, 1.05fr) minmax(128px, auto);
-    align-items: center;
-    gap: 14px;
+    gap: 10px;
     min-width: 0;
-    padding: 12px 14px;
+    padding: 13px;
     border-radius: 12px;
-    background: var(--mk-card);
+    background: rgba(18, 18, 22, 0.88);
     border: 1px solid var(--mk-border);
     transition: background 0.2s, border-color 0.2s;
     animation: mktCardIn 0.32s ease both;
   }
 
   .mkt-offer-row:hover {
-    background: var(--mk-card-hover);
+    background: rgba(24, 24, 29, 0.94);
     border-color: var(--mk-border-hover);
+  }
+
+  .mkt-offer-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
   }
 
   .mkt-offer-item {
@@ -779,8 +785,8 @@ const metadata = {
   }
 
   .mkt-offer-icon {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: 10px;
     background: var(--mk-accent-dim);
     border: 1px solid var(--mk-accent-border);
@@ -801,7 +807,7 @@ const metadata = {
   }
 
   .mkt-offer-name {
-    font-size: 14px;
+    font-size: 14.5px;
     font-weight: 800;
     color: var(--mk-fg);
     line-height: 1.45;
@@ -819,52 +825,62 @@ const metadata = {
   }
 
   .mkt-offer-details {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
     min-width: 0;
   }
 
   .mkt-offer-detail {
     min-width: 0;
+    max-width: 100%;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    padding: 6px 9px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.075);
   }
 
   .mkt-offer-detail span {
-    display: block;
-    margin-bottom: 2px;
     font-size: 11.5px;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--mk-fg-dim);
+    white-space: nowrap;
   }
 
   .mkt-offer-detail strong {
-    display: block;
-    font-size: 13px;
+    min-width: 0;
+    font-size: 12.5px;
     font-weight: 900;
     color: var(--mk-fg-2);
-    line-height: 1.35;
+    line-height: 1.25;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     font-variant-numeric: tabular-nums;
   }
 
+  .mkt-offer-detail.is-party {
+    flex: 1 1 150px;
+    border-radius: 10px;
+  }
+
   .mkt-offer-detail.is-offer strong {
     color: var(--mk-accent);
   }
 
-  .mkt-offer-side {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 9px;
-    flex-wrap: wrap;
-    min-width: 128px;
+  .mkt-offer-detail.is-offer {
+    background: var(--mk-accent-dim);
+    border-color: var(--mk-accent-border);
   }
 
   .mkt-badge.mkt-offer-status {
+    flex-shrink: 0;
     margin-bottom: 0;
-    padding: 5px 10px;
+    padding: 5px 9px;
     border-radius: 999px;
     font-size: 12px;
     gap: 6px;
@@ -879,27 +895,30 @@ const metadata = {
   .mkt-offer-actions {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: flex-start;
     gap: 7px;
     flex-wrap: wrap;
+    padding-top: 2px;
   }
 
   .mkt-offer-actions .mkt-btn {
     width: auto;
-    min-width: 62px;
-    height: 34px;
+    min-width: 58px;
+    height: 32px;
     padding: 0 10px;
     margin-top: 0;
     border-radius: 8px;
-    font-size: 12.5px;
+    font-size: 12px;
   }
 
   .mkt-offer-actions .mkt-btn-offer {
-    min-width: 108px;
+    min-width: 102px;
   }
 
   .mkt-offer-hide {
-    background: rgba(255, 255, 255, 0.035);
+    min-width: 52px;
+    height: 30px;
+    background: transparent;
     border-color: var(--mk-border);
     color: var(--mk-fg-dim);
     cursor: pointer;
@@ -1295,22 +1314,17 @@ const metadata = {
       gap: 16px;
     }
 
-    .mkt-offer-row {
-      grid-template-columns: 1fr;
-      align-items: start;
-      gap: 10px;
-      padding: 12px;
-    }
-
     .mkt-offer-details {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
     }
 
-    .mkt-offer-side {
-      width: 100%;
-      min-width: 0;
-      align-items: flex-start;
+    .mkt-offer-detail {
+      flex: 1 1 calc(50% - 8px);
       justify-content: space-between;
+    }
+
+    .mkt-offer-detail.is-party {
+      flex-basis: 100%;
     }
 
     .mkt-offer-actions {
@@ -1752,22 +1766,22 @@ const metadata = {
 
       return (
         '<article class="mkt-offer-row">' +
-          '<div class="mkt-offer-item">' +
-            '<div class="mkt-offer-icon">' + ICON_ITEM + '</div>' +
-            '<div class="mkt-offer-main">' +
-              '<div class="mkt-offer-name">' + escText(offer.itemName) + '</div>' +
-              '<div class="mkt-offer-qty">الكمية ×' + fmt(offer.quantity) + '</div>' +
+          '<div class="mkt-offer-top">' +
+            '<div class="mkt-offer-item">' +
+              '<div class="mkt-offer-icon">' + ICON_ITEM + '</div>' +
+              '<div class="mkt-offer-main">' +
+                '<div class="mkt-offer-name">' + escText(offer.itemName) + '</div>' +
+                '<div class="mkt-offer-qty">الكمية ×' + fmt(offer.quantity) + '</div>' +
+              '</div>' +
             '</div>' +
+            '<span class="mkt-badge mkt-offer-status ' + meta.className + '"><span class="dot"></span>' + escText(meta.label) + '</span>' +
           '</div>' +
           '<div class="mkt-offer-details">' +
-            offerDetail('السعر الأصلي', fmt(offer.listingPrice), '') +
-            offerDetail('سعر العرض', fmt(offer.offerPrice), 'is-offer') +
-            offerDetail(partyLabel, otherName || 'غير معروف', '') +
+            offerDetail('السعر الأصلي:', fmt(offer.listingPrice), '') +
+            offerDetail('عرض الشراء:', fmt(offer.offerPrice), 'is-offer') +
+            offerDetail(partyLabel, otherName || 'غير معروف', 'is-party') +
           '</div>' +
-          '<div class="mkt-offer-side">' +
-            '<span class="mkt-badge mkt-offer-status ' + meta.className + '"><span class="dot"></span>' + escText(meta.label) + '</span>' +
-            actions +
-          '</div>' +
+          actions +
         '</article>'
       )
     }
