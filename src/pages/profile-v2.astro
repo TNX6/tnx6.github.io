@@ -12022,7 +12022,7 @@ const metadata = {
 
       async function useInventoryItemFromProfileV1(item, button, hint) {
         const name = String(item?.name || '').trim();
-        const qty = Math.max(1, Math.floor(Number(item?.qty || 1)));
+        const qty = 1;
 
         if (!name) {
           if (hint) hint.textContent = 'اسم الغرض غير معروف.';
@@ -12049,7 +12049,7 @@ const metadata = {
           }
 
           const tnxUseItemNameForApi = String((typeof apiItemName !== 'undefined' ? apiItemName : name) || '').trim();
-          const tnxUseQtyForApi = Math.max(1, Math.floor(Number(typeof qty !== 'undefined' ? qty : 1)));
+          const tnxUseQtyForApi = 1;
 
           const tnxUseInputText = await tnxResolveInventoryUseInputText(tnxUseItemNameForApi);
 
@@ -13626,6 +13626,7 @@ const metadata = {
           const percent = Math.max(0, Math.min(100, Math.round((used / capacity) * 100)))
 
           const label = box.querySelector('[data-mail-capacity-label]')
+          const nextLabel = box.querySelector('[data-mail-next-capacity-label]')
           const bar = box.querySelector('[data-mail-capacity-bar]')
           const upgradeButton = box.querySelector('[data-mail-upgrade-open], [data-mb-upgrade-open-v4]')
           const costLabel = box.querySelector('[data-mail-upgrade-cost]')
@@ -13634,12 +13635,22 @@ const metadata = {
             label.textContent = mailboxUpgradeFormat(used) + ' / ' + (mailboxUpgradeInfoLoaded ? mailboxUpgradeFormat(capacity) : '…')
           }
 
+          if (nextLabel) {
+            nextLabel.textContent = !info.canUpgrade
+              ? 'أقصى سعة'
+              : mailboxUpgradeInfoLoaded
+                ? 'التالي: ' + mailboxUpgradeFormat(info.nextCapacity) + ' رسالة'
+                : 'التالي: …'
+          }
+
           if (bar) {
             bar.style.width = percent + '%'
           }
 
           if (costLabel) {
-            if (!info.canUpgrade) {
+            if (!mailboxUpgradeInfoLoaded) {
+              costLabel.textContent = '…'
+            } else if (!info.canUpgrade) {
               costLabel.textContent = 'مكتمل'
             } else if (info.activeRequest) {
               costLabel.textContent = 'قيد التنفيذ'
@@ -14059,8 +14070,8 @@ const metadata = {
 
         const used = Array.isArray(list) ? mbV2CapacityUsed(list) : Number(info.used ?? 0)
         const capacity = Math.max(1, Number(info.capacity || 5))
-        const cost = Number(info.cost || 25000)
-        const nextCapacity = Number(info.nextCapacity || 10)
+        const cost = mailboxUpgradeInfoLoaded ? Number(info.cost || 0) : 0
+        const nextCapacity = mailboxUpgradeInfoLoaded ? Number(info.nextCapacity || 0) : 0
         const canUpgrade = info.canUpgrade !== false
 
         return {
@@ -14069,6 +14080,7 @@ const metadata = {
           cost,
           nextCapacity,
           canUpgrade,
+          loaded: Boolean(mailboxUpgradeInfoLoaded),
           activeRequest: info.activeRequest || null,
         }
       }
@@ -14478,7 +14490,9 @@ function mbV2Card(message) {
             ? 'قيد التنفيذ'
             : 'تطوير البريد';
 
-        const upgradeCostText = !upgrade.canUpgrade
+        const upgradeCostText = !upgrade.loaded
+          ? '…'
+          : !upgrade.canUpgrade
           ? 'أقصى سعة'
           : upgrade.activeRequest
             ? 'بانتظار التنفيذ'
@@ -14490,7 +14504,9 @@ function mbV2Card(message) {
             ? '<span class="mbv2-cap-state">شبه ممتلئ</span>'
             : '';
 
-        const nextLabel = upgrade.canUpgrade
+        const nextLabel = !upgrade.loaded
+          ? 'التالي: …'
+          : upgrade.canUpgrade
           ? 'التالي: ' + mbV2Format(upgrade.nextCapacity) + ' رسالة'
           : 'أقصى سعة';
 
@@ -14622,7 +14638,7 @@ function mbV2Card(message) {
             '<div class="mbv2-capacity" data-mail-capacity-box>' +
               '<div class="mbv2-cap-top">' +
                 '<div class="mbv2-cap-title">' + mbV2IconSvg('db', 15) + '<strong>سعة البريد</strong><span data-mail-capacity-label>' + mbV2Format(upgrade.used) + ' / ' + (mailboxUpgradeInfoLoaded ? mbV2Format(upgrade.capacity) : '…') + '</span>' + capacityState + '</div>' +
-                '<span class="mbv2-cap-next">' + nextLabel + '</span>' +
+                '<span class="mbv2-cap-next" data-mail-next-capacity-label>' + nextLabel + '</span>' +
               '</div>' +
               '<div class="mbv2-cap-bar"><span data-mail-capacity-bar style="width:' + percent + '%"></span></div>' +
               '<div class="mbv2-cap-foot">' +
@@ -14855,6 +14871,7 @@ function mbV2Card(message) {
           mbUpgradeV4Remove()
 
           let info = null
+          let hasUpgradeInfo = false
 
           try {
             const result = await mbUpgradeV4Fetch('/api/me/mailbox/upgrade-info', {
@@ -14863,6 +14880,7 @@ function mbV2Card(message) {
 
             if (result.response.ok && result.data.ok) {
               info = result.data
+              hasUpgradeInfo = true
             }
           } catch {}
 
@@ -14880,10 +14898,10 @@ function mbV2Card(message) {
 
           const used = Number(info.used || 0)
           const capacity = Number(info.capacity || 5)
-          const nextCapacity = Number(info.nextCapacity || 10)
-          const increase = Number(info.increase || Math.max(0, nextCapacity - capacity))
-          const cost = Number(info.cost || 0)
-          const canUpgrade = Boolean(info.canUpgrade)
+          const nextCapacity = hasUpgradeInfo ? Number(info.nextCapacity || 0) : 0
+          const increase = hasUpgradeInfo ? Number(info.increase || Math.max(0, nextCapacity - capacity)) : 0
+          const cost = hasUpgradeInfo ? Number(info.cost || 0) : 0
+          const canUpgrade = Boolean(hasUpgradeInfo && info.canUpgrade)
 
           const doneStages = Math.max(0, Math.min(8, Math.round((capacity - 5) / 5)))
           const stageLabel = doneStages >= 8 ? 'وصلت للحد الأعلى' : 'المرحلة ' + mbUpgradeV4Format(doneStages + 1) + ' من 8'
@@ -14913,12 +14931,12 @@ function mbV2Card(message) {
                 ? '<div class="mb-upgrade-v4-compare">' +
                     '<div class="mb-upgrade-v4-col"><small>السعة الحالية</small><strong>' + mbUpgradeV4Format(capacity) + '</strong><em>رسالة</em></div>' +
                     '<div class="mb-upgrade-v4-mid">' + arrowSvg + '<span>+' + mbUpgradeV4Format(increase) + '</span></div>' +
-                    '<div class="mb-upgrade-v4-col mb-upgrade-v4-col-next"><small>بعد التطوير</small><strong>' + mbUpgradeV4Format(nextCapacity) + '</strong><em>رسالة</em></div>' +
+                    '<div class="mb-upgrade-v4-col mb-upgrade-v4-col-next"><small>بعد التطوير</small><strong>' + (hasUpgradeInfo ? mbUpgradeV4Format(nextCapacity) : '…') + '</strong><em>رسالة</em></div>' +
                   '</div>' +
                   stagesHtml +
                   '<div class="mb-upgrade-v4-cost">' +
                     '<span class="mb-upgrade-v4-cost-label">' + mbV2IconSvg('coin', 16) + 'تكلفة التطوير</span>' +
-                    '<span class="mb-upgrade-v4-cost-value">' + mbUpgradeV4Format(cost) + ' <i>نقطة</i></span>' +
+                    '<span class="mb-upgrade-v4-cost-value">' + (hasUpgradeInfo ? mbUpgradeV4Format(cost) : '…') + ' <i>نقطة</i></span>' +
                   '</div>'
                 : '<div class="mb-upgrade-v4-compare">' +
                     '<div class="mb-upgrade-v4-col mb-upgrade-v4-col-next"><small>السعة الحالية</small><strong>' + mbUpgradeV4Format(capacity) + '</strong><em>رسالة</em></div>' +
