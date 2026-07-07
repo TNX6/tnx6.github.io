@@ -706,7 +706,7 @@ const metadata = {
   .mkt-offers-board {
     --offers-bg: #08080e;
     --offers-card: #202026;
-    --offers-card-hover: #24242B;
+    --offers-card-hover: #202026;
     --offers-border: #1a1a28;
     --offers-border-hover: #28283a;
     --offers-gold: #c9a84c;
@@ -1464,23 +1464,38 @@ const metadata = {
     }
   }
 
-  /* FINAL OVERRIDE: visible purchase offer card background */
+  /* FINAL HARD OVERRIDE: purchase offers visible surfaces */
   .mkt-offers-board .mkt-offer-list > article.offer-card,
+  .mkt-offers-board article.offer-card,
   .mkt-offers-board .offer-card,
   .mkt-offers-board .mkt-offer-card,
-  .mkt-offers-board article.offer-card,
   .mkt-offers-board [data-mkp-offer-id] {
     background: #202026 !important;
     background-color: #202026 !important;
+    background-image: none !important;
+  }
+
+  .mkt-offers-board .mkt-offer-list > article.offer-card::before,
+  .mkt-offers-board article.offer-card::before,
+  .mkt-offers-board .offer-card::before,
+  .mkt-offers-board [data-mkp-offer-id]::before,
+  .mkt-offers-board .mkt-offer-list > article.offer-card::after,
+  .mkt-offers-board article.offer-card::after,
+  .mkt-offers-board .offer-card::after,
+  .mkt-offers-board [data-mkp-offer-id]::after {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
   }
 
   .mkt-offers-board .mkt-offer-list > article.offer-card:hover,
+  .mkt-offers-board article.offer-card:hover,
   .mkt-offers-board .offer-card:hover,
   .mkt-offers-board .mkt-offer-card:hover,
-  .mkt-offers-board article.offer-card:hover,
   .mkt-offers-board [data-mkp-offer-id]:hover {
-    background: #24242B !important;
-    background-color: #24242B !important;
+    background: #202026 !important;
+    background-color: #202026 !important;
+    background-image: none !important;
   }
 </style>
 
