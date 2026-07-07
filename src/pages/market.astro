@@ -370,6 +370,11 @@ const metadata = {
     border-color: var(--mk-border-hover);
   }
 
+  .mkt-card.is-linked-listing {
+    border-color: rgba(201, 168, 76, 0.62);
+    box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.18), 0 0 28px rgba(201, 168, 76, 0.12);
+  }
+
   .mkt-card:nth-child(1) { animation-delay: 0.02s; }
   .mkt-card:nth-child(2) { animation-delay: 0.06s; }
   .mkt-card:nth-child(3) { animation-delay: 0.1s; }
@@ -1514,6 +1519,15 @@ const metadata = {
 
     var SPIN = '<span class="mkt-spin"></span>'
 
+    function directListingIdFromUrl() {
+      try {
+        var params = new URLSearchParams(window.location.search || '')
+        return String(params.get('listingId') || params.get('listing') || '').trim()
+      } catch {
+        return ''
+      }
+    }
+
     var DURATIONS = [
       { s: 21600, label: '6 ساعات', fee: 0 },
       { s: 43200, label: '12 ساعة', fee: 2500 },
@@ -1527,6 +1541,8 @@ const metadata = {
       offers: { incoming: [], outgoing: [], offers: [] },
       tab: 'market',
       busy: false,
+      linkedListingId: directListingIdFromUrl(),
+      linkedListingFocused: false,
     }
 
     function el(id) { return document.getElementById(id) }
@@ -1728,6 +1744,37 @@ const metadata = {
       }
     }
 
+    function findListingCard(listingId) {
+      var cards = document.querySelectorAll('[data-listing-id]')
+      for (var i = 0; i < cards.length; i++) {
+        if (cards[i].getAttribute('data-listing-id') === listingId) return cards[i]
+      }
+      return null
+    }
+
+    function focusLinkedListing() {
+      var listingId = String(mkp.linkedListingId || '').trim()
+      if (!listingId || mkp.linkedListingFocused || mkp.tab !== 'market') return
+
+      window.setTimeout(function () {
+        var card = findListingCard(listingId)
+        if (!card) return
+
+        mkp.linkedListingFocused = true
+        card.classList.add('is-linked-listing')
+
+        try {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        } catch {
+          card.scrollIntoView()
+        }
+
+        window.setTimeout(function () {
+          card.classList.remove('is-linked-listing')
+        }, 4500)
+      }, 80)
+    }
+
     function sellerAvatar(listing) {
       return listing.sellerImage
         ? '<img src="' + escText(listing.sellerImage) + '" alt="" loading="lazy" referrerpolicy="no-referrer">'
@@ -1775,7 +1822,7 @@ const metadata = {
       var urgent = secs > 0 && secs < 3600 ? ' is-urgent' : ''
 
       return (
-        '<article class="mkt-card">' +
+        '<article class="mkt-card" data-listing-id="' + escText(listing.listingId) + '">' +
           cardTop(listing) +
           priceBlock(listing) +
           '<div class="mkt-divider"></div>' +
@@ -2013,6 +2060,7 @@ const metadata = {
       }
 
       grid.innerHTML = mkp.listings.length ? mkp.listings.map(marketCard).join('') : emptyHtml()
+      focusLinkedListing()
     }
 
     async function clearFinished() {
