@@ -705,8 +705,8 @@ const metadata = {
 
   .mkt-offers-board {
     --offers-bg: #08080e;
-    --offers-card: #0f0f17;
-    --offers-card-hover: #14141e;
+    --offers-card: #1B1B1F;
+    --offers-card-hover: #202026;
     --offers-border: #1a1a28;
     --offers-border-hover: #28283a;
     --offers-gold: #c9a84c;
@@ -859,8 +859,8 @@ const metadata = {
   .detail-row {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    gap: 6px;
+    justify-content: space-between;
+    gap: 14px;
     min-width: 0;
     padding: 3px 0;
     line-height: 1.7;
@@ -876,10 +876,6 @@ const metadata = {
     font-weight: 800;
     color: var(--offers-text-secondary);
     white-space: nowrap;
-  }
-
-  .offer-detail-label::after {
-    content: ":";
   }
 
   .offer-detail-value {
