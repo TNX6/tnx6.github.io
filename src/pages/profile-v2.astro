@@ -11975,6 +11975,194 @@ const metadata = {
         return await tnxOpenUseInputModal(itemName, rule);
       }
 
+      const inventoryUsePendingKeysV1 = new Set();
+
+      function inventoryUseLockKeyV1(itemName) {
+        const ownerKey = d1InventoryCacheKey(state.activeUser) || 'active';
+        return `${ownerKey}:${normalize(String(itemName || '').trim())}`;
+      }
+
+      function cloneInventoryEntriesForUseV1(entries) {
+        return Array.isArray(entries)
+          ? entries.map((entry) => entry && typeof entry === 'object' ? { ...entry } : entry)
+          : [];
+      }
+
+      function rawInventoryQtyForUseV1(entry) {
+        const raw = get(entry, ['quantity', 'qty', 'amount', 'count', 'Value'], undefined);
+        const value = raw === undefined || raw === null || raw === '' ? 1 : raw;
+        return Math.max(0, Math.floor(Number(value || 0)));
+      }
+
+      function setRawInventoryQtyForUseV1(entry, qty) {
+        const next = entry && typeof entry === 'object' ? { ...entry } : {};
+        const value = Math.max(0, Math.floor(Number(qty || 0)));
+
+        if ('quantity' in next) next.quantity = value;
+        else if ('qty' in next) next.qty = value;
+        else next.quantity = value;
+
+        return next;
+      }
+
+      function cacheItemsFromRawInventoryForUseV1(entries) {
+        return cloneInventoryEntriesForUseV1(entries)
+          .map((entry) => ({
+            ...entry,
+            name: itemName(entry),
+            quantity: rawInventoryQtyForUseV1(entry),
+            itemKey: String(get(entry, ['itemKey', 'item_key', 'key'], '') || '').trim(),
+            updatedAt: get(entry, ['updatedAt', 'updated_at'], '') || '',
+          }))
+          .filter((entry) => entry.name && Number(entry.quantity || 0) > 0);
+      }
+
+      function updateD1InventoryCacheAfterLocalUseV1(cacheKey, entries) {
+        try {
+          if (!cacheKey || !state.d1InventoryCache || !state.d1InventoryCache[cacheKey]) return;
+
+          state.d1InventoryCache[cacheKey] = {
+            ...state.d1InventoryCache[cacheKey],
+            items: cacheItemsFromRawInventoryForUseV1(entries),
+          };
+        } catch (error) {
+          console.warn('[Inventory Use] Failed to update local inventory cache:', error);
+        }
+      }
+
+      function renderActiveInventoryAfterLocalUseV1() {
+        try {
+          if (!state.activeUser) return;
+
+          const inventory = inventoryItems(state.activeUser);
+          const badges = Array.isArray(state.activeUser.badges) ? state.activeUser.badges : [];
+          const level = calculateLevel(state.activeUser);
+
+          setInventoryCountFromItems(inventory);
+          renderChips(chipsFor(state.activeUser, level.level, badges, inventory));
+          renderInventory(inventory);
+
+          const enhanced = enhanceInventorySellButtons(inventory);
+          if (enhanced && typeof enhanced.catch === 'function') {
+            enhanced.catch((error) => console.warn('[Inventory Use] Failed to restore sell buttons:', error));
+          }
+        } catch (error) {
+          console.warn('[Inventory Use] Failed to render local inventory change:', error);
+        }
+      }
+
+      function applyOptimisticInventoryUseV1(itemNameValue) {
+        try {
+          if (!state.activeUser || !Array.isArray(state.activeUser.inventory)) return null;
+
+          const targetKey = normalize(String(itemNameValue || '').trim());
+          if (!targetKey) return null;
+
+          const cacheKey = d1InventoryCacheKey(state.activeUser);
+          const cacheBefore = cacheKey && state.d1InventoryCache && state.d1InventoryCache[cacheKey]
+            ? {
+                ...state.d1InventoryCache[cacheKey],
+                items: cloneInventoryEntriesForUseV1(state.d1InventoryCache[cacheKey].items),
+              }
+            : null;
+          const snapshot = {
+            cacheKey,
+            cacheBefore,
+            inventory: cloneInventoryEntriesForUseV1(state.activeUser.inventory),
+            inventorySource: state.activeUser.inventorySource,
+          };
+
+          let decremented = false;
+          const nextInventory = snapshot.inventory
+            .map((entry) => {
+              if (decremented || normalize(itemName(entry)) !== targetKey) {
+                return entry;
+              }
+
+              const currentQty = rawInventoryQtyForUseV1(entry);
+              const nextQty = currentQty - 1;
+              decremented = true;
+
+              return setRawInventoryQtyForUseV1(entry, nextQty);
+            })
+            .filter((entry) => itemName(entry) && rawInventoryQtyForUseV1(entry) > 0);
+
+          if (!decremented) return null;
+
+          state.activeUser = {
+            ...state.activeUser,
+            inventory: nextInventory,
+            inventorySource: 'd1-optimistic-use',
+          };
+
+          updateD1InventoryCacheAfterLocalUseV1(cacheKey, nextInventory);
+          renderActiveInventoryAfterLocalUseV1();
+
+          return snapshot;
+        } catch (error) {
+          console.warn('[Inventory Use] Optimistic inventory update failed:', error);
+          return null;
+        }
+      }
+
+      function rollbackOptimisticInventoryUseV1(snapshot) {
+        try {
+          if (!snapshot || !state.activeUser) return;
+
+          const activeKey = d1InventoryCacheKey(state.activeUser);
+          if (snapshot.cacheKey && activeKey && snapshot.cacheKey !== activeKey) return;
+
+          state.activeUser = {
+            ...state.activeUser,
+            inventory: cloneInventoryEntriesForUseV1(snapshot.inventory),
+            inventorySource: snapshot.inventorySource,
+          };
+
+          if (snapshot.cacheKey && state.d1InventoryCache) {
+            if (snapshot.cacheBefore) {
+              state.d1InventoryCache[snapshot.cacheKey] = {
+                ...snapshot.cacheBefore,
+                items: cloneInventoryEntriesForUseV1(snapshot.cacheBefore.items),
+              };
+            } else {
+              delete state.d1InventoryCache[snapshot.cacheKey];
+            }
+          }
+
+          renderActiveInventoryAfterLocalUseV1();
+        } catch (error) {
+          console.warn('[Inventory Use] Rollback failed, refreshing inventory:', error);
+          if (typeof refreshActiveProfileFromD1 === 'function') {
+            refreshActiveProfileFromD1();
+          }
+        }
+      }
+
+      function trackProfileUseRequestAfterOptimisticV1(requestId, snapshot, lockKey) {
+        const release = () => {
+          if (lockKey) inventoryUsePendingKeysV1.delete(lockKey);
+        };
+
+        if (!requestId) {
+          setTimeout(() => {
+            refreshActiveProfileFromD1();
+            release();
+          }, 1200);
+          return;
+        }
+
+        waitForProfileUseRequestCompletion(requestId, null)
+          .then(() => refreshActiveProfileFromD1())
+          .catch((error) => {
+            console.warn('[Inventory Use] Request did not complete, restoring local inventory:', error);
+            rollbackOptimisticInventoryUseV1(snapshot);
+            if (typeof refreshActiveProfileFromD1 === 'function') {
+              setTimeout(() => refreshActiveProfileFromD1(), 1200);
+            }
+          })
+          .finally(release);
+      }
+
       async function waitForProfileUseRequestCompletion(requestId, hint) {
         const id = String(requestId || '').trim();
 
@@ -12011,7 +12199,7 @@ const metadata = {
             return true;
           }
 
-          if (status === 'rejected') {
+          if (status === 'rejected' || status === 'failed' || status === 'error' || status === 'cancelled') {
             const message = data?.request?.errorMessage || 'فشل استخدام الغرض.';
             throw new Error(message);
           }
@@ -12037,6 +12225,18 @@ const metadata = {
         }
 
         const oldText = button?.textContent || 'استخدام';
+        const useLockKey = inventoryUseLockKeyV1(name);
+        let releaseUseLockInBackground = false;
+        let optimisticUseSnapshot = null;
+
+        if (useLockKey && inventoryUsePendingKeysV1.has(useLockKey)) {
+          if (hint) hint.textContent = 'طلب استخدام هذا الغرض قيد التنفيذ.';
+          return false;
+        }
+
+        if (useLockKey) {
+          inventoryUsePendingKeysV1.add(useLockKey);
+        }
 
         try {
           if (button) {
@@ -12111,9 +12311,13 @@ const metadata = {
           if (hint) {
             hint.textContent = 'تم إرسال طلب الاستخدام. راقب البث أو الشات للتنفيذ.';
           }
-          return await waitForProfileUseRequestCompletion(data?.requestId, hint);
+          optimisticUseSnapshot = applyOptimisticInventoryUseV1(data?.itemName || tnxUseItemNameForApi);
+          releaseUseLockInBackground = true;
+          trackProfileUseRequestAfterOptimisticV1(data?.requestId, optimisticUseSnapshot, useLockKey);
+          return true;
         } catch (error) {
           console.error('[Inventory Use] Failed:', error);
+          rollbackOptimisticInventoryUseV1(optimisticUseSnapshot);
 
           if (button) {
             button.disabled = false;
@@ -12125,6 +12329,10 @@ const metadata = {
           }
 
           return false;
+        } finally {
+          if (!releaseUseLockInBackground && useLockKey) {
+            inventoryUsePendingKeysV1.delete(useLockKey);
+          }
         }
       }
       function openItemDetailModalV3(item) {
