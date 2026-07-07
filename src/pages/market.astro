@@ -705,8 +705,8 @@ const metadata = {
 
   .mkt-offers-board {
     --offers-bg: #08080e;
-    --offers-card: #1B1B1F;
-    --offers-card-hover: #202026;
+    --offers-card: #202026;
+    --offers-card-hover: #24242B;
     --offers-border: #1a1a28;
     --offers-border-hover: #28283a;
     --offers-gold: #c9a84c;
@@ -768,7 +768,8 @@ const metadata = {
     justify-items: stretch;
   }
 
-  .offer-card {
+  /* FOR MARKET OFFERS VISIBLE CARD SURFACE */
+  .mkt-offers-board .offer-card {
     width: 100%;
     display: grid;
     gap: 0;
@@ -781,7 +782,7 @@ const metadata = {
     animation: mktCardIn 0.32s ease both;
   }
 
-  .offer-card:hover {
+  .mkt-offers-board .offer-card:hover {
     background: var(--offers-card-hover);
     border-color: var(--offers-border-hover);
   }
