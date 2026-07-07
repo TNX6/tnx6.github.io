@@ -1251,6 +1251,7 @@ const metadata = {
       if (v.indexOf('buyer_insufficient_points') >= 0) return 'تعذر قبول العرض لأن المشتري لا يملك نقاطًا كافية الآن.'
       if (v.indexOf('insufficient_points') >= 0) return 'نقاطك غير كافية لإرسال هذا العرض.'
       if (v.indexOf('pending_offer_exists') >= 0) return 'عندك عرض معلق على هذا الغرض.'
+      if (v.indexOf('not_archivable') >= 0) return 'لا يمكن إخفاء عرض ما زال قيد المعالجة.'
       if (v.indexOf('listing_unavailable') >= 0) return 'العرض ما عاد متاحًا.'
       if (v.indexOf('own_listing') >= 0) return 'هذا عرضك أنت.'
       if (v.indexOf('invalid') >= 0) return 'أدخل سعرًا صحيحًا.'
@@ -1501,20 +1502,29 @@ const metadata = {
       )
     }
 
-    function offerStatusText(status) {
-      if (status === 'pending_seller') return 'بانتظار البائع'
-      if (status === 'pending_buyer') return 'بانتظارك'
-      if (status === 'countered') return 'تم الرد بعرض مضاد'
-      if (status === 'rejected') return 'مرفوض'
-      if (status === 'processing') return 'قيد التنفيذ'
-      if (status === 'completed') return 'مكتمل'
-      if (status === 'expired_insufficient_points') return 'نقاط غير كافية'
-      if (status === 'failed') return 'فشل'
-      return status || 'غير معروف'
+    function getOfferStatusMeta(status, direction, viewerRole) {
+      if (status === 'pending_seller') {
+        return { label: viewerRole === 'seller' ? 'بانتظار ردك' : 'بانتظار البائع', className: 'is-amber', tone: 'amber' }
+      }
+      if (status === 'pending_buyer') {
+        return { label: viewerRole === 'buyer' ? 'بانتظار ردك' : 'بانتظار المشتري', className: 'is-blue', tone: 'blue' }
+      }
+      if (status === 'rejected') return { label: 'مرفوض', className: 'is-red', tone: 'red' }
+      if (status === 'countered') return { label: 'تم الرد بعرض مضاد', className: 'is-blue', tone: 'blue' }
+      if (status === 'processing') return { label: 'قيد التنفيذ', className: 'is-amber', tone: 'amber' }
+      if (status === 'completed') return { label: 'تم البيع', className: 'is-green', tone: 'green' }
+      if (status === 'failed') return { label: 'فشل', className: 'is-red', tone: 'red' }
+      if (status === 'expired_insufficient_points') return { label: 'فشل: نقاط غير كافية', className: 'is-red', tone: 'red' }
+      if (status === 'cancelled') return { label: 'ملغي', className: '', tone: 'gray' }
+      return { label: status || 'غير معروف', className: '', tone: 'gray' }
     }
 
     function offerCard(offer) {
       var actions = ''
+      var meta = getOfferStatusMeta(offer.status, offer.direction, offer.viewerRole)
+      var dismissBtn = offer.canArchive
+        ? '<button class="mkt-dismiss" type="button" data-mkp-offer-archive="' + escText(offer.offerId) + '" title="إخفاء" aria-label="إخفاء">×</button>'
+        : ''
 
       if (offer.canAccept || offer.canReject || offer.canCounter) {
         actions += '<div class="mkt-offer-actions">'
@@ -1523,11 +1533,12 @@ const metadata = {
         if (offer.canReject) actions += '<button class="mkt-btn mkt-btn-cancel" type="button" data-mkp-offer-reject="' + escText(offer.offerId) + '">رفض</button>'
         actions += '</div>'
       } else {
-        actions = '<div class="mkt-btn mkt-btn-disabled">' + escText(offerStatusText(offer.status)) + '</div>'
+        actions = '<div class="mkt-btn mkt-btn-disabled">' + escText(meta.label) + '</div>'
       }
 
       return (
         '<article class="mkt-card">' +
+          dismissBtn +
           '<div class="mkt-card-top">' +
             '<div class="mkt-icon">' + ICON_ITEM + '</div>' +
             '<div class="mkt-info">' +
@@ -1537,7 +1548,7 @@ const metadata = {
           '</div>' +
           '<div class="mkt-offer-line"><span>السعر الأصلي</span><strong>' + fmt(offer.listingPrice) + '</strong></div>' +
           '<div class="mkt-offer-line"><span>سعر العرض</span><strong>' + fmt(offer.offerPrice) + '</strong></div>' +
-          '<div class="mkt-offer-line"><span>الحالة</span><strong>' + escText(offerStatusText(offer.status)) + '</strong></div>' +
+          '<span class="mkt-badge ' + meta.className + '"><span class="dot"></span>' + escText(meta.label) + '</span>' +
           '<div class="mkt-offer-line"><span>المشتري</span><strong>' + escText(offer.buyerName || offer.buyerLogin || '') + '</strong></div>' +
           actions +
         '</article>'
@@ -1969,6 +1980,35 @@ const metadata = {
       await loadAll()
     }
 
+    async function archiveOffer(offerId, button) {
+      if (button) { button.disabled = true; button.textContent = '…' }
+
+      try {
+        var res = await fetch(API + '/api/me/market/offers/archive', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ offerId: offerId }),
+        })
+        var data = await res.json().catch(function () { return null })
+        if (!res.ok || !data || data.ok !== true) {
+          setNotice('error', offerErrorText(data && data.error))
+          if (button) { button.disabled = false; button.textContent = '×' }
+          return
+        }
+
+        ;['incoming', 'outgoing', 'offers'].forEach(function (key) {
+          mkp.offers[key] = (mkp.offers[key] || []).filter(function (offer) { return offer.offerId !== offerId })
+        })
+        render()
+        setNotice('ok', 'تم إخفاء العرض.')
+        loadAll()
+      } catch {
+        setNotice('error', 'تعذر إخفاء العرض، جرّب بعد قليل.')
+        if (button) { button.disabled = false; button.textContent = '×' }
+      }
+    }
+
     async function acceptOffer(offerId, button) {
       if (button) { button.disabled = true; button.innerHTML = SPIN + ' جاري القبول...' }
       setNotice('', '')
@@ -2198,12 +2238,37 @@ const metadata = {
             return
           }
 
-          setSellState('ok', 'تم إرسال العرض ✓ بيظهر في السوق خلال ثوانٍ')
-          setTimeout(function () {
-            closeSellModal()
-            mkp.tab = 'mine'
-            loadAll()
-          }, 950)
+          setSellState('loading', 'يُنشر الآن...')
+
+          if (data.requestId) {
+            var result = await pollRequest(data.requestId, 60000)
+
+            if (result.ok) {
+              closeSellModal()
+              mkp.tab = 'mine'
+              setNotice('ok', 'تم نشر العرض في السوق ✓')
+              await loadAll()
+              return
+            }
+
+            if (result.error) {
+              setSellState('error', listErrorText(result.error, data))
+              btn.disabled = false
+              btn.textContent = 'نشر العرض'
+              await loadAll()
+              return
+            }
+
+            setSellState('', 'النشر تأخر، جرّب تحديث السوق.')
+            btn.disabled = false
+            btn.textContent = 'نشر العرض'
+            await loadAll()
+            return
+          }
+
+          closeSellModal()
+          mkp.tab = 'mine'
+          await loadAll()
         } catch {
           setSellState('error', 'حدث خطأ، جرّب بعد قليل.')
           btn.disabled = false
@@ -2305,6 +2370,12 @@ const metadata = {
       var offerReject = target.closest('[data-mkp-offer-reject]')
       if (offerReject) {
         rejectOffer(offerReject.getAttribute('data-mkp-offer-reject') || '', offerReject)
+        return
+      }
+
+      var offerArchive = target.closest('[data-mkp-offer-archive]')
+      if (offerArchive) {
+        archiveOffer(offerArchive.getAttribute('data-mkp-offer-archive') || '', offerArchive)
         return
       }
 
