@@ -750,26 +750,28 @@ const metadata = {
   .mkt-offer-list {
     display: grid;
     gap: 10px;
+    justify-items: end;
   }
 
-  .mkt-offer-row {
+  .offer-card {
+    width: min(100%, 460px);
     display: grid;
-    gap: 10px;
+    gap: 11px;
     min-width: 0;
-    padding: 13px;
+    padding: 14px;
     border-radius: 12px;
-    background: rgba(18, 18, 22, 0.88);
+    background: rgba(17, 17, 21, 0.92);
     border: 1px solid var(--mk-border);
     transition: background 0.2s, border-color 0.2s;
     animation: mktCardIn 0.32s ease both;
   }
 
-  .mkt-offer-row:hover {
+  .offer-card:hover {
     background: rgba(24, 24, 29, 0.94);
     border-color: var(--mk-border-hover);
   }
 
-  .mkt-offer-top {
+  .offer-card-head {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -777,14 +779,14 @@ const metadata = {
     min-width: 0;
   }
 
-  .mkt-offer-item {
+  .offer-item-main {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
     min-width: 0;
   }
 
-  .mkt-offer-icon {
+  .offer-item-icon {
     width: 40px;
     height: 40px;
     border-radius: 10px;
@@ -797,16 +799,16 @@ const metadata = {
     flex-shrink: 0;
   }
 
-  .mkt-offer-icon svg {
+  .offer-item-icon svg {
     width: 19px;
     height: 19px;
   }
 
-  .mkt-offer-main {
+  .offer-item-text {
     min-width: 0;
   }
 
-  .mkt-offer-name {
+  .offer-item-name {
     font-size: 14.5px;
     font-weight: 800;
     color: var(--mk-fg);
@@ -816,7 +818,7 @@ const metadata = {
     text-overflow: ellipsis;
   }
 
-  .mkt-offer-qty {
+  .offer-item-qty {
     margin-top: 2px;
     font-size: 12.5px;
     font-weight: 700;
@@ -824,60 +826,54 @@ const metadata = {
     font-variant-numeric: tabular-nums;
   }
 
-  .mkt-offer-details {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 7px;
+  .offer-details-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
     min-width: 0;
   }
 
-  .mkt-offer-detail {
+  .offer-detail-box {
     min-width: 0;
-    max-width: 100%;
-    display: inline-flex;
-    align-items: baseline;
-    gap: 5px;
-    padding: 6px 9px;
-    border-radius: 999px;
+    padding: 8px 9px;
+    border-radius: 10px;
     background: rgba(255, 255, 255, 0.035);
     border: 1px solid rgba(255, 255, 255, 0.075);
   }
 
-  .mkt-offer-detail span {
+  .offer-detail-label {
+    display: block;
+    margin-bottom: 3px;
     font-size: 11.5px;
     font-weight: 800;
     color: var(--mk-fg-dim);
     white-space: nowrap;
   }
 
-  .mkt-offer-detail strong {
+  .offer-detail-value {
+    display: block;
     min-width: 0;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 900;
     color: var(--mk-fg-2);
-    line-height: 1.25;
+    line-height: 1.3;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     font-variant-numeric: tabular-nums;
   }
 
-  .mkt-offer-detail.is-party {
-    flex: 1 1 150px;
-    border-radius: 10px;
-  }
-
-  .mkt-offer-detail.is-offer strong {
+  .offer-detail-box.is-offer .offer-detail-value {
+    font-size: 13.5px;
     color: var(--mk-accent);
   }
 
-  .mkt-offer-detail.is-offer {
+  .offer-detail-box.is-offer {
     background: var(--mk-accent-dim);
     border-color: var(--mk-accent-border);
   }
 
-  .mkt-badge.mkt-offer-status {
+  .offer-status-badge {
     flex-shrink: 0;
     margin-bottom: 0;
     padding: 5px 9px;
@@ -887,21 +883,21 @@ const metadata = {
     white-space: nowrap;
   }
 
-  .mkt-badge.mkt-offer-status .dot {
+  .offer-status-badge .dot {
     width: 6px;
     height: 6px;
   }
 
-  .mkt-offer-actions {
+  .offer-actions {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 7px;
     flex-wrap: wrap;
-    padding-top: 2px;
+    padding-top: 1px;
   }
 
-  .mkt-offer-actions .mkt-btn {
+  .offer-actions .mkt-btn {
     width: auto;
     min-width: 58px;
     height: 32px;
@@ -911,22 +907,30 @@ const metadata = {
     font-size: 12px;
   }
 
-  .mkt-offer-actions .mkt-btn-offer {
+  .offer-actions .mkt-btn-offer {
     min-width: 102px;
   }
 
-  .mkt-offer-hide {
-    min-width: 52px;
-    height: 30px;
+  .offer-hide {
+    min-width: 0;
+    height: 28px;
+    padding: 0 4px;
     background: transparent;
-    border-color: var(--mk-border);
+    border-color: transparent;
     color: var(--mk-fg-dim);
     cursor: pointer;
+    font-size: 12px;
+    font-weight: 800;
   }
 
-  .mkt-offer-hide:hover {
-    color: var(--mk-fg);
-    border-color: var(--mk-border-hover);
+  .offer-hide:hover {
+    color: var(--mk-accent);
+    background: transparent;
+    border-color: transparent;
+  }
+
+  .offer-actions.is-archive-only {
+    justify-content: flex-end;
   }
 
   .mkt-offer-empty {
@@ -1314,25 +1318,28 @@ const metadata = {
       gap: 16px;
     }
 
-    .mkt-offer-details {
+    .offer-card {
+      width: 100%;
+    }
+
+    .offer-details-grid {
       gap: 8px;
     }
 
-    .mkt-offer-detail {
-      flex: 1 1 calc(50% - 8px);
-      justify-content: space-between;
+    .offer-details-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .mkt-offer-detail.is-party {
-      flex-basis: 100%;
+    .offer-detail-box.is-party {
+      grid-column: 1 / -1;
     }
 
-    .mkt-offer-actions {
+    .offer-actions {
       width: 100%;
       justify-content: flex-start;
     }
 
-    .mkt-offer-actions .mkt-btn {
+    .offer-actions .mkt-btn:not(.offer-hide) {
       flex: 1 1 auto;
     }
 
@@ -1734,9 +1741,9 @@ const metadata = {
 
     function offerDetail(label, value, extraClass) {
       return (
-        '<div class="mkt-offer-detail ' + (extraClass || '') + '">' +
-          '<span>' + escText(label) + '</span>' +
-          '<strong>' + escText(value) + '</strong>' +
+        '<div class="offer-detail-box ' + (extraClass || '') + '">' +
+          '<span class="offer-detail-label">' + escText(label) + '</span>' +
+          '<strong class="offer-detail-value">' + escText(value) + '</strong>' +
         '</div>'
       )
     }
@@ -1758,27 +1765,28 @@ const metadata = {
       if (offer.canAccept) actionButtons.push('<button class="mkt-btn mkt-btn-buy" type="button" data-mkp-offer-accept="' + escText(offer.offerId) + '">قبول</button>')
       if (offer.canCounter) actionButtons.push('<button class="mkt-btn mkt-btn-offer" type="button" data-mkp-offer-counter="' + escText(offer.offerId) + '">رد بسعر مختلف</button>')
       if (offer.canReject) actionButtons.push('<button class="mkt-btn mkt-btn-cancel" type="button" data-mkp-offer-reject="' + escText(offer.offerId) + '">رفض</button>')
-      if (offer.canArchive) actionButtons.push('<button class="mkt-btn mkt-offer-hide" type="button" data-mkp-offer-archive="' + escText(offer.offerId) + '">إخفاء</button>')
+      if (offer.canArchive) actionButtons.push('<button class="mkt-btn offer-hide" type="button" data-mkp-offer-archive="' + escText(offer.offerId) + '">إخفاء</button>')
 
+      var archiveOnly = actionButtons.length === 1 && offer.canArchive
       var actions = actionButtons.length
-        ? '<div class="mkt-offer-actions">' + actionButtons.join('') + '</div>'
+        ? '<div class="offer-actions ' + (archiveOnly ? 'is-archive-only' : '') + '">' + actionButtons.join('') + '</div>'
         : ''
 
       return (
-        '<article class="mkt-offer-row">' +
-          '<div class="mkt-offer-top">' +
-            '<div class="mkt-offer-item">' +
-              '<div class="mkt-offer-icon">' + ICON_ITEM + '</div>' +
-              '<div class="mkt-offer-main">' +
-                '<div class="mkt-offer-name">' + escText(offer.itemName) + '</div>' +
-                '<div class="mkt-offer-qty">الكمية ×' + fmt(offer.quantity) + '</div>' +
+        '<article class="offer-card">' +
+          '<div class="offer-card-head">' +
+            '<div class="offer-item-main">' +
+              '<div class="offer-item-icon">' + ICON_ITEM + '</div>' +
+              '<div class="offer-item-text">' +
+                '<div class="offer-item-name">' + escText(offer.itemName) + '</div>' +
+                '<div class="offer-item-qty">' + fmt(offer.quantity) + '×</div>' +
               '</div>' +
             '</div>' +
-            '<span class="mkt-badge mkt-offer-status ' + meta.className + '"><span class="dot"></span>' + escText(meta.label) + '</span>' +
+            '<span class="mkt-badge offer-status-badge ' + meta.className + '"><span class="dot"></span>' + escText(meta.label) + '</span>' +
           '</div>' +
-          '<div class="mkt-offer-details">' +
-            offerDetail('السعر الأصلي:', fmt(offer.listingPrice), '') +
-            offerDetail('عرض الشراء:', fmt(offer.offerPrice), 'is-offer') +
+          '<div class="offer-details-grid">' +
+            offerDetail('السعر الأصلي', fmt(offer.listingPrice), '') +
+            offerDetail('عرض الشراء', fmt(offer.offerPrice), 'is-offer') +
             offerDetail(partyLabel, otherName || 'غير معروف', 'is-party') +
           '</div>' +
           actions +
