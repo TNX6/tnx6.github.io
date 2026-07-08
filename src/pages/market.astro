@@ -11,7 +11,7 @@ const metadata = {
 <Layout metadata={metadata}>
   <main class="tnx-market-page" dir="rtl">
     <div class="mkt-main">
-      <header class="mkt-head mkt-anim-head">
+      <header class="mkt-head mkt-anim-head" style="--d: 0.02s">
         <div class="mkt-head-titles">
           <h1>السوق</h1>
           <p>اشترِ وبيع أغراض المجتمع</p>
@@ -29,7 +29,24 @@ const metadata = {
         </div>
       </header>
 
-      <nav class="mkt-tabs mkt-anim-tabs" role="tablist">
+      <div class="mkt-tools mkt-anim-tabs" id="mktTools" style="--d: 0.1s">
+        <label class="mkt-search" for="mktSearch">
+          <span class="mkt-search-ico" aria-hidden="true"></span>
+          <input id="mktSearch" type="search" autocomplete="off" placeholder="ابحث عن عرض أو بائع..." />
+        </label>
+
+        <label class="mkt-sort-wrap" for="mktSort">
+          <span class="mkt-sort-label">ترتيب</span>
+          <select id="mktSort" class="mkt-sort">
+            <option value="newest">الأحدث</option>
+            <option value="price-asc">الأرخص</option>
+            <option value="price-desc">الأغلى</option>
+            <option value="ending-soon">ينتهي قريبًا</option>
+          </select>
+        </label>
+      </div>
+
+      <nav class="mkt-tabs mkt-anim-tabs" role="tablist" style="--d: 0.18s">
         <button class="mkt-tab active" type="button" role="tab" data-mkp-tab="market">السوق</button>
         <button class="mkt-tab" type="button" role="tab" data-mkp-tab="mine" id="mktMineTab" hidden>
           عروضي <span class="mkt-tab-badge" id="mktMineCount">0</span>
@@ -289,6 +306,91 @@ const metadata = {
     animation: mktspin 0.8s linear infinite;
   }
 
+  /* ---------- market tools ---------- */
+  .mkt-tools {
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) minmax(160px, 210px);
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .mkt-tools[hidden] {
+    display: none;
+  }
+
+  .mkt-search,
+  .mkt-sort-wrap {
+    position: relative;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--mk-card);
+    border: 1px solid var(--mk-border);
+    color: var(--mk-fg-2);
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+
+  .mkt-search:focus-within,
+  .mkt-sort-wrap:focus-within {
+    border-color: var(--mk-accent-border);
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.08);
+  }
+
+  .mkt-search-ico {
+    width: 17px;
+    height: 17px;
+    margin-inline-start: 14px;
+    flex-shrink: 0;
+    background: currentColor;
+    -webkit-mask: no-repeat center / contain;
+    mask: no-repeat center / contain;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.8-3.8'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.8-3.8'/%3E%3C/svg%3E");
+  }
+
+  .mkt-search input,
+  .mkt-sort {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--mk-fg);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .mkt-search input {
+    padding: 0 11px 0 14px;
+  }
+
+  .mkt-search input::placeholder {
+    color: var(--mk-fg-dim);
+    font-weight: 600;
+  }
+
+  .mkt-sort-wrap {
+    gap: 8px;
+    padding-inline-start: 13px;
+    padding-inline-end: 11px;
+  }
+
+  .mkt-sort-label {
+    color: var(--mk-fg-dim);
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .mkt-sort {
+    cursor: pointer;
+    color-scheme: dark;
+  }
+
   /* ---------- tabs (underline) ---------- */
   .mkt-tabs {
     display: flex;
@@ -353,14 +455,48 @@ const metadata = {
 
   /* ---------- notice ---------- */
   .mkt-notice {
+    position: relative;
     margin-bottom: 18px;
-    padding: 11px 15px;
+    padding: 11px 15px 11px 44px;
     border-radius: 10px;
     font-size: 13.5px;
     font-weight: 600;
     border: 1px solid var(--mk-border);
     background: var(--mk-card);
     color: var(--mk-fg);
+  }
+
+  .mkt-notice-text {
+    display: block;
+  }
+
+  .mkt-notice-close {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.035);
+    color: currentColor;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+    opacity: 0.75;
+    transition: opacity 0.2s ease, background 0.2s ease, transform 0.15s ease;
+  }
+
+  .mkt-notice-close:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .mkt-notice-close:active {
+    transform: translateY(-50%) scale(0.94);
   }
 
   .mkt-notice.is-ok {
@@ -1720,6 +1856,16 @@ const metadata = {
       gap: 14px;
     }
 
+    .mkt-tools {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .mkt-search,
+    .mkt-sort-wrap {
+      height: 42px;
+    }
+
     .mkt-offers-board {
       gap: 16px;
     }
@@ -1869,10 +2015,13 @@ const metadata = {
       linkedListingId: directListingIdFromUrl(),
       linkedListingFocused: false,
       loadedOnce: false,
+      marketSearchQuery: '',
+      marketSortMode: 'newest',
     }
 
     var mktActiveCountValue = 0
     var mktActiveCountFrame = 0
+    var mktNoticeTimer = 0
 
     function el(id) { return document.getElementById(id) }
 
@@ -2010,6 +2159,87 @@ const metadata = {
       )
     }
 
+    function normalizeMarketText(value) {
+      return String(value == null ? '' : value)
+        .toLowerCase()
+        .replace(/[إأآ]/g, 'ا')
+        .replace(/ى/g, 'ي')
+        .replace(/ة/g, 'ه')
+        .trim()
+    }
+
+    function listingSearchText(listing) {
+      return normalizeMarketText([
+        listing.itemName,
+        listing.item_name,
+        listing.name,
+        listing.sellerName,
+        listing.sellerDisplayName,
+        listing.userDisplayName,
+        listing.sellerLogin,
+        listing.seller_login,
+      ].join(' '))
+    }
+
+    function listingCreatedTime(listing) {
+      var values = [
+        listing.createdAt,
+        listing.created_at,
+        listing.listedAt,
+        listing.listed_at,
+        listing.created,
+        listing.timestamp,
+      ]
+
+      for (var i = 0; i < values.length; i++) {
+        var t = Date.parse(values[i])
+        if (Number.isFinite(t)) return t
+      }
+
+      return 0
+    }
+
+    function listingEndingValue(listing) {
+      var remaining = Number(listing.remainingSeconds)
+      if (Number.isFinite(remaining) && remaining >= 0) return remaining
+
+      var expires = Date.parse(listing.expiresAt || listing.expires_at || listing.expires)
+      if (Number.isFinite(expires)) return Math.max(0, Math.ceil((expires - Date.now()) / 1000))
+
+      return Number.MAX_SAFE_INTEGER
+    }
+
+    function getVisibleMarketListings(listings) {
+      var visible = (listings || []).slice()
+      var query = normalizeMarketText(mkp.marketSearchQuery)
+
+      if (query) {
+        visible = visible.filter(function (listing) {
+          return listingSearchText(listing).indexOf(query) >= 0
+        })
+      }
+
+      var mode = mkp.marketSortMode || 'newest'
+      return visible
+        .map(function (listing, index) { return { listing: listing, index: index } })
+        .sort(function (a, b) {
+          if (mode === 'price-asc') {
+            return (Number(a.listing.price || 0) - Number(b.listing.price || 0)) || (a.index - b.index)
+          }
+
+          if (mode === 'price-desc') {
+            return (Number(b.listing.price || 0) - Number(a.listing.price || 0)) || (a.index - b.index)
+          }
+
+          if (mode === 'ending-soon') {
+            return (listingEndingValue(a.listing) - listingEndingValue(b.listing)) || (a.index - b.index)
+          }
+
+          return (listingCreatedTime(b.listing) - listingCreatedTime(a.listing)) || (a.index - b.index)
+        })
+        .map(function (entry) { return entry.listing })
+    }
+
     function remainingText(seconds) {
       var total = Math.max(0, Math.floor(Number(seconds || 0)))
       if (total <= 0) return 'ينتهي الآن'
@@ -2110,15 +2340,22 @@ const metadata = {
     function setNotice(kind, text) {
       var box = el('mktNotice')
       if (!box) return
+      if (mktNoticeTimer) {
+        clearTimeout(mktNoticeTimer)
+        mktNoticeTimer = 0
+      }
 
       if (!text) {
         box.hidden = true
+        box.innerHTML = ''
         return
       }
 
       box.hidden = false
       box.className = 'mkt-notice' + (kind ? ' is-' + kind : '')
-      box.textContent = text
+      box.innerHTML =
+        '<span class="mkt-notice-text">' + escText(text) + '</span>' +
+        '<button type="button" class="mkt-notice-close" data-mkt-notice-close aria-label="إغلاق التنبيه">×</button>'
     }
 
     function setRefreshLoading(on) {
@@ -2349,12 +2586,12 @@ const metadata = {
       )
     }
 
-    function emptyHtml() {
+    function emptyHtml(title, desc) {
       return (
         '<div class="mkt-empty">' +
           '<div class="mkt-empty-icon">' + ICON_STORE + '</div>' +
-          '<div class="mkt-empty-title">لا توجد عروض حاليًا</div>' +
-          '<div class="mkt-empty-desc">اعرض غرضًا من حقيبتك ليظهر هنا</div>' +
+          '<div class="mkt-empty-title">' + escText(title || 'لا توجد عروض حاليًا') + '</div>' +
+          '<div class="mkt-empty-desc">' + escText(desc || 'اعرض غرضًا من حقيبتك ليظهر هنا') + '</div>' +
         '</div>'
       )
     }
@@ -2481,6 +2718,9 @@ const metadata = {
       if (!mkp.me && mkp.tab === 'mine') mkp.tab = 'market'
       if (!mkp.me && mkp.tab === 'offers') mkp.tab = 'market'
 
+      var tools = el('mktTools')
+      if (tools) tools.hidden = mkp.tab !== 'market'
+
       var mineList = mkp.mine
       var terminals = mineList.filter(function (l) { return isTerminal(l.status) })
       var offerCount = ((mkp.offers.incoming || []).length + (mkp.offers.outgoing || []).length)
@@ -2518,7 +2758,13 @@ const metadata = {
         return
       }
 
-      grid.innerHTML = mkp.listings.length ? mkp.listings.map(marketCard).join('') : emptyHtml()
+      var visibleListings = getVisibleMarketListings(mkp.listings)
+      var hasMarketFilter = !!normalizeMarketText(mkp.marketSearchQuery)
+      grid.innerHTML = visibleListings.length
+        ? visibleListings.map(marketCard).join('')
+        : (hasMarketFilter
+          ? emptyHtml('لا توجد نتائج مطابقة', 'جرّب كلمة بحث مختلفة أو امسح البحث.')
+          : emptyHtml())
       focusLinkedListing()
     }
 
@@ -3210,6 +3456,12 @@ const metadata = {
     document.addEventListener('click', function (event) {
       var target = event.target
       if (!(target instanceof Element)) return
+
+      if (target.closest('[data-mkt-notice-close]')) {
+        setNotice('', '')
+        return
+      }
+
       addMarketRipple(event)
 
       if (target.closest('#mktSellBtn')) {
@@ -3287,6 +3539,22 @@ const metadata = {
 
     var refreshButton = el('mktRefresh')
     if (refreshButton) refreshButton.addEventListener('click', function () { loadAll() })
+
+    var searchInput = el('mktSearch')
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        mkp.marketSearchQuery = searchInput.value || ''
+        render()
+      })
+    }
+
+    var sortSelect = el('mktSort')
+    if (sortSelect) {
+      sortSelect.addEventListener('change', function () {
+        mkp.marketSortMode = sortSelect.value || 'newest'
+        render()
+      })
+    }
 
     // تحديث دوري خفيف — فقط والصفحة ظاهرة
     setInterval(function () {
