@@ -655,6 +655,25 @@ const metadata = {
     color: var(--mk-fg);
   }
 
+  .guest-login-buy-btn {
+    background: #9146FF;
+    border-color: #A970FF;
+    color: #FFFFFF;
+    box-shadow: 0 0 18px rgba(145, 70, 255, 0.25);
+  }
+
+  .guest-login-buy-btn:hover {
+    background: #772CE8;
+    border-color: #A970FF;
+    color: #FFFFFF;
+    box-shadow: 0 0 22px rgba(145, 70, 255, 0.38);
+  }
+
+  .guest-login-buy-btn:focus-visible {
+    outline: 2px solid #A970FF;
+    outline-offset: 3px;
+  }
+
   .mkt-btn-own,
   .mkt-btn-done,
   .mkt-btn-disabled {
@@ -1807,7 +1826,7 @@ const metadata = {
 
       var action = ''
       if (!mkp.me) {
-        action = '<a class="mkt-btn mkt-btn-guest" href="' + API + '/auth/twitch/login">سجل دخول للشراء</a>'
+        action = '<a class="mkt-btn mkt-btn-guest guest-login-buy-btn" href="' + API + '/auth/twitch/login">سجل دخول للشراء</a>'
       } else if (isOwn) {
         action = '<div class="mkt-btn mkt-btn-own">هذا عرضك</div>'
       } else {
