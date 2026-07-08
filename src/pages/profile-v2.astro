@@ -17635,11 +17635,37 @@ function mbV2Card(message) {
         }
       }
 
+      function stopProfileV2BackgroundWork() {
+        try {
+          if (typeof stopInventoryAutoRefresh === 'function') stopInventoryAutoRefresh()
+        } catch {}
+
+        try { stopInventoryLivePollerV3() } catch {}
+        try { stopEconomyLivePollerV1() } catch {}
+      }
+
+      function showLoginRequiredView() {
+        stopProfileV2BackgroundWork()
+        hideAccountTools()
+        state.activeUser = null
+
+        $('profileView')?.classList.add('hidden')
+        $('notFoundView')?.classList.add('hidden')
+        $('searchView')?.classList.remove('hidden')
+
+        const skeleton = $('profileSkeleton')
+        if (skeleton) {
+          skeleton.classList.add('is-hidden')
+          skeleton.style.display = 'none'
+        }
+      }
+
       async function openFromQuery() {
         const raw = new URLSearchParams(location.search).get('user')
 
         if (!raw) {
-          const authUser = await getLoggedInUser()
+          const authUser = state.pendingAuthUser || await getLoggedInUser()
+          state.pendingAuthUser = null
 
           if (authUser?.login) {
             const user = findUser(authUser.login) || userFromAuth(authUser)
@@ -17650,22 +17676,24 @@ function mbV2Card(message) {
             }
           }
 
-          stopInventoryAutoRefresh()
-          stopInventoryLivePollerV3()
-          $('searchView')?.classList.remove('hidden')
-          $('profileView')?.classList.add('hidden')
-          $('notFoundView')?.classList.add('hidden')
+          showLoginRequiredView()
           return
         }
 
         const user = findUser(raw)
 
         if (!user) {
-          stopInventoryAutoRefresh()
-          stopInventoryLivePollerV3()
+          stopProfileV2BackgroundWork()
           $('searchView')?.classList.add('hidden')
           $('profileView')?.classList.add('hidden')
           $('notFoundView')?.classList.remove('hidden')
+
+          const skeleton = $('profileSkeleton')
+          if (skeleton) {
+            skeleton.classList.add('is-hidden')
+            skeleton.style.display = 'none'
+          }
+
           return
         }
 
@@ -18472,6 +18500,20 @@ function mbV2Card(message) {
           return loadJson('/api/user_mailbox.json', []);
         }
       };
+
+      const directProfileUser = new URLSearchParams(location.search).get('user')
+
+      if (!directProfileUser) {
+        const authUser = await getLoggedInUser()
+
+        if (!authUser?.login) {
+          showLoginRequiredView()
+          return
+        }
+
+        state.pendingAuthUser = authUser
+      }
+
       const [users, mailboxes, profiles, itemPayload, leaderboardPayload] = await Promise.all([
         loadJson('/api/user_badges.json', []),
         loadD1MailboxUsersForProfile(),
