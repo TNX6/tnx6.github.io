@@ -11,25 +11,25 @@ const metadata = {
 <Layout metadata={metadata}>
   <main class="tnx-market-page" dir="rtl">
     <div class="mkt-main">
-      <header class="mkt-head">
+      <header class="mkt-head mkt-anim-head">
         <div class="mkt-head-titles">
           <h1>السوق</h1>
           <p>اشترِ وبيع أغراض المجتمع</p>
         </div>
 
         <div class="mkt-head-actions">
-          <button class="mkt-sell-btn" type="button" id="mktSellBtn" hidden>
+          <button class="mkt-sell-btn mkt-ripple" type="button" id="mktSellBtn" hidden>
             <span class="mkt-plus" aria-hidden="true">+</span> اعرض غرضًا
           </button>
           <span class="mkt-stat">العروض النشطة: <strong id="mktActiveCount">0</strong></span>
-          <button class="mkt-refresh" type="button" id="mktRefresh" title="تحديث">
+          <button class="mkt-refresh mkt-ripple" type="button" id="mktRefresh" title="تحديث">
             <span class="mkt-refresh-ico" aria-hidden="true"></span>
             تحديث
           </button>
         </div>
       </header>
 
-      <nav class="mkt-tabs" role="tablist">
+      <nav class="mkt-tabs mkt-anim-tabs" role="tablist">
         <button class="mkt-tab active" type="button" role="tab" data-mkp-tab="market">السوق</button>
         <button class="mkt-tab" type="button" role="tab" data-mkp-tab="mine" id="mktMineTab" hidden>
           عروضي <span class="mkt-tab-badge" id="mktMineCount">0</span>
@@ -43,11 +43,49 @@ const metadata = {
 
       <div class="mkt-listbar" id="mktListbar" hidden>
         <span id="mktListbarText"></span>
-        <button class="mkt-clear" type="button" id="mktClearFinished">مسح المنتهية</button>
+        <button class="mkt-clear mkt-ripple" type="button" id="mktClearFinished">مسح المنتهية</button>
       </div>
 
       <div class="mkt-grid" id="mktGrid">
-        <div class="mkt-empty"><div class="mkt-empty-title">جاري تحميل السوق...</div></div>
+        <article class="mkt-card mkt-skel mkt-skeleton-card" aria-hidden="true">
+          <div class="mkt-card-top">
+            <div class="mkt-skel-icon"></div>
+            <div class="mkt-skel-stack">
+              <div class="mkt-skel-line w-70"></div>
+              <div class="mkt-skel-line w-35"></div>
+            </div>
+          </div>
+          <div class="mkt-skel-price"></div>
+          <div class="mkt-divider"></div>
+          <div class="mkt-skel-line w-90"></div>
+          <div class="mkt-skel-button"></div>
+        </article>
+        <article class="mkt-card mkt-skel mkt-skeleton-card" aria-hidden="true">
+          <div class="mkt-card-top">
+            <div class="mkt-skel-icon"></div>
+            <div class="mkt-skel-stack">
+              <div class="mkt-skel-line w-60"></div>
+              <div class="mkt-skel-line w-30"></div>
+            </div>
+          </div>
+          <div class="mkt-skel-price"></div>
+          <div class="mkt-divider"></div>
+          <div class="mkt-skel-line w-85"></div>
+          <div class="mkt-skel-button"></div>
+        </article>
+        <article class="mkt-card mkt-skel mkt-skeleton-card" aria-hidden="true">
+          <div class="mkt-card-top">
+            <div class="mkt-skel-icon"></div>
+            <div class="mkt-skel-stack">
+              <div class="mkt-skel-line w-75"></div>
+              <div class="mkt-skel-line w-40"></div>
+            </div>
+          </div>
+          <div class="mkt-skel-price"></div>
+          <div class="mkt-divider"></div>
+          <div class="mkt-skel-line w-80"></div>
+          <div class="mkt-skel-button"></div>
+        </article>
       </div>
     </div>
   </main>
@@ -122,6 +160,30 @@ const metadata = {
     gap: 20px;
     flex-wrap: wrap;
     margin-bottom: 30px;
+  }
+
+  .mkt-anim-head {
+    opacity: 0;
+    transform: translateY(-14px);
+    animation: mktSlideDown 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: var(--d, 0.02s);
+  }
+
+  .mkt-anim-tabs {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: mktSlideUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: var(--d, 0.12s);
+  }
+
+  @keyframes mktSlideDown {
+    from { opacity: 0; transform: translateY(-14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes mktSlideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .mkt-head-titles h1 {
@@ -361,13 +423,21 @@ const metadata = {
     border: 1px solid var(--mk-border);
     border-radius: 14px;
     padding: 22px;
-    transition: background 0.2s, border-color 0.2s;
+    transition:
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.25s ease,
+      background 0.2s,
+      border-color 0.2s;
     animation: mktCardIn 0.42s ease both;
   }
 
   .mkt-card:hover {
+    transform: translateY(-4px);
     background: var(--mk-card-hover);
     border-color: var(--mk-border-hover);
+    box-shadow:
+      0 12px 28px rgba(0, 0, 0, 0.28),
+      0 0 0 1px rgba(255, 255, 255, 0.04);
   }
 
   .mkt-card.is-linked-listing {
@@ -388,6 +458,19 @@ const metadata = {
   @keyframes mktCardIn {
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  .mkt-card.is-removing,
+  .offer-card.is-removing {
+    animation: mktCardOut 0.24s ease forwards !important;
+    pointer-events: none;
+  }
+
+  @keyframes mktCardOut {
+    to {
+      opacity: 0;
+      transform: scale(0.96) translateY(8px);
+    }
   }
 
   .mkt-dismiss {
@@ -431,6 +514,11 @@ const metadata = {
     justify-content: center;
     color: var(--mk-accent);
     flex-shrink: 0;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .mkt-card:hover .mkt-icon {
+    transform: scale(1.06);
   }
 
   .mkt-info {
@@ -537,11 +625,26 @@ const metadata = {
 
   .mkt-time.is-urgent {
     color: var(--mk-danger);
+    animation: mktUrgentPulse 1.5s ease-in-out infinite;
   }
 
   .mkt-time svg {
     width: 13px;
     height: 13px;
+  }
+
+  .mkt-time.is-urgent svg,
+  .mkt-time.is-urgent .mkt-time-ico {
+    animation: mktClockSpin 2.4s linear infinite;
+  }
+
+  @keyframes mktUrgentPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+  }
+
+  @keyframes mktClockSpin {
+    to { transform: rotate(360deg); }
   }
 
   /* status badge (عروضي) */
@@ -592,7 +695,47 @@ const metadata = {
     display: inline-block;
   }
 
+  .mkt-badge.is-processing .dot,
+  .mkt-badge.is-pending .dot,
+  .mkt-badge.is-amber .dot,
+  .status-badge.is-processing .dot,
+  .status-badge.is-pending .dot {
+    animation: mktDotPulse 1.2s ease-in-out infinite;
+  }
+
+  @keyframes mktDotPulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.4;
+      transform: scale(0.72);
+    }
+  }
+
   /* ---------- buttons ---------- */
+  .mkt-ripple {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mkt-ripple-wave {
+    position: absolute;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.22);
+    transform: scale(0);
+    animation: mktRipple 0.55s ease-out forwards;
+    pointer-events: none;
+  }
+
+  @keyframes mktRipple {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
   .mkt-btn {
     width: 100%;
     height: 46px;
@@ -802,13 +945,21 @@ const metadata = {
     border-radius: 10px;
     background: var(--offers-card);
     border: 1px solid var(--offers-border);
-    transition: background 0.2s, border-color 0.2s;
+    transition:
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.25s ease,
+      background 0.2s,
+      border-color 0.2s;
     animation: mktCardIn 0.32s ease both;
   }
 
   .mkt-offers-board .offer-card:hover {
+    transform: translateY(-3px);
     background: var(--offers-card-hover);
     border-color: var(--offers-border-hover);
+    box-shadow:
+      0 10px 22px rgba(0, 0, 0, 0.24),
+      0 0 0 1px rgba(255, 255, 255, 0.035);
   }
 
   .offer-card-head {
@@ -930,6 +1081,7 @@ const metadata = {
   .status-badge {
     display: inline-flex;
     align-items: center;
+    gap: 6px;
     flex-shrink: 0;
     padding: 3px 9px;
     border-radius: 999px;
@@ -938,6 +1090,15 @@ const metadata = {
     font-weight: 800;
     line-height: 1.45;
     white-space: nowrap;
+  }
+
+  .status-badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+    flex-shrink: 0;
   }
 
   .status-pending {
@@ -1091,6 +1252,86 @@ const metadata = {
     }
   }
 
+  /* ---------- skeleton ---------- */
+  .mkt-skel {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mkt-skel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.035) 42%,
+      rgba(255, 255, 255, 0.075) 50%,
+      rgba(255, 255, 255, 0.035) 58%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+    animation: mktShimmer 1.6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes mktShimmer {
+    to { transform: translateX(100%); }
+  }
+
+  .mkt-skeleton-card {
+    min-height: 278px;
+  }
+
+  .mkt-skel-icon,
+  .mkt-skel-line,
+  .mkt-skel-price,
+  .mkt-skel-button {
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.035);
+  }
+
+  .mkt-skel-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  .mkt-skel-stack {
+    display: grid;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .mkt-skel-line {
+    height: 13px;
+    border-radius: 999px;
+  }
+
+  .mkt-skel-line.w-30 { width: 30%; }
+  .mkt-skel-line.w-35 { width: 35%; }
+  .mkt-skel-line.w-40 { width: 40%; }
+  .mkt-skel-line.w-60 { width: 60%; }
+  .mkt-skel-line.w-70 { width: 70%; }
+  .mkt-skel-line.w-75 { width: 75%; }
+  .mkt-skel-line.w-80 { width: 80%; }
+  .mkt-skel-line.w-85 { width: 85%; }
+  .mkt-skel-line.w-90 { width: 90%; }
+
+  .mkt-skel-price {
+    width: 42%;
+    height: 34px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  .mkt-skel-button {
+    height: 46px;
+    border-radius: 10px;
+    margin-top: auto;
+  }
+
   /* ---------- empty ---------- */
   .mkt-empty {
     grid-column: 1 / -1;
@@ -1140,12 +1381,21 @@ const metadata = {
     -webkit-backdrop-filter: blur(3px);
     backdrop-filter: blur(3px);
     direction: rtl;
-    animation: mktFade 0.2s ease;
+    animation: mktModalBgIn 0.22s ease forwards;
   }
 
-  @keyframes mktFade {
+  .mkt-modal.is-closing {
+    animation: mktModalBgOut 0.18s ease forwards;
+  }
+
+  @keyframes mktModalBgIn {
     from { opacity: 0; }
     to { opacity: 1; }
+  }
+
+  @keyframes mktModalBgOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
   }
 
   .mkt-dialog {
@@ -1158,6 +1408,33 @@ const metadata = {
     border-radius: 16px;
     padding: 24px;
     box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+    animation: mktDialogIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .mkt-modal.is-closing .mkt-dialog {
+    animation: mktDialogOut 0.18s ease forwards;
+  }
+
+  @keyframes mktDialogIn {
+    from {
+      opacity: 0;
+      transform: scale(0.92) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes mktDialogOut {
+    from {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.96) translateY(5px);
+    }
   }
 
   .mkt-dialog-close {
@@ -1483,8 +1760,37 @@ const metadata = {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .mkt-card {
-      animation: none;
+    .mkt-anim-head,
+    .mkt-anim-tabs,
+    .mkt-skel::after,
+    .mkt-ripple-wave,
+    .mkt-time.is-urgent,
+    .mkt-time.is-urgent svg,
+    .mkt-time.is-urgent .mkt-time-ico,
+    .mkt-badge .dot,
+    .status-badge .dot,
+    .mkt-modal,
+    .mkt-dialog,
+    .mkt-card,
+    .mkt-card.is-removing,
+    .offer-card.is-removing {
+      animation: none !important;
+    }
+
+    .mkt-anim-head,
+    .mkt-anim-tabs {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .mkt-card,
+    .mkt-card:hover,
+    .mkt-icon,
+    .mkt-card:hover .mkt-icon,
+    .mkt-offers-board .offer-card,
+    .mkt-offers-board .offer-card:hover {
+      transition: none !important;
+      transform: none !important;
     }
   }
 
@@ -1562,7 +1868,11 @@ const metadata = {
       busy: false,
       linkedListingId: directListingIdFromUrl(),
       linkedListingFocused: false,
+      loadedOnce: false,
     }
+
+    var mktActiveCountValue = 0
+    var mktActiveCountFrame = 0
 
     function el(id) { return document.getElementById(id) }
 
@@ -1579,6 +1889,127 @@ const metadata = {
       try { return new Intl.NumberFormat('en-US').format(Number(value || 0)) } catch { return String(value || 0) }
     }
 
+    function mktPrefersReducedMotion() {
+      try {
+        return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      } catch {
+        return false
+      }
+    }
+
+    function mktEaseOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3)
+    }
+
+    function mktCountUp(elm, from, to, duration) {
+      if (!elm) return
+      if (mktActiveCountFrame) cancelAnimationFrame(mktActiveCountFrame)
+
+      if (mktPrefersReducedMotion() || from === to) {
+        elm.textContent = fmt(to)
+        return
+      }
+
+      var startedAt = performance.now()
+      var diff = to - from
+      var limit = duration || 600
+
+      function frame(now) {
+        var p = Math.min((now - startedAt) / limit, 1)
+        var eased = mktEaseOutCubic(p)
+        elm.textContent = fmt(Math.round(from + diff * eased))
+        if (p < 1) {
+          mktActiveCountFrame = requestAnimationFrame(frame)
+        } else {
+          mktActiveCountFrame = 0
+        }
+      }
+
+      mktActiveCountFrame = requestAnimationFrame(frame)
+    }
+
+    function updateActiveCount(next) {
+      var activeCount = el('mktActiveCount')
+      var value = Math.max(0, Math.floor(Number(next || 0)))
+      mktCountUp(activeCount, mktActiveCountValue, value, 620)
+      mktActiveCountValue = value
+    }
+
+    function addMarketRipple(event) {
+      if (mktPrefersReducedMotion()) return
+      var target = event.target
+      if (!(target instanceof Element)) return
+      var trigger = target.closest('.mkt-ripple')
+      if (!trigger || trigger.disabled) return
+
+      var rect = trigger.getBoundingClientRect()
+      var size = Math.max(rect.width, rect.height)
+      var wave = document.createElement('span')
+      wave.className = 'mkt-ripple-wave'
+      wave.style.width = size + 'px'
+      wave.style.height = size + 'px'
+      wave.style.left = (event.clientX - rect.left - size / 2) + 'px'
+      wave.style.top = (event.clientY - rect.top - size / 2) + 'px'
+      trigger.appendChild(wave)
+      window.setTimeout(function () { wave.remove() }, 620)
+    }
+
+    function waitForCardExit(card) {
+      if (!card || mktPrefersReducedMotion()) return Promise.resolve()
+      card.classList.add('is-removing')
+      return new Promise(function (resolve) {
+        var done = false
+        function finish() {
+          if (done) return
+          done = true
+          resolve()
+        }
+        card.addEventListener('animationend', finish, { once: true })
+        window.setTimeout(finish, 280)
+      })
+    }
+
+    function closeMarketModal(selector, afterClose, immediate) {
+      var modal = document.querySelector(selector)
+      if (!modal) {
+        if (afterClose) afterClose()
+        return
+      }
+
+      function removeNow() {
+        modal.remove()
+        if (afterClose) afterClose()
+      }
+
+      if (immediate || modal.classList.contains('is-closing') || mktPrefersReducedMotion()) {
+        removeNow()
+        return
+      }
+
+      modal.classList.add('is-closing')
+      var done = false
+      function finish(event) {
+        if (event && event.target !== modal) return
+        if (done) return
+        done = true
+        modal.removeEventListener('animationend', finish)
+        removeNow()
+      }
+
+      modal.addEventListener('animationend', finish)
+      window.setTimeout(function () { finish() }, 240)
+    }
+
+    function errorHtml() {
+      return (
+        '<div class="mkt-empty">' +
+          '<div class="mkt-empty-icon">' + ICON_STORE + '</div>' +
+          '<div class="mkt-empty-title">تعذر تحميل السوق</div>' +
+          '<div class="mkt-empty-desc">جرّب التحديث بعد لحظات.</div>' +
+        '</div>'
+      )
+    }
+
     function remainingText(seconds) {
       var total = Math.max(0, Math.floor(Number(seconds || 0)))
       if (total <= 0) return 'ينتهي الآن'
@@ -1591,9 +2022,9 @@ const metadata = {
 
     function statusInfo(status) {
       if (status === 'active') return { cls: 'is-green', text: 'نشط' }
-      if (status === 'pending_list') return { cls: 'is-amber', text: 'قيد النشر' }
-      if (status === 'pending_buy') return { cls: 'is-amber', text: 'قيد الشراء' }
-      if (status === 'pending_refund') return { cls: 'is-amber', text: 'قيد الاسترجاع' }
+      if (status === 'pending_list') return { cls: 'is-amber is-pending', text: 'قيد النشر' }
+      if (status === 'pending_buy') return { cls: 'is-amber is-pending', text: 'قيد الشراء' }
+      if (status === 'pending_refund') return { cls: 'is-amber is-pending', text: 'قيد الاسترجاع' }
       if (status === 'sold') return { cls: 'is-green', text: 'مباع' }
       if (status === 'refunded') return { cls: 'is-blue', text: 'رجع لك' }
       if (status === 'cancelled') return { cls: 'is-red', text: 'ملغي' }
@@ -1755,8 +2186,13 @@ const metadata = {
         }
 
         render()
+        mkp.loadedOnce = true
       } catch (error) {
         console.warn('[Market] load failed', error)
+        if (!mkp.loadedOnce) {
+          var grid = el('mktGrid')
+          if (grid) grid.innerHTML = errorHtml()
+        }
       } finally {
         mkp.busy = false
         setRefreshLoading(false)
@@ -1832,8 +2268,8 @@ const metadata = {
       } else {
         action =
           '<div class="mkt-actions">' +
-            '<button class="mkt-btn mkt-btn-buy" type="button" data-mkp-buy="' + escText(listing.listingId) + '">شراء</button>' +
-            '<button class="mkt-btn mkt-btn-offer" type="button" data-mkp-offer-open="' + escText(listing.listingId) + '">إرسال عرض</button>' +
+            '<button class="mkt-btn mkt-btn-buy mkt-ripple" type="button" data-mkp-buy="' + escText(listing.listingId) + '">شراء</button>' +
+            '<button class="mkt-btn mkt-btn-offer mkt-ripple" type="button" data-mkp-offer-open="' + escText(listing.listingId) + '">إرسال عرض</button>' +
           '</div>'
       }
 
@@ -1861,7 +2297,7 @@ const metadata = {
       var status = listing.status
 
       if (status === 'active') {
-        return '<button class="mkt-btn mkt-btn-cancel" type="button" data-mkp-cancel="' + escText(listing.listingId) + '">إلغاء العرض</button>'
+        return '<button class="mkt-btn mkt-btn-cancel mkt-ripple" type="button" data-mkp-cancel="' + escText(listing.listingId) + '">إلغاء العرض</button>'
       }
 
       if (status === 'sold') {
@@ -1949,9 +2385,14 @@ const metadata = {
       )
     }
 
+    function isLiveOfferStatus(status) {
+      return status === 'pending_seller' || status === 'pending_buyer' || status === 'processing'
+    }
+
     function offerCard(offer, bucket) {
       var actionButtons = []
       var meta = getOfferStatusMeta(offer.status, offer.direction, offer.viewerRole)
+      var liveBadge = isLiveOfferStatus(offer.status)
       var otherName = offer.viewerRole === 'seller'
         ? (offer.buyerName || offer.buyerLogin || '')
         : (offer.sellerName || offer.sellerLogin || '')
@@ -1963,10 +2404,10 @@ const metadata = {
           : (offer.sellerName || offer.sellerLogin || offer.buyerName || offer.buyerLogin || '')
       }
 
-      if (offer.canAccept) actionButtons.push('<button class="mkt-btn mkt-btn-buy" type="button" data-mkp-offer-accept="' + escText(offer.offerId) + '">قبول</button>')
-      if (offer.canCounter) actionButtons.push('<button class="mkt-btn mkt-btn-offer" type="button" data-mkp-offer-counter="' + escText(offer.offerId) + '">رد بسعر مختلف</button>')
-      if (offer.canReject) actionButtons.push('<button class="mkt-btn mkt-btn-cancel" type="button" data-mkp-offer-reject="' + escText(offer.offerId) + '">رفض</button>')
-      if (offer.canArchive) actionButtons.push('<button class="mkt-btn offer-hide" type="button" data-mkp-offer-archive="' + escText(offer.offerId) + '">إخفاء</button>')
+      if (offer.canAccept) actionButtons.push('<button class="mkt-btn mkt-btn-buy mkt-ripple" type="button" data-mkp-offer-accept="' + escText(offer.offerId) + '">قبول</button>')
+      if (offer.canCounter) actionButtons.push('<button class="mkt-btn mkt-btn-offer mkt-ripple" type="button" data-mkp-offer-counter="' + escText(offer.offerId) + '">رد بسعر مختلف</button>')
+      if (offer.canReject) actionButtons.push('<button class="mkt-btn mkt-btn-cancel mkt-ripple" type="button" data-mkp-offer-reject="' + escText(offer.offerId) + '">رفض</button>')
+      if (offer.canArchive) actionButtons.push('<button class="mkt-btn offer-hide mkt-ripple" type="button" data-mkp-offer-archive="' + escText(offer.offerId) + '">إخفاء</button>')
 
       var archiveOnly = actionButtons.length === 1 && offer.canArchive
       var actions = actionButtons.length
@@ -1983,7 +2424,7 @@ const metadata = {
                 '<div class="offer-item-qty">' + fmt(offer.quantity) + '×</div>' +
               '</div>' +
             '</div>' +
-            '<span class="status-badge ' + meta.className + '">' + escText(meta.label) + '</span>' +
+            '<span class="status-badge ' + meta.className + (liveBadge ? ' is-processing' : '') + '">' + (liveBadge ? '<span class="dot"></span>' : '') + escText(meta.label) + '</span>' +
           '</div>' +
           '<div class="card-sep"></div>' +
           '<div class="offer-card-body">' +
@@ -2044,8 +2485,7 @@ const metadata = {
       var terminals = mineList.filter(function (l) { return isTerminal(l.status) })
       var offerCount = ((mkp.offers.incoming || []).length + (mkp.offers.outgoing || []).length)
 
-      var activeCount = el('mktActiveCount')
-      if (activeCount) activeCount.textContent = fmt(mkp.listings.length)
+      updateActiveCount(mkp.listings.length)
 
       var mineCount = el('mktMineCount')
       if (mineCount) mineCount.textContent = fmt(mineList.length)
@@ -2252,16 +2692,15 @@ const metadata = {
       }
     }
 
-    function closeOfferModal() {
-      var m = document.querySelector('[data-offer-modal]')
-      if (m) m.remove()
+    function closeOfferModal(immediate) {
+      closeMarketModal('[data-offer-modal]', null, immediate)
     }
 
     function openOfferModal(listingId) {
       if (!mkp.me) return
       var listing = (mkp.listings || []).find(function (entry) { return entry.listingId === listingId })
       if (!listing) return
-      closeOfferModal()
+      closeOfferModal(true)
 
       var modal = document.createElement('div')
       modal.className = 'mkt-modal'
@@ -2273,7 +2712,7 @@ const metadata = {
           '<label class="mkt-flabel" for="mktOfferPrice">السعر المقترح</label>' +
           '<input class="mkt-input" id="mktOfferPrice" data-offer-price type="number" min="1" step="1" inputmode="numeric" value="' + Math.max(1, Math.floor(Number(listing.price || 1))) + '">' +
           '<div class="mkt-sell-state" data-offer-state></div>' +
-          '<button class="mkt-btn mkt-btn-buy" type="button" data-offer-submit>إرسال العرض</button>' +
+          '<button class="mkt-btn mkt-btn-buy mkt-ripple" type="button" data-offer-submit>إرسال العرض</button>' +
         '</div>'
       document.body.appendChild(modal)
 
@@ -2334,7 +2773,7 @@ const metadata = {
     function openCounterModal(offerId) {
       var offer = ((mkp.offers.incoming || []).concat(mkp.offers.outgoing || [])).find(function (entry) { return entry.offerId === offerId })
       if (!offer) return
-      closeOfferModal()
+      closeOfferModal(true)
 
       var modal = document.createElement('div')
       modal.className = 'mkt-modal'
@@ -2346,7 +2785,7 @@ const metadata = {
           '<label class="mkt-flabel" for="mktCounterPrice">السعر الجديد</label>' +
           '<input class="mkt-input" id="mktCounterPrice" data-offer-price type="number" min="1" step="1" inputmode="numeric" value="' + Math.max(1, Math.floor(Number(offer.listingPrice || offer.offerPrice || 1))) + '">' +
           '<div class="mkt-sell-state" data-offer-state></div>' +
-          '<button class="mkt-btn mkt-btn-buy" type="button" data-offer-submit>إرسال العرض المضاد</button>' +
+          '<button class="mkt-btn mkt-btn-buy mkt-ripple" type="button" data-offer-submit>إرسال العرض المضاد</button>' +
         '</div>'
       document.body.appendChild(modal)
 
@@ -2442,6 +2881,9 @@ const metadata = {
           if (button) { button.disabled = false; button.textContent = '×' }
           return
         }
+
+        var card = button && button.closest ? button.closest('.offer-card') : null
+        await waitForCardExit(card)
 
         ;['incoming', 'outgoing', 'offers'].forEach(function (key) {
           mkp.offers[key] = (mkp.offers[key] || []).filter(function (offer) { return offer.offerId !== offerId })
@@ -2569,15 +3011,15 @@ const metadata = {
       } catch { return [] }
     }
 
-    function closeSellModal() {
-      var m = document.querySelector('[data-sell-modal]')
-      if (m) m.remove()
-      document.body.style.overflow = ''
+    function closeSellModal(immediate) {
+      closeMarketModal('[data-sell-modal]', function () {
+        document.body.style.overflow = ''
+      }, immediate)
     }
 
     function openSellModal() {
       if (!mkp.me) return
-      closeSellModal()
+      closeSellModal(true)
 
       var modal = document.createElement('div')
       modal.className = 'mkt-modal'
@@ -2637,7 +3079,7 @@ const metadata = {
           '<label class="mkt-flabel">مدة العرض</label>' +
           '<div class="mkt-durs">' + durs + '</div>' +
           '<div class="mkt-sell-state" data-state></div>' +
-          '<button class="mkt-btn mkt-btn-buy" type="button" data-submit>نشر العرض</button>'
+          '<button class="mkt-btn mkt-btn-buy mkt-ripple" type="button" data-submit>نشر العرض</button>'
       }
 
       function setSellState(kind, text) {
@@ -2768,6 +3210,7 @@ const metadata = {
     document.addEventListener('click', function (event) {
       var target = event.target
       if (!(target instanceof Element)) return
+      addMarketRipple(event)
 
       if (target.closest('#mktSellBtn')) {
         openSellModal()
@@ -2781,8 +3224,9 @@ const metadata = {
 
       var dismissBtn = target.closest('[data-mkp-dismiss]')
       if (dismissBtn) {
+        var dismissCard = dismissBtn.closest('.mkt-card')
         archiveListing(dismissBtn.getAttribute('data-mkp-dismiss') || '', dismissBtn).then(function (ok) {
-          if (ok) loadAll()
+          if (ok) waitForCardExit(dismissCard).then(function () { loadAll() })
         })
         return
       }
