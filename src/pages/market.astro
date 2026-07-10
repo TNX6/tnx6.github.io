@@ -1999,6 +1999,15 @@ const metadata = {
       }
     }
 
+    function initialMarketTabFromUrl() {
+      try {
+        var tab = String(new URLSearchParams(window.location.search || '').get('tab') || '').trim().toLowerCase()
+        return tab === 'offers' ? 'offers' : 'market'
+      } catch {
+        return 'market'
+      }
+    }
+
     var DURATIONS = [
       { s: 21600, label: '6 ساعات', fee: 0 },
       { s: 43200, label: '12 ساعة', fee: 2500 },
@@ -2010,7 +2019,7 @@ const metadata = {
       listings: [],
       mine: [],
       offers: { incoming: [], outgoing: [], offers: [] },
-      tab: 'market',
+      tab: initialMarketTabFromUrl(),
       busy: false,
       linkedListingId: directListingIdFromUrl(),
       linkedListingFocused: false,

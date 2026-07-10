@@ -151,6 +151,7 @@ const nav = [
   }
 
   .tnx-user-button {
+    position: relative;
     width: 46px;
     height: 46px;
     padding: 3px;
@@ -175,6 +176,44 @@ const nav = [
     display: block;
     border-radius: 999px;
     object-fit: cover;
+  }
+
+  .user-market-notification-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 2px solid #0a0a0c;
+    background: #ef4444;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 950;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    box-shadow: 0 0 14px rgba(239, 68, 68, .42);
+    pointer-events: none;
+  }
+
+  .user-market-notification-badge.is-visible {
+    display: inline-flex;
+    animation: userMarketBadgePulse 1.9s ease-in-out infinite;
+  }
+
+  @keyframes userMarketBadgePulse {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 0 14px rgba(239, 68, 68, .42);
+    }
+    50% {
+      transform: scale(1.06);
+      box-shadow: 0 0 20px rgba(239, 68, 68, .58);
+    }
   }
 
   .tnx-user-menu {
@@ -248,6 +287,31 @@ const nav = [
     background: rgba(255,255,255,.07);
   }
 
+  .tnx-user-menu-item-notice {
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .tnx-user-menu-notice-badge {
+    min-width: 22px;
+    height: 20px;
+    padding: 0 7px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 950;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tnx-user-menu-notice-badge.is-visible {
+    display: inline-flex;
+  }
+
   .tnx-user-menu-item.danger {
     color: #ffb4b4;
   }
@@ -265,6 +329,12 @@ const nav = [
     .tnx-user-menu {
       left: -10px;
       width: min(88vw, 250px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .user-market-notification-badge.is-visible {
+      animation: none !important;
     }
   }
 
@@ -355,6 +425,7 @@ const nav = [
           aria-expanded="false"
         >
           <img id="tnx-user-avatar" class="tnx-user-avatar" src="" alt="صورة الحساب" />
+          <span id="tnx-market-alert-badge" class="user-market-notification-badge" aria-hidden="true"></span>
         </button>
 
         <div id="tnx-user-menu" class="tnx-user-menu hidden">
@@ -368,6 +439,11 @@ const nav = [
 
           <a id="tnx-profile-link" class="tnx-user-menu-item" href="/profile">
             الصفحة الرئيسية
+          </a>
+
+          <a id="tnx-market-alert-link" class="tnx-user-menu-item tnx-user-menu-item-notice" href="/market?tab=offers">
+            <span>تنبيهات</span>
+            <span id="tnx-market-alert-menu-badge" class="tnx-user-menu-notice-badge" aria-hidden="true"></span>
           </a>
 
           <button id="tnx-logout-btn" class="tnx-user-menu-item danger" type="button">
@@ -436,6 +512,83 @@ const nav = [
     const menuHandle = $('tnx-menu-handle')
     const profileLink = $('tnx-profile-link')
     const logoutBtn = $('tnx-logout-btn')
+    const marketAlertBadge = $('tnx-market-alert-badge')
+    const marketAlertMenuBadge = $('tnx-market-alert-menu-badge')
+    let marketAlertTimer = 0
+    let marketAlertLoading = false
+
+    function marketAlertLabel(count) {
+      return count > 9 ? '9+' : String(Math.max(0, count))
+    }
+
+    function setMarketAlertCount(count) {
+      const value = Math.max(0, Math.floor(Number(count || 0)))
+      const label = marketAlertLabel(value)
+      const visible = value > 0
+
+      if (marketAlertBadge) {
+        marketAlertBadge.textContent = visible ? label : ''
+        marketAlertBadge.classList.toggle('is-visible', visible)
+        marketAlertBadge.setAttribute('aria-hidden', visible ? 'false' : 'true')
+      }
+
+      if (marketAlertMenuBadge) {
+        marketAlertMenuBadge.textContent = visible ? label : ''
+        marketAlertMenuBadge.classList.toggle('is-visible', visible)
+        marketAlertMenuBadge.setAttribute('aria-hidden', visible ? 'false' : 'true')
+      }
+    }
+
+    function stopMarketAlerts() {
+      if (marketAlertTimer) {
+        window.clearInterval(marketAlertTimer)
+        marketAlertTimer = 0
+      }
+      marketAlertLoading = false
+      setMarketAlertCount(0)
+    }
+
+    async function refreshMarketAlerts() {
+      if (marketAlertLoading || document.hidden) return
+      marketAlertLoading = true
+
+      try {
+        const res = await fetch(API_BASE + '/api/me/market/offers/status?v=' + Date.now(), {
+          method: 'GET',
+          credentials: 'include',
+          cache: 'no-store',
+        })
+
+        if (res.status === 401) {
+          setMarketAlertCount(0)
+          return
+        }
+
+        if (!res.ok) return
+
+        const data = await res.json().catch(() => null)
+        const count = Number(
+          data?.pendingIncomingOffers ??
+          data?.pendingIncoming ??
+          data?.incomingPendingOffers ??
+          data?.count ??
+          0
+        )
+        setMarketAlertCount(count)
+      } catch {
+        // Keep the header quiet if the count endpoint is temporarily unavailable.
+      } finally {
+        marketAlertLoading = false
+      }
+    }
+
+    function startMarketAlerts() {
+      refreshMarketAlerts()
+      if (marketAlertTimer) window.clearInterval(marketAlertTimer)
+      marketAlertTimer = window.setInterval(() => {
+        if (!document.hidden) refreshMarketAlerts()
+      }, 60000)
+    }
 
     function closeMainMenu() {
       if (!menu || !menuBtn || menu.classList.contains('hidden')) return
@@ -513,6 +666,7 @@ const nav = [
       }
 
       closeUserMenu()
+      stopMarketAlerts()
     }
 
     function setLoggedIn(user) {
@@ -539,6 +693,7 @@ const nav = [
       if (menuName) menuName.textContent = name
       if (menuHandle) menuHandle.textContent = login ? '@' + login : '@---'
       if (profileLink) profileLink.href = '/profile'
+      startMarketAlerts()
     }
 
     async function initAuth() {
@@ -571,6 +726,10 @@ const nav = [
 
     on(logoutBtn, 'click', logout)
 
+    on(document, 'visibilitychange', () => {
+      if (!document.hidden && marketAlertTimer) refreshMarketAlerts()
+    })
+
     on(document, 'click', (event) => {
       if (!event.target.closest?.('#tnx-auth-area')) closeUserMenu()
       if (!event.target.closest?.('#tnx-menu-btn') && !event.target.closest?.('#dropdownMenu')) closeMainMenu()
@@ -585,6 +744,8 @@ const nav = [
     window[cleanupKey] = () => {
       cleanups.forEach((fn) => fn())
       cleanups.length = 0
+      if (marketAlertTimer) window.clearInterval(marketAlertTimer)
+      marketAlertTimer = 0
     }
   })()
 </script>
