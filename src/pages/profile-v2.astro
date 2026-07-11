@@ -7258,6 +7258,210 @@ const metadata = {
     line-height: 1.7;
   }
 
+  .item-detail-v3-box.is-use-processing,
+  .item-detail-v3-box.is-use-result,
+  .item-detail-v3-box.is-use-failed,
+  .use-result-box {
+    width: min(430px, calc(100vw - 30px));
+    max-height: min(680px, calc(100vh - 34px));
+  }
+
+  .item-detail-v3-box.is-use-processing .item-detail-v3-head,
+  .item-detail-v3-box.is-use-result .item-detail-v3-head,
+  .item-detail-v3-box.is-use-failed .item-detail-v3-head {
+    padding: 12px 14px;
+  }
+
+  .item-detail-v3-box.is-use-processing .item-detail-v3-close,
+  .item-detail-v3-box.is-use-result .item-detail-v3-close,
+  .item-detail-v3-box.is-use-failed .item-detail-v3-close,
+  .use-result-close {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    font-size: 20px;
+  }
+
+  .item-detail-v3-box.is-use-processing .item-detail-v3-close {
+    opacity: .32;
+    cursor: wait;
+    pointer-events: none;
+  }
+
+  .use-flow {
+    display: grid;
+    gap: 12px;
+    padding: 18px;
+    text-align: center;
+    animation: useFlowSwap .18s ease both;
+  }
+
+  .use-flow-icon {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 20px;
+    border: 1px solid rgba(255,223,138,.16);
+    background: rgba(255,223,138,.075);
+    font-size: 30px;
+    box-shadow: inset 0 0 24px rgba(255,223,138,.06);
+  }
+
+  .use-flow-title {
+    margin: 0;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 1000;
+    line-height: 1.35;
+  }
+
+  .use-flow-subtitle {
+    margin: -4px 0 0;
+    color: rgba(255,255,255,.62);
+    font-size: 13px;
+    font-weight: 760;
+    line-height: 1.8;
+  }
+
+  .use-flow-primary {
+    display: grid;
+    gap: 5px;
+    place-items: center;
+    min-height: 94px;
+    padding: 14px;
+    border-radius: 22px;
+    border: 1px solid rgba(255,223,138,.18);
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255,223,138,.12), transparent 58%),
+      rgba(0,0,0,.22);
+  }
+
+  .use-flow-primary-value {
+    color: #ffe08a;
+    font-size: clamp(34px, 9vw, 52px);
+    font-weight: 1000;
+    line-height: 1;
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .use-flow-primary-label {
+    color: rgba(255,255,255,.58);
+    font-size: 12px;
+    font-weight: 900;
+  }
+
+  .use-flow-message {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.045);
+    color: rgba(255,255,255,.78);
+    font-size: 14px;
+    font-weight: 750;
+    line-height: 1.9;
+    text-align: start;
+    white-space: pre-line;
+  }
+
+  .use-flow-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .use-flow-detail-card {
+    min-width: 0;
+    padding: 11px 12px;
+    border-radius: 17px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.045);
+    text-align: start;
+  }
+
+  .use-flow-detail-card.is-wide {
+    grid-column: 1 / -1;
+  }
+
+  .use-flow-detail-card.is-good {
+    border-color: rgba(74,222,128,.18);
+    background: rgba(74,222,128,.07);
+  }
+
+  .use-flow-detail-card.is-warn,
+  .item-detail-v3-box.is-use-failed .use-flow-detail-card {
+    border-color: rgba(255,109,109,.22);
+    background: rgba(255,109,109,.08);
+  }
+
+  .use-flow-detail-label {
+    display: block;
+    margin-bottom: 5px;
+    color: rgba(255,255,255,.48);
+    font-size: 11px;
+    font-weight: 850;
+  }
+
+  .use-flow-detail-value {
+    display: block;
+    color: rgba(255,255,255,.88);
+    font-size: 14px;
+    font-weight: 950;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+
+  .use-flow-detail-card.is-good .use-flow-detail-value {
+    color: #8ff0ad;
+  }
+
+  .use-flow-detail-card.is-warn .use-flow-detail-value,
+  .item-detail-v3-box.is-use-failed .use-flow-detail-value {
+    color: #ff9b9b;
+  }
+
+  .use-flow-spinner {
+    width: 42px;
+    height: 42px;
+    margin: 2px auto;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,.10);
+    border-top-color: #ffe08a;
+    animation: useFlowSpin .85s linear infinite;
+  }
+
+  .use-flow-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  .use-flow-action {
+    min-height: 42px;
+    min-width: 116px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 15px;
+    background: linear-gradient(180deg,#ffe08a,#d8aa45);
+    color: #1a1304;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 1000;
+    cursor: pointer;
+  }
+
+  @keyframes useFlowSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes useFlowSwap {
+    from { opacity: .55; transform: translateY(6px) scale(.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
   .use-result-modal {
     position: fixed;
     inset: 0;
@@ -7274,8 +7478,7 @@ const metadata = {
   }
 
   .use-result-box {
-    width: min(520px, calc(100vw - 30px));
-    border-radius: 28px;
+    border-radius: 26px;
     border: 1px solid rgba(255, 223, 138, .20);
     background:
       radial-gradient(circle at 82% 0%, rgba(255, 218, 106, .12), transparent 34%),
@@ -7293,7 +7496,7 @@ const metadata = {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 18px 20px;
+    padding: 12px 14px;
     border-bottom: 1px solid rgba(255,255,255,.08);
     background: rgba(14,14,18,.94);
   }
@@ -7301,27 +7504,27 @@ const metadata = {
   .use-result-head h3 {
     margin: 0;
     color: #fff;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 1000;
   }
 
   .use-result-close {
-    width: 42px;
-    height: 42px;
+    width: 34px;
+    height: 34px;
     border: 1px solid rgba(255,255,255,.10);
-    border-radius: 14px;
+    border-radius: 12px;
     background: rgba(255,255,255,.06);
     color: #fff;
     font: inherit;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 900;
     cursor: pointer;
   }
 
   .use-result-body {
-    padding: 20px;
+    padding: 18px;
     display: grid;
-    gap: 14px;
+    gap: 12px;
   }
 
   .use-result-item {
@@ -7353,11 +7556,11 @@ const metadata = {
     place-items: center;
     min-height: 72px;
     padding: 12px 16px;
-    border-radius: 22px;
+    border-radius: 20px;
     border: 1px solid rgba(255,223,138,.18);
     background: rgba(0,0,0,.22);
     color: #ffe08a;
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 1000;
     text-align: center;
   }
@@ -7365,12 +7568,12 @@ const metadata = {
   .use-result-actions {
     display: flex;
     justify-content: flex-end;
-    padding: 0 20px 20px;
+    padding: 0 18px 18px;
   }
 
   .use-result-action {
-    min-height: 46px;
-    min-width: 120px;
+    min-height: 42px;
+    min-width: 116px;
     border: 0;
     border-radius: 16px;
     background: linear-gradient(180deg,#ffe08a,#d8aa45);
@@ -7411,6 +7614,14 @@ const metadata = {
 
     .use-result-action {
       width: 100%;
+    }
+
+    .use-flow {
+      padding: 16px;
+    }
+
+    .use-flow-details {
+      grid-template-columns: 1fr;
     }
 
     .item-detail-v3-icon {
@@ -11967,8 +12178,13 @@ const metadata = {
         return 'rarity-common';
       }
 
-      function closeItemDetailModalV3() {
-        document.querySelectorAll('.item-detail-v3').forEach((modal) => modal.remove());
+      function closeItemDetailModalV3(options = {}) {
+        const force = Boolean(options?.force);
+
+        document.querySelectorAll('.item-detail-v3').forEach((modal) => {
+          if (!force && modal?.dataset?.useProcessing === 'true') return;
+          modal.remove();
+        });
       }
 
 
@@ -12178,21 +12394,364 @@ const metadata = {
         return Boolean(message && result && message.includes(result));
       }
 
-      function openProfileUseResultModalV1(requestData) {
+      function normalizeUseResultDigitsV2(value) {
+        const arabic = '٠١٢٣٤٥٦٧٨٩';
+        const persian = '۰۱۲۳۴۵۶۷۸۹';
+
+        return String(value ?? '')
+          .replace(/[٠-٩]/g, (digit) => String(arabic.indexOf(digit)))
+          .replace(/[۰-۹]/g, (digit) => String(persian.indexOf(digit)));
+      }
+
+      function parseUseResultNumberV2(value) {
+        const cleaned = normalizeUseResultDigitsV2(value)
+          .replace(/[,\u066C]/g, '')
+          .replace(/\s+/g, '')
+          .match(/-?\d+(?:\.\d+)?/);
+
+        if (!cleaned) return null;
+
+        const number = Number(cleaned[0]);
+        return Number.isFinite(number) ? number : null;
+      }
+
+      function formatUseResultNumberV2(value) {
+        const number = typeof value === 'number' ? value : parseUseResultNumberV2(value);
+
+        if (number === null) {
+          return String(value ?? '').trim();
+        }
+
+        return new Intl.NumberFormat('en-US').format(number);
+      }
+
+      function findUseResultNumberAfterV2(text, labels) {
+        const normalized = normalizeUseResultDigitsV2(text);
+        const numberChunk = '([0-9][0-9,\\s]*)';
+
+        for (const label of labels) {
+          const pattern = new RegExp(label + '[^0-9]{0,34}' + numberChunk, 'i');
+          const match = normalized.match(pattern);
+
+          if (match) return parseUseResultNumberV2(match[1]);
+        }
+
+        return null;
+      }
+
+      function useResultCompactTextV2(value) {
+        return String(value ?? '').replace(/\s+/g, ' ').trim();
+      }
+
+      function isDiceUseResultV2(itemName) {
+        const key = normalize(String(itemName || ''));
+        return key.includes('رمي النرد') || key.includes('النرد');
+      }
+
+      function useResultKindV2(requestData, itemName) {
+        const explicit = String(requestData?.resultKind ?? requestData?.result_kind ?? '').toLowerCase().trim();
+        const itemKey = normalize(itemName);
+
+        if (isDiceUseResultV2(itemName)) return 'dice';
+        if (explicit.includes('point')) return 'points';
+        if (explicit.includes('reputation')) return 'reputation';
+        if (explicit.includes('timeout')) return 'timeout';
+        if (explicit.includes('rare_item')) return 'rare_item';
+        if (explicit.includes('item')) return 'item';
+        if (explicit) return explicit;
+        if (itemKey.includes('سمعه')) return 'reputation';
+        if (itemKey.includes('نقطه') || itemKey.includes('نقاط')) return 'points';
+
+        return 'generic';
+      }
+
+      function useResultIconV2(kind, item, itemName) {
+        if (kind === 'dice') return '🎲';
+        if (kind === 'points') return '💰';
+        if (kind === 'reputation') return '⭐';
+        if (kind === 'item' || kind === 'rare_item') return '🎁';
+        if (kind === 'timeout') return '⏱️';
+
+        return String(item?.icon || itemMetaForDetail(itemName)?.icon || '✨').trim() || '✨';
+      }
+
+      function useResultDetailV2(label, value, tone = '', wide = false) {
+        return {
+          label: String(label || '').trim(),
+          value: String(value || '').trim(),
+          tone,
+          wide,
+        };
+      }
+
+      function parseDiceUseResultV2(itemName, resultText, resultValue) {
+        const text = useResultCompactTextV2([resultText, resultValue].filter(Boolean).join(' '));
+        const rollNumber = findUseResultNumberAfterV2(text, [
+          'طلع\\s+لك\\s+الرقم',
+          'ظهر\\s+لك\\s+الرقم',
+          'رقم\\s+الرمية',
+          'الرقم',
+        ]);
+        const rewardPoints = findUseResultNumberAfterV2(text, [
+          'ربحت',
+          'حصلت\\s+على',
+          'كسبت',
+          'اضيف\\s+لك',
+          'أضيف\\s+لك',
+        ]);
+        const currentBalance = findUseResultNumberAfterV2(text, [
+          'الرصيد\\s+الحالي',
+          'رصيدك\\s+الآن',
+          'رصيدك\\s+الان',
+          'رصيدك',
+        ]);
+        const timeoutSeconds = /تايم|timeout|توقيف|مهلة/i.test(text)
+          ? findUseResultNumberAfterV2(text, ['لمدة', 'تايم\\s*اوت\\s*لمدة', 'تايم\\s*أوت\\s*لمدة'])
+          : null;
+        const details = [];
+
+        if (rollNumber === 20) {
+          details.push(useResultDetailV2('الحالة', 'رمية مثالية', 'good'));
+        }
+
+        if (rewardPoints !== null && rewardPoints > 0) {
+          details.push(useResultDetailV2('المكافأة', 'ربحت ' + formatUseResultNumberV2(rewardPoints) + ' نقطة', 'good'));
+        }
+
+        if (timeoutSeconds !== null && timeoutSeconds > 0) {
+          details.push(useResultDetailV2('العقوبة', 'تايم أوت لمدة ' + formatUseResultNumberV2(timeoutSeconds) + ' ثانية', 'warn', true));
+        }
+
+        if (currentBalance !== null) {
+          details.push(useResultDetailV2('الرصيد الحالي', formatUseResultNumberV2(currentBalance) + ' نقطة', '', true));
+        }
+
+        if (!details.length && rollNumber !== null) {
+          details.push(useResultDetailV2('النتيجة', rollNumber >= 2 && rollNumber <= 10 ? 'لم يحدث شيء' : 'تم تنفيذ الرمية', '', true));
+        }
+
+        return {
+          title: 'نتيجة رمي النرد',
+          primaryValue: rollNumber !== null ? formatUseResultNumberV2(rollNumber) : (resultValue ? formatUseResultNumberV2(resultValue) : ''),
+          primaryLabel: 'نتيجة الرمية',
+          details,
+          message: rollNumber === null ? resultText : '',
+        };
+      }
+
+      function buildUseResultViewModelV2(requestData, item) {
+        const itemName = String(requestData?.itemName ?? requestData?.item_name ?? item?.name ?? 'الغرض').trim() || 'الغرض';
+        const resultTitle = String(requestData?.resultTitle ?? requestData?.result_title ?? '').trim();
+        const resultText = String(requestData?.resultText ?? requestData?.result_text ?? '').trim();
+        const resultValue = String(requestData?.resultValue ?? requestData?.result_value ?? '').trim();
+        const kind = useResultKindV2(requestData, itemName);
+        const missingDetails = !resultText && !resultValue;
+        const details = [];
+        let title = resultTitle || ('نتيجة استخدام ' + itemName);
+        let primaryValue = '';
+        let primaryLabel = 'النتيجة';
+        let message = '';
+
+        if (missingDetails) {
+          message = 'تم استخدام الغرض، لكن لم تصل تفاصيل النتيجة من Streamer.bot.';
+        } else if (kind === 'dice') {
+          const dice = parseDiceUseResultV2(itemName, resultText, resultValue);
+          title = resultTitle || dice.title;
+          primaryValue = dice.primaryValue;
+          primaryLabel = dice.primaryLabel;
+          message = dice.message;
+          details.push(...dice.details);
+        } else if (kind === 'points') {
+          const points = parseUseResultNumberV2(resultValue) ?? findUseResultNumberAfterV2(resultText, ['ربحت', 'حصلت\\s+على', 'النقاط', 'نقاط']);
+          primaryValue = points !== null ? formatUseResultNumberV2(points) : (resultValue || '');
+          primaryLabel = 'نقطة';
+          if (resultText && !useResultValueIsRepeatedV1(resultText, primaryValue)) {
+            details.push(useResultDetailV2('التفاصيل', resultText, 'good', true));
+          }
+        } else if (kind === 'reputation') {
+          const reputation = parseUseResultNumberV2(resultValue) ?? findUseResultNumberAfterV2(resultText, ['سمعة', 'السمعة', 'حصلت\\s+على']);
+          primaryValue = reputation !== null ? formatUseResultNumberV2(reputation) : (resultValue || '');
+          primaryLabel = 'سمعة';
+          if (resultText && !useResultValueIsRepeatedV1(resultText, primaryValue)) {
+            details.push(useResultDetailV2('التفاصيل', resultText, 'good', true));
+          }
+        } else if (kind === 'item' || kind === 'rare_item') {
+          primaryValue = resultValue || resultText || itemName;
+          primaryLabel = 'الغرض المكتسب';
+          if (resultText && resultText !== primaryValue) {
+            details.push(useResultDetailV2('التفاصيل', resultText, 'good', true));
+          }
+        } else if (kind === 'timeout') {
+          const seconds = parseUseResultNumberV2(resultValue) ?? findUseResultNumberAfterV2(resultText, ['لمدة', 'تايم\\s*اوت', 'تايم\\s*أوت']);
+          primaryValue = seconds !== null ? formatUseResultNumberV2(seconds) : (resultValue || '');
+          primaryLabel = 'ثانية';
+          if (resultText) {
+            details.push(useResultDetailV2('التفاصيل', resultText, 'warn', true));
+          }
+        } else {
+          primaryValue = resultValue ? formatUseResultNumberV2(resultValue) : '';
+          primaryLabel = resultValue ? 'القيمة' : '';
+          message = resultText;
+        }
+
+        return {
+          itemName,
+          icon: useResultIconV2(kind, item, itemName),
+          title,
+          primaryValue,
+          primaryLabel,
+          message,
+          details,
+          missingDetails,
+          kind,
+        };
+      }
+
+      function renderUseFlowDetailsHtmlV2(details) {
+        const valid = Array.isArray(details) ? details.filter((detail) => detail?.label && detail?.value) : [];
+
+        if (!valid.length) return '';
+
+        return '<div class="use-flow-details">' + valid.map((detail) => {
+          const classes = [
+            'use-flow-detail-card',
+            detail.wide ? 'is-wide' : '',
+            detail.tone === 'good' ? 'is-good' : '',
+            detail.tone === 'warn' ? 'is-warn' : '',
+          ].filter(Boolean).join(' ');
+
+          return (
+            '<div class="' + classes + '">' +
+              '<span class="use-flow-detail-label">' + esc(detail.label) + '</span>' +
+              '<span class="use-flow-detail-value">' + esc(detail.value) + '</span>' +
+            '</div>'
+          );
+        }).join('') + '</div>';
+      }
+
+      function renderUseFlowHtmlV2(view, actionLabel = 'تم') {
+        const primaryHtml = view.primaryValue
+          ? '<div class="use-flow-primary"><div class="use-flow-primary-value">' + esc(view.primaryValue) + '</div>' +
+            (view.primaryLabel ? '<div class="use-flow-primary-label">' + esc(view.primaryLabel) + '</div>' : '') +
+            '</div>'
+          : '';
+        const messageHtml = view.message
+          ? '<p class="use-flow-message">' + esc(view.message) + '</p>'
+          : '';
+
+        return (
+          '<div class="use-flow">' +
+            '<div class="use-flow-icon">' + esc(view.icon) + '</div>' +
+            '<h3 class="use-flow-title">' + esc(view.title) + '</h3>' +
+            primaryHtml +
+            messageHtml +
+            renderUseFlowDetailsHtmlV2(view.details) +
+            '<div class="use-flow-actions"><button class="use-flow-action" type="button" data-use-flow-close>' + esc(actionLabel) + '</button></div>' +
+          '</div>'
+        );
+      }
+
+      function renderProfileUseProcessingInItemModalV2(modal, item) {
+        const box = modal?.querySelector('.item-detail-v3-box');
+        const itemNameValue = String(item?.name || 'الغرض').trim() || 'الغرض';
+        const icon = String(item?.icon || itemMetaForDetail(itemNameValue)?.icon || '✨').trim() || '✨';
+
+        if (!modal || !box) return false;
+
+        modal.dataset.useProcessing = 'true';
+        box.className = 'item-detail-v3-box is-use-processing';
+        box.innerHTML = `
+          <div class="item-detail-v3-head">
+            <h3>جاري التنفيذ</h3>
+            <button class="item-detail-v3-close" type="button" disabled aria-disabled="true">×</button>
+          </div>
+          <div class="use-flow">
+            <div class="use-flow-icon">${esc(icon)}</div>
+            <h3 class="use-flow-title">جاري استخدام ${esc(itemNameValue)}</h3>
+            <p class="use-flow-subtitle">يتم تنفيذ الغرض الآن عبر Streamer.bot<br>انتظر لحظات...</p>
+            <div class="use-flow-spinner" aria-hidden="true"></div>
+          </div>
+        `;
+
+        return true;
+      }
+
+      function renderProfileUseResultInItemModalV2(modal, requestData, item) {
+        const requestId = String(requestData?.id || requestData?.requestId || '').trim();
+
+        if (profileUseResultWasShownV1(requestId)) return true;
+
+        if (!modal || !document.body.contains(modal)) {
+          openProfileUseResultModalV1(requestData, item);
+          return false;
+        }
+
+        const box = modal.querySelector('.item-detail-v3-box');
+
+        if (!box) {
+          openProfileUseResultModalV1(requestData, item);
+          return false;
+        }
+
+        const view = buildUseResultViewModelV2(requestData, item);
+
+        if (view.missingDetails) {
+          console.warn('[Inventory Use Result] missing details requestId=' + requestId);
+        }
+
+        markProfileUseResultShownV1(requestId);
+        delete modal.dataset.useProcessing;
+        box.className = 'item-detail-v3-box is-use-result';
+        box.innerHTML = `
+          <div class="item-detail-v3-head">
+            <h3>${esc(view.itemName)}</h3>
+            <button class="item-detail-v3-close" type="button" data-item-detail-close aria-label="إغلاق">×</button>
+          </div>
+          ${renderUseFlowHtmlV2(view, 'تم')}
+        `;
+
+        return true;
+      }
+
+      function renderProfileUseFailureInItemModalV2(modal, error, item) {
+        const box = modal?.querySelector('.item-detail-v3-box');
+        const itemNameValue = String(item?.name || 'الغرض').trim() || 'الغرض';
+        const message = String(error?.message || error || 'فشل استخدام الغرض.').trim();
+        const icon = String(item?.icon || itemMetaForDetail(itemNameValue)?.icon || '⚠️').trim() || '⚠️';
+
+        if (!modal || !box) return false;
+
+        delete modal.dataset.useProcessing;
+        box.className = 'item-detail-v3-box is-use-failed';
+        box.innerHTML = `
+          <div class="item-detail-v3-head">
+            <h3>${esc(itemNameValue)}</h3>
+            <button class="item-detail-v3-close" type="button" data-item-detail-close aria-label="إغلاق">×</button>
+          </div>
+          <div class="use-flow">
+            <div class="use-flow-icon">${esc(icon)}</div>
+            <h3 class="use-flow-title">تعذر استخدام الغرض</h3>
+            <div class="use-flow-details">
+              <div class="use-flow-detail-card is-wide is-warn">
+                <span class="use-flow-detail-label">سبب الخطأ</span>
+                <span class="use-flow-detail-value">${esc(message)}</span>
+              </div>
+            </div>
+            <div class="use-flow-actions"><button class="use-flow-action" type="button" data-use-flow-close>إغلاق</button></div>
+          </div>
+        `;
+
+        return true;
+      }
+
+      function openProfileUseResultModalV1(requestData, item) {
         const requestId = String(requestData?.id || requestData?.requestId || '').trim();
 
         if (profileUseResultWasShownV1(requestId)) return;
 
-        const item = String(requestData?.itemName ?? requestData?.item_name ?? 'الغرض').trim() || 'الغرض';
-        const resultTitle = String(requestData?.resultTitle ?? requestData?.result_title ?? '').trim();
-        const resultText = String(requestData?.resultText ?? requestData?.result_text ?? '').trim();
-        const resultValue = String(requestData?.resultValue ?? requestData?.result_value ?? '').trim();
-        const title = resultTitle || ('نتيجة استخدام ' + item);
-        const missingDetails = !resultText && !resultValue;
-        const message = resultText || 'تم استخدام الغرض، لكن لم تصل تفاصيل النتيجة من Streamer.bot.';
-        const shouldShowValue = Boolean(resultValue && !useResultValueIsRepeatedV1(message, resultValue));
+        const view = buildUseResultViewModelV2(requestData, item);
 
-        if (missingDetails) {
+        if (view.missingDetails) {
           console.warn('[Inventory Use Result] missing details requestId=' + requestId);
         }
 
@@ -12205,17 +12764,10 @@ const metadata = {
         modal.innerHTML = `
           <div class="use-result-box" role="dialog" aria-modal="true" aria-labelledby="useResultTitle">
             <div class="use-result-head">
-              <h3 id="useResultTitle">${esc(title)}</h3>
+              <h3 id="useResultTitle">${esc(view.itemName)}</h3>
               <button class="use-result-close" type="button" data-use-result-close aria-label="إغلاق">×</button>
             </div>
-            <div class="use-result-body">
-              <div class="use-result-item">${esc(item)}</div>
-              <p class="use-result-text">${esc(message)}</p>
-              ${shouldShowValue ? `<div class="use-result-value">${esc(resultValue)}</div>` : ''}
-            </div>
-            <div class="use-result-actions">
-              <button class="use-result-action" type="button" data-use-result-close>إغلاق</button>
-            </div>
+            ${renderUseFlowHtmlV2(view, 'تم')}
           </div>
         `;
 
@@ -12228,11 +12780,21 @@ const metadata = {
           if (event.key === 'Escape') close();
         };
 
-        modal.querySelectorAll('[data-use-result-close]').forEach((button) => {
+        modal.querySelectorAll('[data-use-result-close], [data-use-flow-close]').forEach((button) => {
           addListener(button, 'click', close);
         });
 
         addListener(modal, 'click', (event) => {
+          const target = event.target;
+          const closeButton = target && typeof target.closest === 'function'
+            ? target.closest('[data-use-result-close], [data-use-flow-close]')
+            : null;
+
+          if (closeButton) {
+            close();
+            return;
+          }
+
           if (event.target === modal) close();
         });
 
@@ -12401,12 +12963,13 @@ const metadata = {
         }
       }
 
-      function trackProfileUseRequestAfterOptimisticV1(requestId, snapshot, lockKey) {
+      function trackProfileUseRequestAfterOptimisticV1(requestId, snapshot, lockKey, modal, item) {
         const release = () => {
           if (lockKey) inventoryUsePendingKeysV1.delete(lockKey);
         };
 
         if (!requestId) {
+          renderProfileUseFailureInItemModalV2(modal, 'تعذر متابعة طلب الاستخدام لأن رقم الطلب غير موجود.', item);
           setTimeout(() => {
             refreshActiveProfileFromD1();
             release();
@@ -12416,12 +12979,13 @@ const metadata = {
 
         waitForProfileUseRequestCompletion(requestId, null)
           .then((requestData) => {
-            openProfileUseResultModalV1(requestData);
+            renderProfileUseResultInItemModalV2(modal, requestData, item);
             return refreshActiveProfileFromD1();
           })
           .catch((error) => {
             console.warn('[Inventory Use] Request did not complete, restoring local inventory:', error);
             rollbackOptimisticInventoryUseV1(snapshot);
+            renderProfileUseFailureInItemModalV2(modal, error, item);
             if (typeof refreshActiveProfileFromD1 === 'function') {
               setTimeout(() => refreshActiveProfileFromD1(), 1200);
             }
@@ -12474,7 +13038,7 @@ const metadata = {
         throw new Error('تأخر تنفيذ استخدام الغرض. جرّب تحديث الصفحة.');
       }
 
-      async function useInventoryItemFromProfileV1(item, button, hint) {
+      async function useInventoryItemFromProfileV1(item, button, hint, modal) {
         const name = String(item?.name || '').trim();
         const qty = 1;
 
@@ -12578,12 +13142,20 @@ const metadata = {
             hint.textContent = 'تم إرسال طلب الاستخدام. ستظهر النتيجة هنا بعد التنفيذ.';
           }
           optimisticUseSnapshot = applyOptimisticInventoryUseV1(data?.itemName || tnxUseItemNameForApi);
+          renderProfileUseProcessingInItemModalV2(modal, {
+            ...item,
+            name: data?.itemName || tnxUseItemNameForApi,
+          });
           releaseUseLockInBackground = true;
-          trackProfileUseRequestAfterOptimisticV1(data?.requestId, optimisticUseSnapshot, useLockKey);
+          trackProfileUseRequestAfterOptimisticV1(data?.requestId, optimisticUseSnapshot, useLockKey, modal, {
+            ...item,
+            name: data?.itemName || tnxUseItemNameForApi,
+          });
           return true;
         } catch (error) {
           console.error('[Inventory Use] Failed:', error);
           rollbackOptimisticInventoryUseV1(optimisticUseSnapshot);
+          renderProfileUseFailureInItemModalV2(modal, error, item);
 
           if (button) {
             button.disabled = false;
@@ -12618,7 +13190,7 @@ const metadata = {
           }
         })();
 
-        closeItemDetailModalV3();
+        closeItemDetailModalV3({ force: true });
 
         const modal = document.createElement('div');
         modal.className = 'item-detail-v3';
@@ -12658,13 +13230,26 @@ const metadata = {
           </div>
         `;
 
-        const close = () => modal.remove();
+        const close = () => {
+          if (modal.dataset.useProcessing === 'true') return;
+          modal.remove();
+        };
 
         modal.querySelectorAll('[data-item-detail-close]').forEach((button) => {
           addListener(button, 'click', close);
         });
 
         addListener(modal, 'click', (event) => {
+          const target = event.target;
+          const closeButton = target && typeof target.closest === 'function'
+            ? target.closest('[data-use-flow-close], [data-item-detail-close]')
+            : null;
+
+          if (closeButton) {
+            close();
+            return;
+          }
+
           if (event.target === modal) close();
         });
 
@@ -12679,11 +13264,7 @@ const metadata = {
                 return;
               }
 
-              const used = await useInventoryItemFromProfileV1(item, button, hint);
-
-              if (used) {
-                close();
-              }
+              await useInventoryItemFromProfileV1(item, button, hint, modal);
               return;
             }
 
@@ -12816,7 +13397,10 @@ const metadata = {
 
       /* Remove item detail after sell modal closes */
       function removeItemDetailModalsAfterSell() {
-        document.querySelectorAll('.item-detail-v3').forEach((node) => node.remove());
+        document.querySelectorAll('.item-detail-v3').forEach((node) => {
+          if (node?.dataset?.useProcessing === 'true') return;
+          node.remove();
+        });
 
         const nodes = Array.from(document.body.querySelectorAll('div,[role="dialog"]'));
 
