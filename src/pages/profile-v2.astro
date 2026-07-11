@@ -6144,26 +6144,31 @@ const metadata = {
     }
 
     .profile-banner-modal {
-      width: min(560px, 100%);
-      max-height: min(86vh, 760px);
-      overflow: auto;
-      border-radius: 26px;
+      width: min(620px, 100%);
+      max-height: min(90vh, 780px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border-radius: 24px;
       border: 1px solid rgba(255,223,138,.18);
       background:
+        radial-gradient(circle at 82% 0%, rgba(212,175,55,.11), transparent 34%),
         linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025)),
         #0d0d10;
       color: #f7f1df;
       box-shadow: 0 26px 80px rgba(0,0,0,.55);
       direction: rtl;
+      animation: profileBannerModalIn .18s ease-out;
     }
 
     .profile-banner-modal-head {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 18px;
-      padding: 24px 24px 16px;
+      gap: 16px;
+      padding: 18px 20px 14px;
       border-bottom: 1px solid rgba(255,255,255,.07);
+      flex: 0 0 auto;
     }
 
     .profile-banner-modal-title {
@@ -6171,19 +6176,20 @@ const metadata = {
       font-size: 1.15rem;
       font-weight: 1000;
       color: #fff7dd;
+      letter-spacing: 0;
     }
 
     .profile-banner-modal-desc {
       margin: 0;
-      color: rgba(255,255,255,.62);
+      color: rgba(255,255,255,.64);
       font-size: .88rem;
       line-height: 1.8;
     }
 
     .profile-banner-modal-close {
       flex: 0 0 auto;
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,.09);
       background: rgba(255,255,255,.04);
@@ -6198,35 +6204,138 @@ const metadata = {
       color: #fff;
     }
 
+    .profile-banner-modal-close:focus-visible,
+    .profile-banner-action:focus-visible,
+    .profile-banner-file-pick:focus-visible,
+    .profile-banner-center-btn:focus-visible,
+    .profile-banner-upload-zone:focus-visible {
+      outline: 2px solid rgba(255,223,138,.55);
+      outline-offset: 3px;
+    }
+
     .profile-banner-modal-body {
-      padding: 20px 24px 24px;
+      padding: 16px 20px 18px;
       display: grid;
-      gap: 18px;
+      gap: 14px;
+      overflow-y: auto;
+      min-height: 0;
     }
 
     .profile-banner-file-label {
-      display: grid;
-      gap: 8px;
-      color: rgba(255,255,255,.76);
-      font-size: .9rem;
-      font-weight: 900;
+      position: relative;
+      display: block;
     }
 
     .profile-banner-file-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .profile-banner-upload-zone {
       width: 100%;
+      border: 1px dashed rgba(255,223,138,.24);
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(255,223,138,.055), rgba(255,255,255,.025)),
+        rgba(255,255,255,.035);
+      padding: 14px;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      cursor: pointer;
+      transition: border-color .18s ease, background .18s ease, transform .18s ease;
+    }
+
+    .profile-banner-upload-zone:hover,
+    .profile-banner-upload-zone.is-drag-over {
+      border-color: rgba(255,223,138,.48);
+      background:
+        linear-gradient(135deg, rgba(255,223,138,.095), rgba(255,255,255,.035)),
+        rgba(255,255,255,.045);
+    }
+
+    .profile-banner-upload-icon {
+      width: 44px;
+      height: 44px;
       border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.045);
-      color: rgba(255,255,255,.86);
-      padding: 12px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,223,138,.18);
+      background: rgba(212,175,55,.09);
+      color: #ffdf8a;
+      font-size: 20px;
+      font-weight: 1000;
+    }
+
+    .profile-banner-upload-copy {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+
+    .profile-banner-upload-title {
+      color: #fff6d8;
+      font-size: .94rem;
+      font-weight: 1000;
+    }
+
+    .profile-banner-upload-desc,
+    .profile-banner-file-meta {
+      color: rgba(255,255,255,.56);
+      font-size: .79rem;
+      line-height: 1.5;
+    }
+
+    .profile-banner-file-name {
+      color: rgba(255,255,255,.88);
+      font-size: .86rem;
+      font-weight: 900;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+
+    .profile-banner-file-pick {
+      min-height: 36px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,223,138,.26);
+      background: rgba(212,175,55,.12);
+      color: #ffe6a3;
       font: inherit;
+      font-size: .82rem;
+      font-weight: 1000;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    .profile-banner-preview-wrap {
+      display: grid;
+      gap: 8px;
+    }
+
+    .profile-banner-section-label {
+      color: rgba(255,255,255,.70);
+      font-size: .8rem;
+      font-weight: 1000;
     }
 
     .profile-banner-preview {
       position: relative;
-      min-height: 164px;
+      width: 100%;
+      aspect-ratio: 3.8 / 1;
+      min-height: 132px;
+      max-height: 190px;
       border-radius: 18px;
-      border: 1px solid rgba(255,223,138,.16);
+      border: 1px solid rgba(255,223,138,.20);
       overflow: hidden;
       background:
         linear-gradient(to top, rgba(6,6,8,.78), rgba(6,6,8,.16)),
@@ -6235,6 +6344,7 @@ const metadata = {
       background-position: var(--profile-banner-preview-position, 50% 50%);
       background-repeat: no-repeat;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+      transition: background-position .12s ease;
     }
 
     .profile-banner-preview::after {
@@ -6247,17 +6357,60 @@ const metadata = {
         radial-gradient(circle at 78% 55%, rgba(255,223,138,.12), transparent 34%);
     }
 
+    .profile-banner-preview-placeholder {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      color: rgba(255,255,255,.72);
+      font-size: .88rem;
+      font-weight: 900;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .profile-banner-preview[data-has-real-image="1"] .profile-banner-preview-placeholder {
+      display: none;
+    }
+
     .profile-banner-range-grid {
       display: grid;
-      gap: 14px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
     }
 
     .profile-banner-range-row {
       display: grid;
-      gap: 8px;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.035);
       color: rgba(255,255,255,.72);
       font-size: .86rem;
       font-weight: 900;
+    }
+
+    .profile-banner-range-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .profile-banner-range-value {
+      flex: 0 0 auto;
+      min-width: 46px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,223,138,.18);
+      background: rgba(212,175,55,.10);
+      color: #ffdf8a;
+      text-align: center;
+      font-size: .78rem;
+      font-weight: 1000;
+      padding: 4px 8px;
     }
 
     .profile-banner-range-row input[type="range"] {
@@ -6265,19 +6418,50 @@ const metadata = {
       accent-color: #d4af37;
     }
 
+    .profile-banner-center-btn {
+      grid-column: 1 / -1;
+      justify-self: start;
+      min-height: 34px;
+      width: fit-content;
+      border-radius: 999px;
+      border: 1px solid rgba(255,223,138,.22);
+      background: transparent;
+      color: #f4d56f;
+      font: inherit;
+      font-size: .78rem;
+      font-weight: 1000;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
     .profile-banner-status {
-      min-height: 22px;
-      color: rgba(255,255,255,.68);
+      min-height: 0;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      border-radius: 14px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.035);
+      color: rgba(255,255,255,.72);
       font-size: .86rem;
       line-height: 1.6;
     }
 
+    .profile-banner-status:not(:empty) {
+      display: flex;
+    }
+
     .profile-banner-status.is-error {
       color: #ff9b9b;
+      border-color: rgba(255,105,105,.20);
+      background: rgba(255,80,80,.08);
     }
 
     .profile-banner-status.is-success {
       color: #9ff0b7;
+      border-color: rgba(80,220,125,.18);
+      background: rgba(65,200,110,.08);
     }
 
     .profile-banner-actions {
@@ -6285,6 +6469,8 @@ const metadata = {
       flex-wrap: wrap;
       gap: 10px;
       justify-content: flex-start;
+      align-items: center;
+      padding-top: 2px;
     }
 
     .profile-banner-action {
@@ -6296,6 +6482,11 @@ const metadata = {
       font-size: .88rem;
       font-weight: 1000;
       cursor: pointer;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease, color .16s ease;
+    }
+
+    .profile-banner-action:hover {
+      transform: translateY(-1px);
     }
 
     .profile-banner-action.primary {
@@ -6335,6 +6526,56 @@ const metadata = {
 
     @keyframes profileBannerSpin {
       to { transform: rotate(360deg); }
+    }
+
+    @keyframes profileBannerModalIn {
+      from { opacity: 0; transform: translateY(8px) scale(.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (max-width: 640px) {
+      .profile-banner-modal {
+        width: min(100%, 520px);
+        max-height: 90vh;
+        border-radius: 20px;
+      }
+
+      .profile-banner-upload-zone {
+        grid-template-columns: auto minmax(0, 1fr);
+      }
+
+      .profile-banner-file-pick {
+        grid-column: 1 / -1;
+        width: 100%;
+      }
+
+      .profile-banner-range-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-banner-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .profile-banner-action.primary {
+        grid-column: 1 / -1;
+        width: 100%;
+      }
+
+      .profile-banner-action.danger {
+        margin-inline-start: 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .profile-banner-modal,
+      .profile-banner-upload-zone,
+      .profile-banner-action,
+      .profile-banner-preview {
+        animation: none !important;
+        transition: none !important;
+      }
     }
 
     .profile-v2-layout .v2-profile-head {
@@ -10243,6 +10484,36 @@ const metadata = {
         return String(data?.message || data?.errorMessage || data?.error || fallback || 'تعذر تنفيذ الطلب حاليًا.')
       }
 
+      function formatProfileBannerFileSize(bytes) {
+        const size = Math.max(0, Number(bytes || 0))
+        if (size >= 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(size >= 10 * 1024 * 1024 ? 0 : 1)} MB`
+        if (size >= 1024) return `${Math.round(size / 1024)} KB`
+        return `${Math.round(size)} B`
+      }
+
+      function shortenProfileBannerFileName(name) {
+        const clean = String(name || 'صورة البنر').replace(/[\\/:*?"<>|]/g, '').trim() || 'صورة البنر'
+        return clean.length > 48 ? `${clean.slice(0, 24)}…${clean.slice(-18)}` : clean
+      }
+
+      function updateProfileBannerFileUi(backdrop, file) {
+        const empty = backdrop.querySelector('[data-profile-banner-file-empty]')
+        const selected = backdrop.querySelector('[data-profile-banner-file-selected]')
+        const name = backdrop.querySelector('[data-profile-banner-file-name]')
+        const size = backdrop.querySelector('[data-profile-banner-file-size]')
+        const pick = backdrop.querySelector('[data-profile-banner-pick]')
+
+        if (empty) empty.hidden = Boolean(file)
+        if (selected) selected.hidden = !file
+        if (name) name.textContent = file ? shortenProfileBannerFileName(file.name) : ''
+        if (size) size.textContent = file ? formatProfileBannerFileSize(file.size) : ''
+        if (pick) pick.textContent = file ? 'تغيير الصورة' : 'اختيار صورة'
+      }
+
+      function updateProfileBannerRangeUi(input, badge) {
+        if (badge) badge.textContent = `${profileBannerPercent(input?.value, 50)}%`
+      }
+
       function setProfileBannerModalBusy(backdrop, busy, label = '') {
         state.profileBannerUploadBusy = busy
         backdrop.querySelectorAll('button, input').forEach((el) => {
@@ -10260,7 +10531,11 @@ const metadata = {
       function setProfileBannerStatus(backdrop, message, kind = '') {
         const status = backdrop.querySelector('[data-profile-banner-status]')
         if (!status) return
-        status.textContent = message || ''
+        const cleanMessage = String(message || '').trim()
+        status.innerHTML = cleanMessage
+          ? `<span aria-hidden="true">${kind === 'success' ? '✓' : kind === 'error' ? '!' : '•'}</span><span>${esc(cleanMessage)}</span>`
+          : ''
+        status.hidden = !cleanMessage
         status.classList.toggle('is-error', kind === 'error')
         status.classList.toggle('is-success', kind === 'success')
       }
@@ -10373,6 +10648,7 @@ const metadata = {
         let previewImageValue = currentBanner
           ? profileBannerCssUrl(currentBanner.url)
           : state.profileBannerDefaultCoverValue || fallbackCover()
+        let hasRealPreview = Boolean(currentBanner)
         const initialX = currentBanner?.positionX ?? 50
         const initialY = currentBanner?.positionY ?? 50
 
@@ -10386,27 +10662,50 @@ const metadata = {
             <div class="profile-banner-modal-head">
               <div>
                 <h2 class="profile-banner-modal-title" id="profileBannerModalTitle">تغيير بنر البروفايل</h2>
-                <p class="profile-banner-modal-desc">ارفع صورة بصيغة JPG أو PNG أو WebP أو GIF.</p>
+                <p class="profile-banner-modal-desc">اختر صورة واضبط الجزء الذي سيظهر في أعلى البروفايل.</p>
               </div>
               <button class="profile-banner-modal-close" type="button" data-profile-banner-cancel aria-label="إغلاق">×</button>
             </div>
             <div class="profile-banner-modal-body">
-              <label class="profile-banner-file-label">
-                اختيار الصورة
-                <input class="profile-banner-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-profile-banner-file />
-              </label>
-              <div class="profile-banner-preview" data-profile-banner-preview aria-label="معاينة البنر"></div>
-              <div class="profile-banner-range-grid">
-                <label class="profile-banner-range-row">
-                  الموضع الأفقي
-                  <input type="range" min="0" max="100" value="${esc(initialX)}" data-profile-banner-x />
-                </label>
-                <label class="profile-banner-range-row">
-                  الموضع العمودي
-                  <input type="range" min="0" max="100" value="${esc(initialY)}" data-profile-banner-y />
-                </label>
+              <div class="profile-banner-file-label">
+                <input class="profile-banner-file-input" id="profileBannerFileInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-profile-banner-file aria-label="اختيار صورة البنر" />
+                <div class="profile-banner-upload-zone" role="button" tabindex="0" data-profile-banner-dropzone aria-controls="profileBannerFileInput">
+                  <span class="profile-banner-upload-icon" aria-hidden="true">↑</span>
+                  <span class="profile-banner-upload-copy" data-profile-banner-file-empty>
+                    <span class="profile-banner-upload-title">اختر صورة البنر</span>
+                    <span class="profile-banner-upload-desc">JPG أو PNG أو WebP أو GIF — حتى 5MB</span>
+                  </span>
+                  <span class="profile-banner-upload-copy" data-profile-banner-file-selected hidden>
+                    <span class="profile-banner-file-name" data-profile-banner-file-name></span>
+                    <span class="profile-banner-file-meta" data-profile-banner-file-size></span>
+                  </span>
+                  <button class="profile-banner-file-pick" type="button" data-profile-banner-pick>اختيار صورة</button>
+                </div>
               </div>
-              <div class="profile-banner-status" data-profile-banner-status></div>
+              <div class="profile-banner-preview-wrap">
+                <span class="profile-banner-section-label">معاينة البنر</span>
+                <div class="profile-banner-preview" data-profile-banner-preview aria-label="معاينة البنر">
+                  <span class="profile-banner-preview-placeholder" data-profile-banner-placeholder>اختر صورة لمعاينتها هنا.</span>
+                </div>
+              </div>
+              <div class="profile-banner-range-grid">
+                <label class="profile-banner-range-row" for="profileBannerPositionX">
+                  <span class="profile-banner-range-head">
+                    <span>الموضع الأفقي</span>
+                    <span class="profile-banner-range-value" data-profile-banner-x-value>${esc(initialX)}%</span>
+                  </span>
+                  <input id="profileBannerPositionX" type="range" min="0" max="100" value="${esc(initialX)}" data-profile-banner-x />
+                </label>
+                <label class="profile-banner-range-row" for="profileBannerPositionY">
+                  <span class="profile-banner-range-head">
+                    <span>الموضع العمودي</span>
+                    <span class="profile-banner-range-value" data-profile-banner-y-value>${esc(initialY)}%</span>
+                  </span>
+                  <input id="profileBannerPositionY" type="range" min="0" max="100" value="${esc(initialY)}" data-profile-banner-y />
+                </label>
+                <button class="profile-banner-center-btn" type="button" data-profile-banner-center>توسيط</button>
+              </div>
+              <div class="profile-banner-status" data-profile-banner-status aria-live="polite" hidden></div>
               <div class="profile-banner-actions">
                 <button class="profile-banner-action primary" type="button" data-profile-banner-save>حفظ البنر</button>
                 <button class="profile-banner-action secondary" type="button" data-profile-banner-cancel>إلغاء</button>
@@ -10418,34 +10717,43 @@ const metadata = {
 
         const preview = backdrop.querySelector('[data-profile-banner-preview]')
         const fileInput = backdrop.querySelector('[data-profile-banner-file]')
+        const uploadZone = backdrop.querySelector('[data-profile-banner-dropzone]')
         const xInput = backdrop.querySelector('[data-profile-banner-x]')
         const yInput = backdrop.querySelector('[data-profile-banner-y]')
+        const xValue = backdrop.querySelector('[data-profile-banner-x-value]')
+        const yValue = backdrop.querySelector('[data-profile-banner-y-value]')
 
         const updatePreview = () => {
           setProfileBannerPreviewImage(preview, previewImageValue, xInput?.value, yInput?.value)
+          if (preview) preview.dataset.hasRealImage = hasRealPreview ? '1' : '0'
+          updateProfileBannerRangeUi(xInput, xValue)
+          updateProfileBannerRangeUi(yInput, yValue)
         }
 
-        fileInput?.addEventListener('change', () => {
-          const file = fileInput.files?.[0] || null
+        const handleProfileBannerPickedFile = (file) => {
 
           if (!file) {
             selectedFile = null
             revokeProfileBannerPreviewUrl()
             previewImageValue = currentBanner ? profileBannerCssUrl(currentBanner.url) : state.profileBannerDefaultCoverValue || fallbackCover()
+            hasRealPreview = Boolean(currentBanner)
+            updateProfileBannerFileUi(backdrop, null)
             updatePreview()
             return
           }
 
           if (!PROFILE_BANNER_TYPES.has(String(file.type || '').toLowerCase())) {
-            fileInput.value = ''
+            if (fileInput) fileInput.value = ''
             selectedFile = null
+            updateProfileBannerFileUi(backdrop, null)
             setProfileBannerStatus(backdrop, 'الصيغة غير مدعومة. استخدم JPG أو PNG أو WebP أو GIF.', 'error')
             return
           }
 
           if (file.size > PROFILE_BANNER_MAX_BYTES) {
-            fileInput.value = ''
+            if (fileInput) fileInput.value = ''
             selectedFile = null
+            updateProfileBannerFileUi(backdrop, null)
             setProfileBannerStatus(backdrop, 'حجم الملف يجب ألا يتجاوز 5MB.', 'error')
             return
           }
@@ -10454,30 +10762,72 @@ const metadata = {
           selectedFile = file
           state.profileBannerPreviewUrl = URL.createObjectURL(file)
           previewImageValue = profileBannerCssUrl(state.profileBannerPreviewUrl)
+          hasRealPreview = true
+          updateProfileBannerFileUi(backdrop, file)
           setProfileBannerStatus(backdrop, '')
           updatePreview()
+        }
+
+        fileInput?.addEventListener('change', () => {
+          handleProfileBannerPickedFile(fileInput.files?.[0] || null)
         })
 
         xInput?.addEventListener('input', updatePreview)
         yInput?.addEventListener('input', updatePreview)
 
+        uploadZone?.addEventListener('click', () => {
+          if (!state.profileBannerUploadBusy) fileInput?.click?.()
+        })
+
+        uploadZone?.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            if (!state.profileBannerUploadBusy) fileInput?.click?.()
+          }
+        })
+
+        ;['dragenter', 'dragover'].forEach((type) => {
+          uploadZone?.addEventListener(type, (event) => {
+            event.preventDefault()
+            if (!state.profileBannerUploadBusy) uploadZone.classList.add('is-drag-over')
+          })
+        })
+
+        ;['dragleave', 'dragend'].forEach((type) => {
+          uploadZone?.addEventListener(type, () => uploadZone.classList.remove('is-drag-over'))
+        })
+
+        uploadZone?.addEventListener('drop', (event) => {
+          event.preventDefault()
+          uploadZone.classList.remove('is-drag-over')
+          if (state.profileBannerUploadBusy) return
+          handleProfileBannerPickedFile(event.dataTransfer?.files?.[0] || null)
+        })
+
         backdrop.addEventListener('click', (event) => {
           if (event.target === backdrop) {
-            closeProfileBannerModal()
+            if (!state.profileBannerUploadBusy) closeProfileBannerModal()
             return
           }
 
           const save = event.target?.closest?.('[data-profile-banner-save]')
           const cancel = event.target?.closest?.('[data-profile-banner-cancel]')
           const remove = event.target?.closest?.('[data-profile-banner-remove]')
+          const center = event.target?.closest?.('[data-profile-banner-center]')
 
           if (save) saveProfileBannerFromModal(backdrop, selectedFile, xInput, yInput)
-          else if (cancel) closeProfileBannerModal()
+          else if (cancel && !state.profileBannerUploadBusy) closeProfileBannerModal()
           else if (remove) deleteProfileBannerFromModal(backdrop)
+          else if (center && !state.profileBannerUploadBusy) {
+            if (xInput) xInput.value = '50'
+            if (yInput) yInput.value = '50'
+            updatePreview()
+          }
         })
 
         const onKeyDown = (event) => {
           if (event.key === 'Escape') {
+            if (state.profileBannerUploadBusy) return
             document.removeEventListener('keydown', onKeyDown)
             closeProfileBannerModal()
           }
@@ -10486,8 +10836,9 @@ const metadata = {
         backdrop.__profileBannerKeydown = onKeyDown
         document.addEventListener('keydown', onKeyDown)
         document.body.appendChild(backdrop)
+        updateProfileBannerFileUi(backdrop, null)
         updatePreview()
-        requestAnimationFrame(() => fileInput?.focus?.())
+        requestAnimationFrame(() => uploadZone?.focus?.())
       }
 
       // XP sources: watchtime + daily login + currently owned badges.
