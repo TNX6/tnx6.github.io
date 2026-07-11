@@ -7272,6 +7272,10 @@ const metadata = {
     padding: 12px 14px;
   }
 
+  .item-detail-v3-box.is-use-processing .item-detail-v3-head {
+    justify-content: flex-start;
+  }
+
   .item-detail-v3-box.is-use-processing .item-detail-v3-close,
   .item-detail-v3-box.is-use-result .item-detail-v3-close,
   .item-detail-v3-box.is-use-failed .item-detail-v3-close,
@@ -7283,8 +7287,13 @@ const metadata = {
   }
 
   .item-detail-v3-box.is-use-processing .item-detail-v3-close {
-    opacity: .32;
-    cursor: wait;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    visibility: hidden;
     pointer-events: none;
   }
 
@@ -7294,6 +7303,11 @@ const metadata = {
     padding: 18px;
     text-align: center;
     animation: useFlowSwap .18s ease both;
+  }
+
+  .use-flow.is-processing {
+    gap: 12px;
+    padding: 22px 20px 24px;
   }
 
   .use-flow-icon {
@@ -7309,6 +7323,10 @@ const metadata = {
     box-shadow: inset 0 0 24px rgba(255,223,138,.06);
   }
 
+  .use-flow.is-processing .use-flow-icon {
+    margin-bottom: 2px;
+  }
+
   .use-flow-title {
     margin: 0;
     color: #fff;
@@ -7317,7 +7335,8 @@ const metadata = {
     line-height: 1.35;
   }
 
-  .use-flow-subtitle {
+  .use-flow-subtitle,
+  .use-flow-description {
     margin: -4px 0 0;
     color: rgba(255,255,255,.62);
     font-size: 13px;
@@ -7325,12 +7344,17 @@ const metadata = {
     line-height: 1.8;
   }
 
+  .use-flow.is-processing .use-flow-description {
+    margin: 0;
+    line-height: 1.7;
+  }
+
   .use-flow-primary {
     display: grid;
-    gap: 5px;
+    gap: 0;
     place-items: center;
-    min-height: 94px;
-    padding: 14px;
+    min-height: 118px;
+    padding: 18px;
     border-radius: 22px;
     border: 1px solid rgba(255,223,138,.18);
     background:
@@ -7344,13 +7368,20 @@ const metadata = {
     font-weight: 1000;
     line-height: 1;
     letter-spacing: 0;
+    margin-bottom: 8px;
     overflow-wrap: anywhere;
+  }
+
+  .use-flow-primary-value.is-number {
+    direction: ltr;
+    unicode-bidi: isolate;
   }
 
   .use-flow-primary-label {
     color: rgba(255,255,255,.58);
     font-size: 12px;
     font-weight: 900;
+    margin: 0;
   }
 
   .use-flow-message {
@@ -7370,12 +7401,19 @@ const metadata = {
   .use-flow-details {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 9px;
+    gap: 12px;
+    width: 100%;
   }
 
   .use-flow-detail-card {
+    width: 100%;
     min-width: 0;
-    padding: 11px 12px;
+    min-height: 84px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 12px 14px;
     border-radius: 17px;
     border: 1px solid rgba(255,255,255,.08);
     background: rgba(255,255,255,.045);
@@ -7383,6 +7421,10 @@ const metadata = {
   }
 
   .use-flow-detail-card.is-wide {
+    grid-column: 1 / -1;
+  }
+
+  .use-flow-detail-card.is-full-width {
     grid-column: 1 / -1;
   }
 
@@ -7399,19 +7441,31 @@ const metadata = {
 
   .use-flow-detail-label {
     display: block;
-    margin-bottom: 5px;
-    color: rgba(255,255,255,.48);
-    font-size: 11px;
-    font-weight: 850;
+    color: rgba(255,255,255,.55);
+    font-size: 12px;
+    font-weight: 700;
   }
 
   .use-flow-detail-value {
     display: block;
-    color: rgba(255,255,255,.88);
-    font-size: 14px;
-    font-weight: 950;
-    line-height: 1.6;
+    margin-top: 7px;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 850;
+    line-height: 1.5;
     overflow-wrap: anywhere;
+  }
+
+  .use-flow-detail-value.is-number {
+    direction: ltr;
+    unicode-bidi: isolate;
+    text-align: right;
+  }
+
+  .use-flow-number {
+    direction: ltr;
+    unicode-bidi: isolate;
+    display: inline-block;
   }
 
   .use-flow-detail-card.is-good .use-flow-detail-value {
@@ -7433,6 +7487,10 @@ const metadata = {
     animation: useFlowSpin .85s linear infinite;
   }
 
+  .use-flow.is-processing .use-flow-spinner {
+    margin-top: 4px;
+  }
+
   .use-flow-actions {
     display: flex;
     justify-content: center;
@@ -7441,7 +7499,9 @@ const metadata = {
 
   .use-flow-action {
     min-height: 42px;
-    min-width: 116px;
+    width: min(146px, 100%);
+    min-width: 130px;
+    margin-inline: auto;
     padding: 0 18px;
     border: 0;
     border-radius: 15px;
@@ -7622,6 +7682,11 @@ const metadata = {
 
     .use-flow-details {
       grid-template-columns: 1fr;
+    }
+
+    .use-flow-action {
+      width: 100%;
+      min-width: 0;
     }
 
     .item-detail-v3-icon {
@@ -12613,9 +12678,15 @@ const metadata = {
         if (!valid.length) return '';
 
         return '<div class="use-flow-details">' + valid.map((detail) => {
+          const fullWidth = valid.length === 1 || detail.fullWidth === true;
+          const valueText = String(detail.value || '').trim();
+          const valueClasses = [
+            'use-flow-detail-value',
+            /^[\s+\-0-9,]/.test(normalizeUseResultDigitsV2(valueText)) ? 'is-number' : '',
+          ].filter(Boolean).join(' ');
           const classes = [
             'use-flow-detail-card',
-            detail.wide ? 'is-wide' : '',
+            fullWidth ? 'is-full-width' : '',
             detail.tone === 'good' ? 'is-good' : '',
             detail.tone === 'warn' ? 'is-warn' : '',
           ].filter(Boolean).join(' ');
@@ -12623,15 +12694,20 @@ const metadata = {
           return (
             '<div class="' + classes + '">' +
               '<span class="use-flow-detail-label">' + esc(detail.label) + '</span>' +
-              '<span class="use-flow-detail-value">' + esc(detail.value) + '</span>' +
+              '<span class="' + valueClasses + '">' + esc(valueText).replace(/([0-9][0-9,]*)/g, '<bdi class="use-flow-number">$1</bdi>') + '</span>' +
             '</div>'
           );
         }).join('') + '</div>';
       }
 
       function renderUseFlowHtmlV2(view, actionLabel = 'تم') {
+        const primaryValueText = String(view.primaryValue || '').trim();
+        const primaryValueClasses = [
+          'use-flow-primary-value',
+          /^[\s+\-0-9,]/.test(normalizeUseResultDigitsV2(primaryValueText)) ? 'is-number' : '',
+        ].filter(Boolean).join(' ');
         const primaryHtml = view.primaryValue
-          ? '<div class="use-flow-primary"><div class="use-flow-primary-value">' + esc(view.primaryValue) + '</div>' +
+          ? '<div class="use-flow-primary"><div class="' + primaryValueClasses + '">' + esc(primaryValueText) + '</div>' +
             (view.primaryLabel ? '<div class="use-flow-primary-label">' + esc(view.primaryLabel) + '</div>' : '') +
             '</div>'
           : '';
@@ -12663,12 +12739,11 @@ const metadata = {
         box.innerHTML = `
           <div class="item-detail-v3-head">
             <h3>جاري التنفيذ</h3>
-            <button class="item-detail-v3-close" type="button" disabled aria-disabled="true">×</button>
           </div>
-          <div class="use-flow">
+          <div class="use-flow is-processing">
             <div class="use-flow-icon">${esc(icon)}</div>
             <h3 class="use-flow-title">جاري استخدام ${esc(itemNameValue)}</h3>
-            <p class="use-flow-subtitle">يتم تنفيذ الغرض الآن عبر Streamer.bot<br>انتظر لحظات...</p>
+            <p class="use-flow-description">يتم تنفيذ الغرض الآن عبر Streamer.bot<br>انتظر لحظات...</p>
             <div class="use-flow-spinner" aria-hidden="true"></div>
           </div>
         `;
@@ -12704,7 +12779,7 @@ const metadata = {
         box.className = 'item-detail-v3-box is-use-result';
         box.innerHTML = `
           <div class="item-detail-v3-head">
-            <h3>${esc(view.itemName)}</h3>
+            <h3>نتيجة الاستخدام</h3>
             <button class="item-detail-v3-close" type="button" data-item-detail-close aria-label="إغلاق">×</button>
           </div>
           ${renderUseFlowHtmlV2(view, 'تم')}
@@ -12725,7 +12800,7 @@ const metadata = {
         box.className = 'item-detail-v3-box is-use-failed';
         box.innerHTML = `
           <div class="item-detail-v3-head">
-            <h3>${esc(itemNameValue)}</h3>
+            <h3>تعذر الاستخدام</h3>
             <button class="item-detail-v3-close" type="button" data-item-detail-close aria-label="إغلاق">×</button>
           </div>
           <div class="use-flow">
@@ -12764,7 +12839,7 @@ const metadata = {
         modal.innerHTML = `
           <div class="use-result-box" role="dialog" aria-modal="true" aria-labelledby="useResultTitle">
             <div class="use-result-head">
-              <h3 id="useResultTitle">${esc(view.itemName)}</h3>
+              <h3 id="useResultTitle">نتيجة الاستخدام</h3>
               <button class="use-result-close" type="button" data-use-result-close aria-label="إغلاق">×</button>
             </div>
             ${renderUseFlowHtmlV2(view, 'تم')}
