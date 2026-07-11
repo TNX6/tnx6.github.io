@@ -7323,6 +7323,30 @@ const metadata = {
     box-shadow: inset 0 0 24px rgba(255,223,138,.06);
   }
 
+  .use-flow-success-badge {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    border: 1px solid rgba(74,222,128,.28);
+    background:
+      radial-gradient(circle at 50% 18%, rgba(255,255,255,.22), transparent 34%),
+      rgba(74,222,128,.13);
+    color: #8ff0ad;
+    box-shadow: 0 0 26px rgba(74,222,128,.16);
+    animation: useSuccessPop .36s cubic-bezier(.2,.9,.22,1.18) both;
+  }
+
+  .use-flow-success-check {
+    font-size: 31px;
+    font-weight: 1000;
+    line-height: 1;
+    transform-origin: center;
+    animation: useSuccessCheck .34s ease .16s both;
+  }
+
   .use-flow.is-processing .use-flow-icon {
     margin-bottom: 2px;
   }
@@ -7520,6 +7544,16 @@ const metadata = {
   @keyframes useFlowSwap {
     from { opacity: .55; transform: translateY(6px) scale(.985); }
     to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes useSuccessPop {
+    from { opacity: 0; transform: scale(.72); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes useSuccessCheck {
+    from { opacity: 0; transform: scale(.65) rotate(-10deg); }
+    to { opacity: 1; transform: scale(1) rotate(0); }
   }
 
   .use-result-modal {
@@ -12201,7 +12235,7 @@ const metadata = {
         const price = itemDetailSellPrice(meta);
 
         if (action === 'use') {
-          return 'استخدم هذا الغرض من خلال Streamer.bot حسب نظام الأغراض الحالي.';
+          return 'استخدم هذا الغرض حسب نظام الأغراض الحالي.';
         }
 
         if (action === 'gift') {
@@ -12616,9 +12650,12 @@ const metadata = {
         let primaryValue = '';
         let primaryLabel = 'النتيجة';
         let message = '';
+        let successFallback = false;
 
         if (missingDetails) {
-          message = 'تم استخدام الغرض، لكن لم تصل تفاصيل النتيجة من Streamer.bot.';
+          title = 'تم استخدام الغرض بنجاح';
+          message = 'تم تنفيذ الغرض بنجاح.';
+          successFallback = true;
         } else if (kind === 'dice') {
           const dice = parseDiceUseResultV2(itemName, resultText, resultValue);
           title = resultTitle || dice.title;
@@ -12668,6 +12705,7 @@ const metadata = {
           message,
           details,
           missingDetails,
+          successFallback,
           kind,
         };
       }
@@ -12714,10 +12752,13 @@ const metadata = {
         const messageHtml = view.message
           ? '<p class="use-flow-message">' + esc(view.message) + '</p>'
           : '';
+        const iconHtml = view.successFallback
+          ? '<div class="use-flow-success-badge" aria-hidden="true"><span class="use-flow-success-check">✓</span></div>'
+          : '<div class="use-flow-icon">' + esc(view.icon) + '</div>';
 
         return (
-          '<div class="use-flow">' +
-            '<div class="use-flow-icon">' + esc(view.icon) + '</div>' +
+          '<div class="use-flow' + (view.successFallback ? ' is-success' : '') + '">' +
+            iconHtml +
             '<h3 class="use-flow-title">' + esc(view.title) + '</h3>' +
             primaryHtml +
             messageHtml +
@@ -12742,8 +12783,8 @@ const metadata = {
           </div>
           <div class="use-flow is-processing">
             <div class="use-flow-icon">${esc(icon)}</div>
-            <h3 class="use-flow-title">جاري استخدام ${esc(itemNameValue)}</h3>
-            <p class="use-flow-description">يتم تنفيذ الغرض الآن عبر Streamer.bot<br>انتظر لحظات...</p>
+            <h3 class="use-flow-title">جاري استخدام الغرض</h3>
+            <p class="use-flow-description">انتظر قليلًا حتى يكتمل التنفيذ...</p>
             <div class="use-flow-spinner" aria-hidden="true"></div>
           </div>
         `;
@@ -13150,7 +13191,7 @@ const metadata = {
           }
 
           if (hint) {
-            hint.textContent = 'جاري إرسال طلب الاستخدام إلى Streamer.bot...';
+            hint.textContent = 'جاري إرسال طلب الاستخدام...';
           }
 
           const tnxUseItemNameForApi = String((typeof apiItemName !== 'undefined' ? apiItemName : name) || '').trim();
