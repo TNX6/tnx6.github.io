@@ -442,7 +442,7 @@ const nav = [
           </a>
 
           <a id="tnx-market-alert-link" class="tnx-user-menu-item tnx-user-menu-item-notice" href="/market?tab=offers">
-            <span>تنبيهات</span>
+            <span>العروض</span>
             <span id="tnx-market-alert-menu-badge" class="tnx-user-menu-notice-badge" aria-hidden="true"></span>
           </a>
 
@@ -511,6 +511,7 @@ const nav = [
     const menuName = $('tnx-menu-name')
     const menuHandle = $('tnx-menu-handle')
     const profileLink = $('tnx-profile-link')
+    const marketAlertLink = $('tnx-market-alert-link')
     const logoutBtn = $('tnx-logout-btn')
     const marketAlertBadge = $('tnx-market-alert-badge')
     const marketAlertMenuBadge = $('tnx-market-alert-menu-badge')
@@ -548,6 +549,19 @@ const nav = [
       setMarketAlertCount(0)
     }
 
+    function markMarketOffersSeen() {
+      setMarketAlertCount(0)
+
+      try {
+        fetch(API_BASE + '/api/me/market/offers/mark-seen', {
+          method: 'POST',
+          credentials: 'include',
+          cache: 'no-store',
+          keepalive: true,
+        }).catch(() => {})
+      } catch {}
+    }
+
     async function refreshMarketAlerts() {
       if (marketAlertLoading || document.hidden) return
       marketAlertLoading = true
@@ -568,10 +582,9 @@ const nav = [
 
         const data = await res.json().catch(() => null)
         const count = Number(
-          data?.pendingIncomingOffers ??
-          data?.pendingIncoming ??
-          data?.incomingPendingOffers ??
-          data?.count ??
+          data?.unreadIncomingOffers ??
+          data?.unreadIncoming ??
+          data?.incomingUnreadOffers ??
           0
         )
         setMarketAlertCount(count)
@@ -725,6 +738,7 @@ const nav = [
     })
 
     on(logoutBtn, 'click', logout)
+    on(marketAlertLink, 'click', markMarketOffersSeen)
 
     on(document, 'visibilitychange', () => {
       if (!document.hidden && marketAlertTimer) refreshMarketAlerts()

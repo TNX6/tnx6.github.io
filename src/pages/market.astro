@@ -2031,6 +2031,7 @@ const metadata = {
     var mktActiveCountValue = 0
     var mktActiveCountFrame = 0
     var mktNoticeTimer = 0
+    var marketOffersSeenMarked = false
 
     function el(id) { return document.getElementById(id) }
 
@@ -2370,6 +2371,35 @@ const metadata = {
     function setRefreshLoading(on) {
       var btn = el('mktRefresh')
       if (btn) btn.classList.toggle('is-loading', !!on)
+    }
+
+    function clearHeaderOfferBadges() {
+      ;['tnx-market-alert-badge', 'tnx-market-alert-menu-badge'].forEach(function (id) {
+        var badge = document.getElementById(id)
+        if (!badge) return
+        badge.textContent = ''
+        badge.classList.remove('is-visible')
+        badge.setAttribute('aria-hidden', 'true')
+      })
+    }
+
+    function markIncomingOffersSeenFromMarket() {
+      if (!mkp.me || marketOffersSeenMarked) return
+      marketOffersSeenMarked = true
+      clearHeaderOfferBadges()
+
+      try {
+        fetch(API + '/api/me/market/offers/mark-seen', {
+          method: 'POST',
+          credentials: 'include',
+          cache: 'no-store',
+          keepalive: true,
+        }).catch(function () {
+          marketOffersSeenMarked = false
+        })
+      } catch {
+        marketOffersSeenMarked = false
+      }
     }
 
     async function fetchMe() {
@@ -2764,6 +2794,7 @@ const metadata = {
 
       if (mkp.tab === 'offers') {
         grid.innerHTML = offersHtml()
+        markIncomingOffersSeenFromMarket()
         return
       }
 
