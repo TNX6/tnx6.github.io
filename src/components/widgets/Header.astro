@@ -582,6 +582,7 @@ const nav = [
 
         const data = await res.json().catch(() => null)
         const count = Number(
+          data?.unreadOfferNotifications ??
           data?.unreadIncomingOffers ??
           data?.unreadIncoming ??
           data?.incomingUnreadOffers ??

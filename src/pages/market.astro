@@ -581,6 +581,12 @@ const metadata = {
     box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.18), 0 0 28px rgba(201, 168, 76, 0.12);
   }
 
+  .mkt-offers-board .offer-card.is-linked-offer,
+  .mkt-offers-board .offer-card.is-unread-offer {
+    border-color: rgba(201, 168, 76, 0.5);
+    box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.12), 0 0 20px rgba(201, 168, 76, 0.08);
+  }
+
   .mkt-card:nth-child(1) { animation-delay: 0.02s; }
   .mkt-card:nth-child(2) { animation-delay: 0.06s; }
   .mkt-card:nth-child(3) { animation-delay: 0.1s; }
@@ -1107,6 +1113,29 @@ const metadata = {
     padding: 12px 14px;
   }
 
+  .offer-card-badges {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    flex-shrink: 0;
+  }
+
+  .offer-new-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 22px;
+    padding: 0 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(201, 168, 76, 0.24);
+    background: rgba(201, 168, 76, 0.1);
+    color: var(--offers-gold-light);
+    font-size: 11px;
+    font-weight: 900;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
   .offer-item-main {
     display: flex;
     align-items: center;
@@ -1166,6 +1195,17 @@ const metadata = {
     gap: 2px;
     min-width: 0;
     padding: 10px 14px;
+  }
+
+  .offer-unread-note {
+    margin: 0 14px 10px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(201, 168, 76, 0.18);
+    background: rgba(201, 168, 76, 0.07);
+    color: var(--offers-gold-light);
+    font-size: 12px;
+    font-weight: 800;
   }
 
   .detail-row {
@@ -1999,6 +2039,15 @@ const metadata = {
       }
     }
 
+    function directOfferIdFromUrl() {
+      try {
+        var params = new URLSearchParams(window.location.search || '')
+        return String(params.get('offerId') || params.get('offer') || '').trim()
+      } catch {
+        return ''
+      }
+    }
+
     function initialMarketTabFromUrl() {
       try {
         var tab = String(new URLSearchParams(window.location.search || '').get('tab') || '').trim().toLowerCase()
@@ -2023,6 +2072,9 @@ const metadata = {
       busy: false,
       linkedListingId: directListingIdFromUrl(),
       linkedListingFocused: false,
+      linkedOfferId: directOfferIdFromUrl(),
+      linkedOfferFocused: false,
+      unreadOfferSession: {},
       loadedOnce: false,
       marketSearchQuery: '',
       marketSortMode: 'newest',
@@ -2031,7 +2083,7 @@ const metadata = {
     var mktActiveCountValue = 0
     var mktActiveCountFrame = 0
     var mktNoticeTimer = 0
-    var marketOffersSeenMarked = false
+    var marketOffersSeenSignature = ''
 
     function el(id) { return document.getElementById(id) }
 
@@ -2383,10 +2435,28 @@ const metadata = {
       })
     }
 
+    function rememberUnreadOffers(offers) {
+      ;(offers || []).forEach(function (offer) {
+        if (!offer || !offer.offerId || !offer.isUnreadForCurrentUser) return
+        mkp.unreadOfferSession[offer.offerId] = offer.unreadEventType || 'offer_update'
+      })
+    }
+
+    function currentUnreadOfferSignature() {
+      var seen = {}
+      ;((mkp.offers && mkp.offers.offers) || []).forEach(function (offer) {
+        if (!offer || !offer.offerId || !offer.isUnreadForCurrentUser) return
+        seen[offer.offerId] = true
+      })
+      return Object.keys(seen).sort().join('|')
+    }
+
     function markIncomingOffersSeenFromMarket() {
-      if (!mkp.me || marketOffersSeenMarked) return
-      marketOffersSeenMarked = true
+      if (!mkp.me) return
+      var signature = currentUnreadOfferSignature()
       clearHeaderOfferBadges()
+      if (!signature || signature === marketOffersSeenSignature) return
+      marketOffersSeenSignature = signature
 
       try {
         fetch(API + '/api/me/market/offers/mark-seen', {
@@ -2395,10 +2465,10 @@ const metadata = {
           cache: 'no-store',
           keepalive: true,
         }).catch(function () {
-          marketOffersSeenMarked = false
+          marketOffersSeenSignature = ''
         })
       } catch {
-        marketOffersSeenMarked = false
+        marketOffersSeenSignature = ''
       }
     }
 
@@ -2453,6 +2523,7 @@ const metadata = {
         if (offersIndex >= 0 && responses[offersIndex]) {
           var offersData = await responses[offersIndex].json().catch(function () { return null })
           if (offersData && offersData.ok) {
+            rememberUnreadOffers(offersData.offers || [])
             mkp.offers = {
               incoming: offersData.incoming || [],
               outgoing: offersData.outgoing || [],
@@ -2504,6 +2575,37 @@ const metadata = {
           card.classList.remove('is-linked-listing')
         }, 4500)
       }, 80)
+    }
+
+    function findOfferCard(offerId) {
+      var cards = document.querySelectorAll('[data-offer-id]')
+      for (var i = 0; i < cards.length; i++) {
+        if (cards[i].getAttribute('data-offer-id') === offerId) return cards[i]
+      }
+      return null
+    }
+
+    function focusLinkedOffer() {
+      var offerId = String(mkp.linkedOfferId || '').trim()
+      if (!offerId || mkp.linkedOfferFocused || mkp.tab !== 'offers') return
+
+      window.setTimeout(function () {
+        var card = findOfferCard(offerId)
+        if (!card) return
+
+        mkp.linkedOfferFocused = true
+        card.classList.add('is-linked-offer')
+
+        try {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        } catch {
+          card.scrollIntoView()
+        }
+
+        window.setTimeout(function () {
+          card.classList.remove('is-linked-offer')
+        }, 4500)
+      }, 100)
     }
 
     function sellerAvatar(listing) {
@@ -2665,10 +2767,24 @@ const metadata = {
       return status === 'pending_seller' || status === 'pending_buyer' || status === 'processing'
     }
 
+    function offerUnreadText(offer) {
+      var eventType = mkp.unreadOfferSession[offer.offerId] || offer.unreadEventType || ''
+      if (eventType === 'new_offer') return 'عرض شراء جديد'
+      if (eventType === 'counter_offer') return 'وصلك سعر مضاد'
+      if (eventType === 'offer_rejected') return 'تم رفض عرضك'
+      if (eventType === 'counter_rejected') return 'رفض المشتري السعر المضاد'
+      if (eventType === 'offer_completed') {
+        return offer.viewerRole === 'seller' ? 'تم بيع الغرض' : 'اكتملت عملية الشراء'
+      }
+      if (eventType === 'offer_failed') return 'تعذرت العملية'
+      return 'تحديث جديد'
+    }
+
     function offerCard(offer, bucket) {
       var actionButtons = []
       var meta = getOfferStatusMeta(offer.status, offer.direction, offer.viewerRole)
       var liveBadge = isLiveOfferStatus(offer.status)
+      var isUnread = !!(offer.isUnreadForCurrentUser || mkp.unreadOfferSession[offer.offerId])
       var otherName = offer.viewerRole === 'seller'
         ? (offer.buyerName || offer.buyerLogin || '')
         : (offer.sellerName || offer.sellerLogin || '')
@@ -2689,9 +2805,11 @@ const metadata = {
       var actions = actionButtons.length
         ? '<div class="card-sep"></div><div class="offer-actions ' + (archiveOnly ? 'is-archive-only' : '') + '">' + actionButtons.join('') + '</div>'
         : ''
+      var unreadBadge = isUnread ? '<span class="offer-new-badge">جديد</span>' : ''
+      var unreadNote = isUnread ? '<div class="offer-unread-note">' + escText(offerUnreadText(offer)) + '</div>' : ''
 
       return (
-        '<article class="offer-card">' +
+        '<article class="offer-card' + (isUnread ? ' is-unread-offer' : '') + '" data-offer-id="' + escText(offer.offerId) + '" data-mkp-offer-id="' + escText(offer.offerId) + '">' +
           '<div class="offer-card-head">' +
             '<div class="offer-item-main">' +
               '<div class="item-icon">' + ICON_ITEM + '</div>' +
@@ -2700,7 +2818,10 @@ const metadata = {
                 '<div class="offer-item-qty">' + fmt(offer.quantity) + '×</div>' +
               '</div>' +
             '</div>' +
-            '<span class="status-badge ' + meta.className + (liveBadge ? ' is-processing' : '') + '">' + (liveBadge ? '<span class="dot"></span>' : '') + escText(meta.label) + '</span>' +
+            '<div class="offer-card-badges">' +
+              unreadBadge +
+              '<span class="status-badge ' + meta.className + (liveBadge ? ' is-processing' : '') + '">' + (liveBadge ? '<span class="dot"></span>' : '') + escText(meta.label) + '</span>' +
+            '</div>' +
           '</div>' +
           '<div class="card-sep"></div>' +
           '<div class="offer-card-body">' +
@@ -2708,6 +2829,7 @@ const metadata = {
             offerDetail('عرض الشراء', fmt(offer.offerPrice), 'is-offer') +
             offerDetail(partyLabel, otherName || 'غير معروف', 'is-party') +
           '</div>' +
+          unreadNote +
           actions +
         '</article>'
       )
@@ -2795,6 +2917,7 @@ const metadata = {
       if (mkp.tab === 'offers') {
         grid.innerHTML = offersHtml()
         markIncomingOffersSeenFromMarket()
+        focusLinkedOffer()
         return
       }
 
@@ -3527,6 +3650,7 @@ const metadata = {
       var tabButton = target.closest('[data-mkp-tab]')
       if (tabButton) {
         mkp.tab = tabButton.getAttribute('data-mkp-tab') || 'market'
+        if (mkp.tab !== 'offers') marketOffersSeenSignature = ''
         render()
         return
       }
