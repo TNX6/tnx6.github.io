@@ -112,6 +112,7 @@ const metadata = {
       box-sizing: border-box;
     }
 
+    .tnx-admin-activity .admin-auth-gate[hidden],
     .tnx-admin-activity #adminDashboard[hidden] {
       display: none !important;
     }
@@ -806,9 +807,14 @@ const metadata = {
 
       function showDashboard() {
         const root = document.querySelector('.tnx-admin-activity')
+        const gate = document.getElementById('adminAuthGate')
+        const dashboard = document.getElementById('adminDashboard')
+
         root?.setAttribute('data-auth-state', 'authorized')
-        $('adminAuthGate')?.setAttribute('hidden', '')
-        $('adminDashboard')?.removeAttribute('hidden')
+
+        if (gate) gate.hidden = true
+        if (dashboard) dashboard.hidden = false
+
         state.authorized = true
       }
 
