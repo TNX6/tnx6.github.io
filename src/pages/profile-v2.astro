@@ -10168,8 +10168,8 @@ const metadata = {
                 linear-gradient(135deg, #1a1208, #080808 58%, #1d160b)`
       }
 
-      const PROFILE_BANNER_MAX_BYTES = 1048576
-      const PROFILE_BANNER_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp'])
+      const PROFILE_BANNER_MAX_BYTES = 5242880
+      const PROFILE_BANNER_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
 
       function profileBannerPercent(value, fallback = 50) {
         const numValue = Math.round(Number(value))
@@ -10386,14 +10386,14 @@ const metadata = {
             <div class="profile-banner-modal-head">
               <div>
                 <h2 class="profile-banner-modal-title" id="profileBannerModalTitle">تغيير بنر البروفايل</h2>
-                <p class="profile-banner-modal-desc">ارفع صورة بصيغة JPG أو PNG أو WebP، وبحجم لا يتجاوز 1MB.</p>
+                <p class="profile-banner-modal-desc">ارفع صورة بصيغة JPG أو PNG أو WebP أو GIF.</p>
               </div>
               <button class="profile-banner-modal-close" type="button" data-profile-banner-cancel aria-label="إغلاق">×</button>
             </div>
             <div class="profile-banner-modal-body">
               <label class="profile-banner-file-label">
                 اختيار الصورة
-                <input class="profile-banner-file-input" type="file" accept="image/jpeg,image/png,image/webp" data-profile-banner-file />
+                <input class="profile-banner-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-profile-banner-file />
               </label>
               <div class="profile-banner-preview" data-profile-banner-preview aria-label="معاينة البنر"></div>
               <div class="profile-banner-range-grid">
@@ -10439,14 +10439,14 @@ const metadata = {
           if (!PROFILE_BANNER_TYPES.has(String(file.type || '').toLowerCase())) {
             fileInput.value = ''
             selectedFile = null
-            setProfileBannerStatus(backdrop, 'الصيغة غير مدعومة. استخدم JPG أو PNG أو WebP.', 'error')
+            setProfileBannerStatus(backdrop, 'الصيغة غير مدعومة. استخدم JPG أو PNG أو WebP أو GIF.', 'error')
             return
           }
 
           if (file.size > PROFILE_BANNER_MAX_BYTES) {
             fileInput.value = ''
             selectedFile = null
-            setProfileBannerStatus(backdrop, 'حجم الصورة يجب ألا يتجاوز 1MB.', 'error')
+            setProfileBannerStatus(backdrop, 'حجم الملف يجب ألا يتجاوز 5MB.', 'error')
             return
           }
 
