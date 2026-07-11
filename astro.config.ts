@@ -30,7 +30,15 @@ export default defineConfig({
     tailwind({
       applyBaseStyles: false,
     }),
-    sitemap(),
+    sitemap({
+      filter: (page) => {
+        try {
+          return !new URL(page).pathname.startsWith('/admin/')
+        } catch {
+          return !String(page || '').includes('/admin/')
+        }
+      },
+    }),
     mdx(),
     icon({
       include: {

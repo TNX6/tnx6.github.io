@@ -1,39 +1,73 @@
 ---
-import Layout from '~/layouts/PageLayout.astro'
+import Layout from '~/layouts/Layout.astro'
 
 const metadata = {
   title: 'مراقبة الموقع',
   ignoreTitleTemplate: true,
+  robots: {
+    index: false,
+    follow: false,
+  },
 }
 ---
 
 <Layout metadata={metadata}>
-  <main class="tnx-admin-activity" dir="rtl">
-    <section class="activity-shell">
-      <header class="activity-hero">
-        <span class="activity-kicker">TNX6 Admin</span>
-        <div>
+  <Fragment slot="head">
+    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet" />
+  </Fragment>
+
+  <main class="tnx-admin-activity" dir="rtl" data-auth-state="checking">
+    <div class="admin-auth-gate" id="adminAuthGate" role="status" aria-live="polite">
+      <span class="admin-auth-spinner" aria-hidden="true"></span>
+      <strong>جاري التحقق من صلاحية الدخول...</strong>
+    </div>
+
+    <section class="activity-shell" id="adminDashboard" hidden>
+      <header class="activity-header">
+        <div class="activity-title-block">
+          <div class="activity-badges">
+            <span class="activity-owner-badge">لوحة المالك</span>
+            <span class="activity-health"><i aria-hidden="true"></i>النظام يعمل</span>
+          </div>
           <h1>مراقبة الموقع</h1>
-          <p>المستخدمون المسجلون النشطون داخل الموقع.</p>
+          <p>متابعة المستخدمين المسجلين النشطين داخل TNX6.</p>
         </div>
+
+        <button class="activity-refresh activity-refresh-head" id="presenceHeaderRefresh" type="button">تحديث</button>
       </header>
 
       <section class="activity-stats" aria-label="إحصائيات الحضور">
         <article class="activity-stat">
-          <span>المتصلون الآن</span>
-          <strong id="presenceOnlineCount">0</strong>
+          <span class="activity-stat-icon" aria-hidden="true">●</span>
+          <div>
+            <span class="activity-stat-label">المتصلون الآن</span>
+            <strong id="presenceOnlineCount">...</strong>
+            <small>آخر نبضة خلال 90 ثانية</small>
+          </div>
         </article>
         <article class="activity-stat">
-          <span>آخر 15 دقيقة</span>
-          <strong id="presenceActiveCount">0</strong>
+          <span class="activity-stat-icon" aria-hidden="true">◷</span>
+          <div>
+            <span class="activity-stat-label">آخر 15 دقيقة</span>
+            <strong id="presenceActiveCount">...</strong>
+            <small>نشاط قريب داخل الموقع</small>
+          </div>
         </article>
         <article class="activity-stat">
-          <span>آخر 24 ساعة</span>
-          <strong id="presenceRecentCount">0</strong>
+          <span class="activity-stat-icon" aria-hidden="true">↺</span>
+          <div>
+            <span class="activity-stat-label">آخر 24 ساعة</span>
+            <strong id="presenceRecentCount">...</strong>
+            <small>آخر ظهور خلال اليوم</small>
+          </div>
         </article>
         <article class="activity-stat">
-          <span>آخر تحديث</span>
-          <strong id="presenceUpdatedAt">---</strong>
+          <span class="activity-stat-icon" aria-hidden="true">⌁</span>
+          <div>
+            <span class="activity-stat-label">آخر تحديث</span>
+            <strong id="presenceUpdatedAt">...</strong>
+            <small>تحديث تلقائي كل 10 ثوانٍ</small>
+          </div>
         </article>
       </section>
 
@@ -53,228 +87,367 @@ const metadata = {
             </select>
           </label>
 
-          <button class="activity-refresh" id="presenceRefresh" type="button">تحديث</button>
+          <div class="activity-result-count" id="presenceResultCount">...</div>
+          <button class="activity-refresh activity-refresh-toolbar" id="presenceRefresh" type="button">تحديث</button>
         </div>
 
-        <div class="activity-message" id="presenceMessage" role="status" aria-live="polite">جاري تحميل البيانات...</div>
-        <div class="activity-grid" id="presenceUsers"></div>
+        <div class="activity-message" id="presenceMessage" role="status" aria-live="polite"></div>
+        <div class="activity-list" id="presenceUsers"></div>
       </section>
     </section>
   </main>
 
-  <style>
+  <style is:global>
     .tnx-admin-activity {
       min-height: 100vh;
-      padding: 36px 18px 70px;
-      color: #f4efe2;
-      background:
-        radial-gradient(circle at 18% 0%, rgba(212, 175, 55, .13), transparent 32%),
-        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.34));
+      padding: 24px 0 68px;
+      color: #e9e3d5;
+      background: #07070a;
+      direction: rtl;
     }
 
-    .activity-shell {
-      width: min(1120px, 100%);
+    .tnx-admin-activity *,
+    .tnx-admin-activity *::before,
+    .tnx-admin-activity *::after {
+      box-sizing: border-box;
+    }
+
+    .tnx-admin-activity #adminDashboard[hidden] {
+      display: none !important;
+    }
+
+    .tnx-admin-activity .admin-auth-gate {
+      width: min(420px, calc(100% - 32px));
+      min-height: 190px;
+      margin: 14vh auto 0;
+      border: 1px solid rgba(212,175,55,.16);
+      border-radius: 22px;
+      background: rgba(12,12,16,.88);
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.34);
+      text-align: center;
+    }
+
+    .tnx-admin-activity .admin-auth-spinner {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 3px solid rgba(212,175,55,.18);
+      border-top-color: #d4af37;
+      animation: tnxAdminSpin .8s linear infinite;
+    }
+
+    .tnx-admin-activity .admin-auth-gate strong {
+      color: #fff1c4;
+      font-size: 15px;
+      font-weight: 1000;
+    }
+
+    .tnx-admin-activity .activity-shell {
+      width: min(1380px, calc(100% - 32px));
       margin: 0 auto;
       display: grid;
+      gap: 14px;
+    }
+
+    .tnx-admin-activity .activity-header,
+    .tnx-admin-activity .activity-stat,
+    .tnx-admin-activity .activity-panel,
+    .tnx-admin-activity .activity-user-row,
+    .tnx-admin-activity .activity-empty {
+      border: 1px solid rgba(255,255,255,.075);
+      background: rgba(13,13,18,.92);
+      box-shadow: 0 16px 46px rgba(0,0,0,.26);
+    }
+
+    .tnx-admin-activity .activity-header {
+      min-height: 116px;
+      border-radius: 22px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 18px;
     }
 
-    .activity-hero,
-    .activity-panel,
-    .activity-stat {
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(10,10,14,.78);
-      box-shadow: 0 18px 52px rgba(0,0,0,.34);
-      backdrop-filter: blur(18px);
-    }
-
-    .activity-hero {
-      border-radius: 24px;
-      padding: 24px;
+    .tnx-admin-activity .activity-title-block {
       display: grid;
-      gap: 12px;
+      gap: 8px;
+      min-width: 0;
     }
 
-    .activity-kicker {
-      width: fit-content;
+    .tnx-admin-activity .activity-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .tnx-admin-activity .activity-owner-badge,
+    .tnx-admin-activity .activity-health {
+      min-height: 28px;
       border-radius: 999px;
-      border: 1px solid rgba(212,175,55,.24);
-      background: rgba(212,175,55,.10);
-      color: #f0d060;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 10px;
       font-size: 12px;
       font-weight: 1000;
-      padding: 6px 10px;
     }
 
-    .activity-hero h1 {
+    .tnx-admin-activity .activity-owner-badge {
+      border: 1px solid rgba(212,175,55,.22);
+      background: rgba(212,175,55,.09);
+      color: #d4af37;
+    }
+
+    .tnx-admin-activity .activity-health {
+      border: 1px solid rgba(34,197,94,.18);
+      background: rgba(34,197,94,.07);
+      color: #86efac;
+    }
+
+    .tnx-admin-activity .activity-health i {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 16px rgba(34,197,94,.44);
+    }
+
+    .tnx-admin-activity .activity-header h1 {
       margin: 0;
-      color: #fff7dd;
-      font-size: clamp(28px, 4vw, 46px);
+      color: #fff5d4;
+      font-size: clamp(26px, 3.1vw, 40px);
       font-weight: 1000;
       letter-spacing: 0;
     }
 
-    .activity-hero p {
-      margin: 8px 0 0;
-      color: rgba(255,255,255,.66);
-      font-weight: 800;
+    .tnx-admin-activity .activity-header p {
+      margin: 0;
+      color: rgba(255,255,255,.60);
+      font-size: 14px;
+      font-weight: 850;
     }
 
-    .activity-stats {
+    .tnx-admin-activity .activity-stats {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
+      gap: 10px;
     }
 
-    .activity-stat {
+    .tnx-admin-activity .activity-stat {
+      min-height: 112px;
       border-radius: 18px;
-      padding: 16px;
-      display: grid;
-      gap: 8px;
-    }
-
-    .activity-stat span {
-      color: rgba(255,255,255,.56);
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    .activity-stat strong {
-      color: #f0d060;
-      font-size: 24px;
-      font-weight: 1000;
-      direction: ltr;
-      unicode-bidi: isolate;
-    }
-
-    .activity-panel {
-      border-radius: 24px;
-      padding: 18px;
-      display: grid;
-      gap: 16px;
-    }
-
-    .activity-toolbar {
-      display: grid;
-      grid-template-columns: minmax(220px, 1fr) minmax(180px, 240px) auto;
-      gap: 12px;
-      align-items: end;
-    }
-
-    .activity-search,
-    .activity-filter {
-      display: grid;
-      gap: 7px;
-      color: rgba(255,255,255,.62);
-      font-size: 12px;
-      font-weight: 1000;
-    }
-
-    .activity-search input,
-    .activity-filter select {
-      min-height: 46px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.045);
-      color: #fff7dd;
-      font: inherit;
-      font-size: 14px;
-      font-weight: 850;
-      padding: 0 13px;
-      outline: 0;
-    }
-
-    .activity-filter select option {
-      color: #111;
-    }
-
-    .activity-search input:focus,
-    .activity-filter select:focus,
-    .activity-refresh:focus-visible,
-    .activity-profile-link:focus-visible {
-      outline: 2px solid rgba(240,208,96,.56);
-      outline-offset: 3px;
-    }
-
-    .activity-refresh {
-      min-height: 46px;
-      border: 1px solid rgba(212,175,55,.28);
-      border-radius: 14px;
-      background: linear-gradient(135deg, #f0d060, #d4af37);
-      color: #090907;
-      font: inherit;
-      font-size: 14px;
-      font-weight: 1000;
-      padding: 0 18px;
-      cursor: pointer;
-    }
-
-    .activity-refresh:disabled {
-      opacity: .58;
-      cursor: wait;
-    }
-
-    .activity-message {
-      min-height: 42px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.035);
-      color: rgba(255,255,255,.68);
-      display: flex;
-      align-items: center;
-      padding: 10px 13px;
-      font-size: 13px;
-      font-weight: 850;
-    }
-
-    .activity-message:empty {
-      display: none;
-    }
-
-    .activity-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .activity-user-card {
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 18px;
-      background: rgba(255,255,255,.035);
-      padding: 14px;
-      display: grid;
-      gap: 13px;
-    }
-
-    .activity-user-main {
+      padding: 15px;
       display: grid;
       grid-template-columns: auto minmax(0, 1fr);
       gap: 12px;
       align-items: center;
     }
 
-    .activity-avatar {
+    .tnx-admin-activity .activity-stat-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(212,175,55,.18);
+      background: rgba(212,175,55,.08);
+      color: #d4af37;
+      font-size: 15px;
+      font-weight: 1000;
+    }
+
+    .tnx-admin-activity .activity-stat-label {
+      display: block;
+      color: rgba(255,255,255,.54);
+      font-size: 12px;
+      font-weight: 950;
+      margin-bottom: 3px;
+    }
+
+    .tnx-admin-activity .activity-stat strong {
+      display: block;
+      color: #f0d060;
+      font-size: 25px;
+      font-weight: 1000;
+      line-height: 1.15;
+      direction: ltr;
+      unicode-bidi: isolate;
+    }
+
+    .tnx-admin-activity .activity-stat small {
+      display: block;
+      margin-top: 5px;
+      color: rgba(255,255,255,.38);
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+
+    .tnx-admin-activity .activity-panel {
+      border-radius: 22px;
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .tnx-admin-activity .activity-toolbar {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) 220px auto auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .tnx-admin-activity .activity-search,
+    .tnx-admin-activity .activity-filter {
+      display: grid;
+      gap: 6px;
+      color: rgba(255,255,255,.54);
+      font-size: 12px;
+      font-weight: 1000;
+    }
+
+    .tnx-admin-activity .activity-search input,
+    .tnx-admin-activity .activity-filter select {
+      width: 100%;
+      min-height: 44px;
+      border-radius: 13px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.045);
+      color: #fff7dd;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 850;
+      padding: 0 12px;
+      outline: 0;
+    }
+
+    .tnx-admin-activity .activity-filter select option {
+      color: #111;
+    }
+
+    .tnx-admin-activity .activity-search input:focus,
+    .tnx-admin-activity .activity-filter select:focus,
+    .tnx-admin-activity .activity-refresh:focus-visible,
+    .tnx-admin-activity .activity-profile-link:focus-visible {
+      outline: 2px solid rgba(212,175,55,.52);
+      outline-offset: 3px;
+    }
+
+    .tnx-admin-activity .activity-result-count {
+      min-height: 44px;
+      border-radius: 13px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.035);
+      color: rgba(255,255,255,.66);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 13px;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .tnx-admin-activity .activity-refresh {
+      min-height: 44px;
+      border: 1px solid rgba(212,175,55,.28);
+      border-radius: 13px;
+      background: linear-gradient(135deg, #ead071, #c9a84c);
+      color: #090907;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 1000;
+      padding: 0 17px;
+      cursor: pointer;
+      box-shadow: 0 12px 30px rgba(212,175,55,.13);
+    }
+
+    .tnx-admin-activity .activity-refresh:disabled {
+      opacity: .58;
+      cursor: wait;
+      box-shadow: none;
+    }
+
+    .tnx-admin-activity .activity-message {
+      min-height: 0;
+      color: rgba(255,255,255,.60);
+      font-size: 13px;
+      font-weight: 850;
+      line-height: 1.7;
+    }
+
+    .tnx-admin-activity .activity-message:empty {
+      display: none;
+    }
+
+    .tnx-admin-activity .activity-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .tnx-admin-activity .activity-user-row {
+      min-height: 78px;
+      border-radius: 16px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: minmax(260px, 1.5fr) 140px minmax(130px, .8fr) minmax(120px, .8fr) minmax(112px, auto);
+      gap: 12px;
+      align-items: center;
+    }
+
+    .tnx-admin-activity .activity-user-main {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+    }
+
+    .tnx-admin-activity .activity-avatar {
       position: relative;
       width: 52px;
       height: 52px;
+      max-width: 52px;
+      max-height: 52px;
       border-radius: 16px;
-      border: 1px solid rgba(212,175,55,.18);
+      border: 1px solid rgba(212,175,55,.20);
       background: rgba(212,175,55,.10);
       overflow: hidden;
       display: grid;
       place-items: center;
       color: #f0d060;
+      font-size: 18px;
       font-weight: 1000;
     }
 
-    .activity-avatar img {
+    .tnx-admin-activity .activity-avatar img {
       width: 100%;
       height: 100%;
+      max-width: 100%;
+      display: block;
       object-fit: cover;
+      position: relative;
+      z-index: 2;
     }
 
-    .activity-dot {
+    .tnx-admin-activity .activity-avatar-fallback {
       position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      background: rgba(212,175,55,.10);
+    }
+
+    .tnx-admin-activity .activity-dot {
+      position: absolute;
+      z-index: 3;
       width: 12px;
       height: 12px;
       border-radius: 50%;
@@ -284,27 +457,27 @@ const metadata = {
       background: #6b7280;
     }
 
-    .activity-dot.online {
+    .tnx-admin-activity .activity-dot.online {
       background: #22c55e;
-      box-shadow: 0 0 16px rgba(34,197,94,.38);
+      box-shadow: 0 0 16px rgba(34,197,94,.40);
     }
 
-    .activity-user-name {
+    .tnx-admin-activity .activity-user-name {
       min-width: 0;
       display: grid;
       gap: 3px;
     }
 
-    .activity-user-name strong {
+    .tnx-admin-activity .activity-user-name strong {
       overflow: hidden;
       color: #fff7dd;
       text-overflow: ellipsis;
       white-space: nowrap;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 1000;
     }
 
-    .activity-user-name span {
+    .tnx-admin-activity .activity-user-name span {
       overflow: hidden;
       color: rgba(255,255,255,.48);
       text-overflow: ellipsis;
@@ -316,38 +489,38 @@ const metadata = {
       font-weight: 850;
     }
 
-    .activity-meta {
+    .tnx-admin-activity .activity-status,
+    .tnx-admin-activity .activity-page,
+    .tnx-admin-activity .activity-time {
+      min-width: 0;
       display: grid;
-      gap: 7px;
-      color: rgba(255,255,255,.64);
-      font-size: 13px;
+      gap: 4px;
+    }
+
+    .tnx-admin-activity .activity-status-label,
+    .tnx-admin-activity .activity-cell-label {
+      color: rgba(255,255,255,.36);
+      font-size: 11px;
       font-weight: 850;
     }
 
-    .activity-meta-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      border-top: 1px solid rgba(255,255,255,.07);
-      padding-top: 7px;
+    .tnx-admin-activity .activity-status-value,
+    .tnx-admin-activity .activity-cell-value {
+      overflow: hidden;
+      color: rgba(255,255,255,.76);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 950;
     }
 
-    .activity-meta-row:first-child {
-      border-top: 0;
-      padding-top: 0;
+    .tnx-admin-activity .activity-status-value.is-online {
+      color: #86efac;
     }
 
-    .activity-meta-row span:first-child {
-      color: rgba(255,255,255,.42);
-    }
-
-    .activity-meta-row span:last-child {
-      text-align: left;
-    }
-
-    .activity-profile-link {
+    .tnx-admin-activity .activity-profile-link {
       min-height: 40px;
-      border-radius: 13px;
+      border-radius: 12px;
       border: 1px solid rgba(212,175,55,.24);
       background: rgba(212,175,55,.10);
       color: #f0d060;
@@ -357,255 +530,479 @@ const metadata = {
       font-size: 13px;
       font-weight: 1000;
       text-decoration: none;
+      white-space: nowrap;
     }
 
-    @media (max-width: 820px) {
-      .activity-stats,
-      .activity-grid {
+    .tnx-admin-activity .activity-empty {
+      border-radius: 18px;
+      padding: 26px 18px;
+      display: grid;
+      gap: 8px;
+      place-items: center;
+      text-align: center;
+    }
+
+    .tnx-admin-activity .activity-empty strong {
+      color: #fff7dd;
+      font-size: 16px;
+      font-weight: 1000;
+    }
+
+    .tnx-admin-activity .activity-empty span {
+      color: rgba(255,255,255,.54);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.7;
+    }
+
+    .tnx-admin-activity .activity-skeleton-row {
+      min-height: 78px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.06);
+      background: linear-gradient(90deg, rgba(255,255,255,.035), rgba(255,255,255,.07), rgba(255,255,255,.035));
+      background-size: 220% 100%;
+      animation: tnxAdminSkeleton 1.2s ease-in-out infinite;
+    }
+
+    @keyframes tnxAdminSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes tnxAdminSkeleton {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    @media (max-width: 1100px) {
+      .tnx-admin-activity .activity-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .tnx-admin-activity .activity-toolbar {
+        grid-template-columns: minmax(220px, 1fr) 210px auto;
+      }
+
+      .tnx-admin-activity .activity-result-count {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+      }
+
+      .tnx-admin-activity .activity-user-row {
+        grid-template-columns: minmax(240px, 1.4fr) minmax(110px, .7fr) minmax(120px, .8fr) minmax(110px, auto);
+      }
+
+      .tnx-admin-activity .activity-time.presence-duration {
+        display: none;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .tnx-admin-activity {
+        padding-top: 14px;
+      }
+
+      .tnx-admin-activity .activity-shell {
+        width: min(100% - 20px, 560px);
+      }
+
+      .tnx-admin-activity .activity-header {
+        min-height: 0;
+        align-items: stretch;
+        flex-direction: column;
+        padding: 16px;
+      }
+
+      .tnx-admin-activity .activity-refresh-head {
+        display: none;
+      }
+
+      .tnx-admin-activity .activity-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .tnx-admin-activity .activity-stat {
+        min-height: 104px;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .tnx-admin-activity .activity-stat-icon {
+        width: 34px;
+        height: 34px;
+      }
+
+      .tnx-admin-activity .activity-toolbar {
         grid-template-columns: 1fr;
       }
 
-      .activity-toolbar {
-        grid-template-columns: 1fr;
-      }
-
-      .activity-refresh {
+      .tnx-admin-activity .activity-result-count,
+      .tnx-admin-activity .activity-refresh {
         width: 100%;
+      }
+
+      .tnx-admin-activity .activity-user-row {
+        min-height: 0;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .tnx-admin-activity .activity-user-main {
+        grid-template-columns: 52px minmax(0, 1fr);
+      }
+
+      .tnx-admin-activity .activity-status,
+      .tnx-admin-activity .activity-page,
+      .tnx-admin-activity .activity-time {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        border-top: 1px solid rgba(255,255,255,.07);
+        padding-top: 9px;
+      }
+
+      .tnx-admin-activity .activity-profile-link {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .tnx-admin-activity .activity-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tnx-admin-activity .admin-auth-spinner,
+      .tnx-admin-activity .activity-skeleton-row {
+        animation: none !important;
       }
     }
   </style>
 
-  <script>
-    const API_ORIGIN = 'https://api.tnx6.xyz'
-    const ONLINE_SCOPE_LABELS = {
-      online: 'لا يوجد مستخدمون متصلون حاليًا.',
-      active15: 'لا يوجد نشاط خلال آخر 15 دقيقة.',
-      recent: 'لا يوجد نشاط خلال آخر 24 ساعة.',
-    }
-
-    const state = {
-      users: [],
-      scope: 'online',
-      query: '',
-      loading: false,
-      pollTimer: 0,
-    }
-
-    const $ = (id) => document.getElementById(id)
-
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-    }
-
-    function safeProfileUrl(value) {
-      const raw = String(value || '')
-      try {
-        const url = new URL(raw)
-        return (url.protocol === 'https:' || url.protocol === 'http:') && url.pathname.startsWith('/profile-v2')
-          ? url.toString()
-          : '/profile-v2/'
-      } catch {
-        return '/profile-v2/'
-      }
-    }
-
-    function formatNumber(value) {
-      return new Intl.NumberFormat('ar-SA').format(Math.max(0, Number(value || 0)))
-    }
-
-    function relativeTime(iso) {
-      const time = Date.parse(String(iso || ''))
-      if (!Number.isFinite(time)) return 'غير معروف'
-
-      const seconds = Math.max(0, Math.floor((Date.now() - time) / 1000))
-      if (seconds < 10) return 'الآن'
-      if (seconds < 60) return `قبل ${formatNumber(seconds)} ثانية`
-
-      const minutes = Math.floor(seconds / 60)
-      if (minutes === 1) return 'قبل دقيقة'
-      if (minutes < 60) return `قبل ${formatNumber(minutes)} دقيقة`
-
-      const hours = Math.floor(minutes / 60)
-      if (hours === 1) return 'قبل ساعة'
-      if (hours < 24) return `قبل ${formatNumber(hours)} ساعة`
-
-      const days = Math.floor(hours / 24)
-      if (days === 1) return 'قبل يوم'
-      return `قبل ${formatNumber(days)} يوم`
-    }
-
-    function formatClock(iso) {
-      const time = Date.parse(String(iso || ''))
-      if (!Number.isFinite(time)) return '---'
-      return new Intl.DateTimeFormat('ar-SA', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      }).format(new Date(time))
-    }
-
-    function renderStats(payload = {}) {
-      $('presenceOnlineCount').textContent = formatNumber(payload.onlineCount)
-      $('presenceActiveCount').textContent = formatNumber(payload.active15Count)
-      $('presenceRecentCount').textContent = formatNumber(payload.recent24hCount)
-      $('presenceUpdatedAt').textContent = formatClock(payload.generatedAt)
-    }
-
-    function userInitial(user) {
-      const text = String(user.displayName || user.login || '?').trim()
-      return escapeHtml((text[0] || '?').toUpperCase())
-    }
-
-    function renderUsers() {
-      const grid = $('presenceUsers')
-      const message = $('presenceMessage')
-      if (!grid || !message) return
-
-      const query = state.query.trim().toLowerCase()
-      const users = state.users.filter((user) => {
-        if (!query) return true
-        return [user.displayName, user.login]
-          .map((value) => String(value || '').toLowerCase())
-          .some((value) => value.includes(query))
-      })
-
-      if (!users.length) {
-        grid.innerHTML = ''
-        message.textContent = query ? 'لا توجد نتائج مطابقة.' : ONLINE_SCOPE_LABELS[state.scope]
-        return
+  <script is:inline>
+    ;(() => {
+      const API_ORIGIN = 'https://api.tnx6.xyz'
+      const EMPTY_MESSAGES = {
+        online: {
+          title: 'لا يوجد مستخدمون متصلون حاليًا.',
+          desc: 'سيظهر المستخدم هنا بعد تسجيل دخوله وفتح إحدى صفحات الموقع.',
+        },
+        active15: {
+          title: 'لا يوجد نشاط خلال آخر 15 دقيقة.',
+          desc: 'سيظهر المستخدم هنا عند عودته وتحديث نبضة الحضور.',
+        },
+        recent: {
+          title: 'لا يوجد نشاط خلال آخر 24 ساعة.',
+          desc: 'سيظهر المستخدم هنا بعد تسجيل دخوله وفتح إحدى صفحات الموقع.',
+        },
       }
 
-      message.textContent = ''
-      grid.innerHTML = users.map((user) => {
-        const login = String(user.login || '').trim()
-        const displayName = String(user.displayName || login || 'غير معروف').trim()
-        const avatar = String(user.avatarUrl || '').trim()
-        const profileUrl = safeProfileUrl(user.profileUrl)
-        const dotClass = user.isOnline ? 'activity-dot online' : 'activity-dot'
+      const state = {
+        users: [],
+        scope: 'online',
+        query: '',
+        loading: false,
+        pollTimer: 0,
+        authorized: false,
+      }
 
-        return `
-          <article class="activity-user-card">
-            <div class="activity-user-main">
-              <div class="activity-avatar">
-                ${avatar ? `<img src="${escapeHtml(avatar)}" alt="" loading="lazy" referrerpolicy="no-referrer" />` : userInitial(user)}
-                <span class="${dotClass}" aria-hidden="true"></span>
-              </div>
-              <div class="activity-user-name">
-                <strong>${escapeHtml(displayName)}</strong>
-                <span>@${escapeHtml(login || 'unknown')}</span>
-              </div>
-            </div>
-            <div class="activity-meta">
-              <div class="activity-meta-row">
-                <span>الصفحة</span>
-                <span>${escapeHtml(user.currentPageLabel || 'صفحة أخرى')}</span>
-              </div>
-              <div class="activity-meta-row">
-                <span>آخر ظهور</span>
-                <span>${escapeHtml(relativeTime(user.lastSeenAt))}</span>
-              </div>
-              <div class="activity-meta-row">
-                <span>أول ظهور</span>
-                <span>${escapeHtml(relativeTime(user.firstSeenAt))}</span>
-              </div>
-            </div>
-            <a class="activity-profile-link" href="${escapeHtml(profileUrl)}">فتح البروفايل</a>
-          </article>
-        `
-      }).join('')
-    }
+      const $ = (id) => document.getElementById(id)
 
-    function showAccessMessage(text) {
-      state.users = []
-      renderStats({})
-      $('presenceUsers').innerHTML = ''
-      $('presenceMessage').textContent = text
-    }
+      function escapeHtml(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;')
+      }
 
-    async function loadPresence() {
-      if (state.loading) return
-      state.loading = true
+      function formatNumber(value) {
+        return new Intl.NumberFormat('ar-SA').format(Math.max(0, Number(value || 0)))
+      }
 
-      const button = $('presenceRefresh')
-      if (button) button.disabled = true
+      function relativeTime(iso) {
+        const time = Date.parse(String(iso || ''))
+        if (!Number.isFinite(time)) return 'غير معروف'
 
-      try {
-        const response = await fetch(API_ORIGIN + '/api/admin/presence?scope=' + encodeURIComponent(state.scope), {
-          credentials: 'include',
-          cache: 'no-store',
+        const seconds = Math.max(0, Math.floor((Date.now() - time) / 1000))
+        if (seconds < 10) return 'الآن'
+        if (seconds < 60) return `قبل ${formatNumber(seconds)} ثانية`
+
+        const minutes = Math.floor(seconds / 60)
+        if (minutes === 1) return 'قبل دقيقة'
+        if (minutes < 60) return `قبل ${formatNumber(minutes)} دقيقة`
+
+        const hours = Math.floor(minutes / 60)
+        if (hours === 1) return 'قبل ساعة'
+        if (hours < 24) return `قبل ${formatNumber(hours)} ساعة`
+
+        const days = Math.floor(hours / 24)
+        if (days === 1) return 'قبل يوم'
+        return `قبل ${formatNumber(days)} يوم`
+      }
+
+      function durationSince(iso) {
+        const time = Date.parse(String(iso || ''))
+        if (!Number.isFinite(time)) return 'غير معروف'
+
+        const minutes = Math.max(0, Math.floor((Date.now() - time) / 60000))
+        if (minutes < 1) return 'أقل من دقيقة'
+        if (minutes === 1) return 'دقيقة'
+        if (minutes < 60) return `${formatNumber(minutes)} دقيقة`
+
+        const hours = Math.floor(minutes / 60)
+        if (hours === 1) return 'ساعة'
+        return `${formatNumber(hours)} ساعة`
+      }
+
+      function formatClock(iso) {
+        const time = Date.parse(String(iso || ''))
+        if (!Number.isFinite(time)) return '---'
+        return new Intl.DateTimeFormat('ar-SA', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        }).format(new Date(time))
+      }
+
+      function safeProfileUrl(value) {
+        const raw = String(value || '')
+        try {
+          const url = new URL(raw, window.location.origin)
+          if (!url.pathname.startsWith('/profile-v2')) return '/profile-v2/'
+          const login = url.searchParams.get('user') || ''
+          const safeUrl = new URL('/profile-v2', window.location.origin)
+          if (login) safeUrl.searchParams.set('user', login)
+          return safeUrl.toString()
+        } catch {
+          return '/profile-v2/'
+        }
+      }
+
+      function stopPolling() {
+        if (state.pollTimer) {
+          window.clearInterval(state.pollTimer)
+          state.pollTimer = 0
+        }
+      }
+
+      function clearDashboardDom() {
+        state.users = []
+        const users = $('presenceUsers')
+        const message = $('presenceMessage')
+        if (users) users.innerHTML = ''
+        if (message) message.textContent = ''
+      }
+
+      function redirectUnauthorized(status) {
+        stopPolling()
+        clearDashboardDom()
+        state.authorized = false
+        $('adminDashboard')?.setAttribute('hidden', '')
+        if (status === 401) window.location.replace('/login')
+        else window.location.replace('/')
+      }
+
+      function showDashboard() {
+        const root = document.querySelector('.tnx-admin-activity')
+        root?.setAttribute('data-auth-state', 'authorized')
+        $('adminAuthGate')?.setAttribute('hidden', '')
+        $('adminDashboard')?.removeAttribute('hidden')
+        state.authorized = true
+      }
+
+      function renderStats(payload = {}) {
+        $('presenceOnlineCount').textContent = formatNumber(payload.onlineCount)
+        $('presenceActiveCount').textContent = formatNumber(payload.active15Count)
+        $('presenceRecentCount').textContent = formatNumber(payload.recent24hCount)
+        $('presenceUpdatedAt').textContent = formatClock(payload.generatedAt)
+      }
+
+      function userInitial(user) {
+        const text = String(user.displayName || user.login || '?').trim()
+        return escapeHtml((text[0] || '?').toUpperCase())
+      }
+
+      function renderSkeletonRows() {
+        const list = $('presenceUsers')
+        const message = $('presenceMessage')
+        if (message) message.textContent = 'جاري تحديث البيانات...'
+        if (list) {
+          list.innerHTML = Array.from({ length: 5 }, () => '<div class="activity-skeleton-row" aria-hidden="true"></div>').join('')
+        }
+      }
+
+      function bindAvatarFallbacks() {
+        document.querySelectorAll('.tnx-admin-activity img[data-presence-avatar]').forEach((img) => {
+          img.addEventListener('error', () => {
+            img.remove()
+          }, { once: true })
+        })
+      }
+
+      function renderUsers() {
+        const list = $('presenceUsers')
+        const message = $('presenceMessage')
+        const resultCount = $('presenceResultCount')
+        if (!list || !message) return
+
+        const query = state.query.trim().toLowerCase()
+        const filtered = state.users.filter((user) => {
+          if (!query) return true
+          return [user.displayName, user.login]
+            .map((value) => String(value || '').toLowerCase())
+            .some((value) => value.includes(query))
         })
 
-        if (response.status === 401) {
-          showAccessMessage('يجب تسجيل الدخول أولًا.')
+        if (resultCount) {
+          resultCount.textContent = filtered.length
+            ? `${formatNumber(filtered.length)} نتيجة`
+            : 'لا توجد نتائج'
+        }
+
+        if (!filtered.length) {
+          const empty = query
+            ? { title: 'لا توجد نتائج مطابقة.', desc: 'جرّب البحث باسم مختلف أو login آخر.' }
+            : EMPTY_MESSAGES[state.scope]
+
+          message.textContent = ''
+          list.innerHTML = `
+            <div class="activity-empty">
+              <strong>${escapeHtml(empty.title)}</strong>
+              <span>${escapeHtml(empty.desc)}</span>
+            </div>
+          `
           return
         }
 
-        if (response.status === 403) {
-          showAccessMessage('ليس لديك صلاحية لفتح هذه الصفحة.')
+        message.textContent = ''
+        list.innerHTML = filtered.map((user) => {
+          const login = String(user.login || '').trim()
+          const displayName = String(user.displayName || login || 'غير معروف').trim()
+          const avatar = String(user.avatarUrl || '').trim()
+          const profileUrl = safeProfileUrl(user.profileUrl)
+          const online = Boolean(user.isOnline)
+          const statusText = online ? 'متصل الآن' : relativeTime(user.lastSeenAt)
+          const dotClass = online ? 'activity-dot online' : 'activity-dot'
+          const statusClass = online ? 'activity-status-value is-online' : 'activity-status-value'
+
+          return `
+            <article class="activity-user-row">
+              <div class="activity-user-main">
+                <div class="activity-avatar">
+                  <span class="activity-avatar-fallback">${userInitial(user)}</span>
+                  ${avatar ? `<img data-presence-avatar src="${escapeHtml(avatar)}" alt="" loading="lazy" referrerpolicy="no-referrer" />` : ''}
+                  <span class="${dotClass}" aria-hidden="true"></span>
+                </div>
+                <div class="activity-user-name">
+                  <strong>${escapeHtml(displayName)}</strong>
+                  <span>@${escapeHtml(login || 'unknown')}</span>
+                </div>
+              </div>
+              <div class="activity-status">
+                <span class="activity-status-label">الحالة</span>
+                <span class="${statusClass}">${escapeHtml(statusText)}</span>
+              </div>
+              <div class="activity-page">
+                <span class="activity-cell-label">الصفحة</span>
+                <span class="activity-cell-value">${escapeHtml(user.currentPageLabel || 'صفحة أخرى')}</span>
+              </div>
+              <div class="activity-time">
+                <span class="activity-cell-label">مدة الوجود</span>
+                <span class="activity-cell-value">${escapeHtml(durationSince(user.firstSeenAt))}</span>
+              </div>
+              <a class="activity-profile-link" href="${escapeHtml(profileUrl)}">فتح البروفايل</a>
+            </article>
+          `
+        }).join('')
+
+        bindAvatarFallbacks()
+      }
+
+      async function loadPresence(options = {}) {
+        if (state.loading) return
+        if (!options.initial && !state.authorized) return
+
+        state.loading = true
+        const buttons = [$('presenceRefresh'), $('presenceHeaderRefresh')].filter(Boolean)
+        buttons.forEach((button) => { button.disabled = true })
+
+        if (!options.initial && options.skeleton !== false) renderSkeletonRows()
+
+        try {
+          const response = await fetch(API_ORIGIN + '/api/admin/presence?scope=' + encodeURIComponent(state.scope), {
+            credentials: 'include',
+            cache: 'no-store',
+          })
+
+          if (response.status === 401 || response.status === 403) {
+            redirectUnauthorized(response.status)
+            return
+          }
+
+          const data = await response.json().catch(() => null)
+          if (!response.ok || !data?.ok) {
+            const message = $('presenceMessage')
+            if (message) message.textContent = 'تعذر تحميل بيانات المراقبة حاليًا.'
+            return
+          }
+
+          if (options.initial) showDashboard()
+          state.users = Array.isArray(data.users) ? data.users : []
+          renderStats(data)
+          renderUsers()
+
+          if (options.initial) startPolling(false)
+        } catch {
+          if (options.initial) {
+            const gate = $('adminAuthGate')
+            if (gate) gate.innerHTML = '<strong>تعذر التحقق من صلاحية الدخول حاليًا.</strong>'
+          } else {
+            const message = $('presenceMessage')
+            if (message) message.textContent = 'تعذر الاتصال بخدمة المراقبة حاليًا.'
+          }
+        } finally {
+          state.loading = false
+          buttons.forEach((button) => { button.disabled = false })
+        }
+      }
+
+      function startPolling(fetchNow = true) {
+        if (!state.authorized) return
+        if (document.visibilityState === 'hidden') {
+          stopPolling()
           return
         }
 
-        const data = await response.json().catch(() => null)
-        if (!response.ok || !data?.ok) {
-          showAccessMessage('تعذر تحميل بيانات المراقبة حاليًا.')
-          return
+        if (fetchNow) loadPresence({ skeleton: false })
+        if (!state.pollTimer) {
+          state.pollTimer = window.setInterval(() => loadPresence({ skeleton: false }), 10_000)
         }
+      }
 
-        state.users = Array.isArray(data.users) ? data.users : []
-        renderStats(data)
+      $('presenceSearch')?.addEventListener('input', (event) => {
+        state.query = event.target.value || ''
         renderUsers()
-      } catch {
-        showAccessMessage('تعذر الاتصال بخدمة المراقبة حاليًا.')
-      } finally {
-        state.loading = false
-        if (button) button.disabled = false
-      }
-    }
+      })
 
-    function stopPolling() {
-      if (state.pollTimer) {
-        window.clearInterval(state.pollTimer)
-        state.pollTimer = 0
-      }
-    }
+      $('presenceScope')?.addEventListener('change', (event) => {
+        state.scope = event.target.value || 'online'
+        loadPresence({ skeleton: true })
+      })
 
-    function startPolling() {
-      if (document.visibilityState === 'hidden') {
-        stopPolling()
-        return
-      }
+      $('presenceRefresh')?.addEventListener('click', () => loadPresence({ skeleton: true }))
+      $('presenceHeaderRefresh')?.addEventListener('click', () => loadPresence({ skeleton: true }))
 
-      loadPresence()
-      if (!state.pollTimer) {
-        state.pollTimer = window.setInterval(loadPresence, 10_000)
-      }
-    }
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') stopPolling()
+        else startPolling(true)
+      })
 
-    $('presenceSearch')?.addEventListener('input', (event) => {
-      state.query = event.target.value || ''
-      renderUsers()
-    })
+      window.addEventListener('pagehide', stopPolling)
+      window.addEventListener('pageshow', () => startPolling(true))
 
-    $('presenceScope')?.addEventListener('change', (event) => {
-      state.scope = event.target.value || 'online'
-      loadPresence()
-    })
-
-    $('presenceRefresh')?.addEventListener('click', loadPresence)
-
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') stopPolling()
-      else startPolling()
-    })
-
-    window.addEventListener('pagehide', stopPolling)
-    window.addEventListener('pageshow', startPolling)
-
-    startPolling()
+      loadPresence({ initial: true })
+    })()
   </script>
 </Layout>
