@@ -1,0 +1,143 @@
+<script is:inline>
+  ;(() => {
+    if (window.__tnxSitePresenceInstalled) return
+    window.__tnxSitePresenceInstalled = true
+
+    const API_ORIGIN = 'https://api.tnx6.xyz'
+    const STORAGE_KEY = 'tnx6_site_presence_last_heartbeat_v1'
+    const CHANNEL_NAME = 'tnx6_site_presence_heartbeat'
+    const HEARTBEAT_INTERVAL_MS = 30_000
+    const SHARED_MIN_INTERVAL_MS = 25_000
+    const FORCED_MIN_INTERVAL_MS = 5_000
+
+    let heartbeatTimer = 0
+    let authChecked = false
+    let isAuthenticated = false
+    let isSending = false
+    let channel = null
+
+    try {
+      if ('BroadcastChannel' in window) channel = new BroadcastChannel(CHANNEL_NAME)
+    } catch {
+      channel = null
+    }
+
+    function currentPath() {
+      const path = String(window.location.pathname || '/').trim()
+      return path && path.startsWith('/') ? path : '/'
+    }
+
+    function readSharedState() {
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY)
+        return raw ? JSON.parse(raw) : {}
+      } catch {
+        return {}
+      }
+    }
+
+    function writeSharedState(path, sentAt) {
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ path, sentAt }))
+      } catch {}
+
+      try {
+        channel?.postMessage({ type: 'heartbeat-sent', path, sentAt })
+      } catch {}
+    }
+
+    function canSendHeartbeat(path, forced) {
+      const state = readSharedState()
+      const lastPath = String(state.path || '')
+      const lastSent = Number(state.sentAt || 0)
+      const age = Date.now() - lastSent
+
+      if (lastPath && lastPath !== path) return true
+      return age >= (forced ? FORCED_MIN_INTERVAL_MS : SHARED_MIN_INTERVAL_MS)
+    }
+
+    async function ensureAuthenticated() {
+      if (authChecked) return isAuthenticated
+      authChecked = true
+
+      try {
+        const response = await fetch(API_ORIGIN + '/api/me', {
+          credentials: 'include',
+          cache: 'no-store',
+        })
+
+        if (!response.ok) {
+          isAuthenticated = false
+          return false
+        }
+
+        const data = await response.json().catch(() => null)
+        isAuthenticated = Boolean(data?.authenticated && data?.user)
+        return isAuthenticated
+      } catch {
+        isAuthenticated = false
+        return false
+      }
+    }
+
+    async function sendHeartbeat(forced = false) {
+      if (document.visibilityState === 'hidden' || isSending) return
+      if (!(await ensureAuthenticated())) return
+
+      const path = currentPath()
+      if (!canSendHeartbeat(path, forced)) return
+
+      isSending = true
+      try {
+        const response = await fetch(API_ORIGIN + '/api/presence/heartbeat', {
+          method: 'POST',
+          credentials: 'include',
+          cache: 'no-store',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path }),
+        })
+
+        if (response.ok) writeSharedState(path, Date.now())
+      } catch {
+      } finally {
+        isSending = false
+      }
+    }
+
+    function stopHeartbeatLoop() {
+      if (heartbeatTimer) {
+        window.clearInterval(heartbeatTimer)
+        heartbeatTimer = 0
+      }
+    }
+
+    function startHeartbeatLoop(forced = false) {
+      if (document.visibilityState === 'hidden') {
+        stopHeartbeatLoop()
+        return
+      }
+
+      sendHeartbeat(forced)
+
+      if (!heartbeatTimer) {
+        heartbeatTimer = window.setInterval(() => {
+          sendHeartbeat(false)
+        }, HEARTBEAT_INTERVAL_MS)
+      }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') stopHeartbeatLoop()
+      else startHeartbeatLoop(true)
+    })
+
+    window.addEventListener('pagehide', stopHeartbeatLoop)
+    window.addEventListener('pageshow', () => startHeartbeatLoop(true))
+    document.addEventListener('astro:page-load', () => {
+      authChecked = false
+      startHeartbeatLoop(true)
+    })
+
+    startHeartbeatLoop(true)
+  })()
+</script>
