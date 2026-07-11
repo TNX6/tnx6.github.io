@@ -75,6 +75,10 @@ const metadata = {
               <div class="v2-cover-shade" aria-hidden="true"></div>
               <canvas id="coverCanvas" class="v2-cover-canvas"></canvas>
 
+              <button class="v2-banner-edit-btn hidden" type="button" id="profileBannerEditButton">
+                تغيير البنر
+              </button>
+
               <button class="v2-mail-btn" type="button" id="openMailButton">
                 البريد
                 <span class="mail-count" id="mailCount">0</span>
@@ -6048,7 +6052,7 @@ const metadata = {
       pointer-events: none !important;
       background-image: var(--cover-image) !important;
       background-size: cover !important;
-      background-position: center center !important;
+      background-position: var(--cover-position, center center) !important;
       background-repeat: no-repeat !important;
       opacity: .72 !important;
       filter: brightness(.72) saturate(.92) contrast(1.03) !important;
@@ -6102,6 +6106,235 @@ const metadata = {
       bottom: 54px !important;
       z-index: 5 !important;
       transform: none !important;
+    }
+
+    .profile-v2-layout .v2-banner-edit-btn {
+      position: absolute !important;
+      left: 34px !important;
+      top: 24px !important;
+      z-index: 5 !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,223,138,.24);
+      background: rgba(8,8,10,.56);
+      color: #fff2c6;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(0,0,0,.28);
+      backdrop-filter: blur(14px);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .profile-v2-layout .v2-banner-edit-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,223,138,.44);
+      background: rgba(20,18,12,.72);
+    }
+
+    .profile-v2-layout .v2-banner-edit-btn.hidden,
+    .profile-v2-layout .v2-banner-edit-btn[hidden] {
+      display: none !important;
+    }
+
+    .profile-banner-modal {
+      width: min(560px, 100%);
+      max-height: min(86vh, 760px);
+      overflow: auto;
+      border-radius: 26px;
+      border: 1px solid rgba(255,223,138,.18);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025)),
+        #0d0d10;
+      color: #f7f1df;
+      box-shadow: 0 26px 80px rgba(0,0,0,.55);
+      direction: rtl;
+    }
+
+    .profile-banner-modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 24px 24px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    .profile-banner-modal-title {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+      font-weight: 1000;
+      color: #fff7dd;
+    }
+
+    .profile-banner-modal-desc {
+      margin: 0;
+      color: rgba(255,255,255,.62);
+      font-size: .88rem;
+      line-height: 1.8;
+    }
+
+    .profile-banner-modal-close {
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.09);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.72);
+      font: inherit;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .profile-banner-modal-close:hover {
+      background: rgba(255,255,255,.08);
+      color: #fff;
+    }
+
+    .profile-banner-modal-body {
+      padding: 20px 24px 24px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .profile-banner-file-label {
+      display: grid;
+      gap: 8px;
+      color: rgba(255,255,255,.76);
+      font-size: .9rem;
+      font-weight: 900;
+    }
+
+    .profile-banner-file-input {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.045);
+      color: rgba(255,255,255,.86);
+      padding: 12px;
+      font: inherit;
+    }
+
+    .profile-banner-preview {
+      position: relative;
+      min-height: 164px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,223,138,.16);
+      overflow: hidden;
+      background:
+        linear-gradient(to top, rgba(6,6,8,.78), rgba(6,6,8,.16)),
+        var(--profile-banner-preview-image, radial-gradient(circle at center, #292014, #070707 65%));
+      background-size: cover;
+      background-position: var(--profile-banner-preview-position, 50% 50%);
+      background-repeat: no-repeat;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+    }
+
+    .profile-banner-preview::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.52), rgba(0,0,0,.12), rgba(0,0,0,.52)),
+        radial-gradient(circle at 78% 55%, rgba(255,223,138,.12), transparent 34%);
+    }
+
+    .profile-banner-range-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .profile-banner-range-row {
+      display: grid;
+      gap: 8px;
+      color: rgba(255,255,255,.72);
+      font-size: .86rem;
+      font-weight: 900;
+    }
+
+    .profile-banner-range-row input[type="range"] {
+      width: 100%;
+      accent-color: #d4af37;
+    }
+
+    .profile-banner-status {
+      min-height: 22px;
+      color: rgba(255,255,255,.68);
+      font-size: .86rem;
+      line-height: 1.6;
+    }
+
+    .profile-banner-status.is-error {
+      color: #ff9b9b;
+    }
+
+    .profile-banner-status.is-success {
+      color: #9ff0b7;
+    }
+
+    .profile-banner-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-start;
+    }
+
+    .profile-banner-action {
+      min-height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,223,138,.18);
+      padding: 0 16px;
+      font: inherit;
+      font-size: .88rem;
+      font-weight: 1000;
+      cursor: pointer;
+    }
+
+    .profile-banner-action.primary {
+      border-color: rgba(255,223,138,.34);
+      background: linear-gradient(135deg, #f0d060, #d4af37);
+      color: #090907;
+    }
+
+    .profile-banner-action.secondary {
+      background: rgba(255,255,255,.045);
+      color: rgba(255,255,255,.80);
+    }
+
+    .profile-banner-action.danger {
+      margin-inline-start: auto;
+      border-color: rgba(255,105,105,.24);
+      background: rgba(255,80,80,.08);
+      color: #ffb0b0;
+    }
+
+    .profile-banner-action:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .profile-banner-upload-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 2px solid rgba(9,9,7,.34);
+      border-top-color: #090907;
+      animation: profileBannerSpin .75s linear infinite;
+      vertical-align: -2px;
+      margin-inline-end: 6px;
+    }
+
+    @keyframes profileBannerSpin {
+      to { transform: rotate(360deg); }
     }
 
     .profile-v2-layout .v2-profile-head {
@@ -9178,6 +9411,8 @@ const metadata = {
         activeUser: null,
         d1InventoryCache: {},
         d1EconomyCache: {},
+        profileBannerUploadBusy: false,
+        profileBannerPreviewUrl: '',
       }
 
       const rarityColors = {
@@ -9605,6 +9840,10 @@ const metadata = {
         const mail = findRecord(state.mailboxes, user) || {}
         const merged = { ...user, ...profile }
 
+        if (user.customBanner !== undefined) {
+          merged.customBanner = user.customBanner
+        }
+
         // D1 is the only inventory source for profile-v2.
         // Do not fall back to __REMOVED_OLD_INVENTORY_JSON__ or profile.inventory,
         // otherwise sold items can reappear from the old static GitHub JSON.
@@ -9927,6 +10166,328 @@ const metadata = {
       function fallbackCover() {
         return `radial-gradient(circle at 50% 20%, rgba(255,223,138,.24), transparent 35%),
                 linear-gradient(135deg, #1a1208, #080808 58%, #1d160b)`
+      }
+
+      const PROFILE_BANNER_MAX_BYTES = 1048576
+      const PROFILE_BANNER_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp'])
+
+      function profileBannerPercent(value, fallback = 50) {
+        const numValue = Math.round(Number(value))
+        if (!Number.isFinite(numValue)) return fallback
+        return Math.max(0, Math.min(100, numValue))
+      }
+
+      function profileBannerCssUrl(url) {
+        return `url("${String(url || '')
+          .replace(/\\/g, '\\\\')
+          .replace(/"/g, '\\"')
+          .replace(/\n/g, '')
+          .replace(/\r/g, '')}")`
+      }
+
+      function profileBannerFromUser(user) {
+        const raw = user?.customBanner || user?.profileBanner || null
+        const url = safeUrl(raw?.url || '')
+        if (!url) return null
+
+        return {
+          url,
+          positionX: profileBannerPercent(raw?.positionX ?? raw?.position_x, 50),
+          positionY: profileBannerPercent(raw?.positionY ?? raw?.position_y, 50),
+          updatedAt: String(raw?.updatedAt || raw?.updated_at || ''),
+        }
+      }
+
+      function setProfileBannerPreviewImage(preview, imageValue, x, y) {
+        if (!preview) return
+        preview.style.setProperty('--profile-banner-preview-image', imageValue || fallbackCover())
+        preview.style.setProperty('--profile-banner-preview-position', `${profileBannerPercent(x)}% ${profileBannerPercent(y)}%`)
+      }
+
+      function applyProfileBannerToCover(user, defaultCoverUrl = '') {
+        const banner = profileBannerFromUser(user)
+        const defaultCover = defaultCoverUrl
+          ? profileBannerCssUrl(defaultCoverUrl)
+          : state.profileBannerDefaultCoverValue || fallbackCover()
+        const imageValue = banner ? profileBannerCssUrl(banner.url) : defaultCover
+        const positionValue = banner ? `${banner.positionX}% ${banner.positionY}%` : 'center center'
+
+        document.documentElement.style.setProperty('--cover-image', imageValue)
+        document.documentElement.style.setProperty('--cover-position', positionValue)
+
+        state.currentProfileBanner = banner
+        state.profileBannerDefaultCoverValue = defaultCover
+
+        const button = $('profileBannerEditButton')
+        if (button) button.dataset.hasBanner = banner ? '1' : '0'
+      }
+
+      function revokeProfileBannerPreviewUrl() {
+        if (!state.profileBannerPreviewUrl) return
+        try { URL.revokeObjectURL(state.profileBannerPreviewUrl) } catch {}
+        state.profileBannerPreviewUrl = ''
+      }
+
+      function closeProfileBannerModal() {
+        revokeProfileBannerPreviewUrl()
+        state.profileBannerUploadBusy = false
+        document.querySelectorAll('.profile-banner-modal-backdrop').forEach((modal) => {
+          if (modal.__profileBannerKeydown) {
+            document.removeEventListener('keydown', modal.__profileBannerKeydown)
+          }
+          modal.remove()
+        })
+      }
+
+      function profileBannerApiMessage(data, fallback) {
+        return String(data?.message || data?.errorMessage || data?.error || fallback || 'تعذر تنفيذ الطلب حاليًا.')
+      }
+
+      function setProfileBannerModalBusy(backdrop, busy, label = '') {
+        state.profileBannerUploadBusy = busy
+        backdrop.querySelectorAll('button, input').forEach((el) => {
+          el.disabled = busy
+        })
+
+        const save = backdrop.querySelector('[data-profile-banner-save]')
+        if (save) {
+          save.innerHTML = busy
+            ? `<span class="profile-banner-upload-spinner" aria-hidden="true"></span>${esc(label || 'جاري رفع البنر...')}`
+            : 'حفظ البنر'
+        }
+      }
+
+      function setProfileBannerStatus(backdrop, message, kind = '') {
+        const status = backdrop.querySelector('[data-profile-banner-status]')
+        if (!status) return
+        status.textContent = message || ''
+        status.classList.toggle('is-error', kind === 'error')
+        status.classList.toggle('is-success', kind === 'success')
+      }
+
+      async function saveProfileBannerFromModal(backdrop, selectedFile, xInput, yInput) {
+        if (state.profileBannerUploadBusy) return
+
+        const x = profileBannerPercent(xInput?.value, 50)
+        const y = profileBannerPercent(yInput?.value, 50)
+        const hasExistingBanner = Boolean(profileBannerFromUser(state.activeUser))
+        const isPositionOnly = !selectedFile && hasExistingBanner
+
+        if (!selectedFile && !isPositionOnly) {
+          setProfileBannerStatus(backdrop, 'اختر صورة أولًا.', 'error')
+          return
+        }
+
+        setProfileBannerModalBusy(backdrop, true, selectedFile ? 'جاري رفع البنر...' : 'جاري حفظ الموضع...')
+        setProfileBannerStatus(backdrop, selectedFile ? 'جاري رفع البنر...' : 'جاري حفظ الموضع...')
+
+        try {
+          const url = TNX_API_ORIGIN + '/api/me/profile/banner'
+          const requestOptions = selectedFile
+            ? {
+                method: 'POST',
+                credentials: 'include',
+                body: (() => {
+                  const form = new FormData()
+                  form.append('banner', selectedFile)
+                  form.append('positionX', String(x))
+                  form.append('positionY', String(y))
+                  return form
+                })(),
+              }
+            : {
+                method: 'PATCH',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ positionX: x, positionY: y }),
+              }
+
+          const res = await fetch(url, requestOptions)
+          const data = await res.json().catch(() => null)
+
+          if (!res.ok || !data?.ok || !data.banner) {
+            throw new Error(profileBannerApiMessage(data, 'تعذر رفع البنر حاليًا.'))
+          }
+
+          const banner = data.banner
+          if (state.activeUser) {
+            state.activeUser = { ...state.activeUser, customBanner: banner }
+          }
+
+          if (state.currentAccount) {
+            state.currentAccount = { ...state.currentAccount, customBanner: banner }
+          }
+
+          applyProfileBannerToCover(state.activeUser, '')
+          setProfileBannerStatus(backdrop, 'تم تحديث البنر بنجاح.', 'success')
+          window.setTimeout(() => closeProfileBannerModal(), 650)
+        } catch (error) {
+          setProfileBannerStatus(backdrop, error instanceof Error ? error.message : 'تعذر رفع البنر حاليًا.', 'error')
+          setProfileBannerModalBusy(backdrop, false)
+        }
+      }
+
+      async function deleteProfileBannerFromModal(backdrop) {
+        if (state.profileBannerUploadBusy) return
+
+        if (!window.confirm('هل تريد إزالة البنر والعودة إلى الخلفية الافتراضية؟')) {
+          return
+        }
+
+        setProfileBannerModalBusy(backdrop, true, 'جاري إزالة البنر...')
+        setProfileBannerStatus(backdrop, 'جاري إزالة البنر...')
+
+        try {
+          const res = await fetch(TNX_API_ORIGIN + '/api/me/profile/banner', {
+            method: 'DELETE',
+            credentials: 'include',
+          })
+          const data = await res.json().catch(() => null)
+
+          if (!res.ok || !data?.ok) {
+            throw new Error(profileBannerApiMessage(data, 'تعذر إزالة البنر حاليًا.'))
+          }
+
+          if (state.activeUser) {
+            state.activeUser = { ...state.activeUser, customBanner: null }
+          }
+
+          if (state.currentAccount) {
+            state.currentAccount = { ...state.currentAccount, customBanner: null }
+          }
+
+          applyProfileBannerToCover(state.activeUser, '')
+          setProfileBannerStatus(backdrop, 'تمت إزالة البنر.', 'success')
+          window.setTimeout(() => closeProfileBannerModal(), 550)
+        } catch (error) {
+          setProfileBannerStatus(backdrop, error instanceof Error ? error.message : 'تعذر إزالة البنر حاليًا.', 'error')
+          setProfileBannerModalBusy(backdrop, false)
+        }
+      }
+
+      function openProfileBannerModal() {
+        if (!state.activeUser || state.profileBannerUploadBusy) return
+
+        const currentBanner = profileBannerFromUser(state.activeUser)
+        let selectedFile = null
+        let previewImageValue = currentBanner
+          ? profileBannerCssUrl(currentBanner.url)
+          : state.profileBannerDefaultCoverValue || fallbackCover()
+        const initialX = currentBanner?.positionX ?? 50
+        const initialY = currentBanner?.positionY ?? 50
+
+        closeProfileBannerModal()
+
+        const backdrop = document.createElement('div')
+        backdrop.className = 'modal-backdrop show profile-banner-modal-backdrop'
+        backdrop.setAttribute('role', 'presentation')
+        backdrop.innerHTML = `
+          <section class="profile-banner-modal" role="dialog" aria-modal="true" aria-labelledby="profileBannerModalTitle">
+            <div class="profile-banner-modal-head">
+              <div>
+                <h2 class="profile-banner-modal-title" id="profileBannerModalTitle">تغيير بنر البروفايل</h2>
+                <p class="profile-banner-modal-desc">ارفع صورة بصيغة JPG أو PNG أو WebP، وبحجم لا يتجاوز 1MB.</p>
+              </div>
+              <button class="profile-banner-modal-close" type="button" data-profile-banner-cancel aria-label="إغلاق">×</button>
+            </div>
+            <div class="profile-banner-modal-body">
+              <label class="profile-banner-file-label">
+                اختيار الصورة
+                <input class="profile-banner-file-input" type="file" accept="image/jpeg,image/png,image/webp" data-profile-banner-file />
+              </label>
+              <div class="profile-banner-preview" data-profile-banner-preview aria-label="معاينة البنر"></div>
+              <div class="profile-banner-range-grid">
+                <label class="profile-banner-range-row">
+                  الموضع الأفقي
+                  <input type="range" min="0" max="100" value="${esc(initialX)}" data-profile-banner-x />
+                </label>
+                <label class="profile-banner-range-row">
+                  الموضع العمودي
+                  <input type="range" min="0" max="100" value="${esc(initialY)}" data-profile-banner-y />
+                </label>
+              </div>
+              <div class="profile-banner-status" data-profile-banner-status></div>
+              <div class="profile-banner-actions">
+                <button class="profile-banner-action primary" type="button" data-profile-banner-save>حفظ البنر</button>
+                <button class="profile-banner-action secondary" type="button" data-profile-banner-cancel>إلغاء</button>
+                ${currentBanner ? '<button class="profile-banner-action danger" type="button" data-profile-banner-remove>إزالة البنر</button>' : ''}
+              </div>
+            </div>
+          </section>
+        `
+
+        const preview = backdrop.querySelector('[data-profile-banner-preview]')
+        const fileInput = backdrop.querySelector('[data-profile-banner-file]')
+        const xInput = backdrop.querySelector('[data-profile-banner-x]')
+        const yInput = backdrop.querySelector('[data-profile-banner-y]')
+
+        const updatePreview = () => {
+          setProfileBannerPreviewImage(preview, previewImageValue, xInput?.value, yInput?.value)
+        }
+
+        fileInput?.addEventListener('change', () => {
+          const file = fileInput.files?.[0] || null
+
+          if (!file) {
+            selectedFile = null
+            revokeProfileBannerPreviewUrl()
+            previewImageValue = currentBanner ? profileBannerCssUrl(currentBanner.url) : state.profileBannerDefaultCoverValue || fallbackCover()
+            updatePreview()
+            return
+          }
+
+          if (!PROFILE_BANNER_TYPES.has(String(file.type || '').toLowerCase())) {
+            fileInput.value = ''
+            selectedFile = null
+            setProfileBannerStatus(backdrop, 'الصيغة غير مدعومة. استخدم JPG أو PNG أو WebP.', 'error')
+            return
+          }
+
+          if (file.size > PROFILE_BANNER_MAX_BYTES) {
+            fileInput.value = ''
+            selectedFile = null
+            setProfileBannerStatus(backdrop, 'حجم الصورة يجب ألا يتجاوز 1MB.', 'error')
+            return
+          }
+
+          revokeProfileBannerPreviewUrl()
+          selectedFile = file
+          state.profileBannerPreviewUrl = URL.createObjectURL(file)
+          previewImageValue = profileBannerCssUrl(state.profileBannerPreviewUrl)
+          setProfileBannerStatus(backdrop, '')
+          updatePreview()
+        })
+
+        xInput?.addEventListener('input', updatePreview)
+        yInput?.addEventListener('input', updatePreview)
+
+        backdrop.addEventListener('click', (event) => {
+          if (event.target === backdrop) {
+            closeProfileBannerModal()
+            return
+          }
+
+          const save = event.target?.closest?.('[data-profile-banner-save]')
+          const cancel = event.target?.closest?.('[data-profile-banner-cancel]')
+          const remove = event.target?.closest?.('[data-profile-banner-remove]')
+
+          if (save) saveProfileBannerFromModal(backdrop, selectedFile, xInput, yInput)
+          else if (cancel) closeProfileBannerModal()
+          else if (remove) deleteProfileBannerFromModal(backdrop)
+        })
+
+        const onKeyDown = (event) => {
+          if (event.key === 'Escape') {
+            document.removeEventListener('keydown', onKeyDown)
+            closeProfileBannerModal()
+          }
+        }
+
+        backdrop.__profileBannerKeydown = onKeyDown
+        document.addEventListener('keydown', onKeyDown)
+        document.body.appendChild(backdrop)
+        updatePreview()
+        requestAnimationFrame(() => fileInput?.focus?.())
       }
 
       // XP sources: watchtime + daily login + currently owned badges.
@@ -10339,7 +10900,7 @@ const metadata = {
         const level = calculateLevel(user)
         const bio = get(user, ['bio'], 'ملف العضو يعرض المستوى، الحقيبة، البادجات، والبريد في صفحة واحدة بشكل واضح.')
 
-        document.documentElement.style.setProperty('--cover-image', cover ? `url("${cover}")` : fallbackCover())
+        applyProfileBannerToCover(user, cover)
 
         if ($('avatar')) $('avatar').src = avatar
         if ($('onlineDot')) $('onlineDot').style.display = get(user, ['online', 'isOnline'], false) ? 'block' : 'none'
@@ -18485,7 +19046,17 @@ function mbV2Card(message) {
           mailButton.setAttribute('aria-hidden', allowed ? 'false' : 'true')
         }
 
+        const bannerButton = $('profileBannerEditButton')
+        if (bannerButton) {
+          bannerButton.hidden = !allowed
+          bannerButton.disabled = !allowed
+          bannerButton.classList.toggle('hidden', !allowed)
+          bannerButton.tabIndex = allowed ? 0 : -1
+          bannerButton.setAttribute('aria-hidden', allowed ? 'false' : 'true')
+        }
+
         if (!allowed) {
+          closeProfileBannerModal()
           closeMail()
 
           document
@@ -18577,6 +19148,7 @@ function mbV2Card(message) {
           displayName: name,
           profileImageUrl: avatar,
           avatar,
+          customBanner: authUser.customBanner || null,
           bio: 'هذا ملفك الشخصي في نظام TNX6. من هنا بتشوف مستواك، أغراضك، بادجاتك، والبريد.',
         }
       }
@@ -18720,6 +19292,7 @@ function mbV2Card(message) {
           userName: String(d1User.displayName || get(user, ['userName', 'displayName'], '') || ''),
           profileImageUrl: String(d1User.profileImageUrl || get(user, ['profileImageUrl', 'avatar'], '') || ''),
           avatar: String(d1User.profileImageUrl || get(user, ['avatar', 'profileImageUrl'], '') || ''),
+          customBanner: d1User.customBanner !== undefined ? d1User.customBanner : get(user, ['customBanner'], null),
           inventory: data.items.map((item) => ({
             name: String(item.name || item.itemName || item.itemKey || '').trim(),
             quantity: Math.max(0, Math.floor(Number(item.quantity || item.qty || 0))),
@@ -18902,6 +19475,7 @@ function mbV2Card(message) {
           userName: String(d1User.displayName || get(user, ['userName', 'displayName'], '') || ''),
           profileImageUrl: String(d1User.profileImageUrl || get(user, ['profileImageUrl', 'avatar'], '') || ''),
           avatar: String(d1User.profileImageUrl || get(user, ['avatar', 'profileImageUrl'], '') || ''),
+          customBanner: d1User.customBanner !== undefined ? d1User.customBanner : get(user, ['customBanner'], null),
           points,
           totalPoints: points,
           balance: points,
@@ -19446,6 +20020,12 @@ function mbV2Card(message) {
           return loadJson('/api/user_mailbox.json', []);
         }
       };
+
+      addListener($('profileBannerEditButton'), 'click', async () => {
+        if (await isProfileOwnerV36(state.activeUser)) {
+          openProfileBannerModal()
+        }
+      })
 
       const directProfileUser = new URLSearchParams(location.search).get('user')
 
