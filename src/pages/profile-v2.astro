@@ -6206,8 +6206,11 @@ const metadata = {
 
     .profile-banner-modal-close:focus-visible,
     .profile-banner-action:focus-visible,
+    .profile-banner-confirm-action:focus-visible,
     .profile-banner-file-pick:focus-visible,
     .profile-banner-center-btn:focus-visible,
+    .profile-banner-stepper:focus-visible,
+    .profile-banner-number-input:focus-visible,
     .profile-banner-upload-zone:focus-visible {
       outline: 2px solid rgba(255,223,138,.55);
       outline-offset: 3px;
@@ -6375,13 +6378,13 @@ const metadata = {
       display: none;
     }
 
-    .profile-banner-range-grid {
+    .profile-banner-position-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
     }
 
-    .profile-banner-range-row {
+    .profile-banner-position-card {
       display: grid;
       gap: 10px;
       padding: 12px;
@@ -6393,14 +6396,14 @@ const metadata = {
       font-weight: 900;
     }
 
-    .profile-banner-range-head {
+    .profile-banner-position-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
     }
 
-    .profile-banner-range-value {
+    .profile-banner-position-value {
       flex: 0 0 auto;
       min-width: 46px;
       border-radius: 999px;
@@ -6413,9 +6416,76 @@ const metadata = {
       padding: 4px 8px;
     }
 
-    .profile-banner-range-row input[type="range"] {
+    .profile-banner-number-control {
       width: 100%;
-      accent-color: #d4af37;
+      display: grid;
+      grid-template-columns: 42px minmax(74px, 1fr) 42px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .profile-banner-stepper {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,223,138,.20);
+      background: rgba(212,175,55,.10);
+      color: #ffdf8a;
+      font: inherit;
+      font-size: .9rem;
+      font-weight: 1000;
+      line-height: 1;
+      cursor: pointer;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .profile-banner-stepper:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,223,138,.36);
+      background: rgba(212,175,55,.15);
+    }
+
+    .profile-banner-number-wrap {
+      min-height: 42px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 7px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      padding: 0 10px;
+    }
+
+    .profile-banner-number-input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      background: transparent;
+      color: #fff7dd;
+      font: inherit;
+      font-size: 1rem;
+      font-weight: 1000;
+      text-align: center;
+      direction: ltr;
+      unicode-bidi: isolate;
+      outline: 0;
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
+    .profile-banner-number-input::-webkit-outer-spin-button,
+    .profile-banner-number-input::-webkit-inner-spin-button {
+      margin: 0;
+      -webkit-appearance: none;
+    }
+
+    .profile-banner-number-percent {
+      color: rgba(255,255,255,.58);
+      font-size: .85rem;
+      font-weight: 1000;
+      direction: ltr;
+      unicode-bidi: isolate;
     }
 
     .profile-banner-center-btn {
@@ -6512,6 +6582,140 @@ const metadata = {
       cursor: wait;
     }
 
+    .profile-banner-confirm-action .profile-banner-upload-spinner {
+      border-color: rgba(255,255,255,.35);
+      border-top-color: #fff;
+    }
+
+    .profile-banner-confirm-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(0,0,0,.48);
+      backdrop-filter: blur(6px);
+      direction: rtl;
+      animation: profileBannerConfirmFade .16s ease-out;
+    }
+
+    .profile-banner-confirm-modal {
+      width: min(370px, 100%);
+      border-radius: 22px;
+      border: 1px solid rgba(255,105,105,.18);
+      background:
+        radial-gradient(circle at 82% 0%, rgba(255,90,90,.10), transparent 36%),
+        linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.025)),
+        #111114;
+      color: #f7f1df;
+      box-shadow: 0 24px 70px rgba(0,0,0,.58);
+      padding: 18px;
+      animation: profileBannerModalIn .18s ease-out;
+    }
+
+    .profile-banner-confirm-head {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .profile-banner-confirm-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,105,105,.24);
+      background: rgba(255,80,80,.10);
+      color: #ff9b9b;
+      font-size: 1.08rem;
+      font-weight: 1000;
+    }
+
+    .profile-banner-confirm-title {
+      margin: 0 0 6px;
+      color: #fff7dd;
+      font-size: 1.02rem;
+      font-weight: 1000;
+      letter-spacing: 0;
+    }
+
+    .profile-banner-confirm-desc {
+      margin: 0;
+      color: rgba(255,255,255,.64);
+      font-size: .86rem;
+      line-height: 1.75;
+    }
+
+    .profile-banner-confirm-close {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.09);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.68);
+      font: inherit;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .profile-banner-confirm-status {
+      display: none;
+      margin-top: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,105,105,.20);
+      background: rgba(255,80,80,.08);
+      color: #ffb0b0;
+      font-size: .84rem;
+      line-height: 1.65;
+      padding: 9px 11px;
+    }
+
+    .profile-banner-confirm-status:not(:empty) {
+      display: block;
+    }
+
+    .profile-banner-confirm-actions {
+      display: flex;
+      justify-content: flex-start;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .profile-banner-confirm-action {
+      min-height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      padding: 0 15px;
+      font: inherit;
+      font-size: .86rem;
+      font-weight: 1000;
+      cursor: pointer;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease, color .16s ease;
+    }
+
+    .profile-banner-confirm-action:hover {
+      transform: translateY(-1px);
+    }
+
+    .profile-banner-confirm-action.danger {
+      border-color: rgba(255,105,105,.28);
+      background: rgba(255,80,80,.16);
+      color: #ffd7d7;
+    }
+
+    .profile-banner-confirm-action.secondary {
+      background: rgba(255,255,255,.045);
+      color: rgba(255,255,255,.80);
+    }
+
+    .profile-banner-confirm-action:disabled {
+      opacity: .58;
+      cursor: wait;
+    }
+
     .profile-banner-upload-spinner {
       display: inline-block;
       width: 14px;
@@ -6526,6 +6730,11 @@ const metadata = {
 
     @keyframes profileBannerSpin {
       to { transform: rotate(360deg); }
+    }
+
+    @keyframes profileBannerConfirmFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     @keyframes profileBannerModalIn {
@@ -6549,8 +6758,12 @@ const metadata = {
         width: 100%;
       }
 
-      .profile-banner-range-grid {
+      .profile-banner-position-grid {
         grid-template-columns: 1fr;
+      }
+
+      .profile-banner-number-control {
+        grid-template-columns: 42px minmax(78px, 1fr) 42px;
       }
 
       .profile-banner-actions {
@@ -6566,10 +6779,22 @@ const metadata = {
       .profile-banner-action.danger {
         margin-inline-start: 0;
       }
+
+      .profile-banner-confirm-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .profile-banner-confirm-action {
+        width: 100%;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .profile-banner-modal,
+      .profile-banner-confirm-layer,
+      .profile-banner-confirm-modal,
+      .profile-banner-confirm-action,
       .profile-banner-upload-zone,
       .profile-banner-action,
       .profile-banner-preview {
@@ -10510,8 +10735,19 @@ const metadata = {
         if (pick) pick.textContent = file ? 'تغيير الصورة' : 'اختيار صورة'
       }
 
-      function updateProfileBannerRangeUi(input, badge) {
-        if (badge) badge.textContent = `${profileBannerPercent(input?.value, 50)}%`
+      function profileBannerInputPercent(input, fallback = 50) {
+        const storedValue = Number(input?.dataset?.profileBannerValue)
+        const safeFallback = Number.isFinite(storedValue) ? storedValue : fallback
+        const rawValue = String(input?.value ?? '').trim()
+        if (!rawValue) return profileBannerPercent(safeFallback, fallback)
+        return profileBannerPercent(rawValue, safeFallback)
+      }
+
+      function updateProfileBannerRangeUi(input, badge, value = null) {
+        const displayValue = value == null
+          ? profileBannerInputPercent(input, 50)
+          : profileBannerPercent(value, 50)
+        if (badge) badge.textContent = `${displayValue}%`
       }
 
       function setProfileBannerModalBusy(backdrop, busy, label = '') {
@@ -10543,8 +10779,8 @@ const metadata = {
       async function saveProfileBannerFromModal(backdrop, selectedFile, xInput, yInput) {
         if (state.profileBannerUploadBusy) return
 
-        const x = profileBannerPercent(xInput?.value, 50)
-        const y = profileBannerPercent(yInput?.value, 50)
+        const x = profileBannerInputPercent(xInput, 50)
+        const y = profileBannerInputPercent(yInput, 50)
         const hasExistingBanner = Boolean(profileBannerFromUser(state.activeUser))
         const isPositionOnly = !selectedFile && hasExistingBanner
 
@@ -10602,15 +10838,87 @@ const metadata = {
         }
       }
 
-      async function deleteProfileBannerFromModal(backdrop) {
+      function setProfileBannerConfirmBusy(confirmLayer, busy, label = '') {
+        state.profileBannerUploadBusy = busy
+        const remove = confirmLayer?.querySelector?.('[data-profile-banner-confirm-remove]')
+        const cancel = confirmLayer?.querySelector?.('[data-profile-banner-confirm-cancel]')
+        const close = confirmLayer?.querySelector?.('[data-profile-banner-confirm-close]')
+
+        ;[remove, cancel, close].forEach((button) => {
+          if (button) button.disabled = busy
+        })
+
+        if (remove) {
+          remove.innerHTML = busy
+            ? `<span class="profile-banner-upload-spinner" aria-hidden="true"></span>${esc(label || 'جاري الإزالة...')}`
+            : 'إزالة البنر'
+        }
+      }
+
+      function setProfileBannerConfirmError(confirmLayer, message = '') {
+        const status = confirmLayer?.querySelector?.('[data-profile-banner-confirm-status]')
+        if (!status) return
+        const cleanMessage = String(message || '').trim()
+        status.textContent = cleanMessage
+        status.hidden = !cleanMessage
+      }
+
+      function closeProfileBannerDeleteConfirm(confirmLayer, restoreFocus = true) {
+        if (!confirmLayer || state.profileBannerUploadBusy) return
+        const returnFocus = confirmLayer.__profileBannerReturnFocus
+        confirmLayer.remove()
+        if (restoreFocus && returnFocus?.focus) {
+          requestAnimationFrame(() => returnFocus.focus())
+        }
+      }
+
+      function openProfileBannerDeleteConfirm(backdrop, returnFocusEl) {
+        if (!backdrop || state.profileBannerUploadBusy) return
+        backdrop.querySelectorAll('[data-profile-banner-confirm-layer]').forEach((layer) => layer.remove())
+
+        const confirmLayer = document.createElement('div')
+        confirmLayer.className = 'profile-banner-confirm-layer'
+        confirmLayer.dataset.profileBannerConfirmLayer = '1'
+        confirmLayer.setAttribute('role', 'presentation')
+        confirmLayer.__profileBannerReturnFocus = returnFocusEl || null
+        confirmLayer.innerHTML = `
+          <section class="profile-banner-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="profileBannerRemoveTitle" aria-describedby="profileBannerRemoveDesc">
+            <div class="profile-banner-confirm-head">
+              <span class="profile-banner-confirm-icon" aria-hidden="true">!</span>
+              <div>
+                <h3 class="profile-banner-confirm-title" id="profileBannerRemoveTitle">إزالة البنر؟</h3>
+                <p class="profile-banner-confirm-desc" id="profileBannerRemoveDesc">سيتم حذف البنر الحالي والعودة إلى الخلفية الافتراضية.</p>
+              </div>
+              <button class="profile-banner-confirm-close" type="button" data-profile-banner-confirm-close aria-label="إغلاق تأكيد إزالة البنر">×</button>
+            </div>
+            <div class="profile-banner-confirm-status" data-profile-banner-confirm-status aria-live="polite" hidden></div>
+            <div class="profile-banner-confirm-actions">
+              <button class="profile-banner-confirm-action danger" type="button" data-profile-banner-confirm-remove>إزالة البنر</button>
+              <button class="profile-banner-confirm-action secondary" type="button" data-profile-banner-confirm-cancel>تراجع</button>
+            </div>
+          </section>
+        `
+
+        confirmLayer.addEventListener('click', (event) => {
+          if (state.profileBannerUploadBusy) return
+          const remove = event.target?.closest?.('[data-profile-banner-confirm-remove]')
+          const cancel = event.target?.closest?.('[data-profile-banner-confirm-cancel], [data-profile-banner-confirm-close]')
+
+          if (remove) deleteProfileBannerFromModal(backdrop, confirmLayer)
+          else if (cancel || event.target === confirmLayer) closeProfileBannerDeleteConfirm(confirmLayer)
+        })
+
+        backdrop.appendChild(confirmLayer)
+        requestAnimationFrame(() => {
+          confirmLayer.querySelector('[data-profile-banner-confirm-cancel]')?.focus?.()
+        })
+      }
+
+      async function deleteProfileBannerFromModal(backdrop, confirmLayer) {
         if (state.profileBannerUploadBusy) return
 
-        if (!window.confirm('هل تريد إزالة البنر والعودة إلى الخلفية الافتراضية؟')) {
-          return
-        }
-
-        setProfileBannerModalBusy(backdrop, true, 'جاري إزالة البنر...')
-        setProfileBannerStatus(backdrop, 'جاري إزالة البنر...')
+        setProfileBannerConfirmBusy(confirmLayer, true, 'جاري الإزالة...')
+        setProfileBannerConfirmError(confirmLayer, '')
 
         try {
           const res = await fetch(TNX_API_ORIGIN + '/api/me/profile/banner', {
@@ -10632,18 +10940,21 @@ const metadata = {
           }
 
           applyProfileBannerToCover(state.activeUser, '')
-          setProfileBannerStatus(backdrop, 'تمت إزالة البنر.', 'success')
-          window.setTimeout(() => closeProfileBannerModal(), 550)
+          setProfileBannerConfirmBusy(confirmLayer, false)
+          closeProfileBannerDeleteConfirm(confirmLayer, false)
+          backdrop.querySelector('[data-profile-banner-remove]')?.remove?.()
+          backdrop.dispatchEvent(new CustomEvent('profile-banner-deleted'))
+          setProfileBannerStatus(backdrop, 'تمت إزالة البنر والعودة إلى الخلفية الافتراضية.', 'success')
         } catch (error) {
-          setProfileBannerStatus(backdrop, error instanceof Error ? error.message : 'تعذر إزالة البنر حاليًا.', 'error')
-          setProfileBannerModalBusy(backdrop, false)
+          setProfileBannerConfirmError(confirmLayer, 'تعذر إزالة البنر حاليًا. حاول مرة أخرى.')
+          setProfileBannerConfirmBusy(confirmLayer, false)
         }
       }
 
       function openProfileBannerModal() {
         if (!state.activeUser || state.profileBannerUploadBusy) return
 
-        const currentBanner = profileBannerFromUser(state.activeUser)
+        let currentBanner = profileBannerFromUser(state.activeUser)
         let selectedFile = null
         let previewImageValue = currentBanner
           ? profileBannerCssUrl(currentBanner.url)
@@ -10651,6 +10962,8 @@ const metadata = {
         let hasRealPreview = Boolean(currentBanner)
         const initialX = currentBanner?.positionX ?? 50
         const initialY = currentBanner?.positionY ?? 50
+        let positionX = profileBannerPercent(initialX, 50)
+        let positionY = profileBannerPercent(initialY, 50)
 
         closeProfileBannerModal()
 
@@ -10688,20 +11001,34 @@ const metadata = {
                   <span class="profile-banner-preview-placeholder" data-profile-banner-placeholder>اختر صورة لمعاينتها هنا.</span>
                 </div>
               </div>
-              <div class="profile-banner-range-grid">
-                <label class="profile-banner-range-row" for="profileBannerPositionX">
-                  <span class="profile-banner-range-head">
+              <div class="profile-banner-position-grid">
+                <label class="profile-banner-position-card" for="profileBannerPositionX">
+                  <span class="profile-banner-position-head">
                     <span>الموضع الأفقي</span>
-                    <span class="profile-banner-range-value" data-profile-banner-x-value>${esc(initialX)}%</span>
+                    <span class="profile-banner-position-value" data-profile-banner-x-value>${esc(positionX)}%</span>
                   </span>
-                  <input id="profileBannerPositionX" type="range" min="0" max="100" value="${esc(initialX)}" data-profile-banner-x />
+                  <span class="profile-banner-number-control">
+                    <button class="profile-banner-stepper" type="button" data-profile-banner-axis="x" data-profile-banner-step="1" aria-label="زيادة الموضع الأفقي">▲</button>
+                    <span class="profile-banner-number-wrap">
+                      <input class="profile-banner-number-input" id="profileBannerPositionX" type="number" min="0" max="100" step="1" inputmode="numeric" value="${esc(positionX)}" data-profile-banner-value="${esc(positionX)}" data-profile-banner-x aria-label="الموضع الأفقي للبنر" />
+                      <span class="profile-banner-number-percent" aria-hidden="true">%</span>
+                    </span>
+                    <button class="profile-banner-stepper" type="button" data-profile-banner-axis="x" data-profile-banner-step="-1" aria-label="تقليل الموضع الأفقي">▼</button>
+                  </span>
                 </label>
-                <label class="profile-banner-range-row" for="profileBannerPositionY">
-                  <span class="profile-banner-range-head">
+                <label class="profile-banner-position-card" for="profileBannerPositionY">
+                  <span class="profile-banner-position-head">
                     <span>الموضع العمودي</span>
-                    <span class="profile-banner-range-value" data-profile-banner-y-value>${esc(initialY)}%</span>
+                    <span class="profile-banner-position-value" data-profile-banner-y-value>${esc(positionY)}%</span>
                   </span>
-                  <input id="profileBannerPositionY" type="range" min="0" max="100" value="${esc(initialY)}" data-profile-banner-y />
+                  <span class="profile-banner-number-control">
+                    <button class="profile-banner-stepper" type="button" data-profile-banner-axis="y" data-profile-banner-step="1" aria-label="زيادة الموضع العمودي">▲</button>
+                    <span class="profile-banner-number-wrap">
+                      <input class="profile-banner-number-input" id="profileBannerPositionY" type="number" min="0" max="100" step="1" inputmode="numeric" value="${esc(positionY)}" data-profile-banner-value="${esc(positionY)}" data-profile-banner-y aria-label="الموضع العمودي للبنر" />
+                      <span class="profile-banner-number-percent" aria-hidden="true">%</span>
+                    </span>
+                    <button class="profile-banner-stepper" type="button" data-profile-banner-axis="y" data-profile-banner-step="-1" aria-label="تقليل الموضع العمودي">▼</button>
+                  </span>
                 </label>
                 <button class="profile-banner-center-btn" type="button" data-profile-banner-center>توسيط</button>
               </div>
@@ -10724,10 +11051,52 @@ const metadata = {
         const yValue = backdrop.querySelector('[data-profile-banner-y-value]')
 
         const updatePreview = () => {
-          setProfileBannerPreviewImage(preview, previewImageValue, xInput?.value, yInput?.value)
+          setProfileBannerPreviewImage(preview, previewImageValue, positionX, positionY)
           if (preview) preview.dataset.hasRealImage = hasRealPreview ? '1' : '0'
-          updateProfileBannerRangeUi(xInput, xValue)
-          updateProfileBannerRangeUi(yInput, yValue)
+          updateProfileBannerRangeUi(xInput, xValue, positionX)
+          updateProfileBannerRangeUi(yInput, yValue, positionY)
+        }
+
+        const setPositionValue = (axis, value) => {
+          const nextValue = profileBannerPercent(value, axis === 'x' ? positionX : positionY)
+          const input = axis === 'x' ? xInput : yInput
+          if (axis === 'x') positionX = nextValue
+          else positionY = nextValue
+          if (input) {
+            input.value = String(nextValue)
+            input.dataset.profileBannerValue = String(nextValue)
+          }
+          updatePreview()
+        }
+
+        const handlePositionInput = (input, axis, commit = false) => {
+          if (!input) return
+          const rawValue = String(input.value ?? '').trim()
+          const currentValue = axis === 'x' ? positionX : positionY
+
+          if (!rawValue) {
+            if (commit) setPositionValue(axis, currentValue)
+            else updatePreview()
+            return
+          }
+
+          const nextValue = profileBannerPercent(rawValue, currentValue)
+          setPositionValue(axis, nextValue)
+        }
+
+        const bindPositionInput = (input, axis) => {
+          input?.addEventListener('input', () => handlePositionInput(input, axis))
+          input?.addEventListener('blur', () => handlePositionInput(input, axis, true))
+          input?.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault()
+              handlePositionInput(input, axis, true)
+              input.blur?.()
+            }
+          })
+          input?.addEventListener('wheel', (event) => {
+            if (document.activeElement === input) event.preventDefault()
+          }, { passive: false })
         }
 
         const handleProfileBannerPickedFile = (file) => {
@@ -10772,8 +11141,20 @@ const metadata = {
           handleProfileBannerPickedFile(fileInput.files?.[0] || null)
         })
 
-        xInput?.addEventListener('input', updatePreview)
-        yInput?.addEventListener('input', updatePreview)
+        bindPositionInput(xInput, 'x')
+        bindPositionInput(yInput, 'y')
+
+        backdrop.addEventListener('profile-banner-deleted', () => {
+          currentBanner = null
+          selectedFile = null
+          if (fileInput) fileInput.value = ''
+          revokeProfileBannerPreviewUrl()
+          previewImageValue = state.profileBannerDefaultCoverValue || fallbackCover()
+          hasRealPreview = false
+          updateProfileBannerFileUi(backdrop, null)
+          setPositionValue('x', 50)
+          setPositionValue('y', 50)
+        })
 
         uploadZone?.addEventListener('click', () => {
           if (!state.profileBannerUploadBusy) fileInput?.click?.()
@@ -10814,19 +11195,31 @@ const metadata = {
           const cancel = event.target?.closest?.('[data-profile-banner-cancel]')
           const remove = event.target?.closest?.('[data-profile-banner-remove]')
           const center = event.target?.closest?.('[data-profile-banner-center]')
+          const stepper = event.target?.closest?.('[data-profile-banner-axis][data-profile-banner-step]')
 
           if (save) saveProfileBannerFromModal(backdrop, selectedFile, xInput, yInput)
           else if (cancel && !state.profileBannerUploadBusy) closeProfileBannerModal()
-          else if (remove) deleteProfileBannerFromModal(backdrop)
+          else if (remove && !state.profileBannerUploadBusy) openProfileBannerDeleteConfirm(backdrop, remove)
+          else if (stepper && !state.profileBannerUploadBusy) {
+            const axis = stepper.dataset.profileBannerAxis === 'y' ? 'y' : 'x'
+            const delta = Number(stepper.dataset.profileBannerStep || 0)
+            const currentValue = axis === 'x' ? positionX : positionY
+            setPositionValue(axis, currentValue + delta)
+          }
           else if (center && !state.profileBannerUploadBusy) {
-            if (xInput) xInput.value = '50'
-            if (yInput) yInput.value = '50'
-            updatePreview()
+            setPositionValue('x', 50)
+            setPositionValue('y', 50)
           }
         })
 
         const onKeyDown = (event) => {
           if (event.key === 'Escape') {
+            const confirmLayer = backdrop.querySelector('[data-profile-banner-confirm-layer]')
+            if (confirmLayer) {
+              event.preventDefault()
+              closeProfileBannerDeleteConfirm(confirmLayer)
+              return
+            }
             if (state.profileBannerUploadBusy) return
             document.removeEventListener('keydown', onKeyDown)
             closeProfileBannerModal()
