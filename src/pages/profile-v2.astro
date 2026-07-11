@@ -6988,6 +6988,56 @@ const metadata = {
         width: 118px !important;
         height: 118px !important;
       }
+
+      .profile-v2-layout .v2-profile-head {
+        order: 1 !important;
+      }
+
+      .profile-v2-layout .v2-mail-btn {
+        order: 2 !important;
+        position: static !important;
+        inset: auto !important;
+        left: auto !important;
+        right: auto !important;
+        top: auto !important;
+        bottom: auto !important;
+        width: min(100%, 420px) !important;
+        max-width: 420px !important;
+        min-width: 0 !important;
+        min-height: 54px !important;
+        height: 54px !important;
+        margin: 20px auto 4px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        border-radius: 16px !important;
+        transform: none !important;
+      }
+
+      .profile-v2-layout .v2-mail-btn .mail-count {
+        position: static !important;
+        flex: 0 0 auto !important;
+        min-width: 22px !important;
+        height: 22px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        border-radius: 999px !important;
+        line-height: 1 !important;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .profile-v2-layout .v2-mail-btn {
+        width: 100% !important;
+        max-width: 360px !important;
+        min-height: 52px !important;
+        height: 52px !important;
+        margin-top: 20px !important;
+        margin-bottom: 6px !important;
+      }
     }
 
 
