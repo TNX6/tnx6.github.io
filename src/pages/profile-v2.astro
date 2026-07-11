@@ -108,22 +108,22 @@ const metadata = {
 
             <div class="v2-stats-strip">
               <div class="v2-stat-item">
-                <span class="stat-value" id="rank">---</span>
+                <span class="stat-value" id="rank">—</span>
                 <span class="stat-label">الرتبة</span>
               </div>
 
               <div class="v2-stat-item">
-                <span class="stat-value" id="messages">---</span>
+                <span class="stat-value" id="messages">—</span>
                 <span class="stat-label">رسالة</span>
               </div>
 
               <div class="v2-stat-item">
-                <span class="stat-value" id="checkins">---</span>
+                <span class="stat-value" id="checkins">—</span>
                 <span class="stat-label">دخول يومي</span>
               </div>
 
               <div class="v2-stat-item">
-                <span class="stat-value" id="points">---</span>
+                <span class="stat-value" id="points">—</span>
                 <span class="stat-label">نقطة</span>
               </div>
             </div>
@@ -9927,6 +9927,7 @@ const metadata = {
         activeUser: null,
         d1InventoryCache: {},
         d1EconomyCache: {},
+        d1ProfileStatsCache: {},
         profileBannerUploadBusy: false,
         profileBannerPreviewUrl: '',
       }
@@ -10092,6 +10093,19 @@ const metadata = {
         }
 
         window.__tnxPointsAnimationFrameV1 = requestAnimationFrame(step)
+      }
+
+      function setProfilePointsPlaceholderV1() {
+        const el = $('points')
+        if (!el) return
+
+        if (window.__tnxPointsAnimationFrameV1) {
+          cancelAnimationFrame(window.__tnxPointsAnimationFrameV1)
+          window.__tnxPointsAnimationFrameV1 = 0
+        }
+
+        el.classList.remove('is-points-counting')
+        el.textContent = '—'
       }
 
 
@@ -11290,7 +11304,9 @@ const metadata = {
       const DAILY_LOGIN_XP = 500
 
       function currentPoints(user) {
-        const rawPoints = num(deepGet(user, ['points', 'totalPoints', 'balance', 'loyaltyPoints'], 0))
+        const rawPoints = user?.profileStatsLoaded
+          ? num(deepGet(user, ['profileStatsPoints', 'points', 'totalPoints', 'balance'], 0))
+          : num(deepGet(user, ['points', 'totalPoints', 'balance', 'loyaltyPoints'], 0))
 
         try {
           if (typeof getOptimisticEconomyV1 === 'function') {
@@ -11477,30 +11493,24 @@ const metadata = {
       }
 
       function rankFor(user) {
-        const rank = levelRankFor(user)
+        const rank = user?.profileStatsLoaded ? Math.floor(Number(user.profileStatsRank || 0)) : 0
         return rank ? `#${rank}` : '—'
       }
 
       function messagesFor(user) {
-        return get(user, ['messages', 'messageCount', 'chatMessages'], 0)
+        if (user?.profileStatsLoaded || user?.profileStatsMailboxMessages !== undefined) {
+          return Math.max(0, Math.floor(Number(user.profileStatsMailboxMessages || 0)))
+        }
+
+        return null
       }
 
       function dailyLoginCount(user) {
-        return num(deepGet(user, [
-          'dailyLogin',
-          'dailyLogins',
-          'daily_login',
-          'daily_logins',
-          'dailyCheckIns',
-          'dailyCheckins',
-          'checkins',
-          'checkIns',
-          'attendance',
-          'loginCount',
-          'login_count',
-          'daily',
-          'streak'
-        ], 0))
+        if (user?.profileStatsLoaded) {
+          return Math.max(0, Math.floor(Number(user.profileStatsCheckins || 0)))
+        }
+
+        return 0
       }
 
       function dailyLoginXp(user) {
@@ -11509,6 +11519,27 @@ const metadata = {
 
       function checkinsFor(user) {
         return dailyLoginCount(user)
+      }
+
+      function applyProfileStatsUi(user) {
+        if (!user?.profileStatsLoaded) {
+          setText('rank', '—')
+          setText('checkins', '—')
+          setProfilePointsPlaceholderV1()
+
+          if (user?.profileStatsMailboxMessages !== undefined) {
+            setText('messages', formatNumber(user.profileStatsMailboxMessages))
+          } else {
+            setText('messages', '—')
+          }
+
+          return
+        }
+
+        setText('rank', rankFor(user))
+        setText('messages', formatNumber(messagesFor(user)))
+        setText('checkins', formatNumber(checkinsFor(user)))
+        setProfilePointsV1(currentPoints(user))
       }
 
       function chipsFor(user, level, badges, inventory) {
@@ -11712,10 +11743,7 @@ const metadata = {
         renderXpBreakdown(level)
         applyAvatarFrame(level.level)
 
-        setText('rank', rankFor(user))
-        setText('messages', formatNumber(messagesFor(user)))
-        setText('checkins', formatNumber(checkinsFor(user)))
-        setProfilePointsV1(currentPoints(user))
+        applyProfileStatsUi(user)
 
         setText('inventoryCount', `${inventory.length} ${inventory.length === 1 ? 'غرض' : 'أغراض'}`)
         setText('badgesCount', `${badges.length} مفتوحة`)
@@ -15690,7 +15718,7 @@ const metadata = {
           }
 
           setText('mailCount', messages.length)
-          setText('messages', formatNumber(messages.length))
+          applyMailboxMessageCountToProfileStats(messages.length)
           syncMailboxUpgradeUsedFromMessages(messages, mbV2CapacityUsedFromPayload(data, messages))
 
           try {
@@ -15839,10 +15867,14 @@ const metadata = {
             window.__mbV2FlashKind = result.status === 'rejected' ? 'no' : 'ok'
 
             if (state.activeUser) {
-              state.activeUser.mailbox = result.messages
+              const nextMessages = Array.isArray(result.messages)
+                ? result.messages
+                : (Array.isArray(state.activeUser.mailbox) ? state.activeUser.mailbox : [])
+              state.activeUser.mailbox = nextMessages
+              setText('mailCount', nextMessages.length)
+              applyMailboxMessageCountToProfileStats(nextMessages.length)
+              renderMail(nextMessages)
             }
-
-            renderMail(result.messages)
           } else {
             setInline('loading', 'التنفيذ متأخر شوي... بيتحدث تلقائيًا')
             window.setTimeout(() => loadD1MailboxForProfile(state.activeUser, true), 6000)
@@ -15895,7 +15927,7 @@ const metadata = {
           if (state.activeUser && optimisticMessages.length !== currentMessages.length) {
             state.activeUser.mailbox = optimisticMessages
             setText('mailCount', optimisticMessages.length)
-            setText('messages', formatNumber(optimisticMessages.length))
+            applyMailboxMessageCountToProfileStats(optimisticMessages.length)
             syncMailboxUpgradeUsedFromMessages(optimisticMessages)
           }
 
@@ -15935,7 +15967,7 @@ const metadata = {
           if (state.activeUser) {
             state.activeUser.mailbox = []
             setText('mailCount', 0)
-            setText('messages', formatNumber(0))
+            applyMailboxMessageCountToProfileStats(0)
             syncMailboxUpgradeUsedFromMessages([])
           }
 
@@ -20135,6 +20167,122 @@ function mbV2Card(message) {
         }
       }
 
+      function d1ProfileStatsCacheKey(user) {
+        return d1InventoryCacheKey(user)
+      }
+
+      function buildD1ProfileStatsUrlForUser(user) {
+        const params = new URLSearchParams()
+        const viewedId = String(userId(user) || get(user, ['twitchId', 'twitch_id'], '') || '').trim()
+        const viewedLogin = String(userLogin(user) || get(user, ['login', 'userLogin'], '') || '').trim().toLowerCase()
+
+        if (viewedId) params.set('twitchId', viewedId)
+        else if (viewedLogin) params.set('login', viewedLogin)
+        else return ''
+
+        return TNX_API_ORIGIN + '/api/profile/stats?' + params.toString()
+      }
+
+      function profileStatsNumber(value, fallback = 0) {
+        const parsed = Math.floor(Number(value))
+        return Number.isFinite(parsed) ? Math.max(0, parsed) : fallback
+      }
+
+      function profileStatsRank(value) {
+        const parsed = Math.floor(Number(value))
+        return Number.isFinite(parsed) && parsed > 0 ? parsed : null
+      }
+
+      async function loadProfileStatsFromD1(user, options = {}) {
+        const cacheKey = d1ProfileStatsCacheKey(user)
+        if (!cacheKey) return null
+
+        if (options.cache !== false && state.d1ProfileStatsCache[cacheKey]) {
+          return state.d1ProfileStatsCache[cacheKey]
+        }
+
+        const url = buildD1ProfileStatsUrlForUser(user)
+        if (!url) return null
+
+        try {
+          const res = await fetch(url, { cache: 'no-store' })
+          if (!res.ok) return null
+
+          const data = await res.json().catch(() => null)
+          if (!data?.ok || !data.stats) return null
+
+          state.d1ProfileStatsCache[cacheKey] = data
+          return data
+        } catch {
+          return null
+        }
+      }
+
+      function userWithD1Stats(user, data) {
+        if (!data?.ok || !data.stats) {
+          return {
+            ...user,
+            profileStatsLoaded: false,
+          }
+        }
+
+        const d1User = data.user || {}
+        const stats = data.stats || {}
+        const points = profileStatsNumber(stats.points, 0)
+        const checkins = profileStatsNumber(stats.checkins, 0)
+        const mailboxMessages = profileStatsNumber(stats.mailboxMessages, 0)
+        const rank = profileStatsRank(stats.rank)
+        const twitchIdValue = String(d1User.twitchId || get(user, ['twitchId', 'twitch_id', 'userId', 'id'], '') || '').trim()
+        const loginValue = String(d1User.login || get(user, ['login', 'userLogin'], '') || '').trim()
+
+        return {
+          ...user,
+          twitchId: twitchIdValue || String(get(user, ['twitchId', 'twitch_id'], '') || ''),
+          userId: twitchIdValue || String(get(user, ['userId', 'id'], '') || ''),
+          login: loginValue || String(get(user, ['login', 'userLogin'], '') || ''),
+          userLogin: loginValue || String(get(user, ['userLogin', 'login'], '') || ''),
+          points,
+          totalPoints: points,
+          balance: points,
+          profileStatsLoaded: true,
+          profileStatsPoints: points,
+          profileStatsRank: rank,
+          profileStatsCheckins: checkins,
+          profileStatsMailboxMessages: mailboxMessages,
+          profileStatsUpdatedAt: stats.updatedAt || null,
+          profileStatsEconomyUpdatedAt: stats.economyUpdatedAt || null,
+          profileStatsCheckinsUpdatedAt: stats.profileStatsUpdatedAt || null,
+        }
+      }
+
+      async function userWithD1ProfileStats(user, options = {}) {
+        const data = await loadProfileStatsFromD1(user, options)
+        return userWithD1Stats(user, data)
+      }
+
+      function applyMailboxMessageCountToProfileStats(count) {
+        const mailboxMessages = profileStatsNumber(count, 0)
+
+        setText('messages', formatNumber(mailboxMessages))
+
+        if (!state.activeUser) return
+
+        state.activeUser = {
+          ...state.activeUser,
+          profileStatsMailboxMessages: mailboxMessages,
+        }
+
+        try {
+          const cacheKey = d1ProfileStatsCacheKey(state.activeUser)
+          const cached = cacheKey ? state.d1ProfileStatsCache[cacheKey] : null
+
+          if (cached?.stats) {
+            cached.stats.mailboxMessages = mailboxMessages
+            cached.stats.updatedAt = new Date().toISOString()
+          }
+        } catch {}
+      }
+
       function getOptimisticEconomyV1(user) {
         try {
           const key = d1EconomyCacheKey(user || state.activeUser)
@@ -20194,13 +20342,11 @@ function mbV2Card(message) {
         try {
           if (!user) return
 
-          const points = Math.max(0, Math.floor(Number(currentPoints(user) || 0)))
           const inventory = inventoryItems(user)
           const badges = Array.isArray(user.badges) ? user.badges : []
           const level = calculateLevel(user)
 
-          setProfilePointsV1(points)
-          setText('rank', rankFor(user))
+          applyProfileStatsUi(user)
           renderChips(chipsFor(user, level.level, badges, inventory))
           renderNextBadge(user, badges)
         } catch (error) {
@@ -20236,6 +20382,8 @@ function mbV2Card(message) {
             points: nextPoints,
             totalPoints: nextPoints,
             balance: nextPoints,
+            profileStatsLoaded: true,
+            profileStatsPoints: nextPoints,
             gold: nextGold,
             economySource: 'local-sell-optimistic',
           }
@@ -20281,7 +20429,8 @@ function mbV2Card(message) {
 
       async function userWithD1ProfileData(user) {
         const withInventory = await userWithD1Inventory(user)
-        return await userWithD1Economy(withInventory)
+        const withEconomy = await userWithD1Economy(withInventory)
+        return await userWithD1ProfileStats(withEconomy)
       }
 
       async function renderProfileFromD1(user) {
@@ -20305,11 +20454,19 @@ function mbV2Card(message) {
         } catch {}
       }
 
+      function clearD1ProfileStatsCacheForUser(user) {
+        try {
+          const cacheKey = d1ProfileStatsCacheKey(user || state.activeUser)
+          if (cacheKey && state.d1ProfileStatsCache) delete state.d1ProfileStatsCache[cacheKey]
+        } catch {}
+      }
+
       async function refreshActiveProfileFromD1() {
         try {
           if (!state.activeUser) return
           clearD1InventoryCacheForUser(state.activeUser)
           clearD1EconomyCacheForUser(state.activeUser)
+          clearD1ProfileStatsCacheForUser(state.activeUser)
           await renderProfileFromD1(state.activeUser)
         } catch (error) {
           console.warn('Failed to refresh D1 profile data after sell status:', error)
@@ -20513,8 +20670,7 @@ function mbV2Card(message) {
 
 
       /* TNX_ECONOMY_LIVE_POLLER_V1 */
-      const ECONOMY_LIVE_POLL_VISIBLE_MS = 5000
-      const ECONOMY_LIVE_POLL_HIDDEN_MS = 25000
+      const ECONOMY_LIVE_POLL_VISIBLE_MS = 12000
 
       function getEconomyLivePollerV1() {
         if (!window.__tnxEconomyLivePollerV1) {
@@ -20535,27 +20691,31 @@ function mbV2Card(message) {
       }
 
       function economyLiveSignatureFromData(data) {
-        if (!data?.economy) return ''
+        if (!data?.stats) return ''
 
-        const points = Math.max(0, Math.floor(Number(data.economy.points || 0)))
-        const gold = Math.max(0, Math.floor(Number(data.economy.gold || 0)))
-        const updatedAt = String(data.economy.updatedAt || '')
+        const points = profileStatsNumber(data.stats.points, 0)
+        const rank = data.stats.rank === null || data.stats.rank === undefined ? '' : String(data.stats.rank)
+        const checkins = profileStatsNumber(data.stats.checkins, 0)
+        const mailboxMessages = profileStatsNumber(data.stats.mailboxMessages, 0)
+        const updatedAt = String(data.stats.updatedAt || '')
 
-        return `${points}|${gold}|${updatedAt}`
+        return `${points}|${rank}|${checkins}|${mailboxMessages}|${updatedAt}`
       }
 
       function economyLiveSignatureFromUser(user) {
         if (!user) return ''
 
-        const points = Math.max(0, Math.floor(Number(currentPoints(user) || 0)))
-        const gold = Math.max(0, Math.floor(Number(get(user, ['gold'], 0) || 0)))
-        const updatedAt = String(get(user, ['economyUpdatedAt'], '') || '')
+        const points = profileStatsNumber(currentPoints(user), 0)
+        const rank = user.profileStatsRank === null || user.profileStatsRank === undefined ? '' : String(user.profileStatsRank)
+        const checkins = profileStatsNumber(user.profileStatsCheckins, 0)
+        const mailboxMessages = profileStatsNumber(user.profileStatsMailboxMessages, 0)
+        const updatedAt = String(get(user, ['profileStatsUpdatedAt'], '') || '')
 
-        return `${points}|${gold}|${updatedAt}`
+        return `${points}|${rank}|${checkins}|${mailboxMessages}|${updatedAt}`
       }
 
       function economyLivePollDelay() {
-        return document.hidden ? ECONOMY_LIVE_POLL_HIDDEN_MS : ECONOMY_LIVE_POLL_VISIBLE_MS
+        return ECONOMY_LIVE_POLL_VISIBLE_MS
       }
 
       function stopEconomyLivePollerV1() {
@@ -20574,6 +20734,14 @@ function mbV2Card(message) {
       function scheduleEconomyLivePollerV1(delay = ECONOMY_LIVE_POLL_VISIBLE_MS) {
         const poller = getEconomyLivePollerV1()
 
+        if (document.hidden) {
+          if (poller.timer) {
+            window.clearTimeout(poller.timer)
+            poller.timer = 0
+          }
+          return
+        }
+
         if (poller.timer) {
           window.clearTimeout(poller.timer)
         }
@@ -20588,7 +20756,7 @@ function mbV2Card(message) {
       function startEconomyLivePollerV1() {
         const poller = getEconomyLivePollerV1()
 
-        if (!economyLiveProfileIsReady()) {
+        if (document.hidden || !economyLiveProfileIsReady()) {
           stopEconomyLivePollerV1()
           return
         }
@@ -20607,8 +20775,13 @@ function mbV2Card(message) {
           poller.listenersInstalled = true
 
           addListener(document, 'visibilitychange', () => {
+            if (document.hidden) {
+              stopEconomyLivePollerV1()
+              return
+            }
+
             if (economyLiveProfileIsReady()) {
-              scheduleEconomyLivePollerV1(document.hidden ? ECONOMY_LIVE_POLL_HIDDEN_MS : 500)
+              scheduleEconomyLivePollerV1(500)
             }
           })
 
@@ -20623,21 +20796,13 @@ function mbV2Card(message) {
       }
 
       function buildD1EconomyUrlForUser(user) {
-        const params = new URLSearchParams()
-        const viewedId = String(userId(user) || get(user, ['twitchId', 'twitch_id'], '') || '').trim()
-        const viewedLogin = String(userLogin(user) || get(user, ['login', 'userLogin'], '') || '').trim().toLowerCase()
-
-        if (viewedId) params.set('twitchId', viewedId)
-        else if (viewedLogin) params.set('login', viewedLogin)
-        else return ''
-
-        return TNX_API_ORIGIN + '/api/profile/economy?' + params.toString()
+        return buildD1ProfileStatsUrlForUser(user)
       }
 
       async function runEconomyLivePollerV1() {
         const poller = getEconomyLivePollerV1()
 
-        if (!economyLiveProfileIsReady()) {
+        if (document.hidden || !economyLiveProfileIsReady()) {
           stopEconomyLivePollerV1()
           return
         }
@@ -20661,7 +20826,7 @@ function mbV2Card(message) {
           const res = await fetch(url, { cache: 'no-store' })
           const data = res.ok ? await res.json().catch(() => null) : null
 
-          if (!data?.ok || !data.economy) {
+          if (!data?.ok || !data.stats) {
             return
           }
 
@@ -20671,30 +20836,16 @@ function mbV2Card(message) {
             poller.lastSignature = nextSignature
             poller.lastStartedKey = key
 
-            const rawPoints = Math.max(0, Math.floor(Number(data.economy.points || 0)))
-            const rawGold = Math.max(0, Math.floor(Number(data.economy.gold || 0)))
-            const resolvedEconomy = resolveEconomyAmountsV1(state.activeUser, rawPoints, rawGold)
-            const points = resolvedEconomy.points
-            const gold = resolvedEconomy.gold
-
-            const nextUser = {
-              ...state.activeUser,
-              points,
-              totalPoints: points,
-              balance: points,
-              gold,
-              economyUpdatedAt: data.economy.updatedAt || null,
-              economySource: resolvedEconomy.optimistic ? 'd1-live-optimistic' : 'd1-live',
-            }
+            const nextUser = userWithD1Stats(state.activeUser, data)
 
             state.activeUser = nextUser
+            state.d1ProfileStatsCache[key] = data
 
             const inventory = inventoryItems(nextUser)
             const badges = Array.isArray(nextUser.badges) ? nextUser.badges : []
             const level = calculateLevel(nextUser)
 
-            setProfilePointsV1(points)
-            setText('rank', rankFor(nextUser))
+            applyProfileStatsUi(nextUser)
             renderChips(chipsFor(nextUser, level.level, badges, inventory))
             renderNextBadge(nextUser, badges)
           }
@@ -20702,7 +20853,9 @@ function mbV2Card(message) {
           console.warn('Economy live poll failed:', error)
         } finally {
           poller.running = false
-          scheduleEconomyLivePollerV1(economyLivePollDelay())
+          if (!document.hidden) {
+            scheduleEconomyLivePollerV1(economyLivePollDelay())
+          }
         }
       }
 
