@@ -7258,6 +7258,128 @@ const metadata = {
     line-height: 1.7;
   }
 
+  .use-result-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100004;
+    display: grid;
+    place-items: center;
+    padding: 22px;
+    direction: rtl;
+    background:
+      radial-gradient(circle at 50% 16%, rgba(255, 218, 106, .10), transparent 34%),
+      rgba(0, 0, 0, .72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .use-result-box {
+    width: min(520px, calc(100vw - 30px));
+    border-radius: 28px;
+    border: 1px solid rgba(255, 223, 138, .20);
+    background:
+      radial-gradient(circle at 82% 0%, rgba(255, 218, 106, .12), transparent 34%),
+      linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025)),
+      rgba(14,14,18,.98);
+    color: rgba(255,255,255,.92);
+    box-shadow: 0 34px 110px rgba(0,0,0,.72);
+    overflow: hidden;
+    transform-origin: center;
+    animation: modalSoftSlideIn .24s cubic-bezier(.22, .9, .25, 1) both;
+  }
+
+  .use-result-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    background: rgba(14,14,18,.94);
+  }
+
+  .use-result-head h3 {
+    margin: 0;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 1000;
+  }
+
+  .use-result-close {
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 14px;
+    background: rgba(255,255,255,.06);
+    color: #fff;
+    font: inherit;
+    font-size: 24px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .use-result-body {
+    padding: 20px;
+    display: grid;
+    gap: 14px;
+  }
+
+  .use-result-item {
+    display: inline-flex;
+    width: fit-content;
+    max-width: 100%;
+    align-items: center;
+    min-height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(240,208,96,.26);
+    background: rgba(240,208,96,.08);
+    color: #f0d060;
+    font-size: 13px;
+    font-weight: 1000;
+  }
+
+  .use-result-text {
+    margin: 0;
+    color: rgba(255,255,255,.86);
+    font-size: 16px;
+    font-weight: 850;
+    line-height: 1.9;
+    white-space: pre-line;
+  }
+
+  .use-result-value {
+    display: grid;
+    place-items: center;
+    min-height: 72px;
+    padding: 12px 16px;
+    border-radius: 22px;
+    border: 1px solid rgba(255,223,138,.18);
+    background: rgba(0,0,0,.22);
+    color: #ffe08a;
+    font-size: 28px;
+    font-weight: 1000;
+    text-align: center;
+  }
+
+  .use-result-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 20px 20px;
+  }
+
+  .use-result-action {
+    min-height: 46px;
+    min-width: 120px;
+    border: 0;
+    border-radius: 16px;
+    background: linear-gradient(180deg,#ffe08a,#d8aa45);
+    color: #1a1304;
+    font: inherit;
+    font-weight: 1000;
+    cursor: pointer;
+  }
+
   @media (max-width: 520px) {
     .item-detail-v3 {
       padding: 12px;
@@ -7273,6 +7395,22 @@ const metadata = {
 
     .item-detail-v3-hero {
       grid-template-columns: 60px minmax(0, 1fr);
+    }
+
+    .use-result-modal {
+      padding: 12px;
+    }
+
+    .use-result-body {
+      padding: 16px;
+    }
+
+    .use-result-actions {
+      padding: 0 16px 16px;
+    }
+
+    .use-result-action {
+      width: 100%;
     }
 
     .item-detail-v3-icon {
@@ -11996,6 +12134,111 @@ const metadata = {
       }
 
       const inventoryUsePendingKeysV1 = new Set();
+      const shownUseResultRequestIdsV1 = new Set();
+
+      function profileUseResultStorageKeyV1(requestId) {
+        return 'tnx_shown_use_result_' + String(requestId || '').trim();
+      }
+
+      function profileUseResultWasShownV1(requestId) {
+        const id = String(requestId || '').trim();
+
+        if (!id) return true;
+        if (shownUseResultRequestIdsV1.has(id)) return true;
+
+        try {
+          return window.sessionStorage?.getItem(profileUseResultStorageKeyV1(id)) === '1';
+        } catch {
+          return false;
+        }
+      }
+
+      function markProfileUseResultShownV1(requestId) {
+        const id = String(requestId || '').trim();
+
+        if (!id) return;
+
+        shownUseResultRequestIdsV1.add(id);
+
+        try {
+          window.sessionStorage?.setItem(profileUseResultStorageKeyV1(id), '1');
+        } catch {
+          // sessionStorage is optional; the in-memory Set still prevents polling duplicates.
+        }
+      }
+
+      function normalizeUseResultTextV1(value) {
+        return String(value ?? '').replace(/\s+/g, ' ').trim();
+      }
+
+      function useResultValueIsRepeatedV1(text, value) {
+        const message = normalizeUseResultTextV1(text);
+        const result = normalizeUseResultTextV1(value);
+
+        return Boolean(message && result && message.includes(result));
+      }
+
+      function openProfileUseResultModalV1(requestData) {
+        const requestId = String(requestData?.id || requestData?.requestId || '').trim();
+
+        if (profileUseResultWasShownV1(requestId)) return;
+
+        const item = String(requestData?.itemName ?? requestData?.item_name ?? 'الغرض').trim() || 'الغرض';
+        const resultTitle = String(requestData?.resultTitle ?? requestData?.result_title ?? '').trim();
+        const resultText = String(requestData?.resultText ?? requestData?.result_text ?? '').trim();
+        const resultValue = String(requestData?.resultValue ?? requestData?.result_value ?? '').trim();
+        const title = resultTitle || ('نتيجة استخدام ' + item);
+        const missingDetails = !resultText && !resultValue;
+        const message = resultText || 'تم استخدام الغرض، لكن لم تصل تفاصيل النتيجة من Streamer.bot.';
+        const shouldShowValue = Boolean(resultValue && !useResultValueIsRepeatedV1(message, resultValue));
+
+        if (missingDetails) {
+          console.warn('[Inventory Use Result] missing details requestId=' + requestId);
+        }
+
+        markProfileUseResultShownV1(requestId);
+        document.querySelectorAll('[data-use-result-modal]').forEach((node) => node.remove());
+
+        const modal = document.createElement('div');
+        modal.className = 'use-result-modal';
+        modal.setAttribute('data-use-result-modal', 'true');
+        modal.innerHTML = `
+          <div class="use-result-box" role="dialog" aria-modal="true" aria-labelledby="useResultTitle">
+            <div class="use-result-head">
+              <h3 id="useResultTitle">${esc(title)}</h3>
+              <button class="use-result-close" type="button" data-use-result-close aria-label="إغلاق">×</button>
+            </div>
+            <div class="use-result-body">
+              <div class="use-result-item">${esc(item)}</div>
+              <p class="use-result-text">${esc(message)}</p>
+              ${shouldShowValue ? `<div class="use-result-value">${esc(resultValue)}</div>` : ''}
+            </div>
+            <div class="use-result-actions">
+              <button class="use-result-action" type="button" data-use-result-close>إغلاق</button>
+            </div>
+          </div>
+        `;
+
+        const close = () => {
+          document.removeEventListener('keydown', onKeyDown);
+          modal.remove();
+        };
+
+        const onKeyDown = (event) => {
+          if (event.key === 'Escape') close();
+        };
+
+        modal.querySelectorAll('[data-use-result-close]').forEach((button) => {
+          addListener(button, 'click', close);
+        });
+
+        addListener(modal, 'click', (event) => {
+          if (event.target === modal) close();
+        });
+
+        document.addEventListener('keydown', onKeyDown);
+        document.body.appendChild(modal);
+      }
 
       function inventoryUseLockKeyV1(itemName) {
         const ownerKey = d1InventoryCacheKey(state.activeUser) || 'active';
@@ -12172,7 +12415,10 @@ const metadata = {
         }
 
         waitForProfileUseRequestCompletion(requestId, null)
-          .then(() => refreshActiveProfileFromD1())
+          .then((requestData) => {
+            openProfileUseResultModalV1(requestData);
+            return refreshActiveProfileFromD1();
+          })
           .catch((error) => {
             console.warn('[Inventory Use] Request did not complete, restoring local inventory:', error);
             rollbackOptimisticInventoryUseV1(snapshot);
@@ -12216,7 +12462,7 @@ const metadata = {
 
           if (status === 'completed') {
             if (hint) hint.textContent = 'تم استخدام الغرض.';
-            return true;
+            return data?.request || { id, status };
           }
 
           if (status === 'rejected' || status === 'failed' || status === 'error' || status === 'cancelled') {
@@ -12329,7 +12575,7 @@ const metadata = {
           }
 
           if (hint) {
-            hint.textContent = 'تم إرسال طلب الاستخدام. راقب البث أو الشات للتنفيذ.';
+            hint.textContent = 'تم إرسال طلب الاستخدام. ستظهر النتيجة هنا بعد التنفيذ.';
           }
           optimisticUseSnapshot = applyOptimisticInventoryUseV1(data?.itemName || tnxUseItemNameForApi);
           releaseUseLockInBackground = true;
