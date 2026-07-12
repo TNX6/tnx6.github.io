@@ -8722,15 +8722,17 @@ const metadata = {
     }
 
     .bp29-shell {
-      --bp29-black: #070707;
+      --bp29-bg: #070707;
       --bp29-panel: #12100c;
-      --bp29-panel-2: #18140e;
+      --bp29-panel-soft: #171410;
+      --bp29-card: #14120f;
+      --bp29-card-hover: #1b1711;
       --bp29-line: rgba(215,168,79,.18);
-      --bp29-line-strong: rgba(255,223,138,.44);
+      --bp29-line-soft: rgba(255,255,255,.075);
       --bp29-gold: #d7a84f;
-      --bp29-gold-2: #ffdf8a;
+      --bp29-gold-light: #ffdf8a;
       --bp29-text: #f4f0e8;
-      --bp29-muted: rgba(244,240,232,.64);
+      --bp29-muted: rgba(244,240,232,.62);
       position: fixed;
       inset: 0;
       z-index: 100000;
@@ -8750,41 +8752,32 @@ const metadata = {
       inset: 0;
       border: 0;
       background:
-        radial-gradient(circle at 30% 12%, rgba(215,168,79,.12), transparent 32%),
-        radial-gradient(circle at 72% 85%, rgba(255,223,138,.07), transparent 34%),
-        rgba(0,0,0,.78);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
+        radial-gradient(circle at 24% 16%, rgba(215,168,79,.11), transparent 34%),
+        rgba(0,0,0,.80);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       cursor: pointer;
     }
 
     .bp29-shell .bp29-modal {
       position: relative;
       z-index: 1;
-      width: min(1040px, 100%);
-      height: min(820px, calc(100vh - 48px));
+      width: min(1160px, 100%);
+      height: min(780px, calc(100vh - 48px));
       max-height: calc(100vh - 48px);
-      background:
-        radial-gradient(820px 420px at 84% -12%, rgba(215,168,79,.16), transparent 58%),
-        radial-gradient(660px 360px at 12% 108%, rgba(255,223,138,.08), transparent 56%),
-        linear-gradient(180deg, #12100c 0%, #0a0907 100%);
-      border: 1px solid var(--bp29-line);
-      border-radius: 28px;
-      box-shadow: 0 42px 110px rgba(0,0,0,.68), 0 0 0 1px rgba(255,223,138,.05), inset 0 1px 0 rgba(255,255,255,.06);
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: 292px minmax(0, 1fr);
+      grid-template-rows: minmax(0, 1fr);
+      direction: rtl;
       overflow: hidden;
       color: var(--bp29-text);
+      background:
+        radial-gradient(820px 420px at 86% -14%, rgba(215,168,79,.15), transparent 58%),
+        linear-gradient(180deg, #12100c 0%, #080807 100%);
+      border: 1px solid var(--bp29-line);
+      border-radius: 26px;
+      box-shadow: 0 42px 110px rgba(0,0,0,.68), inset 0 1px 0 rgba(255,255,255,.055);
       animation: bp29In .22s cubic-bezier(.22,1,.36,1) both;
-    }
-
-    .bp29-shell .bp29-modal::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background: linear-gradient(180deg, rgba(255,223,138,.09), transparent 22%);
-      opacity: .8;
     }
 
     @keyframes bp29In {
@@ -8792,48 +8785,84 @@ const metadata = {
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    .bp29-shell .bp29-head {
-      position: relative;
-      z-index: 1;
-      padding: 26px 30px 18px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      background: linear-gradient(180deg, rgba(7,7,7,.44), rgba(7,7,7,.08));
-      flex: none;
+    .bp29-shell .bp29-side {
+      grid-column: 1;
+      direction: rtl;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+      gap: 18px;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(255,223,138,.11), transparent 42%),
+        rgba(7,7,7,.44);
+      border-left: 1px solid rgba(255,255,255,.06);
     }
 
-    .bp29-shell .bp29-head-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 18px;
+    .bp29-shell .bp29-main {
+      grid-column: 2;
+      direction: rtl;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr);
+      padding: 24px;
+      gap: 16px;
+    }
+
+    .bp29-shell .bp29-side-head {
+      display: grid;
+      gap: 10px;
+    }
+
+    .bp29-shell .bp29-side-icon {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      color: var(--bp29-gold-light);
+      background: rgba(215,168,79,.12);
+      border: 1px solid rgba(215,168,79,.22);
+    }
+
+    .bp29-shell .bp29-side-icon svg {
+      width: 24px;
+      height: 24px;
+      display: block;
     }
 
     .bp29-shell .bp29-title {
       color: var(--bp29-text);
       font-size: 27px;
-      font-weight: 900;
+      font-weight: 950;
       line-height: 1.15;
     }
 
     .bp29-shell .bp29-subtitle {
-      color: var(--bp29-muted);
+      color: rgba(244,240,232,.72);
       font-size: 14px;
-      margin-top: 8px;
-      line-height: 1.7;
-      font-weight: 700;
-      max-width: 620px;
+      line-height: 1.75;
+      font-weight: 750;
+      margin: 0;
     }
 
-    .bp29-shell .bp29-subtitle b {
-      color: var(--bp29-gold-2);
-      font-weight: 900;
+    .bp29-shell .bp29-note {
+      color: rgba(244,240,232,.46);
+      font-size: 12.5px;
+      line-height: 1.7;
+      font-weight: 750;
+      margin: 0;
     }
 
     .bp29-shell .bp29-close {
-      width: 42px;
-      height: 42px;
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      width: 40px;
+      height: 40px;
       border-radius: 14px;
-      flex: none;
       background: rgba(255,255,255,.055);
       border: 1px solid rgba(255,255,255,.08);
       color: rgba(244,240,232,.76);
@@ -8841,9 +8870,10 @@ const metadata = {
       place-items: center;
       cursor: pointer;
       transition: transform .16s ease, border-color .16s ease, background .16s ease, color .16s ease;
-      font-size: 24px;
+      font-size: 23px;
       line-height: 1;
       padding: 0;
+      z-index: 4;
     }
 
     .bp29-shell .bp29-close:hover {
@@ -8854,59 +8884,257 @@ const metadata = {
     }
 
     .bp29-shell .bp29-counter {
-      width: fit-content;
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 18px;
-      padding: 8px 11px;
+      display: grid;
+      gap: 10px;
+      padding: 14px;
       border: 1px solid rgba(215,168,79,.20);
-      border-radius: 999px;
-      background: rgba(7,7,7,.42);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+      border-radius: 18px;
+      background: rgba(7,7,7,.44);
+    }
+
+    .bp29-shell .bp29-count {
+      font-weight: 950;
+      color: rgba(244,240,232,.76);
+    }
+
+    .bp29-shell .bp29-count b {
+      color: var(--bp29-gold-light);
+      font-family: Oxanium, Tajawal, system-ui, sans-serif;
+      font-size: 34px;
+      line-height: 1;
+      margin-inline-end: 6px;
     }
 
     .bp29-shell .bp29-pips {
-      display: inline-flex;
-      gap: 6px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
     }
 
     .bp29-shell .bp29-pip {
-      width: 30px;
-      height: 6px;
+      height: 7px;
       border-radius: 999px;
       background: rgba(255,255,255,.11);
       transition: background .18s ease, box-shadow .18s ease;
     }
 
     .bp29-shell .bp29-pip.on {
-      background: linear-gradient(90deg, var(--bp29-gold), var(--bp29-gold-2));
-      box-shadow: 0 0 14px rgba(215,168,79,.30);
+      background: linear-gradient(90deg, var(--bp29-gold), var(--bp29-gold-light));
+      box-shadow: 0 0 14px rgba(215,168,79,.26);
     }
 
-    .bp29-shell .bp29-count {
-      min-width: 48px;
-      text-align: center;
+    .bp29-shell .bp29-tray {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .bp29-shell .bp29-tray-label {
+      color: rgba(255,223,138,.82);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .bp29-shell .bp29-chips {
+      display: grid;
+      align-content: start;
+      gap: 10px;
+      min-height: 0;
+      overflow: auto;
+      padding-inline-end: 2px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(215,168,79,.32) transparent;
+    }
+
+    .bp29-shell .bp29-slot {
+      min-height: 66px;
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.075);
+      background: rgba(255,255,255,.04);
+    }
+
+    .bp29-shell .bp29-slot.empty {
+      grid-template-columns: 44px 1fr;
+      border-style: dashed;
+      color: rgba(244,240,232,.46);
+    }
+
+    .bp29-shell .bp29-slot-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      overflow: hidden;
+      color: rgba(255,223,138,.72);
+      background: rgba(215,168,79,.10);
+      border: 1px solid rgba(215,168,79,.18);
       font-family: Oxanium, Tajawal, system-ui, sans-serif;
       font-weight: 900;
-      font-size: 14px;
-      color: rgba(244,240,232,.76);
       direction: ltr;
     }
 
-    .bp29-shell .bp29-count b {
-      color: var(--bp29-gold-2);
+    .bp29-shell .bp29-slot-icon img {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+    }
+
+    .bp29-shell .bp29-slot-name {
+      min-width: 0;
+      color: var(--bp29-text);
+      font-size: 13.5px;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bp29-shell .bp29-slot-meta {
+      color: rgba(244,240,232,.48);
+      font-size: 11.5px;
+      font-weight: 750;
+      margin-top: 2px;
+    }
+
+    .bp29-shell .bp29-slot-remove {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.045);
+      color: rgba(244,240,232,.62);
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      transition: background .14s ease, color .14s ease, border-color .14s ease;
+    }
+
+    .bp29-shell .bp29-slot-remove:hover {
+      border-color: rgba(224,121,95,.34);
+      background: rgba(224,121,95,.12);
+      color: #ffb19f;
+    }
+
+    .bp29-shell .bp29-clear {
+      width: fit-content;
+      justify-self: start;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.08);
+      color: rgba(244,240,232,.64);
+      font: inherit;
+      font-weight: 900;
+      font-size: 12.5px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color .14s ease, color .14s ease, background .14s ease;
+    }
+
+    .bp29-shell .bp29-clear:hover:not(:disabled) {
+      border-color: rgba(224,121,95,.36);
+      color: #ffb19f;
+      background: rgba(224,121,95,.10);
+    }
+
+    .bp29-shell .bp29-clear:disabled {
+      opacity: .42;
+      cursor: default;
+    }
+
+    .bp29-shell .bp29-foot {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      align-self: end;
+    }
+
+    .bp29-shell .bp29-save,
+    .bp29-shell .bp29-cancel {
+      min-height: 50px;
+      border-radius: 15px;
+      padding: 13px 18px;
+      font: inherit;
+      font-size: 14.5px;
+      font-weight: 950;
+      cursor: pointer;
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease, color .16s ease;
+    }
+
+    .bp29-shell .bp29-save {
+      border: 0;
+      color: #171006;
+      background: linear-gradient(180deg, var(--bp29-gold-light), var(--bp29-gold));
+      box-shadow: 0 12px 30px rgba(215,168,79,.20);
+    }
+
+    .bp29-shell .bp29-save:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 34px rgba(215,168,79,.28);
+    }
+
+    .bp29-shell .bp29-save:disabled {
+      background: rgba(255,255,255,.055);
+      color: rgba(244,240,232,.38);
+      box-shadow: none;
+      cursor: default;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .bp29-shell .bp29-cancel {
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: rgba(244,240,232,.72);
+    }
+
+    .bp29-shell .bp29-cancel:hover {
+      background: rgba(255,255,255,.075);
+      color: var(--bp29-text);
+      border-color: rgba(255,255,255,.14);
+    }
+
+    .bp29-shell .bp29-main-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding-inline-start: 48px;
+    }
+
+    .bp29-shell .bp29-main-title {
+      color: var(--bp29-text);
+      font-size: 18px;
+      font-weight: 950;
+    }
+
+    .bp29-shell .bp29-results {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      color: rgba(255,223,138,.86);
+      background: rgba(215,168,79,.09);
+      border: 1px solid rgba(215,168,79,.17);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
     }
 
     .bp29-shell .bp29-tools {
-      position: relative;
-      z-index: 1;
       display: grid;
       grid-template-columns: minmax(260px, 1fr) auto;
-      gap: 14px;
-      padding: 18px 30px 10px;
+      gap: 12px;
       align-items: center;
-      flex: none;
     }
 
     .bp29-shell .bp29-search {
@@ -8933,15 +9161,15 @@ const metadata = {
 
     .bp29-shell .bp29-search input {
       width: 100%;
-      height: 54px;
+      height: 50px;
       background: rgba(7,7,7,.56);
       border: 1px solid rgba(255,255,255,.08);
-      border-radius: 17px;
+      border-radius: 16px;
       color: var(--bp29-text);
       font: inherit;
-      font-size: 15px;
-      font-weight: 800;
-      padding: 14px 48px 14px 16px;
+      font-size: 14.5px;
+      font-weight: 850;
+      padding: 13px 48px 13px 16px;
       outline: none;
       transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
     }
@@ -8962,12 +9190,12 @@ const metadata = {
       justify-content: center;
       background: rgba(7,7,7,.56);
       border: 1px solid rgba(255,255,255,.08);
-      border-radius: 17px;
+      border-radius: 16px;
       padding: 5px;
       gap: 4px;
       overflow-x: auto;
       scrollbar-width: none;
-      min-height: 54px;
+      min-height: 50px;
     }
 
     .bp29-shell .bp29-seg::-webkit-scrollbar { display: none; }
@@ -8978,11 +9206,11 @@ const metadata = {
       color: rgba(244,240,232,.66);
       font: inherit;
       font-weight: 900;
-      font-size: 13.5px;
-      padding: 10px 18px;
-      border-radius: 12px;
+      font-size: 13px;
+      padding: 9px 14px;
+      border-radius: 11px;
       cursor: pointer;
-      transition: background .16s ease, color .16s ease, transform .16s ease;
+      transition: background .16s ease, color .16s ease;
       white-space: nowrap;
     }
 
@@ -8992,155 +9220,15 @@ const metadata = {
     }
 
     .bp29-shell .bp29-seg button.act {
-      background: linear-gradient(180deg, var(--bp29-gold-2), var(--bp29-gold));
+      background: linear-gradient(180deg, var(--bp29-gold-light), var(--bp29-gold));
       color: #171006;
-      box-shadow: 0 8px 20px rgba(215,168,79,.18);
-    }
-
-    .bp29-shell .bp29-tray {
-      position: relative;
-      z-index: 1;
-      margin: 0 30px;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-      gap: 12px;
-      max-height: 0;
-      opacity: 0;
-      overflow: hidden;
-      border: 1px solid transparent;
-      border-radius: 18px;
-      background: transparent;
-      transition: max-height .24s ease, opacity .18s ease, padding .24s ease, margin-top .24s ease, border-color .18s ease, background .18s ease;
-      flex: none;
-    }
-
-    .bp29-shell .bp29-tray.show {
-      max-height: 124px;
-      opacity: 1;
-      margin-top: 8px;
-      padding: 12px;
-      border-color: rgba(215,168,79,.14);
-      background: rgba(7,7,7,.34);
-    }
-
-    .bp29-shell .bp29-tray-label {
-      color: rgba(255,223,138,.82);
-      font-size: 13px;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .bp29-shell .bp29-chips {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      min-width: 0;
-    }
-
-    .bp29-shell .bp29-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255,255,255,.055);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 999px;
-      padding: 6px 8px 6px 11px;
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--bp29-text);
-      cursor: pointer;
-      min-width: 0;
-      transition: border-color .14s ease, background .14s ease, transform .14s ease;
-    }
-
-    .bp29-shell .bp29-chip:hover {
-      border-color: rgba(215,168,79,.28);
-      background: rgba(215,168,79,.10);
-      transform: translateY(-1px);
-    }
-
-    .bp29-shell .bp29-chip .dot {
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
-      display: grid;
-      place-items: center;
-      background: rgba(215,168,79,.12);
-      border: 1px solid rgba(215,168,79,.22);
-      color: var(--bp29-gold-2);
-      font-size: 10px;
-      overflow: hidden;
-      flex: none;
-    }
-
-    .bp29-shell .bp29-chip .dot img {
-      width: 18px;
-      height: 18px;
-      object-fit: contain;
-    }
-
-    .bp29-shell .bp29-chip code {
-      max-width: 96px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-family: Oxanium, Tajawal, system-ui, sans-serif;
-      font-weight: 800;
-      direction: ltr;
-    }
-
-    .bp29-shell .bp29-chip .x {
-      width: 20px;
-      height: 20px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.07);
-      color: rgba(244,240,232,.58);
-      display: grid;
-      place-items: center;
-      font-size: 14px;
-      line-height: 1;
-      transition: background .14s ease, color .14s ease;
-      flex: none;
-    }
-
-    .bp29-shell .bp29-chip:hover .x {
-      background: rgba(224,121,95,.18);
-      color: #ffb19f;
-    }
-
-    .bp29-shell .bp29-clear {
-      justify-self: end;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
-      color: rgba(244,240,232,.68);
-      font: inherit;
-      font-weight: 900;
-      font-size: 12.5px;
-      padding: 9px 14px;
-      border-radius: 12px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: border-color .14s ease, color .14s ease, background .14s ease;
-    }
-
-    .bp29-shell .bp29-clear:hover:not(:disabled) {
-      border-color: rgba(224,121,95,.36);
-      color: #ffb19f;
-      background: rgba(224,121,95,.10);
-    }
-
-    .bp29-shell .bp29-clear:disabled {
-      opacity: .42;
-      cursor: default;
+      box-shadow: 0 8px 20px rgba(215,168,79,.16);
     }
 
     .bp29-shell .bp29-scroller {
-      position: relative;
-      z-index: 1;
-      overflow-y: auto;
-      padding: 18px 30px 24px;
-      flex: 1 1 auto;
       min-height: 0;
+      overflow-y: auto;
+      padding-inline-end: 2px;
       scrollbar-width: thin;
       scrollbar-color: rgba(215,168,79,.38) transparent;
     }
@@ -9148,169 +9236,191 @@ const metadata = {
     .bp29-shell .bp29-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
+      gap: 12px;
       contain: layout paint;
+      padding-bottom: 2px;
     }
 
     .bp29-shell .bp29-card {
       position: relative;
       min-width: 0;
-      min-height: 164px;
-      background: linear-gradient(180deg, rgba(24,20,14,.96), rgba(12,10,8,.96));
-      border: 1px solid rgba(255,255,255,.075);
-      border-radius: 22px;
-      padding: 18px 12px 15px;
-      cursor: pointer;
-      text-align: center;
-      color: var(--bp29-text);
-      user-select: none;
+      min-height: 112px;
       display: grid;
-      justify-items: center;
-      align-content: center;
+      grid-template-columns: 62px minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+      padding: 14px 13px 14px 14px;
+      text-align: right;
+      color: var(--bp29-text);
+      background: linear-gradient(180deg, rgba(20,18,15,.98), rgba(12,10,8,.98));
+      border: 1px solid rgba(255,255,255,.075);
+      border-radius: 18px;
+      cursor: pointer;
+      user-select: none;
+      overflow: hidden;
       transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease, background .16s ease, opacity .16s ease;
       contain: layout paint style;
     }
 
+    .bp29-shell .bp29-card::before {
+      content: "";
+      position: absolute;
+      inset-block: 12px;
+      inset-inline-end: 0;
+      width: 3px;
+      border-radius: 999px 0 0 999px;
+      background: transparent;
+      transition: background .16s ease;
+    }
+
     .bp29-shell .bp29-card:hover {
       transform: translateY(-2px);
-      border-color: rgba(255,223,138,.28);
-      box-shadow: 0 16px 34px rgba(0,0,0,.26);
+      border-color: rgba(255,223,138,.25);
+      background: var(--bp29-card-hover);
+      box-shadow: 0 14px 30px rgba(0,0,0,.22);
     }
 
     .bp29-shell .bp29-medal {
       position: relative;
-      width: 76px;
-      height: 76px;
-      margin: 0 auto 13px;
+      width: 58px;
+      height: 58px;
       display: grid;
       place-items: center;
+      grid-column: 1;
+      grid-row: 1;
     }
 
     .bp29-shell .bp29-ring {
       position: absolute;
       inset: 0;
-      border-radius: 50%;
-      background: conic-gradient(from 220deg, rgba(215,168,79,.28), rgba(255,223,138,.82), rgba(215,168,79,.22), rgba(255,223,138,.66), rgba(215,168,79,.28));
-      -webkit-mask: radial-gradient(circle, transparent 58%, #000 60%);
-      mask: radial-gradient(circle, transparent 58%, #000 60%);
-      opacity: .78;
+      border-radius: 18px;
+      background: rgba(215,168,79,.11);
+      border: 1px solid rgba(215,168,79,.20);
     }
 
     .bp29-shell .bp29-core {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
+      position: relative;
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
       display: grid;
       place-items: center;
-      background: radial-gradient(circle at 38% 28%, rgba(255,223,138,.16), rgba(7,7,7,.96) 64%);
-      border: 1px solid rgba(215,168,79,.24);
-      box-shadow: inset 0 2px 10px rgba(0,0,0,.62);
-      color: var(--bp29-gold-2);
+      background: rgba(7,7,7,.62);
+      color: var(--bp29-gold-light);
       overflow: hidden;
       font-family: Oxanium, Tajawal, system-ui, sans-serif;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 900;
       direction: ltr;
     }
 
     .bp29-shell .bp29-core img {
-      width: 38px;
-      height: 38px;
+      width: 34px;
+      height: 34px;
       object-fit: contain;
       filter: drop-shadow(0 6px 12px rgba(0,0,0,.28));
     }
 
-    .bp29-shell .bp29-card.tier-role .bp29-ring {
-      background: conic-gradient(from 220deg, rgba(151,95,255,.38), rgba(226,205,255,.82), rgba(151,95,255,.26), rgba(255,223,138,.54), rgba(151,95,255,.38));
+    .bp29-shell .bp29-copy {
+      min-width: 0;
+      display: grid;
+      gap: 5px;
+      grid-column: 2;
+      grid-row: 1;
+      padding-inline-end: 2px;
     }
 
     .bp29-shell .bp29-name {
-      display: block;
-      width: 100%;
-      max-width: 132px;
-      margin: 0 auto;
+      min-width: 0;
       color: var(--bp29-text);
       font-family: Oxanium, Tajawal, system-ui, sans-serif;
-      font-weight: 900;
-      font-size: 17px;
+      font-weight: 950;
+      font-size: 15.5px;
       line-height: 1.25;
       direction: ltr;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      text-align: right;
     }
 
     .bp29-shell .bp29-cat {
+      width: fit-content;
+      max-width: 100%;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      min-height: 24px;
-      margin-top: 8px;
-      padding: 4px 10px;
+      min-height: 22px;
+      padding: 3px 8px;
       border-radius: 999px;
       color: rgba(244,240,232,.62);
       background: rgba(255,255,255,.04);
       border: 1px solid rgba(255,255,255,.06);
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .bp29-shell .bp29-desc {
+      color: rgba(244,240,232,.44);
       font-size: 11.5px;
-      font-weight: 800;
+      font-weight: 750;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bp29-shell .bp29-role-chip {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      min-height: 21px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #d9c2ff;
+      background: rgba(151,95,255,.12);
+      border: 1px solid rgba(151,95,255,.20);
+      font-size: 10.5px;
+      font-weight: 900;
     }
 
     .bp29-shell .bp29-info {
-      position: absolute;
-      top: 11px;
-      inset-inline-start: 11px;
-      width: 26px;
-      height: 26px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.045);
-      border: 1px solid rgba(255,255,255,.075);
-      color: rgba(244,240,232,.48);
-      display: grid;
-      place-items: center;
-      z-index: 3;
-    }
-
-    .bp29-shell .bp29-info svg {
-      width: 14px;
-      height: 14px;
-      display: block;
+      display: none;
     }
 
     .bp29-shell .bp29-tick {
       position: absolute;
-      top: 11px;
-      inset-inline-end: 11px;
-      width: 28px;
-      height: 28px;
-      border-radius: 999px;
-      background: linear-gradient(180deg, var(--bp29-gold-2), var(--bp29-gold));
+      top: 10px;
+      left: 10px;
+      width: 24px;
+      height: 24px;
+      border-radius: 9px;
+      background: linear-gradient(180deg, var(--bp29-gold-light), var(--bp29-gold));
       display: grid;
       place-items: center;
       transform: scale(.72);
       opacity: 0;
       transition: transform .16s ease, opacity .16s ease;
-      box-shadow: 0 8px 22px rgba(215,168,79,.24);
+      box-shadow: 0 8px 22px rgba(215,168,79,.22);
       z-index: 3;
       color: #161006;
       font-weight: 1000;
+      font-size: 13px;
     }
 
     .bp29-shell .bp29-card.sel {
-      border-color: rgba(255,223,138,.62);
+      border-color: rgba(255,223,138,.55);
       background:
-        radial-gradient(circle at 50% 0%, rgba(255,223,138,.13), transparent 54%),
-        linear-gradient(180deg, rgba(30,24,14,.98), rgba(16,13,9,.98));
-      box-shadow: 0 0 0 1px rgba(215,168,79,.22), 0 16px 38px rgba(215,168,79,.10);
+        linear-gradient(90deg, rgba(215,168,79,.09), transparent 42%),
+        linear-gradient(180deg, rgba(25,21,15,.98), rgba(14,12,9,.98));
+      box-shadow: 0 0 0 1px rgba(215,168,79,.16);
+    }
+
+    .bp29-shell .bp29-card.sel::before {
+      background: linear-gradient(180deg, var(--bp29-gold-light), var(--bp29-gold));
     }
 
     .bp29-shell .bp29-card.sel .bp29-tick {
       opacity: 1;
       transform: scale(1);
-    }
-
-    .bp29-shell .bp29-card.sel .bp29-core {
-      border-color: rgba(255,223,138,.58);
-      box-shadow: 0 0 0 4px rgba(215,168,79,.12), inset 0 2px 10px rgba(0,0,0,.55);
     }
 
     .bp29-shell .bp29-card.lock {
@@ -9326,14 +9436,15 @@ const metadata = {
 
     .bp29-shell .bp29-hint {
       position: absolute;
-      inset: auto 10px 10px;
+      left: 10px;
+      bottom: 10px;
       padding: 4px 8px;
       border-radius: 999px;
       background: rgba(7,7,7,.72);
       border: 1px solid rgba(215,168,79,.16);
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 900;
-      color: var(--bp29-gold-2);
+      color: var(--bp29-gold-light);
       opacity: 0;
       transition: opacity .16s ease;
       pointer-events: none;
@@ -9345,68 +9456,37 @@ const metadata = {
 
     .bp29-shell .bp29-empty {
       grid-column: 1/-1;
+      min-height: 260px;
+      display: grid;
+      place-items: center;
       text-align: center;
       color: rgba(244,240,232,.58);
-      padding: 56px 0;
-      font-size: 15px;
-      font-weight: 800;
+      padding: 36px;
+      border: 1px dashed rgba(255,255,255,.10);
+      border-radius: 20px;
+      background: rgba(255,255,255,.03);
     }
 
-    .bp29-shell .bp29-foot {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-      padding: 18px 30px;
-      border-top: 1px solid rgba(255,255,255,.06);
-      background: rgba(7,7,7,.48);
-      flex: none;
+    .bp29-shell .bp29-empty svg {
+      width: 38px;
+      height: 38px;
+      color: rgba(255,223,138,.62);
+      margin-bottom: 12px;
     }
 
-    .bp29-shell .bp29-save,
-    .bp29-shell .bp29-cancel {
-      min-height: 52px;
-      border-radius: 16px;
-      padding: 14px 22px;
-      font: inherit;
-      font-size: 15px;
-      font-weight: 900;
-      cursor: pointer;
-      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease, color .16s ease;
-    }
-
-    .bp29-shell .bp29-save {
-      border: 0;
-      color: #171006;
-      background: linear-gradient(180deg, var(--bp29-gold-2), var(--bp29-gold));
-      box-shadow: 0 12px 30px rgba(215,168,79,.20);
-    }
-
-    .bp29-shell .bp29-save:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 16px 34px rgba(215,168,79,.28);
-    }
-
-    .bp29-shell .bp29-save:disabled {
-      background: rgba(255,255,255,.055);
-      color: rgba(244,240,232,.38);
-      box-shadow: none;
-      cursor: default;
-      border: 1px solid rgba(255,255,255,.06);
-    }
-
-    .bp29-shell .bp29-cancel {
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-      color: rgba(244,240,232,.72);
-      min-width: 126px;
-    }
-
-    .bp29-shell .bp29-cancel:hover {
-      background: rgba(255,255,255,.075);
+    .bp29-shell .bp29-empty strong {
+      display: block;
       color: var(--bp29-text);
-      border-color: rgba(255,255,255,.14);
+      font-size: 17px;
+      font-weight: 950;
+      margin-bottom: 6px;
+    }
+
+    .bp29-shell .bp29-empty span {
+      display: block;
+      color: rgba(244,240,232,.56);
+      font-size: 13px;
+      font-weight: 750;
     }
 
     .bp29-shell button:focus-visible,
@@ -9440,9 +9520,10 @@ const metadata = {
       transform: translateX(-50%) translateY(0) scale(1);
     }
 
-    @media (max-width: 1024px) {
+    @media (max-width: 1050px) {
       .bp29-shell .bp29-modal {
-        width: min(920px, 100%);
+        width: min(980px, 100%);
+        grid-template-columns: 278px minmax(0, 1fr);
       }
 
       .bp29-shell .bp29-grid {
@@ -9450,28 +9531,137 @@ const metadata = {
       }
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 760px) {
       .bp29-shell {
-        padding: 16px;
+        padding: 8px;
       }
 
       .bp29-shell .bp29-modal {
-        height: min(820px, calc(100vh - 32px));
-        max-height: calc(100vh - 32px);
-        border-radius: 24px;
+        width: calc(100vw - 16px);
+        height: calc(100dvh - 16px);
+        max-height: calc(100dvh - 16px);
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(0, 1fr);
+        border-radius: 22px;
       }
 
-      .bp29-shell .bp29-head {
-        padding: 22px 20px 16px;
+      .bp29-shell .bp29-side {
+        grid-column: 1;
+        grid-row: 1;
+        grid-template-rows: auto auto auto auto;
+        gap: 12px;
+        padding: 16px;
+        border-left: 0;
+        border-bottom: 1px solid rgba(255,255,255,.06);
+      }
+
+      .bp29-shell .bp29-main {
+        grid-column: 1;
+        grid-row: 2;
+        padding: 14px 16px 0;
+        grid-template-rows: auto auto minmax(0, 1fr);
+      }
+
+      .bp29-shell .bp29-side-head {
+        grid-template-columns: 40px minmax(0, 1fr);
+        align-items: center;
+        gap: 8px 12px;
+      }
+
+      .bp29-shell .bp29-side-icon {
+        width: 40px;
+        height: 40px;
+        grid-row: span 2;
       }
 
       .bp29-shell .bp29-title {
-        font-size: 23px;
+        font-size: 21px;
+      }
+
+      .bp29-shell .bp29-subtitle {
+        font-size: 12.5px;
+      }
+
+      .bp29-shell .bp29-note {
+        grid-column: 1 / -1;
+      }
+
+      .bp29-shell .bp29-counter {
+        padding: 10px 12px;
+      }
+
+      .bp29-shell .bp29-count b {
+        font-size: 24px;
+      }
+
+      .bp29-shell .bp29-tray {
+        min-height: auto;
+      }
+
+      .bp29-shell .bp29-chips {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        overflow: visible;
+        gap: 8px;
+      }
+
+      .bp29-shell .bp29-slot {
+        min-height: 64px;
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+        padding: 8px;
+      }
+
+      .bp29-shell .bp29-slot:not(.empty) {
+        grid-template-columns: 34px minmax(0, 1fr) 24px;
+        justify-items: stretch;
+        text-align: right;
+      }
+
+      .bp29-shell .bp29-slot-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 11px;
+      }
+
+      .bp29-shell .bp29-slot-icon img {
+        width: 24px;
+        height: 24px;
+      }
+
+      .bp29-shell .bp29-slot-name {
+        font-size: 12px;
+      }
+
+      .bp29-shell .bp29-slot-meta {
+        display: none;
+      }
+
+      .bp29-shell .bp29-slot-remove {
+        width: 24px;
+        height: 24px;
+      }
+
+      .bp29-shell .bp29-clear {
+        justify-self: stretch;
+        text-align: center;
+      }
+
+      .bp29-shell .bp29-foot {
+        position: sticky;
+        bottom: 0;
+        grid-template-columns: 1fr 1fr;
+        z-index: 5;
+        padding-top: 4px;
+        background: linear-gradient(180deg, transparent, rgba(7,7,7,.84) 24%);
+      }
+
+      .bp29-shell .bp29-main-head {
+        padding-inline-start: 48px;
       }
 
       .bp29-shell .bp29-tools {
         grid-template-columns: 1fr;
-        padding: 16px 20px 8px;
       }
 
       .bp29-shell .bp29-seg {
@@ -9480,98 +9670,49 @@ const metadata = {
 
       .bp29-shell .bp29-seg button {
         flex: 1;
-      }
-
-      .bp29-shell .bp29-tray {
-        margin-inline: 20px;
-        grid-template-columns: 1fr auto;
-      }
-
-      .bp29-shell .bp29-tray-label {
-        grid-column: 1 / -1;
-      }
-
-      .bp29-shell .bp29-scroller {
-        padding: 16px 20px 20px;
+        padding-inline: 8px;
       }
 
       .bp29-shell .bp29-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-      }
-
-      .bp29-shell .bp29-foot {
-        padding: 16px 20px;
-      }
-    }
-
-    @media (max-width: 430px) {
-      .bp29-shell {
-        padding: 10px;
-      }
-
-      .bp29-shell .bp29-modal {
-        width: 100%;
-        height: calc(100vh - 20px);
-        max-height: calc(100vh - 20px);
-        border-radius: 22px;
-      }
-
-      .bp29-shell .bp29-head-top {
-        gap: 12px;
-      }
-
-      .bp29-shell .bp29-title {
-        font-size: 21px;
-      }
-
-      .bp29-shell .bp29-subtitle {
-        font-size: 13px;
-      }
-
-      .bp29-shell .bp29-counter {
-        width: 100%;
-        justify-content: space-between;
-      }
-
-      .bp29-shell .bp29-pip {
-        width: 25px;
+        gap: 10px;
+        padding-bottom: 16px;
       }
 
       .bp29-shell .bp29-card {
-        min-height: 150px;
-        border-radius: 18px;
-        padding: 16px 9px 13px;
+        min-height: 104px;
+        grid-template-columns: 50px minmax(0, 1fr);
+        gap: 9px;
+        padding: 12px 10px;
+        border-radius: 16px;
       }
 
       .bp29-shell .bp29-medal {
-        width: 68px;
-        height: 68px;
-        margin-bottom: 10px;
+        width: 50px;
+        height: 50px;
       }
 
       .bp29-shell .bp29-core {
-        width: 52px;
-        height: 52px;
+        width: 42px;
+        height: 42px;
       }
 
       .bp29-shell .bp29-core img {
-        width: 34px;
-        height: 34px;
+        width: 30px;
+        height: 30px;
       }
 
       .bp29-shell .bp29-name {
-        max-width: 112px;
-        font-size: 15px;
+        font-size: 13.5px;
       }
 
-      .bp29-shell .bp29-foot {
-        grid-template-columns: 1fr;
-        gap: 10px;
+      .bp29-shell .bp29-desc {
+        display: none;
       }
 
-      .bp29-shell .bp29-cancel {
-        min-width: 0;
+      .bp29-shell .bp29-close {
+        top: 12px;
+        left: 12px;
       }
     }
 
@@ -15221,6 +15362,16 @@ const metadata = {
         return bp29Tier(badge) === 'k' ? 'النقاط' : 'الأسئلة'
       }
 
+      function bp29DetailText(badge) {
+        const xp = get(badge, ['xp', 'XP', 'points', 'score', 'value'], '')
+        if (xp !== '' && xp !== null && xp !== undefined) return `${formatNumber(xp)} XP`
+
+        const text = String(get(badge, ['description', 'desc', 'how', 'note'], '') || '').trim()
+        if (text) return text.length > 44 ? text.slice(0, 44) + '…' : text
+
+        return bp29Tier(badge) === 'k' ? 'بادج نقاط' : 'بادج أسئلة'
+      }
+
       function bp29Fallback(badge) {
         if (bp29IsRole(badge)) return '★'
         return bp29Tier(badge) === 'k' ? 'K' : 'Q'
@@ -15368,52 +15519,67 @@ const metadata = {
         shell.innerHTML = `
           <button class="bp29-backdrop" type="button" aria-label="إغلاق"></button>
           <div class="bp29-modal">
-            <div class="bp29-head">
-              <div class="bp29-head-top">
-                <div>
-                  <div class="bp29-title">اختيار البادجات</div>
-                  <div class="bp29-subtitle">اختر حتى <b>3 بادجات</b> من مخزونك — بادجات <b>MOD / VIP</b> لا تُحسب من الحد.</div>
-                </div>
-                <button class="bp29-close" type="button" aria-label="إغلاق">×</button>
-              </div>
-              <div class="bp29-counter">
-                <div class="bp29-pips" data-bp29-pips></div>
-                <div class="bp29-count"><b data-bp29-count>0</b> / ${BP29_LIMIT}</div>
-              </div>
-            </div>
+            <button class="bp29-close" type="button" aria-label="إغلاق">×</button>
 
-            <div class="bp29-tools">
-              <label class="bp29-search">
-                <span aria-hidden="true">
+            <aside class="bp29-side">
+              <div class="bp29-side-head">
+                <span class="bp29-side-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" focusable="false">
-                    <path d="M10.8 18.1a7.3 7.3 0 1 1 0-14.6 7.3 7.3 0 0 1 0 14.6Z" stroke="currentColor" stroke-width="2"/>
-                    <path d="m16.2 16.2 4.3 4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M12 3.7 14.4 8.6 19.8 9.4 15.9 13.2 16.8 18.6 12 16.1 7.2 18.6 8.1 13.2 4.2 9.4 9.6 8.6 12 3.7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
                   </svg>
                 </span>
-                <input data-bp29-search placeholder="ابحث عن بادج..." autocomplete="off" />
-              </label>
-
-              <div class="bp29-seg" data-bp29-seg>
-                <button class="act" type="button" data-bp29-filter="all">الكل</button>
-                <button type="button" data-bp29-filter="q">الأسئلة</button>
-                <button type="button" data-bp29-filter="k">النقاط</button>
+                <div class="bp29-title">اختيار البادجات</div>
+                <p class="bp29-subtitle">اختر حتى ${BP29_LIMIT} بادجات لعرضها بجانب اسمك.</p>
+                <p class="bp29-note">بادجات MOD وVIP ثابتة ولا تُحسب من الحد.</p>
               </div>
-            </div>
 
-            <div class="bp29-tray" data-bp29-tray>
-              <span class="bp29-tray-label">المختارة الآن</span>
-              <div class="bp29-chips" data-bp29-chips></div>
-              <button class="bp29-clear" type="button" data-bp29-clear>مسح الاختيار</button>
-            </div>
+              <div class="bp29-counter">
+                <div class="bp29-count"><b data-bp29-count>0</b> من ${BP29_LIMIT}</div>
+                <div class="bp29-pips" data-bp29-pips></div>
+              </div>
 
-            <div class="bp29-scroller">
-              <div class="bp29-grid" data-bp29-grid></div>
-            </div>
+              <div class="bp29-tray" data-bp29-tray>
+                <span class="bp29-tray-label">اختيارات العرض</span>
+                <div class="bp29-chips" data-bp29-chips></div>
+              </div>
 
-            <div class="bp29-foot">
-              <button class="bp29-save" type="button" data-bp29-save disabled>احفظ الاختيار</button>
-              <button class="bp29-cancel" type="button" data-bp29-cancel>إلغاء</button>
-            </div>
+              <button class="bp29-clear" type="button" data-bp29-clear>مسح الكل</button>
+
+              <div class="bp29-foot">
+                <button class="bp29-cancel" type="button" data-bp29-cancel>إلغاء</button>
+                <button class="bp29-save" type="button" data-bp29-save disabled>احفظ الاختيار</button>
+              </div>
+            </aside>
+
+            <main class="bp29-main">
+              <div class="bp29-main-head">
+                <div class="bp29-main-title">بادجاتك المتاحة</div>
+                <div class="bp29-results" data-bp29-results>0 بادج</div>
+              </div>
+
+              <div class="bp29-tools">
+                <label class="bp29-search">
+                  <span aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                      <path d="M10.8 18.1a7.3 7.3 0 1 1 0-14.6 7.3 7.3 0 0 1 0 14.6Z" stroke="currentColor" stroke-width="2"/>
+                      <path d="m16.2 16.2 4.3 4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                  </span>
+                  <input data-bp29-search placeholder="ابحث عن بادج..." autocomplete="off" />
+                </label>
+
+                <div class="bp29-seg" data-bp29-seg>
+                  <button class="act" type="button" data-bp29-filter="all">الكل</button>
+                  <button type="button" data-bp29-filter="k">النقاط</button>
+                  <button type="button" data-bp29-filter="q">الأسئلة</button>
+                  <button type="button" data-bp29-filter="role">الثابتة</button>
+                </div>
+              </div>
+
+              <div class="bp29-scroller">
+                <div class="bp29-grid" data-bp29-grid></div>
+              </div>
+            </main>
           </div>
         `
 
@@ -15476,7 +15642,17 @@ const metadata = {
 
           const chips = shell.querySelector('[data-bp29-chips]')
           if (chips) {
-            chips.innerHTML = selected.map((key) => {
+            chips.innerHTML = Array.from({ length: BP29_LIMIT }, (_, index) => {
+              const key = selected[index]
+              if (!key) {
+                return `
+                  <div class="bp29-slot empty">
+                    <span class="bp29-slot-icon">+</span>
+                    <span class="bp29-slot-name">اختر بادج</span>
+                  </div>
+                `
+              }
+
               const badge = byKey(key)
               if (!badge) return ''
 
@@ -15484,11 +15660,14 @@ const metadata = {
               const name = badgeName(badge)
 
               return `
-                <button class="bp29-chip" type="button" data-bp29-remove="${esc(key)}" title="إزالة ${esc(name)}">
-                  <span class="dot">${image ? `<img src="${esc(image)}" alt="" />` : esc(bp29Fallback(badge))}</span>
-                  <code>${esc(bp29ShortName(name))}</code>
-                  <span class="x">×</span>
-                </button>
+                <div class="bp29-slot">
+                  <span class="bp29-slot-icon">${image ? `<img src="${esc(image)}" alt="" />` : esc(bp29Fallback(badge))}</span>
+                  <span>
+                    <span class="bp29-slot-name">${esc(bp29ShortName(name))}</span>
+                    <span class="bp29-slot-meta">${esc(bp29Category(badge))}</span>
+                  </span>
+                  <button class="bp29-slot-remove" type="button" data-bp29-remove="${esc(key)}" title="إزالة ${esc(name)}" aria-label="إزالة ${esc(name)}">×</button>
+                </div>
               `
             }).join('')
           }
@@ -15512,10 +15691,14 @@ const metadata = {
 
           const list = all.filter((badge) => {
             const tier = bp29Tier(badge)
-            const matchesFilter = filter === 'all' || tier === filter
+            const role = bp29IsRole(badge)
+            const matchesFilter = filter === 'all' || (filter === 'role' ? role : tier === filter)
             const matchesSearch = !normalizedQuery || normalize(badgeName(badge)).includes(normalizedQuery) || normalize(bp29Category(badge)).includes(normalizedQuery)
             return matchesFilter && matchesSearch
           })
+
+          const results = shell.querySelector('[data-bp29-results]')
+          if (results) results.textContent = `${formatNumber(list.length)} بادج`
 
           const grid = shell.querySelector('[data-bp29-grid]')
           if (grid) {
@@ -15528,6 +15711,8 @@ const metadata = {
                   const image = badgeImage(badge)
                   const name = badgeName(badge)
                   const tier = bp29Tier(badge)
+                  const category = bp29Category(badge)
+                  const detail = role ? 'ثابت' : bp29DetailText(badge)
 
                   return `
                     <button
@@ -15538,25 +15723,30 @@ const metadata = {
                       aria-pressed="${isSelected ? 'true' : 'false'}"
                       title="${esc(name)}"
                     >
-                      <span class="bp29-info" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" focusable="false">
-                          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
-                          <path d="M12 10.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                          <path d="M12 7.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                        </svg>
-                      </span>
                       <span class="bp29-tick">✓</span>
                       <span class="bp29-medal">
                         <span class="bp29-ring"></span>
                         <span class="bp29-core">${image ? `<img src="${esc(image)}" alt="${esc(name)}" loading="lazy" />` : esc(bp29Fallback(badge))}</span>
                       </span>
-                      <span class="bp29-name">${esc(bp29ShortName(name))}</span>
-                      <span class="bp29-cat">${esc(role ? 'ثابت ولا يُحسب' : bp29Category(badge))}</span>
-                      <span class="bp29-hint">وصلت للحد ٣</span>
+                      <span class="bp29-copy">
+                        <span class="bp29-name">${esc(bp29ShortName(name))}</span>
+                        <span class="bp29-cat">${esc(category)}</span>
+                        ${role ? '<span class="bp29-role-chip">ثابت</span>' : `<span class="bp29-desc">${esc(detail)}</span>`}
+                      </span>
+                      <span class="bp29-hint">اكتمل الحد</span>
                     </button>
                   `
                 }).join('')
-              : `<div class="bp29-empty">ما فيه بادج بهذا الاسم — جرّب كلمة ثانية.</div>`
+              : `
+                <div class="bp29-empty">
+                  <svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true">
+                    <path d="M10.8 18.1a7.3 7.3 0 1 1 0-14.6 7.3 7.3 0 0 1 0 14.6Z" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="m16.2 16.2 4.3 4.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                  <strong>ما لقينا بادجات</strong>
+                  <span>جرّب اسمًا أو تصنيفًا مختلفًا.</span>
+                </div>
+              `
           }
 
           updateSelectionState(null)
