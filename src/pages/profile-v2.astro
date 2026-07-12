@@ -8768,6 +8768,7 @@ const metadata = {
       display: grid;
       grid-template-columns: 270px minmax(0, 1fr);
       grid-template-rows: auto;
+      align-items: start;
       direction: rtl;
       overflow: hidden;
       color: var(--bp29-text);
@@ -8790,11 +8791,12 @@ const metadata = {
       direction: rtl;
       min-width: 0;
       min-height: 0;
-      max-height: 620px;
+      height: auto;
+      align-self: start;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding: 20px;
+      gap: 8px;
+      padding: 16px;
       background:
         radial-gradient(circle at 50% -10%, rgba(255,223,138,.11), transparent 42%),
         rgba(7,7,7,.44);
@@ -8806,54 +8808,59 @@ const metadata = {
       direction: rtl;
       min-width: 0;
       min-height: 0;
-      max-height: 620px;
+      height: auto;
+      align-self: start;
       display: grid;
-      grid-template-rows: auto auto minmax(0, 1fr);
+      grid-template-rows: auto auto auto;
       padding: 20px;
       gap: 12px;
     }
 
     .bp29-shell .bp29-side-head {
       display: grid;
-      gap: 8px;
+      grid-template-columns: 40px minmax(0, 1fr);
+      align-items: center;
+      gap: 7px 10px;
     }
 
     .bp29-shell .bp29-side-icon {
-      width: 46px;
-      height: 46px;
+      width: 40px;
+      height: 40px;
       display: grid;
       place-items: center;
       border-radius: 16px;
       color: var(--bp29-gold-light);
       background: rgba(215,168,79,.12);
       border: 1px solid rgba(215,168,79,.22);
+      grid-row: span 2;
     }
 
     .bp29-shell .bp29-side-icon svg {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       display: block;
     }
 
     .bp29-shell .bp29-title {
       color: var(--bp29-text);
-      font-size: 25px;
+      font-size: 24px;
       font-weight: 950;
       line-height: 1.15;
     }
 
     .bp29-shell .bp29-subtitle {
       color: rgba(244,240,232,.72);
-      font-size: 14px;
-      line-height: 1.65;
+      font-size: 13.5px;
+      line-height: 1.55;
       font-weight: 750;
       margin: 0;
     }
 
     .bp29-shell .bp29-note {
+      grid-column: 1 / -1;
       color: rgba(244,240,232,.46);
-      font-size: 12px;
-      line-height: 1.6;
+      font-size: 11.5px;
+      line-height: 1.5;
       font-weight: 750;
       margin: 0;
     }
@@ -8887,23 +8894,29 @@ const metadata = {
 
     .bp29-shell .bp29-counter {
       display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
       gap: 8px;
-      min-height: 74px;
-      padding: 14px 16px;
+      min-height: 58px;
+      padding: 10px 12px;
       border: 1px solid rgba(215,168,79,.20);
       border-radius: 18px;
       background: rgba(7,7,7,.44);
     }
 
     .bp29-shell .bp29-count {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
       font-weight: 950;
       color: rgba(244,240,232,.76);
+      white-space: nowrap;
     }
 
     .bp29-shell .bp29-count b {
       color: var(--bp29-gold-light);
       font-family: Oxanium, Tajawal, system-ui, sans-serif;
-      font-size: 30px;
+      font-size: 27px;
       line-height: 1;
       margin-inline-end: 6px;
     }
@@ -8911,11 +8924,11 @@ const metadata = {
     .bp29-shell .bp29-pips {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 7px;
+      gap: 6px;
     }
 
     .bp29-shell .bp29-pip {
-      height: 7px;
+      height: 6px;
       border-radius: 999px;
       background: rgba(255,255,255,.11);
       transition: background .18s ease, box-shadow .18s ease;
@@ -8928,9 +8941,10 @@ const metadata = {
 
     .bp29-shell .bp29-tray {
       min-height: 0;
+      flex: 0 0 auto;
       display: grid;
       grid-template-rows: auto auto;
-      gap: 8px;
+      gap: 7px;
     }
 
     .bp29-shell .bp29-tray-label {
@@ -8951,26 +8965,27 @@ const metadata = {
     }
 
     .bp29-shell .bp29-slot {
-      min-height: 60px;
+      flex: 0 0 auto;
+      min-height: 58px;
       display: grid;
-      grid-template-columns: 40px minmax(0, 1fr) auto;
+      grid-template-columns: 38px minmax(0, 1fr) auto;
       align-items: center;
       gap: 8px;
-      padding: 9px;
+      padding: 8px;
       border-radius: 16px;
       border: 1px solid rgba(255,255,255,.075);
       background: rgba(255,255,255,.04);
     }
 
     .bp29-shell .bp29-slot.empty {
-      grid-template-columns: 40px 1fr;
+      grid-template-columns: 38px 1fr;
       border-style: dashed;
       color: rgba(244,240,232,.46);
     }
 
     .bp29-shell .bp29-slot-icon {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       display: grid;
       place-items: center;
       border-radius: 14px;
@@ -8984,8 +8999,8 @@ const metadata = {
     }
 
     .bp29-shell .bp29-slot-icon img {
-      width: 29px;
-      height: 29px;
+      width: 27px;
+      height: 27px;
       object-fit: contain;
     }
 
@@ -9028,8 +9043,10 @@ const metadata = {
     }
 
     .bp29-shell .bp29-clear {
-      width: fit-content;
-      justify-self: start;
+      width: 100%;
+      min-height: 34px;
+      flex: 0 0 auto;
+      justify-self: stretch;
       background: transparent;
       border: 1px solid rgba(255,255,255,.08);
       color: rgba(244,240,232,.64);
@@ -9057,16 +9074,19 @@ const metadata = {
     .bp29-shell .bp29-foot {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 8px;
+      gap: 10px;
       align-self: end;
-      margin-top: auto;
+      flex: 0 0 auto;
+      width: 100%;
+      margin-top: 8px;
     }
 
     .bp29-shell .bp29-save,
     .bp29-shell .bp29-cancel {
-      min-height: 50px;
+      width: 100%;
+      min-height: 46px;
       border-radius: 15px;
-      padding: 13px 18px;
+      padding: 11px 14px;
       font: inherit;
       font-size: 14.5px;
       font-weight: 950;
@@ -9231,8 +9251,10 @@ const metadata = {
 
     .bp29-shell .bp29-scroller {
       min-height: 0;
+      height: auto;
+      flex: none;
       overflow-y: auto;
-      max-height: min(500px, calc(100dvh - 210px));
+      max-height: min(560px, calc(100dvh - 220px));
       padding-inline-end: 2px;
       scrollbar-width: thin;
       scrollbar-color: rgba(215,168,79,.38) transparent;
@@ -9242,8 +9264,8 @@ const metadata = {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
+      padding-bottom: 24px;
       contain: layout paint;
-      padding-bottom: 2px;
     }
 
     .bp29-shell .bp29-card {
@@ -9429,7 +9451,7 @@ const metadata = {
     }
 
     .bp29-shell .bp29-card.lock {
-      opacity: .52;
+      opacity: .56;
       cursor: not-allowed;
     }
 
@@ -9569,7 +9591,7 @@ const metadata = {
         grid-column: 1;
         grid-row: 2;
         padding: 14px 16px 0;
-        grid-template-rows: auto auto minmax(0, 1fr);
+        grid-template-rows: auto auto auto;
         max-height: none;
       }
 
@@ -9659,12 +9681,12 @@ const metadata = {
       }
 
       .bp29-shell .bp29-foot {
-        position: sticky;
-        bottom: 0;
-        grid-template-columns: 1fr 1fr;
+        position: static;
+        bottom: auto;
+        grid-template-columns: 1fr;
         z-index: 5;
         padding-top: 4px;
-        background: linear-gradient(180deg, transparent, rgba(7,7,7,.84) 24%);
+        background: transparent;
         margin-top: 0;
       }
 
