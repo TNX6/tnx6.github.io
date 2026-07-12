@@ -1649,9 +1649,7 @@ const metadata = {
     display: grid;
     place-items: center;
     padding: 18px;
-    background: rgba(0, 0, 0, 0.66);
-    -webkit-backdrop-filter: blur(3px);
-    backdrop-filter: blur(3px);
+    background: rgba(5, 6, 10, 0.72);
     direction: rtl;
     animation: mktModalBgIn 0.22s ease forwards;
   }
@@ -1679,7 +1677,7 @@ const metadata = {
     border: 1px solid var(--mk-border);
     border-radius: 16px;
     padding: 24px;
-    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.52);
     animation: mktDialogIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
 
@@ -3053,15 +3051,65 @@ const metadata = {
       )
     }
 
+    function warnOfferItemsParse(sourceName, error) {
+      var host = String(window.location.hostname || '').toLowerCase()
+      var isDevelopment = host === 'localhost' || host === '127.0.0.1' || host.endsWith('.local')
+      if (isDevelopment && window.console && typeof window.console.warn === 'function') {
+        window.console.warn('[TNX6 Market] تعذر قراءة أغراض العرض من ' + sourceName, error)
+      }
+    }
+
+    function parseOfferItemsSource(value, sourceName) {
+      if (Array.isArray(value)) return value
+      if (typeof value !== 'string' || !value.trim()) return []
+
+      try {
+        var parsed = JSON.parse(value)
+        return Array.isArray(parsed) ? parsed : []
+      } catch (error) {
+        warnOfferItemsParse(sourceName, error)
+        return []
+      }
+    }
+
+    function rawOfferedItems(offer) {
+      var sources = [
+        ['offeredItems', offer && offer.offeredItems],
+        ['offered_items', offer && offer.offered_items],
+        ['offeredItemsJson', offer && offer.offeredItemsJson],
+        ['offered_items_json', offer && offer.offered_items_json],
+      ]
+
+      for (var i = 0; i < sources.length; i++) {
+        var parsed = parseOfferItemsSource(sources[i][1], sources[i][0])
+        if (parsed.length) return parsed
+      }
+
+      return []
+    }
+
+    function firstOfferItemValue(item, keys) {
+      for (var i = 0; i < keys.length; i++) {
+        var value = item && item[keys[i]]
+        if (value !== undefined && value !== null) return value
+      }
+      return ''
+    }
+
     function offeredItemsForDisplay(offer) {
-      var items = Array.isArray(offer && offer.offeredItems) ? offer.offeredItems : []
-      return items.map(function (item) {
+      return rawOfferedItems(offer).map(function (item) {
+        var itemName = String(firstOfferItemValue(item, ['itemName', 'item_name', 'name', 'itemKey', 'item_key'])).trim()
+        var itemKey = String(firstOfferItemValue(item, ['itemKey', 'item_key', 'itemName', 'item_name', 'name'])).trim()
+        var quantity = Math.floor(Number(firstOfferItemValue(item, ['quantity', 'qty', 'amount'])))
+
         return {
-          key: String(item.itemKey || item.item_key || item.name || item.itemName || '').trim(),
-          name: String(item.itemName || item.item_name || item.name || item.itemKey || item.item_key || '').trim(),
-          qty: Math.max(1, Math.floor(Number(item.quantity || item.qty || 1))),
+          itemKey: itemKey || itemName,
+          itemName: itemName,
+          quantity: quantity,
         }
-      }).filter(function (item) { return item.name && item.qty > 0 })
+      }).filter(function (item) {
+        return item.itemName && Number.isFinite(item.quantity) && item.quantity > 0
+      })
     }
 
     function offerItemsListHtml(items) {
@@ -3070,8 +3118,8 @@ const metadata = {
           items.map(function (item) {
             return (
               '<span class="offer-item-chip">' +
-                '<span class="offer-item-chip-name">' + escText(item.name) + '</span>' +
-                '<span class="offer-item-chip-qty">×' + fmt(item.qty) + '</span>' +
+                '<span class="offer-item-chip-name">' + escText(item.itemName) + '</span>' +
+                '<span class="offer-item-chip-qty">×' + fmt(item.quantity) + '</span>' +
               '</span>'
             )
           }).join('') +
@@ -3086,12 +3134,6 @@ const metadata = {
           offerItemsListHtml(items) +
         '</div>'
       )
-    }
-
-    function offerItemsPayload(offer) {
-      return offeredItemsForDisplay(offer).map(function (item) {
-        return { itemKey: item.key || item.name, itemName: item.name, quantity: item.qty }
-      })
     }
 
     function inferOfferType(price, items) {
@@ -3475,8 +3517,18 @@ const metadata = {
       }
     }
 
+    var offerModalPreviousBodyOverflow = ''
+
+    function lockOfferModalScroll() {
+      offerModalPreviousBodyOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+    }
+
     function closeOfferModal(immediate) {
-      closeMarketModal('[data-offer-modal]', null, immediate)
+      closeMarketModal('[data-offer-modal]', function () {
+        document.body.style.overflow = offerModalPreviousBodyOverflow
+        offerModalPreviousBodyOverflow = ''
+      }, immediate)
     }
 
     function openOfferModal(listingId) {
@@ -3508,6 +3560,7 @@ const metadata = {
           '<button class="mkt-btn mkt-btn-buy mkt-ripple" type="button" data-offer-submit>إرسال العرض</button>' +
         '</div>'
       document.body.appendChild(modal)
+      lockOfferModalScroll()
 
       var input = modal.querySelector('[data-offer-price]')
       var state = modal.querySelector('[data-offer-state]')
@@ -3705,7 +3758,7 @@ const metadata = {
       var offer = ((mkp.offers.incoming || []).concat(mkp.offers.outgoing || [])).find(function (entry) { return entry.offerId === offerId })
       if (!offer) return
       closeOfferModal(true)
-      var offeredItems = offerItemsPayload(offer)
+      var offeredItems = offeredItemsForDisplay(offer)
       var hasOfferItems = offeredItems.length > 0
       var currentPrice = Math.max(0, Math.floor(Number(offer.offerPrice || 0)))
       var initialPrice = Math.max(hasOfferItems ? 0 : 1, Math.floor(Number(offer.listingPrice || offer.offerPrice || (hasOfferItems ? 0 : 1))))
@@ -3724,6 +3777,7 @@ const metadata = {
           '<button class="mkt-btn mkt-btn-buy mkt-ripple" type="button" data-offer-submit>إرسال العرض المضاد</button>' +
         '</div>'
       document.body.appendChild(modal)
+      lockOfferModalScroll()
 
       var input = modal.querySelector('[data-offer-price]')
       var state = modal.querySelector('[data-offer-state]')
