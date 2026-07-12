@@ -1136,6 +1136,22 @@ const metadata = {
     white-space: nowrap;
   }
 
+  .offer-type-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 22px;
+    padding: 0 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(201, 168, 76, 0.2);
+    background: rgba(201, 168, 76, 0.07);
+    color: var(--offers-gold);
+    font-size: 10.5px;
+    font-weight: 850;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
   .offer-item-main {
     display: flex;
     align-items: center;
@@ -1246,6 +1262,12 @@ const metadata = {
     font-size: 15px;
     font-weight: 900;
     color: var(--offers-gold);
+  }
+
+  .detail-row.is-items .offer-detail-value {
+    color: var(--offers-text);
+    white-space: normal;
+    text-align: left;
   }
 
   .detail-row.is-party .offer-detail-value {
@@ -1860,6 +1882,163 @@ const metadata = {
     color: var(--mk-accent);
   }
 
+  .mkt-offer-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    margin: 0 0 16px;
+    border-radius: 12px;
+    border: 1px solid var(--mk-border);
+    background: rgba(255, 255, 255, 0.025);
+    color: var(--mk-fg-2);
+    font-size: 13px;
+    font-weight: 750;
+    cursor: pointer;
+  }
+
+  .mkt-offer-toggle input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--mk-accent);
+    flex-shrink: 0;
+  }
+
+  .mkt-offer-help {
+    margin: -6px 0 14px;
+    color: var(--mk-fg-dim);
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+
+  .mkt-offer-summary {
+    display: grid;
+    gap: 8px;
+    margin: 0 0 14px;
+  }
+
+  .mkt-offer-selected {
+    min-height: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 9px;
+    border-radius: 12px;
+    border: 1px solid var(--mk-border);
+    background: rgba(255, 255, 255, 0.022);
+  }
+
+  .mkt-offer-selected.is-empty {
+    color: var(--mk-fg-dim);
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+
+  .mkt-offer-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 28px;
+    padding: 0 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(201, 168, 76, 0.18);
+    background: rgba(201, 168, 76, 0.07);
+    color: var(--mk-fg);
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .mkt-offer-chip button {
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--mk-fg-2);
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .mkt-offer-add {
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px dashed rgba(201, 168, 76, 0.32);
+    background: rgba(201, 168, 76, 0.055);
+    color: var(--mk-accent);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 850;
+    cursor: pointer;
+  }
+
+  .mkt-offer-items-panel {
+    display: none;
+    max-height: 260px;
+    overflow-y: auto;
+    margin: -4px 0 14px;
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid var(--mk-border);
+    background: var(--mk-bg);
+  }
+
+  .mkt-offer-items-panel.is-open {
+    display: grid;
+    gap: 8px;
+  }
+
+  .mkt-offer-inv-row {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.055);
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .mkt-offer-inv-name {
+    min-width: 0;
+    color: var(--mk-fg);
+    font-size: 12.5px;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mkt-offer-inv-qty {
+    margin-top: 2px;
+    color: var(--mk-fg-dim);
+    font-size: 11.5px;
+    font-weight: 700;
+  }
+
+  .mkt-offer-qty-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .mkt-offer-qty-actions button {
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    border: 1px solid var(--mk-border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--mk-fg);
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .mkt-offer-qty-actions button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
   /* ---------- responsive ---------- */
   @media (max-width: 1024px) {
     .mkt-grid {
@@ -2364,6 +2543,13 @@ const metadata = {
       if (v.indexOf('buyer_insufficient_points') >= 0) return 'تعذر قبول العرض لأن المشتري لا يملك نقاطًا كافية الآن.'
       if (v.indexOf('insufficient_points') >= 0) return 'نقاطك غير كافية لإرسال هذا العرض.'
       if (v.indexOf('pending_offer_exists') >= 0) return 'عندك عرض معلق على هذا الغرض.'
+      if (v.indexOf('empty_offer') >= 0) return 'أضف نقاطًا أو غرضًا واحدًا على الأقل.'
+      if (v.indexOf('offers_disabled') >= 0) return 'البائع لا يستقبل عروضًا على هذا الغرض.'
+      if (v.indexOf('not_enough_offer_items') >= 0 || v.indexOf('insufficient_offer_items') >= 0) return 'بعض الأغراض المعروضة غير متوفرة الآن في حقيبتك.'
+      if (v.indexOf('too_many_offer_items') >= 0) return 'قلّل عدد أنواع الأغراض في العرض.'
+      if (v.indexOf('invalid_offer_item_quantity') >= 0) return 'كمية أحد الأغراض غير صحيحة.'
+      if (v.indexOf('offer_item_not_tradeable') >= 0) return 'أحد الأغراض لا يمكن تداوله في السوق.'
+      if (v.indexOf('offer_item_not_found') >= 0 || v.indexOf('inventory_lookup_failed') >= 0) return 'تعذر التحقق من أحد الأغراض في العرض.'
       if (v.indexOf('not_archivable') >= 0) return 'لا يمكن إخفاء عرض ما زال قيد المعالجة.'
       if (v.indexOf('listing_unavailable') >= 0) return 'العرض ما عاد متاحًا.'
       if (v.indexOf('own_listing') >= 0) return 'هذا عرضك أنت.'
@@ -2644,10 +2830,13 @@ const metadata = {
       } else if (isOwn) {
         action = '<div class="mkt-btn mkt-btn-own">هذا عرضك</div>'
       } else {
+        var offerBtn = listing.canOffer === false || listing.allowOffers === false
+          ? ''
+          : '<button class="mkt-btn mkt-btn-offer mkt-ripple" type="button" data-mkp-offer-open="' + escText(listing.listingId) + '">إرسال عرض</button>'
         action =
           '<div class="mkt-actions">' +
             '<button class="mkt-btn mkt-btn-buy mkt-ripple" type="button" data-mkp-buy="' + escText(listing.listingId) + '">شراء</button>' +
-            '<button class="mkt-btn mkt-btn-offer mkt-ripple" type="button" data-mkp-offer-open="' + escText(listing.listingId) + '">إرسال عرض</button>' +
+            offerBtn +
           '</div>'
       }
 
@@ -2763,6 +2952,32 @@ const metadata = {
       )
     }
 
+    function offeredItemsForDisplay(offer) {
+      var items = Array.isArray(offer && offer.offeredItems) ? offer.offeredItems : []
+      return items.map(function (item) {
+        return {
+          name: String(item.itemName || item.item_name || item.name || item.itemKey || item.item_key || '').trim(),
+          qty: Math.max(1, Math.floor(Number(item.quantity || item.qty || 1))),
+        }
+      }).filter(function (item) { return item.name && item.qty > 0 })
+    }
+
+    function offerItemsText(offer) {
+      return offeredItemsForDisplay(offer).map(function (item) {
+        return item.name + ' ×' + fmt(item.qty)
+      }).join('، ')
+    }
+
+    function offerTypeLabel(offer) {
+      var items = offeredItemsForDisplay(offer)
+      var price = Math.max(0, Math.floor(Number(offer && offer.offerPrice || 0)))
+      var type = String(offer && (offer.offerType || offer.offer_type) || '').toLowerCase()
+      if (!type) type = items.length && price > 0 ? 'mixed' : items.length ? 'items' : 'points'
+      if (type === 'mixed') return 'نقاط + أغراض'
+      if (type === 'items') return 'أغراض'
+      return 'نقاط'
+    }
+
     function isLiveOfferStatus(status) {
       return status === 'pending_seller' || status === 'pending_buyer' || status === 'processing'
     }
@@ -2789,6 +3004,9 @@ const metadata = {
         ? (offer.buyerName || offer.buyerLogin || '')
         : (offer.sellerName || offer.sellerLogin || '')
       var partyLabel = bucket === 'incoming' ? 'من' : 'إلى'
+      var offerPrice = Math.max(0, Math.floor(Number(offer.offerPrice || 0)))
+      var offerItems = offerItemsText(offer)
+      var hasOfferItems = !!offerItems
 
       if (!otherName) {
         otherName = bucket === 'incoming'
@@ -2806,7 +3024,17 @@ const metadata = {
         ? '<div class="card-sep"></div><div class="offer-actions ' + (archiveOnly ? 'is-archive-only' : '') + '">' + actionButtons.join('') + '</div>'
         : ''
       var unreadBadge = isUnread ? '<span class="offer-new-badge">جديد</span>' : ''
+      var typeBadge = '<span class="offer-type-badge">' + escText(offerTypeLabel(offer)) + '</span>'
       var unreadNote = isUnread ? '<div class="offer-unread-note">' + escText(offerUnreadText(offer)) + '</div>' : ''
+      var offerRows = ''
+
+      if (offerPrice > 0) {
+        offerRows += offerDetail('عرض الشراء', fmt(offerPrice), 'is-offer')
+      }
+
+      if (hasOfferItems) {
+        offerRows += offerDetail(offerPrice > 0 ? 'أغراض مضافة' : 'العرض', offerItems, offerPrice > 0 ? 'is-items' : 'is-offer is-items')
+      }
 
       return (
         '<article class="offer-card' + (isUnread ? ' is-unread-offer' : '') + '" data-offer-id="' + escText(offer.offerId) + '" data-mkp-offer-id="' + escText(offer.offerId) + '">' +
@@ -2820,13 +3048,14 @@ const metadata = {
             '</div>' +
             '<div class="offer-card-badges">' +
               unreadBadge +
+              typeBadge +
               '<span class="status-badge ' + meta.className + (liveBadge ? ' is-processing' : '') + '">' + (liveBadge ? '<span class="dot"></span>' : '') + escText(meta.label) + '</span>' +
             '</div>' +
           '</div>' +
           '<div class="card-sep"></div>' +
           '<div class="offer-card-body">' +
             offerDetail('السعر الأصلي', fmt(offer.listingPrice), '') +
-            offerDetail('عرض الشراء', fmt(offer.offerPrice), 'is-offer') +
+            offerRows +
             offerDetail(partyLabel, otherName || 'غير معروف', 'is-party') +
           '</div>' +
           unreadNote +
@@ -3109,6 +3338,10 @@ const metadata = {
       if (!mkp.me) return
       var listing = (mkp.listings || []).find(function (entry) { return entry.listingId === listingId })
       if (!listing) return
+      if (listing.canOffer === false || listing.allowOffers === false) {
+        setNotice('error', 'البائع لا يستقبل عروضًا على هذا الغرض.')
+        return
+      }
       closeOfferModal(true)
 
       var modal = document.createElement('div')
@@ -3118,8 +3351,14 @@ const metadata = {
         '<div class="mkt-dialog">' +
           '<button class="mkt-dialog-close" type="button" data-offer-close aria-label="إغلاق">×</button>' +
           '<div class="mkt-dialog-head"><h3>إرسال عرض شراء</h3><p>' + escText(listing.itemName) + ' · السعر الحالي ' + fmt(listing.price) + ' نقطة</p></div>' +
-          '<label class="mkt-flabel" for="mktOfferPrice">السعر المقترح</label>' +
-          '<input class="mkt-input" id="mktOfferPrice" data-offer-price type="number" min="1" step="1" inputmode="numeric" value="' + Math.max(1, Math.floor(Number(listing.price || 1))) + '">' +
+          '<label class="mkt-flabel" for="mktOfferPrice">النقاط المعروضة</label>' +
+          '<input class="mkt-input" id="mktOfferPrice" data-offer-price type="number" min="0" step="1" inputmode="numeric" value="' + Math.max(0, Math.floor(Number(listing.price || 0))) + '">' +
+          '<div class="mkt-offer-help">يمكنك تقديم نقاط فقط، أغراض فقط، أو نقاط مع أغراض.</div>' +
+          '<div class="mkt-offer-summary">' +
+            '<div class="mkt-offer-selected is-empty" data-offer-selected>لم تضف أغراضًا للعرض.</div>' +
+            '<button class="mkt-offer-add" type="button" data-offer-add-items>إضافة أغراض من الحقيبة</button>' +
+          '</div>' +
+          '<div class="mkt-offer-items-panel" data-offer-items-panel></div>' +
           '<div class="mkt-sell-state" data-offer-state></div>' +
           '<button class="mkt-btn mkt-btn-buy mkt-ripple" type="button" data-offer-submit>إرسال العرض</button>' +
         '</div>'
@@ -3128,6 +3367,9 @@ const metadata = {
       var input = modal.querySelector('[data-offer-price]')
       var state = modal.querySelector('[data-offer-state]')
       var submit = modal.querySelector('[data-offer-submit]')
+      var selectedBox = modal.querySelector('[data-offer-selected]')
+      var itemsPanel = modal.querySelector('[data-offer-items-panel]')
+      var st = { items: [], selected: [], inventoryLoaded: false, inventoryLoading: false, panelOpen: false }
       if (input) input.focus()
 
       function setState(kind, text) {
@@ -3136,15 +3378,150 @@ const metadata = {
         state.innerHTML = text || ''
       }
 
+      function selectedKey(item) {
+        return String(item.key || item.name || '').toLowerCase()
+      }
+
+      function selectedQuantity(it) {
+        var key = selectedKey(it)
+        var found = st.selected.find(function (entry) { return selectedKey(entry) === key })
+        return found ? found.qty : 0
+      }
+
+      function renderSelectedItems() {
+        if (!selectedBox) return
+        if (!st.selected.length) {
+          selectedBox.className = 'mkt-offer-selected is-empty'
+          selectedBox.innerHTML = 'لم تضف أغراضًا للعرض.'
+          return
+        }
+
+        selectedBox.className = 'mkt-offer-selected'
+        selectedBox.innerHTML = st.selected.map(function (it, i) {
+          return (
+            '<span class="mkt-offer-chip">' +
+              escText(it.name) + ' ×' + fmt(it.qty) +
+              '<button type="button" data-offer-item-remove="' + i + '" aria-label="إزالة">×</button>' +
+            '</span>'
+          )
+        }).join('')
+      }
+
+      function renderInventoryPanel() {
+        if (!itemsPanel) return
+        itemsPanel.className = 'mkt-offer-items-panel' + (st.panelOpen ? ' is-open' : '')
+
+        if (!st.panelOpen) {
+          itemsPanel.innerHTML = ''
+          return
+        }
+
+        if (st.inventoryLoading) {
+          itemsPanel.innerHTML = '<div class="mkt-inv-loading">' + SPIN + ' جاري تحميل الحقيبة...</div>'
+          return
+        }
+
+        if (!st.items.length) {
+          itemsPanel.innerHTML = '<div class="mkt-inv-empty">لا توجد أغراض متاحة لتقديمها في العرض.</div>'
+          return
+        }
+
+        itemsPanel.innerHTML = st.items.map(function (it, i) {
+          var picked = selectedQuantity(it)
+          var left = Math.max(0, it.qty - picked)
+          return (
+            '<div class="mkt-offer-inv-row">' +
+              '<div class="mkt-inv-icon sm">' + ICON_ITEM + '</div>' +
+              '<div>' +
+                '<div class="mkt-offer-inv-name">' + escText(it.name) + '</div>' +
+                '<div class="mkt-offer-inv-qty">متاح ×' + fmt(it.qty) + (picked ? ' · مضاف ×' + fmt(picked) : '') + '</div>' +
+              '</div>' +
+              '<div class="mkt-offer-qty-actions">' +
+                '<button type="button" data-offer-item-minus="' + i + '"' + (picked <= 0 ? ' disabled' : '') + '>−</button>' +
+                '<button type="button" data-offer-item-add="' + i + '"' + (left <= 0 ? ' disabled' : '') + '>+</button>' +
+              '</div>' +
+            '</div>'
+          )
+        }).join('')
+      }
+
+      function addSelectedItem(index, delta) {
+        var it = st.items[index]
+        if (!it) return
+        var key = selectedKey(it)
+        var existingIndex = st.selected.findIndex(function (entry) { return selectedKey(entry) === key })
+        var current = existingIndex >= 0 ? st.selected[existingIndex].qty : 0
+        var next = Math.max(0, Math.min(it.qty, current + delta))
+
+        if (next <= 0) {
+          if (existingIndex >= 0) st.selected.splice(existingIndex, 1)
+        } else if (existingIndex >= 0) {
+          st.selected[existingIndex].qty = next
+        } else {
+          st.selected.push({ key: it.key, name: it.name, qty: next })
+        }
+
+        renderSelectedItems()
+        renderInventoryPanel()
+      }
+
+      async function toggleInventoryPanel() {
+        st.panelOpen = !st.panelOpen
+        renderInventoryPanel()
+
+        if (!st.panelOpen || st.inventoryLoaded || st.inventoryLoading) return
+
+        st.inventoryLoading = true
+        renderInventoryPanel()
+        st.items = await fetchInventory()
+        st.inventoryLoaded = true
+        st.inventoryLoading = false
+        renderInventoryPanel()
+      }
+
       modal.addEventListener('click', function (e) {
         var t = e.target
         if (t === modal || t.closest('[data-offer-close]')) closeOfferModal()
+        var addItems = t.closest('[data-offer-add-items]')
+        if (addItems) {
+          toggleInventoryPanel()
+          return
+        }
+
+        var addBtn = t.closest('[data-offer-item-add]')
+        if (addBtn) {
+          addSelectedItem(Math.floor(Number(addBtn.getAttribute('data-offer-item-add') || -1)), 1)
+          return
+        }
+
+        var minusBtn = t.closest('[data-offer-item-minus]')
+        if (minusBtn) {
+          addSelectedItem(Math.floor(Number(minusBtn.getAttribute('data-offer-item-minus') || -1)), -1)
+          return
+        }
+
+        var removeBtn = t.closest('[data-offer-item-remove]')
+        if (removeBtn) {
+          var removeIndex = Math.floor(Number(removeBtn.getAttribute('data-offer-item-remove') || -1))
+          if (removeIndex >= 0) st.selected.splice(removeIndex, 1)
+          renderSelectedItems()
+          renderInventoryPanel()
+        }
       })
 
       if (submit) submit.addEventListener('click', async function () {
-        var price = Math.floor(Number(input && input.value || 0))
-        if (!Number.isFinite(price) || price < 1) {
-          setState('error', 'أدخل سعرًا صحيحًا.')
+        var price = Math.max(0, Math.floor(Number(input && input.value || 0)))
+        var itemsPayload = st.selected.map(function (it) {
+          return { itemKey: it.key, itemName: it.name, quantity: it.qty }
+        }).filter(function (it) { return it.itemName && it.quantity > 0 })
+
+        if (!Number.isFinite(price) || price < 0) {
+          setState('error', 'أدخل عدد نقاط صحيحًا.')
+          return
+        }
+
+        if (price < 1 && !itemsPayload.length) {
+          setState('error', 'أضف نقاطًا أو غرضًا واحدًا على الأقل.')
           return
         }
 
@@ -3157,7 +3534,7 @@ const metadata = {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ listingId: listingId, offerPrice: price }),
+            body: JSON.stringify({ listingId: listingId, offerPrice: price, items: itemsPayload }),
           })
           var data = await res.json().catch(function () { return null })
           if (!res.ok || !data || data.ok !== true) {
@@ -3402,9 +3779,9 @@ const metadata = {
     /* ---------- sell (list an item) modal ---------- */
     async function fetchInventory() {
       var id = meId()
-      var params = ''
-      if (id) params = 'twitchId=' + encodeURIComponent(id)
-      else if (mkp.me && mkp.me.login) params = 'login=' + encodeURIComponent(String(mkp.me.login).toLowerCase())
+      var params = 'marketAvailable=1'
+      if (id) params += '&twitchId=' + encodeURIComponent(id)
+      else if (mkp.me && mkp.me.login) params += '&login=' + encodeURIComponent(String(mkp.me.login).toLowerCase())
       else return []
 
       try {
@@ -3412,9 +3789,13 @@ const metadata = {
         var data = await res.json().catch(function () { return null })
         if (!data || !data.ok || !Array.isArray(data.items)) return []
         return data.items.map(function (it) {
+          var qty = Math.max(0, Math.floor(Number(it.availableQuantity ?? it.quantity ?? it.qty ?? 0)))
           return {
+            key: String(it.itemKey || it.key || it.name || it.itemName || '').trim(),
             name: String(it.name || it.itemName || it.itemKey || '').trim(),
-            qty: Math.max(0, Math.floor(Number(it.quantity || it.qty || 0))),
+            qty: qty,
+            totalQty: Math.max(0, Math.floor(Number(it.totalQuantity ?? it.quantity ?? it.qty ?? qty))),
+            reservedQty: Math.max(0, Math.floor(Number(it.reservedQuantity || 0))),
           }
         }).filter(function (it) { return it.name && it.qty > 0 })
       } catch { return [] }
@@ -3487,6 +3868,10 @@ const metadata = {
           '<input class="mkt-input" type="number" data-price min="500" step="100" placeholder="500 نقطة أو أكثر" inputmode="numeric">' +
           '<label class="mkt-flabel">مدة العرض</label>' +
           '<div class="mkt-durs">' + durs + '</div>' +
+          '<label class="mkt-offer-toggle">' +
+            '<input type="checkbox" data-allow-offers checked>' +
+            '<span>السماح باستقبال العروض على هذا الغرض</span>' +
+          '</label>' +
           '<div class="mkt-sell-state" data-state></div>' +
           '<button class="mkt-btn mkt-btn-buy mkt-ripple" type="button" data-submit>نشر العرض</button>'
       }
@@ -3502,8 +3887,10 @@ const metadata = {
         var it = st.picked
         var qtyEl = body.querySelector('[data-qty]')
         var priceEl = body.querySelector('[data-price]')
+        var allowOffersEl = body.querySelector('[data-allow-offers]')
         var qty = Math.floor(Number((qtyEl && qtyEl.value) || 0))
         var price = Math.floor(Number((priceEl && priceEl.value) || 0))
+        var allowOffers = !allowOffersEl || !!allowOffersEl.checked
 
         if (!(qty >= 1 && qty <= it.qty)) {
           setSellState('error', 'الكمية لازم تكون بين 1 و' + fmt(it.qty) + '.')
@@ -3523,7 +3910,7 @@ const metadata = {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ itemName: it.name, quantity: qty, price: price, durationSeconds: st.dur }),
+            body: JSON.stringify({ itemName: it.name, itemKey: it.key, quantity: qty, price: price, durationSeconds: st.dur, allowOffers: allowOffers }),
           })
 
           var data = await res.json().catch(function () { return null })
