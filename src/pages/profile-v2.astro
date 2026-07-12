@@ -8738,7 +8738,7 @@ const metadata = {
       z-index: 100000;
       display: grid;
       place-items: center;
-      padding: 24px;
+      padding: 18px;
       direction: rtl;
       font-family: Tajawal, system-ui, sans-serif;
     }
@@ -8762,12 +8762,12 @@ const metadata = {
     .bp29-shell .bp29-modal {
       position: relative;
       z-index: 1;
-      width: min(1160px, 100%);
-      height: min(780px, calc(100vh - 48px));
-      max-height: calc(100vh - 48px);
+      width: min(1060px, calc(100vw - 40px));
+      height: auto;
+      max-height: calc(100dvh - 36px);
       display: grid;
-      grid-template-columns: 292px minmax(0, 1fr);
-      grid-template-rows: minmax(0, 1fr);
+      grid-template-columns: 270px minmax(0, 1fr);
+      grid-template-rows: auto;
       direction: rtl;
       overflow: hidden;
       color: var(--bp29-text);
@@ -8790,10 +8790,11 @@ const metadata = {
       direction: rtl;
       min-width: 0;
       min-height: 0;
-      display: grid;
-      grid-template-rows: auto auto minmax(0, 1fr) auto auto;
-      gap: 18px;
-      padding: 24px;
+      max-height: 620px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 20px;
       background:
         radial-gradient(circle at 50% -10%, rgba(255,223,138,.11), transparent 42%),
         rgba(7,7,7,.44);
@@ -8805,15 +8806,16 @@ const metadata = {
       direction: rtl;
       min-width: 0;
       min-height: 0;
+      max-height: 620px;
       display: grid;
       grid-template-rows: auto auto minmax(0, 1fr);
-      padding: 24px;
-      gap: 16px;
+      padding: 20px;
+      gap: 12px;
     }
 
     .bp29-shell .bp29-side-head {
       display: grid;
-      gap: 10px;
+      gap: 8px;
     }
 
     .bp29-shell .bp29-side-icon {
@@ -8835,7 +8837,7 @@ const metadata = {
 
     .bp29-shell .bp29-title {
       color: var(--bp29-text);
-      font-size: 27px;
+      font-size: 25px;
       font-weight: 950;
       line-height: 1.15;
     }
@@ -8843,15 +8845,15 @@ const metadata = {
     .bp29-shell .bp29-subtitle {
       color: rgba(244,240,232,.72);
       font-size: 14px;
-      line-height: 1.75;
+      line-height: 1.65;
       font-weight: 750;
       margin: 0;
     }
 
     .bp29-shell .bp29-note {
       color: rgba(244,240,232,.46);
-      font-size: 12.5px;
-      line-height: 1.7;
+      font-size: 12px;
+      line-height: 1.6;
       font-weight: 750;
       margin: 0;
     }
@@ -8885,8 +8887,9 @@ const metadata = {
 
     .bp29-shell .bp29-counter {
       display: grid;
-      gap: 10px;
-      padding: 14px;
+      gap: 8px;
+      min-height: 74px;
+      padding: 14px 16px;
       border: 1px solid rgba(215,168,79,.20);
       border-radius: 18px;
       background: rgba(7,7,7,.44);
@@ -8900,7 +8903,7 @@ const metadata = {
     .bp29-shell .bp29-count b {
       color: var(--bp29-gold-light);
       font-family: Oxanium, Tajawal, system-ui, sans-serif;
-      font-size: 34px;
+      font-size: 30px;
       line-height: 1;
       margin-inline-end: 6px;
     }
@@ -8926,8 +8929,8 @@ const metadata = {
     .bp29-shell .bp29-tray {
       min-height: 0;
       display: grid;
-      grid-template-rows: auto minmax(0, 1fr);
-      gap: 10px;
+      grid-template-rows: auto auto;
+      gap: 8px;
     }
 
     .bp29-shell .bp29-tray-label {
@@ -8939,35 +8942,35 @@ const metadata = {
     .bp29-shell .bp29-chips {
       display: grid;
       align-content: start;
-      gap: 10px;
+      gap: 8px;
       min-height: 0;
-      overflow: auto;
+      overflow: visible;
       padding-inline-end: 2px;
       scrollbar-width: thin;
       scrollbar-color: rgba(215,168,79,.32) transparent;
     }
 
     .bp29-shell .bp29-slot {
-      min-height: 66px;
+      min-height: 60px;
       display: grid;
-      grid-template-columns: 44px minmax(0, 1fr) auto;
+      grid-template-columns: 40px minmax(0, 1fr) auto;
       align-items: center;
-      gap: 10px;
-      padding: 10px;
+      gap: 8px;
+      padding: 9px;
       border-radius: 16px;
       border: 1px solid rgba(255,255,255,.075);
       background: rgba(255,255,255,.04);
     }
 
     .bp29-shell .bp29-slot.empty {
-      grid-template-columns: 44px 1fr;
+      grid-template-columns: 40px 1fr;
       border-style: dashed;
       color: rgba(244,240,232,.46);
     }
 
     .bp29-shell .bp29-slot-icon {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       display: grid;
       place-items: center;
       border-radius: 14px;
@@ -8981,15 +8984,15 @@ const metadata = {
     }
 
     .bp29-shell .bp29-slot-icon img {
-      width: 30px;
-      height: 30px;
+      width: 29px;
+      height: 29px;
       object-fit: contain;
     }
 
     .bp29-shell .bp29-slot-name {
       min-width: 0;
       color: var(--bp29-text);
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 900;
       white-space: nowrap;
       overflow: hidden;
@@ -8998,7 +9001,7 @@ const metadata = {
 
     .bp29-shell .bp29-slot-meta {
       color: rgba(244,240,232,.48);
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 750;
       margin-top: 2px;
     }
@@ -9054,8 +9057,9 @@ const metadata = {
     .bp29-shell .bp29-foot {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 10px;
+      gap: 8px;
       align-self: end;
+      margin-top: auto;
     }
 
     .bp29-shell .bp29-save,
@@ -9083,11 +9087,11 @@ const metadata = {
     }
 
     .bp29-shell .bp29-save:disabled {
-      background: rgba(255,255,255,.055);
-      color: rgba(244,240,232,.38);
-      box-shadow: none;
+      background: rgba(255,255,255,.07);
+      color: rgba(244,240,232,.48);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
       cursor: default;
-      border: 1px solid rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.09);
     }
 
     .bp29-shell .bp29-cancel {
@@ -9105,14 +9109,14 @@ const metadata = {
     .bp29-shell .bp29-main-head {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding-inline-start: 48px;
+      justify-content: flex-start;
+      gap: 10px;
+      padding-inline-end: 52px;
     }
 
     .bp29-shell .bp29-main-title {
       color: var(--bp29-text);
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 950;
     }
 
@@ -9133,7 +9137,7 @@ const metadata = {
     .bp29-shell .bp29-tools {
       display: grid;
       grid-template-columns: minmax(260px, 1fr) auto;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
     }
 
@@ -9161,7 +9165,7 @@ const metadata = {
 
     .bp29-shell .bp29-search input {
       width: 100%;
-      height: 50px;
+      height: 48px;
       background: rgba(7,7,7,.56);
       border: 1px solid rgba(255,255,255,.08);
       border-radius: 16px;
@@ -9195,7 +9199,7 @@ const metadata = {
       gap: 4px;
       overflow-x: auto;
       scrollbar-width: none;
-      min-height: 50px;
+      min-height: 48px;
     }
 
     .bp29-shell .bp29-seg::-webkit-scrollbar { display: none; }
@@ -9228,6 +9232,7 @@ const metadata = {
     .bp29-shell .bp29-scroller {
       min-height: 0;
       overflow-y: auto;
+      max-height: min(500px, calc(100dvh - 210px));
       padding-inline-end: 2px;
       scrollbar-width: thin;
       scrollbar-color: rgba(215,168,79,.38) transparent;
@@ -9235,8 +9240,8 @@ const metadata = {
 
     .bp29-shell .bp29-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
       contain: layout paint;
       padding-bottom: 2px;
     }
@@ -9244,12 +9249,12 @@ const metadata = {
     .bp29-shell .bp29-card {
       position: relative;
       min-width: 0;
-      min-height: 112px;
+      min-height: 118px;
       display: grid;
-      grid-template-columns: 62px minmax(0, 1fr);
+      grid-template-columns: 64px minmax(0, 1fr);
       align-items: center;
-      gap: 12px;
-      padding: 14px 13px 14px 14px;
+      gap: 14px;
+      padding: 15px;
       text-align: right;
       color: var(--bp29-text);
       background: linear-gradient(180deg, rgba(20,18,15,.98), rgba(12,10,8,.98));
@@ -9282,8 +9287,8 @@ const metadata = {
 
     .bp29-shell .bp29-medal {
       position: relative;
-      width: 58px;
-      height: 58px;
+      width: 64px;
+      height: 64px;
       display: grid;
       place-items: center;
       grid-column: 1;
@@ -9293,16 +9298,16 @@ const metadata = {
     .bp29-shell .bp29-ring {
       position: absolute;
       inset: 0;
-      border-radius: 18px;
+      border-radius: 20px;
       background: rgba(215,168,79,.11);
       border: 1px solid rgba(215,168,79,.20);
     }
 
     .bp29-shell .bp29-core {
       position: relative;
-      width: 48px;
-      height: 48px;
-      border-radius: 15px;
+      width: 54px;
+      height: 54px;
+      border-radius: 17px;
       display: grid;
       place-items: center;
       background: rgba(7,7,7,.62);
@@ -9315,8 +9320,8 @@ const metadata = {
     }
 
     .bp29-shell .bp29-core img {
-      width: 34px;
-      height: 34px;
+      width: 38px;
+      height: 38px;
       object-fit: contain;
       filter: drop-shadow(0 6px 12px rgba(0,0,0,.28));
     }
@@ -9335,7 +9340,7 @@ const metadata = {
       color: var(--bp29-text);
       font-family: Oxanium, Tajawal, system-ui, sans-serif;
       font-weight: 950;
-      font-size: 15.5px;
+      font-size: 16.5px;
       line-height: 1.25;
       direction: ltr;
       white-space: nowrap;
@@ -9355,13 +9360,13 @@ const metadata = {
       color: rgba(244,240,232,.62);
       background: rgba(255,255,255,.04);
       border: 1px solid rgba(255,255,255,.06);
-      font-size: 11px;
+      font-size: 12.5px;
       font-weight: 850;
     }
 
     .bp29-shell .bp29-desc {
       color: rgba(244,240,232,.44);
-      font-size: 11.5px;
+      font-size: 12.5px;
       font-weight: 750;
       white-space: nowrap;
       overflow: hidden;
@@ -9390,8 +9395,8 @@ const metadata = {
       position: absolute;
       top: 10px;
       left: 10px;
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       border-radius: 9px;
       background: linear-gradient(180deg, var(--bp29-gold-light), var(--bp29-gold));
       display: grid;
@@ -9424,7 +9429,7 @@ const metadata = {
     }
 
     .bp29-shell .bp29-card.lock {
-      opacity: .55;
+      opacity: .52;
       cursor: not-allowed;
     }
 
@@ -9522,12 +9527,18 @@ const metadata = {
 
     @media (max-width: 1050px) {
       .bp29-shell .bp29-modal {
-        width: min(980px, 100%);
-        grid-template-columns: 278px minmax(0, 1fr);
+        width: min(1000px, calc(100vw - 32px));
+        grid-template-columns: 260px minmax(0, 1fr);
       }
 
       .bp29-shell .bp29-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 850px) {
+      .bp29-shell .bp29-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -9538,7 +9549,7 @@ const metadata = {
 
       .bp29-shell .bp29-modal {
         width: calc(100vw - 16px);
-        height: calc(100dvh - 16px);
+        height: auto;
         max-height: calc(100dvh - 16px);
         grid-template-columns: 1fr;
         grid-template-rows: auto minmax(0, 1fr);
@@ -9548,7 +9559,6 @@ const metadata = {
       .bp29-shell .bp29-side {
         grid-column: 1;
         grid-row: 1;
-        grid-template-rows: auto auto auto auto;
         gap: 12px;
         padding: 16px;
         border-left: 0;
@@ -9560,6 +9570,7 @@ const metadata = {
         grid-row: 2;
         padding: 14px 16px 0;
         grid-template-rows: auto auto minmax(0, 1fr);
+        max-height: none;
       }
 
       .bp29-shell .bp29-side-head {
@@ -9654,10 +9665,11 @@ const metadata = {
         z-index: 5;
         padding-top: 4px;
         background: linear-gradient(180deg, transparent, rgba(7,7,7,.84) 24%);
+        margin-top: 0;
       }
 
       .bp29-shell .bp29-main-head {
-        padding-inline-start: 48px;
+        padding-inline-end: 44px;
       }
 
       .bp29-shell .bp29-tools {
@@ -9679,27 +9691,31 @@ const metadata = {
         padding-bottom: 16px;
       }
 
+      .bp29-shell .bp29-scroller {
+        max-height: calc(100dvh - 392px);
+      }
+
       .bp29-shell .bp29-card {
         min-height: 104px;
-        grid-template-columns: 50px minmax(0, 1fr);
+        grid-template-columns: 52px minmax(0, 1fr);
         gap: 9px;
         padding: 12px 10px;
         border-radius: 16px;
       }
 
       .bp29-shell .bp29-medal {
-        width: 50px;
-        height: 50px;
+        width: 52px;
+        height: 52px;
       }
 
       .bp29-shell .bp29-core {
-        width: 42px;
-        height: 42px;
+        width: 46px;
+        height: 46px;
       }
 
       .bp29-shell .bp29-core img {
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
       }
 
       .bp29-shell .bp29-name {
@@ -9713,6 +9729,12 @@ const metadata = {
       .bp29-shell .bp29-close {
         top: 12px;
         left: 12px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .bp29-shell .bp29-grid {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -15369,7 +15391,7 @@ const metadata = {
         const text = String(get(badge, ['description', 'desc', 'how', 'note'], '') || '').trim()
         if (text) return text.length > 44 ? text.slice(0, 44) + '…' : text
 
-        return bp29Tier(badge) === 'k' ? 'بادج نقاط' : 'بادج أسئلة'
+        return ''
       }
 
       function bp29Fallback(badge) {
@@ -15678,9 +15700,7 @@ const metadata = {
           const save = shell.querySelector('[data-bp29-save]')
           if (save) {
             save.disabled = !changed()
-            save.textContent = !changed()
-              ? (selected.length ? 'لا توجد تغييرات' : 'احفظ الاختيار')
-              : `احفظ الاختيار (${selected.length})`
+            save.textContent = changed() ? 'حفظ الاختيار' : 'لا توجد تغييرات'
           }
         }
 
@@ -15731,7 +15751,7 @@ const metadata = {
                       <span class="bp29-copy">
                         <span class="bp29-name">${esc(bp29ShortName(name))}</span>
                         <span class="bp29-cat">${esc(category)}</span>
-                        ${role ? '<span class="bp29-role-chip">ثابت</span>' : `<span class="bp29-desc">${esc(detail)}</span>`}
+                        ${role ? '<span class="bp29-role-chip">ثابت</span>' : (detail ? `<span class="bp29-desc">${esc(detail)}</span>` : '')}
                       </span>
                       <span class="bp29-hint">اكتمل الحد</span>
                     </button>
