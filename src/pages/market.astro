@@ -1340,6 +1340,36 @@ const metadata = {
     font-variant-numeric: tabular-nums;
   }
 
+  .offer-item-remove {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+    display: inline-grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.08);
+    color: #ef7777;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  }
+
+  .offer-item-remove:hover {
+    border-color: rgba(239, 68, 68, 0.38);
+    background: rgba(239, 68, 68, 0.16);
+    color: #ff9a9a;
+  }
+
+  .offer-item-remove:focus-visible {
+    outline: 2px solid rgba(239, 68, 68, 0.55);
+    outline-offset: 2px;
+  }
+
   .detail-row.is-party .offer-detail-value {
     color: var(--offers-text);
     direction: ltr;
@@ -2138,6 +2168,18 @@ const metadata = {
     line-height: 1.6;
   }
 
+  .mkt-counter-points-only {
+    margin: 0 0 16px;
+    padding: 11px 12px;
+    border: 1px solid var(--mk-border);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.024);
+    color: var(--mk-fg-2);
+    font-size: 12.5px;
+    font-weight: 750;
+    line-height: 1.6;
+  }
+
   /* ---------- responsive ---------- */
   @media (max-width: 1024px) {
     .mkt-grid {
@@ -2649,6 +2691,7 @@ const metadata = {
       if (v.indexOf('invalid_offer_item_quantity') >= 0) return 'كمية أحد الأغراض غير صحيحة.'
       if (v.indexOf('offer_item_not_tradeable') >= 0) return 'أحد الأغراض لا يمكن تداوله في السوق.'
       if (v.indexOf('offer_item_not_found') >= 0 || v.indexOf('inventory_lookup_failed') >= 0) return 'تعذر التحقق من أحد الأغراض في العرض.'
+      if (v.indexOf('counter_offer_items') >= 0) return 'تعذر تعديل أغراض العرض المضاد. أغلق النافذة وحاول مرة أخرى.'
       if (v.indexOf('not_archivable') >= 0) return 'لا يمكن إخفاء عرض ما زال قيد المعالجة.'
       if (v.indexOf('listing_unavailable') >= 0) return 'العرض ما عاد متاحًا.'
       if (v.indexOf('own_listing') >= 0) return 'هذا عرضك أنت.'
@@ -3112,14 +3155,18 @@ const metadata = {
       })
     }
 
-    function offerItemsListHtml(items) {
+    function offerItemsListHtml(items, removable) {
       return (
         '<div class="offer-items-list">' +
-          items.map(function (item) {
+          items.map(function (item, index) {
+            var removeButton = removable
+              ? '<button class="offer-item-remove" type="button" data-counter-remove-item="' + index + '" aria-label="إزالة ' + escText(item.itemName) + ' من العرض المضاد">×</button>'
+              : ''
             return (
               '<span class="offer-item-chip">' +
                 '<span class="offer-item-chip-name">' + escText(item.itemName) + '</span>' +
                 '<span class="offer-item-chip-qty">×' + fmt(item.quantity) + '</span>' +
+                removeButton +
               '</span>'
             )
           }).join('') +
@@ -3145,12 +3192,12 @@ const metadata = {
     }
 
     function counterItemsHtml(items) {
-      if (!items.length) return ''
+      if (!items.length) return '<div class="mkt-counter-points-only">سيتم إرسال عرض مضاد بالنقاط فقط.</div>'
       return (
         '<div class="mkt-counter-items">' +
           '<div class="mkt-counter-items-title">الأغراض الموجودة في العرض</div>' +
-          offerItemsListHtml(items) +
-          '<div class="mkt-counter-note">سيتم الاحتفاظ بالأغراض الموجودة وتعديل عدد النقاط فقط.</div>' +
+          offerItemsListHtml(items, true) +
+          '<div class="mkt-counter-note">يمكنك إزالة غرض كامل من العرض المضاد قبل إرساله.</div>' +
         '</div>'
       )
     }
@@ -3758,8 +3805,10 @@ const metadata = {
       var offer = ((mkp.offers.incoming || []).concat(mkp.offers.outgoing || [])).find(function (entry) { return entry.offerId === offerId })
       if (!offer) return
       closeOfferModal(true)
-      var offeredItems = offeredItemsForDisplay(offer)
-      var hasOfferItems = offeredItems.length > 0
+      var counterOfferedItems = offeredItemsForDisplay(offer).map(function (item) {
+        return { itemKey: item.itemKey, itemName: item.itemName, quantity: item.quantity }
+      })
+      var hasOfferItems = counterOfferedItems.length > 0
       var currentPrice = Math.max(0, Math.floor(Number(offer.offerPrice || 0)))
       var initialPrice = Math.max(hasOfferItems ? 0 : 1, Math.floor(Number(offer.listingPrice || offer.offerPrice || (hasOfferItems ? 0 : 1))))
 
@@ -3770,7 +3819,7 @@ const metadata = {
         '<div class="mkt-dialog">' +
           '<button class="mkt-dialog-close" type="button" data-offer-close aria-label="إغلاق">×</button>' +
           '<div class="mkt-dialog-head"><h3>رد بسعر مختلف</h3><p>' + escText(offer.itemName) + ' · السعر الحالي في العرض ' + fmt(currentPrice) + ' نقطة</p></div>' +
-          counterItemsHtml(offeredItems) +
+          '<div data-counter-items>' + counterItemsHtml(counterOfferedItems) + '</div>' +
           '<label class="mkt-flabel" for="mktCounterPrice">السعر الجديد</label>' +
           '<input class="mkt-input" id="mktCounterPrice" data-offer-price type="number" min="' + (hasOfferItems ? '0' : '1') + '" step="1" inputmode="numeric" value="' + initialPrice + '">' +
           '<div class="mkt-sell-state" data-offer-state></div>' +
@@ -3780,6 +3829,7 @@ const metadata = {
       lockOfferModalScroll()
 
       var input = modal.querySelector('[data-offer-price]')
+      var counterItemsBox = modal.querySelector('[data-counter-items]')
       var state = modal.querySelector('[data-offer-state]')
       var submit = modal.querySelector('[data-offer-submit]')
       if (input) input.focus()
@@ -3790,18 +3840,36 @@ const metadata = {
         state.innerHTML = text || ''
       }
 
+      function renderCounterItems() {
+        if (counterItemsBox) counterItemsBox.innerHTML = counterItemsHtml(counterOfferedItems)
+        if (input) input.min = counterOfferedItems.length ? '0' : '1'
+      }
+
       modal.addEventListener('click', function (e) {
         var t = e.target
+        var removeItem = t.closest('[data-counter-remove-item]')
+        if (removeItem) {
+          var index = Math.floor(Number(removeItem.getAttribute('data-counter-remove-item')))
+          if (index >= 0 && index < counterOfferedItems.length) {
+            counterOfferedItems.splice(index, 1)
+            renderCounterItems()
+            setState('', '')
+          }
+          return
+        }
         if (t === modal || t.closest('[data-offer-close]')) closeOfferModal()
       })
 
       if (submit) submit.addEventListener('click', async function () {
         var price = Math.max(0, Math.floor(Number(input && input.value || 0)))
-        var nextOfferType = inferOfferType(price, offeredItems)
-        var offeredItemsJson = JSON.stringify(offeredItems)
+        var counterPayloadItems = counterOfferedItems.map(function (item) {
+          return { itemKey: item.itemKey, itemName: item.itemName, quantity: item.quantity }
+        })
+        var nextOfferType = inferOfferType(price, counterPayloadItems)
+        var offeredItemsJson = JSON.stringify(counterPayloadItems)
 
-        if (!Number.isFinite(price) || price < 0 || (!hasOfferItems && price < 1)) {
-          setState('error', hasOfferItems ? 'أدخل عدد نقاط صحيحًا.' : 'أدخل سعرًا صحيحًا.')
+        if (!Number.isFinite(price) || price < 0 || (!counterPayloadItems.length && price < 1)) {
+          setState('error', counterPayloadItems.length ? 'أدخل عدد نقاط صحيحًا.' : 'أدخل سعرًا صحيحًا.')
           return
         }
 
@@ -3819,8 +3887,8 @@ const metadata = {
               counterPrice: price,
               offerType: nextOfferType,
               offer_type: nextOfferType,
-              offeredItems: offeredItems,
-              offered_items: offeredItems,
+              offeredItems: counterPayloadItems,
+              offered_items: counterPayloadItems,
               offeredItemsJson: offeredItemsJson,
               offered_items_json: offeredItemsJson,
             }),
