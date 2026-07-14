@@ -1,0 +1,94 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import '~/assets/styles/dungeon.css';
+
+const metadata = {
+  title: 'الدنجن | TNX6',
+  ignoreTitleTemplate: true,
+  description: 'تابع رحلة الدنجن، شاهد اللاعبين والأحداث والمكافآت، وانضم عند فتح التسجيل.',
+  canonical: 'https://tnx6.xyz/dungeon',
+};
+---
+
+<Layout metadata={metadata}>
+  <div class="dungeon-page" id="dungeonApp" dir="rtl">
+    <section class="dungeon-hero" aria-labelledby="dungeonPageTitle">
+      <div class="dungeon-hero__texture" aria-hidden="true"></div>
+      <div class="dungeon-hero__portal" aria-hidden="true">
+        <span></span>
+      </div>
+      <div class="dungeon-shell dungeon-hero__content">
+        <div class="dungeon-hero__copy">
+          <p class="dungeon-eyebrow">TNX6 DUNGEON</p>
+          <h1 id="dungeonPageTitle">الدنجن</h1>
+          <p>رحلة جماعية لمشاهدي TNX6</p>
+        </div>
+        <div class="dungeon-hero__seal" aria-hidden="true">
+          <iconify-icon icon="tabler:door-enter"></iconify-icon>
+        </div>
+      </div>
+    </section>
+
+    <div class="dungeon-shell dungeon-content">
+      <p id="dungeonLiveRegion" class="dungeon-sr-only" aria-live="polite" aria-atomic="true"></p>
+
+      <section id="dungeonView" class="dungeon-view" aria-label="حالة رحلة الدنجن" aria-busy="true">
+        <div class="dungeon-loading" role="status">
+          <div class="dungeon-loading__mark" aria-hidden="true">
+            <iconify-icon icon="tabler:door-enter"></iconify-icon>
+          </div>
+          <div>
+            <h2>جاري فتح سجل الدنجن</h2>
+            <p>يتم التحقق من حالة الرحلة الحالية...</p>
+          </div>
+          <span class="dungeon-loading__bar" aria-hidden="true"></span>
+        </div>
+      </section>
+
+      <section class="dungeon-info" aria-labelledby="dungeonInfoTitle">
+        <div class="dungeon-section-heading dungeon-section-heading--compact">
+          <div>
+            <p class="dungeon-section-kicker">قبل الدخول</p>
+            <h2 id="dungeonInfoTitle">معلومات الرحلة</h2>
+          </div>
+        </div>
+
+        <div class="dungeon-info__grid">
+          <article class="dungeon-info__item">
+            <span class="dungeon-info__icon" aria-hidden="true">
+              <iconify-icon icon="tabler:users-group"></iconify-icon>
+            </span>
+            <div>
+              <h3>حتى 6 لاعبين</h3>
+              <p>تتسع كل رحلة لصاحب الفتح وخمسة مشاركين.</p>
+            </div>
+          </article>
+
+          <article class="dungeon-info__item">
+            <span class="dungeon-info__icon" aria-hidden="true">
+              <iconify-icon icon="tabler:key"></iconify-icon>
+            </span>
+            <div>
+              <h3>صاحب الفتح يدخل أولًا</h3>
+              <p>صاحب مكافأة فتح الدنجن يُسجل تلقائيًا في المقعد الأول.</p>
+            </div>
+          </article>
+
+          <article class="dungeon-info__item">
+            <span class="dungeon-info__icon" aria-hidden="true">
+              <iconify-icon icon="tabler:hourglass"></iconify-icon>
+            </span>
+            <div>
+              <h3>تسجيل محدود</h3>
+              <p>يبقى باب الانضمام مفتوحًا لوقت قصير قبل بدء الرحلة.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import '~/scripts/dungeon-client';
+</script>
