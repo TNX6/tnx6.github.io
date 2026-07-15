@@ -1,0 +1,96 @@
+---
+import '~/assets/styles/dungeon-overlay.css';
+
+const slots = Array.from({ length: 6 }, (_, index) => index + 1);
+---
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>TNX6 Dungeon Overlay</title>
+  </head>
+  <body>
+    <main id="dungeonOverlay" class="dov-overlay" hidden>
+      <section id="dungeonOverlayScene" class="dov-scene" aria-label="مشهد دنجن TNX6 التجريبي">
+        <div id="dovJoinNotice" class="dov-notice" role="status" aria-live="polite" aria-atomic="true" hidden>
+          <span class="dov-notice__spark" aria-hidden="true"></span>
+          <strong id="dovJoinNoticeText"></strong>
+        </div>
+
+        <div id="dovEvent" class="dov-event" role="status" aria-live="polite" aria-atomic="true" hidden>
+          <span id="dovEventIcon" class="dov-event__icon" aria-hidden="true"></span>
+          <p id="dovEventText"></p>
+        </div>
+
+        <div class="dov-cave-layer" aria-hidden="true">
+          <img
+            class="dov-cave-art"
+            src="/assets/dungeon-overlay/cave.webp"
+            alt=""
+            width="1448"
+            height="1086"
+            loading="eager"
+            decoding="sync"
+            draggable="false"
+          />
+          <span class="dov-fire dov-fire--right"></span>
+          <span class="dov-fire dov-fire--left"></span>
+        </div>
+
+        <div class="dov-brand" aria-label="TNX6 Dungeon">
+          <span aria-hidden="true"></span>
+          <strong>TNX6 DUNGEON</strong>
+          <span aria-hidden="true"></span>
+        </div>
+
+        <div id="dovStatus" class="dov-status" hidden>
+          <span id="dovStatusLabel" class="dov-status__label">تبدأ الرحلة خلال</span>
+          <strong id="dovCountdown" class="dov-status__count">43</strong>
+          <span class="dov-status__players"><b id="dovPlayerCount">4 / 6</b> لاعبين</span>
+        </div>
+
+        <div id="dovResult" class="dov-result" role="status" aria-live="polite" hidden>
+          <span id="dovResultMark" class="dov-result__mark" aria-hidden="true"></span>
+          <strong id="dovResultTitle"></strong>
+          <span id="dovResultText"></span>
+        </div>
+
+        <div id="dovParty" class="dov-party" aria-label="مقاعد فريق الدنجن">
+          {
+            slots.map((slot) => (
+              <article class="dov-slot dov-slot--empty" data-dov-slot={slot} aria-label={`المقعد ${slot} فارغ`}>
+                <span class="dov-empty-seat" aria-hidden="true">
+                  <span />
+                </span>
+
+                <span class="dov-character-shadow" aria-hidden="true" />
+                <span class="dov-player-figure">
+                  <span class="dov-slot__identity">
+                    <span class="dov-slot__name-row">
+                      <strong class="dov-slot__name" />
+                      <span class="dov-slot__key" aria-label="صاحب فتح الدنجن" title="صاحب الفتح" />
+                    </span>
+                    <span class="dov-slot__level" />
+                    <span class="dov-slot__state" />
+                  </span>
+
+                  <span class="dov-avatar" aria-hidden="true">
+                    <span class="dov-character-sprite" />
+                  </span>
+                </span>
+                <span class="dov-slot__reward" aria-live="polite" />
+              </article>
+            ))
+          }
+        </div>
+      </section>
+    </main>
+
+    <script>
+      import '~/scripts/dungeon-overlay-client';
+    </script>
+  </body>
+</html>
