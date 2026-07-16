@@ -65,6 +65,10 @@ body {
   transform: translateY(0) scale(var(--dungeon-overlay-scale));
 }
 
+.dov-overlay--instant .dov-scene {
+  transition: none;
+}
+
 .dov-overlay--fading .dov-scene {
   opacity: 0;
   transform: translateY(10px) scale(var(--dungeon-overlay-scale));
@@ -91,7 +95,7 @@ body {
 .dov-torch-flame {
   position: absolute;
   z-index: 2;
-  top: 276px;
+  top: 277px;
   width: 24px;
   height: 32px;
   background-image: url('/assets/dungeon-overlay/fire-sheet.webp');
@@ -103,12 +107,287 @@ body {
 }
 
 .dov-torch-flame--left {
-  left: 223px;
+  left: 228px;
 }
 
 .dov-torch-flame--right {
-  right: 223px;
+  right: 228px;
   animation-delay: -180ms;
+}
+
+.dov-entry-fx {
+  position: absolute;
+  z-index: 8;
+  top: 318px;
+  right: 50%;
+  width: 240px;
+  height: 170px;
+  transform: translateX(50%);
+  transform-origin: center 68%;
+  pointer-events: none;
+}
+
+.dov-entry-fx__burst,
+.dov-entry-fx__burst::before,
+.dov-entry-fx__burst::after,
+.dov-entry-fx__flash,
+.dov-entry-fx__spark,
+.dov-entry-fx__dust {
+  position: absolute;
+  display: block;
+  content: '';
+}
+
+.dov-entry-fx__burst {
+  --dov-burst-delay: 0ms;
+  --dov-slash-forward-angle: 36deg;
+  --dov-slash-back-angle: -32deg;
+  --dov-slash-forward-shift: 14px;
+  --dov-slash-back-shift: -14px;
+  --dov-slash-forward-top: 49px;
+  --dov-slash-forward-right: 70px;
+  --dov-slash-forward-width: 88px;
+  --dov-slash-back-top: 69px;
+  --dov-slash-back-right: 94px;
+  --dov-slash-back-width: 72px;
+  inset: 0;
+  transform: scale(1);
+}
+
+.dov-entry-fx__burst--two {
+  --dov-burst-delay: 350ms;
+  --dov-slash-forward-angle: 28deg;
+  --dov-slash-back-angle: -43deg;
+  --dov-slash-forward-shift: 11px;
+  --dov-slash-back-shift: -16px;
+  --dov-slash-forward-top: 53px;
+  --dov-slash-forward-right: 64px;
+  --dov-slash-forward-width: 84px;
+  --dov-slash-back-top: 66px;
+  --dov-slash-back-right: 91px;
+  --dov-slash-back-width: 76px;
+  transform: translate(7px, 5px) scale(0.86);
+}
+
+.dov-entry-fx__burst--three {
+  --dov-burst-delay: 700ms;
+  --dov-slash-forward-angle: 43deg;
+  --dov-slash-back-angle: -27deg;
+  --dov-slash-forward-shift: 16px;
+  --dov-slash-back-shift: -10px;
+  --dov-slash-forward-top: 47px;
+  --dov-slash-forward-right: 76px;
+  --dov-slash-forward-width: 78px;
+  --dov-slash-back-top: 72px;
+  --dov-slash-back-right: 86px;
+  --dov-slash-back-width: 86px;
+  transform: translate(-9px, 8px) scale(0.74);
+}
+
+.dov-entry-fx__burst::before,
+.dov-entry-fx__burst::after {
+  height: 5px;
+  background: #fff1bc;
+  box-shadow:
+    0 -2px 0 #ff9d35,
+    0 2px 0 #6d351f;
+  clip-path: polygon(0 50%, 9% 0, 87% 0, 100% 50%, 87% 100%, 9% 100%);
+  opacity: 0;
+  transform-origin: center;
+}
+
+.dov-entry-fx__burst::before {
+  top: var(--dov-slash-forward-top);
+  right: var(--dov-slash-forward-right);
+  width: var(--dov-slash-forward-width);
+}
+
+.dov-entry-fx__burst::after {
+  top: var(--dov-slash-back-top);
+  right: var(--dov-slash-back-right);
+  width: var(--dov-slash-back-width);
+}
+
+.dov-entry-fx--active .dov-entry-fx__burst::before {
+  animation: dov-combat-slash-forward 300ms steps(5, end) var(--dov-burst-delay) both;
+}
+
+.dov-entry-fx--active .dov-entry-fx__burst::after {
+  animation: dov-combat-slash-back 300ms steps(5, end) var(--dov-burst-delay) both;
+}
+
+.dov-entry-fx__flash {
+  top: 48px;
+  right: 105px;
+  width: 30px;
+  height: 30px;
+  background: #fff6c9;
+  clip-path: polygon(
+    40% 0,
+    60% 0,
+    60% 34%,
+    100% 34%,
+    100% 66%,
+    60% 66%,
+    60% 100%,
+    40% 100%,
+    40% 66%,
+    0 66%,
+    0 34%,
+    40% 34%
+  );
+  opacity: 0;
+}
+
+.dov-entry-fx--active .dov-entry-fx__flash {
+  animation: dov-combat-flash 260ms steps(4, end) var(--dov-burst-delay) both;
+}
+
+.dov-entry-fx__spark {
+  --dov-spark-x: 0px;
+  --dov-spark-y: 0px;
+  --dov-spark-color: #ffd36a;
+  --dov-spark-tail-x: -4px;
+  --dov-spark-tail-y: 0;
+  top: 61px;
+  right: 117px;
+  width: 7px;
+  height: 7px;
+  background: var(--dov-spark-color);
+  box-shadow: var(--dov-spark-tail-x) var(--dov-spark-tail-y) 0 var(--dov-spark-color);
+  opacity: 0;
+}
+
+.dov-entry-fx__spark--one {
+  --dov-spark-x: -55px;
+  --dov-spark-y: -32px;
+}
+
+.dov-entry-fx__spark--two {
+  --dov-spark-x: 52px;
+  --dov-spark-y: -27px;
+  --dov-spark-color: #ff9d35;
+  --dov-spark-tail-x: 4px;
+}
+
+.dov-entry-fx__spark--three {
+  --dov-spark-x: -66px;
+  --dov-spark-y: 7px;
+  --dov-spark-tail-y: -4px;
+}
+
+.dov-entry-fx__spark--four {
+  --dov-spark-x: 64px;
+  --dov-spark-y: 13px;
+  --dov-spark-color: #ffb247;
+  --dov-spark-tail-x: 4px;
+  --dov-spark-tail-y: 2px;
+}
+
+.dov-entry-fx__spark--five {
+  --dov-spark-x: -37px;
+  --dov-spark-y: 44px;
+  --dov-spark-tail-y: 4px;
+}
+
+.dov-entry-fx__spark--six {
+  --dov-spark-x: 41px;
+  --dov-spark-y: 48px;
+  --dov-spark-color: #ff9d35;
+  --dov-spark-tail-x: 4px;
+  --dov-spark-tail-y: 4px;
+}
+
+.dov-entry-fx__spark--seven {
+  --dov-spark-x: -22px;
+  --dov-spark-y: -52px;
+  --dov-spark-tail-y: -4px;
+}
+
+.dov-entry-fx__spark--eight {
+  --dov-spark-x: 25px;
+  --dov-spark-y: -48px;
+  --dov-spark-color: #ffb247;
+  --dov-spark-tail-x: 4px;
+  --dov-spark-tail-y: -3px;
+}
+
+.dov-entry-fx__spark--nine {
+  --dov-spark-x: -72px;
+  --dov-spark-y: 28px;
+  --dov-spark-tail-y: 3px;
+}
+
+.dov-entry-fx__spark--ten {
+  --dov-spark-x: 73px;
+  --dov-spark-y: 31px;
+  --dov-spark-color: #ff9d35;
+  --dov-spark-tail-x: 4px;
+  --dov-spark-tail-y: 3px;
+}
+
+.dov-entry-fx--active .dov-entry-fx__spark {
+  animation: dov-combat-spark 390ms steps(5, end) calc(var(--dov-burst-delay) + 45ms) both;
+}
+
+.dov-entry-fx__dust {
+  --dov-dust-delay: 0ms;
+  bottom: 18px;
+  width: 32px;
+  height: 21px;
+  background: #746253;
+  clip-path: polygon(
+    18% 0,
+    82% 0,
+    82% 16%,
+    100% 16%,
+    100% 82%,
+    78% 82%,
+    78% 100%,
+    16% 100%,
+    16% 84%,
+    0 84%,
+    0 25%,
+    18% 25%
+  );
+  box-shadow:
+    8px -7px 0 #9a8064,
+    -7px 5px 0 #4d4240;
+  opacity: 0;
+}
+
+.dov-entry-fx__dust--one {
+  --dov-dust-delay: 80ms;
+  right: 42px;
+}
+
+.dov-entry-fx__dust--two {
+  --dov-dust-delay: 410ms;
+  right: 87px;
+}
+
+.dov-entry-fx__dust--three {
+  --dov-dust-delay: 760ms;
+  right: 129px;
+}
+
+.dov-entry-fx__dust--four {
+  --dov-dust-delay: 830ms;
+  right: 169px;
+}
+
+.dov-entry-fx__dust--five {
+  --dov-dust-delay: 705ms;
+  right: 108px;
+  transform: scale(0.78);
+}
+
+.dov-entry-fx--active {
+  animation: dov-combat-cluster-shake 1.1s steps(2, end) both;
+}
+
+.dov-entry-fx--active .dov-entry-fx__dust {
+  animation: dov-combat-dust 650ms steps(6, end) var(--dov-dust-delay) both;
 }
 
 .dov-brand {
@@ -534,9 +813,9 @@ body {
   opacity: 0;
   transform: translate(var(--dov-cave-shift-x, 0), var(--dov-cave-shift-y, -125px)) scale(0.65);
   transition:
-    opacity 760ms ease-in,
-    transform 860ms cubic-bezier(0.22, 0.68, 0.18, 1),
-    visibility 0s linear 860ms;
+    opacity 110ms ease-in 710ms,
+    transform 820ms cubic-bezier(0.22, 0.68, 0.18, 1),
+    visibility 0s linear 840ms;
   visibility: hidden;
 }
 
@@ -550,7 +829,7 @@ body {
 
 .dov-party--inside .dov-player-shadow {
   opacity: 0;
-  transform: translateX(50%) scale(0.42);
+  transform: translateX(50%) scale(0.32);
 }
 
 .dov-slot {
@@ -575,6 +854,7 @@ body {
   opacity: 1;
   text-align: center;
   transform-origin: bottom center;
+  isolation: isolate;
   transition:
     top 180ms ease,
     left 180ms ease,
@@ -603,7 +883,7 @@ body {
 }
 
 .dov-slot--rear .dov-slot__identity {
-  margin-bottom: -23px;
+  margin-bottom: -17px;
 }
 
 .dov-party[data-player-count='1'] [data-dov-slot='1'] {
@@ -667,7 +947,7 @@ body {
 }
 
 .dov-party[data-player-count='6'] .dov-slot--rear .dov-slot__identity {
-  margin-bottom: -29px;
+  margin-bottom: -23px;
 }
 
 .dov-party[data-player-count='6'] [data-dov-slot='1'] {
@@ -744,17 +1024,28 @@ body {
   position: absolute;
   z-index: 1;
   right: 50%;
-  bottom: 43px;
+  bottom: 4px;
   display: block;
-  width: 76px;
-  height: 12px;
-  background: rgba(7, 4, 12, 0.5);
-  clip-path: polygon(12% 18%, 88% 18%, 100% 50%, 88% 82%, 12% 82%, 0 50%);
+  width: 100px;
+  height: 18px;
+  background: rgba(5, 3, 10, 0.68);
+  clip-path: polygon(10% 18%, 90% 18%, 100% 42%, 100% 58%, 90% 82%, 10% 82%, 0 58%, 0 42%);
   transform: translateX(50%);
   transform-origin: center;
   transition:
-    opacity 760ms ease-in,
-    transform 860ms cubic-bezier(0.22, 0.68, 0.18, 1);
+    opacity 90ms ease-in 750ms,
+    transform 820ms cubic-bezier(0.22, 0.68, 0.18, 1);
+}
+
+.dov-player-shadow::after {
+  position: absolute;
+  top: 5px;
+  right: 20px;
+  width: 60px;
+  height: 8px;
+  content: '';
+  background: rgba(0, 0, 0, 0.58);
+  clip-path: polygon(12% 0, 88% 0, 100% 35%, 100% 65%, 88% 100%, 12% 100%, 0 65%, 0 35%);
 }
 
 .dov-player-figure {
@@ -847,7 +1138,7 @@ body {
   display: flex;
   width: 150px;
   max-width: 150px;
-  margin-bottom: -16px;
+  margin-bottom: -10px;
   padding: 0;
   flex-direction: column;
   align-items: center;
@@ -872,9 +1163,9 @@ body {
   min-width: 0;
   overflow: hidden;
   color: #fffef8;
-  font-size: 16px;
-  font-weight: 800;
-  line-height: 19px;
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 20px;
   text-overflow: ellipsis;
   white-space: nowrap;
   text-shadow:
@@ -883,7 +1174,9 @@ body {
     0 2px #09070a,
     0 -2px #09070a,
     1px 1px #09070a,
-    -1px -1px #09070a;
+    -1px -1px #09070a,
+    -2px 2px #09070a,
+    2px -2px #09070a;
 }
 
 .dov-slot__level {
@@ -891,14 +1184,16 @@ body {
   margin-top: 1px;
   color: #ffd778;
   font-family: Consolas, Tahoma, monospace;
-  font-size: 10px;
-  font-weight: 800;
-  line-height: 11px;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 13px;
   text-shadow:
-    1px 0 #09070a,
-    -1px 0 #09070a,
-    0 1px #09070a,
-    0 -1px #09070a;
+    2px 0 #09070a,
+    -2px 0 #09070a,
+    0 2px #09070a,
+    0 -2px #09070a,
+    1px 1px #09070a,
+    -1px -1px #09070a;
 }
 
 .dov-slot__key {
@@ -961,7 +1256,7 @@ body {
 }
 
 .dov-slot--dead .dov-player-shadow {
-  opacity: 0.12;
+  opacity: 0.03;
 }
 
 .dov-slot--dead .dov-character-sprite {
@@ -1099,7 +1394,7 @@ body {
 
 .dov-slot--dead.dov-slot--arriving .dov-player-shadow,
 .dov-slot--dead.dov-slot--returning .dov-player-shadow {
-  opacity: 0.12;
+  opacity: 0.03;
   animation: none;
 }
 
@@ -1116,8 +1411,8 @@ body {
 
 @keyframes dov-player-shadow-return {
   from {
-    opacity: 0;
-    transform: translateX(50%) scale(0.42);
+    opacity: 0.1;
+    transform: translateX(50%) scale(0.32);
   }
   to {
     opacity: 1;
@@ -1154,6 +1449,100 @@ body {
   }
 }
 
+@keyframes dov-combat-slash-forward {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--dov-slash-forward-angle)) scaleX(0.08);
+  }
+  32%,
+  68% {
+    opacity: 1;
+    transform: rotate(var(--dov-slash-forward-angle)) scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--dov-slash-forward-angle)) translateX(var(--dov-slash-forward-shift)) scaleX(0.7);
+  }
+}
+
+@keyframes dov-combat-slash-back {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--dov-slash-back-angle)) scaleX(0.08);
+  }
+  32%,
+  68% {
+    opacity: 1;
+    transform: rotate(var(--dov-slash-back-angle)) scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--dov-slash-back-angle)) translateX(var(--dov-slash-back-shift)) scaleX(0.7);
+  }
+}
+
+@keyframes dov-combat-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.25);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+}
+
+@keyframes dov-combat-spark {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.3);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dov-spark-x), var(--dov-spark-y)) scale(0.75);
+  }
+}
+
+@keyframes dov-combat-dust {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.42);
+  }
+  28% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-28px) scale(1.15);
+  }
+}
+
+@keyframes dov-combat-cluster-shake {
+  0%,
+  100% {
+    transform: translateX(50%);
+  }
+  18% {
+    transform: translateX(calc(50% - 2px)) translateY(1px);
+  }
+  36% {
+    transform: translateX(calc(50% + 2px)) translateY(-1px);
+  }
+  58% {
+    transform: translateX(calc(50% - 1px));
+  }
+  76% {
+    transform: translateX(calc(50% + 1px));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dov-scene,
   .dov-notice,
@@ -1167,7 +1556,13 @@ body {
   .dov-player-figure,
   .dov-character-sprite,
   .dov-slot--arriving,
-  .dov-slot--returning {
+  .dov-slot--returning,
+  .dov-entry-fx,
+  .dov-entry-fx__burst::before,
+  .dov-entry-fx__burst::after,
+  .dov-entry-fx__flash,
+  .dov-entry-fx__spark,
+  .dov-entry-fx__dust {
     animation: none !important;
   }
 

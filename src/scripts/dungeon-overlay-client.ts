@@ -28,10 +28,13 @@ const ACTIVE_RUN_RETRY_MS = 2_500;
 const ACTIVE_RUN_GRACE_MS = 20_000;
 const REAL_EVENT_DURATION_MS = 5_000;
 const REAL_EVENT_GAP_MS = 400;
-const REAL_FULL_PARTY_ENTRY_DELAY_MS = 650;
+const REAL_FULL_PARTY_ENTRY_DELAY_MS = 120;
 const REAL_TERMINAL_DURATION_MS = 12_000;
 const REAL_TERMINAL_STALE_MS = 15_000;
 const DEMO_EVENT_GAP_MS = 350;
+const ENTRY_EVENT_READY_DELAY_MS = 600;
+const ENTRY_FX_START_DELAY_MS = PLAYER_MOTION_DURATION_MS.arriving;
+const ENTRY_FX_DURATION_MS = 1_500;
 
 interface OverlayPlayer {
   name: string;
@@ -101,6 +104,7 @@ const resultMark = document.getElementById('dovResultMark');
 const resultTitle = document.getElementById('dovResultTitle');
 const resultText = document.getElementById('dovResultText');
 const party = document.getElementById('dovParty');
+const entryFx = document.getElementById('dovEntryFx');
 const slots = root
   ? Array.from(root.querySelectorAll<HTMLElement>('[data-dov-slot]')).sort(
       (left, right) => Number(left.dataset.dovSlot) - Number(right.dataset.dovSlot)
@@ -124,6 +128,7 @@ const elementsReady =
   resultTitle &&
   resultText &&
   party &&
+  entryFx &&
   slots.length === 6;
 
 if (elementsReady) {
@@ -134,6 +139,7 @@ if (elementsReady) {
   let disposed = false;
   let noticeVersion = 0;
   let eventVersion = 0;
+  let entryFxVersion = 0;
   let realMode = false;
   let pollTimer: number | null = null;
   let countdownTimer: number | null = null;
@@ -142,6 +148,9 @@ if (elementsReady) {
   let currentRunId: string | null = null;
   let currentRunStatus: DungeonViewerActiveRun['status'] | null = null;
   let countdownDeadline: number | null = null;
+  let countdownDisplayedSeconds: number | null = null;
+  let countdownRunId: string | null = null;
+  let countdownActiveRun: DungeonViewerActiveRun | null = null;
   let entryPresentedRunId: string | null = null;
   let entryPresentationReadyAt = 0;
   let entryWaitTimerScheduled = false;
@@ -188,6 +197,7 @@ if (elementsReady) {
     eventQueueRunning = false;
     entryWaitTimerScheduled = false;
     fullPartyEntryScheduledRunId = null;
+    hideEntryFx();
   }
 
   function stopCountdown(): void {
@@ -196,6 +206,9 @@ if (elementsReady) {
       countdownTimer = null;
     }
     countdownDeadline = null;
+    countdownDisplayedSeconds = null;
+    countdownRunId = null;
+    countdownActiveRun = null;
   }
 
   function stopPolling(): void {
@@ -276,6 +289,25 @@ if (elementsReady) {
     eventPanel.classList.remove('dov-event--visible');
     void eventPanel.offsetWidth;
     eventPanel.classList.add('dov-event--visible');
+  }
+
+  function hideEntryFx(): void {
+    entryFxVersion += 1;
+    entryFx.classList.remove('dov-entry-fx--active');
+    entryFx.hidden = true;
+  }
+
+  function showEntryFx(schedule: typeof later = later): void {
+    const version = ++entryFxVersion;
+    entryFx.hidden = false;
+    entryFx.classList.remove('dov-entry-fx--active');
+    void entryFx.offsetWidth;
+    entryFx.classList.add('dov-entry-fx--active');
+    schedule(ENTRY_FX_DURATION_MS, () => {
+      if (version !== entryFxVersion) return;
+      entryFx.classList.remove('dov-entry-fx--active');
+      entryFx.hidden = true;
+    });
   }
 
   function setStatus(seconds: number, joinedPlayers: number, label = 'تبدأ الرحلة خلال', maxPlayers = 6): void {
@@ -410,10 +442,11 @@ if (elementsReady) {
     party.classList.remove('dov-party--inside');
   }
 
-  function sendPartyInside(): void {
+  function sendPartyInside(schedule: typeof later = later): void {
     root.classList.remove('dov-overlay--terminal');
     root.classList.add('dov-overlay--running');
     party.classList.add('dov-party--inside');
+    schedule(ENTRY_FX_START_DELAY_MS, () => showEntryFx(schedule));
   }
 
   function resetScene(): void {
@@ -421,12 +454,14 @@ if (elementsReady) {
       'dov-overlay--visible',
       'dov-overlay--fading',
       'dov-overlay--running',
-      'dov-overlay--terminal'
+      'dov-overlay--terminal',
+      'dov-overlay--instant'
     );
     notice.hidden = true;
     notice.classList.remove('dov-notice--visible');
     eventPanel.hidden = true;
     eventPanel.classList.remove('dov-event--visible');
+    hideEntryFx();
     hideStatus();
     hideResult();
     hideRewards();
@@ -448,7 +483,7 @@ if (elementsReady) {
   function runRunningDemo(): void {
     setPlayers(PLAYERS);
     later(120, sendPartyInside);
-    scheduleDemoEvents(0);
+    scheduleDemoEvents(120 + PLAYER_MOTION_DURATION_MS.arriving + ENTRY_EVENT_READY_DELAY_MS);
   }
 
   function runCompletedDemo(): void {
@@ -460,17 +495,10 @@ if (elementsReady) {
   }
 
   function runFailedDemo(): void {
-    const returnedPlayers: DemoPlayer[] = [
-      { ...PLAYERS[0], outcome: 'survived' },
-      { ...PLAYERS[2], outcome: 'survived' },
-      { ...PLAYERS[1], outcome: 'dead' },
-    ];
-    setPlayers(returnedPlayers, 'returning');
-    showResult(false, 'نجا لاعبان من أصل أربعة');
-    showRewards([
-      { player: 'تنكس', xp: 35 },
-      { player: 'خالد', xp: 35 },
-    ]);
+    const defeatedPlayers = PLAYERS.map((player) => ({ ...player, outcome: 'dead' as const }));
+    setPlayers(defeatedPlayers, 'returning');
+    showResult(false, 'لم ينجُ أحد من أفراد الفريق');
+    hideRewards();
     fadeOut(14_000);
   }
 
@@ -485,7 +513,7 @@ if (elementsReady) {
 
     later(9_200, () => setStatus(10, PLAYERS.length));
     for (let elapsed = 1; elapsed <= 10; elapsed += 1) {
-      later(9_200 + elapsed * 900, () => {
+      later(9_200 + elapsed * 1_000, () => {
         countdown.textContent = String(10 - elapsed);
         if (elapsed === 10) {
           hideNotice();
@@ -495,7 +523,10 @@ if (elementsReady) {
       });
     }
 
-    const terminalAt = scheduleDemoEvents(20_200);
+    const entryStartsAt = 9_200 + 10_000;
+    const terminalAt = scheduleDemoEvents(
+      entryStartsAt + PLAYER_MOTION_DURATION_MS.arriving + ENTRY_EVENT_READY_DELAY_MS
+    );
     later(terminalAt, () => {
       showResult(true, 'عاد الناجون ومعهم غنائم الرحلة');
     });
@@ -519,12 +550,16 @@ if (elementsReady) {
     return startAt + RUN_EVENTS.length * interval;
   }
 
-  function revealRealOverlay(): void {
+  function revealRealOverlay(immediate = false): void {
     root.hidden = false;
     root.classList.remove('dov-overlay--fading');
+    if (immediate) root.classList.add('dov-overlay--instant');
     if (!root.classList.contains('dov-overlay--visible')) {
-      void root.offsetWidth;
+      if (!immediate) void root.offsetWidth;
       root.classList.add('dov-overlay--visible');
+    }
+    if (immediate) {
+      later(0, () => root.classList.remove('dov-overlay--instant'));
     }
   }
 
@@ -554,8 +589,12 @@ if (elementsReady) {
     activeRunOutageStartedAt ??= now;
     if (now - activeRunOutageStartedAt >= ACTIVE_RUN_GRACE_MS) return false;
 
-    stopJoiningCountdown();
-    hideStatus();
+    const keepJoiningCountdown =
+      currentRunStatus === 'joining' && countdownTimer !== null && countdownActiveRun?.id === currentRunId;
+    if (!keepJoiningCountdown) {
+      stopJoiningCountdown();
+      hideStatus();
+    }
     noticeVersion += 1;
     notice.hidden = true;
     notice.classList.remove('dov-notice--visible');
@@ -684,10 +723,10 @@ if (elementsReady) {
     hideNotice(runLater);
     joinNoticeQueue = [];
     entryPresentedRunId = runId;
-    entryPresentationReadyAt = Date.now() + PLAYER_MOTION_DURATION_MS.arriving;
+    entryPresentationReadyAt = Date.now() + PLAYER_MOTION_DURATION_MS.arriving + ENTRY_EVENT_READY_DELAY_MS;
     entryWaitTimerScheduled = false;
     revealRealOverlay();
-    sendPartyInside();
+    sendPartyInside(runLater);
     return true;
   }
 
@@ -770,32 +809,56 @@ if (elementsReady) {
     });
   }
 
-  function updateCountdownDisplay(activeRun: DungeonViewerActiveRun): void {
-    const seconds = countdownDeadline === null ? 0 : Math.max(0, Math.ceil((countdownDeadline - Date.now()) / 1_000));
-    if (seconds <= 0) {
-      presentPartyEntryOnce(activeRun.id, activeRun.participants);
+  function updateCountdownDisplay(advanceOneSecond: boolean): void {
+    const activeRun = countdownActiveRun;
+    if (!activeRun || countdownDeadline === null || countdownRunId !== activeRun.id) return;
+
+    const targetSeconds = Math.max(0, Math.ceil((countdownDeadline - Date.now()) / 1_000));
+    if (targetSeconds <= 0) {
+      setStatus(0, activeRun.joinedPlayers, 'تبدأ الرحلة خلال', activeRun.maxPlayers);
+      stopCountdown();
+      runLater(80, () => {
+        if (currentRunId === activeRun.id && currentRunStatus === 'joining') {
+          presentPartyEntryOnce(activeRun.id, activeRun.participants);
+        }
+      });
       return;
     }
-    setStatus(seconds, activeRun.joinedPlayers, 'تبدأ الرحلة خلال', activeRun.maxPlayers);
+
+    if (countdownDisplayedSeconds === null) {
+      countdownDisplayedSeconds = targetSeconds;
+    } else if (advanceOneSecond && targetSeconds < countdownDisplayedSeconds) {
+      countdownDisplayedSeconds -= 1;
+    } else if (advanceOneSecond && targetSeconds > countdownDisplayedSeconds) {
+      countdownDisplayedSeconds += 1;
+    }
+
+    setStatus(countdownDisplayedSeconds, activeRun.joinedPlayers, 'تبدأ الرحلة خلال', activeRun.maxPlayers);
   }
 
   function startCountdown(activeRun: DungeonViewerActiveRun): void {
     const parsedDeadline = parseApiTimestamp(activeRun.registrationClosesAt);
+    const sameRun = countdownRunId === activeRun.id;
+    countdownActiveRun = activeRun;
+    countdownRunId = activeRun.id;
+
     if (parsedDeadline !== null) {
       countdownDeadline = parsedDeadline;
-    } else if (countdownDeadline === null) {
+    } else if (!sameRun || countdownDeadline === null) {
       countdownDeadline = Date.now() + activeRun.secondsRemaining * 1_000;
     }
 
-    if (countdownTimer !== null) window.clearInterval(countdownTimer);
-    updateCountdownDisplay(activeRun);
+    if (!sameRun) countdownDisplayedSeconds = null;
+    updateCountdownDisplay(false);
     if (entryPresentedRunId === activeRun.id) return;
+    if (countdownTimer !== null) return;
+
     countdownTimer = window.setInterval(() => {
       if (disposed || !realMode || currentRunStatus !== 'joining') {
         stopCountdown();
         return;
       }
-      updateCountdownDisplay(activeRun);
+      updateCountdownDisplay(true);
     }, 1_000);
   }
 
@@ -910,12 +973,15 @@ if (elementsReady) {
     return generalRewards;
   }
 
+  function isFailedTerminal(summary: DungeonViewerRunSummary): boolean {
+    return summary.status === 'failed' || summary.result === 'failed';
+  }
+
   function terminalDescription(summary: DungeonViewerRunSummary, generalRewards: string[]): string {
     const survivors = summary.participants.filter((participant) => participant.survived === true).length;
-    const base =
-      summary.status === 'completed'
-        ? `عاد ${survivors} من المغامرين ومعهم غنائم الرحلة`
-        : `نجا ${survivors} من أصل ${summary.participants.length}`;
+    const base = isFailedTerminal(summary)
+      ? 'لم ينجُ أحد من أفراد الفريق'
+      : `عاد ${survivors} من المغامرين ومعهم غنائم الرحلة`;
     return generalRewards.length > 0 ? `${base} • ${generalRewards.join(' • ')}` : base;
   }
 
@@ -935,14 +1001,18 @@ if (elementsReady) {
     hideStatus();
     hideNotice(runLater);
     hideEvent(runLater);
-    const visibleParticipants =
-      summary.status === 'completed'
-        ? summary.participants.filter((participant) => participant.survived === true)
-        : summary.participants;
+    const failedTerminal = isFailedTerminal(summary);
+    const visibleParticipants = !failedTerminal
+      ? summary.participants.filter((participant) => participant.survived === true)
+      : summary.participants.map((participant) => ({
+          ...participant,
+          status: 'dead',
+          survived: false,
+        }));
     setRealParticipants(visibleParticipants, true, 'returning');
     const generalRewards = showRealRewards(summary);
     revealRealOverlay();
-    showResult(summary.status === 'completed', terminalDescription(summary, generalRewards));
+    showResult(!failedTerminal, terminalDescription(summary, generalRewards));
 
     runLater(REAL_TERMINAL_DURATION_MS, () => {
       root.classList.add('dov-overlay--fading');
@@ -1005,11 +1075,7 @@ if (elementsReady) {
     joinNoticeQueue = [];
 
     if (openedDuringRunning) {
-      setRealParticipants(activeRun.participants);
-      sendPartyInside();
-      entryPresentedRunId = activeRun.id;
-      entryPresentationReadyAt = 0;
-      revealRealOverlay();
+      presentPartyEntryOnce(activeRun.id, activeRun.participants);
     } else if (transitionedFromJoining) {
       presentPartyEntryOnce(activeRun.id, activeRun.participants);
     } else {
@@ -1077,7 +1143,7 @@ if (elementsReady) {
         return REAL_POLL_ACTIVE_MS;
       }
       startCountdown(activeRun);
-      revealRealOverlay();
+      revealRealOverlay(isNewRun);
       return REAL_POLL_ACTIVE_MS;
     }
 

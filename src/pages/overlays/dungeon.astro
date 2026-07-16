@@ -2,6 +2,11 @@
 import '~/assets/styles/dungeon-overlay.css';
 
 const slots = Array.from({ length: 6 }, (_, index) => index + 1);
+const battleBursts = [
+  { name: 'one', sparks: ['one', 'two', 'three', 'four'] },
+  { name: 'two', sparks: ['five', 'six', 'seven'] },
+  { name: 'three', sparks: ['eight', 'nine', 'ten'] },
+];
 ---
 
 <!doctype html>
@@ -38,6 +43,24 @@ const slots = Array.from({ length: 6 }, (_, index) => index + 1);
           />
           <span class="dov-torch-flame dov-torch-flame--right"></span>
           <span class="dov-torch-flame dov-torch-flame--left"></span>
+        </div>
+
+        <div id="dovEntryFx" class="dov-entry-fx" aria-hidden="true" hidden>
+          {
+            battleBursts.map((burst) => (
+              <span class={`dov-entry-fx__burst dov-entry-fx__burst--${burst.name}`}>
+                <span class="dov-entry-fx__flash" />
+                {burst.sparks.map((spark) => (
+                  <span class={`dov-entry-fx__spark dov-entry-fx__spark--${spark}`} />
+                ))}
+              </span>
+            ))
+          }
+          <span class="dov-entry-fx__dust dov-entry-fx__dust--one"></span>
+          <span class="dov-entry-fx__dust dov-entry-fx__dust--two"></span>
+          <span class="dov-entry-fx__dust dov-entry-fx__dust--three"></span>
+          <span class="dov-entry-fx__dust dov-entry-fx__dust--four"></span>
+          <span class="dov-entry-fx__dust dov-entry-fx__dust--five"></span>
         </div>
 
         <div class="dov-brand" aria-label="TNX6 Dungeon">
