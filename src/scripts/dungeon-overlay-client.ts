@@ -24,6 +24,8 @@ const PLAYER_MOTION_DURATION_MS: Record<PlayerMotion, number> = {
 const REAL_POLL_ACTIVE_MS = 3_000;
 const REAL_POLL_IDLE_MS = 10_000;
 const REAL_POLL_TERMINAL_MS = 15_000;
+const ACTIVE_RUN_RETRY_MS = 2_500;
+const ACTIVE_RUN_GRACE_MS = 20_000;
 const REAL_EVENT_DURATION_MS = 3_000;
 const REAL_TERMINAL_DURATION_MS = 11_000;
 const REAL_TERMINAL_STALE_MS = 15_000;
@@ -137,6 +139,10 @@ if (elementsReady) {
   let currentRunId: string | null = null;
   let currentRunStatus: DungeonViewerActiveRun['status'] | null = null;
   let countdownDeadline: number | null = null;
+  let entryPresentedRunId: string | null = null;
+  let entryPresentationReadyAt = 0;
+  let entryWaitTimerScheduled = false;
+  let activeRunOutageStartedAt: number | null = null;
   let knownParticipantSlots = new Set<number>();
   let joinNoticeQueue: string[] = [];
   let joinNoticeRunning = false;
@@ -175,6 +181,7 @@ if (elementsReady) {
     eventVersion += 1;
     joinNoticeRunning = false;
     eventQueueRunning = false;
+    entryWaitTimerScheduled = false;
   }
 
   function stopCountdown(): void {
@@ -476,14 +483,13 @@ if (elementsReady) {
     for (let elapsed = 1; elapsed <= 10; elapsed += 1) {
       later(9_200 + elapsed * 900, () => {
         countdown.textContent = String(10 - elapsed);
+        if (elapsed === 10) {
+          hideNotice();
+          hideStatus();
+          sendPartyInside();
+        }
       });
     }
-
-    later(18_600, () => {
-      hideNotice();
-      hideStatus();
-      sendPartyInside();
-    });
 
     RUN_EVENTS.forEach((event, index) => {
       later(20_200 + index * 3_200, () => showEvent(event));
@@ -521,16 +527,46 @@ if (elementsReady) {
     stopCountdown();
   }
 
-  function hideOverlayForRetry(): void {
-    stopJoiningCountdown();
-    if (currentRunStatus === 'joining') {
-      clearRunTimers();
-      activeJoinNotice = null;
-      joinNoticeQueue = [];
-      notice.hidden = true;
-      notice.classList.remove('dov-notice--visible');
+  function preserveActiveRunDuringOutage(): boolean {
+    if (
+      !currentRunId ||
+      displayedTerminalRunIds.has(currentRunId) ||
+      (currentRunStatus !== 'joining' &&
+        currentRunStatus !== 'running' &&
+        entryPresentedRunId !== currentRunId &&
+        activeTerminalSummary?.id !== currentRunId &&
+        pendingTerminalSummary?.id !== currentRunId)
+    ) {
+      return false;
     }
+
+    const now = Date.now();
+    activeRunOutageStartedAt ??= now;
+    if (now - activeRunOutageStartedAt >= ACTIVE_RUN_GRACE_MS) return false;
+
+    stopJoiningCountdown();
+    hideStatus();
+    noticeVersion += 1;
+    notice.hidden = true;
+    notice.classList.remove('dov-notice--visible');
+    activeJoinNotice = null;
+    joinNoticeQueue = [];
+    joinNoticeRunning = false;
+    if (entryPresentedRunId === currentRunId || currentRunStatus === 'running') {
+      root.classList.remove('dov-overlay--terminal');
+      root.classList.add('dov-overlay--running');
+      party.classList.add('dov-party--inside');
+    }
+    revealRealOverlay();
+    return true;
+  }
+
+  function handleViewerInterruption(): number {
+    if (preserveActiveRunDuringOutage()) return ACTIVE_RUN_RETRY_MS;
+    activeRunOutageStartedAt = null;
+    if (currentRunId !== null) resetRealRunState(null);
     concealRealOverlay();
+    return REAL_POLL_IDLE_MS;
   }
 
   function pauseRunPresentationForVisibility(): void {
@@ -579,6 +615,10 @@ if (elementsReady) {
     pendingTerminalSummary = null;
     terminalPresentationRunning = false;
     activeTerminalSummary = null;
+    entryPresentedRunId = null;
+    entryPresentationReadyAt = 0;
+    entryWaitTimerScheduled = false;
+    activeRunOutageStartedAt = null;
     currentRunId = nextRunId;
     currentRunStatus = null;
     resetScene();
@@ -618,6 +658,49 @@ if (elementsReady) {
     party.classList.remove('dov-party--inside');
   }
 
+  function presentPartyEntryOnce(runId: string, participants: DungeonViewerParticipant[]): boolean {
+    if (entryPresentedRunId === runId) {
+      root.classList.remove('dov-overlay--terminal');
+      root.classList.add('dov-overlay--running');
+      party.classList.add('dov-party--inside');
+      revealRealOverlay();
+      return false;
+    }
+
+    setRealParticipants(participants);
+    stopCountdown();
+    hideStatus();
+    hideNotice(runLater);
+    joinNoticeQueue = [];
+    entryPresentedRunId = runId;
+    entryPresentationReadyAt = Date.now() + PLAYER_MOTION_DURATION_MS.arriving;
+    entryWaitTimerScheduled = false;
+    revealRealOverlay();
+    sendPartyInside();
+    return true;
+  }
+
+  function waitForPartyEntry(): boolean {
+    if (entryPresentedRunId !== currentRunId) return false;
+    const remainingMs = entryPresentationReadyAt - Date.now();
+    if (remainingMs <= 0) return false;
+    if (!entryWaitTimerScheduled) {
+      entryWaitTimerScheduled = true;
+      runLater(remainingMs, () => {
+        entryWaitTimerScheduled = false;
+        processEventQueue();
+      });
+    }
+    return true;
+  }
+
+  function prepareRealEventScene(): void {
+    root.classList.remove('dov-overlay--terminal');
+    root.classList.add('dov-overlay--running');
+    party.classList.add('dov-party--inside');
+    revealRealOverlay();
+  }
+
   function queueJoinNotices(participants: DungeonViewerParticipant[], initialLoad: boolean): void {
     const nextSlots = new Set(participants.map((participant) => participant.slotNumber));
     if (!initialLoad) {
@@ -632,7 +715,14 @@ if (elementsReady) {
   }
 
   function processJoinNoticeQueue(): void {
-    if (document.hidden || joinNoticeRunning || joinNoticeQueue.length === 0 || currentRunStatus !== 'joining') return;
+    if (
+      document.hidden ||
+      activeRunOutageStartedAt !== null ||
+      joinNoticeRunning ||
+      joinNoticeQueue.length === 0 ||
+      currentRunStatus !== 'joining'
+    )
+      return;
     const playerName = joinNoticeQueue.shift();
     if (!playerName) return;
     joinNoticeRunning = true;
@@ -647,9 +737,13 @@ if (elementsReady) {
     });
   }
 
-  function updateCountdownDisplay(joinedPlayers: number, maxPlayers: number): void {
+  function updateCountdownDisplay(activeRun: DungeonViewerActiveRun): void {
     const seconds = countdownDeadline === null ? 0 : Math.max(0, Math.ceil((countdownDeadline - Date.now()) / 1_000));
-    setStatus(seconds, joinedPlayers, 'تبدأ الرحلة خلال', maxPlayers);
+    if (seconds <= 0) {
+      presentPartyEntryOnce(activeRun.id, activeRun.participants);
+      return;
+    }
+    setStatus(seconds, activeRun.joinedPlayers, 'تبدأ الرحلة خلال', activeRun.maxPlayers);
   }
 
   function startCountdown(activeRun: DungeonViewerActiveRun): void {
@@ -661,13 +755,14 @@ if (elementsReady) {
     }
 
     if (countdownTimer !== null) window.clearInterval(countdownTimer);
-    updateCountdownDisplay(activeRun.joinedPlayers, activeRun.maxPlayers);
+    updateCountdownDisplay(activeRun);
+    if (entryPresentedRunId === activeRun.id) return;
     countdownTimer = window.setInterval(() => {
       if (disposed || !realMode || currentRunStatus !== 'joining') {
         stopCountdown();
         return;
       }
-      updateCountdownDisplay(activeRun.joinedPlayers, activeRun.maxPlayers);
+      updateCountdownDisplay(activeRun);
     }, 1_000);
   }
 
@@ -695,7 +790,7 @@ if (elementsReady) {
   }
 
   function processEventQueue(): void {
-    if (document.hidden || eventQueueRunning) return;
+    if (document.hidden || eventQueueRunning || waitForPartyEntry()) return;
     const event = eventQueue.shift();
     if (!event) {
       maybeShowTerminalResult();
@@ -703,6 +798,7 @@ if (elementsReady) {
     }
     eventQueueRunning = true;
     activeQueuedEvent = event;
+    prepareRealEventScene();
     showEvent(eventPresentation(event));
     runLater(REAL_EVENT_DURATION_MS, () => {
       if (activeQueuedEvent?.sequenceNumber === event.sequenceNumber) activeQueuedEvent = null;
@@ -794,6 +890,7 @@ if (elementsReady) {
     const summary = pendingTerminalSummary;
     if (document.hidden || !summary || eventQueueRunning || eventQueue.length > 0 || terminalPresentationRunning)
       return;
+    if (waitForPartyEntry()) return;
     if (displayedTerminalRunIds.has(summary.id)) {
       pendingTerminalSummary = null;
       return;
@@ -845,9 +942,11 @@ if (elementsReady) {
     if (openedDuringRunning) {
       setRealParticipants(activeRun.participants);
       sendPartyInside();
+      entryPresentedRunId = activeRun.id;
+      entryPresentationReadyAt = 0;
       revealRealOverlay();
     } else if (transitionedFromJoining) {
-      sendPartyInside();
+      presentPartyEntryOnce(activeRun.id, activeRun.participants);
     } else {
       revealRealOverlay();
     }
@@ -891,6 +990,15 @@ if (elementsReady) {
 
     if (activeRun.status === 'joining') {
       currentRunStatus = 'joining';
+      if (entryPresentedRunId === activeRun.id) {
+        knownParticipantSlots = new Set(activeRun.participants.map((participant) => participant.slotNumber));
+        hideStatus();
+        root.classList.remove('dov-overlay--terminal');
+        root.classList.add('dov-overlay--running');
+        party.classList.add('dov-party--inside');
+        revealRealOverlay();
+        return REAL_POLL_ACTIVE_MS;
+      }
       root.classList.remove('dov-overlay--running', 'dov-overlay--terminal');
       setRealParticipants(activeRun.participants);
       queueJoinNotices(activeRun.participants, isNewRun);
@@ -903,14 +1011,15 @@ if (elementsReady) {
       const openedDuringRunning = isNewRun;
       const transitionedFromJoining = previousStatus === 'joining';
       currentRunStatus = 'running';
-      if (transitionedFromJoining) {
-        setRealParticipants(activeRun.participants);
-      }
       await syncRunningRun(activeRun, signal, openedDuringRunning, transitionedFromJoining);
       return REAL_POLL_ACTIVE_MS;
     }
 
+    const transitionedFromJoining = previousStatus === 'joining';
     currentRunStatus = activeRun.status;
+    if (transitionedFromJoining) {
+      presentPartyEntryOnce(activeRun.id, activeRun.participants);
+    }
     await syncTerminalRun(activeRun, signal, isNewRun);
     return REAL_POLL_TERMINAL_MS;
   }
@@ -938,14 +1047,15 @@ if (elementsReady) {
     try {
       const activeRun = await fetchActiveDungeonRun(controller.signal);
       if (!activeRun) {
-        if (currentRunId !== null) resetRealRunState(null);
-        concealRealOverlay();
+        nextDelay = handleViewerInterruption();
       } else {
         nextDelay = await handleActiveRun(activeRun, controller.signal);
+        activeRunOutageStartedAt = null;
+        processJoinNoticeQueue();
       }
     } catch (error) {
       if (!(error instanceof DOMException && error.name === 'AbortError')) {
-        hideOverlayForRetry();
+        nextDelay = handleViewerInterruption();
       }
     } finally {
       if (requestController === controller) requestController = null;

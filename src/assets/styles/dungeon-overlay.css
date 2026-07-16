@@ -88,27 +88,27 @@ body {
   user-select: none;
 }
 
-.dov-fire {
+.dov-torch-flame {
   position: absolute;
   z-index: 2;
-  top: 287px;
-  width: 10px;
-  height: 19px;
-  background: #ffbd43;
-  border: 3px solid #ff6d22;
-  box-shadow:
-    0 -6px 0 -2px #fff1a4,
-    0 5px 0 -2px #a9441e;
-  animation: dov-fire-frames 900ms steps(3, end) infinite;
+  top: 276px;
+  width: 24px;
+  height: 32px;
+  background-image: url('/assets/dungeon-overlay/fire-sheet.webp');
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 400% 100%;
+  image-rendering: pixelated;
+  animation: dov-torch-flame-frames 720ms steps(4, end) infinite;
 }
 
-.dov-fire--left {
-  left: 220px;
+.dov-torch-flame--left {
+  left: 213px;
 }
 
-.dov-fire--right {
-  right: 220px;
-  animation-delay: 300ms;
+.dov-torch-flame--right {
+  right: 213px;
+  animation-delay: -180ms;
 }
 
 .dov-brand {
@@ -1113,16 +1113,12 @@ body {
   }
 }
 
-@keyframes dov-fire-frames {
-  0%,
-  100% {
-    transform: translateY(0) scaleX(1);
+@keyframes dov-torch-flame-frames {
+  from {
+    background-position: 0 0;
   }
-  34% {
-    transform: translateY(-3px) scaleX(0.72);
-  }
-  67% {
-    transform: translateY(1px) scaleX(1.18);
+  to {
+    background-position: 133.333% 0;
   }
 }
 
@@ -1134,12 +1130,16 @@ body {
     transition-duration: 1ms !important;
   }
 
-  .dov-fire,
+  .dov-torch-flame,
   .dov-player-figure,
   .dov-character-sprite,
   .dov-slot--arriving,
   .dov-slot--returning {
     animation: none !important;
+  }
+
+  .dov-torch-flame {
+    background-position: 0 0;
   }
 
   .dov-party--inside .dov-character-sprite,
