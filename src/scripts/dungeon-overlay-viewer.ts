@@ -13,6 +13,7 @@ export interface DungeonViewerActiveRun {
   status: DungeonViewerStatus;
   maxPlayers: number;
   joinedPlayers: number;
+  remainingSlots: number;
   registrationClosesAt: string | null;
   secondsRemaining: number;
   participants: DungeonViewerParticipant[];
@@ -201,6 +202,7 @@ function parseActiveRun(value: unknown): DungeonViewerActiveRun {
     status: safeStatus(run.status),
     maxPlayers,
     joinedPlayers,
+    remainingSlots: Math.max(0, maxPlayers - joinedPlayers),
     registrationClosesAt: safeTimestamp(run.registrationClosesAt, 'registration close timestamp'),
     secondsRemaining: safeInteger(run.secondsRemaining, 'seconds remaining', 0),
     participants,

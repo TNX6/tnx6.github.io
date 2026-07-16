@@ -103,11 +103,11 @@ body {
 }
 
 .dov-torch-flame--left {
-  left: 213px;
+  left: 223px;
 }
 
 .dov-torch-flame--right {
-  right: 213px;
+  right: 223px;
   animation-delay: -180ms;
 }
 
@@ -548,6 +548,11 @@ body {
   animation: none;
 }
 
+.dov-party--inside .dov-player-shadow {
+  opacity: 0;
+  transform: translateX(50%) scale(0.42);
+}
+
 .dov-slot {
   --dov-cloth: #a85332;
   --dov-cloth-light: #e38b4a;
@@ -735,16 +740,21 @@ body {
   --dov-cloth-dark: #4d4032;
 }
 
-.dov-character-shadow {
+.dov-player-shadow {
   position: absolute;
+  z-index: 1;
   right: 50%;
   bottom: 43px;
   display: block;
   width: 76px;
-  height: 11px;
-  background: rgba(5, 4, 6, 0.56);
+  height: 12px;
+  background: rgba(7, 4, 12, 0.5);
   clip-path: polygon(12% 18%, 88% 18%, 100% 50%, 88% 82%, 12% 82%, 0 50%);
   transform: translateX(50%);
+  transform-origin: center;
+  transition:
+    opacity 760ms ease-in,
+    transform 860ms cubic-bezier(0.22, 0.68, 0.18, 1);
 }
 
 .dov-player-figure {
@@ -950,8 +960,8 @@ body {
   display: block;
 }
 
-.dov-slot--dead .dov-character-shadow {
-  opacity: 0.36;
+.dov-slot--dead .dov-player-shadow {
+  opacity: 0.12;
 }
 
 .dov-slot--dead .dov-character-sprite {
@@ -1057,7 +1067,7 @@ body {
 }
 
 .dov-slot--empty .dov-avatar,
-.dov-slot--empty .dov-character-shadow,
+.dov-slot--empty .dov-player-shadow,
 .dov-slot--empty .dov-slot__identity,
 .dov-slot--empty .dov-slot__key,
 .dov-slot--empty .dov-slot__state,
@@ -1082,6 +1092,17 @@ body {
   animation: none;
 }
 
+.dov-slot--arriving .dov-player-shadow,
+.dov-slot--returning .dov-player-shadow {
+  animation: dov-player-shadow-return 860ms cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.dov-slot--dead.dov-slot--arriving .dov-player-shadow,
+.dov-slot--dead.dov-slot--returning .dov-player-shadow {
+  opacity: 0.12;
+  animation: none;
+}
+
 @keyframes dov-player-return {
   from {
     opacity: 0;
@@ -1090,6 +1111,17 @@ body {
   to {
     opacity: 1;
     transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes dov-player-shadow-return {
+  from {
+    opacity: 0;
+    transform: translateX(50%) scale(0.42);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(50%) scale(1);
   }
 }
 
@@ -1131,11 +1163,16 @@ body {
   }
 
   .dov-torch-flame,
+  .dov-player-shadow,
   .dov-player-figure,
   .dov-character-sprite,
   .dov-slot--arriving,
   .dov-slot--returning {
     animation: none !important;
+  }
+
+  .dov-player-shadow {
+    transition: none !important;
   }
 
   .dov-torch-flame {

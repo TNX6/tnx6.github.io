@@ -26,9 +26,12 @@ const REAL_POLL_IDLE_MS = 10_000;
 const REAL_POLL_TERMINAL_MS = 15_000;
 const ACTIVE_RUN_RETRY_MS = 2_500;
 const ACTIVE_RUN_GRACE_MS = 20_000;
-const REAL_EVENT_DURATION_MS = 3_000;
-const REAL_TERMINAL_DURATION_MS = 11_000;
+const REAL_EVENT_DURATION_MS = 5_000;
+const REAL_EVENT_GAP_MS = 400;
+const REAL_FULL_PARTY_ENTRY_DELAY_MS = 650;
+const REAL_TERMINAL_DURATION_MS = 12_000;
 const REAL_TERMINAL_STALE_MS = 15_000;
+const DEMO_EVENT_GAP_MS = 350;
 
 interface OverlayPlayer {
   name: string;
@@ -155,6 +158,8 @@ if (elementsReady) {
   let pendingTerminalSummary: DungeonViewerRunSummary | null = null;
   let terminalPresentationRunning = false;
   let activeTerminalSummary: DungeonViewerRunSummary | null = null;
+  let deferredActiveRun: DungeonViewerActiveRun | null = null;
+  let fullPartyEntryScheduledRunId: string | null = null;
 
   function later(delayMs: number, callback: () => void): void {
     if (disposed) return;
@@ -182,6 +187,7 @@ if (elementsReady) {
     joinNoticeRunning = false;
     eventQueueRunning = false;
     entryWaitTimerScheduled = false;
+    fullPartyEntryScheduledRunId = null;
   }
 
   function stopCountdown(): void {
@@ -442,9 +448,7 @@ if (elementsReady) {
   function runRunningDemo(): void {
     setPlayers(PLAYERS);
     later(120, sendPartyInside);
-    RUN_EVENTS.forEach((event, index) => {
-      later(index * 3_100, () => showEvent(event));
-    });
+    scheduleDemoEvents(0);
   }
 
   function runCompletedDemo(): void {
@@ -491,22 +495,28 @@ if (elementsReady) {
       });
     }
 
-    RUN_EVENTS.forEach((event, index) => {
-      later(20_200 + index * 3_200, () => showEvent(event));
-    });
-
-    later(36_800, () => {
-      hideEvent();
+    const terminalAt = scheduleDemoEvents(20_200);
+    later(terminalAt, () => {
       showResult(true, 'عاد الناجون ومعهم غنائم الرحلة');
     });
 
-    later(38_200, () => {
+    later(terminalAt + 1_400, () => {
       const survivors = PLAYERS.slice(0, 2).map((player) => ({ ...player, outcome: 'survived' as const }));
       setPlayers(survivors, 'returning');
     });
 
-    later(40_400, () => showRewards(COMPLETED_REWARDS));
-    fadeOut(50_000);
+    later(terminalAt + 3_000, () => showRewards(COMPLETED_REWARDS));
+    fadeOut(terminalAt + REAL_TERMINAL_DURATION_MS);
+  }
+
+  function scheduleDemoEvents(startAt: number): number {
+    const interval = REAL_EVENT_DURATION_MS + DEMO_EVENT_GAP_MS;
+    RUN_EVENTS.forEach((event, index) => {
+      const showAt = startAt + index * interval;
+      later(showAt, () => showEvent(event));
+      later(showAt + REAL_EVENT_DURATION_MS, () => hideEvent());
+    });
+    return startAt + RUN_EVENTS.length * interval;
   }
 
   function revealRealOverlay(): void {
@@ -615,6 +625,7 @@ if (elementsReady) {
     pendingTerminalSummary = null;
     terminalPresentationRunning = false;
     activeTerminalSummary = null;
+    deferredActiveRun = null;
     entryPresentedRunId = null;
     entryPresentationReadyAt = 0;
     entryWaitTimerScheduled = false;
@@ -678,6 +689,28 @@ if (elementsReady) {
     revealRealOverlay();
     sendPartyInside();
     return true;
+  }
+
+  function scheduleFullPartyEntry(activeRun: DungeonViewerActiveRun): void {
+    stopJoiningCountdown();
+    hideStatus();
+    root.classList.remove('dov-overlay--terminal');
+    root.classList.add('dov-overlay--running');
+    revealRealOverlay();
+
+    if (entryPresentedRunId === activeRun.id || fullPartyEntryScheduledRunId === activeRun.id) {
+      return;
+    }
+
+    fullPartyEntryScheduledRunId = activeRun.id;
+    runLater(REAL_FULL_PARTY_ENTRY_DELAY_MS, () => {
+      if (currentRunId !== activeRun.id || currentRunStatus !== 'joining' || entryPresentedRunId === activeRun.id) {
+        fullPartyEntryScheduledRunId = null;
+        return;
+      }
+      fullPartyEntryScheduledRunId = null;
+      presentPartyEntryOnce(activeRun.id, activeRun.participants);
+    });
   }
 
   function waitForPartyEntry(): boolean {
@@ -803,7 +836,7 @@ if (elementsReady) {
     runLater(REAL_EVENT_DURATION_MS, () => {
       if (activeQueuedEvent?.sequenceNumber === event.sequenceNumber) activeQueuedEvent = null;
       hideEvent(runLater);
-      runLater(200, () => {
+      runLater(REAL_EVENT_GAP_MS, () => {
         eventQueueRunning = false;
         processEventQueue();
       });
@@ -919,8 +952,40 @@ if (elementsReady) {
         activeTerminalSummary = null;
         terminalPresentationRunning = false;
         displayedTerminalRunIds.add(summary.id);
+        if (deferredActiveRun) scheduleRealPoll(0);
       });
     });
+  }
+
+  function hasUnfinishedRunPresentation(): boolean {
+    return (
+      activeQueuedEvent !== null ||
+      eventQueue.length > 0 ||
+      pendingTerminalSummary !== null ||
+      activeTerminalSummary !== null ||
+      terminalPresentationRunning
+    );
+  }
+
+  async function syncDeferredPreviousRun(signal: AbortSignal): Promise<void> {
+    const previousRunId = currentRunId;
+    if (
+      !previousRunId ||
+      pendingTerminalSummary?.id === previousRunId ||
+      activeTerminalSummary?.id === previousRunId ||
+      displayedTerminalRunIds.has(previousRunId)
+    ) {
+      return;
+    }
+    const summary = await fetchDungeonRunSummary(previousRunId, signal);
+    if (currentRunId !== previousRunId || (summary.status !== 'completed' && summary.status !== 'failed')) {
+      return;
+    }
+    const events = await fetchDungeonRunEvents(previousRunId, signal);
+    if (currentRunId !== previousRunId) return;
+    pendingTerminalSummary = summary;
+    syncEvents(events, false);
+    maybeShowTerminalResult();
   }
 
   function isStaleTerminal(summary: DungeonViewerRunSummary): boolean {
@@ -985,6 +1050,11 @@ if (elementsReady) {
 
   async function handleActiveRun(activeRun: DungeonViewerActiveRun, signal: AbortSignal): Promise<number> {
     const isNewRun = activeRun.id !== currentRunId;
+    if (isNewRun && currentRunId && hasUnfinishedRunPresentation()) {
+      deferredActiveRun = activeRun;
+      await syncDeferredPreviousRun(signal);
+      return REAL_POLL_ACTIVE_MS;
+    }
     if (isNewRun) resetRealRunState(activeRun.id);
     const previousStatus = currentRunStatus;
 
@@ -1002,6 +1072,10 @@ if (elementsReady) {
       root.classList.remove('dov-overlay--running', 'dov-overlay--terminal');
       setRealParticipants(activeRun.participants);
       queueJoinNotices(activeRun.participants, isNewRun);
+      if (activeRun.joinedPlayers >= activeRun.maxPlayers || activeRun.remainingSlots === 0) {
+        scheduleFullPartyEntry(activeRun);
+        return REAL_POLL_ACTIVE_MS;
+      }
       startCountdown(activeRun);
       revealRealOverlay();
       return REAL_POLL_ACTIVE_MS;
