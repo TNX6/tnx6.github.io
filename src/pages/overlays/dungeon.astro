@@ -3,9 +3,9 @@ import '~/assets/styles/dungeon-overlay.css';
 
 const slots = Array.from({ length: 6 }, (_, index) => index + 1);
 const battleBursts = [
-  { name: 'one', sparks: ['one', 'two', 'three', 'four'] },
-  { name: 'two', sparks: ['five', 'six', 'seven'] },
-  { name: 'three', sparks: ['eight', 'nine', 'ten'] },
+  { name: 'one', sparks: ['one', 'two', 'three', 'four', 'five'] },
+  { name: 'two', sparks: ['six', 'seven', 'eight', 'nine'] },
+  { name: 'three', sparks: ['ten', 'eleven', 'twelve'] },
 ];
 ---
 
@@ -61,6 +61,8 @@ const battleBursts = [
           <span class="dov-entry-fx__dust dov-entry-fx__dust--three"></span>
           <span class="dov-entry-fx__dust dov-entry-fx__dust--four"></span>
           <span class="dov-entry-fx__dust dov-entry-fx__dust--five"></span>
+          <span class="dov-entry-fx__dust dov-entry-fx__dust--six"></span>
+          <span class="dov-entry-fx__dust dov-entry-fx__dust--seven"></span>
         </div>
 
         <div class="dov-brand" aria-label="TNX6 Dungeon">
@@ -89,19 +91,21 @@ const battleBursts = [
                   <span />
                 </span>
 
-                <span class="dov-player-shadow" aria-hidden="true" />
-                <span class="dov-player-figure">
-                  <span class="dov-slot__identity">
-                    <span class="dov-slot__name-row">
-                      <strong class="dov-slot__name" />
-                      <span class="dov-slot__key" aria-label="صاحب فتح الدنجن" title="صاحب الفتح" />
+                <span class="dov-player-actor">
+                  <span class="dov-player-shadow" aria-hidden="true" />
+                  <span class="dov-player-figure">
+                    <span class="dov-slot__identity">
+                      <span class="dov-slot__name-row">
+                        <strong class="dov-slot__name" />
+                        <span class="dov-slot__key" aria-label="صاحب فتح الدنجن" title="صاحب الفتح" />
+                      </span>
+                      <span class="dov-slot__level" />
+                      <span class="dov-slot__state" />
                     </span>
-                    <span class="dov-slot__level" />
-                    <span class="dov-slot__state" />
-                  </span>
 
-                  <span class="dov-avatar" aria-hidden="true">
-                    <span class="dov-character-sprite" />
+                    <span class="dov-avatar" aria-hidden="true">
+                      <span class="dov-character-sprite" />
+                    </span>
                   </span>
                 </span>
                 <span class="dov-slot__reward" aria-live="polite" />

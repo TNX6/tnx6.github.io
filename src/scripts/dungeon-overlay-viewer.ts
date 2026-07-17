@@ -11,6 +11,7 @@ export interface DungeonViewerParticipant {
 export interface DungeonViewerActiveRun {
   id: string;
   status: DungeonViewerStatus;
+  serverNow: string | null;
   maxPlayers: number;
   joinedPlayers: number;
   remainingSlots: number;
@@ -39,6 +40,7 @@ export interface DungeonViewerPlayerReward {
 export interface DungeonViewerRunSummary {
   id: string;
   status: DungeonViewerStatus;
+  serverNow: string | null;
   startedAt: string | null;
   completedAt: string | null;
   result: 'completed' | 'failed' | null;
@@ -200,6 +202,7 @@ function parseActiveRun(value: unknown): DungeonViewerActiveRun {
   return {
     id: safeRunId(run.id),
     status: safeStatus(run.status),
+    serverNow: safeTimestamp(run.serverNow, 'server timestamp'),
     maxPlayers,
     joinedPlayers,
     remainingSlots: Math.max(0, maxPlayers - joinedPlayers),
@@ -236,6 +239,7 @@ function parseRunSummary(value: unknown): DungeonViewerRunSummary {
   return {
     id: safeRunId(run.id),
     status: safeStatus(run.status),
+    serverNow: safeTimestamp(run.serverNow, 'server timestamp'),
     startedAt: safeTimestamp(run.startedAt, 'run start timestamp'),
     completedAt: safeTimestamp(run.completedAt, 'run completion timestamp'),
     result: result as 'completed' | 'failed' | null,
@@ -324,4 +328,22 @@ export async function fetchDungeonRunEvents(runId: string, signal: AbortSignal):
     throw new DungeonViewerRequestError('Dungeon events do not match the requested run');
   }
   return parseEvents(payload.events);
+}
+
+export async function advanceDungeonRunIfDue(runId: string, signal: AbortSignal): Promise<void> {
+  const safeId = safeRunId(runId);
+  const response = await fetch(`${API_BASE}/api/dungeon/runs/${encodeURIComponent(safeId)}/advance-if-due`, {
+    method: 'POST',
+    credentials: 'omit',
+    cache: 'no-store',
+    headers: { Accept: 'application/json' },
+    signal,
+  });
+  if (!response.ok) {
+    throw new DungeonViewerRequestError('Dungeon lifecycle nudge failed', response.status);
+  }
+  const payload = asRecord(await response.json());
+  if (payload.ok !== true || safeRunId(payload.runId) !== safeId) {
+    throw new DungeonViewerRequestError('Dungeon lifecycle nudge response is invalid', response.status);
+  }
 }
