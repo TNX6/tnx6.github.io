@@ -25,9 +25,11 @@ const PLAYER_MOTION_DURATION_MS: Record<PlayerMotion, number> = {
 
 const REAL_POLL_ACTIVE_MS = 1_000;
 const REAL_POLL_IDLE_MS = 1_000;
-const REAL_POLL_TERMINAL_MS = 1_800;
 const ACTIVE_RUN_RETRY_MS = 1_800;
 const ACTIVE_RUN_GRACE_MS = 20_000;
+const KNOWN_RUN_NOT_FOUND_GRACE_MS = 90_000;
+const ENTRY_EVENT_FAST_POLL_MS = 500;
+const ENTRY_EVENT_FAST_POLL_WINDOW_MS = 5_000;
 const REAL_EVENT_DURATION_MS = 5_000;
 const REAL_EVENT_GAP_MS = 400;
 const REAL_FULL_PARTY_ENTRY_DELAY_MS = 120;
@@ -43,6 +45,7 @@ const NUDGE_RETRY_MS = 2_000;
 const NUDGE_FAST_POLL_MS = 500;
 const NUDGE_FAST_POLL_WINDOW_MS = 4_000;
 const COUNTDOWN_ZERO_HOLD_MS = 120;
+const BATTLE_STATUS_TEXT = 'بدأت المواجهة داخل الدنجن';
 
 interface OverlayPlayer {
   name: string;
@@ -166,8 +169,10 @@ if (elementsReady) {
   let serverClockOffsetMs = 0;
   let entryPresentedRunId: string | null = null;
   let entryPresentationReadyAt = 0;
+  let entryEventFastPollUntil = 0;
   let entryWaitTimerScheduled = false;
   let activeRunOutageStartedAt: number | null = null;
+  let knownRunNotFoundStartedAt: number | null = null;
   let knownParticipantSlots = new Set<number>();
   let joinNoticeQueue: string[] = [];
   let joinNoticeRunning = false;
@@ -320,7 +325,7 @@ if (elementsReady) {
     eventVersion += 1;
     eventIcon.replaceChildren();
     eventIcon.dataset.icon = 'encounter';
-    eventText.textContent = 'بدأت المواجهة داخل الدنجن';
+    eventText.textContent = BATTLE_STATUS_TEXT;
     eventPanel.dataset.tone = 'danger';
     eventPanel.hidden = false;
     eventPanel.classList.remove('dov-event--visible');
@@ -610,6 +615,93 @@ if (elementsReady) {
     stopCountdown();
   }
 
+  function isBattleStatusVisible(): boolean {
+    return !eventPanel.hidden && eventText.textContent === BATTLE_STATUS_TEXT;
+  }
+
+  function hasKnownRunRecoveryContext(): boolean {
+    return Boolean(
+      currentRunId &&
+        !displayedTerminalRunIds.has(currentRunId) &&
+        (entryPresentedRunId === currentRunId ||
+          currentRunStatus === 'running' ||
+          isBattleStatusVisible() ||
+          activeQueuedEvent ||
+          eventQueue.length > 0 ||
+          pendingTerminalSummary?.id === currentRunId ||
+          activeTerminalSummary?.id === currentRunId ||
+          terminalPresentationRunning)
+    );
+  }
+
+  function knownRunPollDelay(): number {
+    return entryPresentedRunId === currentRunId && Date.now() < entryEventFastPollUntil
+      ? ENTRY_EVENT_FAST_POLL_MS
+      : REAL_POLL_ACTIVE_MS;
+  }
+
+  function keepKnownRunVisible(): void {
+    stopJoiningCountdown();
+    hideStatus();
+    if (terminalPresentationRunning || activeTerminalSummary) {
+      revealRealOverlay();
+      return;
+    }
+    root.classList.remove('dov-overlay--terminal');
+    root.classList.add('dov-overlay--running');
+    party.classList.add('dov-party--inside');
+    if (!activeQueuedEvent && !eventQueueRunning && !terminalPresentationRunning && !activeTerminalSummary) {
+      showBattleStatus();
+    }
+    revealRealOverlay();
+  }
+
+  async function recoverKnownRun(signal: AbortSignal): Promise<number | null> {
+    const runId = currentRunId;
+    if (!runId || !hasKnownRunRecoveryContext()) return null;
+
+    keepKnownRunVisible();
+    let summary: DungeonViewerRunSummary;
+    try {
+      summary = await fetchDungeonRunSummary(runId, signal);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') throw error;
+      if (error instanceof DungeonViewerRequestError && error.status === 404) {
+        knownRunNotFoundStartedAt ??= Date.now();
+        if (Date.now() - knownRunNotFoundStartedAt >= KNOWN_RUN_NOT_FOUND_GRACE_MS) {
+          resetRealRunState(null);
+          concealRealOverlay();
+          return REAL_POLL_IDLE_MS;
+        }
+      } else {
+        knownRunNotFoundStartedAt = null;
+      }
+      return knownRunPollDelay();
+    }
+
+    if (summary.id !== currentRunId) return knownRunPollDelay();
+    knownRunNotFoundStartedAt = null;
+    updateServerClock(summary.serverNow);
+    currentRunStatus = summary.status;
+
+    let events: DungeonViewerEvent[] | null = null;
+    try {
+      events = await fetchDungeonRunEvents(runId, signal);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') throw error;
+    }
+
+    if (events && summary.id === currentRunId) syncEvents(events, false);
+    if (summary.status === 'completed' || summary.status === 'failed') {
+      pendingTerminalSummary = summary;
+      if (events) maybeShowTerminalResult();
+      else keepKnownRunVisible();
+    } else {
+      keepKnownRunVisible();
+    }
+    return knownRunPollDelay();
+  }
+
   function preserveActiveRunDuringOutage(): boolean {
     if (
       !currentRunId ||
@@ -649,6 +741,10 @@ if (elementsReady) {
   }
 
   function handleViewerInterruption(): number {
+    if (hasKnownRunRecoveryContext()) {
+      keepKnownRunVisible();
+      return knownRunPollDelay();
+    }
     if (preserveActiveRunDuringOutage()) return ACTIVE_RUN_RETRY_MS;
     activeRunOutageStartedAt = null;
     if (currentRunId !== null) resetRealRunState(null);
@@ -723,8 +819,10 @@ if (elementsReady) {
     deferredActiveRun = null;
     entryPresentedRunId = null;
     entryPresentationReadyAt = 0;
+    entryEventFastPollUntil = 0;
     entryWaitTimerScheduled = false;
     activeRunOutageStartedAt = null;
+    knownRunNotFoundStartedAt = null;
     currentRunId = nextRunId;
     currentRunStatus = null;
     resetScene();
@@ -792,6 +890,7 @@ if (elementsReady) {
     stopCountdown();
     entryPresentedRunId = runId;
     entryPresentationReadyAt = Date.now() + startDelayMs + PARTY_ENTRY_DURATION_MS + ENTRY_EVENT_READY_DELAY_MS;
+    entryEventFastPollUntil = Date.now() + startDelayMs + PARTY_ENTRY_DURATION_MS + ENTRY_EVENT_FAST_POLL_WINDOW_MS;
     entryWaitTimerScheduled = false;
     revealRealOverlay();
     const beginEntry = () => {
@@ -1169,6 +1268,11 @@ if (elementsReady) {
     if (document.hidden || !summary || eventQueueRunning || eventQueue.length > 0 || terminalPresentationRunning)
       return;
     if (waitForPartyEntry()) return;
+    const terminalVisibleAt = parseApiTimestamp(summary.completedAt);
+    if (terminalVisibleAt !== null && terminalVisibleAt > Date.now() + serverClockOffsetMs) {
+      showBattleStatus();
+      return;
+    }
     if (displayedTerminalRunIds.has(summary.id)) {
       pendingTerminalSummary = null;
       return;
@@ -1313,11 +1417,7 @@ if (elementsReady) {
       currentRunStatus = 'joining';
       if (entryPresentedRunId === activeRun.id) {
         knownParticipantSlots = new Set(activeRun.participants.map((participant) => participant.slotNumber));
-        hideStatus();
-        root.classList.remove('dov-overlay--terminal');
-        root.classList.add('dov-overlay--running');
-        party.classList.add('dov-party--inside');
-        revealRealOverlay();
+        keepKnownRunVisible();
         if (
           activeRun.secondsRemaining <= 0 ||
           activeRun.joinedPlayers >= activeRun.maxPlayers ||
@@ -1325,7 +1425,7 @@ if (elementsReady) {
         ) {
           void nudgeLifecycleOnce(activeRun.id);
         }
-        return REAL_POLL_ACTIVE_MS;
+        return (await recoverKnownRun(signal)) ?? knownRunPollDelay();
       }
       root.classList.remove('dov-overlay--running', 'dov-overlay--terminal');
       setJoiningParticipants(activeRun.participants, isNewRun);
@@ -1344,7 +1444,7 @@ if (elementsReady) {
       const transitionedFromJoining = previousStatus === 'joining';
       currentRunStatus = 'running';
       await syncRunningRun(activeRun, signal, openedDuringRunning, transitionedFromJoining);
-      return REAL_POLL_ACTIVE_MS;
+      return knownRunPollDelay();
     }
 
     const transitionedFromJoining = previousStatus === 'joining';
@@ -1353,7 +1453,7 @@ if (elementsReady) {
       presentPartyEntryOnce(activeRun.id, activeRun.participants, countdownZeroHoldRemaining(activeRun.id));
     }
     await syncTerminalRun(activeRun, signal, isNewRun);
-    return REAL_POLL_TERMINAL_MS;
+    return knownRunPollDelay();
   }
 
   function scheduleRealPoll(delayMs: number): void {
@@ -1379,15 +1479,16 @@ if (elementsReady) {
     try {
       const activeRun = await fetchActiveDungeonRun(controller.signal);
       if (!activeRun) {
-        nextDelay = handleViewerInterruption();
+        nextDelay = (await recoverKnownRun(controller.signal)) ?? handleViewerInterruption();
       } else {
+        knownRunNotFoundStartedAt = null;
         nextDelay = await handleActiveRun(activeRun, controller.signal);
         activeRunOutageStartedAt = null;
         processJoinNoticeQueue();
       }
     } catch (error) {
       if (!(error instanceof DOMException && error.name === 'AbortError')) {
-        nextDelay = handleViewerInterruption();
+        nextDelay = (await recoverKnownRun(controller.signal)) ?? handleViewerInterruption();
       }
     } finally {
       if (requestController === controller) requestController = null;
