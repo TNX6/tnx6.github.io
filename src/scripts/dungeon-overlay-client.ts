@@ -11,6 +11,14 @@ import {
   type DungeonViewerRunParticipant,
   type DungeonViewerRunSummary,
 } from './dungeon-overlay-viewer';
+import {
+  DUNGEON_NUDGE_MAX_ATTEMPTS,
+  DUNGEON_NUDGE_RETRY_MS,
+  DUNGEON_NUDGE_RETRY_WINDOW_MS,
+  canRetryDungeonLifecycleNudge,
+  dungeonLifecycleNudgeClientAction,
+  isRetryableDungeonLifecycleNudgeStatus,
+} from './dungeon-overlay-nudge-policy';
 
 type DemoMode = 'joining' | 'running' | 'completed' | 'failed' | 'sequence';
 type PlayerOutcome = 'survived' | 'dead';
@@ -41,7 +49,6 @@ const ENTRY_EVENT_READY_DELAY_MS = 600;
 const PARTY_ENTRY_DURATION_MS = 820;
 const ENTRY_FX_START_DELAY_MS = PARTY_ENTRY_DURATION_MS;
 const ENTRY_FX_DURATION_MS = 1_700;
-const NUDGE_RETRY_MS = 2_000;
 const NUDGE_FAST_POLL_MS = 500;
 const NUDGE_FAST_POLL_WINDOW_MS = 4_000;
 const COUNTDOWN_ZERO_HOLD_MS = 120;
@@ -146,6 +153,8 @@ if (elementsReady) {
   const timers = new Set<number>();
   const runTimers = new Set<number>();
   const displayedTerminalRunIds = new Set<string>();
+  const searchParams = new URLSearchParams(window.location.search);
+  const dungeonDebug = searchParams.get('dungeonDebug') === '1';
   const pageLoadedAt = Date.now();
   let disposed = false;
   let noticeVersion = 0;
@@ -194,8 +203,19 @@ if (elementsReady) {
   let deferredActiveRun: DungeonViewerActiveRun | null = null;
   let fullPartyEntryScheduledRunId: string | null = null;
   const nudgeAttempts = new Map<string, number>();
+  const nudgeStartedAt = new Map<string, number>();
   const nudgedRunIds = new Set<string>();
+  const abandonedNudgeRunIds = new Set<string>();
+  const debuggedFirstEventRunIds = new Set<string>();
   let nudgeFastPollUntil = 0;
+
+  function debugNudge(label: string, fields: Record<string, unknown> = {}): void {
+    if (!dungeonDebug) return;
+    console.info(`[TNX6 Dungeon Debug] ${label}`, {
+      at: new Date().toISOString(),
+      ...fields,
+    });
+  }
 
   function later(delayMs: number, callback: () => void): void {
     if (disposed) return;
@@ -1003,27 +1023,89 @@ if (elementsReady) {
     if (!pollInFlight) scheduleRealPoll(0);
   }
 
+  function nudgeHasViewerResult(runId: string): boolean {
+    return (
+      currentRunId !== runId ||
+      highestEventSequence > 0 ||
+      currentRunStatus === 'completed' ||
+      currentRunStatus === 'failed' ||
+      pendingTerminalSummary?.id === runId ||
+      activeTerminalSummary?.id === runId ||
+      displayedTerminalRunIds.has(runId)
+    );
+  }
+
+  function scheduleNudgeRetry(runId: string): void {
+    const attempts = nudgeAttempts.get(runId) ?? 0;
+    const startedAt = nudgeStartedAt.get(runId) ?? Date.now();
+    if (!canRetryDungeonLifecycleNudge(attempts, Date.now() - startedAt)) {
+      debugNudge('nudge retry window exhausted', { attempts });
+      return;
+    }
+    runLater(DUNGEON_NUDGE_RETRY_MS, () => {
+      if (nudgeHasViewerResult(runId)) {
+        nudgedRunIds.add(runId);
+        return;
+      }
+      void nudgeLifecycleOnce(runId);
+    });
+  }
+
   async function nudgeLifecycleOnce(runId: string): Promise<void> {
-    if (nudgedRunIds.has(runId) || nudgeController) return;
+    if (nudgedRunIds.has(runId) || abandonedNudgeRunIds.has(runId) || nudgeController || nudgeHasViewerResult(runId)) {
+      if (nudgeHasViewerResult(runId)) nudgedRunIds.add(runId);
+      return;
+    }
     const attempt = (nudgeAttempts.get(runId) ?? 0) + 1;
-    if (attempt > 2) return;
+    const startedAt = nudgeStartedAt.get(runId) ?? Date.now();
+    nudgeStartedAt.set(runId, startedAt);
+    const elapsedMs = Date.now() - startedAt;
+    if (attempt > DUNGEON_NUDGE_MAX_ATTEMPTS || elapsedMs >= DUNGEON_NUDGE_RETRY_WINDOW_MS) return;
     nudgeAttempts.set(runId, attempt);
     const controller = new AbortController();
     nudgeController = controller;
+    const requestTimeout = window.setTimeout(
+      () => controller.abort(),
+      Math.max(1, DUNGEON_NUDGE_RETRY_WINDOW_MS - elapsedMs)
+    );
+    runTimers.add(requestTimeout);
+    debugNudge('nudge request', { attempt });
     try {
-      await advanceDungeonRunIfDue(runId, controller.signal);
-      nudgedRunIds.add(runId);
+      const response = await advanceDungeonRunIfDue(runId, controller.signal);
+      debugNudge('nudge response', {
+        attempt,
+        statusCode: response.httpStatus,
+        result: response.result,
+        eventsPersisted: response.eventsPersisted,
+        statusAfter: response.statusAfter,
+      });
+      const action = dungeonLifecycleNudgeClientAction(response);
+      if (action === 'complete') {
+        nudgedRunIds.add(runId);
+      } else if (action === 'retry') {
+        scheduleNudgeRetry(runId);
+      } else {
+        abandonedNudgeRunIds.add(runId);
+      }
       beginFastPolling();
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') return;
-      const isNetworkFailure = !(error instanceof DungeonViewerRequestError) || error.status === null;
-      if (isNetworkFailure && attempt < 2) {
-        runLater(NUDGE_RETRY_MS, () => void nudgeLifecycleOnce(runId));
+      const requestError = error instanceof DungeonViewerRequestError ? error : null;
+      const retryable = requestError === null || isRetryableDungeonLifecycleNudgeStatus(requestError.status);
+      debugNudge('nudge request failed', {
+        attempt,
+        statusCode: requestError?.status ?? null,
+        retryable,
+      });
+      if (retryable) {
+        scheduleNudgeRetry(runId);
       } else {
-        nudgedRunIds.add(runId);
+        abandonedNudgeRunIds.add(runId);
       }
       beginFastPolling();
     } finally {
+      window.clearTimeout(requestTimeout);
+      runTimers.delete(requestTimeout);
       if (nudgeController === controller) nudgeController = null;
     }
   }
@@ -1033,6 +1115,7 @@ if (elementsReady) {
     countdownZeroRunId = activeRun.id;
     countdownZeroVisibleUntil = Date.now() + COUNTDOWN_ZERO_HOLD_MS;
     stopCountdown();
+    debugNudge('countdown zero');
     void nudgeLifecycleOnce(activeRun.id);
     runLater(120, () => {
       if (currentRunId === activeRun.id && currentRunStatus === 'joining') {
@@ -1137,6 +1220,10 @@ if (elementsReady) {
     eventQueueRunning = true;
     activeQueuedEvent = event;
     prepareRealEventScene();
+    if (currentRunId && !debuggedFirstEventRunIds.has(currentRunId)) {
+      debuggedFirstEventRunIds.add(currentRunId);
+      debugNudge('first event displayed', { sequenceNumber: event.sequenceNumber });
+    }
     showEvent(eventPresentation(event));
     runLater(REAL_EVENT_DURATION_MS, () => {
       if (activeQueuedEvent?.sequenceNumber === event.sequenceNumber) activeQueuedEvent = null;
@@ -1517,7 +1604,6 @@ if (elementsReady) {
     scheduleRealPoll(0);
   }
 
-  const searchParams = new URLSearchParams(window.location.search);
   const hasDemoParameter = searchParams.has('demo');
   const requestedDemo = searchParams.get('demo');
   const demoMode = requestedDemo && DEMO_MODES.has(requestedDemo as DemoMode) ? (requestedDemo as DemoMode) : null;

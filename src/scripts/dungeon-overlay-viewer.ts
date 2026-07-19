@@ -1,3 +1,5 @@
+import type { DungeonLifecycleNudgeResult } from './dungeon-overlay-nudge-policy';
+
 export type DungeonViewerStatus = 'joining' | 'running' | 'completed' | 'failed';
 export type DungeonViewerStage = 'entrance' | 'trap' | 'encounter' | 'treasure' | 'boss' | 'result';
 export type DungeonViewerSeverity = 'info' | 'success' | 'warning' | 'danger';
@@ -58,19 +60,36 @@ export interface DungeonViewerEvent {
   visibleAt: string;
 }
 
+export interface DungeonLifecycleNudgeResponse {
+  runId: string;
+  result: DungeonLifecycleNudgeResult;
+  statusBefore: DungeonViewerStatus | null;
+  statusAfter: DungeonViewerStatus | null;
+  eventsPersisted: number;
+  lifecycleIterations: number;
+  httpStatus: number;
+}
+
 const API_BASE = 'https://api.tnx6.xyz';
 const SAFE_RUN_ID = /^[A-Za-z0-9._:-]+$/;
 const STATUSES = new Set<DungeonViewerStatus>(['joining', 'running', 'completed', 'failed']);
 const STAGES = new Set<DungeonViewerStage>(['entrance', 'trap', 'encounter', 'treasure', 'boss', 'result']);
 const SEVERITIES = new Set<DungeonViewerSeverity>(['info', 'success', 'warning', 'danger']);
+const NUDGE_DECISIONS = new Set<DungeonLifecycleNudgeResult>([
+  'events_persisted',
+  'terminal_replay',
+  'actively_processing',
+  'not_due',
+  'run_not_active',
+]);
 
 export class DungeonViewerRequestError extends Error {
-  constructor(
-    message: string,
-    readonly status: number | null = null
-  ) {
+  readonly status: number | null;
+
+  constructor(message: string, status: number | null = null) {
     super(message);
     this.name = 'DungeonViewerRequestError';
+    this.status = status;
   }
 }
 
@@ -126,6 +145,10 @@ function safeStatus(value: unknown): DungeonViewerStatus {
     throw new DungeonViewerRequestError('run status is invalid');
   }
   return value as DungeonViewerStatus;
+}
+
+function safeNullableStatus(value: unknown): DungeonViewerStatus | null {
+  return value === null ? null : safeStatus(value);
 }
 
 export function parseApiTimestamp(value: unknown): number | null {
@@ -330,7 +353,10 @@ export async function fetchDungeonRunEvents(runId: string, signal: AbortSignal):
   return parseEvents(payload.events);
 }
 
-export async function advanceDungeonRunIfDue(runId: string, signal: AbortSignal): Promise<void> {
+export async function advanceDungeonRunIfDue(
+  runId: string,
+  signal: AbortSignal
+): Promise<DungeonLifecycleNudgeResponse> {
   const safeId = safeRunId(runId);
   const response = await fetch(`${API_BASE}/api/dungeon/runs/${encodeURIComponent(safeId)}/advance-if-due`, {
     method: 'POST',
@@ -339,11 +365,33 @@ export async function advanceDungeonRunIfDue(runId: string, signal: AbortSignal)
     headers: { Accept: 'application/json' },
     signal,
   });
-  if (!response.ok) {
+  let value: unknown;
+  try {
+    value = await response.json();
+  } catch {
+    throw new DungeonViewerRequestError('Dungeon lifecycle nudge response is not valid JSON', response.status);
+  }
+  const payload = asRecord(value);
+  const result = payload.result;
+  const contractStatus = response.ok || response.status === 409 || response.status === 423;
+  if (
+    !contractStatus ||
+    typeof result !== 'string' ||
+    !NUDGE_DECISIONS.has(result as DungeonLifecycleNudgeResult) ||
+    safeRunId(payload.runId) !== safeId
+  ) {
     throw new DungeonViewerRequestError('Dungeon lifecycle nudge failed', response.status);
   }
-  const payload = asRecord(await response.json());
-  if (payload.ok !== true || safeRunId(payload.runId) !== safeId) {
+  if (payload.ok !== true && result !== 'not_due' && result !== 'run_not_active' && result !== 'actively_processing') {
     throw new DungeonViewerRequestError('Dungeon lifecycle nudge response is invalid', response.status);
   }
+  return {
+    runId: safeId,
+    result: result as DungeonLifecycleNudgeResult,
+    statusBefore: safeNullableStatus(payload.statusBefore),
+    statusAfter: safeNullableStatus(payload.statusAfter),
+    eventsPersisted: safeInteger(payload.eventsPersisted, 'persisted event count', 0, 50),
+    lifecycleIterations: safeInteger(payload.lifecycleIterations, 'lifecycle iteration count', 0, 8),
+    httpStatus: response.status,
+  };
 }
