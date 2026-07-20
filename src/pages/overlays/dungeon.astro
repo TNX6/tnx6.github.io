@@ -65,6 +65,16 @@ const battleBursts = [
           <span class="dov-entry-fx__dust dov-entry-fx__dust--seven"></span>
         </div>
 
+        <div id="dovBattleAmbient" class="dov-battle-ambient" aria-hidden="true" hidden>
+          <span class="dov-battle-ambient__gate"></span>
+          <span class="dov-battle-ambient__flash"></span>
+          <span class="dov-battle-ambient__spark dov-battle-ambient__spark--one"></span>
+          <span class="dov-battle-ambient__spark dov-battle-ambient__spark--two"></span>
+          <span class="dov-battle-ambient__spark dov-battle-ambient__spark--three"></span>
+          <span class="dov-battle-ambient__dust dov-battle-ambient__dust--one"></span>
+          <span class="dov-battle-ambient__dust dov-battle-ambient__dust--two"></span>
+        </div>
+
         <div class="dov-brand" aria-label="TNX6 Dungeon">
           <span aria-hidden="true"></span>
           <strong>TNX6 DUNGEON</strong>
@@ -91,7 +101,11 @@ const battleBursts = [
                   <span />
                 </span>
 
-                <span class="dov-player-actor">
+                <span
+                  class="dov-player-actor"
+                  data-animation-state="inside"
+                  data-character-style={['red', 'purple', 'green', 'orange', 'blue', 'black-gold'][slot - 1]}
+                >
                   <span class="dov-player-shadow" aria-hidden="true" />
                   <span class="dov-player-figure">
                     <span class="dov-slot__identity">
@@ -104,7 +118,10 @@ const battleBursts = [
                     </span>
 
                     <span class="dov-avatar" aria-hidden="true">
-                      <span class="dov-character-sprite" />
+                      <span class="dov-character-motion">
+                        <span class="dov-character-sprite" />
+                        <span class="dov-character-accent" />
+                      </span>
                     </span>
                   </span>
                 </span>

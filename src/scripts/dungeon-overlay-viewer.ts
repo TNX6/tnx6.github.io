@@ -58,6 +58,12 @@ export interface DungeonViewerEvent {
   severity: DungeonViewerSeverity;
   outcome: string;
   visibleAt: string;
+  players: DungeonViewerEventPlayer[];
+}
+
+export interface DungeonViewerEventPlayer {
+  slotNumber: number;
+  displayName: string;
 }
 
 export interface DungeonLifecycleNudgeResponse {
@@ -291,6 +297,16 @@ function parseEvents(value: unknown): DungeonViewerEvent[] {
       if (!visibleAt) {
         throw new DungeonViewerRequestError('event visibility timestamp is missing');
       }
+      const players =
+        event.players === undefined
+          ? []
+          : asArray(event.players, 'event players').map((candidate) => {
+              const player = asRecord(candidate);
+              return {
+                slotNumber: safeInteger(player.slotNumber, 'event player slot', 1, 6),
+                displayName: safeText(player.displayName, 'event player display name', 100),
+              };
+            });
       return {
         sequenceNumber,
         stage: event.stage as DungeonViewerStage,
@@ -299,6 +315,7 @@ function parseEvents(value: unknown): DungeonViewerEvent[] {
         severity: event.severity as DungeonViewerSeverity,
         outcome: safeText(event.outcome, 'event outcome', 100),
         visibleAt,
+        players,
       };
     })
     .sort((left, right) => left.sequenceNumber - right.sequenceNumber)

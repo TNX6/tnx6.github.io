@@ -19,8 +19,21 @@ import {
   dungeonLifecycleNudgeClientAction,
   isRetryableDungeonLifecycleNudgeStatus,
 } from './dungeon-overlay-nudge-policy';
+import { setPlayerAnimationState, type DungeonPlayerAnimationState } from './dungeon-overlay-animation-state';
+import {
+  CHARACTER_ANIMATION_CONFIG,
+  DUNGEON_CHARACTER_STYLES,
+  type DungeonCharacterStyle,
+} from './dungeon-overlay-character-config';
 
-type DemoMode = 'joining' | 'running' | 'completed' | 'failed' | 'sequence';
+type DemoMode =
+  | 'joining'
+  | 'running'
+  | 'completed'
+  | 'failed'
+  | 'sequence'
+  | 'animation-red-gate'
+  | 'animation-party-gate';
 type PlayerOutcome = 'survived' | 'dead';
 type PlayerMotion = 'arriving' | 'returning';
 type EventTone = 'normal' | 'mystery' | 'danger';
@@ -28,7 +41,7 @@ type EventIconKind = 'entrance' | 'trap' | 'encounter' | 'treasure' | 'boss';
 
 const PLAYER_MOTION_DURATION_MS: Record<PlayerMotion, number> = {
   arriving: 1_050,
-  returning: 880,
+  returning: 900,
 };
 
 const REAL_POLL_ACTIVE_MS = 1_000;
@@ -46,9 +59,13 @@ const REAL_TERMINAL_FADE_MS = 400;
 const REAL_TERMINAL_STALE_MS = 15_000;
 const DEMO_EVENT_GAP_MS = 350;
 const ENTRY_EVENT_READY_DELAY_MS = 600;
-const PARTY_ENTRY_DURATION_MS = 820;
+const PARTY_ENTRY_TRAVEL_MS = 740;
+const PARTY_ENTRY_STAGGER_MS = 60;
+const PARTY_ENTRY_DURATION_MS = 1_040;
 const ENTRY_FX_START_DELAY_MS = PARTY_ENTRY_DURATION_MS;
 const ENTRY_FX_DURATION_MS = 1_700;
+const PLAYER_HIT_DURATION_MS = 240;
+const PLAYER_DEATH_DURATION_MS = 380;
 const NUDGE_FAST_POLL_MS = 500;
 const NUDGE_FAST_POLL_WINDOW_MS = 4_000;
 const COUNTDOWN_ZERO_HOLD_MS = 120;
@@ -69,6 +86,7 @@ interface DemoEvent {
   icon: EventIconKind;
   text: string;
   tone: EventTone;
+  playerSlots?: number[];
 }
 
 interface DemoReward {
@@ -81,19 +99,29 @@ interface DungeonOverlayWindow extends Window {
   __tnxDungeonOverlayCleanup?: () => void;
 }
 
-const DEMO_MODES = new Set<DemoMode>(['joining', 'running', 'completed', 'failed', 'sequence']);
+const DEMO_MODES = new Set<DemoMode>([
+  'joining',
+  'running',
+  'completed',
+  'failed',
+  'sequence',
+  'animation-red-gate',
+  'animation-party-gate',
+]);
 
 const PLAYERS: DemoPlayer[] = [
   { name: 'تنكس', level: 1 },
   { name: 'tnx66', level: 3 },
   { name: 'خالد', level: 2 },
   { name: 'سعد', level: 4 },
+  { name: 'نورا', level: 5 },
+  { name: 'راشد', level: 2 },
 ];
 
 const RUN_EVENTS: DemoEvent[] = [
   { icon: 'entrance', text: 'دخل الفريق إلى أعماق الدنجن.', tone: 'normal' },
   { icon: 'trap', text: 'عبر الفريق ممر الفخاخ بسلام.', tone: 'normal' },
-  { icon: 'encounter', text: 'واجه تنكس وحش الظلال.', tone: 'danger' },
+  { icon: 'encounter', text: 'واجه تنكس وحش الظلال.', tone: 'danger', playerSlots: [1] },
   { icon: 'treasure', text: 'عثر الفريق على غرفة كنز.', tone: 'mystery' },
   { icon: 'boss', text: 'بدأ القتال ضد حارس الأعماق.', tone: 'danger' },
 ];
@@ -123,6 +151,7 @@ const resultTitle = document.getElementById('dovResultTitle');
 const resultText = document.getElementById('dovResultText');
 const party = document.getElementById('dovParty');
 const entryFx = document.getElementById('dovEntryFx');
+const battleAmbient = document.getElementById('dovBattleAmbient');
 const slots = root
   ? Array.from(root.querySelectorAll<HTMLElement>('[data-dov-slot]')).sort(
       (left, right) => Number(left.dataset.dovSlot) - Number(right.dataset.dovSlot)
@@ -147,19 +176,26 @@ const elementsReady =
   resultText &&
   party &&
   entryFx &&
+  battleAmbient &&
   slots.length === 6;
 
 if (elementsReady) {
+  slots.forEach((slot, index) => configureCharacterActor(slot, index));
   const timers = new Set<number>();
   const runTimers = new Set<number>();
   const displayedTerminalRunIds = new Set<string>();
   const searchParams = new URLSearchParams(window.location.search);
+  const requestedDemoPlayerCount = Number(searchParams.get('players'));
+  const demoPlayerCount = Number.isSafeInteger(requestedDemoPlayerCount)
+    ? Math.min(6, Math.max(1, requestedDemoPlayerCount))
+    : 4;
   const dungeonDebug = searchParams.get('dungeonDebug') === '1';
   const pageLoadedAt = Date.now();
   let disposed = false;
   let noticeVersion = 0;
   let eventVersion = 0;
   let entryFxVersion = 0;
+  let battleAmbientVersion = 0;
   let realMode = false;
   let pollTimer: number | null = null;
   let countdownTimer: number | null = null;
@@ -245,6 +281,7 @@ if (elementsReady) {
     entryWaitTimerScheduled = false;
     fullPartyEntryScheduledRunId = null;
     hideEntryFx();
+    stopBattleAmbient();
   }
 
   function stopCountdown(): void {
@@ -338,6 +375,27 @@ if (elementsReady) {
     eventPanel.classList.remove('dov-event--visible');
     void eventPanel.offsetWidth;
     eventPanel.classList.add('dov-event--visible');
+    triggerEventMotion(event);
+  }
+
+  function triggerPlayerHit(slotNumber: number, schedule: typeof later): boolean {
+    const slot = slots[slotNumber - 1];
+    if (!slot || slot.classList.contains('dov-slot--empty')) return false;
+    const currentState = animationState(slot);
+    if (currentState !== 'inside') return false;
+    startTransientPlayerState(slot, 'hit', 'inside', PLAYER_HIT_DURATION_MS, schedule);
+    return true;
+  }
+
+  function triggerEventMotion(event: DemoEvent): void {
+    const schedule = realMode ? runLater : later;
+    const playerWasHit = (event.playerSlots ?? []).some((slotNumber) => triggerPlayerHit(slotNumber, schedule));
+    if (event.tone === 'danger') {
+      pulseBattleAmbient(schedule);
+      if (!playerWasHit || party.classList.contains('dov-party--inside')) showEntryFx(schedule);
+    } else if (event.tone === 'mystery') {
+      pulseBattleAmbient(schedule);
+    }
   }
 
   function showBattleStatus(): void {
@@ -359,6 +417,30 @@ if (elementsReady) {
     entryFx.hidden = true;
   }
 
+  function stopBattleAmbient(): void {
+    battleAmbientVersion += 1;
+    battleAmbient.classList.remove('dov-battle-ambient--active', 'dov-battle-ambient--impact');
+    battleAmbient.hidden = true;
+  }
+
+  function startBattleAmbient(): void {
+    if (!battleAmbient.hidden && battleAmbient.classList.contains('dov-battle-ambient--active')) return;
+    battleAmbientVersion += 1;
+    battleAmbient.hidden = false;
+    battleAmbient.classList.add('dov-battle-ambient--active');
+  }
+
+  function pulseBattleAmbient(schedule: typeof later): void {
+    if (battleAmbient.hidden) startBattleAmbient();
+    const version = ++battleAmbientVersion;
+    battleAmbient.classList.remove('dov-battle-ambient--impact');
+    void battleAmbient.offsetWidth;
+    battleAmbient.classList.add('dov-battle-ambient--impact');
+    schedule(480, () => {
+      if (version === battleAmbientVersion) battleAmbient.classList.remove('dov-battle-ambient--impact');
+    });
+  }
+
   function showEntryFx(schedule: typeof later = later): void {
     const version = ++entryFxVersion;
     entryFx.hidden = false;
@@ -370,6 +452,84 @@ if (elementsReady) {
       entryFx.classList.remove('dov-entry-fx--active');
       entryFx.hidden = true;
     });
+  }
+
+  function playerActor(slot: HTMLElement): HTMLElement | null {
+    return slot.querySelector<HTMLElement>('.dov-player-actor');
+  }
+
+  function configureCharacterActor(slot: HTMLElement, slotIndex: number): void {
+    const actor = playerActor(slot);
+    const style = DUNGEON_CHARACTER_STYLES[slotIndex];
+    if (!actor || !style) return;
+    const config = CHARACTER_ANIMATION_CONFIG[style];
+
+    actor.dataset.characterStyle = style;
+    actor.dataset.characterAnimated = 'true';
+    actor.style.setProperty('--dov-idle-sheet', `url("${config.idleSheet}")`);
+    actor.style.setProperty('--dov-walk-front-sheet', `url("${config.walkFrontSheet}")`);
+    actor.style.setProperty('--dov-walk-back-sheet', `url("${config.walkBackSheet}")`);
+    actor.style.setProperty('--dov-death-sheet', `url("${config.deathSheet}")`);
+    actor.style.setProperty('--dov-ghost-sheet', `url("${config.ghostSheet}")`);
+    actor.style.setProperty('--dov-idle-sheet-duration', `${config.durations.idle}ms`);
+    actor.style.setProperty('--dov-walk-sheet-duration', `${config.durations.walk}ms`);
+    actor.style.setProperty('--dov-death-sheet-duration', `${config.durations.death}ms`);
+    actor.style.setProperty('--dov-ghost-sheet-duration', `${config.durations.ghost}ms`);
+    actor.style.setProperty('--dov-death-meta-drop', `${config.deathMetaDrop}px`);
+    actor.style.setProperty('--dov-ghost-meta-offset', `${config.ghostMetaOffset}px`);
+    actor.style.setProperty('--dov-sprite-scale', String(config.spriteScale));
+    actor.style.setProperty('--dov-ghost-scale', String(config.ghostScale));
+    actor.style.setProperty('--dov-foot-anchor', String(config.footAnchor));
+  }
+
+  function characterAnimationConfig(slot: HTMLElement) {
+    const style = playerActor(slot)?.dataset.characterStyle as DungeonCharacterStyle | undefined;
+    return style ? CHARACTER_ANIMATION_CONFIG[style] : null;
+  }
+
+  function playerDeathDuration(slot: HTMLElement): number {
+    const config = characterAnimationConfig(slot);
+    return config ? config.durations.death + config.deathHoldMs : PLAYER_DEATH_DURATION_MS;
+  }
+
+  function animationState(slot: HTMLElement): DungeonPlayerAnimationState | null {
+    return (playerActor(slot)?.dataset.animationState as DungeonPlayerAnimationState | undefined) ?? null;
+  }
+
+  function setSlotAnimationState(slot: HTMLElement, state: DungeonPlayerAnimationState, restart = false): boolean {
+    const actor = playerActor(slot);
+    if (!actor) return false;
+    if (state !== 'arriving' && state !== 'returning' && state !== 'hit' && state !== 'dead') {
+      delete actor.dataset.animationEndsAt;
+    }
+    return setPlayerAnimationState(actor, state, restart);
+  }
+
+  function startTransientPlayerState(
+    slot: HTMLElement,
+    state: Extract<DungeonPlayerAnimationState, 'arriving' | 'returning' | 'hit' | 'dead'>,
+    nextState: DungeonPlayerAnimationState,
+    durationMs: number,
+    schedule: typeof later
+  ): void {
+    const actor = playerActor(slot);
+    if (!actor) return;
+    setPlayerAnimationState(actor, state, true);
+    actor.dataset.animationEndsAt = String(Date.now() + durationMs);
+    schedule(durationMs, () => {
+      if (actor.dataset.animationState !== state) return;
+      delete actor.dataset.animationEndsAt;
+      setPlayerAnimationState(actor, nextState);
+    });
+  }
+
+  function settleElapsedPlayerState(slot: HTMLElement, nextState: DungeonPlayerAnimationState): boolean {
+    const actor = playerActor(slot);
+    const endsAt = Number(actor?.dataset.animationEndsAt);
+    if (!actor || !Number.isFinite(endsAt) || endsAt > Date.now()) return false;
+    delete actor.dataset.animationEndsAt;
+    setPlayerAnimationState(actor, nextState);
+    return true;
   }
 
   function setStatus(seconds: number, joinedPlayers: number, label = 'تبدأ الرحلة خلال', maxPlayers = 6): void {
@@ -390,6 +550,7 @@ if (elementsReady) {
   }
 
   function showResult(completed: boolean, description: string): void {
+    stopBattleAmbient();
     resultPanel.classList.toggle('dov-result--failed', !completed);
     resultMark.replaceChildren();
     resultMark.dataset.result = completed ? 'success' : 'failed';
@@ -450,6 +611,7 @@ if (elementsReady) {
   }
 
   function resetSlot(slot: HTMLElement): void {
+    const actor = playerActor(slot);
     slot.className = 'dov-slot dov-slot--empty';
     slot.setAttribute('aria-label', `المقعد ${slot.dataset.dovSlot || ''} فارغ`);
     const name = slot.querySelector<HTMLElement>('.dov-slot__name');
@@ -463,23 +625,25 @@ if (elementsReady) {
     }
     if (state) state.textContent = '';
     if (reward) reward.replaceChildren();
+    if (actor) {
+      actor.style.removeProperty('--dov-entry-stagger');
+      actor.style.removeProperty('--dov-return-stagger');
+      delete actor.dataset.animationEndsAt;
+      setPlayerAnimationState(actor, 'inside');
+    }
   }
 
   function setPlayer(
     slotIndex: number,
     player: OverlayPlayer,
     motion?: PlayerMotion,
-    schedule: typeof later = later
+    schedule: typeof later = later,
+    motionDelayMs = 0
   ): void {
     const slot = slots[slotIndex];
     if (!slot) return;
     slot.className = 'dov-slot';
     if (player.isOpener ?? slotIndex === 0) slot.classList.add('dov-slot--opener');
-    if (motion) {
-      const motionClass = `dov-slot--${motion}`;
-      slot.classList.add(motionClass);
-      schedule(PLAYER_MOTION_DURATION_MS[motion], () => slot.classList.remove(motionClass));
-    }
     if (player.outcome) slot.classList.add(`dov-slot--${player.outcome}`);
     const playerLevel = Number.isSafeInteger(player.level) && Number(player.level) > 0 ? Number(player.level) : null;
     const levelLabel = playerLevel === null ? '' : `، المستوى ${playerLevel}`;
@@ -494,12 +658,34 @@ if (elementsReady) {
       level.textContent = playerLevel === null ? '' : `LV ${playerLevel}`;
     }
     if (state) state.textContent = player.outcome === 'dead' ? 'مات' : player.outcome === 'survived' ? 'نجا' : '';
+
+    const currentState = animationState(slot);
+    if (player.outcome === 'dead') {
+      if (currentState === 'dead') settleElapsedPlayerState(slot, 'ghost');
+      else if (currentState !== 'ghost') {
+        startTransientPlayerState(slot, 'dead', 'ghost', playerDeathDuration(slot), schedule);
+      }
+    } else if (motion) {
+      const actor = playerActor(slot);
+      if (motion === 'returning') {
+        actor?.style.setProperty('--dov-return-stagger', `${motionDelayMs}ms`);
+      }
+      startTransientPlayerState(slot, motion, 'idle', PLAYER_MOTION_DURATION_MS[motion] + motionDelayMs, schedule);
+    } else if (currentState === 'arriving' || currentState === 'returning') {
+      settleElapsedPlayerState(slot, 'idle');
+    } else if (currentState !== 'hit') {
+      setSlotAnimationState(slot, 'idle');
+    }
     updatePartyLayout();
   }
 
   function setPlayers(players: OverlayPlayer[], motion?: PlayerMotion, schedule: typeof later = later): void {
     slots.forEach(resetSlot);
-    players.slice(0, slots.length).forEach((player, index) => setPlayer(index, player, motion, schedule));
+    players
+      .slice(0, slots.length)
+      .forEach((player, index) =>
+        setPlayer(index, player, motion, schedule, motion === 'returning' ? index * PARTY_ENTRY_STAGGER_MS : 0)
+      );
     updatePartyLayout();
     party.classList.remove('dov-party--inside');
   }
@@ -507,8 +693,20 @@ if (elementsReady) {
   function sendPartyInside(schedule: typeof later = later): void {
     root.classList.remove('dov-overlay--terminal');
     root.classList.add('dov-overlay--running');
+    stopBattleAmbient();
+    const activeSlots = slots.filter((slot) => !slot.classList.contains('dov-slot--empty'));
+    activeSlots.forEach((slot, index) => {
+      const actor = playerActor(slot);
+      actor?.style.setProperty('--dov-entry-stagger', `${index * PARTY_ENTRY_STAGGER_MS}ms`);
+      actor?.style.setProperty('--dov-entry-duration', `${PARTY_ENTRY_TRAVEL_MS}ms`);
+      setSlotAnimationState(slot, 'entering', true);
+    });
     party.classList.add('dov-party--inside');
     schedule(ENTRY_FX_START_DELAY_MS, () => {
+      activeSlots.forEach((slot) => {
+        if (animationState(slot) === 'entering') setSlotAnimationState(slot, 'inside');
+      });
+      startBattleAmbient();
       showEntryFx(schedule);
       showBattleStatus();
     });
@@ -527,6 +725,7 @@ if (elementsReady) {
     eventPanel.hidden = true;
     eventPanel.classList.remove('dov-event--visible');
     hideEntryFx();
+    stopBattleAmbient();
     hideStatus();
     hideResult();
     hideRewards();
@@ -540,45 +739,96 @@ if (elementsReady) {
   }
 
   function runJoiningDemo(): void {
-    setPlayers(PLAYERS);
-    setStatus(43, PLAYERS.length);
+    const players = PLAYERS.slice(0, demoPlayerCount);
+    setPlayers(players);
+    setStatus(43, players.length);
     showNotice('تنكس');
   }
 
   function runRunningDemo(): void {
-    setPlayers(PLAYERS);
+    setPlayers(PLAYERS.slice(0, demoPlayerCount));
     later(120, sendPartyInside);
     scheduleDemoEvents(120 + PARTY_ENTRY_DURATION_MS + ENTRY_EVENT_READY_DELAY_MS);
   }
 
   function runCompletedDemo(): void {
-    const survivors = PLAYERS.slice(0, 2).map((player) => ({ ...player, outcome: 'survived' as const }));
-    setPlayers(survivors, 'returning');
+    const players = PLAYERS.slice(0, demoPlayerCount).map((player, index) => ({
+      ...player,
+      outcome: index < Math.min(2, demoPlayerCount) ? ('survived' as const) : ('dead' as const),
+    }));
+    setPlayers(players, 'returning');
     showResult(true, 'عاد الناجون ومعهم غنائم الرحلة');
     showRewards(COMPLETED_REWARDS);
     fadeOut(REAL_TERMINAL_DURATION_MS + REAL_TERMINAL_FADE_MS);
   }
 
   function runFailedDemo(): void {
-    const defeatedPlayers = PLAYERS.map((player) => ({ ...player, outcome: 'dead' as const }));
+    const defeatedPlayers = PLAYERS.slice(0, demoPlayerCount).map((player) => ({
+      ...player,
+      outcome: 'dead' as const,
+    }));
     setPlayers(defeatedPlayers, 'returning');
     showResult(false, 'فشلت الرحلة ولم ينجُ أحد من أعماق الدنجن');
     hideRewards();
     fadeOut(REAL_TERMINAL_DURATION_MS + REAL_TERMINAL_FADE_MS);
   }
 
+  function runAnimationRedGateDemo(): void {
+    const redPlayer = { ...PLAYERS[0], isOpener: true };
+    setPlayers([]);
+
+    later(2_000, () => setPlayer(0, redPlayer, 'arriving'));
+    later(5_500, () => sendPartyInside());
+    later(7_500, () => {
+      hideEntryFx();
+      stopBattleAmbient();
+      setPlayer(0, redPlayer, 'returning');
+    });
+    later(10_000, () => setPlayer(0, { ...redPlayer, outcome: 'dead' }));
+  }
+
+  function runAnimationPartyGateDemo(): void {
+    const partyPlayers = PLAYERS.map((player, index) => ({ ...player, isOpener: index === 0 }));
+    setPlayers([]);
+
+    partyPlayers.forEach((player, index) => {
+      later(2_000 + index * 360, () => setPlayer(index, player, 'arriving'));
+    });
+
+    later(7_000, () => sendPartyInside());
+    later(9_000, () => showEvent(RUN_EVENTS[0]));
+    later(10_800, () => hideEvent());
+    later(11_000, () => {
+      partyPlayers.forEach((player, index) => {
+        setPlayer(index, index < 3 ? { ...player, outcome: 'survived' } : player, 'returning', later, index * 60);
+      });
+    });
+    later(14_000, () => {
+      partyPlayers.slice(3).forEach((player, index) => setPlayer(index + 3, { ...player, outcome: 'dead' }));
+    });
+    later(18_800, () => {
+      partyPlayers.slice(0, 3).forEach((player, index) => setPlayer(index, { ...player, outcome: 'dead' }));
+    });
+    later(20_000, () => {
+      showResult(false, 'فشلت الرحلة ولم ينجُ أحد من أعماق الدنجن');
+      hideRewards();
+    });
+  }
+
   function runSequenceDemo(): void {
-    const joinMoments = [500, 2_800, 5_100, 7_400];
+    const sequencePlayers = PLAYERS.slice(0, demoPlayerCount);
+    const joinMoments = sequencePlayers.map((_, index) => 500 + index * 2_300);
     joinMoments.forEach((moment, index) => {
       later(moment, () => {
-        setPlayer(index, PLAYERS[index], 'arriving');
-        showNotice(PLAYERS[index].name);
+        setPlayer(index, sequencePlayers[index], 'arriving');
+        showNotice(sequencePlayers[index].name);
       });
     });
 
-    later(9_200, () => setStatus(10, PLAYERS.length));
+    const countdownStartsAt = (joinMoments.at(-1) ?? 500) + 1_800;
+    later(countdownStartsAt, () => setStatus(10, sequencePlayers.length));
     for (let elapsed = 1; elapsed <= 10; elapsed += 1) {
-      later(9_200 + elapsed * 1_000, () => {
+      later(countdownStartsAt + elapsed * 1_000, () => {
         countdown.textContent = String(10 - elapsed);
         if (elapsed === 10) {
           hideNotice();
@@ -588,15 +838,18 @@ if (elementsReady) {
       });
     }
 
-    const entryStartsAt = 9_200 + 10_000;
+    const entryStartsAt = countdownStartsAt + 10_000;
     const terminalAt = scheduleDemoEvents(entryStartsAt + PARTY_ENTRY_DURATION_MS + ENTRY_EVENT_READY_DELAY_MS);
     later(terminalAt, () => {
       showResult(true, 'عاد الناجون ومعهم غنائم الرحلة');
     });
 
     later(terminalAt + 1_400, () => {
-      const survivors = PLAYERS.slice(0, 2).map((player) => ({ ...player, outcome: 'survived' as const }));
-      setPlayers(survivors, 'returning');
+      const terminalPlayers = sequencePlayers.map((player, index) => ({
+        ...player,
+        outcome: index < Math.min(2, sequencePlayers.length) ? ('survived' as const) : ('dead' as const),
+      }));
+      setPlayers(terminalPlayers, 'returning');
     });
 
     later(terminalAt + 3_000, () => showRewards(COMPLETED_REWARDS));
@@ -869,21 +1122,39 @@ if (elementsReady) {
     };
   }
 
+  function resetMissingParticipantSlots(
+    participants: Array<DungeonViewerParticipant | DungeonViewerRunParticipant>
+  ): void {
+    const occupiedSlots = new Set(participants.map((participant) => participant.slotNumber));
+    slots.forEach((slot, index) => {
+      if (!occupiedSlots.has(index + 1) && !slot.classList.contains('dov-slot--empty')) resetSlot(slot);
+    });
+  }
+
   function setRealParticipants(
     participants: Array<DungeonViewerParticipant | DungeonViewerRunParticipant>,
     terminal = false,
     motion?: PlayerMotion
   ): void {
-    slots.forEach(resetSlot);
-    participants.forEach((participant) => {
-      setPlayer(participant.slotNumber - 1, realPlayerFromParticipant(participant, terminal), motion, runLater);
-    });
+    resetMissingParticipantSlots(participants);
+    participants
+      .slice()
+      .sort((left, right) => left.slotNumber - right.slotNumber)
+      .forEach((participant, index) => {
+        setPlayer(
+          participant.slotNumber - 1,
+          realPlayerFromParticipant(participant, terminal),
+          motion,
+          runLater,
+          motion === 'returning' ? index * PARTY_ENTRY_STAGGER_MS : 0
+        );
+      });
     updatePartyLayout();
     party.classList.remove('dov-party--inside');
   }
 
   function setJoiningParticipants(participants: DungeonViewerParticipant[], initialLoad: boolean): void {
-    slots.forEach(resetSlot);
+    resetMissingParticipantSlots(participants);
     participants.forEach((participant) => {
       const arrivesNow = initialLoad || !knownParticipantSlots.has(participant.slotNumber);
       setPlayer(
@@ -902,6 +1173,10 @@ if (elementsReady) {
       root.classList.remove('dov-overlay--terminal');
       root.classList.add('dov-overlay--running');
       party.classList.add('dov-party--inside');
+      slots.forEach((slot) => {
+        if (!slot.classList.contains('dov-slot--empty')) setSlotAnimationState(slot, 'inside');
+      });
+      startBattleAmbient();
       revealRealOverlay();
       return false;
     }
@@ -942,7 +1217,7 @@ if (elementsReady) {
     }
 
     fullPartyEntryScheduledRunId = activeRun.id;
-    const entryDelay = slots.some((slot) => slot.classList.contains('dov-slot--arriving'))
+    const entryDelay = slots.some((slot) => animationState(slot) === 'arriving')
       ? PLAYER_MOTION_DURATION_MS.arriving
       : REAL_FULL_PARTY_ENTRY_DELAY_MS;
     runLater(entryDelay, () => {
@@ -973,6 +1248,10 @@ if (elementsReady) {
     root.classList.remove('dov-overlay--terminal');
     root.classList.add('dov-overlay--running');
     party.classList.add('dov-party--inside');
+    slots.forEach((slot) => {
+      if (!slot.classList.contains('dov-slot--empty')) setSlotAnimationState(slot, 'inside');
+    });
+    startBattleAmbient();
     revealRealOverlay();
   }
 
@@ -1197,7 +1476,12 @@ if (elementsReady) {
           ? 'mystery'
           : 'normal';
     const text = event.message === event.title ? event.title : `${event.title}: ${event.message}`;
-    return { icon, text, tone };
+    return {
+      icon,
+      text,
+      tone,
+      playerSlots: event.players.map((player) => player.slotNumber),
+    };
   }
 
   function enqueueEvents(events: DungeonViewerEvent[]): void {
@@ -1379,13 +1663,15 @@ if (elementsReady) {
     hideNotice(runLater);
     hideEvent(runLater);
     const failedTerminal = isFailedTerminal(summary);
-    const visibleParticipants = !failedTerminal
-      ? summary.participants.filter((participant) => participant.survived === true)
-      : summary.participants.map((participant) => ({
-          ...participant,
-          status: 'dead',
-          survived: false,
-        }));
+    const visibleParticipants = summary.participants.map((participant) =>
+      !failedTerminal && participant.survived === true
+        ? participant
+        : {
+            ...participant,
+            status: 'dead',
+            survived: false,
+          }
+    );
     setRealParticipants(visibleParticipants, true, 'returning');
     const generalRewards = showRealRewards(summary);
     revealRealOverlay();
@@ -1620,6 +1906,8 @@ if (elementsReady) {
       completed: runCompletedDemo,
       failed: runFailedDemo,
       sequence: runSequenceDemo,
+      'animation-red-gate': runAnimationRedGateDemo,
+      'animation-party-gate': runAnimationPartyGateDemo,
     };
     runners[demoMode]();
   } else if (!hasDemoParameter) {
