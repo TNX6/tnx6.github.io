@@ -77,42 +77,69 @@ test('keeps retries bounded inside one ten-second scheduler window', () => {
   assert.equal(canRetryDungeonLifecycleNudge(3, 10_000), false);
 });
 
-test('parses the production nudge contract for persisted and processing responses', async () => {
+test('sends an exact bodyless browser POST and parses every production nudge result', async () => {
   const originalFetch = globalThis.fetch;
-  const payloads = [
-    new Response(
-      JSON.stringify({
-        ok: true,
-        runId: 'run-1',
-        result: 'actively_processing',
-        statusBefore: 'running',
-        statusAfter: 'running',
-        eventsPersisted: 0,
-        lifecycleIterations: 1,
-      }),
-      { status: 202 }
-    ),
-    new Response(
-      JSON.stringify({
-        ok: true,
-        runId: 'run-1',
-        result: 'events_persisted',
-        statusBefore: 'joining',
-        statusAfter: 'completed',
-        eventsPersisted: 6,
-        lifecycleIterations: 6,
-      }),
-      { status: 200 }
-    ),
+  const cases = [
+    { result: 'actively_processing', status: 202, ok: true, action: 'retry' },
+    { result: 'events_persisted', status: 200, ok: true, action: 'complete', eventsPersisted: 6 },
+    { result: 'terminal_replay', status: 200, ok: true, action: 'complete' },
+    { result: 'not_due', status: 409, ok: false, action: 'stop' },
+    { result: 'run_not_active', status: 409, ok: false, action: 'stop' },
   ];
-  globalThis.fetch = async () => payloads.shift();
+  const requests = [];
+  globalThis.fetch = async (input, init) => {
+    requests.push({ input, init });
+    const current = cases[requests.length - 1];
+    return new Response(
+      JSON.stringify({
+        ok: current.ok,
+        runId: 'run-1',
+        result: current.result,
+        statusBefore: current.result === 'events_persisted' ? 'joining' : 'running',
+        statusAfter: current.result === 'events_persisted' ? 'completed' : 'running',
+        eventsPersisted: current.eventsPersisted ?? 0,
+        lifecycleIterations: current.eventsPersisted ?? 0,
+      }),
+      { status: current.status }
+    );
+  };
   try {
-    const processing = await advanceDungeonRunIfDue('run-1', new AbortController().signal);
-    const completed = await advanceDungeonRunIfDue('run-1', new AbortController().signal);
-    assert.equal(processing.httpStatus, 202);
-    assert.equal(dungeonLifecycleNudgeClientAction(processing), 'retry');
-    assert.equal(completed.httpStatus, 200);
-    assert.equal(dungeonLifecycleNudgeClientAction(completed), 'complete');
+    for (const expected of cases) {
+      const result = await advanceDungeonRunIfDue('run-1', new AbortController().signal);
+      assert.equal(result.result, expected.result);
+      assert.equal(result.httpStatus, expected.status);
+      assert.equal(dungeonLifecycleNudgeClientAction(result), expected.action);
+    }
+    assert.equal(requests.length, cases.length);
+    for (const { input, init } of requests) {
+      assert.match(String(input), /\/api\/dungeon\/runs\/run-1\/advance-if-due$/);
+      assert.equal(init.method, 'POST');
+      assert.equal(init.body, undefined);
+      const headers = new Headers(init.headers);
+      assert.equal(headers.get('Accept'), 'application/json');
+      assert.equal(headers.get('Content-Type'), null);
+    }
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('a real HTTP 400 is permanent and cannot be treated as a completed nudge', async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () =>
+    new Response(
+      JSON.stringify({
+        ok: false,
+        error: { code: 'DUNGEON_LIFECYCLE_NUDGE_INVALID_REQUEST', message: 'invalid' },
+      }),
+      { status: 400 }
+    );
+  try {
+    await assert.rejects(
+      advanceDungeonRunIfDue('run-1', new AbortController().signal),
+      (error) => error?.status === 400
+    );
+    assert.equal(isRetryableDungeonLifecycleNudgeStatus(400), false);
   } finally {
     globalThis.fetch = originalFetch;
   }
