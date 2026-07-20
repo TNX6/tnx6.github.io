@@ -19,12 +19,24 @@ import {
   dungeonLifecycleNudgeClientAction,
   isRetryableDungeonLifecycleNudgeStatus,
 } from './dungeon-overlay-nudge-policy';
-import { setPlayerAnimationState, type DungeonPlayerAnimationState } from './dungeon-overlay-animation-state';
+import {
+  hasActivePlayerAnimation,
+  setPlayerAnimationState,
+  type DungeonPlayerAnimationState,
+} from './dungeon-overlay-animation-state';
+import { DungeonSpriteAssetLoader, preloadPrimaryCharacterAssets } from './dungeon-overlay-assets';
 import {
   CHARACTER_ANIMATION_CONFIG,
   DUNGEON_CHARACTER_STYLES,
   type DungeonCharacterStyle,
 } from './dungeon-overlay-character-config';
+import {
+  beginDungeonTerminalFade,
+  dungeonTerminalDescription,
+  DUNGEON_TERMINAL_FADE_MS,
+  formatDungeonXp,
+  normalizeDungeonViewerText,
+} from './dungeon-overlay-presentation';
 
 type DemoMode =
   | 'joining'
@@ -33,7 +45,10 @@ type DemoMode =
   | 'failed'
   | 'sequence'
   | 'animation-red-gate'
-  | 'animation-party-gate';
+  | 'animation-party-gate'
+  | 'real-mode-regression'
+  | 'joining-stability'
+  | 'meta-anchor-regression';
 type PlayerOutcome = 'survived' | 'dead';
 type PlayerMotion = 'arriving' | 'returning';
 type EventTone = 'normal' | 'mystery' | 'danger';
@@ -55,7 +70,6 @@ const REAL_EVENT_DURATION_MS = 5_000;
 const REAL_EVENT_GAP_MS = 400;
 const REAL_FULL_PARTY_ENTRY_DELAY_MS = 120;
 const REAL_TERMINAL_DURATION_MS = 12_000;
-const REAL_TERMINAL_FADE_MS = 400;
 const REAL_TERMINAL_STALE_MS = 15_000;
 const DEMO_EVENT_GAP_MS = 350;
 const ENTRY_EVENT_READY_DELAY_MS = 600;
@@ -95,6 +109,17 @@ interface DemoReward {
   item?: string;
 }
 
+type OverlayScheduler = (delayMs: number, callback: () => void) => void;
+type CharacterStateSheet = 'walkBackSheet' | 'deathSheet' | 'ghostSheet';
+
+interface PendingPlayerPresentation {
+  playerKey: string;
+  player: OverlayPlayer;
+  motion?: PlayerMotion;
+  schedule: OverlayScheduler;
+  motionDelayMs: number;
+}
+
 interface DungeonOverlayWindow extends Window {
   __tnxDungeonOverlayCleanup?: () => void;
 }
@@ -107,6 +132,9 @@ const DEMO_MODES = new Set<DemoMode>([
   'sequence',
   'animation-red-gate',
   'animation-party-gate',
+  'real-mode-regression',
+  'joining-stability',
+  'meta-anchor-regression',
 ]);
 
 const PLAYERS: DemoPlayer[] = [
@@ -180,6 +208,10 @@ const elementsReady =
   slots.length === 6;
 
 if (elementsReady) {
+  const spriteAssetLoader = new DungeonSpriteAssetLoader();
+  const primaryAssetLoads = new WeakMap<HTMLElement, Promise<boolean>>();
+  const stateAssetLoads = new WeakMap<HTMLElement, Map<CharacterStateSheet, Promise<boolean>>>();
+  const pendingPlayerPresentations = new WeakMap<HTMLElement, PendingPlayerPresentation>();
   slots.forEach((slot, index) => configureCharacterActor(slot, index));
   const timers = new Set<number>();
   const runTimers = new Set<number>();
@@ -234,7 +266,7 @@ if (elementsReady) {
   let terminalPresentationRunId: string | null = null;
   let terminalPhaseStartedAt: number | null = null;
   let terminalDisplayRemainingMs = REAL_TERMINAL_DURATION_MS;
-  let terminalFadeRemainingMs = REAL_TERMINAL_FADE_MS;
+  let terminalFadeRemainingMs = DUNGEON_TERMINAL_FADE_MS;
   let terminalPhase: 'display' | 'fade' | null = null;
   let deferredActiveRun: DungeonViewerActiveRun | null = null;
   let fullPartyEntryScheduledRunId: string | null = null;
@@ -244,6 +276,8 @@ if (elementsReady) {
   const abandonedNudgeRunIds = new Set<string>();
   const debuggedFirstEventRunIds = new Set<string>();
   let nudgeFastPollUntil = 0;
+  let partyEntryVersion = 0;
+  let cancelTerminalFade: (() => void) | null = null;
 
   function debugNudge(label: string, fields: Record<string, unknown> = {}): void {
     if (!dungeonDebug) return;
@@ -280,6 +314,8 @@ if (elementsReady) {
     eventQueueRunning = false;
     entryWaitTimerScheduled = false;
     fullPartyEntryScheduledRunId = null;
+    cancelTerminalFade?.();
+    cancelTerminalFade = null;
     hideEntryFx();
     stopBattleAmbient();
   }
@@ -466,6 +502,9 @@ if (elementsReady) {
 
     actor.dataset.characterStyle = style;
     actor.dataset.characterAnimated = 'true';
+    actor.dataset.assetStatus = 'idle';
+    actor.dataset.visualReady = 'false';
+    actor.style.setProperty('--dov-character-idle-image', `url("${config.fallbackIdleImage}")`);
     actor.style.setProperty('--dov-idle-sheet', `url("${config.idleSheet}")`);
     actor.style.setProperty('--dov-walk-front-sheet', `url("${config.walkFrontSheet}")`);
     actor.style.setProperty('--dov-walk-back-sheet', `url("${config.walkBackSheet}")`);
@@ -480,6 +519,63 @@ if (elementsReady) {
     actor.style.setProperty('--dov-sprite-scale', String(config.spriteScale));
     actor.style.setProperty('--dov-ghost-scale', String(config.ghostScale));
     actor.style.setProperty('--dov-foot-anchor', String(config.footAnchor));
+  }
+
+  function useStaticCharacterFallback(actor: HTMLElement, fallbackUrl: string): void {
+    actor.dataset.characterAnimated = 'false';
+    actor.dataset.assetStatus = 'fallback';
+    actor.style.setProperty('--dov-character-idle-image', `url("${fallbackUrl}")`);
+  }
+
+  function demoPrimaryAssetDelayMs(): number {
+    return requestedDemo === 'real-mode-regression' ? 800 : 0;
+  }
+
+  async function ensurePrimaryActorAssets(slot: HTMLElement): Promise<boolean> {
+    const actor = playerActor(slot);
+    const config = characterAnimationConfig(slot);
+    if (!actor || !config) return false;
+    const existing = primaryAssetLoads.get(actor);
+    if (existing) return existing;
+
+    actor.dataset.assetStatus = 'loading';
+    const request = preloadPrimaryCharacterAssets(spriteAssetLoader, config).then(async (mode) => {
+      const demoDelayMs = demoPrimaryAssetDelayMs();
+      if (demoDelayMs > 0) {
+        await new Promise<void>((resolve) => later(demoDelayMs, resolve));
+      }
+      if (mode === 'fallback') {
+        useStaticCharacterFallback(actor, config.fallbackIdleImage);
+        return false;
+      }
+      actor.dataset.assetStatus = 'animated';
+      actor.dataset.characterAnimated = 'true';
+      void ensureActorStateAsset(slot, 'walkBackSheet');
+      void ensureActorStateAsset(slot, 'deathSheet');
+      void ensureActorStateAsset(slot, 'ghostSheet');
+      return true;
+    });
+    primaryAssetLoads.set(actor, request);
+    return request;
+  }
+
+  function ensureActorStateAsset(slot: HTMLElement, sheet: CharacterStateSheet): Promise<boolean> {
+    const actor = playerActor(slot);
+    const config = characterAnimationConfig(slot);
+    if (!actor || !config || actor.dataset.assetStatus === 'fallback') return Promise.resolve(false);
+    let requests = stateAssetLoads.get(actor);
+    if (!requests) {
+      requests = new Map<CharacterStateSheet, Promise<boolean>>();
+      stateAssetLoads.set(actor, requests);
+    }
+    const existing = requests.get(sheet);
+    if (existing) return existing;
+    const request = spriteAssetLoader.load(config[sheet]).then((loaded) => {
+      if (!loaded) useStaticCharacterFallback(actor, config.fallbackIdleImage);
+      return loaded;
+    });
+    requests.set(sheet, request);
+    return request;
   }
 
   function characterAnimationConfig(slot: HTMLElement) {
@@ -499,7 +595,7 @@ if (elementsReady) {
   function setSlotAnimationState(slot: HTMLElement, state: DungeonPlayerAnimationState, restart = false): boolean {
     const actor = playerActor(slot);
     if (!actor) return false;
-    if (state !== 'arriving' && state !== 'returning' && state !== 'hit' && state !== 'dead') {
+    if (state !== 'arriving' && state !== 'entering' && state !== 'returning' && state !== 'hit' && state !== 'dead') {
       delete actor.dataset.animationEndsAt;
     }
     return setPlayerAnimationState(actor, state, restart);
@@ -507,7 +603,7 @@ if (elementsReady) {
 
   function startTransientPlayerState(
     slot: HTMLElement,
-    state: Extract<DungeonPlayerAnimationState, 'arriving' | 'returning' | 'hit' | 'dead'>,
+    state: Extract<DungeonPlayerAnimationState, 'arriving' | 'entering' | 'returning' | 'hit' | 'dead'>,
     nextState: DungeonPlayerAnimationState,
     durationMs: number,
     schedule: typeof later
@@ -530,6 +626,11 @@ if (elementsReady) {
     delete actor.dataset.animationEndsAt;
     setPlayerAnimationState(actor, nextState);
     return true;
+  }
+
+  function hasActiveTransientPlayerState(slot: HTMLElement): boolean {
+    const actor = playerActor(slot);
+    return actor ? hasActivePlayerAnimation(actor) : false;
   }
 
   function setStatus(seconds: number, joinedPlayers: number, label = 'تبدأ الرحلة خلال', maxPlayers = 6): void {
@@ -583,7 +684,9 @@ if (elementsReady) {
       const name = document.createElement('strong');
       name.textContent = reward.player;
       const xp = document.createElement('span');
-      xp.textContent = `+${reward.xp} XP`;
+      xp.className = 'dov-reward__xp';
+      xp.dir = 'ltr';
+      xp.textContent = formatDungeonXp(reward.xp);
       item.append(name, xp);
 
       if (reward.item) {
@@ -629,8 +732,113 @@ if (elementsReady) {
       actor.style.removeProperty('--dov-entry-stagger');
       actor.style.removeProperty('--dov-return-stagger');
       delete actor.dataset.animationEndsAt;
+      delete actor.dataset.playerKey;
+      delete actor.dataset.requestedOutcome;
+      delete actor.dataset.deathAssetPending;
+      actor.dataset.visualReady = 'false';
+      pendingPlayerPresentations.delete(actor);
       setPlayerAnimationState(actor, 'inside');
     }
+  }
+
+  function revealGhostWhenReady(slot: HTMLElement): void {
+    const actor = playerActor(slot);
+    if (!actor || actor.dataset.deathAssetPending === 'ghost') return;
+    actor.dataset.deathAssetPending = 'ghost';
+    void ensureActorStateAsset(slot, 'ghostSheet').then(() => {
+      if (actor.dataset.deathAssetPending === 'ghost') delete actor.dataset.deathAssetPending;
+      if (actor.dataset.requestedOutcome !== 'dead' || animationState(slot) !== 'dead') return;
+      delete actor.dataset.animationEndsAt;
+      setPlayerAnimationState(actor, 'ghost');
+    });
+  }
+
+  function startDeathWhenReady(slot: HTMLElement, schedule: OverlayScheduler): void {
+    const actor = playerActor(slot);
+    if (!actor) return;
+    const currentState = animationState(slot);
+    if (currentState === 'ghost') return;
+    if (currentState === 'dead') {
+      if (!hasActiveTransientPlayerState(slot)) revealGhostWhenReady(slot);
+      return;
+    }
+    if (actor.dataset.deathAssetPending === 'death') return;
+    actor.dataset.deathAssetPending = 'death';
+    void ensureActorStateAsset(slot, 'deathSheet').then(() => {
+      if (actor.dataset.deathAssetPending === 'death') delete actor.dataset.deathAssetPending;
+      if (actor.dataset.requestedOutcome !== 'dead' || animationState(slot) === 'ghost') return;
+      const durationMs = playerDeathDuration(slot);
+      setPlayerAnimationState(actor, 'dead', true);
+      actor.dataset.animationEndsAt = String(Date.now() + durationMs);
+      schedule(durationMs, () => revealGhostWhenReady(slot));
+    });
+  }
+
+  function applyReadyPlayerState(
+    slot: HTMLElement,
+    player: OverlayPlayer,
+    motion: PlayerMotion | undefined,
+    schedule: OverlayScheduler,
+    motionDelayMs: number
+  ): void {
+    const actor = playerActor(slot);
+    if (!actor) return;
+    const currentState = animationState(slot);
+    if (player.outcome === 'dead') {
+      actor.dataset.requestedOutcome = 'dead';
+      startDeathWhenReady(slot, schedule);
+      return;
+    }
+    delete actor.dataset.requestedOutcome;
+
+    if (motion) {
+      if (motion === 'returning') actor.style.setProperty('--dov-return-stagger', `${motionDelayMs}ms`);
+      startTransientPlayerState(slot, motion, 'idle', PLAYER_MOTION_DURATION_MS[motion] + motionDelayMs, schedule);
+      return;
+    }
+    if (hasActiveTransientPlayerState(slot)) return;
+    if (currentState === 'arriving' || currentState === 'returning') {
+      settleElapsedPlayerState(slot, 'idle');
+    } else if (currentState === 'entering') {
+      settleElapsedPlayerState(slot, 'inside');
+    } else if (currentState !== 'hit' && currentState !== 'dead' && currentState !== 'ghost') {
+      setSlotAnimationState(slot, 'idle');
+    }
+  }
+
+  function requestPlayerPresentation(
+    slot: HTMLElement,
+    slotIndex: number,
+    player: OverlayPlayer,
+    motion: PlayerMotion | undefined,
+    schedule: OverlayScheduler,
+    motionDelayMs: number
+  ): void {
+    const actor = playerActor(slot);
+    if (!actor) return;
+    const playerKey = `${slotIndex + 1}:${player.name}`;
+    const changedPlayer = actor.dataset.playerKey !== playerKey;
+    if (changedPlayer) {
+      actor.dataset.playerKey = playerKey;
+      actor.dataset.visualReady = 'false';
+      pendingPlayerPresentations.delete(actor);
+    }
+
+    if (actor.dataset.visualReady === 'true') {
+      applyReadyPlayerState(slot, player, motion, schedule, motionDelayMs);
+      return;
+    }
+
+    const pending = pendingPlayerPresentations.get(actor);
+    if (pending?.playerKey === playerKey && pending.motion === 'arriving' && motion === undefined) return;
+    pendingPlayerPresentations.set(actor, { playerKey, player, motion, schedule, motionDelayMs });
+    void ensurePrimaryActorAssets(slot).then(() => {
+      const queued = pendingPlayerPresentations.get(actor);
+      if (!queued || queued.playerKey !== actor.dataset.playerKey || slot.classList.contains('dov-slot--empty')) return;
+      pendingPlayerPresentations.delete(actor);
+      applyReadyPlayerState(slot, queued.player, queued.motion, queued.schedule, queued.motionDelayMs);
+      actor.dataset.visualReady = 'true';
+    });
   }
 
   function setPlayer(
@@ -659,23 +867,7 @@ if (elementsReady) {
     }
     if (state) state.textContent = player.outcome === 'dead' ? 'مات' : player.outcome === 'survived' ? 'نجا' : '';
 
-    const currentState = animationState(slot);
-    if (player.outcome === 'dead') {
-      if (currentState === 'dead') settleElapsedPlayerState(slot, 'ghost');
-      else if (currentState !== 'ghost') {
-        startTransientPlayerState(slot, 'dead', 'ghost', playerDeathDuration(slot), schedule);
-      }
-    } else if (motion) {
-      const actor = playerActor(slot);
-      if (motion === 'returning') {
-        actor?.style.setProperty('--dov-return-stagger', `${motionDelayMs}ms`);
-      }
-      startTransientPlayerState(slot, motion, 'idle', PLAYER_MOTION_DURATION_MS[motion] + motionDelayMs, schedule);
-    } else if (currentState === 'arriving' || currentState === 'returning') {
-      settleElapsedPlayerState(slot, 'idle');
-    } else if (currentState !== 'hit') {
-      setSlotAnimationState(slot, 'idle');
-    }
+    requestPlayerPresentation(slot, slotIndex, player, motion, schedule, motionDelayMs);
     updatePartyLayout();
   }
 
@@ -690,32 +882,36 @@ if (elementsReady) {
     party.classList.remove('dov-party--inside');
   }
 
-  function sendPartyInside(schedule: typeof later = later): void {
+  async function sendPartyInside(schedule: OverlayScheduler = later): Promise<number | null> {
+    const version = ++partyEntryVersion;
     root.classList.remove('dov-overlay--terminal');
     root.classList.add('dov-overlay--running');
     stopBattleAmbient();
     const activeSlots = slots.filter((slot) => !slot.classList.contains('dov-slot--empty'));
+    await Promise.all(activeSlots.map((slot) => ensureActorStateAsset(slot, 'walkBackSheet')));
+    if (disposed || version !== partyEntryVersion) return null;
+    const startedAt = Date.now();
     activeSlots.forEach((slot, index) => {
       const actor = playerActor(slot);
       actor?.style.setProperty('--dov-entry-stagger', `${index * PARTY_ENTRY_STAGGER_MS}ms`);
       actor?.style.setProperty('--dov-entry-duration', `${PARTY_ENTRY_TRAVEL_MS}ms`);
-      setSlotAnimationState(slot, 'entering', true);
+      startTransientPlayerState(slot, 'entering', 'inside', PARTY_ENTRY_DURATION_MS, schedule);
     });
     party.classList.add('dov-party--inside');
     schedule(ENTRY_FX_START_DELAY_MS, () => {
-      activeSlots.forEach((slot) => {
-        if (animationState(slot) === 'entering') setSlotAnimationState(slot, 'inside');
-      });
       startBattleAmbient();
       showEntryFx(schedule);
       showBattleStatus();
     });
+    return startedAt;
   }
 
   function resetScene(): void {
+    partyEntryVersion += 1;
     root.classList.remove(
       'dov-overlay--visible',
       'dov-overlay--fading',
+      'dov-overlay--leaving',
       'dov-overlay--running',
       'dov-overlay--terminal',
       'dov-overlay--instant'
@@ -734,7 +930,12 @@ if (elementsReady) {
 
   function fadeOut(delayMs: number): void {
     later(delayMs, () => {
-      root.classList.add('dov-overlay--fading');
+      cancelTerminalFade?.();
+      cancelTerminalFade = beginDungeonTerminalFade(root, later, () => {
+        cancelTerminalFade = null;
+        root.hidden = true;
+        root.classList.remove('dov-overlay--visible', 'dov-overlay--leaving');
+      });
     });
   }
 
@@ -757,9 +958,9 @@ if (elementsReady) {
       outcome: index < Math.min(2, demoPlayerCount) ? ('survived' as const) : ('dead' as const),
     }));
     setPlayers(players, 'returning');
-    showResult(true, 'عاد الناجون ومعهم غنائم الرحلة');
+    showResult(true, 'عثر الناجون على غنائم داخل الدنجن.');
     showRewards(COMPLETED_REWARDS);
-    fadeOut(REAL_TERMINAL_DURATION_MS + REAL_TERMINAL_FADE_MS);
+    fadeOut(REAL_TERMINAL_DURATION_MS);
   }
 
   function runFailedDemo(): void {
@@ -768,9 +969,9 @@ if (elementsReady) {
       outcome: 'dead' as const,
     }));
     setPlayers(defeatedPlayers, 'returning');
-    showResult(false, 'فشلت الرحلة ولم ينجُ أحد من أعماق الدنجن');
+    showResult(false, 'لم يتمكن الفريق من إكمال الدنجن.');
     hideRewards();
-    fadeOut(REAL_TERMINAL_DURATION_MS + REAL_TERMINAL_FADE_MS);
+    fadeOut(REAL_TERMINAL_DURATION_MS);
   }
 
   function runAnimationRedGateDemo(): void {
@@ -810,9 +1011,71 @@ if (elementsReady) {
       partyPlayers.slice(0, 3).forEach((player, index) => setPlayer(index, { ...player, outcome: 'dead' }));
     });
     later(20_000, () => {
-      showResult(false, 'فشلت الرحلة ولم ينجُ أحد من أعماق الدنجن');
+      showResult(false, 'لم يتمكن الفريق من إكمال الدنجن.');
       hideRewards();
     });
+  }
+
+  function runRealModeRegressionDemo(): void {
+    const player = { ...PLAYERS[0], isOpener: true };
+    setPlayers([]);
+    setStatus(6, 0);
+
+    later(100, () => {
+      setPlayer(0, player, 'arriving');
+      setStatus(6, 1);
+    });
+    for (let second = 1; second <= 6; second += 1) {
+      later(second * 1_000, () => {
+        setPlayer(0, player);
+        setStatus(Math.max(0, 6 - second), 1);
+      });
+    }
+    later(7_000, () => {
+      hideStatus();
+      void sendPartyInside();
+    });
+    later(8_650, () =>
+      showEvent({ icon: 'boss', text: 'صمد حارس الأعماق أمام الفريق.', tone: 'danger', playerSlots: [1] })
+    );
+    later(8_650 + REAL_EVENT_DURATION_MS, () => {
+      hideEvent();
+      setPlayer(0, { ...player, outcome: 'dead' });
+    });
+    later(14_650, () => {
+      showResult(false, 'لم يتمكن الفريق من إكمال الدنجن.');
+      showRewards([{ player: player.name, xp: 65 }]);
+    });
+    fadeOut(17_200);
+  }
+
+  function runJoiningStabilityDemo(): void {
+    const player = { ...PLAYERS[0], isOpener: true };
+    setPlayers([]);
+    setStatus(120, 0);
+    later(100, () => {
+      setPlayer(0, player, 'arriving');
+      setStatus(120, 1);
+      showNotice(player.name);
+    });
+    for (let poll = 1; poll <= 14; poll += 1) {
+      later(poll * 1_000, () => {
+        setPlayer(0, player);
+        setStatus(120 - poll, 1);
+      });
+    }
+  }
+
+  function runMetaAnchorRegressionDemo(): void {
+    const player = { ...PLAYERS[0], isOpener: true };
+    setPlayers([]);
+
+    later(300, () => setPlayer(0, player, 'arriving'));
+    later(2_300, () => setPlayer(0, player));
+    later(3_300, () => sendPartyInside());
+    later(4_500, () => hideEvent());
+    later(4_800, () => setPlayer(0, player, 'returning'));
+    later(6_400, () => setPlayer(0, { ...player, outcome: 'dead' }));
   }
 
   function runSequenceDemo(): void {
@@ -841,7 +1104,7 @@ if (elementsReady) {
     const entryStartsAt = countdownStartsAt + 10_000;
     const terminalAt = scheduleDemoEvents(entryStartsAt + PARTY_ENTRY_DURATION_MS + ENTRY_EVENT_READY_DELAY_MS);
     later(terminalAt, () => {
-      showResult(true, 'عاد الناجون ومعهم غنائم الرحلة');
+      showResult(true, 'عثر الناجون على غنائم داخل الدنجن.');
     });
 
     later(terminalAt + 1_400, () => {
@@ -867,8 +1130,10 @@ if (elementsReady) {
   }
 
   function revealRealOverlay(immediate = false): void {
+    cancelTerminalFade?.();
+    cancelTerminalFade = null;
     root.hidden = false;
-    root.classList.remove('dov-overlay--fading');
+    root.classList.remove('dov-overlay--fading', 'dov-overlay--leaving');
     if (immediate) root.classList.add('dov-overlay--instant');
     if (!root.classList.contains('dov-overlay--visible')) {
       if (!immediate) void root.offsetWidth;
@@ -881,7 +1146,7 @@ if (elementsReady) {
 
   function concealRealOverlay(): void {
     root.hidden = true;
-    root.classList.remove('dov-overlay--visible', 'dov-overlay--fading');
+    root.classList.remove('dov-overlay--visible', 'dov-overlay--fading', 'dov-overlay--leaving');
   }
 
   function stopJoiningCountdown(): void {
@@ -923,6 +1188,13 @@ if (elementsReady) {
     root.classList.remove('dov-overlay--terminal');
     root.classList.add('dov-overlay--running');
     party.classList.add('dov-party--inside');
+    const entryInProgress = slots.some(
+      (slot) => animationState(slot) === 'entering' && hasActiveTransientPlayerState(slot)
+    );
+    if (entryInProgress) {
+      revealRealOverlay();
+      return;
+    }
     if (!activeQueuedEvent && !eventQueueRunning && !terminalPresentationRunning && !activeTerminalSummary) {
       showBattleStatus();
     }
@@ -1085,7 +1357,7 @@ if (elementsReady) {
     terminalPresentationRunId = null;
     terminalPhaseStartedAt = null;
     terminalDisplayRemainingMs = REAL_TERMINAL_DURATION_MS;
-    terminalFadeRemainingMs = REAL_TERMINAL_FADE_MS;
+    terminalFadeRemainingMs = DUNGEON_TERMINAL_FADE_MS;
     terminalPhase = null;
     countdownZeroRunId = null;
     countdownZeroVisibleUntil = 0;
@@ -1173,10 +1445,6 @@ if (elementsReady) {
       root.classList.remove('dov-overlay--terminal');
       root.classList.add('dov-overlay--running');
       party.classList.add('dov-party--inside');
-      slots.forEach((slot) => {
-        if (!slot.classList.contains('dov-slot--empty')) setSlotAnimationState(slot, 'inside');
-      });
-      startBattleAmbient();
       revealRealOverlay();
       return false;
     }
@@ -1184,8 +1452,8 @@ if (elementsReady) {
     setRealParticipants(participants);
     stopCountdown();
     entryPresentedRunId = runId;
-    entryPresentationReadyAt = Date.now() + startDelayMs + PARTY_ENTRY_DURATION_MS + ENTRY_EVENT_READY_DELAY_MS;
-    entryEventFastPollUntil = Date.now() + startDelayMs + PARTY_ENTRY_DURATION_MS + ENTRY_EVENT_FAST_POLL_WINDOW_MS;
+    entryPresentationReadyAt = Number.POSITIVE_INFINITY;
+    entryEventFastPollUntil = 0;
     entryWaitTimerScheduled = false;
     revealRealOverlay();
     const beginEntry = () => {
@@ -1193,7 +1461,12 @@ if (elementsReady) {
       hideStatus();
       hideNotice(runLater);
       joinNoticeQueue = [];
-      sendPartyInside(runLater);
+      void sendPartyInside(runLater).then((startedAt) => {
+        if (startedAt === null || currentRunId !== runId) return;
+        entryPresentationReadyAt = startedAt + PARTY_ENTRY_DURATION_MS + ENTRY_EVENT_READY_DELAY_MS;
+        entryEventFastPollUntil = startedAt + PARTY_ENTRY_DURATION_MS + ENTRY_EVENT_FAST_POLL_WINDOW_MS;
+        processEventQueue();
+      });
     };
     if (startDelayMs > 0) runLater(startDelayMs, beginEntry);
     else beginEntry();
@@ -1233,6 +1506,7 @@ if (elementsReady) {
   function waitForPartyEntry(): boolean {
     if (entryPresentedRunId !== currentRunId) return false;
     const remainingMs = entryPresentationReadyAt - Date.now();
+    if (!Number.isFinite(remainingMs)) return true;
     if (remainingMs <= 0) return false;
     if (!entryWaitTimerScheduled) {
       entryWaitTimerScheduled = true;
@@ -1475,7 +1749,9 @@ if (elementsReady) {
         : event.stage === 'treasure' || event.severity === 'success'
           ? 'mystery'
           : 'normal';
-    const text = event.message === event.title ? event.title : `${event.title}: ${event.message}`;
+    const title = normalizeDungeonViewerText(event.title);
+    const message = normalizeDungeonViewerText(event.message);
+    const text = message === title ? title : `${title}: ${message}`;
     return {
       icon,
       text,
@@ -1547,7 +1823,9 @@ if (elementsReady) {
     const name = document.createElement('strong');
     name.textContent = displayName;
     const xp = document.createElement('span');
-    xp.textContent = `+${xpValue} XP`;
+    xp.className = 'dov-reward__xp';
+    xp.dir = 'ltr';
+    xp.textContent = formatDungeonXp(xpValue);
     card.append(name, xp);
 
     materials.forEach((materialReward) => {
@@ -1592,9 +1870,7 @@ if (elementsReady) {
 
   function terminalDescription(summary: DungeonViewerRunSummary, generalRewards: string[]): string {
     const survivors = summary.participants.filter((participant) => participant.survived === true).length;
-    const base = isFailedTerminal(summary)
-      ? 'فشلت الرحلة ولم ينجُ أحد من أعماق الدنجن'
-      : `عاد ${survivors} من المغامرين ومعهم غنائم الرحلة`;
+    const base = dungeonTerminalDescription(isFailedTerminal(summary), survivors);
     return generalRewards.length > 0 ? `${base} • ${generalRewards.join(' • ')}` : base;
   }
 
@@ -1607,7 +1883,7 @@ if (elementsReady) {
     terminalPresentationRunId = null;
     terminalPhaseStartedAt = null;
     terminalDisplayRemainingMs = REAL_TERMINAL_DURATION_MS;
-    terminalFadeRemainingMs = REAL_TERMINAL_FADE_MS;
+    terminalFadeRemainingMs = DUNGEON_TERMINAL_FADE_MS;
     terminalPhase = null;
     countdownZeroRunId = null;
     countdownZeroVisibleUntil = 0;
@@ -1615,11 +1891,24 @@ if (elementsReady) {
     if (deferredActiveRun) scheduleRealPoll(0);
   }
 
+  function startTerminalFade(summary: DungeonViewerRunSummary): void {
+    cancelTerminalFade?.();
+    terminalPhase = 'fade';
+    terminalPhaseStartedAt = Date.now();
+    cancelTerminalFade = beginDungeonTerminalFade(
+      root,
+      runLater,
+      () => {
+        cancelTerminalFade = null;
+        finishTerminalPresentation(summary);
+      },
+      terminalFadeRemainingMs
+    );
+  }
+
   function scheduleTerminalPhase(summary: DungeonViewerRunSummary): void {
     if (terminalPhase === 'fade') {
-      root.classList.add('dov-overlay--fading');
-      terminalPhaseStartedAt = Date.now();
-      runLater(terminalFadeRemainingMs, () => finishTerminalPresentation(summary));
+      startTerminalFade(summary);
       return;
     }
     terminalPhase = 'display';
@@ -1627,10 +1916,7 @@ if (elementsReady) {
     runLater(terminalDisplayRemainingMs, () => {
       if (activeTerminalSummary?.id !== summary.id) return;
       terminalDisplayRemainingMs = 0;
-      terminalPhase = 'fade';
-      terminalPhaseStartedAt = Date.now();
-      root.classList.add('dov-overlay--fading');
-      runLater(terminalFadeRemainingMs, () => finishTerminalPresentation(summary));
+      startTerminalFade(summary);
     });
   }
 
@@ -1656,7 +1942,7 @@ if (elementsReady) {
       terminalPresentationRunId = summary.id;
       terminalPresentationStartedAt = Date.now();
       terminalDisplayRemainingMs = REAL_TERMINAL_DURATION_MS;
-      terminalFadeRemainingMs = REAL_TERMINAL_FADE_MS;
+      terminalFadeRemainingMs = DUNGEON_TERMINAL_FADE_MS;
       terminalPhase = 'display';
     }
     hideStatus();
@@ -1908,6 +2194,9 @@ if (elementsReady) {
       sequence: runSequenceDemo,
       'animation-red-gate': runAnimationRedGateDemo,
       'animation-party-gate': runAnimationPartyGateDemo,
+      'real-mode-regression': runRealModeRegressionDemo,
+      'joining-stability': runJoiningStabilityDemo,
+      'meta-anchor-regression': runMetaAnchorRegressionDemo,
     };
     runners[demoMode]();
   } else if (!hasDemoParameter) {

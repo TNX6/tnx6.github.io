@@ -3,6 +3,7 @@ export const DUNGEON_CHARACTER_STYLES = ['red', 'purple', 'green', 'orange', 'bl
 export type DungeonCharacterStyle = (typeof DUNGEON_CHARACTER_STYLES)[number];
 
 interface CharacterSheetSet {
+  fallbackIdleImage: string;
   idleSheet: string;
   walkFrontSheet: string;
   walkBackSheet: string;
@@ -45,6 +46,7 @@ const FRAME_COUNTS = {
 function sheets(style: DungeonCharacterStyle): CharacterSheetSet {
   const root = `/assets/dungeon-overlay/characters/animated/${style}/character-${style}`;
   return {
+    fallbackIdleImage: `/assets/dungeon-overlay/characters/character-${style}-idle.webp`,
     idleSheet: `${root}-idle-sheet.webp`,
     walkFrontSheet: `${root}-walk-front-sheet.webp`,
     walkBackSheet: `${root}-walk-back-sheet.webp`,

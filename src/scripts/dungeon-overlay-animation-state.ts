@@ -16,6 +16,11 @@ interface AnimationStateElement {
   readonly offsetWidth: number;
 }
 
+export function hasActivePlayerAnimation(element: Pick<AnimationStateElement, 'dataset'>, now = Date.now()): boolean {
+  const endsAt = Number(element.dataset.animationEndsAt);
+  return Number.isFinite(endsAt) && endsAt > now;
+}
+
 export function setPlayerAnimationState(
   playerElement: AnimationStateElement,
   state: DungeonPlayerAnimationState,
