@@ -675,7 +675,13 @@ body {
   justify-content: flex-end;
   gap: 6px;
   transform: translateX(50%);
+  opacity: 1;
+  transition: opacity 240ms ease;
   pointer-events: none;
+}
+
+.dov-event-feed--hidden {
+  opacity: 0;
 }
 
 .dov-event-feed[hidden],
@@ -1210,33 +1216,7 @@ body {
 }
 
 .dov-overlay--terminal .dov-event-feed {
-  top: 22px;
-  right: auto;
-  left: 8px;
-  width: 286px;
-  height: 116px;
-  transform: none;
-}
-
-.dov-overlay--terminal .dov-event-feed__item {
-  min-height: 40px;
-  max-height: 50px;
-  padding: 5px 7px;
-  grid-template-columns: 28px minmax(0, 1fr);
-  gap: 7px;
-}
-
-.dov-overlay--terminal .dov-event-feed__item p {
-  font-size: 13.5px;
-}
-
-.dov-overlay--terminal .dov-event-feed__icon {
-  transform: scale(0.72);
-}
-
-.dov-overlay--terminal .dov-event-feed__item[data-feed-age='2'],
-.dov-overlay--terminal .dov-event-feed__item[data-feed-age='3'] {
-  display: none;
+  display: none !important;
 }
 
 .dov-result--failed {

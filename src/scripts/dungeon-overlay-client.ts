@@ -54,7 +54,8 @@ type DemoMode =
   | 'joining-stability'
   | 'meta-anchor-regression'
   | 'event-feed-regression'
-  | 'reward-summary-regression';
+  | 'reward-summary-regression'
+  | 'presentation-stability-regression';
 type PlayerOutcome = 'survived' | 'dead';
 type PlayerMotion = 'arriving' | 'returning';
 type EventTone = DungeonEventFeedTone;
@@ -77,6 +78,7 @@ const REAL_EVENT_GAP_MS = 400;
 const REAL_FULL_PARTY_ENTRY_DELAY_MS = 120;
 const REAL_TERMINAL_DURATION_MS = 12_000;
 const REAL_TERMINAL_STALE_MS = 15_000;
+const TERMINAL_EVENT_FEED_FADE_MS = 240;
 const DEMO_EVENT_GAP_MS = 350;
 const ENTRY_EVENT_READY_DELAY_MS = 600;
 const PARTY_ENTRY_TRAVEL_MS = 740;
@@ -84,7 +86,6 @@ const PARTY_ENTRY_STAGGER_MS = 60;
 const PARTY_ENTRY_DURATION_MS = 1_040;
 const ENTRY_FX_START_DELAY_MS = PARTY_ENTRY_DURATION_MS;
 const ENTRY_FX_DURATION_MS = 1_700;
-const PLAYER_HIT_DURATION_MS = 240;
 const PLAYER_DEATH_DURATION_MS = 380;
 const NUDGE_FAST_POLL_MS = 500;
 const NUDGE_FAST_POLL_WINDOW_MS = 4_000;
@@ -96,6 +97,8 @@ interface OverlayPlayer {
   level?: number | null;
   outcome?: PlayerOutcome;
   isOpener?: boolean;
+  presentationKey?: string;
+  restoreTerminalOutcome?: boolean;
 }
 
 interface DemoPlayer extends OverlayPlayer {
@@ -148,6 +151,7 @@ const DEMO_MODES = new Set<DemoMode>([
   'meta-anchor-regression',
   'event-feed-regression',
   'reward-summary-regression',
+  'presentation-stability-regression',
 ]);
 
 const PLAYERS: DemoPlayer[] = [
@@ -234,6 +238,8 @@ if (elementsReady) {
   const timers = new Set<number>();
   const runTimers = new Set<number>();
   const displayedTerminalRunIds = new Set<string>();
+  const processedEventKeys = new Set<string>();
+  const terminalRecoveryRunIds = new Set<string>();
   const searchParams = new URLSearchParams(window.location.search);
   const requestedDemoPlayerCount = Number(searchParams.get('players'));
   const demoPlayerCount = Number.isSafeInteger(requestedDemoPlayerCount)
@@ -480,6 +486,27 @@ if (elementsReady) {
     eventFeedStore.reset();
     eventFeed.replaceChildren();
     eventFeed.hidden = true;
+    eventFeed.classList.remove('dov-event-feed--hidden');
+  }
+
+  function finishHidingEventFeedForTerminal(): void {
+    eventFeedStore.reset();
+    eventFeed.replaceChildren();
+    eventFeed.hidden = true;
+  }
+
+  function hideEventFeedForTerminal(schedule: OverlayScheduler, onHidden: () => void): void {
+    const hasVisibleFeed = !eventFeed.hidden && eventFeed.childElementCount > 0;
+    eventFeed.classList.add('dov-event-feed--hidden');
+    if (!hasVisibleFeed) {
+      finishHidingEventFeedForTerminal();
+      onHidden();
+      return;
+    }
+    schedule(TERMINAL_EVENT_FEED_FADE_MS, () => {
+      finishHidingEventFeedForTerminal();
+      onHidden();
+    });
   }
 
   function forgetEventFeedItem(itemId: string): void {
@@ -493,6 +520,7 @@ if (elementsReady) {
     const visibleItems = eventFeedStore.hydrate(items);
     eventFeed.replaceChildren(...visibleItems.map((item) => createEventFeedElement(item, true)));
     updateEventFeedAges();
+    eventFeed.classList.remove('dov-event-feed--hidden');
     eventFeed.hidden = visibleItems.length === 0;
   }
 
@@ -504,6 +532,7 @@ if (elementsReady) {
     if (!result.added) return false;
     const schedule = options.schedule ?? (realMode ? runLater : later);
     const node = createEventFeedElement(item, options.animate === false);
+    eventFeed.classList.remove('dov-event-feed--hidden');
     eventFeed.hidden = false;
     eventFeed.append(node);
     updateEventFeedAges();
@@ -549,21 +578,11 @@ if (elementsReady) {
     );
   }
 
-  function triggerPlayerHit(slotNumber: number, schedule: typeof later): boolean {
-    const slot = slots[slotNumber - 1];
-    if (!slot || slot.classList.contains('dov-slot--empty')) return false;
-    const currentState = animationState(slot);
-    if (currentState !== 'inside') return false;
-    startTransientPlayerState(slot, 'hit', 'inside', PLAYER_HIT_DURATION_MS, schedule);
-    return true;
-  }
-
   function triggerEventMotion(event: DemoEvent): void {
     const schedule = realMode ? runLater : later;
-    const playerWasHit = (event.playerSlots ?? []).some((slotNumber) => triggerPlayerHit(slotNumber, schedule));
     if (event.tone === 'danger' || event.tone === 'death') {
       pulseBattleAmbient(schedule);
-      if (!playerWasHit || party.classList.contains('dov-party--inside')) showEntryFx(schedule);
+      showEntryFx(schedule);
     } else if (event.tone === 'mystery' || event.tone === 'success' || event.tone === 'reward') {
       pulseBattleAmbient(schedule);
     }
@@ -788,6 +807,7 @@ if (elementsReady) {
 
   function showResult(completed: boolean, description: string): void {
     stopBattleAmbient();
+    finishHidingEventFeedForTerminal();
     resultPanel.classList.toggle('dov-result--failed', !completed);
     resultMark.replaceChildren();
     resultMark.dataset.result = completed ? 'success' : 'failed';
@@ -973,6 +993,12 @@ if (elementsReady) {
     const currentState = animationState(slot);
     if (player.outcome === 'dead') {
       actor.dataset.requestedOutcome = 'dead';
+      if (player.restoreTerminalOutcome) {
+        void ensureActorStateAsset(slot, 'ghostSheet').then(() => {
+          if (actor.dataset.requestedOutcome === 'dead') setPlayerAnimationState(actor, 'ghost');
+        });
+        return;
+      }
       startDeathWhenReady(slot, schedule);
       return;
     }
@@ -1003,7 +1029,7 @@ if (elementsReady) {
   ): void {
     const actor = playerActor(slot);
     if (!actor) return;
-    const playerKey = `${slotIndex + 1}:${player.name}`;
+    const playerKey = player.presentationKey ?? `demo:slot:${slotIndex + 1}`;
     const changedPlayer = actor.dataset.playerKey !== playerKey;
     if (changedPlayer) {
       actor.dataset.playerKey = playerKey;
@@ -1037,9 +1063,10 @@ if (elementsReady) {
   ): void {
     const slot = slots[slotIndex];
     if (!slot) return;
-    slot.className = 'dov-slot';
-    if (player.isOpener ?? slotIndex === 0) slot.classList.add('dov-slot--opener');
-    if (player.outcome) slot.classList.add(`dov-slot--${player.outcome}`);
+    slot.classList.remove('dov-slot--empty');
+    slot.classList.toggle('dov-slot--opener', player.isOpener ?? slotIndex === 0);
+    slot.classList.toggle('dov-slot--survived', player.outcome === 'survived');
+    slot.classList.toggle('dov-slot--dead', player.outcome === 'dead');
     const playerLevel = Number.isSafeInteger(player.level) && Number(player.level) > 0 ? Number(player.level) : null;
     const levelLabel = playerLevel === null ? '' : `، المستوى ${playerLevel}`;
     slot.setAttribute('aria-label', `${player.name}${levelLabel}${player.outcome === 'dead' ? '، مات' : ''}`);
@@ -1302,11 +1329,47 @@ if (elementsReady) {
 
   function presentDemoTerminalSummary(summary: DungeonViewerRunSummary): void {
     const terminal = buildDungeonTerminalPresentation(summary);
-    terminal.rewardEvents.forEach((rewardEvent) => {
-      appendEventFeedItem(rewardEvent, { animate: true, motion: false, schedule: later });
+    hideEventFeedForTerminal(later, () => {
+      renderTerminalRewardRows(terminal.rows);
+      showResult(!isFailedTerminal(summary), terminal.description);
     });
-    renderTerminalRewardRows(terminal.rows);
-    showResult(!isFailedTerminal(summary), terminal.description);
+  }
+
+  function runPresentationStabilityRegressionDemo(): void {
+    const players = PLAYERS.slice(0, 2).map((player, index) => ({ ...player, isOpener: index === 0 }));
+    setPlayers(players);
+    setStatus(15, players.length);
+
+    for (let poll = 1; poll <= 30; poll += 1) {
+      later(poll * 500, () => {
+        players.forEach((player, index) => setPlayer(index, player));
+        setStatus(Math.max(0, 15 - Math.floor(poll / 2)), players.length);
+      });
+    }
+
+    const entryStartsAt = 15_500;
+    later(entryStartsAt, () => {
+      hideStatus();
+      void sendPartyInside();
+    });
+    const eventStartsAt = entryStartsAt + PARTY_ENTRY_DURATION_MS + ENTRY_EVENT_READY_DELAY_MS;
+    const interval = REAL_EVENT_DURATION_MS + DEMO_EVENT_GAP_MS;
+    RUN_EVENTS.slice(0, 4).forEach((event, index) => {
+      const showAt = eventStartsAt + index * interval;
+      later(showAt, () => showEvent(event));
+      later(showAt + REAL_EVENT_DURATION_MS, () => hideEvent());
+    });
+    const terminalAt = eventStartsAt + 4 * interval;
+    later(terminalAt, () => {
+      players.forEach((player, index) =>
+        setPlayer(index, { ...player, outcome: index === 0 ? 'survived' : 'dead' }, 'returning', later)
+      );
+      const summary = demoRewardSummary('presentation-stability-regression');
+      summary.participants = summary.participants.slice(0, 2);
+      summary.rewards = summary.rewards.slice(0, 2);
+      presentDemoTerminalSummary(summary);
+    });
+    fadeOut(terminalAt + REAL_TERMINAL_DURATION_MS + TERMINAL_EVENT_FEED_FADE_MS);
   }
 
   function runEventFeedRegressionDemo(): void {
@@ -1636,6 +1699,8 @@ if (elementsReady) {
     joinNoticeQueue = [];
     activeJoinNotice = null;
     eventQueue = [];
+    processedEventKeys.clear();
+    terminalRecoveryRunIds.clear();
     activeQueuedEvent = null;
     highestEventSequence = 0;
     eventBaselineReady = false;
@@ -1665,7 +1730,8 @@ if (elementsReady) {
 
   function realPlayerFromParticipant(
     participant: DungeonViewerParticipant | DungeonViewerRunParticipant,
-    terminal = false
+    terminal = false,
+    restoreTerminalOutcome = false
   ): OverlayPlayer {
     const runParticipant = participant as DungeonViewerRunParticipant;
     const outcome = terminal
@@ -1680,6 +1746,8 @@ if (elementsReady) {
       level: participant.level,
       outcome,
       isOpener: 'isOpener' in participant ? participant.isOpener : participant.slotNumber === 1,
+      presentationKey: `${currentRunId ?? 'unknown-run'}:slot:${participant.slotNumber}`,
+      restoreTerminalOutcome,
     };
   }
 
@@ -1695,7 +1763,8 @@ if (elementsReady) {
   function setRealParticipants(
     participants: Array<DungeonViewerParticipant | DungeonViewerRunParticipant>,
     terminal = false,
-    motion?: PlayerMotion
+    motion?: PlayerMotion,
+    restoreTerminalOutcome = false
   ): void {
     resetMissingParticipantSlots(participants);
     participants
@@ -1704,7 +1773,7 @@ if (elementsReady) {
       .forEach((participant, index) => {
         setPlayer(
           participant.slotNumber - 1,
-          realPlayerFromParticipant(participant, terminal),
+          realPlayerFromParticipant(participant, terminal, restoreTerminalOutcome),
           motion,
           runLater,
           motion === 'returning' ? index * PARTY_ENTRY_STAGGER_MS : 0
@@ -1811,11 +1880,24 @@ if (elementsReady) {
     root.classList.remove('dov-overlay--terminal');
     root.classList.add('dov-overlay--running');
     party.classList.add('dov-party--inside');
-    slots.forEach((slot) => {
-      if (!slot.classList.contains('dov-slot--empty')) setSlotAnimationState(slot, 'inside');
-    });
     startBattleAmbient();
     revealRealOverlay();
+  }
+
+  async function restoreRunningParticipantsInside(
+    runId: string,
+    participants: DungeonViewerParticipant[]
+  ): Promise<void> {
+    setRealParticipants(participants);
+    const occupiedSlots = slots.filter((slot) => !slot.classList.contains('dov-slot--empty'));
+    await Promise.all(occupiedSlots.map((slot) => ensurePrimaryActorAssets(slot)));
+    if (disposed || currentRunId !== runId) return;
+    occupiedSlots.forEach((slot) => setSlotAnimationState(slot, 'inside'));
+    entryPresentedRunId = runId;
+    entryPresentationReadyAt = 0;
+    entryEventFastPollUntil = 0;
+    entryWaitTimerScheduled = false;
+    prepareRealEventScene();
   }
 
   function queueJoinNotices(participants: DungeonViewerParticipant[], initialLoad: boolean): void {
@@ -2035,8 +2117,10 @@ if (elementsReady) {
 
   function enqueueEvents(events: DungeonViewerEvent[]): void {
     events.forEach((event) => {
-      if (event.sequenceNumber <= highestEventSequence) return;
-      highestEventSequence = event.sequenceNumber;
+      const eventKey = `${currentRunId ?? 'unknown-run'}:${event.sequenceNumber}`;
+      if (processedEventKeys.has(eventKey)) return;
+      processedEventKeys.add(eventKey);
+      highestEventSequence = Math.max(highestEventSequence, event.sequenceNumber);
       eventQueue.push(event);
     });
     eventQueue.sort((left, right) => left.sequenceNumber - right.sequenceNumber);
@@ -2068,13 +2152,20 @@ if (elementsReady) {
     });
   }
 
-  function syncEvents(events: DungeonViewerEvent[], baselineExistingEvents: boolean): void {
+  function syncEvents(
+    events: DungeonViewerEvent[],
+    baselineExistingEvents: boolean,
+    hydrateRecoveredFeed = true
+  ): void {
     if (!eventBaselineReady) {
       eventBaselineReady = true;
       if (baselineExistingEvents) {
         const latest = events.at(-1);
         highestEventSequence = latest?.sequenceNumber ?? 0;
-        if (currentRunId)
+        if (currentRunId) {
+          events.forEach((event) => processedEventKeys.add(`${currentRunId}:${event.sequenceNumber}`));
+        }
+        if (currentRunId && hydrateRecoveredFeed)
           hydrateEventFeed(events.slice(-4).map((event) => dungeonViewerEventToFeedItem(currentRunId!, event)));
         return;
       }
@@ -2164,6 +2255,7 @@ if (elementsReady) {
     hideNotice(runLater);
     hideEvent(runLater);
     const failedTerminal = isFailedTerminal(summary);
+    const recoveringTerminal = terminalRecoveryRunIds.delete(summary.id);
     const visibleParticipants = summary.participants.map((participant) =>
       !failedTerminal && participant.survived === true
         ? participant
@@ -2173,16 +2265,16 @@ if (elementsReady) {
             survived: false,
           }
     );
-    setRealParticipants(visibleParticipants, true, 'returning');
-    hideRewards();
+    setRealParticipants(visibleParticipants, true, recoveringTerminal ? undefined : 'returning', recoveringTerminal);
     const terminal = buildDungeonTerminalPresentation(summary);
-    terminal.rewardEvents.forEach((rewardEvent) => {
-      appendEventFeedItem(rewardEvent, { animate: true, motion: false, schedule: runLater });
-    });
-    renderTerminalRewardRows(terminal.rows);
+    hideRewards();
     revealRealOverlay();
-    showResult(!failedTerminal, terminal.description);
-    scheduleTerminalPhase(summary);
+    hideEventFeedForTerminal(runLater, () => {
+      if (activeTerminalSummary?.id !== summary.id || document.hidden) return;
+      renderTerminalRewardRows(terminal.rows);
+      showResult(!failedTerminal, terminal.description);
+      scheduleTerminalPhase(summary);
+    });
   }
 
   function hasUnfinishedRunPresentation(): boolean {
@@ -2236,7 +2328,7 @@ if (elementsReady) {
     joinNoticeQueue = [];
 
     if (openedDuringRunning) {
-      presentPartyEntryOnce(activeRun.id, activeRun.participants);
+      await restoreRunningParticipantsInside(activeRun.id, activeRun.participants);
     } else if (transitionedFromJoining) {
       presentPartyEntryOnce(activeRun.id, activeRun.participants, zeroHoldMs);
     } else {
@@ -2277,7 +2369,8 @@ if (elementsReady) {
 
     if (summary.id !== currentRunId) return;
     pendingTerminalSummary = summary;
-    syncEvents(events, openedDuringTerminal);
+    if (openedDuringTerminal) terminalRecoveryRunIds.add(summary.id);
+    syncEvents(events, openedDuringTerminal, false);
     maybeShowTerminalResult();
   }
 
@@ -2419,6 +2512,7 @@ if (elementsReady) {
       'meta-anchor-regression': runMetaAnchorRegressionDemo,
       'event-feed-regression': runEventFeedRegressionDemo,
       'reward-summary-regression': runRewardSummaryRegressionDemo,
+      'presentation-stability-regression': runPresentationStabilityRegressionDemo,
     };
     runners[demoMode]();
   } else if (!hasDemoParameter) {

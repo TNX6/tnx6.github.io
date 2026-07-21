@@ -182,14 +182,16 @@ test('uses differential feed updates, isolated XP direction, and registers both 
   ]);
   assert.match(client, /eventFeed\.append\(node\)/);
   assert.match(client, /hydrateEventFeed\(events\.slice\(-4\)/);
-  assert.match(client, /motion:\s*false/);
   assert.match(client, /playerName\.className = 'dov-event-feed__player'/);
   assert.match(client, /xp\.dir = 'ltr'/);
   assert.match(client, /item\.append\(name, status, xp, materials\)/);
   assert.match(css, /\.dov-event-feed__isolated[\s\S]*unicode-bidi:\s*isolate/);
   assert.match(css, /data-feed-age='1'[\s\S]*opacity:\s*0\.82/);
   assert.match(css, /data-feed-age='2'[\s\S]*opacity:\s*0\.62/);
-  assert.match(css, /\.dov-overlay--terminal[\s\S]*data-feed-age='2'[\s\S]*display:\s*none/);
+  assert.match(css, /\.dov-overlay--terminal \.dov-event-feed\s*{\s*display:\s*none !important/);
+  assert.match(css, /\.dov-event-feed--hidden\s*{\s*opacity:\s*0/);
+  assert.match(client, /hideEventFeedForTerminal\(runLater/);
+  assert.doesNotMatch(client, /terminal\.rewardEvents\.forEach/);
   assert.match(css, /grid-template-areas:\s*'name status xp materials'/);
   assert.match(astro, /id="dovEventFeed"[\s\S]*role="log"/);
   assert.match(client, /'event-feed-regression'/);
