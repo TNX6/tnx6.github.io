@@ -25,6 +25,7 @@ test('configures all six character styles with isolated animation sheets', async
   for (const style of DUNGEON_CHARACTER_STYLES) {
     const config = CHARACTER_ANIMATION_CONFIG[style];
     assert.ok(config);
+    assert.equal(config.fallbackIdleImage, `/assets/dungeon-overlay/characters/character-${style}-idle.webp`);
     assert.deepEqual(config.frameCounts, {
       idle: 4,
       walkFront: 6,

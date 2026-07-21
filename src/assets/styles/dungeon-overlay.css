@@ -598,7 +598,7 @@ body {
 }
 
 .dov-notice,
-.dov-event {
+.dov-battle-status {
   position: absolute;
   z-index: 30;
   right: 50%;
@@ -663,7 +663,133 @@ body {
   width: 3px;
 }
 
-.dov-event {
+.dov-event-feed {
+  position: absolute;
+  z-index: 28;
+  top: 5px;
+  right: 50%;
+  display: flex;
+  width: min(620px, calc(100% - 40px));
+  height: 230px;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  transform: translateX(50%);
+  pointer-events: none;
+}
+
+.dov-event-feed[hidden],
+.dov-battle-status[hidden] {
+  display: none !important;
+}
+
+.dov-event-feed__item {
+  display: grid;
+  width: 100%;
+  min-height: 40px;
+  max-height: 54px;
+  padding: 5px 10px;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+  color: #fffaf1;
+  background: rgba(14, 12, 14, 0.94);
+  border: 1px solid #8d6a34;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  transform: translateY(9px);
+  transition:
+    max-height 190ms ease,
+    min-height 190ms ease,
+    padding 190ms ease,
+    border-width 190ms ease,
+    opacity 170ms ease,
+    transform 190ms ease;
+  overflow: hidden;
+}
+
+.dov-event-feed__item--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dov-event-feed__item--visible[data-feed-age='1'] {
+  opacity: 0.82;
+}
+
+.dov-event-feed__item--visible[data-feed-age='2'],
+.dov-event-feed__item--visible[data-feed-age='3'] {
+  opacity: 0.62;
+}
+
+.dov-event-feed__item--leaving {
+  min-height: 0;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-top-width: 0;
+  border-bottom-width: 0;
+  opacity: 0;
+  transform: translateY(-7px);
+}
+
+.dov-event-feed__item[data-tone='mystery'] {
+  border-color: #9869c6;
+}
+
+.dov-event-feed__item[data-tone='danger'],
+.dov-event-feed__item[data-tone='death'] {
+  border-color: #c06450;
+}
+
+.dov-event-feed__item[data-tone='success'] {
+  border-color: #68b67e;
+}
+
+.dov-event-feed__item[data-tone='reward'] {
+  border-color: #c9a84c;
+  background: rgba(24, 20, 13, 0.95);
+}
+
+.dov-event-feed__item p {
+  display: -webkit-box;
+  min-width: 0;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: right;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  unicode-bidi: plaintext;
+}
+
+.dov-event-feed__item p[data-layout='reward-xp'] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 0 5px;
+  direction: rtl;
+  -webkit-line-clamp: unset;
+}
+
+.dov-event-feed__player,
+.dov-event-feed__action {
+  unicode-bidi: isolate;
+}
+
+.dov-event-feed__isolated {
+  display: inline-block;
+  margin-inline: 0;
+  direction: ltr;
+  font-family: Consolas, Tahoma, monospace;
+  unicode-bidi: isolate;
+}
+
+.dov-battle-status {
   top: 6px;
   width: min(620px, calc(100% - 40px));
   min-height: 60px;
@@ -671,42 +797,60 @@ body {
   padding: 10px 17px;
 }
 
-.dov-event[data-tone='mystery'] {
+.dov-battle-status[data-tone='mystery'] {
   border-color: #9869c6;
 }
 
-.dov-event[data-tone='danger'] {
+.dov-battle-status[data-tone='danger'] {
   border-color: #c06450;
 }
 
-.dov-event__icon {
+.dov-event-feed__icon {
   position: relative;
   display: grid;
   width: 38px;
   height: 38px;
   flex: 0 0 38px;
+  justify-self: center;
   place-items: center;
   background: #3a2918;
   border: 3px solid #ffe7a4;
 }
 
-.dov-event[data-tone='mystery'] .dov-event__icon {
+.dov-event-feed__item .dov-event-feed__icon {
+  transform: scale(0.82);
+}
+
+.dov-event-feed__item[data-tone='mystery'] .dov-event-feed__icon,
+.dov-battle-status[data-tone='mystery'] .dov-event-feed__icon {
   background: #4f376b;
   border-color: #c39ae9;
 }
 
-.dov-event[data-tone='danger'] .dov-event__icon {
+.dov-event-feed__item[data-tone='danger'] .dov-event-feed__icon,
+.dov-event-feed__item[data-tone='death'] .dov-event-feed__icon,
+.dov-battle-status[data-tone='danger'] .dov-event-feed__icon {
   background: #6f302a;
   border-color: #e18b75;
 }
 
-.dov-event__icon::before,
-.dov-event__icon::after {
+.dov-event-feed__item[data-tone='success'] .dov-event-feed__icon {
+  background: #294b36;
+  border-color: #82d29a;
+}
+
+.dov-event-feed__item[data-tone='reward'] .dov-event-feed__icon {
+  background: #55421d;
+  border-color: #e0bd58;
+}
+
+.dov-event-feed__icon::before,
+.dov-event-feed__icon::after {
   position: absolute;
   content: '';
 }
 
-.dov-event__icon[data-icon='entrance']::before {
+.dov-event-feed__icon[data-icon='entrance']::before {
   right: 8px;
   bottom: 4px;
   width: 16px;
@@ -716,7 +860,7 @@ body {
   box-shadow: inset -4px 0 0 #6e4525;
 }
 
-.dov-event__icon[data-icon='entrance']::after {
+.dov-event-feed__icon[data-icon='entrance']::after {
   top: 12px;
   left: 3px;
   width: 11px;
@@ -726,7 +870,7 @@ body {
   transform: rotate(-45deg);
 }
 
-.dov-event__icon[data-icon='trap']::before {
+.dov-event-feed__icon[data-icon='trap']::before {
   right: 4px;
   bottom: 4px;
   width: 25px;
@@ -735,7 +879,7 @@ body {
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
 }
 
-.dov-event__icon[data-icon='trap']::after {
+.dov-event-feed__icon[data-icon='trap']::after {
   top: 12px;
   right: 14px;
   width: 4px;
@@ -744,8 +888,8 @@ body {
   box-shadow: 0 13px 0 -1px #4b2d18;
 }
 
-.dov-event__icon[data-icon='encounter']::before,
-.dov-event__icon[data-icon='encounter']::after {
+.dov-event-feed__icon[data-icon='encounter']::before,
+.dov-event-feed__icon[data-icon='encounter']::after {
   top: 3px;
   right: 14px;
   width: 5px;
@@ -756,11 +900,11 @@ body {
   transform: rotate(43deg);
 }
 
-.dov-event__icon[data-icon='encounter']::after {
+.dov-event-feed__icon[data-icon='encounter']::after {
   transform: rotate(-43deg);
 }
 
-.dov-event__icon[data-icon='treasure']::before {
+.dov-event-feed__icon[data-icon='treasure']::before {
   right: 4px;
   bottom: 4px;
   width: 25px;
@@ -770,7 +914,7 @@ body {
   box-shadow: inset 0 4px 0 #e3a84b;
 }
 
-.dov-event__icon[data-icon='treasure']::after {
+.dov-event-feed__icon[data-icon='treasure']::after {
   top: 5px;
   right: 4px;
   width: 25px;
@@ -780,7 +924,7 @@ body {
   box-shadow: inset 9px 0 0 #f1c75f;
 }
 
-.dov-event__icon[data-icon='boss']::before {
+.dov-event-feed__icon[data-icon='boss']::before {
   top: 3px;
   right: 5px;
   width: 23px;
@@ -790,7 +934,7 @@ body {
   clip-path: polygon(50% 0, 100% 16%, 88% 72%, 50% 100%, 12% 72%, 0 16%);
 }
 
-.dov-event__icon[data-icon='boss']::after {
+.dov-event-feed__icon[data-icon='boss']::after {
   top: 10px;
   right: 14px;
   width: 5px;
@@ -799,7 +943,7 @@ body {
   box-shadow: 0 0 0 2px rgba(71, 35, 32, 0.35);
 }
 
-.dov-event p {
+.dov-battle-status p {
   min-width: 0;
   margin: 0;
   font-size: 20px;
@@ -907,7 +1051,7 @@ body {
   transform: rotate(45deg);
 }
 
-.dov-result strong {
+.dov-result > strong {
   align-self: end;
   min-width: 0;
   font-size: 31px;
@@ -916,13 +1060,183 @@ body {
   text-shadow: 0 3px 0 #0b1710;
 }
 
-.dov-result > span:last-child {
+#dovResultText {
   align-self: start;
   color: #d5d1c7;
   font-size: 17px;
   font-weight: 700;
   line-height: 1.45;
   white-space: nowrap;
+}
+
+.dov-result__rewards {
+  display: grid;
+  min-width: 0;
+  margin-top: 8px;
+  grid-column: 1 / -1;
+  gap: 5px;
+}
+
+.dov-result__rewards:empty {
+  display: none;
+}
+
+.dov-result-reward,
+.dov-result-reward-header {
+  display: grid;
+  grid-template-columns: minmax(78px, 0.9fr) 44px 58px minmax(96px, 1.35fr);
+  grid-template-areas: 'name status xp materials';
+  align-items: center;
+  gap: 6px;
+}
+
+.dov-result-reward-header {
+  padding: 0 7px 2px;
+  color: #aaa296;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.dov-result-reward-header__name,
+.dov-result-reward__name {
+  grid-area: name;
+}
+
+.dov-result-reward-header__status,
+.dov-result-reward__status {
+  grid-area: status;
+}
+
+.dov-result-reward-header__xp,
+.dov-result-reward__xp {
+  grid-area: xp;
+}
+
+.dov-result-reward-header__materials,
+.dov-result-reward__materials {
+  grid-area: materials;
+}
+
+.dov-result-reward-header__xp {
+  text-align: left;
+}
+
+.dov-result-reward {
+  min-height: 31px;
+  padding: 5px 7px;
+  color: #e8e2d8;
+  background: rgba(255, 255, 255, 0.035);
+  border-right: 3px solid #5c946b;
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.dov-result-reward[data-status='dead'] {
+  border-right-color: #a85a55;
+}
+
+.dov-result-reward__name {
+  min-width: 0;
+  color: #fff8e9;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dov-result-reward__status {
+  justify-self: start;
+  padding: 2px 5px;
+  color: #d8f2df;
+  background: #294334;
+  border: 1px solid #5c946b;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.dov-result-reward[data-status='dead'] .dov-result-reward__status {
+  color: #ffd9d3;
+  background: #4b2928;
+  border-color: #9d5651;
+}
+
+.dov-result-reward__xp {
+  direction: ltr;
+  color: #f1cf70;
+  font-family: Consolas, Tahoma, monospace;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: left;
+  unicode-bidi: isolate;
+}
+
+.dov-result-reward__materials {
+  display: -webkit-box;
+  min-width: 0;
+  max-height: 2.5em;
+  color: #cfc5dc;
+  font-size: 12px;
+  line-height: 1.25;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.dov-result-reward__status[hidden],
+.dov-result-reward__xp[hidden],
+.dov-result-reward__materials[hidden] {
+  display: none !important;
+}
+
+.dov-overlay--terminal .dov-result {
+  top: 22px;
+  right: 14px;
+  width: 438px;
+  min-height: 78px;
+  padding: 9px 11px;
+  column-gap: 11px;
+  transform: none;
+}
+
+.dov-overlay--terminal .dov-result > strong {
+  font-size: 27px;
+}
+
+.dov-overlay--terminal #dovResultText {
+  font-size: 14px;
+  white-space: normal;
+}
+
+.dov-overlay--terminal .dov-event-feed {
+  top: 22px;
+  right: auto;
+  left: 8px;
+  width: 286px;
+  height: 116px;
+  transform: none;
+}
+
+.dov-overlay--terminal .dov-event-feed__item {
+  min-height: 40px;
+  max-height: 50px;
+  padding: 5px 7px;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 7px;
+}
+
+.dov-overlay--terminal .dov-event-feed__item p {
+  font-size: 13.5px;
+}
+
+.dov-overlay--terminal .dov-event-feed__icon {
+  transform: scale(0.72);
+}
+
+.dov-overlay--terminal .dov-event-feed__item[data-feed-age='2'],
+.dov-overlay--terminal .dov-event-feed__item[data-feed-age='3'] {
+  display: none;
 }
 
 .dov-result--failed {
@@ -2315,7 +2629,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .dov-scene,
   .dov-notice,
-  .dov-event,
+  .dov-battle-status,
+  .dov-event-feed__item,
   .dov-slot {
     transition-duration: 1ms !important;
   }

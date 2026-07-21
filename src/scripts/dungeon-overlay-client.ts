@@ -30,13 +30,17 @@ import {
   DUNGEON_CHARACTER_STYLES,
   type DungeonCharacterStyle,
 } from './dungeon-overlay-character-config';
+import { beginDungeonTerminalFade, DUNGEON_TERMINAL_FADE_MS, formatDungeonXp } from './dungeon-overlay-presentation';
 import {
-  beginDungeonTerminalFade,
-  dungeonTerminalDescription,
-  DUNGEON_TERMINAL_FADE_MS,
-  formatDungeonXp,
-  normalizeDungeonViewerText,
-} from './dungeon-overlay-presentation';
+  buildDungeonTerminalPresentation,
+  dungeonViewerEventFeedId,
+  dungeonViewerEventToFeedItem,
+  DungeonEventFeedStore,
+  type DungeonEventFeedIcon,
+  type DungeonEventFeedItem,
+  type DungeonEventFeedTone,
+  type DungeonTerminalRewardRow,
+} from './dungeon-overlay-feed';
 
 type DemoMode =
   | 'joining'
@@ -48,11 +52,13 @@ type DemoMode =
   | 'animation-party-gate'
   | 'real-mode-regression'
   | 'joining-stability'
-  | 'meta-anchor-regression';
+  | 'meta-anchor-regression'
+  | 'event-feed-regression'
+  | 'reward-summary-regression';
 type PlayerOutcome = 'survived' | 'dead';
 type PlayerMotion = 'arriving' | 'returning';
-type EventTone = 'normal' | 'mystery' | 'danger';
-type EventIconKind = 'entrance' | 'trap' | 'encounter' | 'treasure' | 'boss';
+type EventTone = DungeonEventFeedTone;
+type EventIconKind = DungeonEventFeedIcon;
 
 const PLAYER_MOTION_DURATION_MS: Record<PlayerMotion, number> = {
   arriving: 1_050,
@@ -97,10 +103,15 @@ interface DemoPlayer extends OverlayPlayer {
 }
 
 interface DemoEvent {
+  id?: string;
   icon: EventIconKind;
   text: string;
   tone: EventTone;
   playerSlots?: number[];
+  playerName?: string;
+  actionText?: string;
+  isolatedText?: string;
+  trailingText?: string;
 }
 
 interface DemoReward {
@@ -135,6 +146,8 @@ const DEMO_MODES = new Set<DemoMode>([
   'real-mode-regression',
   'joining-stability',
   'meta-anchor-regression',
+  'event-feed-regression',
+  'reward-summary-regression',
 ]);
 
 const PLAYERS: DemoPlayer[] = [
@@ -166,6 +179,7 @@ const root = document.getElementById('dungeonOverlay');
 const scene = document.getElementById('dungeonOverlayScene');
 const notice = document.getElementById('dovJoinNotice');
 const noticeText = document.getElementById('dovJoinNoticeText');
+const eventFeed = document.getElementById('dovEventFeed');
 const eventPanel = document.getElementById('dovEvent');
 const eventIcon = document.getElementById('dovEventIcon');
 const eventText = document.getElementById('dovEventText');
@@ -177,6 +191,7 @@ const resultPanel = document.getElementById('dovResult');
 const resultMark = document.getElementById('dovResultMark');
 const resultTitle = document.getElementById('dovResultTitle');
 const resultText = document.getElementById('dovResultText');
+const resultRewards = document.getElementById('dovResultRewards');
 const party = document.getElementById('dovParty');
 const entryFx = document.getElementById('dovEntryFx');
 const battleAmbient = document.getElementById('dovBattleAmbient');
@@ -191,6 +206,7 @@ const elementsReady =
   scene &&
   notice &&
   noticeText &&
+  eventFeed &&
   eventPanel &&
   eventIcon &&
   eventText &&
@@ -202,6 +218,7 @@ const elementsReady =
   resultMark &&
   resultTitle &&
   resultText &&
+  resultRewards &&
   party &&
   entryFx &&
   battleAmbient &&
@@ -209,6 +226,7 @@ const elementsReady =
 
 if (elementsReady) {
   const spriteAssetLoader = new DungeonSpriteAssetLoader();
+  const eventFeedStore = new DungeonEventFeedStore();
   const primaryAssetLoads = new WeakMap<HTMLElement, Promise<boolean>>();
   const stateAssetLoads = new WeakMap<HTMLElement, Map<CharacterStateSheet, Promise<boolean>>>();
   const pendingPlayerPresentations = new WeakMap<HTMLElement, PendingPlayerPresentation>();
@@ -226,6 +244,7 @@ if (elementsReady) {
   let disposed = false;
   let noticeVersion = 0;
   let eventVersion = 0;
+  let demoEventId = 0;
   let entryFxVersion = 0;
   let battleAmbientVersion = 0;
   let realMode = false;
@@ -401,17 +420,133 @@ if (elementsReady) {
     });
   }
 
+  function feedItemElement(itemId: string): HTMLElement | null {
+    return (
+      Array.from(eventFeed.querySelectorAll<HTMLElement>('[data-feed-item-id]')).find(
+        (element) => element.dataset.feedItemId === itemId
+      ) ?? null
+    );
+  }
+
+  function createEventFeedElement(item: DungeonEventFeedItem, visible: boolean): HTMLElement {
+    const article = document.createElement('article');
+    article.className = 'dov-event-feed__item';
+    article.dataset.feedItemId = item.id;
+    article.dataset.tone = item.tone;
+
+    const icon = document.createElement('span');
+    icon.className = 'dov-event-feed__icon';
+    icon.dataset.icon = item.icon;
+    icon.setAttribute('aria-hidden', 'true');
+
+    const text = document.createElement('p');
+    if (item.playerName && item.actionText) {
+      text.dataset.layout = 'reward-xp';
+
+      const playerName = document.createElement('bdi');
+      playerName.className = 'dov-event-feed__player';
+      playerName.dir = 'auto';
+      playerName.textContent = item.playerName;
+
+      const action = document.createElement('span');
+      action.className = 'dov-event-feed__action';
+      action.textContent = item.actionText;
+      text.append(playerName, action);
+    } else {
+      text.append(document.createTextNode(item.text));
+    }
+    if (item.isolatedText) {
+      const isolated = document.createElement('bdi');
+      isolated.className = 'dov-event-feed__isolated';
+      isolated.dir = 'ltr';
+      isolated.textContent = item.isolatedText;
+      text.append(isolated);
+    }
+    if (item.trailingText) text.append(document.createTextNode(item.trailingText));
+    article.append(icon, text);
+    if (visible) article.classList.add('dov-event-feed__item--visible');
+    return article;
+  }
+
+  function updateEventFeedAges(): void {
+    const items = eventFeedStore.values();
+    items.forEach((item, index) => {
+      const node = feedItemElement(item.id);
+      if (node) node.dataset.feedAge = String(items.length - index - 1);
+    });
+  }
+
+  function clearEventFeed(): void {
+    eventFeedStore.reset();
+    eventFeed.replaceChildren();
+    eventFeed.hidden = true;
+  }
+
+  function forgetEventFeedItem(itemId: string): void {
+    eventFeedStore.forget(itemId);
+    feedItemElement(itemId)?.remove();
+    updateEventFeedAges();
+    if (eventFeedStore.values().length === 0) eventFeed.hidden = true;
+  }
+
+  function hydrateEventFeed(items: DungeonEventFeedItem[]): void {
+    const visibleItems = eventFeedStore.hydrate(items);
+    eventFeed.replaceChildren(...visibleItems.map((item) => createEventFeedElement(item, true)));
+    updateEventFeedAges();
+    eventFeed.hidden = visibleItems.length === 0;
+  }
+
+  function appendEventFeedItem(
+    item: DungeonEventFeedItem,
+    options: { animate?: boolean; motion?: boolean; schedule?: OverlayScheduler } = {}
+  ): boolean {
+    const result = eventFeedStore.append(item);
+    if (!result.added) return false;
+    const schedule = options.schedule ?? (realMode ? runLater : later);
+    const node = createEventFeedElement(item, options.animate === false);
+    eventFeed.hidden = false;
+    eventFeed.append(node);
+    updateEventFeedAges();
+
+    if (result.removed) {
+      const oldest = feedItemElement(result.removed.id);
+      if (oldest) {
+        oldest.classList.add('dov-event-feed__item--leaving');
+        schedule(190, () => oldest.remove());
+      }
+    }
+
+    if (options.animate !== false) {
+      void node.offsetWidth;
+      node.classList.add('dov-event-feed__item--visible');
+    }
+    if (options.motion !== false) {
+      triggerEventMotion({
+        icon: item.icon,
+        text: item.text,
+        tone: item.tone,
+        playerSlots: item.playerSlots,
+      });
+    }
+    return true;
+  }
+
   function showEvent(event: DemoEvent): void {
-    eventVersion += 1;
-    eventIcon.replaceChildren();
-    eventIcon.dataset.icon = event.icon;
-    eventText.textContent = event.text;
-    eventPanel.dataset.tone = event.tone;
-    eventPanel.hidden = false;
-    eventPanel.classList.remove('dov-event--visible');
-    void eventPanel.offsetWidth;
-    eventPanel.classList.add('dov-event--visible');
-    triggerEventMotion(event);
+    hideEvent(realMode ? runLater : later);
+    appendEventFeedItem(
+      {
+        id: event.id ?? `demo:${++demoEventId}`,
+        icon: event.icon,
+        text: event.text,
+        tone: event.tone,
+        playerSlots: event.playerSlots ?? [],
+        playerName: event.playerName,
+        actionText: event.actionText,
+        isolatedText: event.isolatedText,
+        trailingText: event.trailingText,
+      },
+      { motion: true }
+    );
   }
 
   function triggerPlayerHit(slotNumber: number, schedule: typeof later): boolean {
@@ -426,16 +561,16 @@ if (elementsReady) {
   function triggerEventMotion(event: DemoEvent): void {
     const schedule = realMode ? runLater : later;
     const playerWasHit = (event.playerSlots ?? []).some((slotNumber) => triggerPlayerHit(slotNumber, schedule));
-    if (event.tone === 'danger') {
+    if (event.tone === 'danger' || event.tone === 'death') {
       pulseBattleAmbient(schedule);
       if (!playerWasHit || party.classList.contains('dov-party--inside')) showEntryFx(schedule);
-    } else if (event.tone === 'mystery') {
+    } else if (event.tone === 'mystery' || event.tone === 'success' || event.tone === 'reward') {
       pulseBattleAmbient(schedule);
     }
   }
 
   function showBattleStatus(): void {
-    if (activeQueuedEvent || eventQueueRunning) return;
+    if (activeQueuedEvent || eventQueueRunning || eventFeedStore.values().length > 0) return;
     eventVersion += 1;
     eventIcon.replaceChildren();
     eventIcon.dataset.icon = 'encounter';
@@ -647,6 +782,7 @@ if (elementsReady) {
   function hideResult(): void {
     resultPanel.hidden = true;
     resultPanel.classList.remove('dov-result--failed');
+    resultRewards.replaceChildren();
     scene.classList.remove('dov-scene--result');
   }
 
@@ -661,6 +797,57 @@ if (elementsReady) {
     scene.classList.add('dov-scene--result');
     root.classList.remove('dov-overlay--running');
     root.classList.add('dov-overlay--terminal');
+  }
+
+  function renderTerminalRewardRows(rows: DungeonTerminalRewardRow[]): void {
+    const fragment = document.createDocumentFragment();
+
+    const header = document.createElement('div');
+    header.className = 'dov-result-reward-header';
+    const columnLabels = [
+      ['name', 'الاسم'],
+      ['status', 'الحالة'],
+      ['xp', 'XP'],
+      ['materials', 'الغنائم'],
+    ] as const;
+    columnLabels.forEach(([column, label]) => {
+      const cell = document.createElement('span');
+      cell.className = `dov-result-reward-header__${column}`;
+      cell.textContent = label;
+      if (column === 'xp') cell.dir = 'ltr';
+      header.append(cell);
+    });
+    fragment.append(header);
+
+    rows.forEach((row) => {
+      const item = document.createElement('article');
+      item.className = 'dov-result-reward';
+      item.dataset.status = row.status === 'مات' ? 'dead' : row.status === 'نجا' ? 'survived' : 'unknown';
+
+      const name = document.createElement('strong');
+      name.className = 'dov-result-reward__name';
+      name.textContent = row.displayName;
+
+      const status = document.createElement('span');
+      status.className = 'dov-result-reward__status';
+      status.textContent = row.status ?? '';
+      status.hidden = !row.status;
+
+      const xp = document.createElement('bdi');
+      xp.className = 'dov-result-reward__xp';
+      xp.dir = 'ltr';
+      xp.textContent = row.xpText ?? '';
+      xp.hidden = !row.xpText;
+
+      const materials = document.createElement('span');
+      materials.className = 'dov-result-reward__materials';
+      materials.textContent = row.materials.join('، ');
+      materials.hidden = row.materials.length === 0;
+
+      item.append(name, status, xp, materials);
+      fragment.append(item);
+    });
+    resultRewards.replaceChildren(fragment);
   }
 
   function hideRewards(): void {
@@ -920,6 +1107,7 @@ if (elementsReady) {
     notice.classList.remove('dov-notice--visible');
     eventPanel.hidden = true;
     eventPanel.classList.remove('dov-event--visible');
+    clearEventFeed();
     hideEntryFx();
     stopBattleAmbient();
     hideStatus();
@@ -1076,6 +1264,104 @@ if (elementsReady) {
     later(4_500, () => hideEvent());
     later(4_800, () => setPlayer(0, player, 'returning'));
     later(6_400, () => setPlayer(0, { ...player, outcome: 'dead' }));
+  }
+
+  function demoRewardSummary(runId: string): DungeonViewerRunSummary {
+    const participants: DungeonViewerRunParticipant[] = PLAYERS.map((player, index) => ({
+      slotNumber: index + 1,
+      displayName: player.name,
+      level: player.level,
+      status: index < 4 ? 'survived' : 'dead',
+      survived: index < 4,
+      isOpener: index === 0,
+    }));
+    return {
+      id: runId,
+      status: 'completed',
+      serverNow: new Date().toISOString(),
+      startedAt: new Date(Date.now() - 30_000).toISOString(),
+      completedAt: new Date().toISOString(),
+      result: 'completed',
+      participants,
+      rewards: [
+        {
+          displayName: 'تنكس',
+          xp: 65,
+          materials: [
+            { itemName: 'شظية حديد', quantity: 1 },
+            { itemName: 'خشب الكهف', quantity: 1 },
+          ],
+        },
+        { displayName: 'tnx66', xp: 80, materials: [] },
+        { displayName: 'خالد', xp: 55, materials: [{ itemName: 'جلد الوحش', quantity: 1 }] },
+        { displayName: 'سعد', xp: 45, materials: [] },
+        { displayName: 'نورا', xp: 20, materials: [] },
+      ],
+    };
+  }
+
+  function presentDemoTerminalSummary(summary: DungeonViewerRunSummary): void {
+    const terminal = buildDungeonTerminalPresentation(summary);
+    terminal.rewardEvents.forEach((rewardEvent) => {
+      appendEventFeedItem(rewardEvent, { animate: true, motion: false, schedule: later });
+    });
+    renderTerminalRewardRows(terminal.rows);
+    showResult(!isFailedTerminal(summary), terminal.description);
+  }
+
+  function runEventFeedRegressionDemo(): void {
+    const players = PLAYERS.slice(0, 4).map((player, index) => ({ ...player, isOpener: index === 0 }));
+    const events: DemoEvent[] = [
+      { id: 'feed-demo:1', icon: 'entrance', text: 'دخل الفريق إلى أعماق الدنجن.', tone: 'normal' },
+      { id: 'feed-demo:2', icon: 'trap', text: 'tnx66 وقع في فخ حجري.', tone: 'danger', playerSlots: [2] },
+      { id: 'feed-demo:3', icon: 'encounter', text: 'نورا نجت من مواجهة خطرة.', tone: 'success', playerSlots: [3] },
+      { id: 'feed-demo:4', icon: 'treasure', text: 'خالد عثر على صندوق قديم.', tone: 'mystery', playerSlots: [3] },
+      { id: 'feed-demo:5', icon: 'boss', text: 'سعد مات أثناء حماية الفريق.', tone: 'death', playerSlots: [4] },
+      {
+        id: 'feed-demo:6',
+        icon: 'treasure',
+        text: 'tnx66 حصل على +80 XP',
+        playerName: 'tnx66',
+        actionText: 'حصل على',
+        isolatedText: '+80 XP',
+        tone: 'reward',
+      },
+      { id: 'feed-demo:7', icon: 'treasure', text: 'تنكس حصل على شظية حديد ×1.', tone: 'reward' },
+    ];
+
+    setPlayers(players);
+    later(700, () => void sendPartyInside());
+    events.forEach((event, index) => later(2_400 + index * 3_100, () => showEvent(event)));
+    later(24_000, () => {
+      const terminalPlayers = players.map((player, index) => ({
+        ...player,
+        outcome: index < 3 ? ('survived' as const) : ('dead' as const),
+      }));
+      setPlayers(terminalPlayers, 'returning');
+      const summary = demoRewardSummary('event-feed-regression');
+      summary.participants = summary.participants.slice(0, 4).map((participant, index) => ({
+        ...participant,
+        survived: index < 3,
+        status: index < 3 ? 'survived' : 'dead',
+      }));
+      summary.rewards = summary.rewards.filter((reward) =>
+        summary.participants.some((participant) => participant.displayName === reward.displayName)
+      );
+      presentDemoTerminalSummary(summary);
+    });
+    fadeOut(30_000);
+  }
+
+  function runRewardSummaryRegressionDemo(): void {
+    const summary = demoRewardSummary('reward-summary-regression');
+    const terminalPlayers = PLAYERS.map((player, index) => ({
+      ...player,
+      isOpener: index === 0,
+      outcome: index < 4 ? ('survived' as const) : ('dead' as const),
+    }));
+    setPlayers(terminalPlayers, 'returning');
+    later(900, () => presentDemoTerminalSummary(summary));
+    fadeOut(14_000);
   }
 
   function runSequenceDemo(): void {
@@ -1323,6 +1609,9 @@ if (elementsReady) {
 
     if (interruptedEvent) {
       eventQueue.unshift(interruptedEvent);
+      if (currentRunId) {
+        forgetEventFeedItem(dungeonViewerEventFeedId(currentRunId, interruptedEvent.sequenceNumber));
+      }
     }
     activeQueuedEvent = null;
     eventPanel.hidden = true;
@@ -1740,24 +2029,8 @@ if (elementsReady) {
     scheduleCountdownTick();
   }
 
-  function eventPresentation(event: DungeonViewerEvent): DemoEvent {
-    const icon: EventIconKind =
-      event.stage === 'result' ? (event.outcome === 'failed' ? 'boss' : 'treasure') : event.stage;
-    const tone: EventTone =
-      event.severity === 'danger' || event.stage === 'boss'
-        ? 'danger'
-        : event.stage === 'treasure' || event.severity === 'success'
-          ? 'mystery'
-          : 'normal';
-    const title = normalizeDungeonViewerText(event.title);
-    const message = normalizeDungeonViewerText(event.message);
-    const text = message === title ? title : `${title}: ${message}`;
-    return {
-      icon,
-      text,
-      tone,
-      playerSlots: event.players.map((player) => player.slotNumber),
-    };
+  function eventPresentation(event: DungeonViewerEvent): DungeonEventFeedItem {
+    return dungeonViewerEventToFeedItem(currentRunId ?? 'unknown-run', event);
   }
 
   function enqueueEvents(events: DungeonViewerEvent[]): void {
@@ -1784,10 +2057,10 @@ if (elementsReady) {
       debuggedFirstEventRunIds.add(currentRunId);
       debugNudge('first event displayed', { sequenceNumber: event.sequenceNumber });
     }
-    showEvent(eventPresentation(event));
+    hideEvent(runLater);
+    appendEventFeedItem(eventPresentation(event), { animate: true, motion: true, schedule: runLater });
     runLater(REAL_EVENT_DURATION_MS, () => {
       if (activeQueuedEvent?.sequenceNumber === event.sequenceNumber) activeQueuedEvent = null;
-      hideEvent(runLater);
       runLater(REAL_EVENT_GAP_MS, () => {
         eventQueueRunning = false;
         processEventQueue();
@@ -1801,77 +2074,16 @@ if (elementsReady) {
       if (baselineExistingEvents) {
         const latest = events.at(-1);
         highestEventSequence = latest?.sequenceNumber ?? 0;
-        if (latest) {
-          eventQueue.push(latest);
-          processEventQueue();
-        }
+        if (currentRunId)
+          hydrateEventFeed(events.slice(-4).map((event) => dungeonViewerEventToFeedItem(currentRunId!, event)));
         return;
       }
     }
     enqueueEvents(events);
   }
 
-  function createRewardCard(
-    target: HTMLElement,
-    displayName: string,
-    xpValue: number,
-    materials: Array<{ itemName: string; quantity: number }>
-  ): void {
-    const card = document.createElement('article');
-    card.className = 'dov-reward';
-
-    const name = document.createElement('strong');
-    name.textContent = displayName;
-    const xp = document.createElement('span');
-    xp.className = 'dov-reward__xp';
-    xp.dir = 'ltr';
-    xp.textContent = formatDungeonXp(xpValue);
-    card.append(name, xp);
-
-    materials.forEach((materialReward) => {
-      const material = document.createElement('span');
-      material.textContent = `${materialReward.itemName} ×${materialReward.quantity}`;
-      card.append(material);
-    });
-    target.replaceChildren(card);
-  }
-
-  function showRealRewards(summary: DungeonViewerRunSummary): string[] {
-    hideRewards();
-    const participantsByName = new Map<string, DungeonViewerRunParticipant[]>();
-    summary.participants.forEach((participant) => {
-      const matches = participantsByName.get(participant.displayName) ?? [];
-      matches.push(participant);
-      participantsByName.set(participant.displayName, matches);
-    });
-
-    const generalRewards: string[] = [];
-    summary.rewards.forEach((reward) => {
-      const matchingParticipants = participantsByName.get(reward.displayName) ?? [];
-      if (matchingParticipants.length === 1) {
-        const matchingSlot = slots[matchingParticipants[0].slotNumber - 1];
-        const target = matchingSlot?.querySelector<HTMLElement>('.dov-slot__reward');
-        if (target && !matchingSlot.classList.contains('dov-slot--empty')) {
-          createRewardCard(target, reward.displayName, reward.xp, reward.materials);
-          return;
-        }
-      }
-      const materialText = reward.materials
-        .map((materialReward) => `${materialReward.itemName} ×${materialReward.quantity}`)
-        .join('، ');
-      generalRewards.push(`${reward.displayName}: +${reward.xp} XP${materialText ? `، ${materialText}` : ''}`);
-    });
-    return generalRewards;
-  }
-
   function isFailedTerminal(summary: DungeonViewerRunSummary): boolean {
     return summary.status === 'failed' || summary.result === 'failed';
-  }
-
-  function terminalDescription(summary: DungeonViewerRunSummary, generalRewards: string[]): string {
-    const survivors = summary.participants.filter((participant) => participant.survived === true).length;
-    const base = dungeonTerminalDescription(isFailedTerminal(summary), survivors);
-    return generalRewards.length > 0 ? `${base} • ${generalRewards.join(' • ')}` : base;
   }
 
   function finishTerminalPresentation(summary: DungeonViewerRunSummary): void {
@@ -1888,6 +2100,9 @@ if (elementsReady) {
     countdownZeroRunId = null;
     countdownZeroVisibleUntil = 0;
     displayedTerminalRunIds.add(summary.id);
+    clearEventFeed();
+    hideResult();
+    hideRewards();
     if (deferredActiveRun) scheduleRealPoll(0);
   }
 
@@ -1959,9 +2174,14 @@ if (elementsReady) {
           }
     );
     setRealParticipants(visibleParticipants, true, 'returning');
-    const generalRewards = showRealRewards(summary);
+    hideRewards();
+    const terminal = buildDungeonTerminalPresentation(summary);
+    terminal.rewardEvents.forEach((rewardEvent) => {
+      appendEventFeedItem(rewardEvent, { animate: true, motion: false, schedule: runLater });
+    });
+    renderTerminalRewardRows(terminal.rows);
     revealRealOverlay();
-    showResult(!failedTerminal, terminalDescription(summary, generalRewards));
+    showResult(!failedTerminal, terminal.description);
     scheduleTerminalPhase(summary);
   }
 
@@ -2057,7 +2277,7 @@ if (elementsReady) {
 
     if (summary.id !== currentRunId) return;
     pendingTerminalSummary = summary;
-    syncEvents(events, false);
+    syncEvents(events, openedDuringTerminal);
     maybeShowTerminalResult();
   }
 
@@ -2197,6 +2417,8 @@ if (elementsReady) {
       'real-mode-regression': runRealModeRegressionDemo,
       'joining-stability': runJoiningStabilityDemo,
       'meta-anchor-regression': runMetaAnchorRegressionDemo,
+      'event-feed-regression': runEventFeedRegressionDemo,
+      'reward-summary-regression': runRewardSummaryRegressionDemo,
     };
     runners[demoMode]();
   } else if (!hasDemoParameter) {

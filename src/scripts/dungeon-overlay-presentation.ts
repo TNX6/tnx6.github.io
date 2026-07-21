@@ -16,7 +16,13 @@ export function formatDungeonXp(value: number): string {
 }
 
 export function normalizeDungeonViewerText(value: string): string {
-  return value.replaceAll('عثر الناجون على غنائم مخطط لها', 'عثر الناجون على غنائم داخل الدنجن.');
+  return value
+    .replaceAll('غنائم مخطط لها', 'غنائم داخل الدنجن')
+    .replaceAll('فشلت الرحلة قبل تحقيق هدفها', 'لم يتمكن الفريق من إكمال الرحلة')
+    .replace(/reward planned/giu, 'مكافأة داخل الدنجن')
+    .replace(/planned loot/giu, 'غنائم داخل الدنجن')
+    .replace(/demo reward/giu, 'مكافأة')
+    .replace(/placeholder/giu, 'حدث داخل الدنجن');
 }
 
 export function dungeonTerminalDescription(failed: boolean, survivors: number): string {

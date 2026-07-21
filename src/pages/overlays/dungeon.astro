@@ -25,8 +25,19 @@ const battleBursts = [
           <strong id="dovJoinNoticeText"></strong>
         </div>
 
-        <div id="dovEvent" class="dov-event" role="status" aria-live="polite" aria-atomic="true" hidden>
-          <span id="dovEventIcon" class="dov-event__icon" aria-hidden="true"></span>
+        <div
+          id="dovEventFeed"
+          class="dov-event-feed"
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions"
+          aria-atomic="false"
+          hidden
+        >
+        </div>
+
+        <div id="dovEvent" class="dov-battle-status" role="status" aria-live="polite" aria-atomic="true" hidden>
+          <span id="dovEventIcon" class="dov-event-feed__icon" aria-hidden="true"></span>
           <p id="dovEventText"></p>
         </div>
 
@@ -91,6 +102,7 @@ const battleBursts = [
           <span id="dovResultMark" class="dov-result__mark" aria-hidden="true"></span>
           <strong id="dovResultTitle"></strong>
           <span id="dovResultText"></span>
+          <div id="dovResultRewards" class="dov-result__rewards"></div>
         </div>
 
         <div id="dovParty" class="dov-party" aria-label="مقاعد فريق الدنجن">

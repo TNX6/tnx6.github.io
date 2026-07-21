@@ -3,6 +3,7 @@ import test from 'node:test';
 
 import {
   DUNGEON_PLAYER_ANIMATION_STATES,
+  hasActivePlayerAnimation,
   setPlayerAnimationState,
 } from '../src/scripts/dungeon-overlay-animation-state.ts';
 
@@ -53,4 +54,11 @@ test('moves through arrival, entry, return, death, and ghost states without clas
     assert.equal(setPlayerAnimationState(fixture.element, state), true);
     assert.equal(fixture.element.dataset.animationState, state);
   }
+});
+
+test('preserves transient animation state while its deadline is in the future', () => {
+  const fixture = animationElement('entering');
+  fixture.element.dataset.animationEndsAt = '2000';
+  assert.equal(hasActivePlayerAnimation(fixture.element, 1_999), true);
+  assert.equal(hasActivePlayerAnimation(fixture.element, 2_000), false);
 });

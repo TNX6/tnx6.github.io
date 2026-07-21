@@ -32,7 +32,7 @@ test('keeps vertical identity motion separate from horizontal anchoring', () => 
 });
 
 test('registers the isolated meta anchor regression demo', () => {
-  assert.match(clientSource, /\| 'meta-anchor-regression';/);
+  assert.match(clientSource, /\| 'meta-anchor-regression'/);
   assert.match(clientSource, /function runMetaAnchorRegressionDemo\(\): void/);
   assert.match(clientSource, /'meta-anchor-regression': runMetaAnchorRegressionDemo/);
 });
