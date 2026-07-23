@@ -1,4 +1,5 @@
 import type { DungeonLifecycleNudgeResult } from './dungeon-overlay-nudge-policy';
+import { parseViewerVisualLoadout, type DungeonViewerVisualLoadout } from './dungeon-overlay-equipment-adapter.ts';
 
 export type DungeonViewerStatus = 'joining' | 'running' | 'completed' | 'failed';
 export type DungeonViewerStage = 'entrance' | 'trap' | 'encounter' | 'treasure' | 'boss' | 'result';
@@ -8,6 +9,7 @@ export interface DungeonViewerParticipant {
   slotNumber: number;
   displayName: string;
   level: number | null;
+  visualLoadout?: DungeonViewerVisualLoadout | null;
 }
 
 export interface DungeonViewerActiveRun {
@@ -202,6 +204,10 @@ function parseParticipants(
         displayName: safeText(participant.displayName, 'participant display name', 100),
         level: safeOptionalLevel(participant.level),
       };
+      if (Object.prototype.hasOwnProperty.call(participant, 'visualLoadout')) {
+        common.visualLoadout =
+          participant.visualLoadout === null ? null : parseViewerVisualLoadout(participant.visualLoadout);
+      }
       if (!includeRunState) return common;
       const survived = participant.survived;
       if (survived !== null && typeof survived !== 'boolean') {

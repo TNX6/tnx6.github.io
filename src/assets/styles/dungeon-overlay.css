@@ -1553,6 +1553,76 @@ body {
   transform-origin: bottom center;
 }
 
+.dov-layered-actor {
+  --deq-animation-speed: 1;
+  position: absolute;
+  z-index: 3;
+  bottom: 0;
+  left: 0;
+  display: block;
+  width: 190px;
+  height: 175px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.dov-layered-actor .deq-layered-figure {
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  width: 128px;
+  height: 128px;
+  transform: translateX(-50%) scale(1.25);
+  transform-origin: 64px 120px;
+}
+
+.dov-layered-actor .deq-layer {
+  position: absolute;
+  inset: 0;
+  width: 128px;
+  height: 128px;
+  background-image: var(--deq-layer-image);
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: calc(var(--deq-frame-count) * 100%) 100%;
+  image-rendering: pixelated;
+  pointer-events: none;
+  transform-origin: 64px 120px;
+  animation-name: deq-overlay-layer-frames;
+  animation-duration: var(--deq-playback-duration, var(--deq-frame-duration));
+  animation-timing-function: steps(var(--deq-frame-count), end);
+  animation-iteration-count: var(--deq-animation-iteration);
+  animation-fill-mode: both;
+}
+
+.dov-layered-actor .deq-layer--weapon-back {
+  z-index: 2;
+}
+
+.dov-layered-actor .deq-layer--base-body {
+  z-index: 3;
+}
+
+.dov-layered-actor .deq-layer--boots {
+  z-index: 4;
+}
+
+.dov-layered-actor .deq-layer--armor {
+  z-index: 5;
+}
+
+.dov-layered-actor .deq-layer--helmet {
+  z-index: 6;
+}
+
+.dov-layered-actor .deq-layer--weapon-front {
+  z-index: 7;
+}
+
+.dov-player-actor[data-render-mode='layered'] .dov-character-accent {
+  display: none;
+}
+
 .dov-avatar {
   --dov-avatar-scale: 0.9;
   position: absolute;
@@ -1566,6 +1636,12 @@ body {
   transform: scale(var(--dov-avatar-scale));
   transform-origin: bottom center;
   image-rendering: pixelated;
+}
+
+@keyframes deq-overlay-layer-frames {
+  to {
+    background-position: 100% 0;
+  }
 }
 
 .dov-character-motion {

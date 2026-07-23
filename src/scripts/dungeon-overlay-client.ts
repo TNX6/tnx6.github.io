@@ -41,6 +41,11 @@ import {
   type DungeonEventFeedTone,
   type DungeonTerminalRewardRow,
 } from './dungeon-overlay-feed';
+import { DungeonOverlayEquipmentAdapter, type DungeonViewerVisualLoadout } from './dungeon-overlay-equipment-adapter';
+import {
+  decodeDungeonLayerAssetInBrowser,
+  DungeonEquipmentLayerAssetLoader,
+} from './dungeon-equipment-layer-preloader';
 
 type DemoMode =
   | 'joining'
@@ -55,7 +60,8 @@ type DemoMode =
   | 'meta-anchor-regression'
   | 'event-feed-regression'
   | 'reward-summary-regression'
-  | 'presentation-stability-regression';
+  | 'presentation-stability-regression'
+  | 'equipment-integration';
 type PlayerOutcome = 'survived' | 'dead';
 type PlayerMotion = 'arriving' | 'returning';
 type EventTone = DungeonEventFeedTone;
@@ -99,6 +105,7 @@ interface OverlayPlayer {
   isOpener?: boolean;
   presentationKey?: string;
   restoreTerminalOutcome?: boolean;
+  visualLoadout?: DungeonViewerVisualLoadout | null;
 }
 
 interface DemoPlayer extends OverlayPlayer {
@@ -132,10 +139,12 @@ interface PendingPlayerPresentation {
   motion?: PlayerMotion;
   schedule: OverlayScheduler;
   motionDelayMs: number;
+  applied: boolean;
 }
 
 interface DungeonOverlayWindow extends Window {
   __tnxDungeonOverlayCleanup?: () => void;
+  __tnxDungeonEquipmentDiagnostics?: () => ReturnType<DungeonOverlayEquipmentAdapter['diagnostics']>;
 }
 
 const DEMO_MODES = new Set<DemoMode>([
@@ -152,6 +161,7 @@ const DEMO_MODES = new Set<DemoMode>([
   'event-feed-regression',
   'reward-summary-regression',
   'presentation-stability-regression',
+  'equipment-integration',
 ]);
 
 const PLAYERS: DemoPlayer[] = [
@@ -176,8 +186,32 @@ const COMPLETED_REWARDS: DemoReward[] = [
   { player: 'tnx66', xp: 85, item: 'شظية حديد ×1' },
 ];
 
+const EQUIPMENT_COMMON_VISUAL_LOADOUT: DungeonViewerVisualLoadout = {
+  weapon: { spriteKey: 'rusty-sword' },
+  helmet: { spriteKey: 'leather-cap' },
+  armor: { spriteKey: 'patched-leather' },
+  boots: { spriteKey: 'traveler-boots' },
+};
+
+const EQUIPMENT_RARE_VISUAL_LOADOUT: DungeonViewerVisualLoadout = {
+  weapon: { spriteKey: 'steel-sword' },
+  helmet: { spriteKey: 'iron-helmet' },
+  armor: { spriteKey: 'iron-armor' },
+  boots: { spriteKey: 'guard-boots' },
+};
+
+const EQUIPMENT_EMPTY_VISUAL_LOADOUT: DungeonViewerVisualLoadout = {
+  weapon: null,
+  helmet: null,
+  armor: null,
+  boots: null,
+};
+
 const clientWindow = window as DungeonOverlayWindow;
 clientWindow.__tnxDungeonOverlayCleanup?.();
+const searchParams = new URLSearchParams(window.location.search);
+const requestedDemo = searchParams.get('demo');
+const equipmentDemoFixture = searchParams.get('fixture') ?? 'v2-empty';
 
 const root = document.getElementById('dungeonOverlay');
 const scene = document.getElementById('dungeonOverlayScene');
@@ -230,6 +264,26 @@ const elementsReady =
 
 if (elementsReady) {
   const spriteAssetLoader = new DungeonSpriteAssetLoader();
+  const equipmentAssetLoader =
+    requestedDemo === 'equipment-integration'
+      ? new DungeonEquipmentLayerAssetLoader({
+          concurrency: 5,
+          decoder: async (url, timeoutMs) => {
+            const failBase = equipmentDemoFixture === 'base-failure' && url.includes('/base/red/');
+            const failEquipment = equipmentDemoFixture === 'equipment-failure' && url.includes('/items/leather-cap/');
+            const failSteel =
+              equipmentDemoFixture === 'steel-partial-failure' && url.includes('/items/steel-sword/idle-back.webp');
+            if (failBase || failEquipment || failSteel)
+              throw new Error('Controlled equipment integration demo failure');
+            await decodeDungeonLayerAssetInBrowser(url, timeoutMs);
+          },
+        })
+      : undefined;
+  const equipmentAdapter = new DungeonOverlayEquipmentAdapter({
+    initialPlayerNodeCount: slots.length,
+    loader: equipmentAssetLoader,
+  });
+  clientWindow.__tnxDungeonEquipmentDiagnostics = () => equipmentAdapter.diagnostics();
   const eventFeedStore = new DungeonEventFeedStore();
   const primaryAssetLoads = new WeakMap<HTMLElement, Promise<boolean>>();
   const stateAssetLoads = new WeakMap<HTMLElement, Map<CharacterStateSheet, Promise<boolean>>>();
@@ -240,7 +294,6 @@ if (elementsReady) {
   const displayedTerminalRunIds = new Set<string>();
   const processedEventKeys = new Set<string>();
   const terminalRecoveryRunIds = new Set<string>();
-  const searchParams = new URLSearchParams(window.location.search);
   const requestedDemoPlayerCount = Number(searchParams.get('players'));
   const demoPlayerCount = Number.isSafeInteger(requestedDemoPlayerCount)
     ? Math.min(6, Math.max(1, requestedDemoPlayerCount))
@@ -375,6 +428,7 @@ if (elementsReady) {
     clearRunTimers();
     stopCountdown();
     stopPolling();
+    equipmentAdapter.clear();
     window.removeEventListener('pagehide', cleanup);
     window.removeEventListener('beforeunload', cleanup);
     document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -382,6 +436,7 @@ if (elementsReady) {
     if (clientWindow.__tnxDungeonOverlayCleanup === cleanup) {
       delete clientWindow.__tnxDungeonOverlayCleanup;
     }
+    delete clientWindow.__tnxDungeonEquipmentDiagnostics;
   }
 
   clientWindow.__tnxDungeonOverlayCleanup = cleanup;
@@ -752,7 +807,9 @@ if (elementsReady) {
     if (state !== 'arriving' && state !== 'entering' && state !== 'returning' && state !== 'hit' && state !== 'dead') {
       delete actor.dataset.animationEndsAt;
     }
-    return setPlayerAnimationState(actor, state, restart);
+    const changed = setPlayerAnimationState(actor, state, restart);
+    equipmentAdapter.setState(actor, state);
+    return changed;
   }
 
   function startTransientPlayerState(
@@ -764,12 +821,12 @@ if (elementsReady) {
   ): void {
     const actor = playerActor(slot);
     if (!actor) return;
-    setPlayerAnimationState(actor, state, true);
+    setSlotAnimationState(slot, state, true);
     actor.dataset.animationEndsAt = String(Date.now() + durationMs);
     schedule(durationMs, () => {
       if (actor.dataset.animationState !== state) return;
       delete actor.dataset.animationEndsAt;
-      setPlayerAnimationState(actor, nextState);
+      setSlotAnimationState(slot, nextState);
     });
   }
 
@@ -778,7 +835,7 @@ if (elementsReady) {
     const endsAt = Number(actor?.dataset.animationEndsAt);
     if (!actor || !Number.isFinite(endsAt) || endsAt > Date.now()) return false;
     delete actor.dataset.animationEndsAt;
-    setPlayerAnimationState(actor, nextState);
+    setSlotAnimationState(slot, nextState);
     return true;
   }
 
@@ -922,6 +979,7 @@ if (elementsReady) {
 
   function resetSlot(slot: HTMLElement): void {
     const actor = playerActor(slot);
+    if (actor) equipmentAdapter.remove(actor);
     slot.className = 'dov-slot dov-slot--empty';
     slot.setAttribute('aria-label', `المقعد ${slot.dataset.dovSlot || ''} فارغ`);
     const name = slot.querySelector<HTMLElement>('.dov-slot__name');
@@ -944,7 +1002,7 @@ if (elementsReady) {
       delete actor.dataset.deathAssetPending;
       actor.dataset.visualReady = 'false';
       pendingPlayerPresentations.delete(actor);
-      setPlayerAnimationState(actor, 'inside');
+      setSlotAnimationState(slot, 'inside');
     }
   }
 
@@ -956,7 +1014,7 @@ if (elementsReady) {
       if (actor.dataset.deathAssetPending === 'ghost') delete actor.dataset.deathAssetPending;
       if (actor.dataset.requestedOutcome !== 'dead' || animationState(slot) !== 'dead') return;
       delete actor.dataset.animationEndsAt;
-      setPlayerAnimationState(actor, 'ghost');
+      setSlotAnimationState(slot, 'ghost');
     });
   }
 
@@ -975,7 +1033,7 @@ if (elementsReady) {
       if (actor.dataset.deathAssetPending === 'death') delete actor.dataset.deathAssetPending;
       if (actor.dataset.requestedOutcome !== 'dead' || animationState(slot) === 'ghost') return;
       const durationMs = playerDeathDuration(slot);
-      setPlayerAnimationState(actor, 'dead', true);
+      setSlotAnimationState(slot, 'dead', true);
       actor.dataset.animationEndsAt = String(Date.now() + durationMs);
       schedule(durationMs, () => revealGhostWhenReady(slot));
     });
@@ -995,7 +1053,7 @@ if (elementsReady) {
       actor.dataset.requestedOutcome = 'dead';
       if (player.restoreTerminalOutcome) {
         void ensureActorStateAsset(slot, 'ghostSheet').then(() => {
-          if (actor.dataset.requestedOutcome === 'dead') setPlayerAnimationState(actor, 'ghost');
+          if (actor.dataset.requestedOutcome === 'dead') setSlotAnimationState(slot, 'ghost');
         });
         return;
       }
@@ -1037,20 +1095,70 @@ if (elementsReady) {
       pendingPlayerPresentations.delete(actor);
     }
 
+    const visualLoadoutPresent = Object.prototype.hasOwnProperty.call(player, 'visualLoadout');
+    const figure = slot.querySelector<HTMLElement>('.dov-player-figure');
+    const legacyAvatar = slot.querySelector<HTMLElement>('.dov-avatar');
+    const runId = player.presentationKey?.split(':slot:')[0] ?? currentRunId ?? 'demo';
+
     if (actor.dataset.visualReady === 'true') {
+      if (figure && legacyAvatar) {
+        void equipmentAdapter.reconcile({
+          runId,
+          slotNumber: slotIndex + 1,
+          playerActor: actor,
+          figure,
+          legacyAvatar,
+          visualLoadoutPresent,
+          visualLoadout: player.visualLoadout,
+        });
+      }
       applyReadyPlayerState(slot, player, motion, schedule, motionDelayMs);
       return;
     }
 
     const pending = pendingPlayerPresentations.get(actor);
     if (pending?.playerKey === playerKey && pending.motion === 'arriving' && motion === undefined) return;
-    pendingPlayerPresentations.set(actor, { playerKey, player, motion, schedule, motionDelayMs });
-    void ensurePrimaryActorAssets(slot).then(() => {
+    pendingPlayerPresentations.set(actor, {
+      playerKey,
+      player,
+      motion,
+      schedule,
+      motionDelayMs,
+      applied: false,
+    });
+
+    const applyPendingPresentation = (consume: boolean): void => {
       const queued = pendingPlayerPresentations.get(actor);
       if (!queued || queued.playerKey !== actor.dataset.playerKey || slot.classList.contains('dov-slot--empty')) return;
-      pendingPlayerPresentations.delete(actor);
-      applyReadyPlayerState(slot, queued.player, queued.motion, queued.schedule, queued.motionDelayMs);
+      if (!queued.applied) {
+        applyReadyPlayerState(slot, queued.player, queued.motion, queued.schedule, queued.motionDelayMs);
+        queued.applied = true;
+      }
+      if (consume) pendingPlayerPresentations.delete(actor);
       actor.dataset.visualReady = 'true';
+    };
+
+    const legacyReady = ensurePrimaryActorAssets(slot);
+    const rendererReady =
+      figure && legacyAvatar
+        ? equipmentAdapter.reconcile({
+            runId,
+            slotNumber: slotIndex + 1,
+            playerActor: actor,
+            figure,
+            legacyAvatar,
+            visualLoadoutPresent,
+            visualLoadout: player.visualLoadout,
+          })
+        : Promise.resolve<'legacy'>('legacy');
+
+    void legacyReady.then(() => {
+      const record = equipmentAdapter.recordFor(actor);
+      applyPendingPresentation(!record || record.requestedMode === 'legacy' || record.baseFailed);
+    });
+    void rendererReady.then((mode) => {
+      if (mode === 'layered') applyPendingPresentation(true);
+      else void legacyReady.then(() => applyPendingPresentation(true));
     });
   }
 
@@ -1427,6 +1535,135 @@ if (elementsReady) {
     fadeOut(14_000);
   }
 
+  function equipmentDemoLoadout(fixture: string, slotIndex: number): DungeonViewerVisualLoadout | null | undefined {
+    if (fixture === 'v1-legacy') return undefined;
+    if (fixture === 'partial-fallback' && slotIndex === 0) return null;
+    if (fixture === 'v2-empty') return EQUIPMENT_EMPTY_VISUAL_LOADOUT;
+    if (fixture === 'v2-full-rare' || fixture === 'steel-partial-failure') {
+      return EQUIPMENT_RARE_VISUAL_LOADOUT;
+    }
+    if (fixture === 'v2-mixed') {
+      return slotIndex % 2 === 0
+        ? {
+            weapon: EQUIPMENT_RARE_VISUAL_LOADOUT.weapon,
+            helmet: EQUIPMENT_COMMON_VISUAL_LOADOUT.helmet,
+            armor: EQUIPMENT_RARE_VISUAL_LOADOUT.armor,
+            boots: null,
+          }
+        : {
+            weapon: EQUIPMENT_COMMON_VISUAL_LOADOUT.weapon,
+            helmet: null,
+            armor: EQUIPMENT_COMMON_VISUAL_LOADOUT.armor,
+            boots: EQUIPMENT_RARE_VISUAL_LOADOUT.boots,
+          };
+    }
+    return EQUIPMENT_COMMON_VISUAL_LOADOUT;
+  }
+
+  function runEquipmentIntegrationDemo(): void {
+    const fixture = equipmentDemoFixture;
+    const requestedState = searchParams.get('equipmentState') ?? 'registration';
+    const players: OverlayPlayer[] = PLAYERS.map((player, index) => {
+      const visualLoadout = equipmentDemoLoadout(fixture, index);
+      return {
+        ...player,
+        isOpener: index === 0,
+        presentationKey: `equipment-${fixture}:slot:${index + 1}`,
+        ...(visualLoadout !== undefined ? { visualLoadout } : {}),
+      };
+    });
+
+    scene.dataset.equipmentFixture = fixture;
+    scene.dataset.equipmentState = requestedState;
+    setPlayers(players);
+    setStatus(28, players.length);
+
+    const showInsideEffects = (): void => {
+      hideStatus();
+      root.classList.add('dov-overlay--running');
+      slots.forEach((slot) => setSlotAnimationState(slot, 'inside'));
+      party.classList.add('dov-party--inside');
+      startBattleAmbient();
+      showEntryFx();
+    };
+
+    if (fixture === 'running-recovery' || requestedState === 'inside') {
+      later(1_000, showInsideEffects);
+      return;
+    }
+
+    if (fixture === 'terminal-recovery' || requestedState === 'terminal') {
+      later(1_000, () => {
+        const terminalPlayers = players.map((player, index) => ({
+          ...player,
+          outcome: index < 3 ? ('survived' as const) : ('dead' as const),
+          restoreTerminalOutcome: index >= 3,
+        }));
+        setPlayers(terminalPlayers);
+        showResult(true, 'اكتملت الرحلة مع تجهيزات Snapshot المجمدة.');
+      });
+      return;
+    }
+
+    if (requestedState === 'entering') {
+      later(1_000, () => {
+        hideStatus();
+        void sendPartyInside();
+      });
+      return;
+    }
+
+    if (requestedState === 'returning') {
+      later(900, showInsideEffects);
+      later(1_450, () => {
+        players.forEach((player, index) =>
+          setPlayer(index, player, 'returning', later, index * PARTY_ENTRY_STAGGER_MS)
+        );
+      });
+      return;
+    }
+
+    if (requestedState === 'death') {
+      later(1_000, () => {
+        hideStatus();
+        slots.forEach((slot) => setSlotAnimationState(slot, 'dead'));
+      });
+      return;
+    }
+
+    if (requestedState === 'ghost') {
+      later(1_000, () => {
+        hideStatus();
+        slots.forEach((slot) => setSlotAnimationState(slot, 'ghost'));
+      });
+      return;
+    }
+
+    if (requestedState === 'full-sequence') {
+      later(900, () => {
+        hideStatus();
+        void sendPartyInside();
+      });
+      later(2_650, () => showEvent(RUN_EVENTS[0]));
+      later(4_450, () => {
+        hideEvent();
+        players.forEach((player, index) => {
+          setPlayer(
+            index,
+            {
+              ...player,
+              outcome: index < 3 ? ('survived' as const) : ('dead' as const),
+            },
+            'returning',
+            later,
+            index * PARTY_ENTRY_STAGGER_MS
+          );
+        });
+      });
+      later(6_200, () => showResult(true, 'اكتملت الرحلة مع التجهيزات المرئية.'));
+    }
+  }
+
   function runSequenceDemo(): void {
     const sequencePlayers = PLAYERS.slice(0, demoPlayerCount);
     const joinMoments = sequencePlayers.map((_, index) => 500 + index * 2_300);
@@ -1748,6 +1985,9 @@ if (elementsReady) {
       isOpener: 'isOpener' in participant ? participant.isOpener : participant.slotNumber === 1,
       presentationKey: `${currentRunId ?? 'unknown-run'}:slot:${participant.slotNumber}`,
       restoreTerminalOutcome,
+      ...(Object.prototype.hasOwnProperty.call(participant, 'visualLoadout')
+        ? { visualLoadout: participant.visualLoadout }
+        : {}),
     };
   }
 
@@ -2490,7 +2730,6 @@ if (elementsReady) {
   }
 
   const hasDemoParameter = searchParams.has('demo');
-  const requestedDemo = searchParams.get('demo');
   const demoMode = requestedDemo && DEMO_MODES.has(requestedDemo as DemoMode) ? (requestedDemo as DemoMode) : null;
 
   if (demoMode) {
@@ -2513,6 +2752,7 @@ if (elementsReady) {
       'event-feed-regression': runEventFeedRegressionDemo,
       'reward-summary-regression': runRewardSummaryRegressionDemo,
       'presentation-stability-regression': runPresentationStabilityRegressionDemo,
+      'equipment-integration': runEquipmentIntegrationDemo,
     };
     runners[demoMode]();
   } else if (!hasDemoParameter) {

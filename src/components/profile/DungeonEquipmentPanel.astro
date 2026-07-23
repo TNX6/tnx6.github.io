@@ -1,0 +1,138 @@
+---
+import '../../assets/styles/dungeon-equipment.css';
+
+interface Props {
+  apiBase?: string;
+  loginUrl?: string;
+  demo?: boolean;
+}
+
+const {
+  apiBase = 'https://api.tnx6.xyz',
+  loginUrl = 'https://api.tnx6.xyz/auth/twitch/login',
+  demo = false,
+} = Astro.props;
+---
+
+<section
+  class="deq-panel"
+  data-dungeon-equipment-root
+  data-api-base={apiBase}
+  data-login-url={loginUrl}
+  data-demo={demo ? 'true' : undefined}
+  aria-labelledby="dungeonEquipmentTitle"
+  hidden
+>
+  <header class="deq-header">
+    <div class="deq-header__copy">
+      <span class="deq-eyebrow">DUNGEON LOADOUT</span>
+      <h2 id="dungeonEquipmentTitle">معدات الدنجن</h2>
+      <p>جهّز قطعك وقارن الزيادات قبل رحلتك القادمة.</p>
+    </div>
+
+    <button class="deq-refresh" type="button" data-deq-refresh disabled>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 6v5h-5M4 18v-5h5M18.5 9A7 7 0 0 0 6.1 6.3L4 11M5.5 15A7 7 0 0 0 17.9 17.7L20 13"></path>
+      </svg>
+      <span>تحديث المعدات</span>
+    </button>
+  </header>
+
+  <div class="deq-announcer" data-deq-announcer role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="deq-loading" data-deq-loading aria-label="تحميل تجهيزاتك">
+    <div class="deq-loading__line deq-loading__line--short"></div>
+    <div class="deq-loading__stats">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <div class="deq-loading__slots">
+      <span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div class="deq-login" data-deq-login hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8ZM5 21a7 7 0 0 1 14 0"></path>
+    </svg>
+    <div>
+      <h3>تسجيل الدخول مطلوب</h3>
+      <p>يجب تسجيل الدخول عبر Twitch لإدارة معدات الدنجن.</p>
+    </div>
+    <a class="deq-login__button" data-deq-login-link href={loginUrl}>تسجيل الدخول عبر Twitch</a>
+  </div>
+
+  <div class="deq-error" data-deq-error hidden>
+    <div>
+      <strong>تعذر تحميل المعدات</strong>
+      <p data-deq-error-message>حاول مرة أخرى بعد قليل.</p>
+    </div>
+    <button type="button" data-deq-load-retry>إعادة المحاولة</button>
+  </div>
+
+  <div class="deq-body" data-deq-body hidden>
+    <section class="deq-bonuses" aria-labelledby="dungeonEquipmentBonusesTitle">
+      <div class="deq-section-heading">
+        <div>
+          <span>LOADOUT BONUS</span>
+          <h3 id="dungeonEquipmentBonusesTitle">زيادات المعدات</h3>
+        </div>
+      </div>
+      <div class="deq-bonus-grid" data-deq-bonuses></div>
+    </section>
+
+    <section class="deq-loadout" aria-labelledby="dungeonEquipmentSlotsTitle">
+      <div class="deq-section-heading">
+        <div>
+          <span>EQUIPPED</span>
+          <h3 id="dungeonEquipmentSlotsTitle">الخانات المجهزة</h3>
+        </div>
+        <small>اختر خانة لعرض القطع المناسبة</small>
+      </div>
+      <div class="deq-slot-grid" data-deq-slots></div>
+    </section>
+
+    <section class="deq-owned" aria-labelledby="dungeonEquipmentOwnedTitle">
+      <div class="deq-section-heading deq-section-heading--inventory">
+        <div>
+          <span>OWNED GEAR</span>
+          <h3 id="dungeonEquipmentOwnedTitle">معداتك</h3>
+        </div>
+        <small data-deq-inventory-count>0 قطعة</small>
+      </div>
+
+      <div class="deq-filters" data-deq-filters role="group" aria-label="فلترة معدات الدنجن">
+        <button type="button" data-deq-filter="all" aria-pressed="true">الكل</button>
+        <button type="button" data-deq-filter="weapon" aria-pressed="false">الأسلحة</button>
+        <button type="button" data-deq-filter="helmet" aria-pressed="false">الخوذ</button>
+        <button type="button" data-deq-filter="armor" aria-pressed="false">الدروع</button>
+        <button type="button" data-deq-filter="boots" aria-pressed="false">الأحذية</button>
+      </div>
+
+      <div class="deq-inventory" data-deq-inventory aria-live="polite"></div>
+    </section>
+
+    <section class="deq-comparison" data-deq-comparison aria-labelledby="dungeonEquipmentComparisonTitle" hidden>
+      <div class="deq-section-heading">
+        <div>
+          <span>COMPARE</span>
+          <h3 id="dungeonEquipmentComparisonTitle">مقارنة القطعة</h3>
+        </div>
+        <button class="deq-close-comparison" type="button" data-deq-close-comparison aria-label="إغلاق مقارنة القطعة">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"></path></svg>
+        </button>
+      </div>
+      <div data-deq-comparison-content></div>
+    </section>
+  </div>
+
+  <div class="deq-mutation-feedback" data-deq-mutation-feedback hidden>
+    <p data-deq-mutation-message></p>
+    <button type="button" data-deq-mutation-retry hidden>إعادة المحاولة</button>
+  </div>
+</section>
+
+<script>
+  import { installDungeonEquipmentPanels } from '../../scripts/dungeon-equipment-client';
+
+  installDungeonEquipmentPanels();
+</script>
