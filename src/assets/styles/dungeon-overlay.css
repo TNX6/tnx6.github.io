@@ -1584,7 +1584,7 @@ body {
   background-image: var(--deq-layer-image);
   background-repeat: no-repeat;
   background-position: 0 0;
-  background-size: calc(var(--deq-frame-count) * 100%) 100%;
+  background-size: var(--deq-sheet-width) 128px;
   image-rendering: pixelated;
   pointer-events: none;
   transform-origin: 64px 120px;
@@ -1640,7 +1640,7 @@ body {
 
 @keyframes deq-overlay-layer-frames {
   to {
-    background-position: 100% 0;
+    background-position: var(--deq-sheet-shift) 0;
   }
 }
 

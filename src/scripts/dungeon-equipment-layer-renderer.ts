@@ -159,6 +159,8 @@ function syncAnimationContract(actor: DungeonLayeredActor): void {
   const loopEnabled = actor.actor.dataset.animationLoop !== 'false';
   actor.actor.dataset.layeredState = actor.state;
   actor.actor.style.setProperty('--deq-frame-count', String(contract.frames));
+  actor.actor.style.setProperty('--deq-sheet-width', String(contract.frames * DUNGEON_EQUIPMENT_FRAME_SIZE) + 'px');
+  actor.actor.style.setProperty('--deq-sheet-shift', String(-(contract.frames * DUNGEON_EQUIPMENT_FRAME_SIZE)) + 'px');
   actor.actor.style.setProperty('--deq-frame-duration', `${contract.durationMs}ms`);
   actor.actor.style.setProperty('--deq-playback-duration', `${contract.durationMs / speed}ms`);
   actor.actor.style.setProperty('--deq-animation-iteration', contract.loop && loopEnabled ? 'infinite' : '1');
