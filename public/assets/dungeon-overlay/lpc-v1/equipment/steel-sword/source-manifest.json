@@ -1,0 +1,102 @@
+{
+  "id": "steel-sword",
+  "slot": "weapon",
+  "bodyType": "universal",
+  "frameSize": 64,
+  "directionRowOrder": ["back/up", "left", "front/down", "right"],
+  "selection": {
+    "sourceItem": "Arming Sword",
+    "variant": "silver",
+    "reason": "The polished silver palette reads as a higher-tier steel blade and is visibly distinct from the generic test steel sword and the common copper rusty sword.",
+    "candidatesInspected": [
+      "arming iron",
+      "arming steel",
+      "arming silver",
+      "longsword",
+      "rapier"
+    ],
+    "candidatesRejected": {
+      "arming iron": "Too dark and visually merged with the iron armor set.",
+      "arming steel": "Identical to the existing generic test weapon visual.",
+      "longsword": "No dedicated compatible idle sheet.",
+      "rapier": "No dedicated compatible idle sheet and too specialized for the production steel-sword name."
+    }
+  },
+  "layerOrder": {
+    "back": {
+      "zPos": 9,
+      "source": "weapon/sword/arming/universal/bg"
+    },
+    "front": {
+      "zPos": 140,
+      "source": "weapon/sword/arming/universal/fg"
+    }
+  },
+  "animations": {
+    "idle": {
+      "sources": [
+        "weapon/sword/arming/universal/bg/idle/silver.png",
+        "weapon/sword/arming/universal/fg/idle/silver.png"
+      ],
+      "outputs": ["idle-back.png", "idle-front.png"],
+      "dimensions": [832, 256],
+      "activeFramesPerDirection": 2
+    },
+    "idleBreath": {
+      "sources": ["idle-back.png", "idle-front.png"],
+      "outputs": ["idle-breathe-back.png", "idle-breathe-front.png"],
+      "dimensions": [128, 256],
+      "framesPerDirection": 2
+    },
+    "walk": {
+      "sources": [
+        "weapon/sword/arming/universal/bg/walk/silver.png",
+        "weapon/sword/arming/universal/fg/walk/silver.png"
+      ],
+      "outputs": ["walk-back.png", "walk-front.png"],
+      "dimensions": [832, 256],
+      "activeFramesPerDirection": 9
+    },
+    "hurt": {
+      "sources": [
+        "weapon/sword/arming/universal/bg/hurt/silver.png",
+        "weapon/sword/arming/universal/fg/hurt/silver.png"
+      ],
+      "outputs": ["hurt-back.png", "hurt-front.png"],
+      "dimensions": [832, 64],
+      "activeFrames": 6,
+      "transparentPaddingColumns": [6, 12]
+    }
+  },
+  "rightHandNormalization": {
+    "hand": "character-right",
+    "resized": false,
+    "rotated": false,
+    "mirrored": false,
+    "recolored": false,
+    "leftDirectionFrontPixelsTransferredToBack": true,
+    "idleFrontDownOffsets": [[-20, 0], [-20, 0]],
+    "walkFrontDownOffsets": [
+      [-20, 0],
+      [-20, 0],
+      [-20, 0],
+      [-20, 0],
+      [-20, 0],
+      [-20, 0],
+      [-20, 0],
+      [-17, 0],
+      [-20, 0]
+    ],
+    "hurtOffsets": [
+      [-21, 0],
+      [-22, 0],
+      [-20, 0],
+      [-20, 0],
+      [-22, 0],
+      [-28, 0]
+    ],
+    "hurtFinalBackPixelsTransferredToFront": true,
+    "validation": "The normalization implementation was byte-validated against every existing normalized steel test-weapon output before applying it to the original silver variant."
+  },
+  "credits": "/assets/dungeon-overlay/lpc-v1/equipment/steel-sword/credits.txt"
+}

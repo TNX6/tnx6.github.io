@@ -1,0 +1,43 @@
+{
+  "id": "iron-helmet",
+  "slot": "helmet",
+  "bodyType": "adult/male-compatible",
+  "frameSize": 64,
+  "directionRowOrder": ["back/up", "left", "front/down", "right"],
+  "selection": {
+    "sourceItem": "Kettle Helm",
+    "variant": "metal.ulpc iron with original brown inner lining",
+    "reason": "The broad iron brim and visible brown lining read as practical guard equipment and remain distinct from the enclosed generic Greathelm.",
+    "candidatesInspected": [
+      "kettle iron",
+      "nasal iron",
+      "round bascinet iron",
+      "greathelm iron"
+    ]
+  },
+  "sourceFiles": {
+    "idle": "hat/helmet/kettle/adult/idle.png",
+    "walk": "hat/helmet/kettle/adult/walk.png",
+    "hurt": "hat/helmet/kettle/adult/hurt.png",
+    "sourceMetalPalette": "palette_definitions/metal/metal_ulpc.json#steel",
+    "targetMetalPalette": "palette_definitions/metal/metal_ulpc.json#iron",
+    "secondaryPalette": "Original brown inner lining preserved"
+  },
+  "outputs": {
+    "idle.png": [832, 256],
+    "idle-breathe.png": [128, 256],
+    "walk.png": [832, 256],
+    "hurt.png": [832, 64]
+  },
+  "composition": {
+    "zPos": 135,
+    "gridPreserved": true,
+    "resized": false,
+    "cropped": false,
+    "rotated": false,
+    "mirrored": false,
+    "paletteRecolored": true,
+    "recolorMethod": "Exact official LPC steel-to-iron metal palette replacement with one-channel tolerance; alpha and coordinates are unchanged."
+  },
+  "credits": "/assets/dungeon-overlay/lpc-v1/equipment/iron-helmet/credits.txt"
+}

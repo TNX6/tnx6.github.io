@@ -68,9 +68,21 @@ export const SUPPORTED_LPC_ITEM_MAPPINGS: Readonly<
 > = {
   chest: ['test-armor', 'patched-leather', 'iron-armor', 'plate-armor'],
   legs: ['test-legs', 'iron-legs', 'plate-legs'],
-  boots: ['test-boots', 'leather-boots', 'iron-boots', 'plate-boots'],
+  boots: [
+    'test-boots',
+    'leather-boots',
+    'guard-boots',
+    'iron-boots',
+    'plate-boots',
+  ],
   helmet: ['test-helmet', 'leather-cap', 'greathelm', 'iron-helmet'],
-  weapon: ['test-weapon', 'rusty-sword', 'arming-sword', 'iron-sword'],
+  weapon: [
+    'test-weapon',
+    'rusty-sword',
+    'steel-sword',
+    'arming-sword',
+    'iron-sword',
+  ],
   shield: ['test-shield', 'heater-shield', 'iron-shield'],
 };
 

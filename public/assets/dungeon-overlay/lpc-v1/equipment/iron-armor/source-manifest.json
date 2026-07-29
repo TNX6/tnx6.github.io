@@ -1,0 +1,58 @@
+{
+  "id": "iron-armor",
+  "slot": "chest",
+  "bodyType": "male",
+  "frameSize": 64,
+  "directionRowOrder": ["back/up", "left", "front/down", "right"],
+  "selection": {
+    "sourceItem": "Iron Plate Guard Armour",
+    "variant": "plate torso + plate arms + mantal, official iron palette",
+    "reason": "The dark iron plate body and arms retain the expected material while the broad mantal creates a guard silhouette that is visibly distinct from the generic Plate plus Pauldrons test armor.",
+    "candidatesInspected": [
+      "plate + pauldrons iron",
+      "plate + mantal iron",
+      "plate + epaulets iron",
+      "legion + mantal iron"
+    ]
+  },
+  "sourceFiles": {
+    "idle": [
+      "torso/armour/plate/male/idle.png",
+      "arms/armour/plate/male/idle.png",
+      "shoulders/mantal/male/idle.png"
+    ],
+    "walk": [
+      "torso/armour/plate/male/walk.png",
+      "arms/armour/plate/male/walk.png",
+      "shoulders/mantal/male/walk.png"
+    ],
+    "hurt": [
+      "torso/armour/plate/male/hurt.png",
+      "arms/armour/plate/male/hurt.png",
+      "shoulders/mantal/male/hurt.png"
+    ],
+    "plateSourcePalette": "palette_definitions/metal/metal_ulpc.json#steel",
+    "mantalSourcePalette": "palette_definitions/cloth/cloth_ulpc.json#white",
+    "targetPalette": "palette_definitions/metal/metal_ulpc.json#iron"
+  },
+  "outputs": {
+    "idle.png": [832, 256],
+    "idle-breathe.png": [128, 256],
+    "walk.png": [832, 256],
+    "hurt.png": [832, 64]
+  },
+  "composition": {
+    "layerOrder": [
+      "torso plate at zPos 60",
+      "arm plate at zPos 60",
+      "mantal at zPos 75"
+    ],
+    "operation": "Original equipment-only layers palette-normalized and alpha-composited at unchanged coordinates.",
+    "gridPreserved": true,
+    "resized": false,
+    "cropped": false,
+    "rotated": false,
+    "mirrored": false
+  },
+  "credits": "/assets/dungeon-overlay/lpc-v1/equipment/iron-armor/credits.txt"
+}

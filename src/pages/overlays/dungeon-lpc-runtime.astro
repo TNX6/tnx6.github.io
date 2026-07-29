@@ -255,56 +255,46 @@
       const initialPlayers: DungeonPlayerInput[] = [
         {
           slot: 1,
-          username: 'player_one',
-          displayName: 'Player One',
+          username: 'production_steel_sword',
+          displayName: 'Steel Sword Only',
           level: 10,
           animationState: 'idle',
           direction: 'front',
           visualLoadout: {
-            chest: 'test-armor',
-            legs: 'test-legs',
-            boots: 'test-boots',
-            helmet: 'test-helmet',
-            weapon: 'test-weapon',
-            shield: 'test-shield',
+            weapon: { spriteKey: 'steel-sword' },
           },
         },
         {
           slot: 2,
-          username: 'production_common',
-          displayName: 'Production Common Set',
+          username: 'production_iron_helmet',
+          displayName: 'Iron Helmet Only',
           level: 8,
           animationState: 'idle',
-          direction: 'front',
+          direction: 'back',
           visualLoadout: {
-            weapon: { spriteKey: 'rusty-sword' },
-            helmet: { spriteKey: 'leather-cap' },
-            armor: { spriteKey: 'patched-leather' },
-            boots: { spriteKey: 'traveler-boots' },
+            helmet: { spriteKey: 'iron-helmet' },
           },
         },
         {
           slot: 3,
-          username: 'player_three',
-          displayName: 'Player Three',
+          username: 'production_iron_armor',
+          displayName: 'Iron Armor Only',
           level: 7,
           animationState: 'walk',
           direction: 'right',
           visualLoadout: {
-            weapon: 'arming-sword',
-            shield: 'heater-shield',
+            armor: { spriteKey: 'iron-armor' },
           },
         },
         {
           slot: 4,
-          username: 'player_four',
-          displayName: 'Player Four',
+          username: 'production_guard_boots',
+          displayName: 'Guard Boots Only',
           level: 6,
-          animationState: 'idle',
-          direction: 'back',
+          animationState: 'walk',
+          direction: 'left',
           visualLoadout: {
-            helmet: 'greathelm',
-            chest: 'plate-armor',
+            boots: { spriteKey: 'guard-boots' },
           },
         },
         {
@@ -317,18 +307,16 @@
         },
         {
           slot: 6,
-          username: 'player_six',
-          displayName: 'Player Six',
+          username: 'production_rare_set',
+          displayName: 'Production Rare Set',
           level: 4,
           animationState: 'idle',
           direction: 'front',
           visualLoadout: {
-            chest: 'test-armor',
-            legs: 'test-legs',
-            boots: 'test-boots',
-            helmet: 'test-helmet',
-            weapon: 'test-weapon',
-            shield: 'test-shield',
+            weapon: { spriteKey: 'steel-sword' },
+            helmet: { spriteKey: 'iron-helmet' },
+            armor: { spriteKey: 'iron-armor' },
+            boots: { spriteKey: 'guard-boots' },
           },
         },
       ];
@@ -452,12 +440,10 @@
       };
 
       const fullLoadout = {
-        chest: 'test-armor',
-        legs: 'test-legs',
-        boots: 'test-boots',
-        helmet: 'test-helmet',
-        weapon: 'test-weapon',
-        shield: 'test-shield',
+        weapon: { spriteKey: 'steel-sword' },
+        helmet: { spriteKey: 'iron-helmet' },
+        armor: { spriteKey: 'iron-armor' },
+        boots: { spriteKey: 'guard-boots' },
       };
 
       const demoSteps: Array<() => void> = [

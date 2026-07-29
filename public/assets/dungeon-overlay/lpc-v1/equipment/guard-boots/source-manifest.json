@@ -1,0 +1,46 @@
+{
+  "id": "guard-boots",
+  "slot": "boots",
+  "bodyType": "male",
+  "frameSize": 64,
+  "directionRowOrder": ["back/up", "left", "front/down", "right"],
+  "selection": {
+    "sourceItem": "Plate Foot Armour",
+    "variant": "metal.ulpc iron",
+    "reason": "The compact dark iron greaves visibly complete the guard set without the cloth silhouette of ordinary boots or the partial protection of a plate toe.",
+    "candidatesInspected": [
+      "plate greaves iron",
+      "revised boots iron",
+      "rimmed boots iron",
+      "plate-toe iron"
+    ]
+  },
+  "sourceFiles": {
+    "idle": "feet/armour/plate/male/idle.png",
+    "walk": "feet/armour/plate/male/walk.png",
+    "hurt": "feet/armour/plate/male/hurt.png",
+    "sourcePalette": "palette_definitions/metal/metal_ulpc.json#steel",
+    "targetPalette": "palette_definitions/metal/metal_ulpc.json#iron"
+  },
+  "outputs": {
+    "idle.png": [832, 256],
+    "idle-breathe.png": [128, 256],
+    "walk.png": [832, 256],
+    "hurt.png": [832, 64]
+  },
+  "idleBreath": {
+    "feetFixed": true,
+    "operation": "The first recolored original rest frame is repeated as both breathing columns for every direction."
+  },
+  "composition": {
+    "zPos": 15,
+    "gridPreserved": true,
+    "resized": false,
+    "cropped": false,
+    "rotated": false,
+    "mirrored": false,
+    "paletteRecolored": true,
+    "recolorMethod": "Exact official LPC steel-to-iron palette replacement with one-channel tolerance; alpha and coordinates are unchanged."
+  },
+  "credits": "/assets/dungeon-overlay/lpc-v1/equipment/guard-boots/credits.txt"
+}
