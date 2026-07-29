@@ -78,7 +78,7 @@ export interface DungeonLifecycleNudgeResponse {
   httpStatus: number;
 }
 
-const API_BASE = 'https://api.tnx6.xyz';
+const API_BASE = import.meta.env.DEV ? '' : 'https://api.tnx6.xyz';
 const SAFE_RUN_ID = /^[A-Za-z0-9._:-]+$/;
 const STATUSES = new Set<DungeonViewerStatus>(['joining', 'running', 'completed', 'failed']);
 const STAGES = new Set<DungeonViewerStage>(['entrance', 'trap', 'encounter', 'treasure', 'boss', 'result']);
@@ -346,6 +346,22 @@ async function requestJson(path: string, signal: AbortSignal): Promise<Record<st
     throw new DungeonViewerRequestError('Dungeon viewer response is not valid JSON', response.status);
   }
   const record = asRecord(payload);
+  if (import.meta.env.DEV) {
+    const run = record.run && typeof record.run === 'object' ? (record.run as Record<string, unknown>) : null;
+    const summary = run
+      ? {
+          runId: run.id ?? null,
+          runStatus: run.status ?? null,
+          joinedPlayers: run.joinedPlayers ?? null,
+        }
+      : {
+          run: record.run ?? null,
+          eventCount: Array.isArray(record.events) ? record.events.length : null,
+        };
+    console.debug(
+      `[dungeon-viewer] GET ${response.url} -> ${response.status} ${JSON.stringify(summary)}`
+    );
+  }
   if (record.ok !== true) {
     throw new DungeonViewerRequestError('Dungeon viewer response was not successful', response.status);
   }
@@ -395,6 +411,14 @@ export async function advanceDungeonRunIfDue(
     throw new DungeonViewerRequestError('Dungeon lifecycle nudge response is not valid JSON', response.status);
   }
   const payload = asRecord(value);
+  if (import.meta.env.DEV) {
+    console.debug(
+      `[dungeon-viewer] POST ${response.url} -> ${response.status} ${JSON.stringify({
+        runId: payload.runId ?? null,
+        result: payload.result ?? null,
+      })}`
+    );
+  }
   const result = payload.result;
   const contractStatus = response.ok || response.status === 409 || response.status === 423;
   if (

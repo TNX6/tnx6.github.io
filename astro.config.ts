@@ -87,5 +87,14 @@ export default defineConfig({
         '~': path.resolve(__dirname, './src'),
       },
     },
+    server: {
+      proxy: {
+        '/api/dungeon': {
+          target: 'https://api.tnx6.xyz',
+          changeOrigin: true,
+          secure: true,
+        },
+      },
+    },
   },
 });
