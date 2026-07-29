@@ -12,6 +12,20 @@
   pointer-events: none;
 }
 
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-lpc-test-loadout-label {
+  position: absolute;
+  z-index: 30;
+  top: 10px;
+  right: 12px;
+  padding: 3px 7px;
+  border: 1px solid rgba(255, 205, 107, 0.68);
+  background: rgba(20, 13, 4, 0.82);
+  color: #ffe0a1;
+  font: 700 10px/1.2 Consolas, monospace;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+
 .dov-player-actor[data-lpc-render-state='active'] .dov-avatar,
 .dov-player-actor[data-lpc-render-state='active'] .dov-layered-actor {
   display: none !important;

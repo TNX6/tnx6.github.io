@@ -8,6 +8,7 @@ import {
 import type { DungeonPlayerInput, DungeonVisualLoadout } from './dungeon-lpc-adapter';
 import type { DungeonViewerVisualLoadout } from './dungeon-overlay-equipment-adapter';
 import type { DungeonPlayerAnimationState } from './dungeon-overlay-animation-state';
+import { resolveDungeonLpcTestLoadout, type DungeonLpcTestLoadout } from './dungeon-lpc-test-loadout';
 
 type ProductionVisualLoadout = DungeonViewerVisualLoadout & {
   readonly legs?: { readonly spriteKey: string } | null;
@@ -207,9 +208,14 @@ function equipmentItem(
   return PRODUCTION_ITEM_TO_LPC[slot][itemId] ?? itemId;
 }
 
-function lpcLoadout(player: DungeonLpcOverlayPlayer): DungeonVisualLoadout | undefined {
-  if (!Object.prototype.hasOwnProperty.call(player, 'visualLoadout')) return undefined;
-  const loadout = player.visualLoadout;
+function lpcLoadout(
+  player: DungeonLpcOverlayPlayer,
+  forcedLoadout?: DungeonViewerVisualLoadout,
+): DungeonVisualLoadout | undefined {
+  if (forcedLoadout === undefined && !Object.prototype.hasOwnProperty.call(player, 'visualLoadout')) {
+    return undefined;
+  }
+  const loadout = forcedLoadout ?? player.visualLoadout;
   if (!loadout) return {};
   return {
     chest: equipmentItem('chest', loadout.armor),
@@ -236,6 +242,7 @@ function inputFor(
   slotNumber: number,
   player: DungeonLpcOverlayPlayer,
   state: DungeonPlayerAnimationState,
+  forcedLoadout?: DungeonViewerVisualLoadout,
 ): DungeonPlayerInput {
   const mappedState = lpcState(state, player);
   return {
@@ -246,7 +253,7 @@ function inputFor(
     status: player.status ?? player.outcome ?? state,
     animationState: mappedState.animationState,
     direction: mappedState.direction,
-    visualLoadout: lpcLoadout(player),
+    visualLoadout: lpcLoadout(player, forcedLoadout),
   };
 }
 
@@ -260,6 +267,8 @@ export class DungeonLpcOverlayIntegration {
   private readonly warned = new Set<string>();
   private readonly debugLabel: HTMLElement;
   private readonly debugEnabled: boolean;
+  private readonly testLoadout: DungeonLpcTestLoadout | null;
+  private readonly testLoadoutLabel: HTMLElement | null;
   private readonly debugSlots = new Map<HTMLElement, DebugSlotElements>();
   private debugLayer: SVGSVGElement | null = null;
   private debugFrameId: number | null = null;
@@ -269,6 +278,7 @@ export class DungeonLpcOverlayIntegration {
     private readonly slots: readonly HTMLElement[],
   ) {
     root.dataset.dungeonRenderer = 'lpc';
+    this.testLoadout = resolveDungeonLpcTestLoadout(window.location.search, window.location.hostname);
     this.debugEnabled =
       new URLSearchParams(window.location.search).get('lpcDebugSlots') === '1';
     if (this.debugEnabled) root.dataset.lpcDebugSlots = 'true';
@@ -289,6 +299,18 @@ export class DungeonLpcOverlayIntegration {
     this.debugLabel.setAttribute('aria-hidden', 'true');
     root.append(this.debugLabel);
 
+    if (this.testLoadout) {
+      root.dataset.lpcTestLoadout = this.testLoadout.name;
+      const label = document.createElement('span');
+      label.className = 'dov-lpc-test-loadout-label';
+      label.textContent = this.testLoadout.label;
+      label.setAttribute('aria-hidden', 'true');
+      root.append(label);
+      this.testLoadoutLabel = label;
+    } else {
+      this.testLoadoutLabel = null;
+    }
+
     if (this.debugEnabled) this.mountDebugLayer();
   }
 
@@ -302,7 +324,7 @@ export class DungeonLpcOverlayIntegration {
     if (this.failedPlayerKeys.get(slot) === playerKey) return false;
 
     try {
-      const input = inputFor(slotIndex + 1, player, state);
+      const input = inputFor(slotIndex + 1, player, state, this.testLoadout?.visualLoadout);
       const signature = inputSignature(input);
       let record = this.records.get(slot);
 
@@ -390,8 +412,10 @@ export class DungeonLpcOverlayIntegration {
       slot.style.removeProperty('--dov-lpc-identity-bottom');
     });
     this.debugLabel.remove();
+    this.testLoadoutLabel?.remove();
     delete this.root.dataset.dungeonRenderer;
     delete this.root.dataset.lpcDebugSlots;
+    delete this.root.dataset.lpcTestLoadout;
   }
 
   diagnostics(): {
@@ -399,6 +423,7 @@ export class DungeonLpcOverlayIntegration {
     duplicateRootCount: number;
     warningCount: number;
     debugSlots: boolean;
+    testLoadout: DungeonLpcTestLoadout['name'] | null;
   } {
     const roots = this.root.querySelectorAll('[data-lpc-runtime-character]');
     return {
@@ -406,6 +431,7 @@ export class DungeonLpcOverlayIntegration {
       duplicateRootCount: Math.max(0, roots.length - this.records.size),
       warningCount: this.warned.size,
       debugSlots: this.debugEnabled,
+      testLoadout: this.testLoadout?.name ?? null,
     };
   }
 
