@@ -42,6 +42,8 @@ import {
   type DungeonTerminalRewardRow,
 } from './dungeon-overlay-feed';
 import { DungeonOverlayEquipmentAdapter, type DungeonViewerVisualLoadout } from './dungeon-overlay-equipment-adapter';
+import { DungeonLpcOverlayIntegration } from './dungeon-lpc-overlay-integration';
+import { resolveDungeonRendererMode } from './dungeon-renderer-mode';
 import {
   decodeDungeonLayerAssetInBrowser,
   DungeonEquipmentLayerAssetLoader,
@@ -98,6 +100,11 @@ const NUDGE_FAST_POLL_WINDOW_MS = 4_000;
 const COUNTDOWN_ZERO_HOLD_MS = 120;
 const BATTLE_STATUS_TEXT = 'بدأت المواجهة داخل الدنجن';
 
+type DungeonLpcCapableVisualLoadout = DungeonViewerVisualLoadout & {
+  readonly legs?: { readonly spriteKey: string } | null;
+  readonly shield?: { readonly spriteKey: string } | null;
+};
+
 interface OverlayPlayer {
   name: string;
   level?: number | null;
@@ -105,7 +112,10 @@ interface OverlayPlayer {
   isOpener?: boolean;
   presentationKey?: string;
   restoreTerminalOutcome?: boolean;
-  visualLoadout?: DungeonViewerVisualLoadout | null;
+  visualLoadout?: DungeonLpcCapableVisualLoadout | null;
+  status?: string;
+  direction?: string;
+  animationState?: string;
 }
 
 interface DemoPlayer extends OverlayPlayer {
@@ -145,6 +155,7 @@ interface PendingPlayerPresentation {
 interface DungeonOverlayWindow extends Window {
   __tnxDungeonOverlayCleanup?: () => void;
   __tnxDungeonEquipmentDiagnostics?: () => ReturnType<DungeonOverlayEquipmentAdapter['diagnostics']>;
+  __tnxDungeonLpcDiagnostics?: () => ReturnType<DungeonLpcOverlayIntegration['diagnostics']>;
 }
 
 const DEMO_MODES = new Set<DemoMode>([
@@ -283,7 +294,19 @@ if (elementsReady) {
     initialPlayerNodeCount: slots.length,
     loader: equipmentAssetLoader,
   });
+  const rendererMode = resolveDungeonRendererMode(window.location.search);
+  let lpcIntegration: DungeonLpcOverlayIntegration | null = null;
+  if (rendererMode === 'lpc') {
+    try {
+      lpcIntegration = new DungeonLpcOverlayIntegration(root, slots);
+    } catch (error) {
+      console.error('[TNX6 Dungeon LPC] Renderer initialization failed; equipment-v2 remains active.', error);
+    }
+  }
   clientWindow.__tnxDungeonEquipmentDiagnostics = () => equipmentAdapter.diagnostics();
+  if (lpcIntegration) {
+    clientWindow.__tnxDungeonLpcDiagnostics = () => lpcIntegration.diagnostics();
+  }
   const eventFeedStore = new DungeonEventFeedStore();
   const primaryAssetLoads = new WeakMap<HTMLElement, Promise<boolean>>();
   const stateAssetLoads = new WeakMap<HTMLElement, Map<CharacterStateSheet, Promise<boolean>>>();
@@ -428,6 +451,7 @@ if (elementsReady) {
     clearRunTimers();
     stopCountdown();
     stopPolling();
+    lpcIntegration?.destroy();
     equipmentAdapter.clear();
     window.removeEventListener('pagehide', cleanup);
     window.removeEventListener('beforeunload', cleanup);
@@ -437,6 +461,7 @@ if (elementsReady) {
       delete clientWindow.__tnxDungeonOverlayCleanup;
     }
     delete clientWindow.__tnxDungeonEquipmentDiagnostics;
+    delete clientWindow.__tnxDungeonLpcDiagnostics;
   }
 
   clientWindow.__tnxDungeonOverlayCleanup = cleanup;
@@ -809,6 +834,7 @@ if (elementsReady) {
     }
     const changed = setPlayerAnimationState(actor, state, restart);
     equipmentAdapter.setState(actor, state);
+    if (changed || restart) lpcIntegration?.setAnimationState(slot, state);
     return changed;
   }
 
@@ -978,6 +1004,7 @@ if (elementsReady) {
   }
 
   function resetSlot(slot: HTMLElement): void {
+    lpcIntegration?.remove(slot);
     const actor = playerActor(slot);
     if (actor) equipmentAdapter.remove(actor);
     slot.className = 'dov-slot dov-slot--empty';
@@ -1099,6 +1126,17 @@ if (elementsReady) {
     const figure = slot.querySelector<HTMLElement>('.dov-player-figure');
     const legacyAvatar = slot.querySelector<HTMLElement>('.dov-avatar');
     const runId = player.presentationKey?.split(':slot:')[0] ?? currentRunId ?? 'demo';
+
+    if (lpcIntegration) {
+      const currentState =
+        (actor.dataset.animationState as DungeonPlayerAnimationState | undefined) ?? 'inside';
+      if (lpcIntegration.reconcile(slot, slotIndex, player, currentState)) {
+        actor.dataset.visualReady = 'true';
+        pendingPlayerPresentations.delete(actor);
+        applyReadyPlayerState(slot, player, motion, schedule, motionDelayMs);
+        return;
+      }
+    }
 
     if (actor.dataset.visualReady === 'true') {
       if (figure && legacyAvatar) {
@@ -1575,6 +1613,49 @@ if (elementsReady) {
 
     scene.dataset.equipmentFixture = fixture;
     scene.dataset.equipmentState = requestedState;
+
+    if (rendererMode === 'lpc' && requestedState === 'lpc-lifecycle') {
+      const fullLpcVisualLoadout: DungeonLpcCapableVisualLoadout = {
+        ...EQUIPMENT_RARE_VISUAL_LOADOUT,
+        legs: { spriteKey: 'test-legs' },
+        shield: { spriteKey: 'test-shield' },
+      };
+      const unsupportedHelmetPlayer: OverlayPlayer = {
+        ...players[1],
+        visualLoadout: {
+          ...EQUIPMENT_RARE_VISUAL_LOADOUT,
+          helmet: { spriteKey: 'unsupported-demo-helmet' },
+        },
+      };
+
+      const lifecyclePlayers = players.map((player, index) => {
+        if (index === 0) return { ...player, visualLoadout: fullLpcVisualLoadout };
+        if (index === 1) return unsupportedHelmetPlayer;
+        return player;
+      });
+
+      setPlayers([]);
+      setStatus(28, 0);
+      lifecyclePlayers.forEach((player, index) => {
+        later(600 + index * 90, () => {
+          setPlayer(index, player, 'arriving');
+          setStatus(28, index + 1);
+        });
+      });
+      later(1_800, () => setPlayer(1, unsupportedHelmetPlayer));
+      later(2_800, () => setSlotAnimationState(slots[5], 'entering', true));
+      later(3_540, () => {
+        resetSlot(slots[5]);
+        updatePartyLayout();
+        setStatus(28, 5);
+      });
+      later(4_300, () => {
+        setPlayer(5, lifecyclePlayers[5], 'arriving');
+        setStatus(28, 6);
+      });
+      return;
+    }
+
     setPlayers(players);
     setStatus(28, players.length);
 
@@ -1985,6 +2066,9 @@ if (elementsReady) {
       isOpener: 'isOpener' in participant ? participant.isOpener : participant.slotNumber === 1,
       presentationKey: `${currentRunId ?? 'unknown-run'}:slot:${participant.slotNumber}`,
       restoreTerminalOutcome,
+      ...('status' in participant && typeof participant.status === 'string'
+        ? { status: participant.status }
+        : {}),
       ...(Object.prototype.hasOwnProperty.call(participant, 'visualLoadout')
         ? { visualLoadout: participant.visualLoadout }
         : {}),

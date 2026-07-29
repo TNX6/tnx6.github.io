@@ -1,0 +1,519 @@
+---
+import LpcCharacter from '../../components/dungeon/LpcCharacter.astro';
+
+const directions = [
+  { name: 'back', detail: 'up', rowY: '0px' },
+  { name: 'left', detail: 'left', rowY: '-64px' },
+  { name: 'front', detail: 'down', rowY: '-128px' },
+  { name: 'right', detail: 'right', rowY: '-192px' },
+] as const;
+
+const fullLoadout = {
+  chest: true,
+  legs: true,
+  boots: true,
+  helmet: true,
+  weapon: true,
+  shield: true,
+};
+
+const equipmentControls = [
+  { slot: 'chest', label: 'Chest' },
+  { slot: 'legs', label: 'Legs' },
+  { slot: 'boots', label: 'Boots' },
+  { slot: 'helmet', label: 'Helmet' },
+  { slot: 'weapon', label: 'Weapon' },
+  { slot: 'shield', label: 'Shield' },
+] as const;
+
+const inspections = [
+  {
+    label: 'armor layer only',
+    detail: 'chest / idle front',
+    layers: ['idle-chest'],
+  },
+  {
+    label: 'legs layer only',
+    detail: 'idle front',
+    layers: ['idle-legs'],
+  },
+  {
+    label: 'boots layer only',
+    detail: 'idle front',
+    layers: ['idle-boots'],
+  },
+  {
+    label: 'helmet layer only',
+    detail: 'idle front',
+    layers: ['idle-helmet'],
+  },
+  {
+    label: 'weapon layer only',
+    detail: 'back + front / idle front',
+    layers: ['idle-weapon-back', 'idle-weapon-front'],
+  },
+  {
+    label: 'shield layer only',
+    detail: 'back + front / idle front',
+    layers: ['idle-shield-back', 'idle-shield-front'],
+  },
+] as const;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Dungeon LPC V1 Prototype</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #080b11;
+        color: #e5e7eb;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        background:
+          radial-gradient(circle at top, rgb(30 41 59 / 35%), transparent 34rem),
+          #080b11;
+      }
+
+      main {
+        width: min(100% - 2rem, 72rem);
+        margin: 0 auto;
+        padding: 3rem 0 4rem;
+      }
+
+      header {
+        margin-bottom: 2rem;
+      }
+
+      h1,
+      h2,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 0.5rem;
+        font-size: clamp(1.75rem, 4vw, 2.5rem);
+      }
+
+      header p {
+        max-width: 48rem;
+        margin-bottom: 0;
+        color: #94a3b8;
+      }
+
+      .equipment-controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+        gap: 0.65rem;
+        margin-bottom: 2.5rem;
+        padding: 1rem;
+        border: 1px solid #263244;
+        border-radius: 0.75rem;
+        background: rgb(15 23 42 / 72%);
+      }
+
+      .equipment-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+        min-height: 2.75rem;
+        padding: 0.65rem 0.75rem;
+        border: 1px solid #64748b;
+        border-radius: 0.55rem;
+        background: #172033;
+        color: #f8fafc;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .equipment-toggle:hover {
+        border-color: #94a3b8;
+        background: #202c43;
+      }
+
+      .equipment-toggle[aria-pressed="false"] {
+        border-color: #7f1d1d;
+      }
+
+      .toggle-state {
+        min-width: 2.6rem;
+        padding: 0.15rem 0.4rem;
+        border-radius: 999px;
+        background: #15803d;
+        color: #f0fdf4;
+        font-size: 0.72rem;
+        text-align: center;
+      }
+
+      .equipment-toggle[aria-pressed="false"] .toggle-state {
+        background: #991b1b;
+        color: #fef2f2;
+      }
+
+      .toggle-all {
+        grid-column: 1 / -1;
+        border-color: #a78bfa;
+        background: #312e81;
+      }
+
+      .toggle-all:hover {
+        border-color: #c4b5fd;
+        background: #3730a3;
+      }
+
+      section + section {
+        margin-top: 2.5rem;
+      }
+
+      h2 {
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #cbd5e1;
+      }
+
+      .direction-grid,
+      .inspection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+        gap: 1rem;
+      }
+
+      figure {
+        display: grid;
+        justify-items: center;
+        gap: 0.75rem;
+        margin: 0;
+        padding: 1rem;
+        overflow: hidden;
+        border: 1px solid #263244;
+        border-radius: 0.75rem;
+        background: rgb(15 23 42 / 72%);
+      }
+
+      .stage {
+        width: 192px;
+        height: 192px;
+        overflow: hidden;
+        background: transparent;
+      }
+
+      .sprite-stack {
+        position: relative;
+        width: 64px;
+        height: 64px;
+        transform: scale(3);
+        transform-origin: top left;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+      }
+
+      .sprite {
+        position: absolute;
+        inset: 0;
+        background-repeat: no-repeat;
+        background-position-x: 0;
+        background-position-y: var(--row-y);
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+      }
+
+      .idle-base {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/base/male/idle.png");
+      }
+
+      .walk-base {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/base/male/walk.png");
+      }
+
+      .idle-chest {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-armor/idle.png");
+      }
+
+      .walk-chest {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-armor/walk.png");
+      }
+
+      .idle-legs {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-legs/idle.png");
+      }
+
+      .walk-legs {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-legs/walk.png");
+      }
+
+      .idle-boots {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-boots/idle.png");
+      }
+
+      .walk-boots {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-boots/walk.png");
+      }
+
+      .idle-helmet {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-helmet/idle.png");
+      }
+
+      .walk-helmet {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-helmet/walk.png");
+      }
+
+      .idle-weapon-back {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-weapon/idle-back.png");
+      }
+
+      .idle-weapon-front {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-weapon/idle-front.png");
+      }
+
+      .walk-weapon-back {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-weapon/walk-back.png");
+      }
+
+      .walk-weapon-front {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-weapon/walk-front.png");
+      }
+
+      .idle-shield-back {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-shield/crusader-idle-back-v3.png");
+      }
+
+      .idle-shield-front {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-shield/crusader-idle-front-v3.png");
+      }
+
+      .walk-shield-back {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-shield/crusader-walk-back-v3.png");
+      }
+
+      .walk-shield-front {
+        background-image: url("/assets/dungeon-overlay/lpc-v1/equipment/test-shield/crusader-walk-front-v3.png");
+      }
+
+      .walk-sprite {
+        animation: walk-cycle 900ms steps(9) infinite;
+      }
+
+      .equipment-layer {
+        transition: opacity 100ms linear;
+      }
+
+      .hide-chest .layered-preview .slot-chest,
+      .hide-legs .layered-preview .slot-legs,
+      .hide-boots .layered-preview .slot-boots,
+      .hide-helmet .layered-preview .slot-helmet,
+      .hide-weapon .layered-preview .slot-weapon,
+      .hide-shield .layered-preview .slot-shield {
+        opacity: 0;
+      }
+
+      figcaption {
+        display: grid;
+        gap: 0.2rem;
+        text-align: center;
+      }
+
+      .label {
+        font-weight: 700;
+        text-transform: lowercase;
+      }
+
+      .direction {
+        color: #94a3b8;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .stage.compact {
+        width: 128px;
+        height: 128px;
+      }
+
+      .stage.compact .sprite-stack {
+        transform: scale(2);
+      }
+
+      @keyframes walk-cycle {
+        to {
+          background-position-x: -576px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .walk-sprite {
+          animation-play-state: paused;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="prototype">
+      <header>
+        <h1>Dungeon LPC V1 Prototype</h1>
+        <p>
+          Standalone bald male LPC base with static local equipment layers. All sprites use the
+          original 64x64 grid.
+        </p>
+      </header>
+
+      <nav class="equipment-controls" aria-label="Equipment visibility">
+        {
+          equipmentControls.map((control) => (
+            <button
+              class="equipment-toggle"
+              type="button"
+              data-slot-toggle={control.slot}
+              aria-pressed="true"
+            >
+              <span>{control.label}</span>
+              <span class="toggle-state" data-toggle-state>ON</span>
+            </button>
+          ))
+        }
+        <button class="equipment-toggle toggle-all" type="button" data-toggle-all aria-pressed="true">
+          <span>Toggle All Equipment</span>
+          <span class="toggle-state" data-toggle-all-state>ALL ON</span>
+        </button>
+      </nav>
+
+      <section aria-labelledby="idle-heading">
+        <h2 id="idle-heading">Idle directions</h2>
+        <div class="direction-grid">
+          {
+            directions.map((direction) => (
+              <figure class="layered-preview">
+                <div class="stage" aria-hidden="true">
+                  <LpcCharacter
+                    name={`Idle ${direction.name}`}
+                    level={1}
+                    state="idle"
+                    direction={direction.name}
+                    scale={3}
+                    showName={false}
+                    showLevel={false}
+                    loadout={fullLoadout}
+                  />
+                </div>
+                <figcaption>
+                  <span class="label">idle {direction.name}</span>
+                  <span class="direction">{direction.detail}</span>
+                </figcaption>
+              </figure>
+            ))
+          }
+        </div>
+      </section>
+
+      <section aria-labelledby="walk-heading">
+        <h2 id="walk-heading">Walk directions</h2>
+        <div class="direction-grid">
+          {
+            directions.map((direction) => (
+              <figure class="layered-preview">
+                <div class="stage" aria-hidden="true">
+                  <LpcCharacter
+                    name={`Walk ${direction.name}`}
+                    level={1}
+                    state="walk"
+                    direction={direction.name}
+                    scale={3}
+                    showName={false}
+                    showLevel={false}
+                    loadout={fullLoadout}
+                  />
+                </div>
+                <figcaption>
+                  <span class="label">walk {direction.name}</span>
+                  <span class="direction">{direction.detail}</span>
+                </figcaption>
+              </figure>
+            ))
+          }
+        </div>
+      </section>
+
+      <section aria-labelledby="layer-heading">
+        <h2 id="layer-heading">Layer inspection</h2>
+        <div class="inspection-grid">
+          {
+            inspections.map((inspection) => (
+              <figure>
+                <div class="stage compact" aria-hidden="true">
+                  <div class="sprite-stack" style="--row-y: -128px;">
+                    {inspection.layers.map((layer) => <div class={`sprite ${layer}`} />)}
+                  </div>
+                </div>
+                <figcaption>
+                  <span class="label">{inspection.label}</span>
+                  <span class="direction">{inspection.detail}</span>
+                </figcaption>
+              </figure>
+            ))
+          }
+        </div>
+      </section>
+    </main>
+
+    <script is:inline>
+      const prototype = document.querySelector(".prototype");
+      const slotButtons = Array.from(document.querySelectorAll("[data-slot-toggle]"));
+      const toggleAll = document.querySelector("[data-toggle-all]");
+      const toggleAllState = document.querySelector("[data-toggle-all-state]");
+
+      const setSlot = (button, enabled) => {
+        const slot = button.getAttribute("data-slot-toggle");
+        if (!slot) return;
+        prototype?.classList.toggle(`hide-${slot}`, !enabled);
+        button.setAttribute("aria-pressed", String(enabled));
+        const state = button.querySelector("[data-toggle-state]");
+        if (state) state.textContent = enabled ? "ON" : "OFF";
+      };
+
+      const updateAllState = () => {
+        const enabledCount = slotButtons.filter(
+          (button) => button.getAttribute("aria-pressed") === "true"
+        ).length;
+        const allEnabled = enabledCount === slotButtons.length;
+        const allDisabled = enabledCount === 0;
+        toggleAll?.setAttribute("aria-pressed", String(allEnabled));
+        if (toggleAllState) {
+          toggleAllState.textContent = allEnabled ? "ALL ON" : allDisabled ? "ALL OFF" : "MIXED";
+        }
+      };
+
+      slotButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          setSlot(button, button.getAttribute("aria-pressed") !== "true");
+          updateAllState();
+        });
+      });
+
+      toggleAll?.addEventListener("click", () => {
+        const allEnabled = slotButtons.every(
+          (button) => button.getAttribute("aria-pressed") === "true"
+        );
+        slotButtons.forEach((button) => setSlot(button, !allEnabled));
+        updateAllState();
+      });
+    </script>
+  </body>
+</html>

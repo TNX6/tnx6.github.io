@@ -1,0 +1,531 @@
+---
+import lpcManifest from '../../../public/assets/dungeon-overlay/lpc-v1/manifest.json';
+import equipmentCatalog from '../../../public/assets/dungeon-overlay/lpc-v1/equipment-catalog.json';
+
+export type LpcState = 'idle' | 'walk' | 'hurt';
+export type LpcDirection = 'front' | 'back' | 'left' | 'right';
+
+export type LpcLoadout = {
+  chest: boolean;
+  legs: boolean;
+  boots: boolean;
+  helmet: boolean;
+  weapon: boolean;
+  shield: boolean;
+};
+
+export interface Props {
+  name: string;
+  level: number;
+  state: LpcState;
+  direction: LpcDirection;
+  scale: number;
+  showName: boolean;
+  showLevel: boolean;
+  loadout: LpcLoadout;
+  slot?: number;
+}
+
+type SimpleAssets = {
+  idle: string;
+  idleBreath?: string;
+  walk: string;
+  hurt?: string;
+};
+
+type SplitAssets = {
+  idle: { back: string; front: string };
+  idleBreath?: { back?: string; front?: string };
+  walk: { back: string; front: string };
+  hurt?: { back?: string; front?: string };
+};
+
+type Slot = keyof LpcLoadout;
+
+type EquipmentItem = {
+  slot: Slot;
+  assets: SimpleAssets | SplitAssets;
+};
+
+const {
+  name,
+  level,
+  state,
+  direction,
+  scale,
+  showName,
+  showLevel,
+  loadout,
+  slot,
+} = Astro.props;
+
+if (!Number.isInteger(scale) || scale < 1) {
+  throw new Error('LpcCharacter scale must be a positive integer.');
+}
+
+const equipmentBySlot = Object.fromEntries(
+  (equipmentCatalog.items as EquipmentItem[]).map((item) => [
+    item.slot,
+    item,
+  ]),
+) as Record<Slot, EquipmentItem>;
+
+const simpleAssets = (
+  slot: Exclude<Slot, 'weapon' | 'shield'>,
+): SimpleAssets => equipmentBySlot[slot].assets as SimpleAssets;
+
+const splitAssets = (slot: 'weapon' | 'shield'): SplitAssets =>
+  equipmentBySlot[slot].assets as SplitAssets;
+
+const layerStyle = (
+  idle: string,
+  idleBreath: string | undefined,
+  walk: string,
+  hurt?: string,
+) =>
+  `--idle-image: url("${idle}"); --walk-image: url("${walk}");` +
+  (idleBreath ? ` --idle-breath-image: url("${idleBreath}");` : '') +
+  (hurt ? ` --hurt-image: url("${hurt}");` : '');
+const layerClass = (classes: string, idleBreath?: string) => [
+  classes,
+  { 'has-idle-breath-layer': Boolean(idleBreath) },
+];
+
+const baseStyle = layerStyle(
+  lpcManifest.base.idle,
+  lpcManifest.base.idleBreath,
+  lpcManifest.base.walk,
+  lpcManifest.base.hurt,
+);
+// Versioned, explicit Crusader paths ensure static Astro renders cannot fall
+// back to any heater or generic test-shield filename.
+const SHIELD_ASSETS = {
+  idle: {
+    back: '/assets/dungeon-overlay/lpc-v1/equipment/test-shield/crusader-idle-back-v3.png',
+    front: '/assets/dungeon-overlay/lpc-v1/equipment/test-shield/crusader-idle-front-v3.png',
+  },
+  idleBreath: {
+    back:
+      '/assets/dungeon-overlay/lpc-v1/equipment/test-shield/crusader-idle-breathe-back-v1.png',
+    front:
+      '/assets/dungeon-overlay/lpc-v1/equipment/test-shield/crusader-idle-breathe-front-v1.png',
+  },
+  walk: {
+    back: '/assets/dungeon-overlay/lpc-v1/equipment/test-shield/crusader-walk-back-v3.png',
+    front: '/assets/dungeon-overlay/lpc-v1/equipment/test-shield/crusader-walk-front-v3.png',
+  },
+  hurt: {
+    back: '/assets/dungeon-overlay/lpc-v1/equipment/test-shield/crusader-hurt-back-v3.png',
+    front: '/assets/dungeon-overlay/lpc-v1/equipment/test-shield/crusader-hurt-front-v3.png',
+  },
+} satisfies SplitAssets;
+const chestAssets = simpleAssets('chest');
+const legsAssets = simpleAssets('legs');
+const bootsAssets = simpleAssets('boots');
+const helmetAssets = simpleAssets('helmet');
+const weaponAssets = splitAssets('weapon');
+const shieldAssets = SHIELD_ASSETS;
+
+const hurtSupport: Record<Slot, boolean> = {
+  chest: Boolean(chestAssets.hurt),
+  legs: Boolean(legsAssets.hurt),
+  boots: Boolean(bootsAssets.hurt),
+  helmet: Boolean(helmetAssets.hurt),
+  weapon: Boolean(
+    weaponAssets.hurt?.back || weaponAssets.hurt?.front,
+  ),
+  shield: Boolean(shieldAssets.hurt?.back || shieldAssets.hurt?.front),
+};
+
+// Hurt is a six-frame, single-row sequence. During hurt, each equipped slot is
+// rendered only when its catalog entry contains an authentic hurt layer.
+const showSlot = (slot: Slot) =>
+  loadout[slot] && (state !== 'hurt' || hurtSupport[slot]);
+const renderedEquipment = (Object.keys(loadout) as Slot[]).some(showSlot);
+const accessibleDetails = [
+  name,
+  showLevel ? `level ${level}` : '',
+  `${state} ${direction}`,
+].filter(Boolean);
+const stableNamePhase = [...name].reduce(
+  (hash, character) => (hash * 31 + character.codePointAt(0)!) >>> 0,
+  0,
+) % 6;
+const breathPhase =
+  Number.isInteger(slot) && Number(slot) >= 1 && Number(slot) <= 6
+    ? Number(slot) - 1
+    : stableNamePhase;
+const breathDelay = breathPhase * -350;
+---
+
+<div
+  class="lpc-character"
+  data-lpc-character
+  data-state={state}
+  data-direction={direction}
+  data-equipment-visible={String(renderedEquipment)}
+  style={`--lpc-scale: ${scale}; --lpc-idle-breath-delay: ${breathDelay}ms;`}
+  role="img"
+  aria-label={accessibleDetails.join(', ')}
+>
+  <div class="lpc-frame" aria-hidden="true">
+    <div class="lpc-stack">
+      {
+        showSlot('shield') && (
+          <div
+            class:list={layerClass(
+              'lpc-layer equipment-layer slot-shield layer-back',
+              shieldAssets.idleBreath?.back,
+            )}
+            style={layerStyle(
+              shieldAssets.idle.back,
+              shieldAssets.idleBreath?.back,
+              shieldAssets.walk.back,
+              shieldAssets.hurt?.back,
+            )}
+          />
+        )
+      }
+      {
+        showSlot('weapon') && (
+          <div
+            class:list={layerClass(
+              'lpc-layer equipment-layer slot-weapon layer-back',
+              weaponAssets.idleBreath?.back,
+            )}
+            style={layerStyle(
+              weaponAssets.idle.back,
+              weaponAssets.idleBreath?.back,
+              weaponAssets.walk.back,
+              weaponAssets.hurt?.back,
+            )}
+          />
+        )
+      }
+
+      <div
+        class:list={layerClass(
+          'lpc-layer base-layer',
+          lpcManifest.base.idleBreath,
+        )}
+        style={baseStyle}
+      />
+
+      {
+        showSlot('legs') && (
+          <div
+            class:list={layerClass(
+              'lpc-layer equipment-layer slot-legs',
+              legsAssets.idleBreath,
+            )}
+            style={layerStyle(
+              legsAssets.idle,
+              legsAssets.idleBreath,
+              legsAssets.walk,
+              legsAssets.hurt,
+            )}
+          />
+        )
+      }
+      {
+        showSlot('boots') && (
+          <div
+            class:list={layerClass(
+              'lpc-layer equipment-layer slot-boots',
+              bootsAssets.idleBreath,
+            )}
+            style={layerStyle(
+              bootsAssets.idle,
+              bootsAssets.idleBreath,
+              bootsAssets.walk,
+              bootsAssets.hurt,
+            )}
+          />
+        )
+      }
+      {
+        showSlot('chest') && (
+          <div
+            class:list={layerClass(
+              'lpc-layer equipment-layer slot-chest',
+              chestAssets.idleBreath,
+            )}
+            style={layerStyle(
+              chestAssets.idle,
+              chestAssets.idleBreath,
+              chestAssets.walk,
+              chestAssets.hurt,
+            )}
+          />
+        )
+      }
+      {
+        showSlot('shield') && (
+          <div
+            class:list={layerClass(
+              'lpc-layer equipment-layer slot-shield layer-front',
+              shieldAssets.idleBreath?.front,
+            )}
+            style={layerStyle(
+              shieldAssets.idle.front,
+              shieldAssets.idleBreath?.front,
+              shieldAssets.walk.front,
+              shieldAssets.hurt?.front,
+            )}
+          />
+        )
+      }
+      {
+        showSlot('weapon') && (
+          <div
+            class:list={layerClass(
+              'lpc-layer equipment-layer slot-weapon layer-front',
+              weaponAssets.idleBreath?.front,
+            )}
+            style={layerStyle(
+              weaponAssets.idle.front,
+              weaponAssets.idleBreath?.front,
+              weaponAssets.walk.front,
+              weaponAssets.hurt?.front,
+            )}
+          />
+        )
+      }
+      {
+        showSlot('helmet') && (
+          <div
+            class:list={layerClass(
+              'lpc-layer equipment-layer slot-helmet',
+              helmetAssets.idleBreath,
+            )}
+            style={layerStyle(
+              helmetAssets.idle,
+              helmetAssets.idleBreath,
+              helmetAssets.walk,
+              helmetAssets.hurt,
+            )}
+          />
+        )
+      }
+    </div>
+  </div>
+
+  {
+    (showName || showLevel) && (
+      <div class="lpc-caption">
+        {showName && <span class="lpc-name">{name}</span>}
+        {showLevel && <span class="lpc-level">Level {level}</span>}
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .lpc-character {
+    --lpc-row-y: -128px;
+    position: relative;
+    z-index: 1;
+    display: grid;
+    justify-items: center;
+    gap: 0.4rem;
+    margin: 0;
+  }
+
+  .lpc-character[data-direction="back"] {
+    --lpc-row-y: 0px;
+  }
+
+  .lpc-character[data-direction="left"] {
+    --lpc-row-y: -64px;
+  }
+
+  .lpc-character[data-direction="front"] {
+    --lpc-row-y: -128px;
+  }
+
+  .lpc-character[data-direction="right"] {
+    --lpc-row-y: -192px;
+  }
+
+  .lpc-frame {
+    position: relative;
+    width: calc(64px * var(--lpc-scale));
+    height: calc(64px * var(--lpc-scale));
+    overflow: hidden;
+    background: transparent;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  .lpc-stack {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    transform: scale(var(--lpc-scale));
+    transform-origin: top left;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  .lpc-layer {
+    position: absolute;
+    inset: 0;
+    width: 64px;
+    height: 64px;
+    background-image: var(--idle-image);
+    background-repeat: no-repeat;
+    background-position: 0 var(--lpc-row-y);
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  .lpc-character[data-state="idle"] .lpc-layer.has-idle-breath-layer {
+    background-image: var(--idle-breath-image);
+    background-position: 0 var(--lpc-row-y);
+    animation: lpc-idle-breathe-cycle 2800ms steps(1, end)
+      var(--lpc-idle-breath-delay, 0ms) infinite;
+  }
+
+  .lpc-character[data-state="walk"] .lpc-layer {
+    background-image: var(--walk-image);
+    animation: lpc-walk-cycle 900ms steps(9) infinite;
+  }
+
+  .lpc-character[data-state="hurt"] {
+    --lpc-row-y: 0px;
+  }
+
+  .lpc-character[data-state="hurt"] .lpc-layer {
+    background-image: var(--hurt-image);
+    background-position: 0 0;
+    /*
+     * Six poses occupy x = 0, -64, -128, -192, -256, and -320.
+     * Five stepped transitions display all six poses, then retain frame 5.
+     */
+    animation: lpc-hurt-cycle 720ms steps(5) forwards;
+  }
+
+  .equipment-layer {
+    transition: opacity 100ms linear;
+  }
+
+  :global(.room[data-state="idle-front"]) .lpc-character {
+    --lpc-row-y: -128px;
+  }
+
+  :global(.room[data-state="idle-back"]) .lpc-character {
+    --lpc-row-y: 0px;
+  }
+
+  :global(.room[data-state="walk-front"]) .lpc-character {
+    --lpc-row-y: -128px;
+  }
+
+  :global(.room[data-state="walk-back"]) .lpc-character {
+    --lpc-row-y: 0px;
+  }
+
+  :global(.room[data-state^="idle-"])
+    .lpc-character:not([data-state="hurt"])
+    .lpc-layer {
+    background-image: var(--idle-image);
+    background-position-x: 0;
+    animation: none;
+  }
+
+  :global(.room[data-state^="idle-"])
+    .lpc-character:not([data-state="hurt"])
+    .lpc-layer.has-idle-breath-layer {
+    background-image: var(--idle-breath-image);
+    animation: lpc-idle-breathe-cycle 2800ms steps(1, end)
+      var(--lpc-idle-breath-delay, 0ms) infinite;
+  }
+
+  :global(.room[data-state^="walk-"])
+    .lpc-character:not([data-state="hurt"])
+    .lpc-layer {
+    background-image: var(--walk-image);
+    animation: lpc-walk-cycle 900ms steps(9) infinite;
+  }
+
+  :global(.room.all-equipment-hidden) .equipment-layer,
+  :global(.player-card.equipment-hidden) .equipment-layer {
+    opacity: 0;
+  }
+
+  :global(.prototype.hide-chest .layered-preview) .slot-chest,
+  :global(.prototype.hide-legs .layered-preview) .slot-legs,
+  :global(.prototype.hide-boots .layered-preview) .slot-boots,
+  :global(.prototype.hide-helmet .layered-preview) .slot-helmet,
+  :global(.prototype.hide-weapon .layered-preview) .slot-weapon,
+  :global(.prototype.hide-shield .layered-preview) .slot-shield {
+    opacity: 0;
+  }
+
+  .lpc-caption {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.45rem;
+    text-align: center;
+  }
+
+  .lpc-name {
+    font-weight: 700;
+  }
+
+  .lpc-level {
+    font-size: 0.78em;
+    opacity: 0.78;
+  }
+
+  @keyframes lpc-walk-cycle {
+    to {
+      background-position-x: -576px;
+    }
+  }
+
+  @keyframes lpc-hurt-cycle {
+    to {
+      background-position-x: -320px;
+    }
+  }
+
+  @keyframes lpc-idle-breathe-cycle {
+    0%,
+    39.999%,
+    60%,
+    100% {
+      background-position-x: 0;
+    }
+
+    40%,
+    59.999% {
+      background-position-x: -64px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lpc-character[data-state="idle"] .lpc-layer.has-idle-breath-layer,
+    :global(.room[data-state^="idle-"])
+      .lpc-character:not([data-state="hurt"])
+      .lpc-layer.has-idle-breath-layer {
+      background-position-x: 0;
+      animation: none;
+    }
+
+    .lpc-character[data-state="walk"] .lpc-layer,
+    :global(.room[data-state^="walk-"]) .lpc-character .lpc-layer {
+      animation-play-state: paused;
+    }
+
+    .lpc-character[data-state="hurt"] .lpc-layer {
+      background-position: -320px 0;
+      animation: none;
+    }
+
+    .equipment-layer {
+      transition: none;
+    }
+  }
+</style>

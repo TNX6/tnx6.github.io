@@ -1,0 +1,377 @@
+---
+import LpcCharacter from '../../components/dungeon/LpcCharacter.astro';
+import {
+  adaptDungeonPlayerToLpc,
+  type DungeonPlayerInput,
+} from '../../scripts/dungeon-lpc-adapter';
+
+const mockPlayers: DungeonPlayerInput[] = [
+  {
+    slot: 1,
+    twitchUserId: '100001',
+    username: 'player_one',
+    displayName: 'Player One',
+    level: 10,
+    status: 'ready',
+    animationState: 'idle',
+    direction: 'front',
+    visualLoadout: {
+      chest: 'test-armor',
+      legs: 'test-legs',
+      boots: 'test-boots',
+      helmet: 'test-helmet',
+      weapon: 'test-weapon',
+      shield: 'test-shield',
+    },
+  },
+  {
+    slot: 2,
+    twitchUserId: '100002',
+    username: 'Player Two',
+    level: 8,
+    status: 'moving',
+    animationState: 'walking',
+    direction: 'left',
+    visualLoadout: {
+      chest: 'iron-armor',
+      legs: 'iron-legs',
+      boots: 'iron-boots',
+    },
+  },
+  {
+    slot: 3,
+    twitchUserId: '100003',
+    username: 'player_three',
+    displayName: 'Player Three',
+    level: 7,
+    status: 'moving',
+    animationState: 'walk',
+    direction: 'right',
+    visualLoadout: {
+      weapon: 'arming-sword',
+      shield: 'heater-shield',
+    },
+  },
+  {
+    slot: 4,
+    twitchUserId: '100004',
+    username: 'player_four',
+    displayName: 'Player Four',
+    level: 6,
+    status: 'ready',
+    animationState: 'idle',
+    direction: 'back',
+    visualLoadout: {
+      helmet: 'greathelm',
+      chest: 'plate-armor',
+    },
+  },
+  {
+    slot: 5,
+    username: '',
+  },
+  {
+    slot: 6,
+    twitchUserId: '100006',
+    username: 'player_six',
+    displayName: 'Player Six',
+    level: 4,
+    status: 'defeated',
+    animationState: 'defeated',
+    direction: 'down',
+    visualLoadout: {
+      helmet: 'unknown-void-helm',
+    },
+  },
+];
+
+const adaptedPlayers = mockPlayers.map((input) => ({
+  input,
+  result: adaptDungeonPlayerToLpc(input),
+}));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LPC V1 Dungeon Adapter Integration</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-width: 320px;
+        min-height: 100%;
+        margin: 0;
+        background: #090d12;
+        color: #e8edf3;
+      }
+
+      body {
+        min-height: 100vh;
+      }
+
+      .inspection-page {
+        width: min(1500px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 56px;
+      }
+
+      .page-heading {
+        margin-bottom: 22px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #283343;
+      }
+
+      h1,
+      h2,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 8px;
+        font-size: clamp(1.35rem, 2.5vw, 2.1rem);
+      }
+
+      .page-heading p {
+        max-width: 72ch;
+        margin-bottom: 0;
+        color: #9aa8ba;
+        line-height: 1.55;
+      }
+
+      .summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .summary span {
+        padding: 5px 9px;
+        border: 1px solid #2d3d51;
+        border-radius: 999px;
+        background: #111923;
+        color: #b9c7d8;
+        font-size: 0.76rem;
+      }
+
+      .player-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .player-card {
+        min-width: 0;
+        padding: 18px;
+        border: 1px solid #2a3748;
+        border-radius: 12px;
+        background: #101720;
+      }
+
+      .player-card.has-warning {
+        border-color: #76582b;
+      }
+
+      .slot-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 6px;
+      }
+
+      .slot-heading h2 {
+        margin: 0;
+        font-size: 1rem;
+      }
+
+      .slot-number {
+        padding: 3px 7px;
+        border-radius: 5px;
+        background: #253349;
+        color: #bcd0e9;
+        font: 700 0.72rem ui-monospace, SFMono-Regular, Consolas, monospace;
+      }
+
+      .mapped-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 9px;
+        color: #99a9bc;
+        font-size: 0.75rem;
+      }
+
+      .mapped-meta span {
+        padding: 3px 6px;
+        border-radius: 4px;
+        background: #182332;
+      }
+
+      .character-stage {
+        min-height: 204px;
+        display: grid;
+        place-items: center;
+        margin: 9px 0 14px;
+        overflow: hidden;
+        border: 1px dashed #2a3b50;
+        border-radius: 8px;
+        background:
+          linear-gradient(#101820de, #101820de),
+          repeating-linear-gradient(
+            0deg,
+            transparent 0 15px,
+            #243346 16px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            transparent 0 15px,
+            #243346 16px
+          );
+      }
+
+      .warnings {
+        margin: 0;
+        padding: 9px 11px 9px 28px;
+        border: 1px solid #705325;
+        border-radius: 7px;
+        background: #2a2113;
+        color: #f1c777;
+        font-size: 0.77rem;
+        line-height: 1.45;
+      }
+
+      .inspection {
+        margin-top: 16px;
+      }
+
+      details {
+        border: 1px solid #263344;
+        border-radius: 7px;
+        background: #0b1118;
+      }
+
+      summary {
+        padding: 8px 10px;
+        color: #9fb5cf;
+        cursor: pointer;
+        font-size: 0.76rem;
+        font-weight: 700;
+      }
+
+      pre {
+        max-height: 360px;
+        margin: 0;
+        padding: 12px;
+        overflow: auto;
+        border-top: 1px solid #263344;
+        color: #b9d0bd;
+        font: 0.7rem/1.45 ui-monospace, SFMono-Regular, Consolas, monospace;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      @media (max-width: 1000px) {
+        .player-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 650px) {
+        .inspection-page {
+          width: min(100% - 16px, 1500px);
+          padding-top: 16px;
+        }
+
+        .player-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="inspection-page">
+      <header class="page-heading">
+        <h1>Dungeon LPC Adapter Integration</h1>
+        <p>
+          Static production-like payload inspection. Every character below is
+          mapped by <code>dungeon-lpc-adapter.ts</code> before being passed to
+          <code>LpcCharacter.astro</code>.
+        </p>
+        <div class="summary" aria-label="Integration summary">
+          <span>6 input players</span>
+          <span>6 adapter results</span>
+          <span>No API calls</span>
+          <span>Static local assets</span>
+        </div>
+      </header>
+
+      <section class="player-grid" aria-label="Adapted dungeon players">
+        {
+          adaptedPlayers.map(({ input, result }) => (
+            <article
+              class:list={[
+                'player-card',
+                { 'has-warning': result.warnings.length > 0 },
+              ]}
+              data-integration-slot={input.slot}
+              data-warning-count={result.warnings.length}
+            >
+              <header class="slot-heading">
+                <h2>{result.props.name}</h2>
+                <span class="slot-number">Slot {input.slot}</span>
+              </header>
+
+              <div class="mapped-meta" aria-label="Mapped character properties">
+                <span>Level {result.props.level}</span>
+                <span>State: {result.props.state}</span>
+                <span>Direction: {result.props.direction}</span>
+              </div>
+
+              <div class="character-stage">
+                <LpcCharacter {...result.props} />
+              </div>
+
+              {
+                result.warnings.length > 0 && (
+                  <ul class="warnings" aria-label="Adapter warnings">
+                    {result.warnings.map((warning) => <li>{warning}</li>)}
+                  </ul>
+                )
+              }
+
+              <div class="inspection">
+                <details>
+                  <summary>JSON inspection</summary>
+                  <pre>{JSON.stringify(
+                      {
+                        input,
+                        mappedProps: result.props,
+                        warnings: result.warnings,
+                      },
+                      null,
+                      2,
+                    )}</pre>
+                </details>
+              </div>
+            </article>
+          ))
+        }
+      </section>
+    </main>
+  </body>
+</html>

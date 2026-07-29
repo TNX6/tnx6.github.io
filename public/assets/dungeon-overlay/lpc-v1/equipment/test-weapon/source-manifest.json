@@ -1,0 +1,151 @@
+{
+  "id": "test-weapon",
+  "slot": "weapon",
+  "sourceRoot": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets",
+  "frameSize": 64,
+  "directionRowOrder": ["back/up", "left", "front/down", "right"],
+  "layerPosition": {
+    "back": {
+      "zPos": 9,
+      "stack": "behind base body",
+      "sourceLayer": "weapon/sword/arming/universal/bg"
+    },
+    "front": {
+      "zPos": 140,
+      "stack": "above chest; below helmet",
+      "sourceLayer": "weapon/sword/arming/universal/fg"
+    }
+  },
+  "animations": {
+    "idle": {
+      "dimensions": [832, 256],
+      "frameCountPerDirection": 2,
+      "outputs": {
+        "back": "idle-back.png",
+        "front": "idle-front.png"
+      },
+      "sourceFiles": [
+        "weapon/sword/arming/universal/bg/idle/steel.png",
+        "weapon/sword/arming/universal/fg/idle/steel.png"
+      ]
+    },
+    "idleBreath": {
+      "dimensions": [128, 256],
+      "framesPerDirection": 2,
+      "outputs": {
+        "back": "idle-breathe-back-v1.png",
+        "front": "idle-breathe-front-v1.png"
+      },
+      "restSource": "idle-back-normalized.png / idle-front-normalized.png column 0",
+      "inhaleSource": "idle-back-normalized.png / idle-front-normalized.png column 1",
+      "operation": "Copy the existing normalized right-hand sword frames without changing direction-specific handedness or layer split."
+    },
+    "walk": {
+      "dimensions": [832, 256],
+      "frameCountPerDirection": 9,
+      "outputs": {
+        "back": "walk-back.png",
+        "front": "walk-front.png"
+      },
+      "sourceFiles": [
+        "weapon/sword/arming/universal/bg/walk/steel.png",
+        "weapon/sword/arming/universal/fg/walk/steel.png"
+      ]
+    },
+    "hurt": {
+      "dimensions": [832, 64],
+      "frameCount": 6,
+      "directionRows": 1,
+      "transparentPaddingColumns": [6, 12],
+      "outputs": {
+        "back": "hurt-back.png",
+        "front": "hurt-front.png"
+      },
+      "sourceFiles": [
+        "weapon/sword/arming/universal/bg/hurt/steel.png",
+        "weapon/sword/arming/universal/fg/hurt/steel.png"
+      ],
+      "sourceSha256": {
+        "back": "2f53f9f1ab18758bc22e4c9f4e63f2383fc7c3ca9b6c9060d38b5192150404a5",
+        "front": "1ed63971f5212c26be873418844be0e0a3f0b42923701df54fc8d3dcfef1ba27"
+      }
+    }
+  },
+  "handSeparationNormalization": {
+    "operation": "translate unchanged source pixels inside each 64x64 frame cell and transfer the left-direction row between original bg/fg outputs",
+    "resized": false,
+    "rotated": false,
+    "mirrored": false,
+    "sourceOutputsPreserved": true,
+    "measuredIdleFrontAnchors": {
+      "bodyScreenLeftHand": [22, 48],
+      "bodyScreenRightHand": [42, 48],
+      "sourceSwordGrip": [42, 48],
+      "normalizedSwordGrip": [22, 48]
+    },
+    "handAssignment": {
+      "hand": "character-right",
+      "front": "viewer-left",
+      "back": "viewer-right",
+      "rightDirectionDepth": "front",
+      "leftDirectionDepth": "back"
+    },
+    "outputs": {
+      "idle-back-normalized.png": {
+        "sources": ["idle-back.png", "idle-front.png"],
+        "leftDirectionFrontPixelsTransferredToBack": true
+      },
+      "idle-front-normalized.png": {
+        "source": "idle-front.png",
+        "frontDownOffsets": [[-20, 0], [-20, 0]],
+        "leftDirectionPixelsTransferredToBack": true
+      },
+      "walk-back-normalized.png": {
+        "sources": ["walk-back.png", "walk-front.png"],
+        "leftDirectionFrontPixelsTransferredToBack": true,
+        "appliesToAllNineWalkFrames": true
+      },
+      "walk-front-normalized.png": {
+        "source": "walk-front.png",
+        "frontDownOffsets": [
+          [-20, 0],
+          [-20, 0],
+          [-20, 0],
+          [-20, 0],
+          [-20, 0],
+          [-20, 0],
+          [-20, 0],
+          [-17, 0],
+          [-20, 0]
+        ],
+        "leftDirectionPixelsTransferredToBack": true,
+        "note": "Frame 8 uses -17 so no sword pixel leaves its 64x64 cell."
+      },
+      "hurt-back-normalized.png": {
+        "source": "hurt-back.png",
+        "offsets": [
+          [-21, 0],
+          [-22, 0],
+          [-20, 0],
+          [-20, 0],
+          [-22, 0],
+          [-28, 0]
+        ],
+        "finalFrameTransferredToFront": true
+      },
+      "hurt-front-normalized.png": {
+        "source": "hurt-front.png",
+        "offsets": [
+          [-21, 0],
+          [-22, 0],
+          [-20, 0],
+          [-20, 0],
+          [-22, 0],
+          [-28, 0]
+        ],
+        "finalFrameIncludesOriginalBackPixels": true
+      }
+    }
+  },
+  "credits": "/assets/dungeon-overlay/lpc-v1/equipment/test-weapon/credits.txt"
+}

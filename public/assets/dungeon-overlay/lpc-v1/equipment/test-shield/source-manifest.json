@@ -1,0 +1,161 @@
+{
+  "id": "test-shield",
+  "name": "Test Crusader Shield",
+  "assetVersion": "crusader-v3",
+  "slot": "shield",
+  "sourceRoot": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets",
+  "frameSize": 64,
+  "directionRowOrder": [
+    "back/up",
+    "left",
+    "front/down",
+    "right"
+  ],
+  "selectedCandidate": {
+    "family": "shield/crusader",
+    "reason": "The original Crusader face, rim, and cross remain clearly readable in the side directions and visually connect to the off-hand without the heater shield's triangular side silhouette."
+  },
+  "layerPosition": {
+    "back": {
+      "zPosition": 2,
+      "sourceLayer": "shield/crusader/bg"
+    },
+    "front": {
+      "zPosition": 110,
+      "sourceLayer": "shield/crusader/fg/male"
+    }
+  },
+  "animations": {
+    "idle": {
+      "outputDimensions": [
+        832,
+        256
+      ],
+      "static": true,
+      "frameSource": "frame 1 (column 0) from each corresponding original Crusader walk direction",
+      "copiedToColumns": [
+        0,
+        1
+      ],
+      "outputs": {
+        "back": "crusader-idle-back-v3.png",
+        "front": "crusader-idle-front-v3.png"
+      },
+      "sourceFiles": [
+        "shield/crusader/bg/walk/crusader.png",
+        "shield/crusader/fg/male/walk/crusader.png"
+      ]
+    },
+    "idleBreath": {
+      "outputDimensions": [128, 256],
+      "framesPerDirection": 2,
+      "outputs": {
+        "back": "crusader-idle-breathe-back-v1.png",
+        "front": "crusader-idle-breathe-front-v1.png"
+      },
+      "restSource": "crusader-idle-back-v3.png / crusader-idle-front-v3.png column 0",
+      "inhaleSource": "the same original Crusader pixels translated upward by exactly 1px inside each 64x64 cell",
+      "handedness": "character-left/off-hand retained",
+      "redrawn": false,
+      "resized": false,
+      "rotated": false,
+      "mirrored": false,
+      "recolored": false
+    },
+    "walk": {
+      "sourceDimensions": [
+        576,
+        256
+      ],
+      "outputDimensions": [
+        832,
+        256
+      ],
+      "frameCountPerDirection": 9,
+      "transparentPaddingColumns": [
+        9,
+        12
+      ],
+      "outputs": {
+        "back": "crusader-walk-back-v3.png",
+        "front": "crusader-walk-front-v3.png"
+      },
+      "sourceFiles": [
+        "shield/crusader/bg/walk/crusader.png",
+        "shield/crusader/fg/male/walk/crusader.png"
+      ]
+    },
+    "hurt": {
+      "sourceDimensions": [
+        384,
+        64
+      ],
+      "outputDimensions": [
+        832,
+        64
+      ],
+      "frameCount": 6,
+      "directionRows": 1,
+      "transparentPaddingColumns": [
+        6,
+        12
+      ],
+      "outputs": {
+        "back": "crusader-hurt-back-v3.png",
+        "front": "crusader-hurt-front-v3.png"
+      },
+      "sourceFiles": [
+        "shield/crusader/bg/hurt/crusader.png",
+        "shield/crusader/fg/male/hurt/crusader.png"
+      ]
+    }
+  },
+  "normalization": {
+    "operation": "Canonical source coordinates retained for back, left, right, and hurt. The front/down row is translated +27px on x so the shield occupies the character-left hand opposite the sword. Transparent right-side padding was added to match the existing 832-pixel LPC V1 sheets.",
+    "redrawn": false,
+    "resized": false,
+    "rotated": false,
+    "mirrored": false,
+    "recolored": false,
+    "heaterOffsetsReused": false,
+    "frontIdleOffsets": [
+      [27, 0],
+      [27, 0]
+    ],
+    "frontWalkOffsets": [
+      [27, 0],
+      [27, 0],
+      [27, 0],
+      [27, 0],
+      [27, 0],
+      [27, 0],
+      [27, 0],
+      [27, 0],
+      [27, 0]
+    ],
+    "rightIdleOffsets": [
+      [0, 0],
+      [0, 0]
+    ],
+    "rightWalkOffsets": [
+      [0, 0],
+      [0, 0],
+      [0, 0],
+      [0, 0],
+      [0, 0],
+      [0, 0],
+      [0, 0],
+      [0, 0],
+      [0, 0]
+    ],
+    "hurtOffsets": [
+      [0, 0],
+      [0, 0],
+      [0, 0],
+      [0, 0],
+      [0, 0],
+      [0, 0]
+    ]
+  },
+  "credits": "/assets/dungeon-overlay/lpc-v1/equipment/test-shield/credits.txt"
+}

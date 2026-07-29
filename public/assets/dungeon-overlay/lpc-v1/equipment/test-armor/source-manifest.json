@@ -1,0 +1,142 @@
+{
+  "id": "test-armor",
+  "name": "Test Plate Armor",
+  "bodyType": "male",
+  "frameSize": 64,
+  "rowOrder": [
+    "back/up",
+    "left",
+    "front/down",
+    "right"
+  ],
+  "composition": {
+    "operation": "alpha composite at original coordinates",
+    "resized": false,
+    "cropped": false,
+    "recolored": false,
+    "outputColumns": 13,
+    "outputRows": 4,
+    "layerOrder": [
+      "torso plate",
+      "arm plate",
+      "pauldrons"
+    ]
+  },
+  "animations": {
+    "idle": {
+      "output": "idle.png",
+      "dimensions": [
+        832,
+        256
+      ],
+      "activeFramesPerDirection": 2,
+      "sources": [
+        {
+          "path": "torso/armour/plate/male/idle.png",
+          "dimensions": [
+            128,
+            256
+          ],
+          "sha256": "0a73d0c3c2cb405d827309c6aa254b59dca64d0d1288fe3a01c15048bcad4e82"
+        },
+        {
+          "path": "arms/armour/plate/male/idle.png",
+          "dimensions": [
+            128,
+            256
+          ],
+          "sha256": "f5e01c4090bfe96196f1c4805170105f16eaada94b6ccfb82cb22464a12e0a76"
+        },
+        {
+          "path": "shoulders/pauldrons/male/idle.png",
+          "dimensions": [
+            128,
+            256
+          ],
+          "sha256": "0a92fbbe4cfb5808b22211811c6e2bfacc4c11050b0baa32b43b7e3120d1a4bc"
+        }
+      ]
+    },
+    "idleBreath": {
+      "output": "idle-breathe-v1.png",
+      "dimensions": [128, 256],
+      "framesPerDirection": 2,
+      "restSource": "idle.png column 0",
+      "inhaleSource": "idle.png column 1",
+      "operation": "Copy the two original compatible LPC idle frames without redraw, resize, mirroring, rotation, or recoloring."
+    },
+    "walk": {
+      "output": "walk.png",
+      "dimensions": [
+        832,
+        256
+      ],
+      "activeFramesPerDirection": 9,
+      "sources": [
+        {
+          "path": "torso/armour/plate/male/walk.png",
+          "dimensions": [
+            576,
+            256
+          ],
+          "sha256": "4ef811417e7c1163b8da47aa48afd80b398302b18d4ee90c6fbb79667b9cc046"
+        },
+        {
+          "path": "arms/armour/plate/male/walk.png",
+          "dimensions": [
+            576,
+            256
+          ],
+          "sha256": "cc4b91aa86528f86cab723575c7e301a952467ec45be669bad430dc1294351f4"
+        },
+        {
+          "path": "shoulders/pauldrons/male/walk.png",
+          "dimensions": [
+            576,
+            256
+          ],
+          "sha256": "b65c3a33ba148f549640d3e43bf72332cf6f2a511e81e7e813c8cf7faf4e95fb"
+        }
+      ]
+    },
+    "hurt": {
+      "output": "hurt.png",
+      "dimensions": [
+        832,
+        64
+      ],
+      "activeFrames": 6,
+      "directionRows": 1,
+      "transparentPaddingColumns": [
+        6,
+        12
+      ],
+      "sources": [
+        {
+          "path": "torso/armour/plate/male/hurt.png",
+          "dimensions": [
+            384,
+            64
+          ],
+          "sha256": "240cec967f141f10ccba591a427728f582f4125135331bb161114a718965d295"
+        },
+        {
+          "path": "arms/armour/plate/male/hurt.png",
+          "dimensions": [
+            384,
+            64
+          ],
+          "sha256": "b07a53d7f08c446db084839a8da6fdaa9f1014f43b23c4122c40890dcffc7669"
+        },
+        {
+          "path": "shoulders/pauldrons/male/hurt.png",
+          "dimensions": [
+            384,
+            64
+          ],
+          "sha256": "745d81fb5d7c4f3e50cfea919d607cfd25550db849d0f7f3079afcc347e713b0"
+        }
+      ]
+    }
+  }
+}

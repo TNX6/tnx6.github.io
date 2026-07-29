@@ -1,0 +1,583 @@
+---
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LPC V1 Runtime Renderer</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-width: 320px;
+        min-height: 100%;
+        margin: 0;
+        background: #080c11;
+        color: #e9eef5;
+      }
+
+      body {
+        min-height: 100vh;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .runtime-page {
+        width: min(1540px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 52px;
+      }
+
+      .page-heading {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 18px;
+      }
+
+      h1,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 7px;
+        font-size: clamp(1.4rem, 2.4vw, 2.15rem);
+      }
+
+      .page-heading p {
+        max-width: 72ch;
+        margin-bottom: 0;
+        color: #94a4b8;
+        line-height: 1.5;
+      }
+
+      .demo-status {
+        flex: 0 0 auto;
+        padding: 7px 10px;
+        border: 1px solid #35455a;
+        border-radius: 999px;
+        background: #111a25;
+        color: #a9bad0;
+        font: 700 0.73rem ui-monospace, SFMono-Regular, Consolas, monospace;
+      }
+
+      .runtime-controls {
+        position: sticky;
+        z-index: 20;
+        top: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 18px;
+        padding: 10px;
+        border: 1px solid #293749;
+        border-radius: 10px;
+        background: rgb(11 17 24 / 94%);
+        backdrop-filter: blur(8px);
+      }
+
+      .runtime-controls button {
+        min-height: 35px;
+        padding: 7px 10px;
+        border: 1px solid #46576d;
+        border-radius: 6px;
+        background: #172231;
+        color: #e2e9f2;
+        cursor: pointer;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+
+      .runtime-controls button:hover,
+      .runtime-controls button:focus-visible {
+        border-color: #91a9c6;
+        background: #213148;
+        outline: none;
+      }
+
+      .runtime-controls [data-action="demo"] {
+        border-color: #7b6536;
+        background: #3b2e17;
+        color: #f3d593;
+      }
+
+      .runtime-controls [data-action="verify-shield"][aria-pressed="true"] {
+        border-color: #4ecdc4;
+        background: #143c3a;
+        color: #bdfaf5;
+      }
+
+      :global(
+        .lpc-runtime-character.is-shield-asset-verification
+          .lpc-runtime-equipment-layer:not(.slot-shield)
+      ) {
+        display: none !important;
+      }
+
+      :global(.lpc-shield-verification-readout) {
+        max-width: 100%;
+        padding: 5px 8px;
+        border: 1px solid #3b7f79;
+        border-radius: 5px;
+        background: #0d2625;
+        color: #bdfaf5;
+        font: 700 0.67rem/1.35 ui-monospace, SFMono-Regular, Consolas,
+          monospace;
+        overflow-wrap: anywhere;
+        text-align: center;
+      }
+
+      .runtime-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .runtime-slot {
+        min-width: 0;
+        min-height: 315px;
+        padding: 16px;
+        display: grid;
+        place-items: center;
+        border: 1px solid #29384a;
+        border-radius: 12px;
+        background:
+          radial-gradient(
+            ellipse at 50% 46%,
+            rgb(82 98 108 / 16%),
+            transparent 58%
+          ),
+          #101720;
+      }
+
+      @media (max-width: 1000px) {
+        .runtime-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 650px) {
+        .runtime-page {
+          width: min(100% - 16px, 1540px);
+          padding-top: 16px;
+        }
+
+        .page-heading {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .runtime-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="runtime-page">
+      <header class="page-heading">
+        <div>
+          <h1>LPC Runtime Renderer</h1>
+          <p>
+            Six client-side instances updated from production-like dungeon
+            payloads without rebuilding, fetching, or reloading this page.
+          </p>
+        </div>
+        <output class="demo-status" id="demo-status">Demo stopped</output>
+      </header>
+
+      <nav class="runtime-controls" aria-label="Runtime renderer test controls">
+        <button type="button" data-action="idle-front">All Idle Front</button>
+        <button type="button" data-action="idle-back">All Idle Back</button>
+        <button type="button" data-action="walk-front">All Walk Front</button>
+        <button type="button" data-action="walk-back">All Walk Back</button>
+        <button type="button" data-action="hurt-six">Hurt Player 6</button>
+        <button type="button" data-action="equip-five">Equip Player 5</button>
+        <button type="button" data-action="remove-one">
+          Remove Player 1 Equipment
+        </button>
+        <button type="button" data-action="rename-two">
+          Change Player 2 Name
+        </button>
+        <button type="button" data-action="unknown-three">
+          Add Unknown Helmet to Player 3
+        </button>
+        <button type="button" data-action="reset">Reset Mock Data</button>
+        <button
+          type="button"
+          data-action="verify-shield"
+          aria-pressed="false"
+        >
+          Shield Asset Verification
+        </button>
+        <button type="button" data-action="demo">Run Automatic Demo</button>
+      </nav>
+
+      <section class="runtime-grid" aria-label="Six runtime LPC players">
+        <div class="runtime-slot" data-runtime-slot="1"></div>
+        <div class="runtime-slot" data-runtime-slot="2"></div>
+        <div class="runtime-slot" data-runtime-slot="3"></div>
+        <div class="runtime-slot" data-runtime-slot="4"></div>
+        <div class="runtime-slot" data-runtime-slot="5"></div>
+        <div class="runtime-slot" data-runtime-slot="6"></div>
+      </section>
+    </main>
+
+    <script>
+      import {
+        createLpcCharacter,
+        destroyLpcCharacter,
+        updateLpcCharacter,
+        type LpcCharacterInstance,
+      } from '../../scripts/dungeon-lpc-renderer';
+      import type {
+        DungeonPlayerInput,
+        DungeonPlayerPatch,
+      } from '../../scripts/dungeon-lpc-adapter';
+
+      const initialPlayers: DungeonPlayerInput[] = [
+        {
+          slot: 1,
+          username: 'player_one',
+          displayName: 'Player One',
+          level: 10,
+          animationState: 'idle',
+          direction: 'front',
+          visualLoadout: {
+            chest: 'test-armor',
+            legs: 'test-legs',
+            boots: 'test-boots',
+            helmet: 'test-helmet',
+            weapon: 'test-weapon',
+            shield: 'test-shield',
+          },
+        },
+        {
+          slot: 2,
+          username: 'player_two',
+          displayName: 'Player Two',
+          level: 8,
+          animationState: 'walk',
+          direction: 'left',
+          visualLoadout: {
+            chest: 'iron-armor',
+            legs: 'iron-legs',
+            boots: 'iron-boots',
+          },
+        },
+        {
+          slot: 3,
+          username: 'player_three',
+          displayName: 'Player Three',
+          level: 7,
+          animationState: 'walk',
+          direction: 'right',
+          visualLoadout: {
+            weapon: 'arming-sword',
+            shield: 'heater-shield',
+          },
+        },
+        {
+          slot: 4,
+          username: 'player_four',
+          displayName: 'Player Four',
+          level: 6,
+          animationState: 'idle',
+          direction: 'back',
+          visualLoadout: {
+            helmet: 'greathelm',
+            chest: 'plate-armor',
+          },
+        },
+        {
+          slot: 5,
+          username: 'player_five',
+          displayName: 'Player Five',
+          level: 5,
+          animationState: 'idle',
+          direction: 'front',
+        },
+        {
+          slot: 6,
+          username: 'player_six',
+          displayName: 'Player Six',
+          level: 4,
+          animationState: 'idle',
+          direction: 'front',
+          visualLoadout: {
+            chest: 'test-armor',
+            legs: 'test-legs',
+            boots: 'test-boots',
+            helmet: 'test-helmet',
+            weapon: 'test-weapon',
+            shield: 'test-shield',
+          },
+        },
+      ];
+
+      const clonePlayer = (player: DungeonPlayerInput): DungeonPlayerInput => ({
+        ...player,
+        visualLoadout: player.visualLoadout
+          ? { ...player.visualLoadout }
+          : undefined,
+      });
+
+      const completeLoadoutPatch = (
+        player: DungeonPlayerInput,
+      ): NonNullable<DungeonPlayerInput['visualLoadout']> => ({
+        chest: player.visualLoadout?.chest ?? null,
+        legs: player.visualLoadout?.legs ?? null,
+        boots: player.visualLoadout?.boots ?? null,
+        helmet: player.visualLoadout?.helmet ?? null,
+        weapon: player.visualLoadout?.weapon ?? null,
+        shield: player.visualLoadout?.shield ?? null,
+      });
+
+      let players = initialPlayers.map(clonePlayer);
+      const instances: LpcCharacterInstance[] = players.map((player) => {
+        const container = document.querySelector<HTMLElement>(
+          `[data-runtime-slot="${player.slot}"]`,
+        );
+        if (!container) {
+          throw new Error(`Missing runtime container for slot ${player.slot}.`);
+        }
+        return createLpcCharacter(container, player);
+      });
+
+      const shieldVerificationButton =
+        document.querySelector<HTMLButtonElement>('[data-action="verify-shield"]');
+      const playerThreeRoot = instances[2].root;
+      const shieldVerificationReadout =
+        document.createElement('output');
+      shieldVerificationReadout.className =
+        'lpc-shield-verification-readout';
+      shieldVerificationReadout.dataset.shieldVerificationFilename = '';
+      shieldVerificationReadout.hidden = true;
+      playerThreeRoot.append(shieldVerificationReadout);
+
+      const shieldVerificationFiles = {
+        idle: 'crusader-idle-front-v3.png',
+        walk: 'crusader-walk-front-v3.png',
+        hurt: 'crusader-hurt-front-v3.png',
+      } as const;
+      let shieldVerificationEnabled = false;
+
+      const renderShieldVerification = (): void => {
+        playerThreeRoot.classList.toggle(
+          'is-shield-asset-verification',
+          shieldVerificationEnabled,
+        );
+        shieldVerificationReadout.hidden = !shieldVerificationEnabled;
+        shieldVerificationReadout.value =
+          `Active shield: ${shieldVerificationFiles[instances[2].props.state]}`;
+        shieldVerificationButton?.setAttribute(
+          'aria-pressed',
+          String(shieldVerificationEnabled),
+        );
+      };
+
+      const demoStatus =
+        document.querySelector<HTMLOutputElement>('#demo-status');
+      const controls = new AbortController();
+      let demoTimer: ReturnType<typeof setTimeout> | undefined;
+      let demoStep = 0;
+
+      const setDemoStatus = (message: string): void => {
+        if (demoStatus) demoStatus.value = message;
+      };
+
+      const stopAutomaticDemo = (message = 'Demo stopped'): void => {
+        if (demoTimer !== undefined) {
+          window.clearTimeout(demoTimer);
+          demoTimer = undefined;
+        }
+        setDemoStatus(message);
+      };
+
+      const applyPlayer = (
+        index: number,
+        patch: DungeonPlayerPatch,
+      ): void => {
+        updateLpcCharacter(instances[index], patch);
+        players[index] = clonePlayer(instances[index].currentInput);
+        if (index === 2) renderShieldVerification();
+      };
+
+      const applyAll = (
+        transform: (
+          player: DungeonPlayerInput,
+          index: number,
+        ) => DungeonPlayerPatch,
+      ): void => {
+        players.forEach((player, index) => {
+          applyPlayer(index, transform(clonePlayer(player), index));
+        });
+      };
+
+      const setAllState = (
+        animationState: string,
+        direction: string,
+      ): void => {
+        applyAll(() => ({ animationState, direction }));
+      };
+
+      const resetMockData = (): void => {
+        players = initialPlayers.map(clonePlayer);
+        players.forEach((player, index) => {
+          updateLpcCharacter(instances[index], {
+            ...player,
+            visualLoadout: completeLoadoutPatch(player),
+          });
+          players[index] = clonePlayer(instances[index].currentInput);
+        });
+      };
+
+      const fullLoadout = {
+        chest: 'test-armor',
+        legs: 'test-legs',
+        boots: 'test-boots',
+        helmet: 'test-helmet',
+        weapon: 'test-weapon',
+        shield: 'test-shield',
+      };
+
+      const demoSteps: Array<() => void> = [
+        () => setAllState('idle', 'front'),
+        () => setAllState('walk', 'left'),
+        () => setAllState('walk', 'right'),
+        () => setAllState('idle', 'back'),
+        () => {
+          applyPlayer(0, { visualLoadout: null });
+          applyPlayer(4, {
+            visualLoadout: { ...fullLoadout },
+          });
+        },
+        () => {
+          applyPlayer(5, {
+            animationState: 'hurt',
+          });
+        },
+        resetMockData,
+      ];
+
+      const advanceAutomaticDemo = (): void => {
+        demoSteps[demoStep]();
+        demoStep += 1;
+        setDemoStatus(`Demo step ${demoStep} / ${demoSteps.length}`);
+
+        if (demoStep < demoSteps.length) {
+          demoTimer = window.setTimeout(advanceAutomaticDemo, 2000);
+        } else {
+          demoTimer = undefined;
+          setDemoStatus('Demo complete');
+        }
+      };
+
+      const startAutomaticDemo = (): void => {
+        stopAutomaticDemo();
+        resetMockData();
+        demoStep = 0;
+        advanceAutomaticDemo();
+      };
+
+      const runManualAction = (action: () => void): void => {
+        stopAutomaticDemo('Manual update');
+        action();
+      };
+
+      const actions: Record<string, () => void> = {
+        'idle-front': () => runManualAction(() => setAllState('idle', 'front')),
+        'idle-back': () => runManualAction(() => setAllState('idle', 'back')),
+        'walk-front': () => runManualAction(() => setAllState('walk', 'front')),
+        'walk-back': () => runManualAction(() => setAllState('walk', 'back')),
+        'hurt-six': () =>
+          runManualAction(() =>
+            applyPlayer(5, {
+              animationState: 'hurt',
+            }),
+          ),
+        'equip-five': () =>
+          runManualAction(() =>
+            applyPlayer(4, {
+              visualLoadout: { ...fullLoadout },
+            }),
+          ),
+        'remove-one': () =>
+          runManualAction(() =>
+            applyPlayer(0, { visualLoadout: null }),
+          ),
+        'rename-two': () =>
+          runManualAction(() =>
+            applyPlayer(1, {
+              displayName: 'Player Two Updated',
+              level: (players[1].level ?? 1) + 1,
+            }),
+          ),
+        'unknown-three': () =>
+          runManualAction(() =>
+            applyPlayer(2, {
+              visualLoadout: {
+                helmet: 'unknown-runtime-helmet',
+              },
+            }),
+          ),
+        reset: () =>
+          runManualAction(() => {
+            resetMockData();
+            setDemoStatus('Mock data reset');
+          }),
+        'verify-shield': () =>
+          runManualAction(() => {
+            shieldVerificationEnabled = !shieldVerificationEnabled;
+            renderShieldVerification();
+            setDemoStatus(
+              shieldVerificationEnabled
+                ? 'Player Three shield asset isolated'
+                : 'Shield asset verification off',
+            );
+          }),
+        demo: startAutomaticDemo,
+      };
+
+      document.querySelectorAll<HTMLButtonElement>('[data-action]').forEach(
+        (button) => {
+          button.addEventListener(
+            'click',
+            () => {
+              const action = button.dataset.action;
+              if (action) actions[action]?.();
+            },
+            { signal: controls.signal },
+          );
+        },
+      );
+
+      window.addEventListener(
+        'pagehide',
+        () => {
+          stopAutomaticDemo();
+          controls.abort();
+          instances.forEach(destroyLpcCharacter);
+        },
+        { once: true },
+      );
+    </script>
+  </body>
+</html>

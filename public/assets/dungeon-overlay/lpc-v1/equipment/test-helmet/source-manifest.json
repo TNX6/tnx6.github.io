@@ -1,0 +1,43 @@
+{
+  "id": "test-helmet",
+  "slot": "helmet",
+  "sourceRoot": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets",
+  "frameSize": 64,
+  "directionRowOrder": ["back/up", "left", "front/down", "right"],
+  "layerPosition": {
+    "zPos": 130,
+    "stack": "foreground; above body and all selected equipment"
+  },
+  "animations": {
+    "idle": {
+      "output": "idle.png",
+      "dimensions": [832, 256],
+      "frameCountPerDirection": 2,
+      "sourceFiles": ["hat/helmet/greathelm/male/idle.png"]
+    },
+    "idleBreath": {
+      "output": "idle-breathe-v1.png",
+      "dimensions": [128, 256],
+      "framesPerDirection": 2,
+      "restSource": "idle.png column 0",
+      "inhaleSource": "idle.png column 1",
+      "operation": "Copy the two original compatible LPC idle frames so the helmet stays aligned with the breathing head."
+    },
+    "walk": {
+      "output": "walk.png",
+      "dimensions": [832, 256],
+      "frameCountPerDirection": 9,
+      "sourceFiles": ["hat/helmet/greathelm/male/walk.png"]
+    },
+    "hurt": {
+      "output": "hurt.png",
+      "dimensions": [832, 64],
+      "frameCount": 6,
+      "directionRows": 1,
+      "transparentPaddingColumns": [6, 12],
+      "sourceFiles": ["hat/helmet/greathelm/male/hurt.png"],
+      "sourceSha256": "6ca43868dab79ae384584eb4ead4815623f5da1d5e321f4178668c22cc1911b3"
+    }
+  },
+  "credits": "/assets/dungeon-overlay/lpc-v1/equipment/test-helmet/credits.txt"
+}

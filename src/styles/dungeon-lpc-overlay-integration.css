@@ -1,0 +1,270 @@
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-lpc-debug-label {
+  position: absolute;
+  z-index: 30;
+  top: 10px;
+  left: 12px;
+  padding: 3px 7px;
+  border: 1px solid rgba(159, 224, 255, 0.58);
+  background: rgba(5, 12, 20, 0.78);
+  color: #bdeeff;
+  font: 700 10px/1.2 Consolas, monospace;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+
+.dov-player-actor[data-lpc-render-state='active'] .dov-avatar,
+.dov-player-actor[data-lpc-render-state='active'] .dov-layered-actor {
+  display: none !important;
+}
+
+.dov-overlay[data-dungeon-renderer='lpc']
+  .dov-slot[data-lpc-slot-configured='true'] {
+  transition: none;
+}
+
+.dov-overlay[data-dungeon-renderer='lpc']
+  .dov-slot[data-lpc-slot-configured='true']
+  .dov-slot__identity-anchor {
+  --dov-identity-anchor-bottom: var(--dov-lpc-identity-bottom);
+}
+
+.dov-overlay[data-dungeon-renderer='lpc']
+  .dov-player-actor[data-lpc-render-state='active']:is(
+    [data-animation-state='arriving'],
+    [data-animation-state='entering'],
+    [data-animation-state='returning']
+  ) {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  visibility: visible;
+  animation: none !important;
+  will-change: auto;
+}
+
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-lpc-character-host {
+  --dov-lpc-slot-scale: 3;
+  --dov-lpc-final-x: 0px;
+  --dov-lpc-final-y: 0px;
+  --dov-lpc-entry-x: 0px;
+  --dov-lpc-entry-y: 0px;
+  --dov-lpc-exit-x: 0px;
+  --dov-lpc-exit-y: 0px;
+  position: absolute;
+  z-index: 4;
+  bottom: -8px;
+  left: -1px;
+  display: block;
+  width: calc(64px * var(--dov-lpc-slot-scale));
+  height: calc(64px * var(--dov-lpc-slot-scale));
+  overflow: visible;
+  direction: ltr;
+  opacity: 1;
+  transform:
+    translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0)
+    scale(1);
+  transform-origin: bottom center;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.dov-overlay[data-dungeon-renderer='lpc']
+  .dov-player-actor[data-animation-state='arriving']
+  .dov-lpc-character-host {
+  animation: dov-lpc-slot-arrive 1050ms steps(14, end) both;
+}
+
+.dov-overlay[data-dungeon-renderer='lpc']
+  .dov-player-actor[data-animation-state='entering']
+  .dov-lpc-character-host {
+  animation:
+    dov-lpc-slot-exit var(--dov-entry-duration, 740ms) steps(12, end)
+    var(--dov-entry-stagger, 0ms) both;
+}
+
+.dov-overlay[data-dungeon-renderer='lpc']
+  .dov-player-actor[data-animation-state='returning']
+  .dov-lpc-character-host {
+  animation:
+    dov-lpc-slot-return 900ms steps(14, end)
+    var(--dov-return-stagger, 0ms) both;
+}
+
+.dov-overlay[data-dungeon-renderer='lpc']
+  .dov-lpc-character-host
+  .lpc-runtime-character {
+  position: absolute;
+  inset: auto;
+  top: 22px;
+  left: 46px;
+  display: block;
+  width: 100px;
+  height: 170px;
+  min-width: 0;
+  overflow: visible;
+  --lpc-scale: var(--dov-lpc-slot-scale) !important;
+}
+
+.dov-overlay[data-dungeon-renderer='lpc']
+  .dov-lpc-character-host
+  .lpc-runtime-visual {
+  position: absolute;
+  inset: auto;
+  top: -22px;
+  left: -46px;
+  width: calc(64px * var(--dov-lpc-slot-scale));
+  height: calc(64px * var(--dov-lpc-slot-scale));
+  filter:
+    drop-shadow(1px 0 0 rgba(8, 5, 8, 0.95))
+    drop-shadow(-1px 0 0 rgba(8, 5, 8, 0.95))
+    drop-shadow(0 1px 0 rgba(8, 5, 8, 0.95));
+}
+
+.dov-overlay[data-dungeon-renderer='lpc']
+  .dov-lpc-character-host
+  .lpc-runtime-meta {
+  display: none;
+}
+
+.dov-lpc-slot-debug-layer {
+  position: absolute;
+  z-index: 45;
+  inset: 0;
+  width: 780px;
+  height: 650px;
+  overflow: visible;
+  direction: ltr;
+  pointer-events: none;
+}
+
+.dov-lpc-debug-safe {
+  fill: rgba(22, 139, 176, 0.035);
+  stroke: rgba(78, 210, 255, 0.62);
+  stroke-width: 1;
+  stroke-dasharray: 5 4;
+  vector-effect: non-scaling-stroke;
+}
+
+.dov-lpc-debug-entry-path {
+  stroke: rgba(255, 213, 92, 0.95);
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.dov-lpc-debug-final-anchor {
+  fill: #fff4a8;
+  stroke: #7a5500;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.dov-lpc-debug-current-bounds {
+  fill: rgba(255, 77, 132, 0.025);
+  stroke: rgba(255, 92, 145, 0.9);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.dov-lpc-debug-slot-label,
+.dov-lpc-debug-current-label {
+  fill: #dbf7ff;
+  paint-order: stroke;
+  stroke: rgba(3, 7, 12, 0.92);
+  stroke-width: 3px;
+  font: 700 9px/1 Consolas, monospace;
+  letter-spacing: 0.02em;
+  vector-effect: non-scaling-stroke;
+}
+
+.dov-lpc-debug-current-label {
+  fill: #ffb8d0;
+}
+
+@keyframes dov-lpc-slot-arrive {
+  from {
+    opacity: 0.9;
+    transform:
+      translate3d(
+        calc(var(--dov-lpc-final-x) + var(--dov-lpc-entry-x)),
+        calc(var(--dov-lpc-final-y) + var(--dov-lpc-entry-y)),
+        0
+      )
+      scale(1);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0)
+      scale(1);
+  }
+}
+
+@keyframes dov-lpc-slot-exit {
+  from {
+    opacity: 1;
+    transform:
+      translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0)
+      scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform:
+      translate3d(
+        calc(var(--dov-lpc-final-x) + var(--dov-lpc-exit-x)),
+        calc(var(--dov-lpc-final-y) + var(--dov-lpc-exit-y)),
+        0
+      )
+      scale(1);
+  }
+}
+
+@keyframes dov-lpc-slot-return {
+  from {
+    opacity: 0;
+    transform:
+      translate3d(
+        calc(var(--dov-lpc-final-x) + var(--dov-lpc-exit-x)),
+        calc(var(--dov-lpc-final-y) + var(--dov-lpc-exit-y)),
+        0
+      )
+      scale(1);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0)
+      scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dov-overlay[data-dungeon-renderer='lpc']
+    .dov-player-actor:is(
+      [data-animation-state='arriving'],
+      [data-animation-state='returning']
+    )
+    .dov-lpc-character-host {
+    opacity: 1;
+    transform:
+      translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0)
+      scale(1);
+    animation: none !important;
+  }
+
+  .dov-overlay[data-dungeon-renderer='lpc']
+    .dov-player-actor[data-animation-state='entering']
+    .dov-lpc-character-host {
+    opacity: 0;
+    transform:
+      translate3d(
+        calc(var(--dov-lpc-final-x) + var(--dov-lpc-exit-x)),
+        calc(var(--dov-lpc-final-y) + var(--dov-lpc-exit-y)),
+        0
+      )
+      scale(1);
+    animation: none !important;
+  }
+}

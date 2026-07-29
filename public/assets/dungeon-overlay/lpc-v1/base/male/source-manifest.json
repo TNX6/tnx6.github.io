@@ -1,0 +1,21 @@
+{
+  "id": "lpc-male-base",
+  "bodyType": "male",
+  "frameSize": 64,
+  "directionRowOrder": ["back/up", "left", "front/down", "right"],
+  "animations": {
+    "idleBreath": {
+      "output": "idle-breathe-v1.png",
+      "dimensions": [128, 256],
+      "framesPerDirection": 2,
+      "restSource": "idle.png column 0",
+      "inhaleSource": "idle.png column 1",
+      "grounding": "The canonical inhale frame is retained above y=51; y=51..63 is restored byte-for-byte from the rest frame in every direction.",
+      "feetFixed": true,
+      "redrawn": false,
+      "resized": false,
+      "mirrored": false,
+      "recolored": false
+    }
+  }
+}

@@ -1,0 +1,36 @@
+Universal LPC Crusader Shield
+
+Exact source files:
+- shield/crusader/bg/walk/crusader.png
+- shield/crusader/fg/male/walk/crusader.png
+- shield/crusader/bg/hurt/crusader.png
+- shield/crusader/fg/male/hurt/crusader.png
+
+Idle behavior:
+- Crusader has no dedicated idle sheet.
+- Each direction uses frame 1 (column 0) from its corresponding original walk
+  row, copied unchanged into idle columns 0 and 1.
+- Idle remains static; no walk animation is played.
+
+Layer order:
+- background: zPos 2, shield/crusader/bg
+- male foreground: zPos 110, shield/crusader/fg/male
+
+Authors:
+- bluecarrot16
+- Sander Frenken (castelonia)
+
+License:
+- OGA-BY 3.0
+
+Source:
+- https://opengameart.org/content/lpc-shields
+
+Processing:
+- Original pixels retained. Canonical coordinates are retained for back, left,
+  right, and hurt.
+- The complete front/down frames are translated +27px on x so the shield is
+  held by the character-left hand opposite the sword.
+- Transparent padding was added on the right to reach the existing LPC V1
+  832-pixel sheet width.
+- No redraw, resize, rotation, mirroring, recolor, or heater offsets.
