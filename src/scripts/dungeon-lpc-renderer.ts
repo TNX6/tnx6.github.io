@@ -34,6 +34,7 @@ type SplitAssets = {
 };
 
 type CatalogItem = {
+  id: string;
   slot: VisualSlot;
   assets: SimpleAssets | SplitAssets;
 };
@@ -98,16 +99,41 @@ const SHIELD_ASSETS = {
   },
 } satisfies SplitAssets;
 
-const equipmentBySlot = Object.fromEntries(
-  (equipmentCatalog.items as CatalogItem[]).map((item) => [item.slot, item]),
-) as Record<VisualSlot, CatalogItem>;
+const DEFAULT_ITEM_ID_BY_SLOT = Object.freeze({
+  chest: 'test-armor',
+  legs: 'test-legs',
+  boots: 'test-boots',
+  helmet: 'test-helmet',
+  weapon: 'test-weapon',
+  shield: 'test-shield',
+} satisfies Record<VisualSlot, string>);
+
+const equipmentById = new Map(
+  (equipmentCatalog.items as CatalogItem[]).map((item) => [item.id, item]),
+);
+
+const catalogItemFor = (
+  slot: VisualSlot,
+  itemId: string | null,
+): CatalogItem => {
+  const selected = itemId ? equipmentById.get(itemId) : undefined;
+  if (selected?.slot === slot) return selected;
+  const fallback = equipmentById.get(DEFAULT_ITEM_ID_BY_SLOT[slot]);
+  if (!fallback || fallback.slot !== slot) {
+    throw new Error(`Missing LPC catalog fallback for ${slot}.`);
+  }
+  return fallback;
+};
 
 const simpleAssets = (
   slot: Exclude<VisualSlot, 'weapon' | 'shield'>,
-): SimpleAssets => equipmentBySlot[slot].assets as SimpleAssets;
+  itemId: string | null = null,
+): SimpleAssets => catalogItemFor(slot, itemId).assets as SimpleAssets;
 
-const splitAssets = (slot: 'weapon' | 'shield'): SplitAssets =>
-  equipmentBySlot[slot].assets as SplitAssets;
+const splitAssets = (
+  slot: 'weapon' | 'shield',
+  itemId: string | null = null,
+): SplitAssets => catalogItemFor(slot, itemId).assets as SplitAssets;
 
 const chestAssets = simpleAssets('chest');
 const legsAssets = simpleAssets('legs');
@@ -201,17 +227,6 @@ const LAYER_DEFINITIONS: LayerDefinition[] = [
   },
 ];
 
-const hurtSupportedSlots = Object.fromEntries(
-  (['chest', 'legs', 'boots', 'helmet', 'weapon', 'shield'] as VisualSlot[]).map(
-    (slot) => [
-      slot,
-      LAYER_DEFINITIONS.some(
-        (definition) => definition.slot === slot && Boolean(definition.hurt),
-      ),
-    ],
-  ),
-) as Record<VisualSlot, boolean>;
-
 const warnedIdleBreathLayers = new Set<LayerKey>();
 
 const warnMissingIdleBreath = (definition: LayerDefinition): void => {
@@ -223,11 +238,13 @@ const warnMissingIdleBreath = (definition: LayerDefinition): void => {
 };
 
 const loadoutChanged = (
-  previous: LpcCharacterProps['loadout'],
-  next: LpcCharacterProps['loadout'],
+  previous: LpcCharacterProps,
+  next: LpcCharacterProps,
 ): boolean =>
-  (Object.keys(previous) as VisualSlot[]).some(
-    (slot) => previous[slot] !== next[slot],
+  (Object.keys(previous.loadout) as VisualSlot[]).some(
+    (slot) =>
+      previous.loadout[slot] !== next.loadout[slot] ||
+      previous.itemIds[slot] !== next.itemIds[slot],
   );
 
 const setImageVariable = (
@@ -236,6 +253,55 @@ const setImageVariable = (
   path: string,
 ): void => {
   element.style.setProperty(name, `url("${path}")`);
+};
+
+const assetsForEquipmentLayer = (
+  definition: LayerDefinition,
+  itemIds: LpcCharacterProps['itemIds'],
+): LayerDefinition => {
+  const slot = definition.slot;
+  if (!slot) return definition;
+  const itemId = itemIds[slot];
+  const item = catalogItemFor(slot, itemId);
+
+  if (slot === 'weapon' || slot === 'shield') {
+    const assets =
+      slot === 'shield' && item.id === 'test-shield'
+        ? SHIELD_ASSETS
+        : (item.assets as SplitAssets);
+    const part = definition.key.endsWith('-back') ? 'back' : 'front';
+    return {
+      ...definition,
+      idle: assets.idle[part],
+      idleBreath: assets.idleBreath?.[part],
+      walk: assets.walk[part],
+      hurt: assets.hurt?.[part],
+    };
+  }
+
+  const assets = item.assets as SimpleAssets;
+  return {
+    ...definition,
+    idle: assets.idle,
+    idleBreath: assets.idleBreath,
+    walk: assets.walk,
+    hurt: assets.hurt,
+  };
+};
+
+const slotSupportsHurt = (
+  slot: VisualSlot,
+  itemId: string | null,
+): boolean => {
+  const item = catalogItemFor(slot, itemId);
+  if (slot === 'weapon' || slot === 'shield') {
+    const assets =
+      slot === 'shield' && item.id === 'test-shield'
+        ? SHIELD_ASSETS
+        : (item.assets as SplitAssets);
+    return Boolean(assets.hurt?.back || assets.hurt?.front);
+  }
+  return Boolean((item.assets as SimpleAssets).hurt);
 };
 
 const mergePlayerPatch = (
@@ -359,7 +425,7 @@ export const createLpcCharacter = (
       const restartAnimation =
         previousProps.state !== nextResult.props.state ||
         previousProps.direction !== nextResult.props.direction ||
-        loadoutChanged(previousProps.loadout, nextResult.props.loadout);
+        loadoutChanged(previousProps, nextResult.props);
 
       instance.input = mergedPlayer;
       instance.currentInput = mergedPlayer;
@@ -390,10 +456,44 @@ export const createLpcCharacter = (
 
     root.dataset.state = props.state;
     root.dataset.direction = props.direction;
+
+    LAYER_DEFINITIONS.forEach((definition) => {
+      if (!definition.slot) return;
+      const element = layerElements.get(definition.key);
+      if (!element) return;
+      const selected = assetsForEquipmentLayer(definition, props.itemIds);
+      const selectedItem = catalogItemFor(
+        definition.slot,
+        props.itemIds[definition.slot],
+      );
+      element.dataset.itemId = selectedItem.id;
+      setImageVariable(element, '--lpc-idle-image', selected.idle);
+      setImageVariable(element, '--lpc-walk-image', selected.walk);
+      if (selected.idleBreath) {
+        setImageVariable(
+          element,
+          '--lpc-idle-breath-image',
+          selected.idleBreath,
+        );
+        element.classList.add('has-idle-breath-layer');
+      } else {
+        element.style.removeProperty('--lpc-idle-breath-image');
+        element.classList.remove('has-idle-breath-layer');
+      }
+      if (selected.hurt) {
+        setImageVariable(element, '--lpc-hurt-image', selected.hurt);
+        element.classList.add('has-hurt-layer');
+      } else {
+        element.style.removeProperty('--lpc-hurt-image');
+        element.classList.remove('has-hurt-layer');
+      }
+    });
+
     const hasVisibleEquipment = (Object.keys(props.loadout) as VisualSlot[]).some(
       (slot) =>
         props.loadout[slot] &&
-        (props.state !== 'hurt' || hurtSupportedSlots[slot]),
+        (props.state !== 'hurt' ||
+          slotSupportsHurt(slot, props.itemIds[slot])),
     );
     root.dataset.equipmentVisible = String(hasVisibleEquipment);
     root.style.setProperty('--lpc-scale', String(props.scale));
@@ -441,7 +541,7 @@ export const createLpcCharacter = (
           );
           const slotVisible =
             !definition?.slot || Boolean(props.loadout[definition.slot]);
-          if (definition?.idleBreath) {
+          if (element.classList.contains('has-idle-breath-layer')) {
             element.classList.add('is-idle-breath-animation');
           } else {
             element.classList.add('is-idle-frame');

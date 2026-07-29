@@ -1,10 +1,15 @@
+export type DungeonVisualItem =
+  | string
+  | { readonly spriteKey: string };
+
 export type DungeonVisualLoadout = {
-  chest?: string | null;
-  legs?: string | null;
-  boots?: string | null;
-  helmet?: string | null;
-  weapon?: string | null;
-  shield?: string | null;
+  chest?: DungeonVisualItem | null;
+  armor?: DungeonVisualItem | null;
+  legs?: DungeonVisualItem | null;
+  boots?: DungeonVisualItem | null;
+  helmet?: DungeonVisualItem | null;
+  weapon?: DungeonVisualItem | null;
+  shield?: DungeonVisualItem | null;
 };
 
 export type DungeonPlayerInput = {
@@ -41,6 +46,14 @@ export type LpcCharacterProps = {
     weapon: boolean;
     shield: boolean;
   };
+  itemIds: {
+    chest: string | null;
+    legs: string | null;
+    boots: string | null;
+    helmet: string | null;
+    weapon: string | null;
+    shield: string | null;
+  };
 };
 
 export type DungeonLpcAdapterResult = {
@@ -53,11 +66,11 @@ type VisualSlot = keyof LpcCharacterProps['loadout'];
 export const SUPPORTED_LPC_ITEM_MAPPINGS: Readonly<
   Record<VisualSlot, readonly string[]>
 > = {
-  chest: ['test-armor', 'iron-armor', 'plate-armor'],
+  chest: ['test-armor', 'patched-leather', 'iron-armor', 'plate-armor'],
   legs: ['test-legs', 'iron-legs', 'plate-legs'],
-  boots: ['test-boots', 'iron-boots', 'plate-boots'],
-  helmet: ['test-helmet', 'greathelm', 'iron-helmet'],
-  weapon: ['test-weapon', 'arming-sword', 'iron-sword'],
+  boots: ['test-boots', 'leather-boots', 'iron-boots', 'plate-boots'],
+  helmet: ['test-helmet', 'leather-cap', 'greathelm', 'iron-helmet'],
+  weapon: ['test-weapon', 'rusty-sword', 'arming-sword', 'iron-sword'],
   shield: ['test-shield', 'heater-shield', 'iron-shield'],
 };
 
@@ -114,24 +127,44 @@ export const adaptDungeonPlayerToLpc = (
   const displayName = normalizedText(input.displayName);
   const username = normalizedText(input.username);
 
-  const loadout = Object.fromEntries(
-    VISUAL_SLOTS.map((slot) => {
-      const rawItemId = input.visualLoadout?.[slot];
-      const itemId =
-        typeof rawItemId === 'string' ? rawItemId.trim().toLowerCase() : '';
+  const loadout = {} as LpcCharacterProps['loadout'];
+  const itemIds = {} as LpcCharacterProps['itemIds'];
 
-      if (!itemId) return [slot, false];
+  VISUAL_SLOTS.forEach((slot) => {
+    const rawItem =
+      slot === 'chest'
+        ? input.visualLoadout?.chest ?? input.visualLoadout?.armor
+        : input.visualLoadout?.[slot];
+    const rawItemId =
+      typeof rawItem === 'string'
+        ? rawItem
+        : rawItem &&
+            typeof rawItem === 'object' &&
+            typeof rawItem.spriteKey === 'string'
+          ? rawItem.spriteKey
+          : '';
+    const normalizedItemId = rawItemId.trim().toLowerCase();
+    const itemId =
+      slot === 'boots' && normalizedItemId === 'traveler-boots'
+        ? 'leather-boots'
+        : normalizedItemId;
 
-      const supported = SUPPORTED_LPC_ITEM_MAPPINGS[slot].includes(itemId);
-      if (!supported) {
-        warnings.push(
-          `Unsupported ${slot} item "${rawItemId}"; visual slot disabled.`,
-        );
-      }
+    if (!itemId) {
+      loadout[slot] = false;
+      itemIds[slot] = null;
+      return;
+    }
 
-      return [slot, supported];
-    }),
-  ) as LpcCharacterProps['loadout'];
+    const supported = SUPPORTED_LPC_ITEM_MAPPINGS[slot].includes(itemId);
+    if (!supported) {
+      warnings.push(
+        `Unsupported ${slot} item "${rawItemId}"; visual slot disabled.`,
+      );
+    }
+
+    loadout[slot] = supported;
+    itemIds[slot] = supported ? itemId : null;
+  });
 
   return {
     props: {
@@ -146,6 +179,7 @@ export const adaptDungeonPlayerToLpc = (
       showName: false,
       showLevel: false,
       loadout,
+      itemIds,
     },
     warnings,
   };

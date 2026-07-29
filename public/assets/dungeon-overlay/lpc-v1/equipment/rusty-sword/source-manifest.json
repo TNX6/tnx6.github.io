@@ -1,0 +1,90 @@
+{
+  "id": "rusty-sword",
+  "slot": "weapon",
+  "bodyType": "universal",
+  "frameSize": 64,
+  "directionRowOrder": ["back/up", "left", "front/down", "right"],
+  "selection": {
+    "sourceItem": "Arming Sword",
+    "variant": "copper",
+    "reason": "The copper palette reads as worn and low-tier while preserving the canonical one-handed arming-sword silhouette.",
+    "candidatesInspected": ["arming bronze", "arming iron", "arming copper", "arming brass"]
+  },
+  "layerOrder": {
+    "back": {
+      "zPos": 9,
+      "source": "weapon/sword/arming/universal/bg"
+    },
+    "front": {
+      "zPos": 140,
+      "source": "weapon/sword/arming/universal/fg"
+    }
+  },
+  "animations": {
+    "idle": {
+      "sources": [
+        "weapon/sword/arming/universal/bg/idle/copper.png",
+        "weapon/sword/arming/universal/fg/idle/copper.png"
+      ],
+      "outputs": ["idle-back.png", "idle-front.png"],
+      "dimensions": [832, 256],
+      "activeFramesPerDirection": 2
+    },
+    "idleBreath": {
+      "sources": ["idle-back.png", "idle-front.png"],
+      "outputs": ["idle-breathe-back.png", "idle-breathe-front.png"],
+      "dimensions": [128, 256],
+      "framesPerDirection": 2
+    },
+    "walk": {
+      "sources": [
+        "weapon/sword/arming/universal/bg/walk/copper.png",
+        "weapon/sword/arming/universal/fg/walk/copper.png"
+      ],
+      "outputs": ["walk-back.png", "walk-front.png"],
+      "dimensions": [832, 256],
+      "activeFramesPerDirection": 9
+    },
+    "hurt": {
+      "sources": [
+        "weapon/sword/arming/universal/bg/hurt/copper.png",
+        "weapon/sword/arming/universal/fg/hurt/copper.png"
+      ],
+      "outputs": ["hurt-back.png", "hurt-front.png"],
+      "dimensions": [832, 64],
+      "activeFrames": 6,
+      "transparentPaddingColumns": [6, 12]
+    }
+  },
+  "rightHandNormalization": {
+    "hand": "character-right",
+    "resized": false,
+    "rotated": false,
+    "mirrored": false,
+    "recolored": false,
+    "leftDirectionFrontPixelsTransferredToBack": true,
+    "idleFrontDownOffsets": [[-20, 0], [-20, 0]],
+    "walkFrontDownOffsets": [
+      [-20, 0],
+      [-20, 0],
+      [-20, 0],
+      [-20, 0],
+      [-20, 0],
+      [-20, 0],
+      [-20, 0],
+      [-17, 0],
+      [-20, 0]
+    ],
+    "hurtOffsets": [
+      [-21, 0],
+      [-22, 0],
+      [-20, 0],
+      [-20, 0],
+      [-22, 0],
+      [-28, 0]
+    ],
+    "hurtFinalBackPixelsTransferredToFront": true,
+    "note": "The same established right-hand spatial normalization used by the test arming sword was applied to unchanged copper source pixels."
+  },
+  "credits": "/assets/dungeon-overlay/lpc-v1/equipment/rusty-sword/credits.txt"
+}

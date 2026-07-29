@@ -1,0 +1,51 @@
+{
+  "id": "leather-boots",
+  "slot": "boots",
+  "bodyType": "male",
+  "frameSize": 64,
+  "directionRowOrder": ["back/up", "left", "front/down", "right"],
+  "selection": {
+    "sourceItem": "Basic Boots",
+    "palette": "cloth.ulpc leather",
+    "reason": "The ankle-height basic boot silhouette is low-tier and practical, while the official dark leather palette matches the brown leather cap and patched leather torso without looking clean, ornate, or metallic.",
+    "candidatesInspected": [
+      "basic boots: leather",
+      "basic boots: brown",
+      "basic boots: walnut",
+      "fold boots: leather",
+      "rimmed boots: leather",
+      "revised boots: leather",
+      "basic shoes: brown",
+      "ghillies: leather"
+    ]
+  },
+  "sourceFiles": {
+    "idle": "feet/boots/basic/male/idle.png",
+    "walk": "feet/boots/basic/male/walk.png",
+    "hurt": "feet/boots/basic/male/hurt.png",
+    "sourcePalette": "palette_definitions/cloth/cloth_ulpc.json#white",
+    "targetPalette": "palette_definitions/cloth/cloth_ulpc.json#leather",
+    "recolorImplementation": "sources/canvas/palette-recolor.ts"
+  },
+  "outputs": {
+    "idle.png": [832, 256],
+    "idle-breathe.png": [128, 256],
+    "walk.png": [832, 256],
+    "hurt.png": [832, 64]
+  },
+  "idleBreath": {
+    "feetFixed": true,
+    "operation": "The first recolored original rest frame is repeated as both breathing columns for every direction, matching the existing feet-anchored breathing system."
+  },
+  "composition": {
+    "zPos": 25,
+    "gridPreserved": true,
+    "resized": false,
+    "cropped": false,
+    "rotated": false,
+    "mirrored": false,
+    "paletteRecolored": true,
+    "recolorMethod": "Exact official LPC white-to-leather palette replacement with the generator's one-channel tolerance; alpha and coordinates are unchanged."
+  },
+  "credits": "/assets/dungeon-overlay/lpc-v1/equipment/leather-boots/credits.txt"
+}

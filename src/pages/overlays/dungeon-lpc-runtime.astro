@@ -271,15 +271,16 @@
         },
         {
           slot: 2,
-          username: 'player_two',
-          displayName: 'Player Two',
+          username: 'production_common',
+          displayName: 'Production Common Set',
           level: 8,
-          animationState: 'walk',
-          direction: 'left',
+          animationState: 'idle',
+          direction: 'front',
           visualLoadout: {
-            chest: 'iron-armor',
-            legs: 'iron-legs',
-            boots: 'iron-boots',
+            weapon: { spriteKey: 'rusty-sword' },
+            helmet: { spriteKey: 'leather-cap' },
+            armor: { spriteKey: 'patched-leather' },
+            boots: { spriteKey: 'traveler-boots' },
           },
         },
         {
@@ -309,7 +310,7 @@
         {
           slot: 5,
           username: 'player_five',
-          displayName: 'Player Five',
+          displayName: 'Unarmored Comparison',
           level: 5,
           animationState: 'idle',
           direction: 'front',
@@ -343,6 +344,7 @@
         player: DungeonPlayerInput,
       ): NonNullable<DungeonPlayerInput['visualLoadout']> => ({
         chest: player.visualLoadout?.chest ?? null,
+        armor: player.visualLoadout?.armor ?? null,
         legs: player.visualLoadout?.legs ?? null,
         boots: player.visualLoadout?.boots ?? null,
         helmet: player.visualLoadout?.helmet ?? null,

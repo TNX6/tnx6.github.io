@@ -147,20 +147,20 @@ export const LPC_OVERLAY_SLOT_CONFIGURATION = Object.freeze([
 
 const PRODUCTION_ITEM_TO_LPC = Object.freeze({
   weapon: Object.freeze({
-    'rusty-sword': 'arming-sword',
+    'rusty-sword': 'rusty-sword',
     'steel-sword': 'iron-sword',
     'test-weapon': 'test-weapon',
     'arming-sword': 'arming-sword',
     'iron-sword': 'iron-sword',
   }),
   helmet: Object.freeze({
-    'leather-cap': 'test-helmet',
+    'leather-cap': 'leather-cap',
     'iron-helmet': 'iron-helmet',
     'test-helmet': 'test-helmet',
     greathelm: 'greathelm',
   }),
   chest: Object.freeze({
-    'patched-leather': 'test-armor',
+    'patched-leather': 'patched-leather',
     'iron-armor': 'iron-armor',
     'test-armor': 'test-armor',
     'plate-armor': 'plate-armor',
@@ -171,7 +171,7 @@ const PRODUCTION_ITEM_TO_LPC = Object.freeze({
     'plate-legs': 'plate-legs',
   }),
   boots: Object.freeze({
-    'traveler-boots': 'test-boots',
+    'traveler-boots': 'leather-boots',
     'guard-boots': 'iron-boots',
     'test-boots': 'test-boots',
     'iron-boots': 'iron-boots',

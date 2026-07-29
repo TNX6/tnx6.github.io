@@ -43,6 +43,7 @@ type SplitAssets = {
 type Slot = keyof LpcLoadout;
 
 type EquipmentItem = {
+  id: string;
   slot: Slot;
   assets: SimpleAssets | SplitAssets;
 };
@@ -63,19 +64,33 @@ if (!Number.isInteger(scale) || scale < 1) {
   throw new Error('LpcCharacter scale must be a positive integer.');
 }
 
-const equipmentBySlot = Object.fromEntries(
-  (equipmentCatalog.items as EquipmentItem[]).map((item) => [
-    item.slot,
-    item,
-  ]),
-) as Record<Slot, EquipmentItem>;
+const defaultItemIdBySlot = {
+  chest: 'test-armor',
+  legs: 'test-legs',
+  boots: 'test-boots',
+  helmet: 'test-helmet',
+  weapon: 'test-weapon',
+  shield: 'test-shield',
+} satisfies Record<Slot, string>;
+
+const equipmentById = new Map(
+  (equipmentCatalog.items as EquipmentItem[]).map((item) => [item.id, item]),
+);
+
+const defaultItemFor = (slot: Slot): EquipmentItem => {
+  const item = equipmentById.get(defaultItemIdBySlot[slot]);
+  if (!item || item.slot !== slot) {
+    throw new Error(`Missing default LPC equipment catalog item for ${slot}.`);
+  }
+  return item;
+};
 
 const simpleAssets = (
   slot: Exclude<Slot, 'weapon' | 'shield'>,
-): SimpleAssets => equipmentBySlot[slot].assets as SimpleAssets;
+): SimpleAssets => defaultItemFor(slot).assets as SimpleAssets;
 
 const splitAssets = (slot: 'weapon' | 'shield'): SplitAssets =>
-  equipmentBySlot[slot].assets as SplitAssets;
+  defaultItemFor(slot).assets as SplitAssets;
 
 const layerStyle = (
   idle: string,
