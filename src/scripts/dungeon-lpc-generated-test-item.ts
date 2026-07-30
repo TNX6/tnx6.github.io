@@ -1,14 +1,8 @@
-import {
-  generatedLpcVisualSlot,
-  getGeneratedLpcItem,
-  type GeneratedLpcItem,
-  type GeneratedLpcVisualSlot,
-} from './dungeon-lpc-generated-catalog';
+import type { GeneratedLpcRuntimeVisualSlot } from './dungeon-lpc-generated-runtime-loader';
 
 export interface DungeonLpcGeneratedTestItem {
   readonly requestedId: string;
-  readonly item: GeneratedLpcItem | null;
-  readonly visualSlot: GeneratedLpcVisualSlot | null;
+  readonly visualSlot: GeneratedLpcRuntimeVisualSlot | null;
   readonly label: string | null;
   readonly warning: string | null;
 }
@@ -34,11 +28,20 @@ export function resolveDungeonLpcGeneratedTestItem(
   const requestedId = params.get('lpcGeneratedItem')?.trim().toLowerCase();
   if (!requestedId) return null;
 
-  const item = getGeneratedLpcItem(requestedId);
-  if (!item) {
+  const productionSlot = requestedId.match(
+    /^lpc-(weapon|helmet|armor|boots)-/,
+  )?.[1];
+  const visualSlot =
+    productionSlot === 'armor'
+      ? 'chest'
+      : productionSlot === 'weapon' ||
+          productionSlot === 'helmet' ||
+          productionSlot === 'boots'
+        ? productionSlot
+        : null;
+  if (!visualSlot) {
     return {
       requestedId,
-      item: null,
       visualSlot: null,
       label: null,
       warning: `Unknown LPC generated item "${requestedId}"; real visual loadout is unchanged.`,
@@ -47,9 +50,8 @@ export function resolveDungeonLpcGeneratedTestItem(
 
   return {
     requestedId,
-    item,
-    visualSlot: generatedLpcVisualSlot(item),
-    label: `LPC GENERATED ITEM: ${item.internalItemId}`,
+    visualSlot,
+    label: `LPC GENERATED ITEM: ${requestedId}`,
     warning: null,
   };
 }

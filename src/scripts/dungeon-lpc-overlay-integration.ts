@@ -221,7 +221,7 @@ function lpcLoadout(
   if (
     forcedLoadout === undefined &&
     !Object.prototype.hasOwnProperty.call(player, 'visualLoadout') &&
-    !generatedTestItem?.item
+    !generatedTestItem?.visualSlot
   ) {
     return undefined;
   }
@@ -235,9 +235,9 @@ function lpcLoadout(
     weapon: equipmentItem('weapon', loadout?.weapon),
     shield: equipmentItem('shield', loadout?.shield),
   };
-  if (generatedTestItem?.item && generatedTestItem.visualSlot) {
+  if (generatedTestItem?.visualSlot) {
     mapped[generatedTestItem.visualSlot] =
-      generatedTestItem.item.internalItemId;
+      generatedTestItem.requestedId;
   }
   return mapped;
 }
@@ -334,9 +334,9 @@ export class DungeonLpcOverlayIntegration {
       this.testLoadoutLabel = null;
     }
 
-    if (this.generatedTestItem?.item && this.generatedTestItem.label) {
+    if (this.generatedTestItem?.visualSlot && this.generatedTestItem.label) {
       root.dataset.lpcGeneratedItem =
-        this.generatedTestItem.item.internalItemId;
+        this.generatedTestItem.requestedId;
       const label = document.createElement('span');
       label.className =
         'dov-lpc-test-loadout-label dov-lpc-generated-item-label';
@@ -495,7 +495,9 @@ export class DungeonLpcOverlayIntegration {
       debugSlots: this.debugEnabled,
       testLoadout: this.testLoadout?.name ?? null,
       generatedTestItem:
-        this.generatedTestItem?.item?.internalItemId ?? null,
+        this.generatedTestItem?.visualSlot
+          ? this.generatedTestItem.requestedId
+          : null,
       generatedTestWarning: Boolean(this.generatedTestItem?.warning),
     };
   }

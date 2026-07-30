@@ -7,9 +7,11 @@ import {
   type LpcCharacterProps,
 } from './dungeon-lpc-adapter';
 import {
-  generatedLpcVisualSlot,
-  getGeneratedLpcItem,
-} from './dungeon-lpc-generated-catalog';
+  generatedLpcRuntimeSlotFor,
+  generatedLpcRuntimeVisualSlot,
+  loadGeneratedLpcRuntimeItem,
+  type GeneratedLpcRuntimeItem,
+} from './dungeon-lpc-generated-runtime-loader';
 
 type VisualSlot = keyof LpcCharacterProps['loadout'];
 type LayerKey =
@@ -116,20 +118,40 @@ const equipmentById = new Map(
   (equipmentCatalog.items as CatalogItem[]).map((item) => [item.id, item]),
 );
 
+const catalogItemFromGenerated = (
+  slot: VisualSlot,
+  item: GeneratedLpcRuntimeItem | undefined,
+): CatalogItem | null => {
+  if (!item || generatedLpcRuntimeVisualSlot(item.slot) !== slot) return null;
+  const assets = item.layered
+    ? {
+        idle: item.idle,
+        idleBreath: item.idleBreath,
+        walk: item.walk,
+        hurt: item.hurt,
+      }
+    : {
+        idle: item.idle,
+        idleBreath: item.idleBreath,
+        walk: item.walk,
+        hurt: item.hurt,
+      };
+  return {
+    id: item.internalItemId,
+    slot,
+    assets: assets as SimpleAssets | SplitAssets,
+  };
+};
+
 const catalogItemFor = (
   slot: VisualSlot,
   itemId: string | null,
+  generatedItem?: GeneratedLpcRuntimeItem,
 ): CatalogItem => {
   const selected = itemId ? equipmentById.get(itemId) : undefined;
   if (selected?.slot === slot) return selected;
-  const generated = itemId ? getGeneratedLpcItem(itemId) : null;
-  if (generated && generatedLpcVisualSlot(generated) === slot) {
-    return {
-      id: generated.internalItemId,
-      slot,
-      assets: generated.assets,
-    };
-  }
+  const generated = catalogItemFromGenerated(slot, generatedItem);
+  if (generated?.id === itemId) return generated;
   const fallback = equipmentById.get(DEFAULT_ITEM_ID_BY_SLOT[slot]);
   if (!fallback || fallback.slot !== slot) {
     throw new Error(`Missing LPC catalog fallback for ${slot}.`);
@@ -270,11 +292,12 @@ const setImageVariable = (
 const assetsForEquipmentLayer = (
   definition: LayerDefinition,
   itemIds: LpcCharacterProps['itemIds'],
+  generatedItems: Partial<Record<VisualSlot, GeneratedLpcRuntimeItem>>,
 ): LayerDefinition => {
   const slot = definition.slot;
   if (!slot) return definition;
   const itemId = itemIds[slot];
-  const item = catalogItemFor(slot, itemId);
+  const item = catalogItemFor(slot, itemId, generatedItems[slot]);
 
   if (slot === 'weapon' || slot === 'shield') {
     const assets =
@@ -304,8 +327,9 @@ const assetsForEquipmentLayer = (
 const slotSupportsHurt = (
   slot: VisualSlot,
   itemId: string | null,
+  generatedItem?: GeneratedLpcRuntimeItem,
 ): boolean => {
-  const item = catalogItemFor(slot, itemId);
+  const item = catalogItemFor(slot, itemId, generatedItem);
   if (slot === 'weapon' || slot === 'shield') {
     const assets =
       slot === 'shield' && item.id === 'test-shield'
@@ -419,13 +443,46 @@ export const createLpcCharacter = (
   let updateCount = 0;
   const disposers: Array<() => void> = [];
   const initialResult = adaptDungeonPlayerToLpc(initialPlayer);
+  let mappedProps = initialResult.props;
+  let mappedWarnings = [...initialResult.warnings];
+  const resolvedGeneratedItems: Partial<
+    Record<VisualSlot, GeneratedLpcRuntimeItem>
+  > = {};
+  const requestedGeneratedIds: Partial<Record<VisualSlot, string>> = {};
+  const generatedWarnings: Partial<Record<VisualSlot, string>> = {};
+  const generatedResolutionTokens: Record<VisualSlot, number> = {
+    chest: 0,
+    legs: 0,
+    boots: 0,
+    helmet: 0,
+    weapon: 0,
+    shield: 0,
+  };
+
+  const effectiveProps = (): LpcCharacterProps => {
+    const loadout = { ...mappedProps.loadout };
+    (Object.keys(resolvedGeneratedItems) as VisualSlot[]).forEach((slot) => {
+      const item = resolvedGeneratedItems[slot];
+      if (item?.internalItemId === mappedProps.itemIds[slot]) {
+        loadout[slot] = true;
+      }
+    });
+    return { ...mappedProps, loadout };
+  };
+
+  const effectiveWarnings = (): string[] => [
+    ...mappedWarnings,
+    ...(Object.keys(generatedWarnings) as VisualSlot[])
+      .map((slot) => generatedWarnings[slot])
+      .filter((warning): warning is string => Boolean(warning)),
+  ];
 
   const instance: LpcCharacterInstance = {
     root,
     input: initialPlayer,
     currentInput: initialPlayer,
-    props: initialResult.props,
-    warnings: [...initialResult.warnings],
+    props: effectiveProps(),
+    warnings: effectiveWarnings(),
     update(patch) {
       if (destroyed) {
         throw new Error('Cannot update a destroyed LPC character instance.');
@@ -434,27 +491,96 @@ export const createLpcCharacter = (
       const previousProps = instance.props;
       const mergedPlayer = mergePlayerPatch(instance.currentInput, patch);
       const nextResult = adaptDungeonPlayerToLpc(mergedPlayer);
+      mappedProps = nextResult.props;
+      mappedWarnings = [...nextResult.warnings];
+      synchronizeGeneratedRequests();
+      const nextProps = effectiveProps();
       const restartAnimation =
-        previousProps.state !== nextResult.props.state ||
-        previousProps.direction !== nextResult.props.direction ||
-        loadoutChanged(previousProps, nextResult.props);
+        previousProps.state !== nextProps.state ||
+        previousProps.direction !== nextProps.direction ||
+        loadoutChanged(previousProps, nextProps);
 
       instance.input = mergedPlayer;
       instance.currentInput = mergedPlayer;
-      instance.props = nextResult.props;
-      instance.warnings = [...nextResult.warnings];
+      instance.props = nextProps;
+      instance.warnings = effectiveWarnings();
       updateCount += 1;
       renderMappedState(restartAnimation);
     },
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      (Object.keys(generatedResolutionTokens) as VisualSlot[]).forEach(
+        (slot) => {
+          generatedResolutionTokens[slot] += 1;
+          delete requestedGeneratedIds[slot];
+          delete resolvedGeneratedItems[slot];
+          delete generatedWarnings[slot];
+        },
+      );
       disposers.splice(0).forEach((dispose) => dispose());
       root.replaceChildren();
       root.remove();
       layerElements.clear();
     },
   };
+
+  function synchronizeGeneratedRequests(): void {
+    (
+      Object.keys(generatedResolutionTokens) as VisualSlot[]
+    ).forEach((slot) => {
+      const itemId = mappedProps.itemIds[slot];
+      const runtimeSlot = itemId
+        ? generatedLpcRuntimeSlotFor(slot, itemId)
+        : null;
+
+      if (!itemId || !runtimeSlot) {
+        if (
+          requestedGeneratedIds[slot] ||
+          resolvedGeneratedItems[slot] ||
+          generatedWarnings[slot]
+        ) {
+          generatedResolutionTokens[slot] += 1;
+          delete requestedGeneratedIds[slot];
+          delete resolvedGeneratedItems[slot];
+          delete generatedWarnings[slot];
+        }
+        return;
+      }
+
+      if (requestedGeneratedIds[slot] === itemId) return;
+
+      generatedResolutionTokens[slot] += 1;
+      const token = generatedResolutionTokens[slot];
+      requestedGeneratedIds[slot] = itemId;
+      delete resolvedGeneratedItems[slot];
+      delete generatedWarnings[slot];
+
+      void loadGeneratedLpcRuntimeItem(runtimeSlot, itemId).then((item) => {
+        if (
+          destroyed ||
+          token !== generatedResolutionTokens[slot] ||
+          mappedProps.itemIds[slot] !== itemId
+        ) {
+          return;
+        }
+
+        if (item) {
+          resolvedGeneratedItems[slot] = item;
+          delete generatedWarnings[slot];
+        } else {
+          delete resolvedGeneratedItems[slot];
+          generatedWarnings[slot] =
+            `Unsupported generated ${runtimeSlot} item "${itemId}"; visual slot disabled.`;
+        }
+
+        const previousProps = instance.props;
+        instance.props = effectiveProps();
+        instance.warnings = effectiveWarnings();
+        renderMappedState(loadoutChanged(previousProps, instance.props));
+      });
+    });
+  }
 
   const renderMappedState = (restartAnimation: boolean): void => {
     const { props, warnings } = instance;
@@ -473,10 +599,15 @@ export const createLpcCharacter = (
       if (!definition.slot) return;
       const element = layerElements.get(definition.key);
       if (!element) return;
-      const selected = assetsForEquipmentLayer(definition, props.itemIds);
+      const selected = assetsForEquipmentLayer(
+        definition,
+        props.itemIds,
+        resolvedGeneratedItems,
+      );
       const selectedItem = catalogItemFor(
         definition.slot,
         props.itemIds[definition.slot],
+        resolvedGeneratedItems[definition.slot],
       );
       element.dataset.itemId = selectedItem.id;
       setImageVariable(element, '--lpc-idle-image', selected.idle);
@@ -505,7 +636,11 @@ export const createLpcCharacter = (
       (slot) =>
         props.loadout[slot] &&
         (props.state !== 'hurt' ||
-          slotSupportsHurt(slot, props.itemIds[slot])),
+          slotSupportsHurt(
+            slot,
+            props.itemIds[slot],
+            resolvedGeneratedItems[slot],
+          )),
     );
     root.dataset.equipmentVisible = String(hasVisibleEquipment);
     root.style.setProperty('--lpc-scale', String(props.scale));
@@ -578,6 +713,7 @@ export const createLpcCharacter = (
     }
   };
 
+  synchronizeGeneratedRequests();
   renderMappedState(false);
   container.append(root);
   return instance;

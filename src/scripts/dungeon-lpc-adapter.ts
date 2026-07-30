@@ -1,7 +1,4 @@
-import {
-  generatedLpcVisualSlot,
-  getGeneratedLpcItem,
-} from './dungeon-lpc-generated-catalog';
+import { generatedLpcRuntimeSlotFor } from './dungeon-lpc-generated-runtime-loader';
 
 export type DungeonVisualItem =
   | string
@@ -174,21 +171,18 @@ export const adaptDungeonPlayerToLpc = (
 
     const directlySupported =
       SUPPORTED_LPC_ITEM_MAPPINGS[slot].includes(itemId);
-    const generatedItem = directlySupported
-      ? null
-      : getGeneratedLpcItem(itemId);
-    const generatedSupported =
-      generatedItem !== null &&
-      generatedLpcVisualSlot(generatedItem) === slot;
-    const supported = directlySupported || generatedSupported;
-    if (!supported) {
+    const generatedCandidate =
+      !directlySupported &&
+      generatedLpcRuntimeSlotFor(slot, itemId) !== null;
+    if (!directlySupported && !generatedCandidate) {
       warnings.push(
         `Unsupported ${slot} item "${rawItemId}"; visual slot disabled.`,
       );
     }
 
-    loadout[slot] = supported;
-    itemIds[slot] = supported ? itemId : null;
+    loadout[slot] = directlySupported;
+    itemIds[slot] =
+      directlySupported || generatedCandidate ? itemId : null;
   });
 
   return {
