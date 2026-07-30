@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:56.529Z",
+  "internalItemId": "lpc-armor-backpack-squarepack-083ca169",
+  "lpcVisualId": "lpc-visual-backpack-squarepack-e1b7a9d041dc-f0a01293fd",
+  "familyId": "backpack--squarepack--e1b7a9d041dc",
+  "variant": "leather",
+  "bodyType": "male",
+  "layered": false,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "backpack--squarepack--e1b7a9d041dc"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "backpack--squarepack--e1b7a9d041dc"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "backpack--squarepack--e1b7a9d041dc"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "main",
+        "source": "backpack/squarepack/male/walk/leather.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "main",
+        "source": "backpack/squarepack/male/walk/leather.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "backpack/squarepack/male/hurt/leather.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "backpack--squarepack--e1b7a9d041dc",
+      "relativeSourcePath": "backpack/squarepack/male/hurt/leather.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\backpack\\squarepack\\male\\hurt\\leather.png",
+      "animation": "hurt",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": "leather",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 448,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "backpack/squarepack/male/hurt/leather.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\backpack\\squarepack\\male\\hurt\\leather.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "backpack--squarepack--e1b7a9d041dc",
+      "relativeSourcePath": "backpack/squarepack/male/walk/leather.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\backpack\\squarepack\\male\\walk\\leather.png",
+      "animation": "walk",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": "leather",
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 945,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "backpack/squarepack/male/walk/leather.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\backpack\\squarepack\\male\\walk\\leather.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "backpack/squarepack/male/hurt/leather.png",
+      "backpack/squarepack/male/walk/leather.png"
+    ]
+  }
+}

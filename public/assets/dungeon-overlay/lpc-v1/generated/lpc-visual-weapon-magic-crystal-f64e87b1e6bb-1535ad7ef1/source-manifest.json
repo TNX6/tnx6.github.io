@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:45.235Z",
+  "internalItemId": "lpc-weapon-weapon-magic-crystal-13f829ca",
+  "lpcVisualId": "lpc-visual-weapon-magic-crystal-f64e87b1e6bb-1535ad7ef1",
+  "familyId": "weapon--magic--crystal--f64e87b1e6bb",
+  "variant": "red",
+  "bodyType": "universal",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "weapon--magic--crystal--f64e87b1e6bb"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--magic--crystal--f64e87b1e6bb"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--magic--crystal--f64e87b1e6bb"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "bg",
+        "source": "weapon/magic/crystal/universal/background/walk/red.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "weapon/magic/crystal/universal/foreground/walk/red.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "bg",
+        "source": "weapon/magic/crystal/universal/background/walk/red.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "weapon/magic/crystal/universal/foreground/walk/red.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "bg",
+        "source": "weapon/magic/crystal/universal/background/hurt/red.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "weapon/magic/crystal/universal/foreground/hurt/red.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--magic--crystal--f64e87b1e6bb",
+      "relativeSourcePath": "weapon/magic/crystal/universal/background/hurt/red.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\crystal\\universal\\background\\hurt\\red.png",
+      "animation": "hurt",
+      "bodyType": "universal",
+      "layerRole": "bg",
+      "variant": "red",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 432,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/magic/crystal/universal/background/hurt/red.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\crystal\\universal\\background\\hurt\\red.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--magic--crystal--f64e87b1e6bb",
+      "relativeSourcePath": "weapon/magic/crystal/universal/background/walk/red.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\crystal\\universal\\background\\walk\\red.png",
+      "animation": "walk",
+      "bodyType": "universal",
+      "layerRole": "bg",
+      "variant": "red",
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 1190,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/magic/crystal/universal/background/walk/red.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\crystal\\universal\\background\\walk\\red.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--magic--crystal--f64e87b1e6bb",
+      "relativeSourcePath": "weapon/magic/crystal/universal/foreground/hurt/red.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\crystal\\universal\\foreground\\hurt\\red.png",
+      "animation": "hurt",
+      "bodyType": "universal",
+      "layerRole": "fg",
+      "variant": "red",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 550,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/magic/crystal/universal/foreground/hurt/red.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\crystal\\universal\\foreground\\hurt\\red.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--magic--crystal--f64e87b1e6bb",
+      "relativeSourcePath": "weapon/magic/crystal/universal/foreground/walk/red.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\crystal\\universal\\foreground\\walk\\red.png",
+      "animation": "walk",
+      "bodyType": "universal",
+      "layerRole": "fg",
+      "variant": "red",
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 688,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/magic/crystal/universal/foreground/walk/red.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\crystal\\universal\\foreground\\walk\\red.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "weapon/magic/crystal/universal/background/hurt/red.png",
+      "weapon/magic/crystal/universal/background/walk/red.png",
+      "weapon/magic/crystal/universal/foreground/hurt/red.png",
+      "weapon/magic/crystal/universal/foreground/walk/red.png"
+    ]
+  }
+}

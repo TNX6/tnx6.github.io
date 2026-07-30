@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:39.613Z",
+  "internalItemId": "lpc-weapon-weapon-polearm-cane-75dd9da5",
+  "lpcVisualId": "lpc-visual-weapon-polearm-cane-ce9629b499af-065780274a",
+  "familyId": "weapon--polearm--cane--ce9629b499af",
+  "variant": null,
+  "bodyType": "male",
+  "layered": false,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": false
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "weapon--polearm--cane--ce9629b499af"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--polearm--cane--ce9629b499af"
+    },
+    "hurt": {
+      "quality": "same-slot-fallback",
+      "strategy": "Use hurt from compatible weapon family weapon--polearm--scythe--bfc7ee55a7e8; it is not visually identical to the selected family.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--polearm--scythe--bfc7ee55a7e8"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "main",
+        "source": "weapon/polearm/cane/male/walk/cane.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "main",
+        "source": "weapon/polearm/cane/male/walk/cane.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "behind",
+        "source": "weapon/polearm/scythe/universal_behind/hurt/scythe.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--polearm--cane--ce9629b499af",
+      "relativeSourcePath": "weapon/polearm/cane/male/walk/cane.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\polearm\\cane\\male\\walk\\cane.png",
+      "animation": "walk",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 1708,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/polearm/cane/male/walk/cane.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\polearm\\cane\\male\\walk\\cane.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--polearm--scythe--bfc7ee55a7e8",
+      "relativeSourcePath": "weapon/polearm/scythe/universal_behind/hurt/scythe.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\polearm\\scythe\\universal_behind\\hurt\\scythe.png",
+      "animation": "hurt",
+      "bodyType": "universal",
+      "layerRole": "behind",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 695,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/polearm/scythe/universal_behind/hurt/scythe.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\polearm\\scythe\\universal_behind\\hurt\\scythe.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "weapon/polearm/cane/male/walk/cane.png",
+      "weapon/polearm/scythe/universal_behind/hurt/scythe.png"
+    ]
+  }
+}

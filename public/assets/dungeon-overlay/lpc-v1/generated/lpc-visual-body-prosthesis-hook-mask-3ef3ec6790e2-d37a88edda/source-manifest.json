@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:55.586Z",
+  "internalItemId": "lpc-armor-body-prosthesis-hook-mask-7e756eb9",
+  "lpcVisualId": "lpc-visual-body-prosthesis-hook-mask-3ef3ec6790e2-d37a88edda",
+  "familyId": "body--prosthesis--hook--mask--3ef3ec6790e2",
+  "variant": null,
+  "bodyType": "male",
+  "layered": false,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": false,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "same-family-fallback",
+      "strategy": "Normalize the closest same-family spellcast pose into the idle layout.",
+      "sourceAnimation": "spellcast",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "body--prosthesis--hook--mask--3ef3ec6790e2"
+    },
+    "walk": {
+      "quality": "same-family-fallback",
+      "strategy": "Normalize the closest same-family slash pose into the walk layout.",
+      "sourceAnimation": "slash",
+      "transformation": "repeat-first-pose-frame-to-walk",
+      "donorFamilyId": "body--prosthesis--hook--mask--3ef3ec6790e2"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "body--prosthesis--hook--mask--3ef3ec6790e2"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "main",
+        "source": "body/prosthesis/hook/male/mask/spellcast.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "main",
+        "source": "body/prosthesis/hook/male/mask/slash.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "body/prosthesis/hook/male/mask/hurt.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "body--prosthesis--hook--mask--3ef3ec6790e2",
+      "relativeSourcePath": "body/prosthesis/hook/male/mask/hurt.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\prosthesis\\hook\\male\\mask\\hurt.png",
+      "animation": "hurt",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 272,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "body/prosthesis/hook/male/mask/hurt.png",
+      "authors": [
+        "bluecarrot16",
+        "JaidynReiman"
+      ],
+      "licenses": [
+        "CC-BY-SA 3.0",
+        "GPL 3.0",
+        "OGA-BY 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\prosthesis\\hook\\male\\mask\\hurt.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "body--prosthesis--hook--mask--3ef3ec6790e2",
+      "relativeSourcePath": "body/prosthesis/hook/male/mask/slash.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\prosthesis\\hook\\male\\mask\\slash.png",
+      "animation": "slash",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": null,
+      "width": 384,
+      "height": 256,
+      "columns": 6,
+      "rows": 4,
+      "fileSizeBytes": 552,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "body/prosthesis/hook/male/mask/slash.png",
+      "authors": [
+        "bluecarrot16",
+        "JaidynReiman"
+      ],
+      "licenses": [
+        "CC-BY-SA 3.0",
+        "GPL 3.0",
+        "OGA-BY 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\prosthesis\\hook\\male\\mask\\slash.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "body--prosthesis--hook--mask--3ef3ec6790e2",
+      "relativeSourcePath": "body/prosthesis/hook/male/mask/spellcast.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\prosthesis\\hook\\male\\mask\\spellcast.png",
+      "animation": "spellcast",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": null,
+      "width": 448,
+      "height": 256,
+      "columns": 7,
+      "rows": 4,
+      "fileSizeBytes": 1033,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "body/prosthesis/hook/male/mask/spellcast.png",
+      "authors": [
+        "bluecarrot16",
+        "JaidynReiman"
+      ],
+      "licenses": [
+        "CC-BY-SA 3.0",
+        "GPL 3.0",
+        "OGA-BY 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\prosthesis\\hook\\male\\mask\\spellcast.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [
+      "JaidynReiman",
+      "bluecarrot16"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0",
+      "GPL 3.0",
+      "OGA-BY 3.0"
+    ],
+    "creditsSources": [
+      "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\CREDITS.csv"
+    ],
+    "sourceCreditKeys": [
+      "body/prosthesis/hook/male/mask/hurt.png",
+      "body/prosthesis/hook/male/mask/slash.png",
+      "body/prosthesis/hook/male/mask/spellcast.png"
+    ]
+  }
+}

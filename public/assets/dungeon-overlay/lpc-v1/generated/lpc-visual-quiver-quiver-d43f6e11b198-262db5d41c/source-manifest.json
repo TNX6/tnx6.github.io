@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:39.687Z",
+  "internalItemId": "lpc-weapon-quiver-quiver-bd910d11",
+  "lpcVisualId": "lpc-visual-quiver-quiver-d43f6e11b198-262db5d41c",
+  "familyId": "quiver--quiver--d43f6e11b198",
+  "variant": "quiver",
+  "bodyType": "unknown",
+  "layered": false,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "quiver--quiver--d43f6e11b198"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "quiver--quiver--d43f6e11b198"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "quiver--quiver--d43f6e11b198"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "main",
+        "source": "quiver/walk/quiver.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "main",
+        "source": "quiver/walk/quiver.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "quiver/hurt/quiver.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "quiver--quiver--d43f6e11b198",
+      "relativeSourcePath": "quiver/hurt/quiver.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\quiver\\hurt\\quiver.png",
+      "animation": "hurt",
+      "bodyType": "unknown",
+      "layerRole": "main",
+      "variant": "quiver",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 784,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "quiver/hurt/quiver.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\quiver\\hurt\\quiver.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "quiver--quiver--d43f6e11b198",
+      "relativeSourcePath": "quiver/walk/quiver.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\quiver\\walk\\quiver.png",
+      "animation": "walk",
+      "bodyType": "unknown",
+      "layerRole": "main",
+      "variant": "quiver",
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 1223,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "quiver/walk/quiver.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\quiver\\walk\\quiver.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "quiver/hurt/quiver.png",
+      "quiver/walk/quiver.png"
+    ]
+  }
+}

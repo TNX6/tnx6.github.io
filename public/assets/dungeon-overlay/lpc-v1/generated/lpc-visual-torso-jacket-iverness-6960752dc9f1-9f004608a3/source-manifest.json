@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:54.578Z",
+  "internalItemId": "lpc-armor-torso-jacket-iverness-e951b8d2",
+  "lpcVisualId": "lpc-visual-torso-jacket-iverness-6960752dc9f1-9f004608a3",
+  "familyId": "torso--jacket--iverness--6960752dc9f1",
+  "variant": "black",
+  "bodyType": "male",
+  "layered": false,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "torso--jacket--iverness--6960752dc9f1"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "torso--jacket--iverness--6960752dc9f1"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "torso--jacket--iverness--6960752dc9f1"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "main",
+        "source": "torso/jacket/iverness/male/walk/black.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "main",
+        "source": "torso/jacket/iverness/male/walk/black.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "torso/jacket/iverness/male/hurt/black.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "torso--jacket--iverness--6960752dc9f1",
+      "relativeSourcePath": "torso/jacket/iverness/male/hurt/black.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\jacket\\iverness\\male\\hurt\\black.png",
+      "animation": "hurt",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": "black",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 1142,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "torso/jacket/iverness/male/hurt/black.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\jacket\\iverness\\male\\hurt\\black.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "torso--jacket--iverness--6960752dc9f1",
+      "relativeSourcePath": "torso/jacket/iverness/male/walk/black.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\jacket\\iverness\\male\\walk\\black.png",
+      "animation": "walk",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": "black",
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 3060,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "torso/jacket/iverness/male/walk/black.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\jacket\\iverness\\male\\walk\\black.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "torso/jacket/iverness/male/hurt/black.png",
+      "torso/jacket/iverness/male/walk/black.png"
+    ]
+  }
+}

@@ -8,12 +8,17 @@ import {
 import type { DungeonPlayerInput, DungeonVisualLoadout } from './dungeon-lpc-adapter';
 import type { DungeonViewerVisualLoadout } from './dungeon-overlay-equipment-adapter';
 import type { DungeonPlayerAnimationState } from './dungeon-overlay-animation-state';
+import {
+  resolveDungeonLpcGeneratedTestItem,
+  type DungeonLpcGeneratedTestItem,
+} from './dungeon-lpc-generated-test-item';
 import { resolveDungeonLpcTestLoadout, type DungeonLpcTestLoadout } from './dungeon-lpc-test-loadout';
 
 type ProductionVisualLoadout = DungeonViewerVisualLoadout & {
   readonly legs?: { readonly spriteKey: string } | null;
   readonly shield?: { readonly spriteKey: string } | null;
 };
+type ProductionLpcSlot = Exclude<keyof DungeonVisualLoadout, 'armor'>;
 
 export interface DungeonLpcOverlayPlayer {
   readonly name: string;
@@ -183,7 +188,7 @@ const PRODUCTION_ITEM_TO_LPC = Object.freeze({
     'heater-shield': 'heater-shield',
     'iron-shield': 'iron-shield',
   }),
-} satisfies Record<keyof DungeonVisualLoadout, Readonly<Record<string, string>>>);
+} satisfies Record<ProductionLpcSlot, Readonly<Record<string, string>>>);
 
 const STATE_TO_LPC = Object.freeze({
   arriving: { animationState: 'walk', direction: 'front' },
@@ -200,7 +205,7 @@ const normalizedItemId = (value: unknown): string =>
   typeof value === 'string' ? value.trim().toLowerCase() : '';
 
 function equipmentItem(
-  slot: keyof DungeonVisualLoadout,
+  slot: ProductionLpcSlot,
   entry: { readonly spriteKey: string } | null | undefined,
 ): string | null {
   if (!entry) return null;
@@ -211,20 +216,30 @@ function equipmentItem(
 function lpcLoadout(
   player: DungeonLpcOverlayPlayer,
   forcedLoadout?: DungeonViewerVisualLoadout,
+  generatedTestItem?: DungeonLpcGeneratedTestItem | null,
 ): DungeonVisualLoadout | undefined {
-  if (forcedLoadout === undefined && !Object.prototype.hasOwnProperty.call(player, 'visualLoadout')) {
+  if (
+    forcedLoadout === undefined &&
+    !Object.prototype.hasOwnProperty.call(player, 'visualLoadout') &&
+    !generatedTestItem?.item
+  ) {
     return undefined;
   }
-  const loadout = forcedLoadout ?? player.visualLoadout;
-  if (!loadout) return {};
-  return {
-    chest: equipmentItem('chest', loadout.armor),
-    legs: equipmentItem('legs', loadout.legs),
-    boots: equipmentItem('boots', loadout.boots),
-    helmet: equipmentItem('helmet', loadout.helmet),
-    weapon: equipmentItem('weapon', loadout.weapon),
-    shield: equipmentItem('shield', loadout.shield),
+  const loadout: ProductionVisualLoadout | null | undefined =
+    forcedLoadout ?? player.visualLoadout;
+  const mapped: DungeonVisualLoadout = {
+    chest: equipmentItem('chest', loadout?.armor),
+    legs: equipmentItem('legs', loadout?.legs),
+    boots: equipmentItem('boots', loadout?.boots),
+    helmet: equipmentItem('helmet', loadout?.helmet),
+    weapon: equipmentItem('weapon', loadout?.weapon),
+    shield: equipmentItem('shield', loadout?.shield),
   };
+  if (generatedTestItem?.item && generatedTestItem.visualSlot) {
+    mapped[generatedTestItem.visualSlot] =
+      generatedTestItem.item.internalItemId;
+  }
+  return mapped;
 }
 
 function lpcState(
@@ -243,6 +258,7 @@ function inputFor(
   player: DungeonLpcOverlayPlayer,
   state: DungeonPlayerAnimationState,
   forcedLoadout?: DungeonViewerVisualLoadout,
+  generatedTestItem?: DungeonLpcGeneratedTestItem | null,
 ): DungeonPlayerInput {
   const mappedState = lpcState(state, player);
   return {
@@ -253,7 +269,7 @@ function inputFor(
     status: player.status ?? player.outcome ?? state,
     animationState: mappedState.animationState,
     direction: mappedState.direction,
-    visualLoadout: lpcLoadout(player, forcedLoadout),
+    visualLoadout: lpcLoadout(player, forcedLoadout, generatedTestItem),
   };
 }
 
@@ -269,6 +285,9 @@ export class DungeonLpcOverlayIntegration {
   private readonly debugEnabled: boolean;
   private readonly testLoadout: DungeonLpcTestLoadout | null;
   private readonly testLoadoutLabel: HTMLElement | null;
+  private readonly generatedTestItem: DungeonLpcGeneratedTestItem | null;
+  private readonly generatedTestItemLabel: HTMLElement | null;
+  private readonly generatedTestItemWarning: HTMLElement | null;
   private readonly debugSlots = new Map<HTMLElement, DebugSlotElements>();
   private debugLayer: SVGSVGElement | null = null;
   private debugFrameId: number | null = null;
@@ -279,6 +298,10 @@ export class DungeonLpcOverlayIntegration {
   ) {
     root.dataset.dungeonRenderer = 'lpc';
     this.testLoadout = resolveDungeonLpcTestLoadout(window.location.search, window.location.hostname);
+    this.generatedTestItem = resolveDungeonLpcGeneratedTestItem(
+      window.location.search,
+      window.location.hostname,
+    );
     this.debugEnabled =
       new URLSearchParams(window.location.search).get('lpcDebugSlots') === '1';
     if (this.debugEnabled) root.dataset.lpcDebugSlots = 'true';
@@ -311,6 +334,34 @@ export class DungeonLpcOverlayIntegration {
       this.testLoadoutLabel = null;
     }
 
+    if (this.generatedTestItem?.item && this.generatedTestItem.label) {
+      root.dataset.lpcGeneratedItem =
+        this.generatedTestItem.item.internalItemId;
+      const label = document.createElement('span');
+      label.className =
+        'dov-lpc-test-loadout-label dov-lpc-generated-item-label';
+      label.textContent = this.generatedTestItem.label;
+      label.setAttribute('aria-hidden', 'true');
+      root.append(label);
+      this.generatedTestItemLabel = label;
+      this.generatedTestItemWarning = null;
+    } else if (this.generatedTestItem?.warning) {
+      const warning = document.createElement('span');
+      warning.className =
+        'dov-lpc-test-loadout-label dov-lpc-generated-item-warning';
+      warning.textContent = `LPC GENERATED ITEM WARNING: ${this.generatedTestItem.warning}`;
+      warning.setAttribute('role', 'status');
+      root.append(warning);
+      this.generatedTestItemLabel = null;
+      this.generatedTestItemWarning = warning;
+      console.warn(
+        `[TNX6 Dungeon LPC] ${this.generatedTestItem.warning}`,
+      );
+    } else {
+      this.generatedTestItemLabel = null;
+      this.generatedTestItemWarning = null;
+    }
+
     if (this.debugEnabled) this.mountDebugLayer();
   }
 
@@ -324,7 +375,13 @@ export class DungeonLpcOverlayIntegration {
     if (this.failedPlayerKeys.get(slot) === playerKey) return false;
 
     try {
-      const input = inputFor(slotIndex + 1, player, state, this.testLoadout?.visualLoadout);
+      const input = inputFor(
+        slotIndex + 1,
+        player,
+        state,
+        this.testLoadout?.visualLoadout,
+        this.generatedTestItem,
+      );
       const signature = inputSignature(input);
       let record = this.records.get(slot);
 
@@ -413,9 +470,12 @@ export class DungeonLpcOverlayIntegration {
     });
     this.debugLabel.remove();
     this.testLoadoutLabel?.remove();
+    this.generatedTestItemLabel?.remove();
+    this.generatedTestItemWarning?.remove();
     delete this.root.dataset.dungeonRenderer;
     delete this.root.dataset.lpcDebugSlots;
     delete this.root.dataset.lpcTestLoadout;
+    delete this.root.dataset.lpcGeneratedItem;
   }
 
   diagnostics(): {
@@ -424,6 +484,8 @@ export class DungeonLpcOverlayIntegration {
     warningCount: number;
     debugSlots: boolean;
     testLoadout: DungeonLpcTestLoadout['name'] | null;
+    generatedTestItem: string | null;
+    generatedTestWarning: boolean;
   } {
     const roots = this.root.querySelectorAll('[data-lpc-runtime-character]');
     return {
@@ -432,6 +494,9 @@ export class DungeonLpcOverlayIntegration {
       warningCount: this.warned.size,
       debugSlots: this.debugEnabled,
       testLoadout: this.testLoadout?.name ?? null,
+      generatedTestItem:
+        this.generatedTestItem?.item?.internalItemId ?? null,
+      generatedTestWarning: Boolean(this.generatedTestItem?.warning),
     };
   }
 

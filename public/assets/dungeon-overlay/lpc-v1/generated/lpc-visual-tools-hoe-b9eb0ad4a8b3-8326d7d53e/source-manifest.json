@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:42.810Z",
+  "internalItemId": "lpc-weapon-tools-hoe-dba1b865",
+  "lpcVisualId": "lpc-visual-tools-hoe-b9eb0ad4a8b3-8326d7d53e",
+  "familyId": "tools--hoe--b9eb0ad4a8b3",
+  "variant": null,
+  "bodyType": "unknown",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": false
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "tools--hoe--b9eb0ad4a8b3"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "tools--hoe--b9eb0ad4a8b3"
+    },
+    "hurt": {
+      "quality": "same-slot-fallback",
+      "strategy": "Use hurt from compatible weapon family weapon--sword--glowsword--7edcf0743ad9; it is not visually identical to the selected family.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--sword--glowsword--7edcf0743ad9"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "bg",
+        "source": "tools/hoe/bg/walk.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "tools/hoe/fg/walk.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "bg",
+        "source": "tools/hoe/bg/walk.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "tools/hoe/fg/walk.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "weapon/sword/glowsword/hurt/red.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "tools--hoe--b9eb0ad4a8b3",
+      "relativeSourcePath": "tools/hoe/bg/walk.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\tools\\hoe\\bg\\walk.png",
+      "animation": "walk",
+      "bodyType": "unknown",
+      "layerRole": "bg",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 1822,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "tools/hoe/bg/walk.png",
+      "authors": [
+        "bluecarrot16",
+        "Inboxninja",
+        "JaidynReiman",
+        "Johannes Sjölund (wulax)",
+        "Pierre Vigier (pvigier)"
+      ],
+      "licenses": [
+        "CC-BY-SA 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\tools\\hoe\\bg\\walk.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "tools--hoe--b9eb0ad4a8b3",
+      "relativeSourcePath": "tools/hoe/fg/walk.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\tools\\hoe\\fg\\walk.png",
+      "animation": "walk",
+      "bodyType": "unknown",
+      "layerRole": "fg",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 5390,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "tools/hoe/fg/walk.png",
+      "authors": [
+        "bluecarrot16",
+        "Inboxninja",
+        "JaidynReiman",
+        "Johannes Sjölund (wulax)",
+        "Pierre Vigier (pvigier)"
+      ],
+      "licenses": [
+        "CC-BY-SA 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\tools\\hoe\\fg\\walk.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--sword--glowsword--7edcf0743ad9",
+      "relativeSourcePath": "weapon/sword/glowsword/hurt/red.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\glowsword\\hurt\\red.png",
+      "animation": "hurt",
+      "bodyType": "unknown",
+      "layerRole": "main",
+      "variant": "red",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 659,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/sword/glowsword/hurt/red.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\glowsword\\hurt\\red.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [
+      "Inboxninja",
+      "JaidynReiman",
+      "Johannes Sjölund (wulax)",
+      "Pierre Vigier (pvigier)",
+      "bluecarrot16"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0"
+    ],
+    "creditsSources": [
+      "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\CREDITS.csv"
+    ],
+    "sourceCreditKeys": [
+      "tools/hoe/bg/walk.png",
+      "tools/hoe/fg/walk.png",
+      "weapon/sword/glowsword/hurt/red.png"
+    ]
+  }
+}

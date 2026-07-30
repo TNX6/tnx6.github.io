@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:54.619Z",
+  "internalItemId": "lpc-armor-torso-jacket-trench-f8795868",
+  "lpcVisualId": "lpc-visual-torso-jacket-trench-44006da362a2-e164b99c6e",
+  "familyId": "torso--jacket--trench--44006da362a2",
+  "variant": "gray",
+  "bodyType": "male",
+  "layered": false,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "torso--jacket--trench--44006da362a2"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "torso--jacket--trench--44006da362a2"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "torso--jacket--trench--44006da362a2"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "main",
+        "source": "torso/jacket/trench/male/walk/gray.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "main",
+        "source": "torso/jacket/trench/male/walk/gray.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "torso/jacket/trench/male/hurt/gray.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "torso--jacket--trench--44006da362a2",
+      "relativeSourcePath": "torso/jacket/trench/male/hurt/gray.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\jacket\\trench\\male\\hurt\\gray.png",
+      "animation": "hurt",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": "gray",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 1162,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "torso/jacket/trench/male/hurt/gray.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\jacket\\trench\\male\\hurt\\gray.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "torso--jacket--trench--44006da362a2",
+      "relativeSourcePath": "torso/jacket/trench/male/walk/gray.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\jacket\\trench\\male\\walk\\gray.png",
+      "animation": "walk",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": "gray",
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 3035,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "torso/jacket/trench/male/walk/gray.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\jacket\\trench\\male\\walk\\gray.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "torso/jacket/trench/male/hurt/gray.png",
+      "torso/jacket/trench/male/walk/gray.png"
+    ]
+  }
+}

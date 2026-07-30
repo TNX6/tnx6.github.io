@@ -1,0 +1,739 @@
+---
+import generatedCatalog from '../../../public/assets/dungeon-overlay/lpc-v1/generated-equipment-catalog.json';
+
+const catalogItems = Array.isArray(generatedCatalog)
+  ? generatedCatalog
+  : Array.isArray(generatedCatalog.items)
+    ? generatedCatalog.items
+    : [];
+
+if (catalogItems.length !== 682) {
+  throw new Error(
+    `Generated LPC catalog expected 682 items but received ${catalogItems.length}`,
+  );
+}
+
+const serializedCatalogItems = JSON.stringify(catalogItems).replaceAll(
+  '<',
+  '\\u003c',
+);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Generated LPC equipment catalog</title>
+    <style is:global>
+      :root {
+        color-scheme: dark;
+        font-family: Inter, system-ui, sans-serif;
+        background: #030712;
+        color: #e5e7eb;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 20px;
+      }
+
+      main {
+        max-width: 1600px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2,
+      p {
+        margin-top: 0;
+      }
+
+      .notice,
+      .panel,
+      .item-card {
+        border: 1px solid #334155;
+        border-radius: 10px;
+        background: #0f172a;
+      }
+
+      .notice,
+      .panel {
+        padding: 14px;
+      }
+
+      .catalog-status {
+        margin-bottom: 10px;
+        color: #86efac;
+      }
+
+      .catalog-error {
+        margin-bottom: 10px;
+        border-color: #b91c1c;
+        color: #fecaca;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(460px, 0.9fr) minmax(620px, 1.1fr);
+        gap: 16px;
+      }
+
+      .filters {
+        display: grid;
+        grid-template-columns: 2fr repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      input,
+      select,
+      button {
+        min-width: 0;
+        border: 1px solid #475569;
+        border-radius: 7px;
+        padding: 8px 10px;
+        background: #111827;
+        color: #f8fafc;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      #results {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 8px;
+      }
+
+      .item-card {
+        padding: 10px;
+        text-align: left;
+      }
+
+      .item-card.is-selected {
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 1px #60a5fa inset;
+      }
+
+      .item-id {
+        overflow-wrap: anywhere;
+        color: #93c5fd;
+        font: 11px/1.35 ui-monospace, monospace;
+      }
+
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 7px;
+      }
+
+      .badge {
+        border-radius: 999px;
+        padding: 2px 7px;
+        background: #1e293b;
+        color: #cbd5e1;
+        font-size: 11px;
+      }
+
+      #load-more {
+        display: block;
+        min-width: 180px;
+        margin: 14px auto 0;
+      }
+
+      .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .preview-cell {
+        display: grid;
+        place-items: center;
+        min-height: 250px;
+        border: 1px solid #263449;
+        border-radius: 8px;
+        background:
+          linear-gradient(45deg, #111827 25%, transparent 25%),
+          linear-gradient(-45deg, #111827 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #111827 75%),
+          linear-gradient(-45deg, transparent 75%, #111827 75%),
+          #0b1220;
+        background-position:
+          0 0,
+          0 8px,
+          8px -8px,
+          -8px 0;
+        background-size: 16px 16px;
+      }
+
+      .preview-cell h3 {
+        align-self: start;
+        justify-self: stretch;
+        margin: 0;
+        padding: 8px;
+        color: #94a3b8;
+        font-size: 12px;
+      }
+
+      .viewport {
+        position: relative;
+        width: 192px;
+        height: 192px;
+      }
+
+      .lpc-preview-stack {
+        position: relative;
+        isolation: isolate;
+        width: 64px;
+        height: 64px;
+        transform: scale(3);
+        transform-origin: top left;
+      }
+
+      .lpc-preview-layer {
+        display: block;
+        position: absolute;
+        inset: 0;
+        width: 64px;
+        height: 64px;
+        background-color: transparent;
+        background-repeat: no-repeat;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+      }
+
+      .lpc-preview-layer--back {
+        z-index: 0;
+      }
+
+      .lpc-preview-layer--base {
+        z-index: 1;
+      }
+
+      .lpc-preview-layer--main,
+      .lpc-preview-layer--front {
+        z-index: 2;
+      }
+
+      .lpc-preview-state-idle .lpc-preview-layer {
+        background-position: 0 -128px;
+      }
+
+      .lpc-preview-state-walk .lpc-preview-layer {
+        animation: lpc-preview-walk-right 900ms steps(9) infinite;
+      }
+
+      .lpc-preview-state-hurt .lpc-preview-layer {
+        background-position: -320px 0;
+      }
+
+      .lpc-preview-state-breathe .lpc-preview-layer {
+        animation: lpc-preview-breathe-front 1800ms steps(1) infinite;
+      }
+
+      @keyframes lpc-preview-walk-right {
+        from {
+          background-position: 0 -192px;
+        }
+        to {
+          background-position: -576px -192px;
+        }
+      }
+
+      @keyframes lpc-preview-breathe-front {
+        0%,
+        49.999% {
+          background-position: 0 -128px;
+        }
+
+        50%,
+        100% {
+          background-position: -64px -128px;
+        }
+      }
+
+      .preview-error {
+        max-width: 100%;
+        margin: 6px 8px 8px;
+        overflow-wrap: anywhere;
+        color: #fca5a5;
+        font: 10px/1.4 ui-monospace, monospace;
+      }
+
+      .metadata {
+        margin-top: 14px;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        color: #cbd5e1;
+        font: 12px/1.5 ui-monospace, monospace;
+      }
+
+      .warnings {
+        color: #fbbf24;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      @media (max-width: 1100px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .filters {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .lpc-preview-layer {
+          animation: none !important;
+        }
+
+        .lpc-preview-state-walk .lpc-preview-layer {
+          background-position: 0 -192px;
+        }
+
+        .lpc-preview-state-breathe .lpc-preview-layer {
+          background-position: 0 -128px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Generated LPC equipment catalog</h1>
+      <p id="catalog-status" class="catalog-status">Loading catalog…</p>
+      <p id="catalog-error" class="notice catalog-error" hidden></p>
+      <div class="layout">
+        <section class="panel">
+          <div class="filters">
+            <input
+              id="search"
+              type="search"
+              placeholder="Search ID, Arabic/English name, family"
+            />
+            <select id="slot">
+              <option value="">All slots</option>
+            </select>
+            <select id="rarity">
+              <option value="">All rarities</option>
+            </select>
+            <select id="fallback">
+              <option value="">All fallback qualities</option>
+            </select>
+            <select id="compatibility">
+              <option value="">All compatibility values</option>
+            </select>
+          </div>
+          <p id="count"></p>
+          <div id="results"></div>
+          <button id="load-more" type="button">Load more</button>
+        </section>
+
+        <section class="panel">
+          <h2 id="selected-title">Select an item</h2>
+          <div class="preview-grid">
+            <div class="preview-cell">
+              <h3>Idle front</h3>
+              <div class="viewport"><div id="idle-preview"></div></div>
+              <p id="idle-preview-error" class="preview-error" hidden></p>
+            </div>
+            <div class="preview-cell">
+              <h3>Walk side</h3>
+              <div class="viewport"><div id="walk-preview"></div></div>
+              <p id="walk-preview-error" class="preview-error" hidden></p>
+            </div>
+            <div class="preview-cell">
+              <h3>Hurt final</h3>
+              <div class="viewport"><div id="hurt-preview"></div></div>
+              <p id="hurt-preview-error" class="preview-error" hidden></p>
+            </div>
+            <div class="preview-cell">
+              <h3>Breathing</h3>
+              <div class="viewport"><div id="breathe-preview"></div></div>
+              <p id="breathe-preview-error" class="preview-error" hidden></p>
+            </div>
+          </div>
+          <div id="metadata" class="metadata"></div>
+          <div id="warnings" class="metadata warnings"></div>
+        </section>
+      </div>
+      <script
+        id="generated-lpc-catalog-data"
+        type="application/json"
+        is:inline
+        set:html={serializedCatalogItems}
+      ></script>
+    </main>
+
+    <script is:inline>
+      (() => {
+              const dataElement = document.getElementById(
+                'generated-lpc-catalog-data',
+              );
+              const statusElement = document.getElementById('catalog-status');
+              const errorElement = document.getElementById('catalog-error');
+              let items = [];
+              let detectedType = dataElement ? 'unparsed' : 'missing element';
+              let detectedItemCount = 0;
+
+              try {
+                const parsedCatalog = JSON.parse(dataElement?.textContent || 'null');
+                detectedType = Array.isArray(parsedCatalog)
+                  ? 'array'
+                  : parsedCatalog === null
+                    ? 'null'
+                    : typeof parsedCatalog;
+                const detectedItems = Array.isArray(parsedCatalog)
+                  ? parsedCatalog
+                  : Array.isArray(parsedCatalog?.items)
+                    ? parsedCatalog.items
+                    : [];
+                detectedItemCount = detectedItems.length;
+
+                if (detectedItemCount !== 682) {
+                  throw new Error(
+                    'Expected exactly 682 generated LPC catalog items.',
+                  );
+                }
+
+                items = detectedItems;
+                statusElement.textContent = 'Catalog loaded: 682 items';
+              } catch (error) {
+                const message =
+                  error instanceof Error ? error.message : String(error);
+                statusElement.textContent = 'Catalog failed to load';
+                errorElement.textContent =
+                  'Generated LPC catalog error. Detected type: ' +
+                  detectedType +
+                  '; item count: ' +
+                  detectedItemCount +
+                  '. ' +
+                  message;
+                errorElement.hidden = false;
+                document.getElementById('load-more').hidden = true;
+                return;
+              }
+
+              const elements = Object.fromEntries(
+                ['search', 'slot', 'rarity', 'fallback', 'compatibility', 'count', 'results', 'load-more', 'selected-title', 'metadata', 'warnings']
+                  .map((id) => [id, document.getElementById(id)]),
+              );
+              const previews = {
+                idle: document.getElementById('idle-preview'),
+                walk: document.getElementById('walk-preview'),
+                hurt: document.getElementById('hurt-preview'),
+                breathe: document.getElementById('breathe-preview'),
+              };
+              const previewErrors = {
+                idle: document.getElementById('idle-preview-error'),
+                walk: document.getElementById('walk-preview-error'),
+                hurt: document.getElementById('hurt-preview-error'),
+                breathe: document.getElementById('breathe-preview-error'),
+              };
+              const previewStates = {
+                idle: {
+                  assetKey: 'idleBreath',
+                  base: '/assets/dungeon-overlay/lpc-v1/base/male/idle-breathe-v1.png',
+                },
+                walk: {
+                  assetKey: 'walk',
+                  base: '/assets/dungeon-overlay/lpc-v1/base/male/walk.png',
+                },
+                hurt: {
+                  assetKey: 'hurt',
+                  base: '/assets/dungeon-overlay/lpc-v1/base/male/hurt.png',
+                },
+                breathe: {
+                  assetKey: 'idleBreath',
+                  base: '/assets/dungeon-overlay/lpc-v1/base/male/idle-breathe-v1.png',
+                },
+              };
+              let filtered = items;
+              let visible = 50;
+              let selectedId = items[0]?.internalItemId || null;
+
+              const optionValues = (key) =>
+                [...new Set(items.flatMap((item) => Array.isArray(item[key]) ? item[key] : [item[key]]).filter(Boolean))].sort();
+              for (const [id, key] of [
+                ['slot', 'slot'],
+                ['rarity', 'rarity'],
+                ['fallback', 'fallbackQualities'],
+                ['compatibility', 'compatibility'],
+              ]) {
+                for (const value of optionValues(key)) {
+                  const option = document.createElement('option');
+                  option.value = value;
+                  option.textContent = value;
+                  elements[id].append(option);
+                }
+              }
+
+              const isRuntimeAssetPath = (path) =>
+                typeof path === 'string' && path.startsWith('/assets/');
+
+              const showPreviewError = (errorElement, renderToken, message) => {
+                if (errorElement.dataset.renderToken !== renderToken) return;
+                const messages = errorElement.textContent
+                  ? errorElement.textContent.split('\\n')
+                  : [];
+                if (!messages.includes(message)) messages.push(message);
+                errorElement.textContent = messages.join('\\n');
+                errorElement.hidden = false;
+              };
+
+              const monitorAsset = (
+                path,
+                label,
+                errorElement,
+                renderToken,
+              ) => {
+                if (typeof Image !== 'function') return;
+                const probe = new Image();
+                probe.addEventListener('error', () => {
+                  showPreviewError(
+                    errorElement,
+                    renderToken,
+                    label + ' failed: ' + path,
+                  );
+                });
+                probe.src = path;
+              };
+
+              const createLayer = (
+                path,
+                role,
+                errorElement,
+                renderToken,
+              ) => {
+                const layer = document.createElement('div');
+                layer.className =
+                  'lpc-preview-layer lpc-preview-layer--' + role;
+                layer.dataset.assetPath = path;
+                layer.style.backgroundImage = 'url("' + path + '")';
+                layer.setAttribute('aria-hidden', 'true');
+                monitorAsset(path, role, errorElement, renderToken);
+                return layer;
+              };
+
+              const resolveEquipmentLayers = (
+                item,
+                state,
+                errorElement,
+                renderToken,
+              ) => {
+                const assetKey = previewStates[state].assetKey;
+                const stateAssets = item.assets?.[assetKey];
+
+                if (item.layered) {
+                  if (
+                    !stateAssets ||
+                    typeof stateAssets !== 'object' ||
+                    Array.isArray(stateAssets)
+                  ) {
+                    showPreviewError(
+                      errorElement,
+                      renderToken,
+                      'Unsupported layered asset shape for ' + assetKey + '.',
+                    );
+                    return { back: null, front: null };
+                  }
+                  const back = isRuntimeAssetPath(stateAssets.back)
+                    ? stateAssets.back
+                    : null;
+                  const front = isRuntimeAssetPath(stateAssets.front)
+                    ? stateAssets.front
+                    : null;
+                  if (!back) {
+                    showPreviewError(
+                      errorElement,
+                      renderToken,
+                      'Missing back asset URL for ' + assetKey + '.',
+                    );
+                  }
+                  if (!front) {
+                    showPreviewError(
+                      errorElement,
+                      renderToken,
+                      'Missing front asset URL for ' + assetKey + '.',
+                    );
+                  }
+                  return { back, front };
+                }
+
+                const main = isRuntimeAssetPath(stateAssets)
+                  ? stateAssets
+                  : null;
+                if (!main) {
+                  showPreviewError(
+                    errorElement,
+                    renderToken,
+                    'Missing main asset URL for ' + assetKey + '.',
+                  );
+                }
+                return { main };
+              };
+
+              const renderPreview = (host, item, state) => {
+                const stateConfig = previewStates[state];
+                const errorElement = previewErrors[state];
+                const renderToken =
+                  item.internalItemId + ':' + state + ':' + Date.now();
+                errorElement.dataset.renderToken = renderToken;
+                errorElement.textContent = '';
+                errorElement.hidden = true;
+
+                const stack = document.createElement('div');
+                stack.className =
+                  'lpc-preview-stack lpc-preview-state-' + state;
+                const equipmentLayers = resolveEquipmentLayers(
+                  item,
+                  state,
+                  errorElement,
+                  renderToken,
+                );
+
+                if (equipmentLayers.back) {
+                  stack.append(
+                    createLayer(
+                      equipmentLayers.back,
+                      'back',
+                      errorElement,
+                      renderToken,
+                    ),
+                  );
+                }
+
+                if (isRuntimeAssetPath(stateConfig.base)) {
+                  stack.append(
+                    createLayer(
+                      stateConfig.base,
+                      'base',
+                      errorElement,
+                      renderToken,
+                    ),
+                  );
+                } else {
+                  showPreviewError(
+                    errorElement,
+                    renderToken,
+                    'Missing base asset URL for ' + state + '.',
+                  );
+                }
+
+                const foregroundPath =
+                  equipmentLayers.front ?? equipmentLayers.main;
+                if (foregroundPath) {
+                  stack.append(
+                    createLayer(
+                      foregroundPath,
+                      item.layered ? 'front' : 'main',
+                      errorElement,
+                      renderToken,
+                    ),
+                  );
+                }
+
+                host.replaceChildren(stack);
+              };
+
+              const selectItem = (itemId) => {
+                selectedId = itemId;
+                const item = items.find((candidate) => candidate.internalItemId === itemId);
+                if (!item) return;
+                elements['selected-title'].textContent =
+                  item.displayNameEn + ' — ' + item.internalItemId;
+                renderPreview(previews.idle, item, 'idle');
+                renderPreview(previews.walk, item, 'walk');
+                renderPreview(previews.hurt, item, 'hurt');
+                renderPreview(previews.breathe, item, 'breathe');
+                elements.metadata.textContent = JSON.stringify({
+                  internalItemId: item.internalItemId,
+                  lpcVisualId: item.lpcVisualId,
+                  familyId: item.familyId,
+                  displayNameAr: item.displayNameAr,
+                  displayNameEn: item.displayNameEn,
+                  slot: item.slot,
+                  rarity: item.rarity,
+                  variant: item.variant,
+                  compatibility: item.compatibility,
+                  suitability: item.suitability,
+                  theme: item.theme,
+                  fallbackQuality: item.fallbackQuality,
+                  animationStrategies: item.animationStrategies,
+                  credits: item.credits,
+                  sourceManifest: item.sourceManifest,
+                }, null, 2);
+                elements.warnings.textContent = item.warnings.length
+                  ? 'Warnings:\\n- ' + item.warnings.join('\\n- ')
+                  : 'Warnings: none';
+                renderResults();
+              };
+
+              const escapeHtml = (value) =>
+                String(value ?? '').replace(/[&<>"']/g, (char) => ({
+                  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+                })[char]);
+
+              const renderResults = () => {
+                elements.results.innerHTML = filtered.slice(0, visible).map((item) =>
+                  '<button type="button" class="item-card ' + (item.internalItemId === selectedId ? 'is-selected' : '') + '" data-item-id="' + escapeHtml(item.internalItemId) + '">' +
+                    '<strong>' + escapeHtml(item.displayNameEn) + '</strong>' +
+                    '<div dir="rtl">' + escapeHtml(item.displayNameAr) + '</div>' +
+                    '<div class="item-id">' + escapeHtml(item.internalItemId) + '</div>' +
+                    '<div class="badges"><span class="badge">' + item.slot + '</span><span class="badge">' + item.rarity + '</span><span class="badge">' + item.fallbackQuality + '</span></div>' +
+                  '</button>'
+                ).join('');
+                elements.results.querySelectorAll('[data-item-id]').forEach((button) => {
+                  button.addEventListener('click', () => selectItem(button.dataset.itemId));
+                });
+                elements.count.textContent =
+                  'Showing ' +
+                  Math.min(visible, filtered.length) +
+                  ' of ' +
+                  filtered.length +
+                  ' items';
+                elements['load-more'].hidden = visible >= filtered.length;
+              };
+
+              const applyFilters = () => {
+                const query = elements.search.value.trim().toLowerCase();
+                filtered = items.filter((item) => {
+                  const haystack = [item.internalItemId, item.displayNameAr, item.displayNameEn, item.familyId].join(' ').toLowerCase();
+                  return (!query || haystack.includes(query)) &&
+                    (!elements.slot.value || item.slot === elements.slot.value) &&
+                    (!elements.rarity.value || item.rarity === elements.rarity.value) &&
+                    (!elements.fallback.value || item.fallbackQualities.includes(elements.fallback.value)) &&
+                    (!elements.compatibility.value || item.compatibility === elements.compatibility.value);
+                });
+                visible = 50;
+                if (!filtered.some((item) => item.internalItemId === selectedId)) {
+                  selectedId = filtered[0]?.internalItemId || selectedId;
+                }
+                renderResults();
+              };
+
+              elements.search.addEventListener('input', applyFilters);
+              for (const id of ['slot', 'rarity', 'fallback', 'compatibility']) {
+                elements[id].addEventListener('change', applyFilters);
+              }
+              elements['load-more'].addEventListener('click', () => {
+                visible += 50;
+                renderResults();
+              });
+              applyFilters();
+              if (selectedId) selectItem(selectedId);
+      })();
+    </script>
+  </body>
+</html>

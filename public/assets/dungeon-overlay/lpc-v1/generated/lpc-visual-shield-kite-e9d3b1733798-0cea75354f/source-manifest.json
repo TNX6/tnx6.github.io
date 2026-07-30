@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:41.846Z",
+  "internalItemId": "lpc-weapon-shield-kite-bbb1ecaa",
+  "lpcVisualId": "lpc-visual-shield-kite-e9d3b1733798-0cea75354f",
+  "familyId": "shield--kite--e9d3b1733798",
+  "variant": "kite_blue_blue",
+  "bodyType": "male",
+  "layered": false,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": false
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "shield--kite--e9d3b1733798"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "shield--kite--e9d3b1733798"
+    },
+    "hurt": {
+      "quality": "same-slot-fallback",
+      "strategy": "Use hurt from compatible weapon family shield--crusader2--047826de1c04; it is not visually identical to the selected family.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "shield--crusader2--047826de1c04"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "main",
+        "source": "shield/kite/male/walk/kite_blue_blue.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "main",
+        "source": "shield/kite/male/walk/kite_blue_blue.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "fg",
+        "source": "shield/crusader2/male/fg/hurt.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "shield--crusader2--047826de1c04",
+      "relativeSourcePath": "shield/crusader2/male/fg/hurt.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\crusader2\\male\\fg\\hurt.png",
+      "animation": "hurt",
+      "bodyType": "male",
+      "layerRole": "fg",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 828,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "shield/crusader2/male/fg/hurt.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\crusader2\\male\\fg\\hurt.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "shield--kite--e9d3b1733798",
+      "relativeSourcePath": "shield/kite/male/walk/kite_blue_blue.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\kite\\male\\walk\\kite_blue_blue.png",
+      "animation": "walk",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": "kite_blue_blue",
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 3546,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "shield/kite/male/walk/kite_blue_blue.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\kite\\male\\walk\\kite_blue_blue.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "shield/crusader2/male/fg/hurt.png",
+      "shield/kite/male/walk/kite_blue_blue.png"
+    ]
+  }
+}

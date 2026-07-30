@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:46.216Z",
+  "internalItemId": "lpc-weapon-weapon-sword-scimitar-286ff823",
+  "lpcVisualId": "lpc-visual-weapon-sword-scimitar-2888177afc34-ef2b0e3dd3",
+  "familyId": "weapon--sword--scimitar--2888177afc34",
+  "variant": null,
+  "bodyType": "unknown",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": false
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "weapon--sword--scimitar--2888177afc34"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--sword--scimitar--2888177afc34"
+    },
+    "hurt": {
+      "quality": "same-slot-fallback",
+      "strategy": "Use hurt from compatible weapon family weapon--sword--glowsword--7edcf0743ad9; it is not visually identical to the selected family.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--sword--glowsword--7edcf0743ad9"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "behind",
+        "source": "weapon/sword/scimitar/walk/behind/scimitar.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "main",
+        "source": "weapon/sword/scimitar/walk/scimitar.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "behind",
+        "source": "weapon/sword/scimitar/walk/behind/scimitar.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "main",
+        "source": "weapon/sword/scimitar/walk/scimitar.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "weapon/sword/glowsword/hurt/red.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--sword--glowsword--7edcf0743ad9",
+      "relativeSourcePath": "weapon/sword/glowsword/hurt/red.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\glowsword\\hurt\\red.png",
+      "animation": "hurt",
+      "bodyType": "unknown",
+      "layerRole": "main",
+      "variant": "red",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 659,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/sword/glowsword/hurt/red.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\glowsword\\hurt\\red.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--sword--scimitar--2888177afc34",
+      "relativeSourcePath": "weapon/sword/scimitar/walk/behind/scimitar.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\scimitar\\walk\\behind\\scimitar.png",
+      "animation": "walk",
+      "bodyType": "unknown",
+      "layerRole": "behind",
+      "variant": null,
+      "width": 1664,
+      "height": 512,
+      "columns": 26,
+      "rows": 8,
+      "fileSizeBytes": 21362,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/sword/scimitar/walk/behind/scimitar.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\scimitar\\walk\\behind\\scimitar.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--sword--scimitar--2888177afc34",
+      "relativeSourcePath": "weapon/sword/scimitar/walk/scimitar.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\scimitar\\walk\\scimitar.png",
+      "animation": "walk",
+      "bodyType": "unknown",
+      "layerRole": "main",
+      "variant": null,
+      "width": 1664,
+      "height": 512,
+      "columns": 26,
+      "rows": 8,
+      "fileSizeBytes": 17166,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/sword/scimitar/walk/scimitar.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\scimitar\\walk\\scimitar.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "weapon/sword/glowsword/hurt/red.png",
+      "weapon/sword/scimitar/walk/behind/scimitar.png",
+      "weapon/sword/scimitar/walk/scimitar.png"
+    ]
+  }
+}

@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:46.216Z",
+  "internalItemId": "lpc-weapon-weapon-magic-loop-off-7d4222a3",
+  "lpcVisualId": "lpc-visual-weapon-magic-loop-off-969b7c7d7114-c78db63bda",
+  "familyId": "weapon--magic--loop-off--969b7c7d7114",
+  "variant": "iron",
+  "bodyType": "universal",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "weapon--magic--loop-off--969b7c7d7114"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--magic--loop-off--969b7c7d7114"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--magic--loop-off--969b7c7d7114"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "bg",
+        "source": "weapon/magic/loop_off/universal/background/walk/iron.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "weapon/magic/loop_off/universal/foreground/walk/iron.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "bg",
+        "source": "weapon/magic/loop_off/universal/background/walk/iron.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "weapon/magic/loop_off/universal/foreground/walk/iron.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "bg",
+        "source": "weapon/magic/loop_off/universal/background/hurt/iron.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "weapon/magic/loop_off/universal/foreground/hurt/iron.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--magic--loop-off--969b7c7d7114",
+      "relativeSourcePath": "weapon/magic/loop_off/universal/background/hurt/iron.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\loop_off\\universal\\background\\hurt\\iron.png",
+      "animation": "hurt",
+      "bodyType": "universal",
+      "layerRole": "bg",
+      "variant": "iron",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 558,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/magic/loop_off/universal/background/hurt/iron.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\loop_off\\universal\\background\\hurt\\iron.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--magic--loop-off--969b7c7d7114",
+      "relativeSourcePath": "weapon/magic/loop_off/universal/background/walk/iron.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\loop_off\\universal\\background\\walk\\iron.png",
+      "animation": "walk",
+      "bodyType": "universal",
+      "layerRole": "bg",
+      "variant": "iron",
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 1344,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/magic/loop_off/universal/background/walk/iron.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\loop_off\\universal\\background\\walk\\iron.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--magic--loop-off--969b7c7d7114",
+      "relativeSourcePath": "weapon/magic/loop_off/universal/foreground/hurt/iron.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\loop_off\\universal\\foreground\\hurt\\iron.png",
+      "animation": "hurt",
+      "bodyType": "universal",
+      "layerRole": "fg",
+      "variant": "iron",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 922,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/magic/loop_off/universal/foreground/hurt/iron.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\loop_off\\universal\\foreground\\hurt\\iron.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--magic--loop-off--969b7c7d7114",
+      "relativeSourcePath": "weapon/magic/loop_off/universal/foreground/walk/iron.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\loop_off\\universal\\foreground\\walk\\iron.png",
+      "animation": "walk",
+      "bodyType": "universal",
+      "layerRole": "fg",
+      "variant": "iron",
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 2772,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/magic/loop_off/universal/foreground/walk/iron.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\magic\\loop_off\\universal\\foreground\\walk\\iron.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "weapon/magic/loop_off/universal/background/hurt/iron.png",
+      "weapon/magic/loop_off/universal/background/walk/iron.png",
+      "weapon/magic/loop_off/universal/foreground/hurt/iron.png",
+      "weapon/magic/loop_off/universal/foreground/walk/iron.png"
+    ]
+  }
+}

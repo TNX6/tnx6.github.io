@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:39.973Z",
+  "internalItemId": "lpc-weapon-weapon-blunt-mace-976d284d",
+  "lpcVisualId": "lpc-visual-weapon-blunt-mace-c4afa0d38d42-5248b1ac07",
+  "familyId": "weapon--blunt--mace--c4afa0d38d42",
+  "variant": null,
+  "bodyType": "universal",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "weapon--blunt--mace--c4afa0d38d42"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--blunt--mace--c4afa0d38d42"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--blunt--mace--c4afa0d38d42"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "behind",
+        "source": "weapon/blunt/mace/universal_behind/walk/mace.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "behind",
+        "source": "weapon/blunt/mace/universal_behind/walk/mace.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "behind",
+        "source": "weapon/blunt/mace/universal_behind/hurt/mace.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--blunt--mace--c4afa0d38d42",
+      "relativeSourcePath": "weapon/blunt/mace/universal_behind/hurt/mace.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\blunt\\mace\\universal_behind\\hurt\\mace.png",
+      "animation": "hurt",
+      "bodyType": "universal",
+      "layerRole": "behind",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 577,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/blunt/mace/universal_behind/hurt/mace.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\blunt\\mace\\universal_behind\\hurt\\mace.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--blunt--mace--c4afa0d38d42",
+      "relativeSourcePath": "weapon/blunt/mace/universal_behind/walk/mace.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\blunt\\mace\\universal_behind\\walk\\mace.png",
+      "animation": "walk",
+      "bodyType": "universal",
+      "layerRole": "behind",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 1487,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/blunt/mace/universal_behind/walk/mace.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\blunt\\mace\\universal_behind\\walk\\mace.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "weapon/blunt/mace/universal_behind/hurt/mace.png",
+      "weapon/blunt/mace/universal_behind/walk/mace.png"
+    ]
+  }
+}

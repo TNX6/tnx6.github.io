@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:42.381Z",
+  "internalItemId": "lpc-weapon-tools-watering-can-f166eacb",
+  "lpcVisualId": "lpc-visual-tools-watering-can-ee2628ecf73b-3e00723333",
+  "familyId": "tools--watering-can--ee2628ecf73b",
+  "variant": null,
+  "bodyType": "unknown",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": false
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "tools--watering-can--ee2628ecf73b"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "tools--watering-can--ee2628ecf73b"
+    },
+    "hurt": {
+      "quality": "same-slot-fallback",
+      "strategy": "Use hurt from compatible weapon family body--wound--brain--80383c1be547; it is not visually identical to the selected family.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "body--wound--brain--80383c1be547"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "bg",
+        "source": "tools/watering_can/bg/walk.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "tools/watering_can/fg/walk.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "bg",
+        "source": "tools/watering_can/bg/walk.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "tools/watering_can/fg/walk.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "body/wound/brain/hurt/red.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "body--wound--brain--80383c1be547",
+      "relativeSourcePath": "body/wound/brain/hurt/red.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\wound\\brain\\hurt\\red.png",
+      "animation": "hurt",
+      "bodyType": "unknown",
+      "layerRole": "main",
+      "variant": "red",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 1095,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "body/wound/brain/hurt/red.png",
+      "authors": [
+        "Benjamin K. Smith (BenCreating)",
+        "Sander Frenken (castelonia)"
+      ],
+      "licenses": [
+        "CC-BY-SA 3.0",
+        "GPL 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\wound\\brain\\hurt\\red.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "tools--watering-can--ee2628ecf73b",
+      "relativeSourcePath": "tools/watering_can/bg/walk.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\tools\\watering_can\\bg\\walk.png",
+      "animation": "walk",
+      "bodyType": "unknown",
+      "layerRole": "bg",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 1655,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "tools/watering_can/bg/walk.png",
+      "authors": [
+        "bluecarrot16"
+      ],
+      "licenses": [
+        "CC-BY 4.0+",
+        "GPL 2.0+",
+        "OGA-BY 3.0+"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\tools\\watering_can\\bg\\walk.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "tools--watering-can--ee2628ecf73b",
+      "relativeSourcePath": "tools/watering_can/fg/walk.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\tools\\watering_can\\fg\\walk.png",
+      "animation": "walk",
+      "bodyType": "unknown",
+      "layerRole": "fg",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 4472,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "tools/watering_can/fg/walk.png",
+      "authors": [
+        "bluecarrot16"
+      ],
+      "licenses": [
+        "CC-BY 4.0+",
+        "GPL 2.0+",
+        "OGA-BY 3.0+"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\tools\\watering_can\\fg\\walk.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [
+      "Benjamin K. Smith (BenCreating)",
+      "Sander Frenken (castelonia)",
+      "bluecarrot16"
+    ],
+    "licenses": [
+      "CC-BY 4.0+",
+      "CC-BY-SA 3.0",
+      "GPL 2.0+",
+      "GPL 3.0",
+      "OGA-BY 3.0+"
+    ],
+    "creditsSources": [
+      "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\CREDITS.csv"
+    ],
+    "sourceCreditKeys": [
+      "body/wound/brain/hurt/red.png",
+      "tools/watering_can/bg/walk.png",
+      "tools/watering_can/fg/walk.png"
+    ]
+  }
+}

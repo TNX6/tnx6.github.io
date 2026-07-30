@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:55.377Z",
+  "internalItemId": "lpc-armor-body-wound-arm-0155270b",
+  "lpcVisualId": "lpc-visual-body-wound-arm-76f7224e0afc-5c2e78ba88",
+  "familyId": "body--wound--arm--76f7224e0afc",
+  "variant": "red",
+  "bodyType": "unknown",
+  "layered": false,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "body--wound--arm--76f7224e0afc"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "body--wound--arm--76f7224e0afc"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "body--wound--arm--76f7224e0afc"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "main",
+        "source": "body/wound/arm/walk/red.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "main",
+        "source": "body/wound/arm/walk/red.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "body/wound/arm/hurt/red.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "body--wound--arm--76f7224e0afc",
+      "relativeSourcePath": "body/wound/arm/hurt/red.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\wound\\arm\\hurt\\red.png",
+      "animation": "hurt",
+      "bodyType": "unknown",
+      "layerRole": "main",
+      "variant": "red",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 603,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "body/wound/arm/hurt/red.png",
+      "authors": [
+        "Benjamin K. Smith (BenCreating)",
+        "Sander Frenken (castelonia)"
+      ],
+      "licenses": [
+        "CC-BY-SA 3.0",
+        "GPL 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\wound\\arm\\hurt\\red.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "body--wound--arm--76f7224e0afc",
+      "relativeSourcePath": "body/wound/arm/walk/red.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\wound\\arm\\walk\\red.png",
+      "animation": "walk",
+      "bodyType": "unknown",
+      "layerRole": "main",
+      "variant": "red",
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 1161,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "body/wound/arm/walk/red.png",
+      "authors": [
+        "Benjamin K. Smith (BenCreating)",
+        "Sander Frenken (castelonia)"
+      ],
+      "licenses": [
+        "CC-BY-SA 3.0",
+        "GPL 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\wound\\arm\\walk\\red.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [
+      "Benjamin K. Smith (BenCreating)",
+      "Sander Frenken (castelonia)"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0",
+      "GPL 3.0"
+    ],
+    "creditsSources": [
+      "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\CREDITS.csv"
+    ],
+    "sourceCreditKeys": [
+      "body/wound/arm/hurt/red.png",
+      "body/wound/arm/walk/red.png"
+    ]
+  }
+}

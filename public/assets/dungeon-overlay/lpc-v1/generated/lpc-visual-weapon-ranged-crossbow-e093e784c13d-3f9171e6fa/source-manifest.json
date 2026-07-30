@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:46.138Z",
+  "internalItemId": "lpc-weapon-weapon-ranged-crossbow-5c817374",
+  "lpcVisualId": "lpc-visual-weapon-ranged-crossbow-e093e784c13d-3f9171e6fa",
+  "familyId": "weapon--ranged--crossbow--e093e784c13d",
+  "variant": null,
+  "bodyType": "unknown",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "weapon--ranged--crossbow--e093e784c13d"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--ranged--crossbow--e093e784c13d"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--ranged--crossbow--e093e784c13d"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "bg",
+        "source": "weapon/ranged/crossbow/background/walk/crossbow.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "main",
+        "source": "weapon/ranged/crossbow/walk/crossbow.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "weapon/ranged/crossbow/foreground/walk/crossbow.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "bg",
+        "source": "weapon/ranged/crossbow/background/walk/crossbow.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "main",
+        "source": "weapon/ranged/crossbow/walk/crossbow.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "weapon/ranged/crossbow/foreground/walk/crossbow.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "bg",
+        "source": "weapon/ranged/crossbow/background/hurt/crossbow.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "weapon/ranged/crossbow/foreground/hurt/crossbow.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--ranged--crossbow--e093e784c13d",
+      "relativeSourcePath": "weapon/ranged/crossbow/background/hurt/crossbow.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\crossbow\\background\\hurt\\crossbow.png",
+      "animation": "hurt",
+      "bodyType": "unknown",
+      "layerRole": "bg",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 657,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/ranged/crossbow/background/hurt/crossbow.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\crossbow\\background\\hurt\\crossbow.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--ranged--crossbow--e093e784c13d",
+      "relativeSourcePath": "weapon/ranged/crossbow/background/walk/crossbow.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\crossbow\\background\\walk\\crossbow.png",
+      "animation": "walk",
+      "bodyType": "unknown",
+      "layerRole": "bg",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 910,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/ranged/crossbow/background/walk/crossbow.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\crossbow\\background\\walk\\crossbow.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--ranged--crossbow--e093e784c13d",
+      "relativeSourcePath": "weapon/ranged/crossbow/foreground/hurt/crossbow.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\crossbow\\foreground\\hurt\\crossbow.png",
+      "animation": "hurt",
+      "bodyType": "unknown",
+      "layerRole": "fg",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 724,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/ranged/crossbow/foreground/hurt/crossbow.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\crossbow\\foreground\\hurt\\crossbow.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--ranged--crossbow--e093e784c13d",
+      "relativeSourcePath": "weapon/ranged/crossbow/foreground/walk/crossbow.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\crossbow\\foreground\\walk\\crossbow.png",
+      "animation": "walk",
+      "bodyType": "unknown",
+      "layerRole": "fg",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 2820,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/ranged/crossbow/foreground/walk/crossbow.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\crossbow\\foreground\\walk\\crossbow.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--ranged--crossbow--e093e784c13d",
+      "relativeSourcePath": "weapon/ranged/crossbow/walk/crossbow.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\crossbow\\walk\\crossbow.png",
+      "animation": "walk",
+      "bodyType": "unknown",
+      "layerRole": "main",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 2959,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/ranged/crossbow/walk/crossbow.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\crossbow\\walk\\crossbow.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "weapon/ranged/crossbow/background/hurt/crossbow.png",
+      "weapon/ranged/crossbow/background/walk/crossbow.png",
+      "weapon/ranged/crossbow/foreground/hurt/crossbow.png",
+      "weapon/ranged/crossbow/foreground/walk/crossbow.png",
+      "weapon/ranged/crossbow/walk/crossbow.png"
+    ]
+  }
+}

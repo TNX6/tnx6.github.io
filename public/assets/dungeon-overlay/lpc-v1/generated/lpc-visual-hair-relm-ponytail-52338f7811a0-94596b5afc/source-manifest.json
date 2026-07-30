@@ -1,0 +1,248 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:54.135Z",
+  "internalItemId": "lpc-helmet-hair-relm-ponytail-fb6d1bb3",
+  "lpcVisualId": "lpc-visual-hair-relm-ponytail-52338f7811a0-94596b5afc",
+  "familyId": "hair--relm-ponytail--52338f7811a0",
+  "variant": "black",
+  "bodyType": "adult",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": false,
+    "hurt": false
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "hair--relm-ponytail--52338f7811a0"
+    },
+    "walk": {
+      "quality": "degraded-static",
+      "strategy": "Repeat the selected static idle pose across all nine frames of each walk direction.",
+      "sourceAnimation": "idle",
+      "transformation": "repeat-static-idle-to-walk",
+      "donorFamilyId": "hair--relm-ponytail--52338f7811a0"
+    },
+    "hurt": {
+      "quality": "same-slot-fallback",
+      "strategy": "Use hurt from compatible helmet family hair--relm-ponytail--mg--81d8897966b7; it is not visually identical to the selected family.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "hair--relm-ponytail--mg--81d8897966b7"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "bg",
+        "source": "hair/relm_ponytail/adult/bg/walk.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "hair/relm_ponytail/adult/fg/walk.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "bg",
+        "source": "hair/relm_ponytail/adult/bg/idle.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "hair/relm_ponytail/adult/fg/idle.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "hair/relm_ponytail/adult/mg/hurt.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "hair--relm-ponytail--52338f7811a0",
+      "relativeSourcePath": "hair/relm_ponytail/adult/bg/idle.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\hair\\relm_ponytail\\adult\\bg\\idle.png",
+      "animation": "idle",
+      "bodyType": "adult",
+      "layerRole": "bg",
+      "variant": null,
+      "width": 128,
+      "height": 256,
+      "columns": 2,
+      "rows": 4,
+      "fileSizeBytes": 3026,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "hair/relm_ponytail/adult/bg/idle.png",
+      "authors": [
+        "JaidynReiman"
+      ],
+      "licenses": [
+        "CC-BY 3.0+",
+        "GPL 3.0",
+        "OGA-BY 3.0+"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\hair\\relm_ponytail\\adult\\bg\\idle.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "hair--relm-ponytail--52338f7811a0",
+      "relativeSourcePath": "hair/relm_ponytail/adult/bg/walk.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\hair\\relm_ponytail\\adult\\bg\\walk.png",
+      "animation": "walk",
+      "bodyType": "adult",
+      "layerRole": "bg",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 6792,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "hair/relm_ponytail/adult/bg/walk.png",
+      "authors": [
+        "JaidynReiman"
+      ],
+      "licenses": [
+        "CC-BY 3.0+",
+        "GPL 3.0",
+        "OGA-BY 3.0+"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\hair\\relm_ponytail\\adult\\bg\\walk.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "hair--relm-ponytail--52338f7811a0",
+      "relativeSourcePath": "hair/relm_ponytail/adult/fg/idle.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\hair\\relm_ponytail\\adult\\fg\\idle.png",
+      "animation": "idle",
+      "bodyType": "adult",
+      "layerRole": "fg",
+      "variant": null,
+      "width": 128,
+      "height": 256,
+      "columns": 2,
+      "rows": 4,
+      "fileSizeBytes": 1331,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "hair/relm_ponytail/adult/fg/idle.png",
+      "authors": [
+        "JaidynReiman"
+      ],
+      "licenses": [
+        "CC-BY 3.0+",
+        "GPL 3.0",
+        "OGA-BY 3.0+"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\hair\\relm_ponytail\\adult\\fg\\idle.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "hair--relm-ponytail--52338f7811a0",
+      "relativeSourcePath": "hair/relm_ponytail/adult/fg/walk.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\hair\\relm_ponytail\\adult\\fg\\walk.png",
+      "animation": "walk",
+      "bodyType": "adult",
+      "layerRole": "fg",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 3037,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "hair/relm_ponytail/adult/fg/walk.png",
+      "authors": [
+        "JaidynReiman"
+      ],
+      "licenses": [
+        "CC-BY 3.0+",
+        "GPL 3.0",
+        "OGA-BY 3.0+"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\hair\\relm_ponytail\\adult\\fg\\walk.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "hair--relm-ponytail--mg--81d8897966b7",
+      "relativeSourcePath": "hair/relm_ponytail/adult/mg/hurt.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\hair\\relm_ponytail\\adult\\mg\\hurt.png",
+      "animation": "hurt",
+      "bodyType": "adult",
+      "layerRole": "main",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 3358,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "hair/relm_ponytail/adult/mg/hurt.png",
+      "authors": [
+        "JaidynReiman"
+      ],
+      "licenses": [
+        "CC-BY 3.0+",
+        "GPL 3.0",
+        "OGA-BY 3.0+"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\hair\\relm_ponytail\\adult\\mg\\hurt.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [
+      "JaidynReiman"
+    ],
+    "licenses": [
+      "CC-BY 3.0+",
+      "GPL 3.0",
+      "OGA-BY 3.0+"
+    ],
+    "creditsSources": [
+      "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\CREDITS.csv"
+    ],
+    "sourceCreditKeys": [
+      "hair/relm_ponytail/adult/bg/idle.png",
+      "hair/relm_ponytail/adult/bg/walk.png",
+      "hair/relm_ponytail/adult/fg/idle.png",
+      "hair/relm_ponytail/adult/fg/walk.png",
+      "hair/relm_ponytail/adult/mg/hurt.png"
+    ]
+  }
+}

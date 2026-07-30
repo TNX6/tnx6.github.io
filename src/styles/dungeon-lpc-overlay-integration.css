@@ -26,6 +26,16 @@
   pointer-events: none;
 }
 
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-lpc-generated-item-label,
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-lpc-generated-item-warning {
+  top: 30px;
+}
+
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-lpc-generated-item-warning {
+  border-color: rgba(255, 113, 113, 0.7);
+  color: #ffc0c0;
+}
+
 .dov-player-actor[data-lpc-render-state='active'] .dov-avatar,
 .dov-player-actor[data-lpc-render-state='active'] .dov-layered-actor {
   display: none !important;

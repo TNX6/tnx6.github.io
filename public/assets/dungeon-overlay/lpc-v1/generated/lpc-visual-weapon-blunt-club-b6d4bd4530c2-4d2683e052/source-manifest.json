@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:46.410Z",
+  "internalItemId": "lpc-weapon-weapon-blunt-club-7baca351",
+  "lpcVisualId": "lpc-visual-weapon-blunt-club-b6d4bd4530c2-4d2683e052",
+  "familyId": "weapon--blunt--club--b6d4bd4530c2",
+  "variant": null,
+  "bodyType": "unknown",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": false,
+    "hurt": false
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "same-family-fallback",
+      "strategy": "Normalize the closest same-family unknown pose into the idle layout.",
+      "sourceAnimation": "unknown",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "weapon--blunt--club--b6d4bd4530c2"
+    },
+    "walk": {
+      "quality": "same-family-fallback",
+      "strategy": "Normalize the closest same-family unknown pose into the walk layout.",
+      "sourceAnimation": "unknown",
+      "transformation": "repeat-first-pose-frame-to-walk",
+      "donorFamilyId": "weapon--blunt--club--b6d4bd4530c2"
+    },
+    "hurt": {
+      "quality": "same-slot-fallback",
+      "strategy": "Use hurt from compatible weapon family weapon--blunt--mace--c4afa0d38d42; it is not visually identical to the selected family.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--blunt--mace--c4afa0d38d42"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "bg",
+        "source": "weapon/blunt/club/background/club.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "main",
+        "source": "weapon/blunt/club/club.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "bg",
+        "source": "weapon/blunt/club/background/club.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "main",
+        "source": "weapon/blunt/club/club.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "weapon/blunt/mace/hurt/mace.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--blunt--club--b6d4bd4530c2",
+      "relativeSourcePath": "weapon/blunt/club/background/club.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\blunt\\club\\background\\club.png",
+      "animation": "unknown",
+      "bodyType": "unknown",
+      "layerRole": "bg",
+      "variant": null,
+      "width": 1152,
+      "height": 768,
+      "columns": 18,
+      "rows": 12,
+      "fileSizeBytes": 5220,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/blunt/club/background/club.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\blunt\\club\\background\\club.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--blunt--club--b6d4bd4530c2",
+      "relativeSourcePath": "weapon/blunt/club/club.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\blunt\\club\\club.png",
+      "animation": "unknown",
+      "bodyType": "unknown",
+      "layerRole": "main",
+      "variant": null,
+      "width": 1152,
+      "height": 768,
+      "columns": 18,
+      "rows": 12,
+      "fileSizeBytes": 7753,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/blunt/club/club.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\blunt\\club\\club.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--blunt--mace--c4afa0d38d42",
+      "relativeSourcePath": "weapon/blunt/mace/hurt/mace.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\blunt\\mace\\hurt\\mace.png",
+      "animation": "hurt",
+      "bodyType": "unknown",
+      "layerRole": "main",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 705,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/blunt/mace/hurt/mace.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\blunt\\mace\\hurt\\mace.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "weapon/blunt/club/background/club.png",
+      "weapon/blunt/club/club.png",
+      "weapon/blunt/mace/hurt/mace.png"
+    ]
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:55.615Z",
+  "internalItemId": "lpc-armor-torso-clothes-tunic-sara-27b71e85",
+  "lpcVisualId": "lpc-visual-torso-clothes-tunic-sara-3deae9cb8f9c-ac52357aba",
+  "familyId": "torso--clothes--tunic-sara--3deae9cb8f9c",
+  "variant": "leather",
+  "bodyType": "female",
+  "layered": false,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "torso--clothes--tunic-sara--3deae9cb8f9c"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "torso--clothes--tunic-sara--3deae9cb8f9c"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "torso--clothes--tunic-sara--3deae9cb8f9c"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "main",
+        "source": "torso/clothes/tunic_sara/female/walk/leather.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "main",
+        "source": "torso/clothes/tunic_sara/female/walk/leather.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "torso/clothes/tunic_sara/female/hurt/leather.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "torso--clothes--tunic-sara--3deae9cb8f9c",
+      "relativeSourcePath": "torso/clothes/tunic_sara/female/hurt/leather.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\clothes\\tunic_sara\\female\\hurt\\leather.png",
+      "animation": "hurt",
+      "bodyType": "female",
+      "layerRole": "main",
+      "variant": "leather",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 936,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "torso/clothes/tunic_sara/female/hurt/leather.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\clothes\\tunic_sara\\female\\hurt\\leather.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "torso--clothes--tunic-sara--3deae9cb8f9c",
+      "relativeSourcePath": "torso/clothes/tunic_sara/female/walk/leather.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\clothes\\tunic_sara\\female\\walk\\leather.png",
+      "animation": "walk",
+      "bodyType": "female",
+      "layerRole": "main",
+      "variant": "leather",
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 2515,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "torso/clothes/tunic_sara/female/walk/leather.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\clothes\\tunic_sara\\female\\walk\\leather.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "torso/clothes/tunic_sara/female/hurt/leather.png",
+      "torso/clothes/tunic_sara/female/walk/leather.png"
+    ]
+  }
+}

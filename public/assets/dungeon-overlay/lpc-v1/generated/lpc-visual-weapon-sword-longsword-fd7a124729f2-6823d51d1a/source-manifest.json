@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:39.641Z",
+  "internalItemId": "lpc-weapon-weapon-sword-longsword-3d532cd7",
+  "lpcVisualId": "lpc-visual-weapon-sword-longsword-fd7a124729f2-6823d51d1a",
+  "familyId": "weapon--sword--longsword--fd7a124729f2",
+  "variant": null,
+  "bodyType": "universal",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "weapon--sword--longsword--fd7a124729f2"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--sword--longsword--fd7a124729f2"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--sword--longsword--fd7a124729f2"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "behind",
+        "source": "weapon/sword/longsword/universal_behind/walk/longsword.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "behind",
+        "source": "weapon/sword/longsword/universal_behind/walk/longsword.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "behind",
+        "source": "weapon/sword/longsword/universal_behind/hurt/longsword.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--sword--longsword--fd7a124729f2",
+      "relativeSourcePath": "weapon/sword/longsword/universal_behind/hurt/longsword.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\longsword\\universal_behind\\hurt\\longsword.png",
+      "animation": "hurt",
+      "bodyType": "universal",
+      "layerRole": "behind",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 685,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/sword/longsword/universal_behind/hurt/longsword.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\longsword\\universal_behind\\hurt\\longsword.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--sword--longsword--fd7a124729f2",
+      "relativeSourcePath": "weapon/sword/longsword/universal_behind/walk/longsword.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\longsword\\universal_behind\\walk\\longsword.png",
+      "animation": "walk",
+      "bodyType": "universal",
+      "layerRole": "behind",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 3279,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/sword/longsword/universal_behind/walk/longsword.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\longsword\\universal_behind\\walk\\longsword.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "weapon/sword/longsword/universal_behind/hurt/longsword.png",
+      "weapon/sword/longsword/universal_behind/walk/longsword.png"
+    ]
+  }
+}

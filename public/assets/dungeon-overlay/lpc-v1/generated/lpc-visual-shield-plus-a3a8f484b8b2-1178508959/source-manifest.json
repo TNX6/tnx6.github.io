@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:39.995Z",
+  "internalItemId": "lpc-weapon-shield-plus-625bb38c",
+  "lpcVisualId": "lpc-visual-shield-plus-a3a8f484b8b2-1178508959",
+  "familyId": "shield--plus--a3a8f484b8b2",
+  "variant": null,
+  "bodyType": "male",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "shield--plus--a3a8f484b8b2"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "shield--plus--a3a8f484b8b2"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "shield--plus--a3a8f484b8b2"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "fg",
+        "source": "shield/plus/fg/male/walk/plus.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "fg",
+        "source": "shield/plus/fg/male/walk/plus.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "fg",
+        "source": "shield/plus/fg/male/hurt/plus.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "shield--plus--a3a8f484b8b2",
+      "relativeSourcePath": "shield/plus/fg/male/hurt/plus.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\plus\\fg\\male\\hurt\\plus.png",
+      "animation": "hurt",
+      "bodyType": "male",
+      "layerRole": "fg",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 1404,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "shield/plus/fg/male/hurt/plus.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\plus\\fg\\male\\hurt\\plus.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "shield--plus--a3a8f484b8b2",
+      "relativeSourcePath": "shield/plus/fg/male/walk/plus.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\plus\\fg\\male\\walk\\plus.png",
+      "animation": "walk",
+      "bodyType": "male",
+      "layerRole": "fg",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 4146,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "shield/plus/fg/male/walk/plus.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\plus\\fg\\male\\walk\\plus.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "shield/plus/fg/male/hurt/plus.png",
+      "shield/plus/fg/male/walk/plus.png"
+    ]
+  }
+}

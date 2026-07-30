@@ -1,3 +1,8 @@
+import {
+  generatedLpcVisualSlot,
+  getGeneratedLpcItem,
+} from './dungeon-lpc-generated-catalog';
+
 export type DungeonVisualItem =
   | string
   | { readonly spriteKey: string };
@@ -167,7 +172,15 @@ export const adaptDungeonPlayerToLpc = (
       return;
     }
 
-    const supported = SUPPORTED_LPC_ITEM_MAPPINGS[slot].includes(itemId);
+    const directlySupported =
+      SUPPORTED_LPC_ITEM_MAPPINGS[slot].includes(itemId);
+    const generatedItem = directlySupported
+      ? null
+      : getGeneratedLpcItem(itemId);
+    const generatedSupported =
+      generatedItem !== null &&
+      generatedLpcVisualSlot(generatedItem) === slot;
+    const supported = directlySupported || generatedSupported;
     if (!supported) {
       warnings.push(
         `Unsupported ${slot} item "${rawItemId}"; visual slot disabled.`,

@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:39.693Z",
+  "internalItemId": "lpc-weapon-shield-two-engrailed-paint-6e08804b",
+  "lpcVisualId": "lpc-visual-shield-two-engrailed-paint-b5011d45b849-1b108e366e",
+  "familyId": "shield--two-engrailed--paint--b5011d45b849",
+  "variant": "two_engrailed",
+  "bodyType": "male",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "shield--two-engrailed--paint--b5011d45b849"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "shield--two-engrailed--paint--b5011d45b849"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "shield--two-engrailed--paint--b5011d45b849"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "fg",
+        "source": "shield/two_engrailed/paint/fg/male/walk/two_engrailed.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "fg",
+        "source": "shield/two_engrailed/paint/fg/male/walk/two_engrailed.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "fg",
+        "source": "shield/two_engrailed/paint/fg/male/hurt/two_engrailed.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "shield--two-engrailed--paint--b5011d45b849",
+      "relativeSourcePath": "shield/two_engrailed/paint/fg/male/hurt/two_engrailed.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\two_engrailed\\paint\\fg\\male\\hurt\\two_engrailed.png",
+      "animation": "hurt",
+      "bodyType": "male",
+      "layerRole": "fg",
+      "variant": "two_engrailed",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 863,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "shield/two_engrailed/paint/fg/male/hurt/two_engrailed.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\two_engrailed\\paint\\fg\\male\\hurt\\two_engrailed.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "shield--two-engrailed--paint--b5011d45b849",
+      "relativeSourcePath": "shield/two_engrailed/paint/fg/male/walk/two_engrailed.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\two_engrailed\\paint\\fg\\male\\walk\\two_engrailed.png",
+      "animation": "walk",
+      "bodyType": "male",
+      "layerRole": "fg",
+      "variant": "two_engrailed",
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 2114,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "shield/two_engrailed/paint/fg/male/walk/two_engrailed.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\two_engrailed\\paint\\fg\\male\\walk\\two_engrailed.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "shield/two_engrailed/paint/fg/male/hurt/two_engrailed.png",
+      "shield/two_engrailed/paint/fg/male/walk/two_engrailed.png"
+    ]
+  }
+}

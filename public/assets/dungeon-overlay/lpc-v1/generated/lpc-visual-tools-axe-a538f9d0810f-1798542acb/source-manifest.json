@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:42.970Z",
+  "internalItemId": "lpc-weapon-tools-axe-3b72ae1b",
+  "lpcVisualId": "lpc-visual-tools-axe-a538f9d0810f-1798542acb",
+  "familyId": "tools--axe--a538f9d0810f",
+  "variant": null,
+  "bodyType": "male",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": false
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "tools--axe--a538f9d0810f"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "tools--axe--a538f9d0810f"
+    },
+    "hurt": {
+      "quality": "same-slot-fallback",
+      "strategy": "Use hurt from compatible weapon family weapon--sword--arming--64636e9d445e; it is not visually identical to the selected family.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--sword--arming--64636e9d445e"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "main",
+        "source": "tools/axe/male/walk.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "main",
+        "source": "tools/axe/male/walk.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "bg",
+        "source": "weapon/sword/arming/universal/bg/hurt/iron.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "weapon/sword/arming/universal/fg/hurt/iron.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "tools--axe--a538f9d0810f",
+      "relativeSourcePath": "tools/axe/male/walk.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\tools\\axe\\male\\walk.png",
+      "animation": "walk",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 4570,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "tools/axe/male/walk.png",
+      "authors": [
+        "bluecarrot16",
+        "JaidynReiman",
+        "Pierre Vigier (pvigier)",
+        "Tuomo Untinen (reemax)"
+      ],
+      "licenses": [
+        "CC-BY 4.0",
+        "CC-BY-SA 3.0+",
+        "GPL 2.0+",
+        "OGA-BY-3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\tools\\axe\\male\\walk.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--sword--arming--64636e9d445e",
+      "relativeSourcePath": "weapon/sword/arming/universal/bg/hurt/iron.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\arming\\universal\\bg\\hurt\\iron.png",
+      "animation": "hurt",
+      "bodyType": "universal",
+      "layerRole": "bg",
+      "variant": "iron",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 471,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/sword/arming/universal/bg/hurt/iron.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\arming\\universal\\bg\\hurt\\iron.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--sword--arming--64636e9d445e",
+      "relativeSourcePath": "weapon/sword/arming/universal/fg/hurt/iron.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\arming\\universal\\fg\\hurt\\iron.png",
+      "animation": "hurt",
+      "bodyType": "universal",
+      "layerRole": "fg",
+      "variant": "iron",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 682,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/sword/arming/universal/fg/hurt/iron.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\arming\\universal\\fg\\hurt\\iron.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [
+      "JaidynReiman",
+      "Pierre Vigier (pvigier)",
+      "Tuomo Untinen (reemax)",
+      "bluecarrot16"
+    ],
+    "licenses": [
+      "CC-BY 4.0",
+      "CC-BY-SA 3.0+",
+      "GPL 2.0+",
+      "OGA-BY-3.0"
+    ],
+    "creditsSources": [
+      "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\CREDITS.csv"
+    ],
+    "sourceCreditKeys": [
+      "tools/axe/male/walk.png",
+      "weapon/sword/arming/universal/bg/hurt/iron.png",
+      "weapon/sword/arming/universal/fg/hurt/iron.png"
+    ]
+  }
+}

@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:57.944Z",
+  "internalItemId": "lpc-armor-torso-clothes-longsleeve-longsleeve-0a21b6eb",
+  "lpcVisualId": "lpc-visual-torso-clothes-longsleeve-longsleeve-78c10d429374-b294b03cc4",
+  "familyId": "torso--clothes--longsleeve--longsleeve--78c10d429374",
+  "variant": "leather",
+  "bodyType": "male",
+  "layered": false,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": false,
+    "hurt": false
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "torso--clothes--longsleeve--longsleeve--78c10d429374"
+    },
+    "walk": {
+      "quality": "degraded-static",
+      "strategy": "Repeat the selected static idle pose across all nine frames of each walk direction.",
+      "sourceAnimation": "idle",
+      "transformation": "repeat-static-idle-to-walk",
+      "donorFamilyId": "torso--clothes--longsleeve--longsleeve--78c10d429374"
+    },
+    "hurt": {
+      "quality": "same-family-fallback",
+      "strategy": "Use native hurt from the same family/body with the closest deterministic variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "torso--clothes--longsleeve--longsleeve--78c10d429374"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "main",
+        "source": "torso/clothes/longsleeve/longsleeve/male/walk.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "main",
+        "source": "torso/clothes/longsleeve/longsleeve/male/idle.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "torso/clothes/longsleeve/longsleeve/male/hurt.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "torso--clothes--longsleeve--longsleeve--78c10d429374",
+      "relativeSourcePath": "torso/clothes/longsleeve/longsleeve/male/hurt.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\clothes\\longsleeve\\longsleeve\\male\\hurt.png",
+      "animation": "hurt",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 1837,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "torso/clothes/longsleeve/longsleeve/male/hurt.png",
+      "authors": [
+        "bluecarrot16",
+        "ElizaWy",
+        "JaidynReiman",
+        "Johannes Sjölund (wulax)",
+        "Stephen Challener (Redshrike)"
+      ],
+      "licenses": [
+        "CC-BY-SA 3.0",
+        "GPL 3.0",
+        "OGA-BY 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\clothes\\longsleeve\\longsleeve\\male\\hurt.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "torso--clothes--longsleeve--longsleeve--78c10d429374",
+      "relativeSourcePath": "torso/clothes/longsleeve/longsleeve/male/idle.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\clothes\\longsleeve\\longsleeve\\male\\idle.png",
+      "animation": "idle",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": null,
+      "width": 128,
+      "height": 256,
+      "columns": 2,
+      "rows": 4,
+      "fileSizeBytes": 2291,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "torso/clothes/longsleeve/longsleeve/male/idle.png",
+      "authors": [
+        "bluecarrot16",
+        "ElizaWy",
+        "JaidynReiman",
+        "Johannes Sjölund (wulax)",
+        "Stephen Challener (Redshrike)"
+      ],
+      "licenses": [
+        "CC-BY-SA 3.0",
+        "GPL 3.0",
+        "OGA-BY 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\clothes\\longsleeve\\longsleeve\\male\\idle.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "torso--clothes--longsleeve--longsleeve--78c10d429374",
+      "relativeSourcePath": "torso/clothes/longsleeve/longsleeve/male/walk.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\clothes\\longsleeve\\longsleeve\\male\\walk.png",
+      "animation": "walk",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 6046,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "torso/clothes/longsleeve/longsleeve/male/walk.png",
+      "authors": [
+        "bluecarrot16",
+        "ElizaWy",
+        "JaidynReiman",
+        "Johannes Sjölund (wulax)",
+        "Stephen Challener (Redshrike)"
+      ],
+      "licenses": [
+        "CC-BY-SA 3.0",
+        "GPL 3.0",
+        "OGA-BY 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\torso\\clothes\\longsleeve\\longsleeve\\male\\walk.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [
+      "ElizaWy",
+      "JaidynReiman",
+      "Johannes Sjölund (wulax)",
+      "Stephen Challener (Redshrike)",
+      "bluecarrot16"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0",
+      "GPL 3.0",
+      "OGA-BY 3.0"
+    ],
+    "creditsSources": [
+      "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\CREDITS.csv"
+    ],
+    "sourceCreditKeys": [
+      "torso/clothes/longsleeve/longsleeve/male/hurt.png",
+      "torso/clothes/longsleeve/longsleeve/male/idle.png",
+      "torso/clothes/longsleeve/longsleeve/male/walk.png"
+    ]
+  }
+}

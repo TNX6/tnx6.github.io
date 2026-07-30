@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:53.428Z",
+  "internalItemId": "lpc-helmet-hair-messy-93f896d1",
+  "lpcVisualId": "lpc-visual-hair-messy-129b1e9e5a95-3f6847bd76",
+  "familyId": "hair--messy--129b1e9e5a95",
+  "variant": "brown",
+  "bodyType": "child",
+  "layered": false,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": false,
+    "hurt": false
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "same-family-fallback",
+      "strategy": "Normalize the closest same-family unknown pose into the idle layout.",
+      "sourceAnimation": "unknown",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "hair--messy--129b1e9e5a95"
+    },
+    "walk": {
+      "quality": "same-family-fallback",
+      "strategy": "Normalize the closest same-family unknown pose into the walk layout.",
+      "sourceAnimation": "unknown",
+      "transformation": "repeat-first-pose-frame-to-walk",
+      "donorFamilyId": "hair--messy--129b1e9e5a95"
+    },
+    "hurt": {
+      "quality": "same-slot-fallback",
+      "strategy": "Use hurt from compatible helmet family hair--long-messy--12384773a6b4; it is not visually identical to the selected family.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "hair--long-messy--12384773a6b4"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "main",
+        "source": "hair/messy/child/brown.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "main",
+        "source": "hair/messy/child/brown.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "hair/long_messy/adult/hurt.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "hair--long-messy--12384773a6b4",
+      "relativeSourcePath": "hair/long_messy/adult/hurt.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\hair\\long_messy\\adult\\hurt.png",
+      "animation": "hurt",
+      "bodyType": "adult",
+      "layerRole": "main",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 2104,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "hair/long_messy/adult/hurt.png",
+      "authors": [
+        "bluecarrot16",
+        "Mandi Paugh"
+      ],
+      "licenses": [
+        "CC-BY 3.0",
+        "GPL 2.0",
+        "GPL 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\hair\\long_messy\\adult\\hurt.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "hair--messy--129b1e9e5a95",
+      "relativeSourcePath": "hair/messy/child/brown.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\hair\\messy\\child\\brown.png",
+      "animation": "unknown",
+      "bodyType": "child",
+      "layerRole": "main",
+      "variant": "brown",
+      "width": 768,
+      "height": 1344,
+      "columns": 12,
+      "rows": 21,
+      "fileSizeBytes": 23099,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "hair/messy/child/brown.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\hair\\messy\\child\\brown.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [
+      "Mandi Paugh",
+      "bluecarrot16"
+    ],
+    "licenses": [
+      "CC-BY 3.0",
+      "GPL 2.0",
+      "GPL 3.0"
+    ],
+    "creditsSources": [
+      "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\CREDITS.csv"
+    ],
+    "sourceCreditKeys": [
+      "hair/long_messy/adult/hurt.png",
+      "hair/messy/child/brown.png"
+    ]
+  }
+}

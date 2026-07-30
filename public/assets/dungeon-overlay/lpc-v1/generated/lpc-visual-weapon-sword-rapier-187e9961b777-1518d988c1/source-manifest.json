@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:40.333Z",
+  "internalItemId": "lpc-weapon-weapon-sword-rapier-f5564806",
+  "lpcVisualId": "lpc-visual-weapon-sword-rapier-187e9961b777-1518d988c1",
+  "familyId": "weapon--sword--rapier--187e9961b777",
+  "variant": null,
+  "bodyType": "universal",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": false
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "weapon--sword--rapier--187e9961b777"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--sword--rapier--187e9961b777"
+    },
+    "hurt": {
+      "quality": "same-slot-fallback",
+      "strategy": "Use hurt from compatible weapon family weapon--sword--arming--64636e9d445e; it is not visually identical to the selected family.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--sword--arming--64636e9d445e"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "behind",
+        "source": "weapon/sword/rapier/universal_behind/walk/rapier.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "behind",
+        "source": "weapon/sword/rapier/universal_behind/walk/rapier.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "bg",
+        "source": "weapon/sword/arming/universal/bg/hurt/iron.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "weapon/sword/arming/universal/fg/hurt/iron.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--sword--arming--64636e9d445e",
+      "relativeSourcePath": "weapon/sword/arming/universal/bg/hurt/iron.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\arming\\universal\\bg\\hurt\\iron.png",
+      "animation": "hurt",
+      "bodyType": "universal",
+      "layerRole": "bg",
+      "variant": "iron",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 471,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/sword/arming/universal/bg/hurt/iron.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\arming\\universal\\bg\\hurt\\iron.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--sword--arming--64636e9d445e",
+      "relativeSourcePath": "weapon/sword/arming/universal/fg/hurt/iron.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\arming\\universal\\fg\\hurt\\iron.png",
+      "animation": "hurt",
+      "bodyType": "universal",
+      "layerRole": "fg",
+      "variant": "iron",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 682,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/sword/arming/universal/fg/hurt/iron.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\arming\\universal\\fg\\hurt\\iron.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--sword--rapier--187e9961b777",
+      "relativeSourcePath": "weapon/sword/rapier/universal_behind/walk/rapier.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\rapier\\universal_behind\\walk\\rapier.png",
+      "animation": "walk",
+      "bodyType": "universal",
+      "layerRole": "behind",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 1189,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/sword/rapier/universal_behind/walk/rapier.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\sword\\rapier\\universal_behind\\walk\\rapier.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "weapon/sword/arming/universal/bg/hurt/iron.png",
+      "weapon/sword/arming/universal/fg/hurt/iron.png",
+      "weapon/sword/rapier/universal_behind/walk/rapier.png"
+    ]
+  }
+}

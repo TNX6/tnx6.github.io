@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:42.261Z",
+  "internalItemId": "lpc-weapon-shield-round-076780d0",
+  "lpcVisualId": "lpc-visual-shield-round-2229e25b9fc6-8ffa7bf1bc",
+  "familyId": "shield--round--2229e25b9fc6",
+  "variant": "brown",
+  "bodyType": "unknown",
+  "layered": false,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": false
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "shield--round--2229e25b9fc6"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "shield--round--2229e25b9fc6"
+    },
+    "hurt": {
+      "quality": "same-slot-fallback",
+      "strategy": "Use hurt from compatible weapon family shield--heater--original--8d7a63eb624a; it is not visually identical to the selected family.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "shield--heater--original--8d7a63eb624a"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "main",
+        "source": "shield/round/walk/brown.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "main",
+        "source": "shield/round/walk/brown.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "fg",
+        "source": "shield/heater/original/wood/fg/hurt.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "shield--heater--original--8d7a63eb624a",
+      "relativeSourcePath": "shield/heater/original/wood/fg/hurt.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\heater\\original\\wood\\fg\\hurt.png",
+      "animation": "hurt",
+      "bodyType": "unknown",
+      "layerRole": "fg",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 794,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "shield/heater/original/wood/fg/hurt.png",
+      "authors": [
+        "bluecarrot16",
+        "ElizaWy",
+        "Sander Frenken (castelonia)"
+      ],
+      "licenses": [
+        "OGA-BY 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\heater\\original\\wood\\fg\\hurt.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "shield--round--2229e25b9fc6",
+      "relativeSourcePath": "shield/round/walk/brown.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\round\\walk\\brown.png",
+      "animation": "walk",
+      "bodyType": "unknown",
+      "layerRole": "main",
+      "variant": "brown",
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 6515,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "shield/round/walk/brown.png",
+      "authors": [
+        "DarkwallLKE",
+        "Johannes Sjölund (wulax)",
+        "Michael Whitlock (bigbeargames)",
+        "Tuomo Untinen (reemax)"
+      ],
+      "licenses": [
+        "CC-BY-SA 3.0",
+        "GPL 3.0",
+        "OGA-BY 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\round\\walk\\brown.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [
+      "DarkwallLKE",
+      "ElizaWy",
+      "Johannes Sjölund (wulax)",
+      "Michael Whitlock (bigbeargames)",
+      "Sander Frenken (castelonia)",
+      "Tuomo Untinen (reemax)",
+      "bluecarrot16"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0",
+      "GPL 3.0",
+      "OGA-BY 3.0"
+    ],
+    "creditsSources": [
+      "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\CREDITS.csv"
+    ],
+    "sourceCreditKeys": [
+      "shield/heater/original/wood/fg/hurt.png",
+      "shield/round/walk/brown.png"
+    ]
+  }
+}

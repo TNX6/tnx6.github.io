@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:44.000Z",
+  "internalItemId": "lpc-weapon-weapon-ranged-bow-great-0aea2b42",
+  "lpcVisualId": "lpc-visual-weapon-ranged-bow-great-9a3f1f59516b-5734e1e355",
+  "familyId": "weapon--ranged--bow--great--9a3f1f59516b",
+  "variant": "iron",
+  "bodyType": "universal",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": false,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "same-family-fallback",
+      "strategy": "Normalize the closest same-family shoot pose into the idle layout.",
+      "sourceAnimation": "shoot",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "weapon--ranged--bow--great--9a3f1f59516b"
+    },
+    "walk": {
+      "quality": "same-family-fallback",
+      "strategy": "Normalize the closest same-family shoot pose into the walk layout.",
+      "sourceAnimation": "shoot",
+      "transformation": "repeat-first-pose-frame-to-walk",
+      "donorFamilyId": "weapon--ranged--bow--great--9a3f1f59516b"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "weapon--ranged--bow--great--9a3f1f59516b"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "fg",
+        "source": "weapon/ranged/bow/great/universal/foreground/shoot/iron.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "fg",
+        "source": "weapon/ranged/bow/great/universal/foreground/shoot/iron.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "bg",
+        "source": "weapon/ranged/bow/great/universal/background/hurt/iron.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "weapon/ranged/bow/great/universal/foreground/hurt/iron.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--ranged--bow--great--9a3f1f59516b",
+      "relativeSourcePath": "weapon/ranged/bow/great/universal/background/hurt/iron.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\bow\\great\\universal\\background\\hurt\\iron.png",
+      "animation": "hurt",
+      "bodyType": "universal",
+      "layerRole": "bg",
+      "variant": "iron",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 585,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/ranged/bow/great/universal/background/hurt/iron.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\bow\\great\\universal\\background\\hurt\\iron.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--ranged--bow--great--9a3f1f59516b",
+      "relativeSourcePath": "weapon/ranged/bow/great/universal/foreground/hurt/iron.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\bow\\great\\universal\\foreground\\hurt\\iron.png",
+      "animation": "hurt",
+      "bodyType": "universal",
+      "layerRole": "fg",
+      "variant": "iron",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 1055,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/ranged/bow/great/universal/foreground/hurt/iron.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\bow\\great\\universal\\foreground\\hurt\\iron.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "weapon--ranged--bow--great--9a3f1f59516b",
+      "relativeSourcePath": "weapon/ranged/bow/great/universal/foreground/shoot/iron.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\bow\\great\\universal\\foreground\\shoot\\iron.png",
+      "animation": "shoot",
+      "bodyType": "universal",
+      "layerRole": "fg",
+      "variant": "iron",
+      "width": 832,
+      "height": 256,
+      "columns": 13,
+      "rows": 4,
+      "fileSizeBytes": 5765,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "weapon/ranged/bow/great/universal/foreground/shoot/iron.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\weapon\\ranged\\bow\\great\\universal\\foreground\\shoot\\iron.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "weapon/ranged/bow/great/universal/background/hurt/iron.png",
+      "weapon/ranged/bow/great/universal/foreground/hurt/iron.png",
+      "weapon/ranged/bow/great/universal/foreground/shoot/iron.png"
+    ]
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:44.075Z",
+  "internalItemId": "lpc-weapon-tools-whip-0d8c47a7",
+  "lpcVisualId": "lpc-visual-tools-whip-19e0b6f985be-1b2714ff01",
+  "familyId": "tools--whip--19e0b6f985be",
+  "variant": null,
+  "bodyType": "unknown",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": false,
+    "hurt": false
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "same-family-fallback",
+      "strategy": "Normalize the closest same-family unknown pose into the idle layout.",
+      "sourceAnimation": "unknown",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "tools--whip--19e0b6f985be"
+    },
+    "walk": {
+      "quality": "same-family-fallback",
+      "strategy": "Normalize the closest same-family unknown pose into the walk layout.",
+      "sourceAnimation": "unknown",
+      "transformation": "repeat-first-pose-frame-to-walk",
+      "donorFamilyId": "tools--whip--19e0b6f985be"
+    },
+    "hurt": {
+      "quality": "same-slot-fallback",
+      "strategy": "Use hurt from compatible weapon family body--wound--brain--80383c1be547; it is not visually identical to the selected family.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "body--wound--brain--80383c1be547"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "bg",
+        "source": "tools/whip/bg.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "tools/whip/fg.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "bg",
+        "source": "tools/whip/bg.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "tools/whip/fg.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "body/wound/brain/hurt/red.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "body--wound--brain--80383c1be547",
+      "relativeSourcePath": "body/wound/brain/hurt/red.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\wound\\brain\\hurt\\red.png",
+      "animation": "hurt",
+      "bodyType": "unknown",
+      "layerRole": "main",
+      "variant": "red",
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 1095,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "body/wound/brain/hurt/red.png",
+      "authors": [
+        "Benjamin K. Smith (BenCreating)",
+        "Sander Frenken (castelonia)"
+      ],
+      "licenses": [
+        "CC-BY-SA 3.0",
+        "GPL 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\wound\\brain\\hurt\\red.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "tools--whip--19e0b6f985be",
+      "relativeSourcePath": "tools/whip/bg.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\tools\\whip\\bg.png",
+      "animation": "unknown",
+      "bodyType": "unknown",
+      "layerRole": "bg",
+      "variant": null,
+      "width": 1536,
+      "height": 768,
+      "columns": 24,
+      "rows": 12,
+      "fileSizeBytes": 7543,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "tools/whip/bg.png",
+      "authors": [
+        "bluecarrot16"
+      ],
+      "licenses": [
+        "CC-BY 4.0",
+        "GPL 3.0",
+        "OGA-BY 3.0+"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\tools\\whip\\bg.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "tools--whip--19e0b6f985be",
+      "relativeSourcePath": "tools/whip/fg.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\tools\\whip\\fg.png",
+      "animation": "unknown",
+      "bodyType": "unknown",
+      "layerRole": "fg",
+      "variant": null,
+      "width": 1536,
+      "height": 768,
+      "columns": 24,
+      "rows": 12,
+      "fileSizeBytes": 11084,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "tools/whip/fg.png",
+      "authors": [
+        "bluecarrot16"
+      ],
+      "licenses": [
+        "CC-BY 4.0",
+        "GPL 3.0",
+        "OGA-BY 3.0+"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\tools\\whip\\fg.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [
+      "Benjamin K. Smith (BenCreating)",
+      "Sander Frenken (castelonia)",
+      "bluecarrot16"
+    ],
+    "licenses": [
+      "CC-BY 4.0",
+      "CC-BY-SA 3.0",
+      "GPL 3.0",
+      "OGA-BY 3.0+"
+    ],
+    "creditsSources": [
+      "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\CREDITS.csv"
+    ],
+    "sourceCreditKeys": [
+      "body/wound/brain/hurt/red.png",
+      "tools/whip/bg.png",
+      "tools/whip/fg.png"
+    ]
+  }
+}

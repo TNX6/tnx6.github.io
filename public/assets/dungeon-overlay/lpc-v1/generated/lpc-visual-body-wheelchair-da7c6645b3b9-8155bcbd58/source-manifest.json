@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:59.002Z",
+  "internalItemId": "lpc-armor-body-wheelchair-d7ce6614",
+  "lpcVisualId": "lpc-visual-body-wheelchair-da7c6645b3b9-8155bcbd58",
+  "familyId": "body--wheelchair--da7c6645b3b9",
+  "variant": "black",
+  "bodyType": "adult",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": false,
+    "hurt": false
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "same-family-fallback",
+      "strategy": "Normalize the closest same-family unknown pose into the idle layout.",
+      "sourceAnimation": "unknown",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "body--wheelchair--da7c6645b3b9"
+    },
+    "walk": {
+      "quality": "same-family-fallback",
+      "strategy": "Normalize the closest same-family unknown pose into the walk layout.",
+      "sourceAnimation": "unknown",
+      "transformation": "repeat-first-pose-frame-to-walk",
+      "donorFamilyId": "body--wheelchair--da7c6645b3b9"
+    },
+    "hurt": {
+      "quality": "same-slot-fallback",
+      "strategy": "Use hurt from compatible armor family body--bodies--f7d89c7252af; it is not visually identical to the selected family.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "body--bodies--f7d89c7252af"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "bg",
+        "source": "body/wheelchair/adult/background/black.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "body/wheelchair/adult/foreground/black.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "bg",
+        "source": "body/wheelchair/adult/background/black.png",
+        "sourceKind": "universal-lpc-library"
+      },
+      {
+        "layer": "fg",
+        "source": "body/wheelchair/adult/foreground/black.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "main",
+        "source": "body/bodies/male/hurt.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "body--bodies--f7d89c7252af",
+      "relativeSourcePath": "body/bodies/male/hurt.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\bodies\\male\\hurt.png",
+      "animation": "hurt",
+      "bodyType": "male",
+      "layerRole": "main",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 1515,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "body/bodies/male/hurt.png",
+      "authors": [
+        "Benjamin K. Smith (BenCreating)",
+        "bluecarrot16",
+        "dalonedrau",
+        "Durrani",
+        "Eliza Wyatt (ElizaWy)",
+        "ElizaWy",
+        "Evert",
+        "JaidynReiman",
+        "Johannes Sjölund (wulax)",
+        "kheftel",
+        "Matthew Krohn (makrohn)",
+        "MuffinElZangano",
+        "Nila122",
+        "Pierre Vigier (pvigier)",
+        "Sander Frenken (castelonia)",
+        "Stephen Challener (Redshrike)",
+        "TheraHedwig"
+      ],
+      "licenses": [
+        "CC-BY-SA 3.0",
+        "GPL 3.0",
+        "OGA-BY 3.0"
+      ],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\bodies\\male\\hurt.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "body--wheelchair--da7c6645b3b9",
+      "relativeSourcePath": "body/wheelchair/adult/background/black.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\wheelchair\\adult\\background\\black.png",
+      "animation": "unknown",
+      "bodyType": "adult",
+      "layerRole": "bg",
+      "variant": "black",
+      "width": 128,
+      "height": 256,
+      "columns": 2,
+      "rows": 4,
+      "fileSizeBytes": 4657,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "body/wheelchair/adult/background/black.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\wheelchair\\adult\\background\\black.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "body--wheelchair--da7c6645b3b9",
+      "relativeSourcePath": "body/wheelchair/adult/foreground/black.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\wheelchair\\adult\\foreground\\black.png",
+      "animation": "unknown",
+      "bodyType": "adult",
+      "layerRole": "fg",
+      "variant": "black",
+      "width": 128,
+      "height": 256,
+      "columns": 2,
+      "rows": 4,
+      "fileSizeBytes": 2721,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "body/wheelchair/adult/foreground/black.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\body\\wheelchair\\adult\\foreground\\black.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [
+      "Benjamin K. Smith (BenCreating)",
+      "Durrani",
+      "Eliza Wyatt (ElizaWy)",
+      "ElizaWy",
+      "Evert",
+      "JaidynReiman",
+      "Johannes Sjölund (wulax)",
+      "Matthew Krohn (makrohn)",
+      "MuffinElZangano",
+      "Nila122",
+      "Pierre Vigier (pvigier)",
+      "Sander Frenken (castelonia)",
+      "Stephen Challener (Redshrike)",
+      "TheraHedwig",
+      "bluecarrot16",
+      "dalonedrau",
+      "kheftel"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0",
+      "GPL 3.0",
+      "OGA-BY 3.0"
+    ],
+    "creditsSources": [
+      "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\CREDITS.csv"
+    ],
+    "sourceCreditKeys": [
+      "body/bodies/male/hurt.png",
+      "body/wheelchair/adult/background/black.png",
+      "body/wheelchair/adult/foreground/black.png"
+    ]
+  }
+}

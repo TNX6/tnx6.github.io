@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T05:16:40.495Z",
+  "internalItemId": "lpc-weapon-shield-scutum-trim-3c8cb00a",
+  "lpcVisualId": "lpc-visual-shield-scutum-trim-53975399432f-a7dda9eb02",
+  "familyId": "shield--scutum-trim--53975399432f",
+  "variant": null,
+  "bodyType": "male",
+  "layered": true,
+  "nativeAnimationSupport": {
+    "idle": false,
+    "walk": true,
+    "hurt": true
+  },
+  "fallbackStrategy": {
+    "idle": {
+      "quality": "degraded-static",
+      "strategy": "Copy the first compatible frame from every walk direction into a static two-column idle sheet.",
+      "sourceAnimation": "walk",
+      "transformation": "first-direction-frame-to-static-idle",
+      "donorFamilyId": "shield--scutum-trim--53975399432f"
+    },
+    "walk": {
+      "quality": "native",
+      "strategy": "Use native walk sources for the selected family, body, and variant.",
+      "sourceAnimation": "walk",
+      "transformation": "native-sheet",
+      "donorFamilyId": "shield--scutum-trim--53975399432f"
+    },
+    "hurt": {
+      "quality": "native",
+      "strategy": "Use native hurt sources for the selected family, body, and variant.",
+      "sourceAnimation": "hurt",
+      "transformation": "native-sheet",
+      "donorFamilyId": "shield--scutum-trim--53975399432f"
+    }
+  },
+  "selectedLayers": {
+    "idle": [
+      {
+        "layer": "fg",
+        "source": "shield/scutum_trim/fg/male/walk/scutum_trim.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "walk": [
+      {
+        "layer": "fg",
+        "source": "shield/scutum_trim/fg/male/walk/scutum_trim.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ],
+    "hurt": [
+      {
+        "layer": "fg",
+        "source": "shield/scutum_trim/fg/male/hurt/scutum_trim.png",
+        "sourceKind": "universal-lpc-library"
+      }
+    ]
+  },
+  "selectedSourceFiles": [
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "shield--scutum-trim--53975399432f",
+      "relativeSourcePath": "shield/scutum_trim/fg/male/hurt/scutum_trim.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\scutum_trim\\fg\\male\\hurt\\scutum_trim.png",
+      "animation": "hurt",
+      "bodyType": "male",
+      "layerRole": "fg",
+      "variant": null,
+      "width": 384,
+      "height": 64,
+      "columns": 6,
+      "rows": 1,
+      "fileSizeBytes": 688,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "shield/scutum_trim/fg/male/hurt/scutum_trim.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\scutum_trim\\fg\\male\\hurt\\scutum_trim.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    },
+    {
+      "sourceKind": "universal-lpc-library",
+      "familyId": "shield--scutum-trim--53975399432f",
+      "relativeSourcePath": "shield/scutum_trim/fg/male/walk/scutum_trim.png",
+      "absoluteSourcePath": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\scutum_trim\\fg\\male\\walk\\scutum_trim.png",
+      "animation": "walk",
+      "bodyType": "male",
+      "layerRole": "fg",
+      "variant": null,
+      "width": 576,
+      "height": 256,
+      "columns": 9,
+      "rows": 4,
+      "fileSizeBytes": 1541,
+      "appearsTransparent": true,
+      "indexedUnreadable": false,
+      "indexedMalformed": false,
+      "creditsKey": "shield/scutum_trim/fg/male/walk/scutum_trim.png",
+      "authors": [],
+      "licenses": [],
+      "path": "C:\\Users\\Admin\\Desktop\\Universal-LPC-Spritesheet-Character-Generator-master\\Universal-LPC-Spritesheet-Character-Generator-master\\spritesheets\\shield\\scutum_trim\\fg\\male\\walk\\scutum_trim.png",
+      "exists": true,
+      "readable": true,
+      "error": null
+    }
+  ],
+  "creditsAndLicenses": {
+    "authors": [],
+    "licenses": [],
+    "creditsSources": [],
+    "sourceCreditKeys": [
+      "shield/scutum_trim/fg/male/hurt/scutum_trim.png",
+      "shield/scutum_trim/fg/male/walk/scutum_trim.png"
+    ]
+  }
+}

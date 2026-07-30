@@ -6,6 +6,10 @@ import {
   type DungeonPlayerPatch,
   type LpcCharacterProps,
 } from './dungeon-lpc-adapter';
+import {
+  generatedLpcVisualSlot,
+  getGeneratedLpcItem,
+} from './dungeon-lpc-generated-catalog';
 
 type VisualSlot = keyof LpcCharacterProps['loadout'];
 type LayerKey =
@@ -118,6 +122,14 @@ const catalogItemFor = (
 ): CatalogItem => {
   const selected = itemId ? equipmentById.get(itemId) : undefined;
   if (selected?.slot === slot) return selected;
+  const generated = itemId ? getGeneratedLpcItem(itemId) : null;
+  if (generated && generatedLpcVisualSlot(generated) === slot) {
+    return {
+      id: generated.internalItemId,
+      slot,
+      assets: generated.assets,
+    };
+  }
   const fallback = equipmentById.get(DEFAULT_ITEM_ID_BY_SLOT[slot]);
   if (!fallback || fallback.slot !== slot) {
     throw new Error(`Missing LPC catalog fallback for ${slot}.`);
