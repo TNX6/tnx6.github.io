@@ -58,6 +58,9 @@ const runtimeSlotForIdentity = (itemId: string): GeneratedLpcRuntimeSlot | null 
   return visualCategory ? (SLOT_BY_VISUAL_CATEGORY.get(visualCategory) ?? null) : null;
 };
 
+const isGeneratedRuntimeIdentity = (itemId: string): boolean =>
+  /^lpc-(?:visual-)?[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i.test(itemId.trim());
+
 const isSplitAsset = (value: unknown): value is GeneratedLpcRuntimeSplitAsset =>
   Boolean(
     value &&
@@ -76,7 +79,7 @@ const isRuntimeItem = (value: unknown, slot: GeneratedLpcRuntimeSlot): value is 
     typeof item.lpcVisualId === 'string' &&
     item.slot === slot &&
     runtimeSlotForIdentity(item.internalItemId) === slot &&
-    runtimeSlotForIdentity(item.lpcVisualId) === slot &&
+    /^lpc-visual-[a-z0-9][a-z0-9-]*$/i.test(item.lpcVisualId.trim()) &&
     typeof item.layered === 'boolean' &&
     isAsset(item.idle) &&
     isAsset(item.walk) &&
@@ -159,18 +162,40 @@ export const generatedLpcRuntimeSlotFor = (visualSlot: string, itemId: string): 
       : visualSlot === 'weapon' || visualSlot === 'helmet' || visualSlot === 'boots'
         ? visualSlot
         : null;
+  if (!expectedSlot || !isGeneratedRuntimeIdentity(normalizedId)) return null;
   const identitySlot = runtimeSlotForIdentity(normalizedId);
-  return expectedSlot && identitySlot === expectedSlot ? expectedSlot : null;
+  return identitySlot && identitySlot !== expectedSlot ? null : expectedSlot;
+};
+
+export const generatedLpcRuntimeItemMatchesIdentity = (
+  item: GeneratedLpcRuntimeItem | undefined,
+  identity: string | null
+): boolean => {
+  if (!item || !identity) return false;
+  const normalizedIdentity = identity.trim().toLowerCase();
+  return (
+    item.internalItemId.trim().toLowerCase() === normalizedIdentity ||
+    item.lpcVisualId.trim().toLowerCase() === normalizedIdentity
+  );
+};
+
+export const resolveGeneratedLpcRuntimeEntry = async (
+  identity: string,
+  slotHint?: GeneratedLpcRuntimeSlot
+): Promise<GeneratedLpcRuntimeItem | null> => {
+  const normalizedIdentity = identity.trim().toLowerCase();
+  if (!isGeneratedRuntimeIdentity(normalizedIdentity)) return null;
+  const slot = slotHint ?? runtimeSlotForIdentity(normalizedIdentity);
+  if (!slot) return null;
+  const runtimeMap = await loadRuntimeMap(slot);
+  const item = runtimeMap?.get(normalizedIdentity) ?? null;
+  return item?.slot === slot ? item : null;
 };
 
 export const loadGeneratedLpcRuntimeItem = async (
   slot: GeneratedLpcRuntimeSlot,
   itemId: string
-): Promise<GeneratedLpcRuntimeItem | null> => {
-  if (runtimeSlotForIdentity(itemId) !== slot) return null;
-  const runtimeMap = await loadRuntimeMap(slot);
-  return runtimeMap?.get(itemId.trim().toLowerCase()) ?? null;
-};
+): Promise<GeneratedLpcRuntimeItem | null> => resolveGeneratedLpcRuntimeEntry(itemId, slot);
 
 export const clearGeneratedLpcRuntimeMapCache = (): void => {
   runtimeMapControllers.forEach((controller) => controller.abort());

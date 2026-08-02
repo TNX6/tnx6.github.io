@@ -7,9 +7,10 @@ import {
   type LpcCharacterProps,
 } from './dungeon-lpc-adapter';
 import {
+  generatedLpcRuntimeItemMatchesIdentity,
   generatedLpcRuntimeSlotFor,
   generatedLpcRuntimeVisualSlot,
-  loadGeneratedLpcRuntimeItem,
+  resolveGeneratedLpcRuntimeEntry,
   type GeneratedLpcRuntimeItem,
 } from './dungeon-lpc-generated-runtime-loader';
 
@@ -151,7 +152,7 @@ const catalogItemFor = (
   const selected = itemId ? equipmentById.get(itemId) : undefined;
   if (selected?.slot === slot) return selected;
   const generated = catalogItemFromGenerated(slot, generatedItem);
-  if (generated?.id === itemId) return generated;
+  if (generated && generatedLpcRuntimeItemMatchesIdentity(generatedItem, itemId)) return generated;
   const fallback = equipmentById.get(DEFAULT_ITEM_ID_BY_SLOT[slot]);
   if (!fallback || fallback.slot !== slot) {
     throw new Error(`Missing LPC catalog fallback for ${slot}.`);
@@ -463,7 +464,7 @@ export const createLpcCharacter = (
     const loadout = { ...mappedProps.loadout };
     (Object.keys(resolvedGeneratedItems) as VisualSlot[]).forEach((slot) => {
       const item = resolvedGeneratedItems[slot];
-      if (item?.internalItemId === mappedProps.itemIds[slot]) {
+      if (generatedLpcRuntimeItemMatchesIdentity(item, mappedProps.itemIds[slot])) {
         loadout[slot] = true;
       }
     });
@@ -556,7 +557,7 @@ export const createLpcCharacter = (
       delete resolvedGeneratedItems[slot];
       delete generatedWarnings[slot];
 
-      void loadGeneratedLpcRuntimeItem(runtimeSlot, itemId).then((item) => {
+      void resolveGeneratedLpcRuntimeEntry(itemId, runtimeSlot).then((item) => {
         if (
           destroyed ||
           token !== generatedResolutionTokens[slot] ||
