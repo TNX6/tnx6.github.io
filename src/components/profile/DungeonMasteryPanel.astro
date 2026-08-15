@@ -1,0 +1,140 @@
+---
+import '../../assets/styles/dungeon-mastery.css';
+
+interface Props {
+  apiBase?: string;
+  loginUrl?: string;
+}
+
+const { apiBase = 'https://api.tnx6.xyz', loginUrl = 'https://api.tnx6.xyz/auth/twitch/login' } = Astro.props;
+---
+
+<section
+  class="dma-panel"
+  data-dungeon-mastery-root
+  data-api-base={apiBase}
+  data-login-url={loginUrl}
+  aria-labelledby="dungeonMasteryTitle"
+  hidden
+>
+  <header class="dma-header">
+    <div>
+      <span class="dma-eyebrow">DUNGEON MASTERY</span>
+      <h2 id="dungeonMasteryTitle">إتقان الدنجن</h2>
+      <p>تقدّمك الدائم والمكافآت التي فتحتها في رحلات الدنجن.</p>
+    </div>
+    <button type="button" class="dma-refresh" data-dma-refresh disabled>تحديث التقدم</button>
+  </header>
+
+  <p class="dma-announcer" data-dma-announcer role="status" aria-live="polite" aria-atomic="true"></p>
+
+  <div class="dma-loading" data-dma-loading aria-label="تحميل تقدم إتقان الدنجن">
+    <span></span><span></span><span></span>
+  </div>
+
+  <div class="dma-login" data-dma-login hidden>
+    <div>
+      <strong>تسجيل الدخول مطلوب</strong>
+      <p>سجّل الدخول عبر Twitch لعرض تقدم الإتقان الخاص بك.</p>
+    </div>
+    <a data-dma-login-link href={loginUrl}>تسجيل الدخول عبر Twitch</a>
+  </div>
+
+  <div class="dma-error" data-dma-error hidden>
+    <div>
+      <strong>تعذر تحميل الإتقان</strong>
+      <p data-dma-error-message></p>
+    </div>
+    <button type="button" data-dma-retry hidden>إعادة المحاولة</button>
+  </div>
+
+  <div class="dma-body" data-dma-body hidden>
+    <div class="dma-summary" aria-label="ملخص الإتقان">
+      <div><span>الرتبة</span><strong data-dma-rank>—</strong></div>
+      <div><span>نقاط الإتقان</span><strong data-dma-progress>—</strong></div>
+      <div><span>نجوم Legacy</span><strong data-dma-stars>—</strong></div>
+      <div><span>المكافآت المفتوحة</span><strong data-dma-unlock-count>—</strong></div>
+    </div>
+
+    <section class="dma-progress-card" aria-labelledby="dungeonMasteryRankProgressTitle">
+      <div class="dma-section-heading">
+        <div>
+          <span>RANK PROGRESS</span>
+          <h3 id="dungeonMasteryRankProgressTitle">تقدم الرتبة</h3>
+        </div>
+        <strong data-dma-rank-percent>—</strong>
+      </div>
+      <div data-dma-rank-active>
+        <div
+          class="dma-progress-track"
+          data-dma-rank-progressbar
+          role="progressbar"
+          aria-label="تقدم رتبة الإتقان"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <span data-dma-rank-fill></span>
+        </div>
+        <div class="dma-progress-meta">
+          <span data-dma-rank-next>—</span>
+          <span data-dma-rank-remaining>—</span>
+        </div>
+      </div>
+      <p class="dma-complete" data-dma-rank-complete hidden>اكتملت رتب الإتقان العشر.</p>
+    </section>
+
+    <section class="dma-progress-card" data-dma-legacy hidden aria-labelledby="dungeonMasteryLegacyTitle">
+      <div class="dma-section-heading">
+        <div>
+          <span>LEGACY PROGRESS</span>
+          <h3 id="dungeonMasteryLegacyTitle">تقدم Legacy</h3>
+        </div>
+        <strong data-dma-legacy-percent>—</strong>
+      </div>
+      <div
+        class="dma-progress-track"
+        data-dma-legacy-progressbar
+        role="progressbar"
+        aria-label="تقدم نجمة Legacy التالية"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+      >
+        <span data-dma-legacy-fill></span>
+      </div>
+      <div class="dma-progress-meta">
+        <span data-dma-legacy-next>—</span>
+        <span data-dma-legacy-remaining>—</span>
+      </div>
+    </section>
+
+    <section class="dma-list-card" aria-labelledby="dungeonMasteryUnlocksTitle">
+      <div class="dma-section-heading">
+        <div>
+          <span>UNLOCKS</span>
+          <h3 id="dungeonMasteryUnlocksTitle">المكافآت المفتوحة</h3>
+        </div>
+      </div>
+      <p class="dma-empty" data-dma-unlocks-empty hidden>لا توجد مكافآت مفتوحة بعد.</p>
+      <ul class="dma-unlocks" data-dma-unlocks></ul>
+    </section>
+
+    <section class="dma-list-card" aria-labelledby="dungeonMasteryGrantsTitle">
+      <div class="dma-section-heading">
+        <div>
+          <span>RECENT GRANTS</span>
+          <h3 id="dungeonMasteryGrantsTitle">آخر تقدم مكتسب</h3>
+        </div>
+      </div>
+      <p class="dma-empty" data-dma-grants-empty hidden>لا توجد عمليات تقدم حديثة.</p>
+      <ol class="dma-grants" data-dma-grants></ol>
+    </section>
+  </div>
+</section>
+
+<script>
+  import { installDungeonMasteryPanels } from '../../scripts/dungeon-mastery-client';
+
+  installDungeonMasteryPanels();
+</script>
