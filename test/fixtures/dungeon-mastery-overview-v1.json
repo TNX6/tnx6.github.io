@@ -1,0 +1,238 @@
+{
+  "fixtureVersion": "dungeon-mastery-overview-v1",
+  "cases": {
+    "zero": {
+      "ok": true,
+      "mastery": {
+        "curveVersion": "dungeon_mastery_curve_v1",
+        "progress": 0,
+        "rank": 0,
+        "legacyStars": 0,
+        "rankProgress": {
+          "complete": false,
+          "currentRankThreshold": 0,
+          "nextRank": 1,
+          "nextRankThreshold": 20,
+          "progressIntoRank": 0,
+          "progressRequired": 20,
+          "remaining": 20,
+          "percent": 0
+        },
+        "legacyProgress": null,
+        "unlocks": [],
+        "recentGrants": []
+      }
+    },
+    "midRank": {
+      "ok": true,
+      "mastery": {
+        "curveVersion": "dungeon_mastery_curve_v1",
+        "progress": 150,
+        "rank": 3,
+        "legacyStars": 0,
+        "rankProgress": {
+          "complete": false,
+          "currentRankThreshold": 120,
+          "nextRank": 4,
+          "nextRankThreshold": 200,
+          "progressIntoRank": 30,
+          "progressRequired": 80,
+          "remaining": 50,
+          "percent": 37
+        },
+        "legacyProgress": null,
+        "unlocks": [
+          { "key": "dungeon.mastery.reward.rank.1.title", "grantingRank": 1, "earned": true, "label": { "ar": "لقب", "en": "Title" } },
+          { "key": "dungeon.mastery.reward.rank.2.profile_frame", "grantingRank": 2, "earned": true, "label": { "ar": "إطار الملف الشخصي", "en": "Profile Frame" } },
+          { "key": "dungeon.mastery.reward.rank.3.dungeon_victory_effect", "grantingRank": 3, "earned": true, "label": { "ar": "تأثير انتصار الدنجن", "en": "Dungeon Victory Effect" } }
+        ],
+        "recentGrants": [
+          {
+            "createdAt": "2032-01-01T00:00:00.000Z",
+            "progressDelta": 150,
+            "progressAfter": 150,
+            "rankAfter": 3,
+            "legacyStarsAfter": 0,
+            "crossedRanks": [1, 2, 3],
+            "semanticUnlockKeys": [
+              "dungeon.mastery.reward.rank.1.title",
+              "dungeon.mastery.reward.rank.2.profile_frame",
+              "dungeon.mastery.reward.rank.3.dungeon_victory_effect"
+            ]
+          }
+        ]
+      }
+    },
+    "multiUnlock": {
+      "ok": true,
+      "mastery": {
+        "curveVersion": "dungeon_mastery_curve_v1",
+        "progress": 320,
+        "rank": 5,
+        "legacyStars": 0,
+        "rankProgress": {
+          "complete": false,
+          "currentRankThreshold": 300,
+          "nextRank": 6,
+          "nextRankThreshold": 420,
+          "progressIntoRank": 20,
+          "progressRequired": 120,
+          "remaining": 100,
+          "percent": 16
+        },
+        "legacyProgress": null,
+        "unlocks": [
+          { "key": "dungeon.mastery.reward.rank.1.title", "grantingRank": 1, "earned": true, "label": { "ar": "لقب", "en": "Title" } },
+          { "key": "dungeon.mastery.reward.rank.2.profile_frame", "grantingRank": 2, "earned": true, "label": { "ar": "إطار الملف الشخصي", "en": "Profile Frame" } },
+          { "key": "dungeon.mastery.reward.rank.3.dungeon_victory_effect", "grantingRank": 3, "earned": true, "label": { "ar": "تأثير انتصار الدنجن", "en": "Dungeon Victory Effect" } },
+          { "key": "dungeon.mastery.reward.rank.4.character_aura", "grantingRank": 4, "earned": true, "label": { "ar": "هالة الشخصية", "en": "Character Aura" } },
+          { "key": "dungeon.mastery.reward.rank.5.badge", "grantingRank": 5, "earned": true, "label": { "ar": "شارة", "en": "Badge" } },
+          { "key": "dungeon.mastery.reward.rank.5.mastery_challenge_access", "grantingRank": 5, "earned": true, "label": { "ar": "دخول تحدي الإتقان", "en": "Mastery Challenge Access" } }
+        ],
+        "recentGrants": [
+          {
+            "createdAt": "2032-01-02T00:00:00.000Z",
+            "progressDelta": 320,
+            "progressAfter": 320,
+            "rankAfter": 5,
+            "legacyStarsAfter": 0,
+            "crossedRanks": [1, 2, 3, 4, 5],
+            "semanticUnlockKeys": [
+              "dungeon.mastery.reward.rank.1.title",
+              "dungeon.mastery.reward.rank.2.profile_frame",
+              "dungeon.mastery.reward.rank.3.dungeon_victory_effect",
+              "dungeon.mastery.reward.rank.4.character_aura",
+              "dungeon.mastery.reward.rank.5.badge",
+              "dungeon.mastery.reward.rank.5.mastery_challenge_access"
+            ]
+          }
+        ]
+      }
+    },
+    "rank10ZeroStars": {
+      "ok": true,
+      "mastery": {
+        "curveVersion": "dungeon_mastery_curve_v1",
+        "progress": 1100,
+        "rank": 10,
+        "legacyStars": 0,
+        "rankProgress": { "complete": true, "currentRankThreshold": 1100, "nextRank": null, "nextRankThreshold": null, "progressIntoRank": 0, "progressRequired": 0, "remaining": 0, "percent": 100 },
+        "legacyProgress": { "nextStar": 1, "nextStarThreshold": 1350, "progressIntoInterval": 0, "progressRequired": 250, "remaining": 250, "percent": 0 },
+        "unlocks": [
+          { "key": "dungeon.mastery.reward.rank.1.title", "grantingRank": 1, "earned": true, "label": { "ar": "لقب", "en": "Title" } },
+          { "key": "dungeon.mastery.reward.rank.2.profile_frame", "grantingRank": 2, "earned": true, "label": { "ar": "إطار الملف الشخصي", "en": "Profile Frame" } },
+          { "key": "dungeon.mastery.reward.rank.3.dungeon_victory_effect", "grantingRank": 3, "earned": true, "label": { "ar": "تأثير انتصار الدنجن", "en": "Dungeon Victory Effect" } },
+          { "key": "dungeon.mastery.reward.rank.4.character_aura", "grantingRank": 4, "earned": true, "label": { "ar": "هالة الشخصية", "en": "Character Aura" } },
+          { "key": "dungeon.mastery.reward.rank.5.badge", "grantingRank": 5, "earned": true, "label": { "ar": "شارة", "en": "Badge" } },
+          { "key": "dungeon.mastery.reward.rank.5.mastery_challenge_access", "grantingRank": 5, "earned": true, "label": { "ar": "دخول تحدي الإتقان", "en": "Mastery Challenge Access" } },
+          { "key": "dungeon.mastery.reward.rank.6.equipment_appearance", "grantingRank": 6, "earned": true, "label": { "ar": "مظهر المعدات", "en": "Equipment Appearance" } },
+          { "key": "dungeon.mastery.reward.rank.7.title", "grantingRank": 7, "earned": true, "label": { "ar": "لقب", "en": "Title" } },
+          { "key": "dungeon.mastery.reward.rank.8.profile_frame", "grantingRank": 8, "earned": true, "label": { "ar": "إطار الملف الشخصي", "en": "Profile Frame" } },
+          { "key": "dungeon.mastery.reward.rank.9.legacy_badge", "grantingRank": 9, "earned": true, "label": { "ar": "شارة الإرث", "en": "Legacy Badge" } },
+          { "key": "dungeon.mastery.reward.rank.10.character_aura", "grantingRank": 10, "earned": true, "label": { "ar": "هالة الشخصية", "en": "Character Aura" } },
+          { "key": "dungeon.mastery.reward.rank.10.legacy_system_access", "grantingRank": 10, "earned": true, "label": { "ar": "دخول نظام الإرث", "en": "Legacy System Access" } },
+          { "key": "dungeon.mastery.reward.rank.10.title", "grantingRank": 10, "earned": true, "label": { "ar": "لقب", "en": "Title" } }
+        ],
+        "recentGrants": []
+      }
+    },
+    "rank10BeforeBoundary": {
+      "ok": true,
+      "mastery": {
+        "curveVersion": "dungeon_mastery_curve_v1",
+        "progress": 1349,
+        "rank": 10,
+        "legacyStars": 0,
+        "rankProgress": { "complete": true, "currentRankThreshold": 1100, "nextRank": null, "nextRankThreshold": null, "progressIntoRank": 0, "progressRequired": 0, "remaining": 0, "percent": 100 },
+        "legacyProgress": { "nextStar": 1, "nextStarThreshold": 1350, "progressIntoInterval": 249, "progressRequired": 250, "remaining": 1, "percent": 99 },
+        "unlocks": [
+          { "key": "dungeon.mastery.reward.rank.1.title", "grantingRank": 1, "earned": true, "label": { "ar": "لقب", "en": "Title" } },
+          { "key": "dungeon.mastery.reward.rank.2.profile_frame", "grantingRank": 2, "earned": true, "label": { "ar": "إطار الملف الشخصي", "en": "Profile Frame" } },
+          { "key": "dungeon.mastery.reward.rank.3.dungeon_victory_effect", "grantingRank": 3, "earned": true, "label": { "ar": "تأثير انتصار الدنجن", "en": "Dungeon Victory Effect" } },
+          { "key": "dungeon.mastery.reward.rank.4.character_aura", "grantingRank": 4, "earned": true, "label": { "ar": "هالة الشخصية", "en": "Character Aura" } },
+          { "key": "dungeon.mastery.reward.rank.5.badge", "grantingRank": 5, "earned": true, "label": { "ar": "شارة", "en": "Badge" } },
+          { "key": "dungeon.mastery.reward.rank.5.mastery_challenge_access", "grantingRank": 5, "earned": true, "label": { "ar": "دخول تحدي الإتقان", "en": "Mastery Challenge Access" } },
+          { "key": "dungeon.mastery.reward.rank.6.equipment_appearance", "grantingRank": 6, "earned": true, "label": { "ar": "مظهر المعدات", "en": "Equipment Appearance" } },
+          { "key": "dungeon.mastery.reward.rank.7.title", "grantingRank": 7, "earned": true, "label": { "ar": "لقب", "en": "Title" } },
+          { "key": "dungeon.mastery.reward.rank.8.profile_frame", "grantingRank": 8, "earned": true, "label": { "ar": "إطار الملف الشخصي", "en": "Profile Frame" } },
+          { "key": "dungeon.mastery.reward.rank.9.legacy_badge", "grantingRank": 9, "earned": true, "label": { "ar": "شارة الإرث", "en": "Legacy Badge" } },
+          { "key": "dungeon.mastery.reward.rank.10.character_aura", "grantingRank": 10, "earned": true, "label": { "ar": "هالة الشخصية", "en": "Character Aura" } },
+          { "key": "dungeon.mastery.reward.rank.10.legacy_system_access", "grantingRank": 10, "earned": true, "label": { "ar": "دخول نظام الإرث", "en": "Legacy System Access" } },
+          { "key": "dungeon.mastery.reward.rank.10.title", "grantingRank": 10, "earned": true, "label": { "ar": "لقب", "en": "Title" } }
+        ],
+        "recentGrants": []
+      }
+    },
+    "rank10AtBoundary": {
+      "ok": true,
+      "mastery": {
+        "curveVersion": "dungeon_mastery_curve_v1",
+        "progress": 1350,
+        "rank": 10,
+        "legacyStars": 1,
+        "rankProgress": { "complete": true, "currentRankThreshold": 1100, "nextRank": null, "nextRankThreshold": null, "progressIntoRank": 0, "progressRequired": 0, "remaining": 0, "percent": 100 },
+        "legacyProgress": { "nextStar": 2, "nextStarThreshold": 1600, "progressIntoInterval": 0, "progressRequired": 250, "remaining": 250, "percent": 0 },
+        "unlocks": [
+          { "key": "dungeon.mastery.reward.rank.1.title", "grantingRank": 1, "earned": true, "label": { "ar": "لقب", "en": "Title" } },
+          { "key": "dungeon.mastery.reward.rank.2.profile_frame", "grantingRank": 2, "earned": true, "label": { "ar": "إطار الملف الشخصي", "en": "Profile Frame" } },
+          { "key": "dungeon.mastery.reward.rank.3.dungeon_victory_effect", "grantingRank": 3, "earned": true, "label": { "ar": "تأثير انتصار الدنجن", "en": "Dungeon Victory Effect" } },
+          { "key": "dungeon.mastery.reward.rank.4.character_aura", "grantingRank": 4, "earned": true, "label": { "ar": "هالة الشخصية", "en": "Character Aura" } },
+          { "key": "dungeon.mastery.reward.rank.5.badge", "grantingRank": 5, "earned": true, "label": { "ar": "شارة", "en": "Badge" } },
+          { "key": "dungeon.mastery.reward.rank.5.mastery_challenge_access", "grantingRank": 5, "earned": true, "label": { "ar": "دخول تحدي الإتقان", "en": "Mastery Challenge Access" } },
+          { "key": "dungeon.mastery.reward.rank.6.equipment_appearance", "grantingRank": 6, "earned": true, "label": { "ar": "مظهر المعدات", "en": "Equipment Appearance" } },
+          { "key": "dungeon.mastery.reward.rank.7.title", "grantingRank": 7, "earned": true, "label": { "ar": "لقب", "en": "Title" } },
+          { "key": "dungeon.mastery.reward.rank.8.profile_frame", "grantingRank": 8, "earned": true, "label": { "ar": "إطار الملف الشخصي", "en": "Profile Frame" } },
+          { "key": "dungeon.mastery.reward.rank.9.legacy_badge", "grantingRank": 9, "earned": true, "label": { "ar": "شارة الإرث", "en": "Legacy Badge" } },
+          { "key": "dungeon.mastery.reward.rank.10.character_aura", "grantingRank": 10, "earned": true, "label": { "ar": "هالة الشخصية", "en": "Character Aura" } },
+          { "key": "dungeon.mastery.reward.rank.10.legacy_system_access", "grantingRank": 10, "earned": true, "label": { "ar": "دخول نظام الإرث", "en": "Legacy System Access" } },
+          { "key": "dungeon.mastery.reward.rank.10.title", "grantingRank": 10, "earned": true, "label": { "ar": "لقب", "en": "Title" } }
+        ],
+        "recentGrants": [
+          { "createdAt": "2032-01-04T00:00:00.000Z", "progressDelta": 250, "progressAfter": 1350, "rankAfter": 10, "legacyStarsAfter": 1, "crossedRanks": [], "semanticUnlockKeys": [] },
+          { "createdAt": "2032-01-03T00:00:00.000Z", "progressDelta": 1100, "progressAfter": 1100, "rankAfter": 10, "legacyStarsAfter": 0, "crossedRanks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "semanticUnlockKeys": [
+            "dungeon.mastery.reward.rank.1.title",
+            "dungeon.mastery.reward.rank.2.profile_frame",
+            "dungeon.mastery.reward.rank.3.dungeon_victory_effect",
+            "dungeon.mastery.reward.rank.4.character_aura",
+            "dungeon.mastery.reward.rank.5.badge",
+            "dungeon.mastery.reward.rank.5.mastery_challenge_access",
+            "dungeon.mastery.reward.rank.6.equipment_appearance",
+            "dungeon.mastery.reward.rank.7.title",
+            "dungeon.mastery.reward.rank.8.profile_frame",
+            "dungeon.mastery.reward.rank.9.legacy_badge",
+            "dungeon.mastery.reward.rank.10.title",
+            "dungeon.mastery.reward.rank.10.character_aura",
+            "dungeon.mastery.reward.rank.10.legacy_system_access"
+          ] }
+        ]
+      }
+    },
+    "rank10AfterBoundary": {
+      "ok": true,
+      "mastery": {
+        "curveVersion": "dungeon_mastery_curve_v1",
+        "progress": 1410,
+        "rank": 10,
+        "legacyStars": 1,
+        "rankProgress": { "complete": true, "currentRankThreshold": 1100, "nextRank": null, "nextRankThreshold": null, "progressIntoRank": 0, "progressRequired": 0, "remaining": 0, "percent": 100 },
+        "legacyProgress": { "nextStar": 2, "nextStarThreshold": 1600, "progressIntoInterval": 60, "progressRequired": 250, "remaining": 190, "percent": 24 },
+        "unlocks": [
+          { "key": "dungeon.mastery.reward.rank.1.title", "grantingRank": 1, "earned": true, "label": { "ar": "لقب", "en": "Title" } },
+          { "key": "dungeon.mastery.reward.rank.2.profile_frame", "grantingRank": 2, "earned": true, "label": { "ar": "إطار الملف الشخصي", "en": "Profile Frame" } },
+          { "key": "dungeon.mastery.reward.rank.3.dungeon_victory_effect", "grantingRank": 3, "earned": true, "label": { "ar": "تأثير انتصار الدنجن", "en": "Dungeon Victory Effect" } },
+          { "key": "dungeon.mastery.reward.rank.4.character_aura", "grantingRank": 4, "earned": true, "label": { "ar": "هالة الشخصية", "en": "Character Aura" } },
+          { "key": "dungeon.mastery.reward.rank.5.badge", "grantingRank": 5, "earned": true, "label": { "ar": "شارة", "en": "Badge" } },
+          { "key": "dungeon.mastery.reward.rank.5.mastery_challenge_access", "grantingRank": 5, "earned": true, "label": { "ar": "دخول تحدي الإتقان", "en": "Mastery Challenge Access" } },
+          { "key": "dungeon.mastery.reward.rank.6.equipment_appearance", "grantingRank": 6, "earned": true, "label": { "ar": "مظهر المعدات", "en": "Equipment Appearance" } },
+          { "key": "dungeon.mastery.reward.rank.7.title", "grantingRank": 7, "earned": true, "label": { "ar": "لقب", "en": "Title" } },
+          { "key": "dungeon.mastery.reward.rank.8.profile_frame", "grantingRank": 8, "earned": true, "label": { "ar": "إطار الملف الشخصي", "en": "Profile Frame" } },
+          { "key": "dungeon.mastery.reward.rank.9.legacy_badge", "grantingRank": 9, "earned": true, "label": { "ar": "شارة الإرث", "en": "Legacy Badge" } },
+          { "key": "dungeon.mastery.reward.rank.10.character_aura", "grantingRank": 10, "earned": true, "label": { "ar": "هالة الشخصية", "en": "Character Aura" } },
+          { "key": "dungeon.mastery.reward.rank.10.legacy_system_access", "grantingRank": 10, "earned": true, "label": { "ar": "دخول نظام الإرث", "en": "Legacy System Access" } },
+          { "key": "dungeon.mastery.reward.rank.10.title", "grantingRank": 10, "earned": true, "label": { "ar": "لقب", "en": "Title" } }
+        ],
+        "recentGrants": []
+      }
+    }
+  }
+}

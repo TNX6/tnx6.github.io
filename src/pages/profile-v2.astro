@@ -1,6 +1,7 @@
 ---
 import Layout from '~/layouts/PageLayout.astro'
 import DungeonEquipmentPanel from '~/components/profile/DungeonEquipmentPanel.astro'
+import DungeonMasteryPanel from '~/components/profile/DungeonMasteryPanel.astro'
 
 const metadata = {
   title: 'Profile V2 — TNX6',
@@ -181,6 +182,7 @@ const metadata = {
                 </section>
 
                 <DungeonEquipmentPanel />
+                <DungeonMasteryPanel />
               </div>
 
               <aside class="v2-side-stack">
@@ -21207,6 +21209,7 @@ function mbV2Card(message) {
         if (!user) return
 
         history.replaceState(null, '', profileLink(user))
+        window.dispatchEvent(new Event('tnx:profile-route-change'))
         await renderProfileFromD1(user)
       })
 
