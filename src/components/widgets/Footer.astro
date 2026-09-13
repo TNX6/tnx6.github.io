@@ -1,12 +1,16 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { SITE } from 'astrowind:config';
-import { getHomePermalink } from '~/utils/permalinks';
+import { getHomePermalink, getPermalink } from '~/utils/permalinks';
 
 const socialLinks = [
   { ariaLabel: 'Twitch', icon: 'tabler:brand-twitch', href: 'https://www.twitch.tv/tnx_6' },
   { ariaLabel: 'Instagram', icon: 'tabler:brand-instagram', href: 'https://www.instagram.com/itstnx6/' },
-  { ariaLabel: 'TikTok', icon: 'tabler:brand-tiktok', href: 'https://www.tiktok.com/@itstnx?is_from_webapp=1&sender_device=pc' },
+  {
+    ariaLabel: 'TikTok',
+    icon: 'tabler:brand-tiktok',
+    href: 'https://www.tiktok.com/@itstnx?is_from_webapp=1&sender_device=pc',
+  },
   { ariaLabel: 'Donations', icon: 'flat-color-icons:currency-exchange', href: 'https://tip.dokan.sa/tstnx' },
   { ariaLabel: 'Linktree', icon: 'tabler:link', href: 'https://linktr.ee/TNX6' },
   { ariaLabel: 'Kick', icon: 'tabler:rocket', href: 'https://kick.com/tnx6' },
@@ -21,20 +25,31 @@ const socialLinks = [
     </a>
     <p class="text-sm mb-6">© {new Date().getFullYear()} TNX6 — All rights reserved.</p>
 
+    <nav aria-label="Legal and attribution" class="mb-6">
+      <a
+        class="text-sm text-gray-300 underline decoration-gray-600 underline-offset-4 transition-colors hover:text-white"
+        href={getPermalink('/credits')}
+      >
+        اعتمادات الأصول / Asset Credits
+      </a>
+    </nav>
+
     <ul class="flex justify-center flex-wrap gap-4">
-      {socialLinks.map(({ ariaLabel, href, icon }) => (
-        <li>
-          <a
-            class="text-gray-400 hover:text-white transition-colors duration-200"
-            aria-label={ariaLabel}
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Icon name={icon} class="w-6 h-6" />
-          </a>
-        </li>
-      ))}
+      {
+        socialLinks.map(({ ariaLabel, href, icon }) => (
+          <li>
+            <a
+              class="text-gray-400 hover:text-white transition-colors duration-200"
+              aria-label={ariaLabel}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Icon name={icon} class="w-6 h-6" />
+            </a>
+          </li>
+        ))
+      }
     </ul>
   </div>
 </footer>
