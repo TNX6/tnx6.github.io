@@ -1,0 +1,184 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'اعتمادات الأصول | TNX6',
+  ignoreTitleTemplate: true,
+  description: 'اعتمادات ومصادر وتراخيص الأصول المرئية المستخدمة في TNX6 Dungeon.',
+  canonical: 'https://tnx6.xyz/credits',
+};
+
+const baseContributors = [
+  'bluecarrot16',
+  'JaidynReiman',
+  'Benjamin K. Smith (BenCreating)',
+  'Evert',
+  'Eliza Wyatt (ElizaWy)',
+  'TheraHedwig',
+  'MuffinElZangano',
+  'Durrani',
+  'Johannes Sjölund (wulax)',
+  'Stephen Challener (Redshrike)',
+];
+
+const representativeEquipmentContributors = [
+  'Napsio (Vitruvian Studio)',
+  'JaidynReiman',
+  'bluecarrot16',
+  'Michael Whitlock (bigbeargames)',
+  'Johannes Sjölund (wulax)',
+  'Matthew Krohn (makrohn)',
+  'ElizaWy',
+  'Sander Frenken (castelonia)',
+];
+
+const sourceLinks = [
+  [
+    'Liberated Pixel Cup base assets',
+    'https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles',
+  ],
+  ['LPC Medieval Fantasy Character Sprites', 'https://opengameart.org/content/lpc-medieval-fantasy-character-sprites'],
+  ['LPC Character Bases', 'https://opengameart.org/content/lpc-character-bases'],
+  ['LPC Revised Character Basics', 'https://opengameart.org/content/lpc-revised-character-basics'],
+  ['LPC Expanded Expressions', 'https://opengameart.org/content/lpc-expanded-expressions'],
+  ['LPC Helmets', 'https://opengameart.org/content/lpc-helmets'],
+  ['LPC Clothing Updates', 'http://opengameart.org/content/lpc-clothing-updates'],
+  [
+    'LPC Arming Sword sources',
+    'https://github.com/ElizaWy/LPC/tree/main/Characters/Props/Sword%2001%20-%20Arming%20Sword',
+  ],
+  ['LPC Shields', 'https://opengameart.org/content/lpc-shields'],
+];
+---
+
+<Layout metadata={metadata}>
+  <article class="mx-auto min-h-screen max-w-5xl px-6 py-16 text-gray-200" dir="rtl">
+    <header class="mb-12 border-b border-gray-800 pb-8">
+      <p class="mb-3 text-sm font-semibold tracking-[0.2em] text-amber-400">TNX6 ASSET CREDITS</p>
+      <h1 class="text-4xl font-extrabold text-white">اعتمادات الأصول والتراخيص</h1>
+      <p class="mt-4 max-w-3xl leading-8 text-gray-300">
+        يوضح هذا السجل مصدر الأصول المرئية المستخدمة في Dungeon. كود وتطبيق TNX6 مستقلان عن أعمال Universal LPC الفنية؛
+        ولا تدّعي TNX6 إنشاء تلك الأعمال.
+      </p>
+    </header>
+
+    <section class="credits-card" aria-labelledby="tnx6-code-heading">
+      <h2 id="tnx6-code-heading">TNX6 application and code</h2>
+      <p>تصميم التطبيق، تكامل Dungeon، ومنطق العرض الخاص بـ TNX6 منفصل عن أصول Universal LPC المرئية الموضحة أدناه.</p>
+    </section>
+
+    <section class="credits-card" aria-labelledby="lpc-base-heading">
+      <h2 id="lpc-base-heading">Universal LPC / Dungeon Character Assets</h2>
+      <p>
+        يستخدم Dungeon قاعدة Universal LPC البشرية الذكورية ذات هندسة 64 بكسل، والمكوّنة من جسم ذكر، رأس بشري، ووجه
+        محايد. الأصول الحالية مشتقة من ملفات Universal LPC الأصلية مع الاحتفاظ بهندسة LPC. أضيفت حشوة شفافة عند الحاجة،
+        ورُكبت بعض الطبقات، وثُبّت خط القدم في إطار التنفس؛ توثّق ملفات المصدر كل معالجة بالتفصيل.
+      </p>
+      <h3>المساهمون في القاعدة البشرية المستخدمة</h3>
+      <p lang="en" dir="ltr">{baseContributors.join(', ')}</p>
+      <p>
+        التراخيص المدرجة في ملفات المصدر: <strong>OGA-BY 3.0</strong>،
+        <strong>CC-BY-SA 3.0</strong>، و<strong>GPL 3.0</strong>. تسرد بيانات Universal LPC هذه المعرفات كترخيص واحد أو
+        أكثر للأصل؛ تعرض TNX6 جميع المعرفات ولا تختار أو تفسر مسارًا قانونيًا نيابةً عن المستخدم.
+      </p>
+      <ul class="credits-links">
+        <li><a href="/assets/dungeon-overlay/lpc-v1/credits/credits.txt">النص الكامل لاعتمادات القاعدة</a></li>
+        <li><a href="/assets/dungeon-overlay/lpc-v1/credits/credits.csv">اعتمادات القاعدة بصيغة CSV</a></li>
+        <li><a href="/assets/dungeon-overlay/lpc-v1/base/male/source-manifest.json">بيان مصدر قاعدة الذكر</a></li>
+      </ul>
+    </section>
+
+    <section class="credits-card" aria-labelledby="lpc-equipment-heading">
+      <h2 id="lpc-equipment-heading">معدات Universal LPC المستخدمة والمولّدة لـ TNX6</h2>
+      <p>
+        تشمل التغطية الموثقة الخوذ، دروع الجذع والذراعين والكتفين، الأرجل، الأحذية، الأسلحة، والدروع. تستخدم TNX6 طبقات
+        LPC مستقلة؛ وجود ملف في مكتبة المصدر لا يعني أنه مفعّل داخل كتالوج TNX6.
+      </p>
+      <h3>مساهمو المعدات التمثيلية الحالية</h3>
+      <p lang="en" dir="ltr">{representativeEquipmentContributors.join(', ')}</p>
+      <p>
+        تذكر سجلات المعدات، بحسب الأصل، OGA-BY 3.0 وCC-BY وCC-BY-SA وGPL بإصداراتها المسجلة. تحافظ TNX6 على أسماء
+        المؤلفين والروابط والتراخيص الخاصة بكل عنصر في السجل التفصيلي بدل اختزالها في اسم جماعي.
+      </p>
+      <ul class="credits-links">
+        <li><a href="/assets/dungeon-overlay/lpc-v1/CREDITS.txt">السجل الكامل المحدد آليًا لكل أصول LPC الحالية</a></li>
+        <li><a href="/assets/dungeon-overlay/lpc-v1/manifest.json">بيان أصول LPC المباشرة المستخدمة</a></li>
+        <li><a href="/assets/dungeon-overlay/lpc-v1/generated-equipment-catalog.json">كتالوج معدات LPC المولّدة</a></li>
+        <li>
+          <a href="/assets/dungeon-overlay/lpc-v1/generated-assets-integrity.json">سجل سلامة ومصادر الأصول المولّدة</a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="credits-card" aria-labelledby="sources-heading">
+      <h2 id="sources-heading">المراجع الأصلية</h2>
+      <ul class="credits-links" dir="ltr">
+        {
+          sourceLinks.map(([label, href]) => (
+            <li>
+              <a href={href} rel="noopener noreferrer">
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-6 text-sm text-gray-400">
+        هذه الصفحة فهرس اكتشاف بشري. السجل الكامل أعلاه هو المرجع التفصيلي الحتمي للأسماء، ملفات المصدر، التراخيص،
+        وروابط كل أصل مستخدم أو مولّد داخل حزمة TNX6 الحالية.
+      </p>
+    </section>
+  </article>
+</Layout>
+
+<style>
+  :global(body) {
+    background: #090a0d;
+  }
+
+  .credits-card {
+    margin-block: 1.5rem;
+    border: 1px solid rgb(55 65 81);
+    border-radius: 1rem;
+    background: rgb(17 19 24 / 0.92);
+    padding: 1.5rem;
+    box-shadow: 0 16px 40px rgb(0 0 0 / 0.22);
+  }
+
+  h2 {
+    margin-bottom: 0.85rem;
+    color: #f8d477;
+    font-size: 1.45rem;
+    font-weight: 800;
+  }
+
+  h3 {
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  p {
+    line-height: 1.85;
+  }
+
+  .credits-links {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.55rem;
+    padding-inline-start: 1.25rem;
+    list-style: disc;
+  }
+
+  .credits-links a {
+    color: #f2c65f;
+    text-decoration: underline;
+    text-underline-offset: 0.25rem;
+  }
+
+  .credits-links a:hover,
+  .credits-links a:focus-visible {
+    color: #fff4c7;
+  }
+</style>

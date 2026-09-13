@@ -225,8 +225,11 @@ test('the eight direct production mappings stay synchronous and generated lookup
   assert.deepEqual(globalThis.__generatedLookupCalls, [['helmet', bonnieTrimVisualId]]);
 
   const rendererMode = await importTypeScript(path.join(projectRoot, 'src/scripts/dungeon-renderer-mode.ts'));
-  assert.equal(rendererMode.resolveDungeonRendererMode(''), 'equipment-v2');
+  assert.equal(rendererMode.resolveDungeonRendererMode(''), 'lpc');
   assert.equal(rendererMode.resolveDungeonRendererMode('?renderer=lpc'), 'lpc');
+  assert.equal(rendererMode.resolveDungeonRendererMode('?renderer=equipment-v2'), 'equipment-v2');
+  assert.equal(rendererMode.resolveDungeonRendererMode('?renderer=unknown'), 'lpc');
+  assert.equal(rendererMode.resolveDungeonRendererMode('?renderer=%EF%BF%BD'), 'lpc');
   assert.equal(requestedUrls.length, 0);
   delete globalThis.__generatedLookupCalls;
 });
