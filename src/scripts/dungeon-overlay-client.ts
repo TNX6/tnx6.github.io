@@ -296,12 +296,20 @@ if (elementsReady) {
   });
   const rendererMode = resolveDungeonRendererMode(window.location.search);
   root.dataset.dungeonRenderer = rendererMode;
+  if (rendererMode === 'equipment-v2') {
+    slots.forEach((slot) => {
+      const legacyAvatar = slot.querySelector<HTMLElement>('.dov-avatar');
+      if (!legacyAvatar) return;
+      legacyAvatar.hidden = false;
+      legacyAvatar.style.removeProperty('display');
+    });
+  }
   let lpcIntegration: DungeonLpcOverlayIntegration | null = null;
   if (rendererMode === 'lpc') {
     try {
       lpcIntegration = new DungeonLpcOverlayIntegration(root, slots);
     } catch (error) {
-      console.error('[TNX6 Dungeon LPC] Renderer initialization failed; equipment-v2 remains active.', error);
+      console.error('[TNX6 Dungeon LPC] Renderer initialization failed; actor visuals remain fail-closed.', error);
     }
   }
   clientWindow.__tnxDungeonEquipmentDiagnostics = () => equipmentAdapter.diagnostics();
@@ -1136,6 +1144,13 @@ if (elementsReady) {
         applyReadyPlayerState(slot, player, motion, schedule, motionDelayMs);
         return;
       }
+    }
+
+    if (rendererMode === 'lpc') {
+      actor.dataset.visualReady = 'true';
+      pendingPlayerPresentations.delete(actor);
+      applyReadyPlayerState(slot, player, motion, schedule, motionDelayMs);
+      return;
     }
 
     if (actor.dataset.visualReady === 'true') {

@@ -657,7 +657,7 @@ export class DungeonLpcOverlayIntegration {
     const warningKey = `failure:${playerKey}:${message}`;
     if (!this.warned.has(warningKey)) {
       this.warned.add(warningKey);
-      console.error(`[TNX6 Dungeon LPC] Slot ${slotNumber} fell back to equipment-v2.`, error);
+      console.error(`[TNX6 Dungeon LPC] Slot ${slotNumber} failed closed without a legacy fallback.`, error);
     }
   }
 }
