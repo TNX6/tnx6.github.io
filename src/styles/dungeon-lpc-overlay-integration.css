@@ -7,7 +7,9 @@
   border: 1px solid rgba(159, 224, 255, 0.58);
   background: rgba(5, 12, 20, 0.78);
   color: #bdeeff;
-  font: 700 10px/1.2 Consolas, monospace;
+  font:
+    700 10px/1.2 Consolas,
+    monospace;
   letter-spacing: 0.08em;
   pointer-events: none;
 }
@@ -21,7 +23,9 @@
   border: 1px solid rgba(255, 205, 107, 0.68);
   background: rgba(20, 13, 4, 0.82);
   color: #ffe0a1;
-  font: 700 10px/1.2 Consolas, monospace;
+  font:
+    700 10px/1.2 Consolas,
+    monospace;
   letter-spacing: 0.08em;
   pointer-events: none;
 }
@@ -41,14 +45,21 @@
   display: none !important;
 }
 
-.dov-overlay[data-dungeon-renderer='lpc']
-  .dov-slot[data-lpc-slot-configured='true'] {
+/*
+ * The default renderer is declared in the server-rendered overlay markup so
+ * legacy pixels stay fail-closed before the client module can initialize LPC.
+ * The client replaces the marker when equipment-v2 is explicitly requested.
+ */
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-avatar,
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-layered-actor {
+  visibility: hidden !important;
+}
+
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-slot[data-lpc-slot-configured='true'] {
   transition: none;
 }
 
-.dov-overlay[data-dungeon-renderer='lpc']
-  .dov-slot[data-lpc-slot-configured='true']
-  .dov-slot__identity-anchor {
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-slot[data-lpc-slot-configured='true'] .dov-slot__identity-anchor {
   --dov-identity-anchor-bottom: var(--dov-lpc-identity-bottom);
 }
 
@@ -83,39 +94,25 @@
   overflow: visible;
   direction: ltr;
   opacity: 1;
-  transform:
-    translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0)
-    scale(1);
+  transform: translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0) scale(1);
   transform-origin: bottom center;
   pointer-events: none;
   will-change: transform, opacity;
 }
 
-.dov-overlay[data-dungeon-renderer='lpc']
-  .dov-player-actor[data-animation-state='arriving']
-  .dov-lpc-character-host {
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-player-actor[data-animation-state='arriving'] .dov-lpc-character-host {
   animation: dov-lpc-slot-arrive 1050ms steps(14, end) both;
 }
 
-.dov-overlay[data-dungeon-renderer='lpc']
-  .dov-player-actor[data-animation-state='entering']
-  .dov-lpc-character-host {
-  animation:
-    dov-lpc-slot-exit var(--dov-entry-duration, 740ms) steps(12, end)
-    var(--dov-entry-stagger, 0ms) both;
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-player-actor[data-animation-state='entering'] .dov-lpc-character-host {
+  animation: dov-lpc-slot-exit var(--dov-entry-duration, 740ms) steps(12, end) var(--dov-entry-stagger, 0ms) both;
 }
 
-.dov-overlay[data-dungeon-renderer='lpc']
-  .dov-player-actor[data-animation-state='returning']
-  .dov-lpc-character-host {
-  animation:
-    dov-lpc-slot-return 900ms steps(14, end)
-    var(--dov-return-stagger, 0ms) both;
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-player-actor[data-animation-state='returning'] .dov-lpc-character-host {
+  animation: dov-lpc-slot-return 900ms steps(14, end) var(--dov-return-stagger, 0ms) both;
 }
 
-.dov-overlay[data-dungeon-renderer='lpc']
-  .dov-lpc-character-host
-  .lpc-runtime-character {
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-lpc-character-host .lpc-runtime-character {
   position: absolute;
   inset: auto;
   top: 22px;
@@ -128,24 +125,18 @@
   --lpc-scale: var(--dov-lpc-slot-scale) !important;
 }
 
-.dov-overlay[data-dungeon-renderer='lpc']
-  .dov-lpc-character-host
-  .lpc-runtime-visual {
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-lpc-character-host .lpc-runtime-visual {
   position: absolute;
   inset: auto;
   top: -22px;
   left: -46px;
   width: calc(64px * var(--dov-lpc-slot-scale));
   height: calc(64px * var(--dov-lpc-slot-scale));
-  filter:
-    drop-shadow(1px 0 0 rgba(8, 5, 8, 0.95))
-    drop-shadow(-1px 0 0 rgba(8, 5, 8, 0.95))
+  filter: drop-shadow(1px 0 0 rgba(8, 5, 8, 0.95)) drop-shadow(-1px 0 0 rgba(8, 5, 8, 0.95))
     drop-shadow(0 1px 0 rgba(8, 5, 8, 0.95));
 }
 
-.dov-overlay[data-dungeon-renderer='lpc']
-  .dov-lpc-character-host
-  .lpc-runtime-meta {
+.dov-overlay[data-dungeon-renderer='lpc'] .dov-lpc-character-host .lpc-runtime-meta {
   display: none;
 }
 
@@ -195,7 +186,9 @@
   paint-order: stroke;
   stroke: rgba(3, 7, 12, 0.92);
   stroke-width: 3px;
-  font: 700 9px/1 Consolas, monospace;
+  font:
+    700 9px/1 Consolas,
+    monospace;
   letter-spacing: 0.02em;
   vector-effect: non-scaling-stroke;
 }
@@ -207,8 +200,7 @@
 @keyframes dov-lpc-slot-arrive {
   from {
     opacity: 0.9;
-    transform:
-      translate3d(
+    transform: translate3d(
         calc(var(--dov-lpc-final-x) + var(--dov-lpc-entry-x)),
         calc(var(--dov-lpc-final-y) + var(--dov-lpc-entry-y)),
         0
@@ -218,24 +210,19 @@
 
   to {
     opacity: 1;
-    transform:
-      translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0)
-      scale(1);
+    transform: translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0) scale(1);
   }
 }
 
 @keyframes dov-lpc-slot-exit {
   from {
     opacity: 1;
-    transform:
-      translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0)
-      scale(1);
+    transform: translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0) scale(1);
   }
 
   to {
     opacity: 0;
-    transform:
-      translate3d(
+    transform: translate3d(
         calc(var(--dov-lpc-final-x) + var(--dov-lpc-exit-x)),
         calc(var(--dov-lpc-final-y) + var(--dov-lpc-exit-y)),
         0
@@ -247,8 +234,7 @@
 @keyframes dov-lpc-slot-return {
   from {
     opacity: 0;
-    transform:
-      translate3d(
+    transform: translate3d(
         calc(var(--dov-lpc-final-x) + var(--dov-lpc-exit-x)),
         calc(var(--dov-lpc-final-y) + var(--dov-lpc-exit-y)),
         0
@@ -258,32 +244,22 @@
 
   to {
     opacity: 1;
-    transform:
-      translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0)
-      scale(1);
+    transform: translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0) scale(1);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .dov-overlay[data-dungeon-renderer='lpc']
-    .dov-player-actor:is(
-      [data-animation-state='arriving'],
-      [data-animation-state='returning']
-    )
+    .dov-player-actor:is([data-animation-state='arriving'], [data-animation-state='returning'])
     .dov-lpc-character-host {
     opacity: 1;
-    transform:
-      translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0)
-      scale(1);
+    transform: translate3d(var(--dov-lpc-final-x), var(--dov-lpc-final-y), 0) scale(1);
     animation: none !important;
   }
 
-  .dov-overlay[data-dungeon-renderer='lpc']
-    .dov-player-actor[data-animation-state='entering']
-    .dov-lpc-character-host {
+  .dov-overlay[data-dungeon-renderer='lpc'] .dov-player-actor[data-animation-state='entering'] .dov-lpc-character-host {
     opacity: 0;
-    transform:
-      translate3d(
+    transform: translate3d(
         calc(var(--dov-lpc-final-x) + var(--dov-lpc-exit-x)),
         calc(var(--dov-lpc-final-y) + var(--dov-lpc-exit-y)),
         0
