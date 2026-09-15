@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -23,6 +23,8 @@ test('release scope covers the renderer, entry point, LPC runtime, base, generat
     'src/scripts/dungeon-lpc-overlay-integration.ts',
     'src/scripts/dungeon-lpc-generated-runtime-loader.ts',
     'src/pages/overlays/dungeon.astro',
+    'src/scripts/dungeon-overlay-client.ts',
+    'src/styles/dungeon-lpc-overlay-integration.css',
     'src/pages/credits.astro',
     'src/components/widgets/Footer.astro',
     'public/assets/dungeon-overlay/lpc-v1/CREDITS.txt',
@@ -101,6 +103,76 @@ test('scoped tree additions, byte changes, and missing files all fail closed', a
         projectRoot: directory,
         scope,
         expectedAggregateSha256: approved.aggregateSha256,
+      })
+    ).errors.map((error) => error.code),
+    ['invalid_scope']
+  );
+});
+
+test('the first-paint integration stylesheet is byte-bound and required', async (context) => {
+  const directory = await mkdtemp(path.join(os.tmpdir(), 'tnx6-lpc-release-css-'));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const stylesheet = path.join(directory, 'dungeon-lpc-overlay-integration.css');
+  const scope = {
+    version: 'fixture-css-v1',
+    files: ['dungeon-lpc-overlay-integration.css'],
+    trees: [],
+  };
+  await writeFile(stylesheet, '[data-dungeon-renderer="lpc"] .legacy { visibility: hidden; }\n');
+  const approved = await calculateDungeonLpcReleaseAggregate({ projectRoot: directory, scope });
+
+  await writeFile(stylesheet, '[data-dungeon-renderer="lpc"] .legacy { visibility: visible; }\n');
+  assert.deepEqual(
+    (
+      await validateDungeonLpcReleasePackage({
+        projectRoot: directory,
+        scope,
+        expectedAggregateSha256: approved.aggregateSha256,
+      })
+    ).errors.map((error) => error.code),
+    ['aggregate_hash']
+  );
+
+  await rm(stylesheet);
+  assert.deepEqual(
+    (
+      await validateDungeonLpcReleasePackage({
+        projectRoot: directory,
+        scope,
+        expectedAggregateSha256: approved.aggregateSha256,
+      })
+    ).errors.map((error) => error.code),
+    ['invalid_scope']
+  );
+});
+
+test('release scope rejects path escapes and symlinked tree entries', async (context) => {
+  const directory = await mkdtemp(path.join(os.tmpdir(), 'tnx6-lpc-release-boundary-'));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const outside = await mkdtemp(path.join(os.tmpdir(), 'tnx6-lpc-release-outside-'));
+  context.after(() => rm(outside, { recursive: true, force: true }));
+  await writeFile(path.join(outside, 'outside.css'), '.legacy { visibility: visible; }\n');
+
+  assert.deepEqual(
+    (
+      await validateDungeonLpcReleasePackage({
+        projectRoot: directory,
+        scope: { version: 'fixture-escape-v1', files: ['../outside.css'], trees: [] },
+        expectedAggregateSha256: '0'.repeat(64),
+      })
+    ).errors.map((error) => error.code),
+    ['invalid_scope']
+  );
+
+  const assets = path.join(directory, 'assets');
+  await mkdir(assets);
+  await symlink(outside, path.join(assets, 'linked-outside'), process.platform === 'win32' ? 'junction' : 'dir');
+  assert.deepEqual(
+    (
+      await validateDungeonLpcReleasePackage({
+        projectRoot: directory,
+        scope: { version: 'fixture-symlink-v1', files: [], trees: ['assets'] },
+        expectedAggregateSha256: '0'.repeat(64),
       })
     ).errors.map((error) => error.code),
     ['invalid_scope']

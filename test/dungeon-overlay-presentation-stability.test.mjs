@@ -8,6 +8,7 @@ import { setPlayerAnimationState } from '../src/scripts/dungeon-overlay-animatio
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const client = readFileSync(`${projectRoot}src/scripts/dungeon-overlay-client.ts`, 'utf8');
 const css = readFileSync(`${projectRoot}src/assets/styles/dungeon-overlay.css`, 'utf8');
+const lpcIntegrationCss = readFileSync(`${projectRoot}src/styles/dungeon-lpc-overlay-integration.css`, 'utf8');
 const astro = readFileSync(`${projectRoot}src/pages/overlays/dungeon.astro`, 'utf8');
 
 function functionBody(name) {
@@ -30,6 +31,19 @@ test('keeps the six player actors mounted and reconciles slot classes without re
   assert.match(client, /presentationKey: `\$\{currentRunId \?\? 'unknown-run'\}:slot:\$\{participant\.slotNumber\}`/);
   assert.match(client, /player\.presentationKey \?\? `demo:slot:/);
   assert.doesNotMatch(client, /replaceChildren\([^)]*dov-player-actor/);
+});
+
+test('suppresses legacy actor pixels from the first paint on the default LPC path', () => {
+  assert.match(astro, /class="dov-overlay" data-dungeon-renderer="lpc" hidden/);
+  assert.match(client, /root\.dataset\.dungeonRenderer = rendererMode/);
+  assert.match(
+    lpcIntegrationCss,
+    /\.dov-overlay\[data-dungeon-renderer='lpc'\] \.dov-avatar,[\s\S]*\.dov-layered-actor\s*{\s*visibility:\s*hidden !important;/
+  );
+  assert.doesNotMatch(
+    lpcIntegrationCss,
+    /\.dov-overlay\[data-dungeon-renderer='lpc'\] \.dov-lpc-character-host[^{]*{[^}]*visibility:\s*hidden/
+  );
 });
 
 test('does not restart idle when one hundred identical polls request the same state', () => {

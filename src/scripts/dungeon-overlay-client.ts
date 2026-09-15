@@ -295,6 +295,7 @@ if (elementsReady) {
     loader: equipmentAssetLoader,
   });
   const rendererMode = resolveDungeonRendererMode(window.location.search);
+  root.dataset.dungeonRenderer = rendererMode;
   let lpcIntegration: DungeonLpcOverlayIntegration | null = null;
   if (rendererMode === 'lpc') {
     try {
@@ -1128,8 +1129,7 @@ if (elementsReady) {
     const runId = player.presentationKey?.split(':slot:')[0] ?? currentRunId ?? 'demo';
 
     if (lpcIntegration) {
-      const currentState =
-        (actor.dataset.animationState as DungeonPlayerAnimationState | undefined) ?? 'inside';
+      const currentState = (actor.dataset.animationState as DungeonPlayerAnimationState | undefined) ?? 'inside';
       if (lpcIntegration.reconcile(slot, slotIndex, player, currentState)) {
         actor.dataset.visualReady = 'true';
         pendingPlayerPresentations.delete(actor);
@@ -2066,9 +2066,7 @@ if (elementsReady) {
       isOpener: 'isOpener' in participant ? participant.isOpener : participant.slotNumber === 1,
       presentationKey: `${currentRunId ?? 'unknown-run'}:slot:${participant.slotNumber}`,
       restoreTerminalOutcome,
-      ...('status' in participant && typeof participant.status === 'string'
-        ? { status: participant.status }
-        : {}),
+      ...('status' in participant && typeof participant.status === 'string' ? { status: participant.status } : {}),
       ...(Object.prototype.hasOwnProperty.call(participant, 'visualLoadout')
         ? { visualLoadout: participant.visualLoadout }
         : {}),
