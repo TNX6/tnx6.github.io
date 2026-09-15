@@ -9,6 +9,7 @@ const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const client = readFileSync(`${projectRoot}src/scripts/dungeon-overlay-client.ts`, 'utf8');
 const css = readFileSync(`${projectRoot}src/assets/styles/dungeon-overlay.css`, 'utf8');
 const lpcIntegrationCss = readFileSync(`${projectRoot}src/styles/dungeon-lpc-overlay-integration.css`, 'utf8');
+const lpcIntegration = readFileSync(`${projectRoot}src/scripts/dungeon-lpc-overlay-integration.ts`, 'utf8');
 const astro = readFileSync(`${projectRoot}src/pages/overlays/dungeon.astro`, 'utf8');
 
 function functionBody(name) {
@@ -35,7 +36,22 @@ test('keeps the six player actors mounted and reconciles slot classes without re
 
 test('suppresses legacy actor pixels from the first paint on the default LPC path', () => {
   assert.match(astro, /class="dov-overlay" data-dungeon-renderer="lpc" hidden/);
+  assert.equal(
+    (astro.match(/class="dov-avatar" aria-hidden="true" hidden style="display: none"/g) ?? []).length,
+    1,
+    'the mapped server template must intrinsically hide every emitted legacy avatar'
+  );
   assert.match(client, /root\.dataset\.dungeonRenderer = rendererMode/);
+  assert.match(
+    client,
+    /if \(rendererMode === 'equipment-v2'\)[\s\S]*legacyAvatar\.hidden = false;[\s\S]*legacyAvatar\.style\.removeProperty\('display'\)/
+  );
+  assert.match(
+    functionBody('requestPlayerPresentation'),
+    /if \(rendererMode === 'lpc'\) \{[\s\S]*actor\.dataset\.visualReady = 'true';[\s\S]*return;/
+  );
+  assert.match(lpcIntegration, /failed closed without a legacy fallback/);
+  assert.doesNotMatch(lpcIntegration, /fell back to equipment-v2/);
   assert.match(
     lpcIntegrationCss,
     /\.dov-overlay\[data-dungeon-renderer='lpc'\] \.dov-avatar,[\s\S]*\.dov-layered-actor\s*{\s*visibility:\s*hidden !important;/
