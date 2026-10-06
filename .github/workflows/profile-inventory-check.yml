@@ -4,6 +4,7 @@ on:
     paths:
       - src/pages/profile.astro
       - scripts/profile-inventory-reader.test.mjs
+      - scripts/profile-lpc-preservation-check.mjs
       - .github/workflows/profile-inventory-check.yml
 permissions:
   contents: read
@@ -18,5 +19,5 @@ jobs:
           cache: npm
       - run: npm ci
       - run: node --test scripts/profile-inventory-reader.test.mjs
-      - run: npm run validate:dungeon-lpc-release
+      - run: node scripts/profile-lpc-preservation-check.mjs
       - run: npm run build
