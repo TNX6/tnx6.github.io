@@ -1,0 +1,23 @@
+name: Profile inventory reader
+on:
+  pull_request:
+    paths:
+      - src/pages/profile.astro
+      - scripts/profile-inventory-reader.test.mjs
+      - scripts/profile-lpc-preservation-check.mjs
+      - .github/workflows/profile-inventory-check.yml
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: node --test scripts/profile-inventory-reader.test.mjs
+      - run: node scripts/profile-lpc-preservation-check.mjs
+      - run: npm run build
