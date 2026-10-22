@@ -11699,8 +11699,9 @@ const metadata = {
         const badgesScore = totalBadgeXp(badges)
         // Only XP earned by a confirmed canonical use, never owned item quantity.
         const reputationScore = user?.profileStatsLoaded ? Math.max(0, Math.floor(Number(user.profileStatsReputationXp || 0))) : 0
+        const streakScore = user?.profileStatsLoaded ? Math.max(0, Math.floor(Number(user.profileStatsStreakXp || 0))) : 0
 
-        return Math.floor(watchScore + loginScore + badgesScore + reputationScore)
+        return Math.floor(watchScore + loginScore + badgesScore + reputationScore + streakScore)
       }
 
       function calculateLevel(user) {
@@ -20585,6 +20586,7 @@ function mbV2Card(message) {
           profileStatsRank: rank,
           profileStatsCheckins: checkins,
           profileStatsReputationXp: profileStatsNumber(stats.reputationXp, 0),
+          profileStatsStreakXp: profileStatsNumber(stats.streakXp, 0),
           profileStatsMailboxMessages: mailboxMessages,
           profileStatsUpdatedAt: stats.updatedAt || null,
           profileStatsEconomyUpdatedAt: stats.economyUpdatedAt || null,
