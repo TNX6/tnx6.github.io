@@ -2139,6 +2139,7 @@ const metadata = {
 
   </style>
 
+  <script is:inline data-astro-rerun src="/data/badge-progression-policy.js?v=20261030"></script>
   <script is:inline data-reinit>
     ;(async () => {
       const cleanupKey = '__tnxBadgesPageCleanup'
@@ -2180,7 +2181,6 @@ const metadata = {
 
       const BADGE_META = {
         king: { title: 'ملك القناة', category: 'status', how: 'يفتح من نظام King of Channel Points.', rarity: 'نادر جدًا', duration: 'دائم', difficulty: 'صعب' },
-        king2: { title: 'ملك القناة', category: 'status', how: 'يفتح من نظام King of Channel Points.', rarity: 'نادر جدًا', duration: 'دائم', difficulty: 'صعب جدًا' },
         Vip: { title: 'VIP', category: 'status', how: 'منحة خاصة حسب تفاعل العضو ومكانته.', rarity: 'مميز', duration: 'قد يكون مؤقت أو دائم', difficulty: 'متوسط' },
         '15D': { title: 'حضور 15 يوم', category: 'attendance', how: 'سجّل حضورك اليومي حتى توصل 15 يوم.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل' },
         '30D': { title: 'حضور 30 يوم', category: 'attendance', how: 'كمل تسجيل الحضور اليومي حتى توصل 30 يوم.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل' },
@@ -2188,7 +2188,6 @@ const metadata = {
         '100D': { title: 'حضور 100 يوم', category: 'attendance', how: 'استمر في تسجيل الحضور حتى توصل 100 يوم.', rarity: 'متقدم', duration: 'دائم', difficulty: 'متوسط' },
         '150D': { title: 'حضور 150 يوم', category: 'attendance', how: 'استمر في تسجيل الحضور حتى توصل 150 يوم.', rarity: 'نادر', duration: 'دائم', difficulty: 'صعب' },
         LAW: { title: 'رخصة محامي', category: 'law', how: 'تحصل عليه عند تفعيل دور المحامي.', rarity: 'مميز', duration: 'دائم', difficulty: 'صعب' },
-        LAW2: { title: 'رخصة محامي', category: 'law', how: 'تحصل عليه عند تفعيل دور المحامي.', rarity: 'مميز', duration: 'دائم', difficulty: 'صعب' },
         '50Q': { title: '50 إجابة صحيحة', category: 'quiz', how: 'جاوب 50 سؤال كويز بشكل صحيح.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل' },
         '150Q': { title: '150 إجابة صحيحة', category: 'quiz', how: 'جاوب 150 سؤال كويز بشكل صحيح.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل' },
         '300Q': { title: '300 إجابة صحيحة', category: 'quiz', how: 'جاوب 300 سؤال كويز بشكل صحيح.', rarity: 'متقدم', duration: 'دائم', difficulty: 'سهل' },
@@ -2430,7 +2429,7 @@ const metadata = {
           difficulty: 'غير محدد',
         }
 
-        return BADGE_META[name] || fallback
+        return { ...(BADGE_META[name] || fallback), ...window.TNX_BADGE_PROGRESSION.approvedBadgeProgression(name) }
       }
 
       function getBadgeByName(name) {
@@ -2545,10 +2544,11 @@ const metadata = {
           categoryIcon: CATEGORY_META[category]?.icon || '⬟',
           how: meta.how,
           rarity: meta.rarity,
+          xp: meta.xp || 0,
           duration: meta.duration,
           difficulty: meta.difficulty,
           searchText,
-          isRare: ['نادر', 'نادر جدًا', 'جائزة', 'خاص'].some((word) => String(meta.rarity).includes(word)),
+          isRare: ['Rare', 'Epic', 'Legendary', 'Mythic', 'TOP'].includes(meta.rarity),
         }
       }
 
@@ -2623,7 +2623,7 @@ const metadata = {
               <div class="tnx-badge-card-content">
                 <span class="tnx-badge-tag">${esc(badge.categoryLabel)}</span>
                 <strong>${esc(badge.title)}</strong>
-                <p>${esc(badge.rarity)} · ${esc(badge.difficulty)}</p>
+                <p dir="ltr">${esc(badge.rarity)} · ${formatNumber(badge.xp)} XP</p>
               </div>
             </button>
           `
@@ -2650,6 +2650,11 @@ const metadata = {
               <div>
                 <span>الندرة</span>
                 <strong>${esc(badge.rarity)}</strong>
+              </div>
+
+              <div>
+                <span>خبرة البادج</span>
+                <strong dir="ltr">${formatNumber(badge.xp)} XP</strong>
               </div>
 
               <div>
