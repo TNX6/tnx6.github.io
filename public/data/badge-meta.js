@@ -4,7 +4,6 @@
 (function () {
   const BADGE_META = {
         king: { title: 'ملك القناة', category: 'status', how: 'يفتح من نظام King of Channel Points.', rarity: 'نادر جدًا', duration: 'دائم', difficulty: 'صعب' },
-        king2: { title: 'ملك القناة', category: 'status', how: 'يفتح من نظام King of Channel Points.', rarity: 'نادر جدًا', duration: 'دائم', difficulty: 'صعب جدًا' },
         Vip: { title: 'VIP', category: 'status', how: 'منحة خاصة حسب تفاعل العضو ومكانته.', rarity: 'مميز', duration: 'قد يكون مؤقت أو دائم', difficulty: 'متوسط' },
         '15D': { title: 'حضور 15 يوم', category: 'attendance', how: 'سجّل حضورك اليومي حتى توصل 15 يوم.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل' },
         '30D': { title: 'حضور 30 يوم', category: 'attendance', how: 'كمل تسجيل الحضور اليومي حتى توصل 30 يوم.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل' },
@@ -12,7 +11,6 @@
         '100D': { title: 'حضور 100 يوم', category: 'attendance', how: 'استمر في تسجيل الحضور حتى توصل 100 يوم.', rarity: 'متقدم', duration: 'دائم', difficulty: 'متوسط' },
         '150D': { title: 'حضور 150 يوم', category: 'attendance', how: 'استمر في تسجيل الحضور حتى توصل 150 يوم.', rarity: 'نادر', duration: 'دائم', difficulty: 'صعب' },
         LAW: { title: 'رخصة محامي', category: 'law', how: 'تحصل عليه عند تفعيل دور المحامي.', rarity: 'مميز', duration: 'دائم', difficulty: 'صعب' },
-        LAW2: { title: 'رخصة محامي', category: 'law', how: 'تحصل عليه عند تفعيل دور المحامي.', rarity: 'مميز', duration: 'دائم', difficulty: 'صعب' },
         '50Q': { title: '50 إجابة صحيحة', category: 'quiz', how: 'جاوب 50 سؤال كويز بشكل صحيح.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل' },
         '150Q': { title: '150 إجابة صحيحة', category: 'quiz', how: 'جاوب 150 سؤال كويز بشكل صحيح.', rarity: 'أساسي', duration: 'دائم', difficulty: 'سهل' },
         '300Q': { title: '300 إجابة صحيحة', category: 'quiz', how: 'جاوب 300 سؤال كويز بشكل صحيح.', rarity: 'متقدم', duration: 'دائم', difficulty: 'سهل' },
@@ -177,6 +175,7 @@
   }
 
   function normalizeBadgeMeta(meta, fallbackName) {
+    const progression = window.TNX_BADGE_PROGRESSION?.approvedBadgeProgression(fallbackName);
     const title = cleanBadgeName(meta?.title || badgeTitle(fallbackName) || "بادج");
     const guessedCategoryKey = guessCategoryKey(fallbackName);
     const categoryKey = meta?.category || guessedCategoryKey;
@@ -187,10 +186,10 @@
       category,
       categoryKey,
       how: meta?.how || guessHow(fallbackName, categoryKey),
-      rarity: meta?.rarity || parseRarity(fallbackName) || "عادي",
+      rarity: progression?.rarity || meta?.rarity || parseRarity(fallbackName) || "عادي",
       duration: meta?.duration || "",
       difficulty: meta?.difficulty || "",
-      xp: meta?.xp || parseXp(fallbackName)
+      xp: progression?.xp ?? meta?.xp ?? parseXp(fallbackName)
     };
   }
 

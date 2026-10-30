@@ -5144,6 +5144,7 @@ const metadata = {
 
 </style>
 
+  <script is:inline data-astro-rerun src="/data/badge-progression-policy.js?v=20261030"></script>
   <script is:inline data-astro-rerun data-reinit>
     ;(async () => {
       const cleanupKey = '__tnxCleanProfileCleanup'
@@ -5704,60 +5705,11 @@ const metadata = {
       }
 
       function badgeRarity(badge) {
-        const explicit = normalize(get(badge, ['rarity', 'tier', 'badgeRarity', 'type'], ''))
-        if (explicit) {
-          if (explicit.includes('mythic') || explicit.includes('اسطوري') || explicit.includes('أسطوري')) return 'Mythic'
-          if (explicit.includes('legendary') || explicit.includes('legend')) return 'Legendary'
-          if (explicit.includes('epic')) return 'Epic'
-          if (explicit.includes('rare')) return 'Rare'
-          if (explicit.includes('common')) return 'Common'
-        }
-
-        const name = normalize(badgeName(badge))
-
-        if (
-          name.includes('vip') ||
-          name.includes('king') ||
-          name.includes('ملك') ||
-          name.includes('3m') ||
-          name.includes('1m') ||
-          name.includes('1000q') ||
-          name.includes('100d') ||
-          name.includes('500k')
-        ) return 'Legendary'
-
-        if (
-          name.includes('250k') ||
-          name.includes('600q') ||
-          name.includes('60d') ||
-          name.includes('500q')
-        ) return 'Epic'
-
-        if (
-          name.includes('100k') ||
-          name.includes('300q') ||
-          name.includes('30d') ||
-          name.includes('law') ||
-          name.includes('محامي')
-        ) return 'Rare'
-
-        return 'Common'
-      }
-
-      function badgeXpValue(rarity) {
-        const table = {
-          Common: 500,
-          Rare: 1500,
-          Epic: 4000,
-          Legendary: 8000,
-          Mythic: 15000,
-        }
-
-        return table[rarity] || table.Common
+        return window.TNX_BADGE_PROGRESSION.badgeProgression(badge).rarity || '—'
       }
 
       function badgeXp(badge) {
-        return badgeXpValue(badgeRarity(badge))
+        return window.TNX_BADGE_PROGRESSION.badgeProgression(badge).xp
       }
 
       function totalBadgeXp(badges) {
@@ -6920,6 +6872,6 @@ const metadata = {
   
 
 
-  <script is:inline src="/data/badge-meta.js?v=3"></script>
+  <script is:inline src="/data/badge-meta.js?v=20261030"></script>
   <script src="/js/profile-badge-modal-test.js?v=31" defer data-astro-rerun></script>
 </Layout>
