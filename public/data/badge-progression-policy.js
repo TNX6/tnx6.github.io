@@ -8,7 +8,7 @@ const BADGE_PROGRESSION=Object.freeze(Object.fromEntries([
  ['Rare',['30D','150Q','250K','VIP']],
  ['Epic',['60D','300Q','500K','LAW']],
  ['Legendary',['100D','600Q','1M']],
- ['Mythic',['150D','1000Q','3M','king']],
+ ['Mythic',['150D','1000Q','3M','5M','king']],
  ['TOP',['BEST VIP','BEST MOD','BEST CHATER','BEST FOLLOWER','BEST SUP','Best Dessert']],
 ].flatMap(([rarity,names])=>names.map(name=>[normalizeBadgeName(name),Object.freeze({rarity,xp:BADGE_XP_BY_RARITY[rarity]})]))));
 
